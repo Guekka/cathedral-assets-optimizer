@@ -30,6 +30,7 @@ bool mainFunc(bool extractBsa, bool deleteBsa, bool textures, bool meshes, QPlai
     {
         nifOpt(log);
     }
+    log->appendPlainText("Completed.\n");
     return true;
 }
 
@@ -68,7 +69,7 @@ void processBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
 
 
 
-void textOpt(QPlainTextEdit *log)
+void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncompressed. WORKING
 {
     log->appendPlainText("Processing textures...\n");
     QDirIterator it(modPath, QDirIterator::Subdirectories);
@@ -76,28 +77,36 @@ void textOpt(QPlainTextEdit *log)
     {
         if(it.next().contains("_n.dds"))
         {
+            log->appendPlainText("Currently scanning :\n" + it.fileName() + "\n");
             QProcess texDiag;
 
-            texDiag.start("ressources/texdiag.exe info " + it.filePath());
+            QStringList texdiagArg;
+            texdiagArg << "info" << it.filePath();
+
+            texDiag.start("ressources/texdiag.exe", texdiagArg);
             texDiag.waitForFinished();
 
             if(texDiag.readAllStandardOutput().contains("compressed = no"))
             {
-                QProcess texConv;
+                QProcess texconv;
 
-                texConv.start("ressources/texconv.exe -nologo -y -m 0 -pow2 -if FANT -f BC7_UNORM " + it.filePath());
-                texConv.waitForFinished();
-                log->appendPlainText("Uncompressed normal map found. Compressing...\n");
+                QStringList texconvArg;
+                texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it.filePath();// << "-o" << it.path();
+
+                texconv.start("ressources/texconv.exe",  texconvArg);
+                texconv.waitForFinished();
+                qDebug() << texconv.readAllStandardOutput();
+                log->appendPlainText("Uncompressed normal map found :\n" + it.fileName() + "\nCompressing...\n");
             }
         }
     }
-    log->appendPlainText("All the textures were processed");
+    log->appendPlainText("All the textures were processed.\n");
 }
 
 
-void nifOpt(QPlainTextEdit *log)
+void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. NOT WORKING
 {
-    log->appendPlainText("Processing meshes...");
+    log->appendPlainText("Processing meshes...\n");
     bool nifCopied=false;
 
 
@@ -127,7 +136,7 @@ void nifOpt(QPlainTextEdit *log)
             nifCopied = true;
         }
     }
-    log->appendPlainText("All the meshes were processed. Please use SSE Nif Optimizer on the \"meshes_to_optimize\" folder ");
+    log->appendPlainText("All the meshes were processed. Please use SSE Nif Optimizer on the \"meshes_to_optimize\" folder \n");
 }
 
 /*
