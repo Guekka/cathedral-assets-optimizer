@@ -6,9 +6,6 @@ QString modPath;
 MainWindow::MainWindow()
 {
 
-    bool extractBsa(true), deleteBsa(false), optimizeTextures(true), optimizeMeshes(true);
-
-
     // Window construction
 
     textEdit = new QPlainTextEdit(this);
@@ -47,28 +44,6 @@ MainWindow::MainWindow()
         modPath = textEdit->toPlainText();
     });
 
-    connect(nifOptCheckbox, &QCheckBox::stateChanged, this ,[=, &optimizeMeshes](){
-        optimizeMeshes = nifOptCheckbox->isChecked();
-
-    });
-
-    connect(extractBsaCheckbox, &QCheckBox::stateChanged, this, [=, &extractBsa](){
-        extractBsa = extractBsaCheckbox->isChecked();
-
-    });
-
-    connect(deleteBsaCheckbox, &QCheckBox::stateChanged, this,[=, &deleteBsa](){
-        deleteBsa = deleteBsaCheckbox->isChecked();
-
-    });
-
-    connect(textOptCheckbox, &QCheckBox::stateChanged, this, [=, &optimizeTextures](){
-        optimizeTextures = textOptCheckbox->isChecked();
-    });
-
-
-
-
 
     connect(pathButton, &QPushButton::pressed, this, [=](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", modPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
@@ -79,7 +54,7 @@ MainWindow::MainWindow()
 
     connect(processButton, &QPushButton::pressed, this, [=]()
     {
-        mainFunc(extractBsa, deleteBsa, optimizeMeshes, optimizeMeshes, log);
+        mainFunc(extractBsaCheckbox, deleteBsaCheckbox, textOptCheckbox, nifOptCheckbox, log);
     });
 
 }

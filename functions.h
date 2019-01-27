@@ -12,21 +12,20 @@ void processBsa(bool deleteBsa, QPlainTextEdit *log);
 void textOpt(QPlainTextEdit *log);
 void nifOpt(QPlainTextEdit *log);
 
-bool mainFunc(bool extractBsa, bool deleteBsa, bool textures, bool meshes, QPlainTextEdit *log)
+bool mainFunc(QCheckBox *extractBsaCheckbox, QCheckBox *deleteBsaCheckbox, QCheckBox *textOptCheckbox, QCheckBox *nifOptCheckbox, QPlainTextEdit *log)
 {
-    qDebug() << "nifOpt" << meshes << endl << "delete bsa" << deleteBsa << endl << "textOpt" << textures << endl << "extract BSA" << extractBsa << endl;
     log->clear();
     log->appendPlainText("Beginning...\n");
 
-    if(extractBsa)
+    if(extractBsaCheckbox->isChecked())
     {
-        processBsa(deleteBsa, log);
+        processBsa(deleteBsaCheckbox->isChecked(), log);
     }
-    if(textures)
+    if(textOptCheckbox->isChecked())
     {
         textOpt(log);
     }
-    if(meshes)
+    if(nifOptCheckbox->isChecked())
     {
         nifOpt(log);
     }
@@ -109,14 +108,13 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. 
     log->appendPlainText("Processing meshes...\n");
     bool nifCopied=false;
 
-
-
     QString readLine;
     QString currentFile;
     QDir modPathDir(modPath);
 
     QProcess nifScan;
     nifScan.setWorkingDirectory(modPath);
+    nifScan.setReadChannel(QProcess::StandardOutput);
     nifScan.start("ressources/NifScan.exe");
     nifScan.waitForFinished();
 
@@ -125,8 +123,7 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. 
         readLine=QString::fromLocal8Bit(nifScan.readLine());
         if(readLine.contains("meshes\\"))
         {
-            QDir::cleanPath(readLine);
-            currentFile = readLine;
+            currentFile = QDir::cleanPath(readLine);
             nifCopied = false;
         }
         else if((readLine.contains("unsupported") || readLine.contains("not supported")) && nifCopied == false)
