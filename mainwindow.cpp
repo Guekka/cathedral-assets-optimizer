@@ -12,7 +12,7 @@ MainWindow::MainWindow()
     textEdit->setFixedHeight(25);
 
     log = new QPlainTextEdit(this);
-    log->setFixedHeight(100);
+    log->setMinimumHeight(100);
     log->setReadOnly(true);
 
     gridLayout = new QGridLayout(this);
