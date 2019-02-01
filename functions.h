@@ -5,37 +5,9 @@
 #include <QProcess>
 #include <QDebug>
 #include <mainwindow.h>
+#include <QMessageBox>
 
 extern QString modPath;
-
-void processBsa(bool deleteBsa, QPlainTextEdit *log);
-void textOpt(QPlainTextEdit *log);
-void nifOpt(QPlainTextEdit *log);
-
-bool mainFunc(QCheckBox *extractBsaCheckbox, QCheckBox *deleteBsaCheckbox, QCheckBox *textOptCheckbox, QCheckBox *nifOptCheckbox, QPlainTextEdit *log)
-{
-    log->clear();
-    log->appendPlainText("Beginning...\n");
-    log->repaint();
-
-    if(extractBsaCheckbox->isChecked())
-    {
-        processBsa(deleteBsaCheckbox->isChecked(), log);
-    }
-    if(textOptCheckbox->isChecked())
-    {
-        textOpt(log);
-    }
-    if(nifOptCheckbox->isChecked())
-    {
-        nifOpt(log);
-    }
-    log->appendPlainText("Completed.\n");
-    log->repaint();
-    return true;
-}
-
-
 
 void processBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and delete the BSA if DeleteBSA==true. WORKING
 {
@@ -45,30 +17,31 @@ void processBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
     while (it.hasNext())
     {
         if(it.next().contains(".bsa"))
+        {
+            log->appendPlainText("BSA found ! Extracting...\n");
+            log->repaint();
+            QProcess bsarch;
+            QStringList bsarchArgs;
+            bsarchArgs << "unpack" << it.filePath() << it.path() ;
+            bsarch.start("ressources/bsarch.exe", bsarchArgs);
+            bsarch.waitForFinished();
+
+            if(bsarch.readAllStandardOutput().contains("Done."))
             {
-                log->appendPlainText("BSA found ! Extracting...\n");
+                log->appendPlainText("BSA successfully extracted.\n");
                 log->repaint();
-                QProcess bsarch;
-                QStringList bsarchArgs;
-                bsarchArgs << "unpack" << it.filePath() << it.path() ;
-                bsarch.start("ressources/bsarch.exe", bsarchArgs);
-                bsarch.waitForFinished();
-                if(bsarch.readAllStandardOutput().contains("Done."))
+                if(deleteBsa)
                 {
-                    log->appendPlainText("BSA successfully extracted.\n");
-                    log->repaint();
-                    if(deleteBsa)
-                    {
-                        QFile::remove(it.filePath());
-                        log->appendPlainText("BSA successfully deleted.\n");
-                        log->repaint();
-                    }
-                }
-                else{
-                    log->appendHtml("<font color=\"DeepPink\">An error occured during the extraction. Please extract it manually. The BSA was not deleted.</font>\n");
+                    QFile::remove(it.filePath());
+                    log->appendPlainText("BSA successfully deleted.\n");
                     log->repaint();
                 }
             }
+            else{
+                log->appendHtml("<font color=\"Red\">An error occured during the extraction. Please extract it manually. The BSA was not deleted.</font>\n");
+                log->repaint();
+            }
+        }
     }
 }
 
@@ -97,7 +70,7 @@ void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncomp
                 QProcess texconv;
 
                 QStringList texconvArg;
-                texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it.filePath();// << "-o" << it.path();
+                texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it.filePath();
 
                 texconv.start("ressources/texconv.exe",  texconvArg);
                 texconv.waitForFinished();
@@ -119,19 +92,15 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. 
 
     QString readLine;
     QString currentFile;
-    QFile nifScan_file("debug/ressources/NifScan.exe"); //Trying to understand why I need the "debug"
-    QFile currentFile_file;
+    QFile nifScan_file("release/ressources/NifScan.exe");
     QDir modPathDir(modPath);
     QProcess nifScan;
 
     if(nifScan_file.exists())
     {
-        nifScan_file.copy("debug/ressources/NifScan.exe", modPath + "/NifScan.exe");
-
+        nifScan_file.copy("release/ressources/NifScan.exe", modPath + "/NifScan.exe");
         nifScan.setReadChannel(QProcess::StandardOutput);
-
         nifScan.setProgram(modPath + "/NifScan.exe");
-
         nifScan.setWorkingDirectory(modPath);
 
         nifScan.start();
@@ -143,37 +112,37 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. 
 
             if(readLine.contains("meshes\\"))
             {
-                currentFile = QDir::cleanPath(readLine);
+                currentFile = QDir::cleanPath(readLine.simplified());
+
                 log->appendPlainText("Processing : " + currentFile + "\n");
                 nifCopied = false;
             }
             else if((readLine.contains("unsupported") || readLine.contains("not supported")) && nifCopied == false)
             {
-                QString oldFile(QDir::cleanPath(modPath + "/" + currentFile));
-                QString newFile(QDir::cleanPath(modPath + "/meshes_to_optimize/" + currentFile));
-
-                oldFile.resize(oldFile.size()-2);
-                newFile.resize(newFile.size()-2);
-
-                QFile oldFile_file(oldFile);
-                QFile newFile_file(newFile);
-
-                modPathDir.mkpath(newFile);
-
-                qDebug() << newFile_file.isWritable() << newFile_file.fileName() ;
-
-                qDebug() << oldFile_file.copy(oldFile, newFile);
+                QString oldFile(modPath + "/" + currentFile);
+                QString newFile(modPath + "/meshes_to_optimize/" + currentFile);
 
 
-                nifCopied = true;
+
+                if(!modPathDir.exists(modPath + "/meshes_to_optimize/" + currentFile.left(currentFile.lastIndexOf("/"))))
+                {
+                    modPathDir.mkpath(newFile.left(newFile.lastIndexOf("/")));
+                    modPathDir.rename(oldFile, newFile);
+                    nifCopied = true;
+                }else
+                {
+                    log->appendHtml("<font color=\"Red\">Meshes_to_optimize folder already exists. Please remove it before resuming.</font>\n");
+                }
             }
         }
         nifScan_file.remove(modPath + "/NifScan.exe");
-        log->appendPlainText("All the above meshes were processed. Please use SSE Nif Optimizer on the \"meshes_to_optimize\" folder \n");
+        log->appendPlainText("All the meshes were processed.\n");
+        log->appendHtml("<font color=\"Blue\">Please use SSE Nif Optimizer on the \"meshes_to_optimize\" folder. Then, move \\meshes_to_optimize\\meshes to \\meshes</font>\n");
         log->repaint();
+
     }else
     {
-        log->appendHtml("<font color=\"DeepPink\">Please ensure that NifScan.exe is located in the ressources folder</font>");
+        log->appendHtml("<font color=\"Red\">Please ensure that NifScan.exe is located in the ressources folder</font>");
         log->repaint();
     }
 }

@@ -54,7 +54,23 @@ MainWindow::MainWindow()
 
     connect(processButton, &QPushButton::pressed, this, [=]()
     {
-        mainFunc(extractBsaCheckbox, deleteBsaCheckbox, textOptCheckbox, nifOptCheckbox, log);
-    });
+        log->clear();
+        log->appendPlainText("Beginning...\n");
+        log->repaint();
 
+        if(extractBsaCheckbox->isChecked())
+        {
+            processBsa(deleteBsaCheckbox->isChecked(), log);
+        }
+        if(textOptCheckbox->isChecked())
+        {
+            textOpt(log);
+        }
+        if(nifOptCheckbox->isChecked())
+        {
+            nifOpt(log);
+        }
+        log->appendPlainText("Completed.\n");
+        log->repaint();
+    });
 }
