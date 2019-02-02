@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "functions.h"
+#include "mainwindow.hpp"
+#include "functions.hpp"
 
 QString modPath;
 

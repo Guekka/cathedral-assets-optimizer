@@ -4,7 +4,7 @@
 #include <QDirIterator>
 #include <QProcess>
 #include <QDebug>
-#include <mainwindow.h>
+#include <mainwindow.hpp>
 #include <QMessageBox>
 
 extern QString modPath;
