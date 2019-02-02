@@ -84,7 +84,7 @@ void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncomp
 }
 
 
-void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. NOT WORKING
+void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
 {
     log->appendPlainText("Processing meshes...\n");
     log->repaint();
@@ -92,19 +92,21 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. 
 
     QString readLine;
     QString currentFile;
-    QFile nifScan_file("release/ressources/NifScan.exe");
+    QFile nifScan_file("ressources/NifScan.exe");
     QDir modPathDir(modPath);
     QProcess nifScan;
 
     if(nifScan_file.exists())
     {
-        nifScan_file.copy("release/ressources/NifScan.exe", modPath + "/NifScan.exe");
+        nifScan_file.copy("ressources/NifScan.exe", modPath + "/NifScan.exe");
         nifScan.setReadChannel(QProcess::StandardOutput);
         nifScan.setProgram(modPath + "/NifScan.exe");
         nifScan.setWorkingDirectory(modPath);
 
         nifScan.start();
         nifScan.waitForFinished();
+
+
 
         while(nifScan.canReadLine())
         {
@@ -113,7 +115,6 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. 
             if(readLine.contains("meshes\\"))
             {
                 currentFile = QDir::cleanPath(readLine.simplified());
-
                 log->appendPlainText("Processing : " + currentFile + "\n");
                 nifCopied = false;
             }
@@ -124,7 +125,7 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them. 
 
 
 
-                if(!modPathDir.exists(modPath + "/meshes_to_optimize/" + currentFile.left(currentFile.lastIndexOf("/"))))
+                if(!modPathDir.exists(modPath + "/meshes_to_optimize/" + currentFile))
                 {
                     modPathDir.mkpath(newFile.left(newFile.lastIndexOf("/")));
                     modPathDir.rename(oldFile, newFile);
