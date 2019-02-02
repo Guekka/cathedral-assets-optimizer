@@ -88,13 +88,17 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
 {
     log->appendPlainText("Processing meshes...\n");
     log->repaint();
-    bool nifCopied=false; //Used to not copy twice the same mesh
+
+    bool meshProcessed=false; //To avoid processing twice the same mesh
 
     QString readLine;
     QString currentFile;
+
     QFile nifScan_file("ressources/NifScan.exe");
-    QDir modPathDir(modPath);
+    QFile optFile;
+
     QProcess nifScan;
+    QProcess nifOpt;
 
     if(nifScan_file.exists())
     {
@@ -106,33 +110,32 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
         nifScan.start();
         nifScan.waitForFinished();
 
-
-
         while(nifScan.canReadLine())
         {
             readLine=QString::fromLocal8Bit(nifScan.readLine());
 
             if(readLine.contains("meshes\\"))
             {
-                currentFile = QDir::cleanPath(readLine.simplified());
-                log->appendPlainText("Processing : " + currentFile + "\n");
-                nifCopied = false;
+                currentFile = QDir::cleanPath(modPath + "/" + readLine.simplified());
+                log->appendPlainText("\nProcessing : " + currentFile);
+                meshProcessed=false;
             }
-            else if((readLine.contains("unsupported") || readLine.contains("not supported")) && nifCopied == false)
+            else if((readLine.contains("unsupported") || readLine.contains("not supported")) && !meshProcessed)
             {
-                QString oldFile(modPath + "/" + currentFile);
-                QString newFile(modPath + "/meshes_to_optimize/" + currentFile);
+                meshProcessed=true;
+                nifOpt.start("ressources/nifopt.exe \"" + currentFile + "\"");
+                nifOpt.waitForFinished();
 
+                optFile.setFileName(currentFile.chopped(4) + ".opt.nif");
 
-
-                if(!modPathDir.exists(modPath + "/meshes_to_optimize/" + currentFile))
+                if(optFile.exists())
                 {
-                    modPathDir.mkpath(newFile.left(newFile.lastIndexOf("/")));
-                    modPathDir.rename(oldFile, newFile);
-                    nifCopied = true;
+                    log->appendHtml("<font color=\"Blue\"> Mesh ported to SSE\n");
+                    optFile.remove(currentFile);
+                    optFile.rename(currentFile);
                 }else
                 {
-                    log->appendHtml("<font color=\"Red\">Meshes_to_optimize folder already exists. Please remove it before resuming.</font>\n");
+                    log->appendHtml("<font color=\"Red\"> Error while porting the mesh\n");
                 }
             }
         }
