@@ -5,52 +5,82 @@ QString modPath;
 
 MainWindow::MainWindow()
 {
+    bool greyedCreateBsa = false;
+
 
     // Window construction
 
-    textEdit = new QPlainTextEdit(this);
-    textEdit->setFixedHeight(25);
-
-    log = new QPlainTextEdit(this);
-    log->setMinimumHeight(100);
-    log->setReadOnly(true);
+    modpathTextEdit = new QPlainTextEdit(this);
+    modpathTextEdit->setFixedHeight(25);
 
     gridLayout = new QGridLayout(this);
     fileDialog = new QFileDialog(this);
     pathButton = new QPushButton("Open directory", this);
     processButton = new QPushButton("Process directory", this);
 
-    extractBsaCheckbox = new QCheckBox("Extract BSA", this);
-    deleteBsaCheckbox = new QCheckBox("Delete BSA", this);
+    extractBsaCheckbox = new QCheckBox("Extract old BSA", this);
+    deleteBsaCheckbox = new QCheckBox("Delete old BSA", this);
+    createBsaCheckbox = new QCheckBox("Create new BSA", this);
+
     textOptCheckbox = new QCheckBox("Optimize textures", this);
     nifOptCheckbox = new QCheckBox("Optimize meshes", this);
+    animOptCheckbox = new QCheckBox("Optimize animations", this);
 
     extractBsaCheckbox->setChecked(true);
-    deleteBsaCheckbox->setChecked(false);
+    deleteBsaCheckbox->setChecked(true);
+    createBsaCheckbox->setChecked(true);
+
     textOptCheckbox->setChecked(true);
     nifOptCheckbox->setChecked(true);
+    animOptCheckbox->setChecked(true);
+
+    log = new QPlainTextEdit(this);
+    log->setMinimumHeight(100);
+    log->setReadOnly(true);
 
     this->setLayout(gridLayout);
-    gridLayout->addWidget(textEdit, 0, 0);
-    gridLayout->addWidget(pathButton, 0, 1);
-    gridLayout->addWidget(processButton, 2,0, 2, 2, Qt::AlignCenter );
+
+    gridLayout->addWidget(modpathTextEdit, 0, 0, 1, 2);
+    gridLayout->addWidget(pathButton, 0, 2);
+
+    gridLayout->setRowMinimumHeight(1, 15);
+
+    gridLayout->addWidget(processButton, 2,1);
+
+    gridLayout->setRowMinimumHeight(3, 15);
+
     gridLayout->addWidget(extractBsaCheckbox,4, 0);
     gridLayout->addWidget(deleteBsaCheckbox,4,1);
+    gridLayout->addWidget(createBsaCheckbox,4, 2);
+
     gridLayout->addWidget(textOptCheckbox,5,0);
     gridLayout->addWidget(nifOptCheckbox,5,1);
-    gridLayout->addWidget(log, 6, 0, 2, 0);
+    gridLayout->addWidget(animOptCheckbox, 5, 2);
 
-    connect(textEdit, &QPlainTextEdit::textChanged, this, [=](){
-        modPath = textEdit->toPlainText();
+    gridLayout->addWidget(log, 6, 0, 3, 0);
+
+    connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=](){
+        modPath = modpathTextEdit->toPlainText();
     });
 
 
     connect(pathButton, &QPushButton::pressed, this, [=](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", modPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        textEdit->setPlainText(dir);
+        modpathTextEdit->setPlainText(dir);
         modPath = dir;
     });
 
+    connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=, &greyedCreateBsa](){
+        if(greyedCreateBsa)
+        {
+            createBsaCheckbox->setDisabled(false);
+            greyedCreateBsa=false;
+        }else
+        {
+            createBsaCheckbox->setDisabled(true);
+            greyedCreateBsa=true;
+        }
+    });
 
     connect(processButton, &QPushButton::pressed, this, [=]()
     {
@@ -70,7 +100,12 @@ MainWindow::MainWindow()
         {
             nifOpt(log);
         }
-        log->appendPlainText("Completed.\n");
+        if(createBsaCheckbox->isChecked())
+        {
+            createBsa(log);
+        }
+
+        log->appendHtml("<font color=blue>Completed. Please check the log to check if there have been any errors (in red) </font>\n");
         log->repaint();
     });
 }

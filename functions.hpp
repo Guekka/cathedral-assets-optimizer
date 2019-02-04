@@ -9,26 +9,37 @@
 
 extern QString modPath;
 
+void processBsa(bool deleteBsa, bool createBsa, QPlainTextEdit *log);
+void textOpt(QPlainTextEdit *log);
+void nifOpt(QPlainTextEdit *log);
+
 void processBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and delete the BSA if DeleteBSA==true. WORKING
 {
+    QString espName;
+    QProcess bsarch;
+    QStringList bsarchArgs;
+    QDir modPathDir(modPath);
+
     log->appendPlainText("Processing BSA...\n");
     log->repaint();
+
     QDirIterator it(modPath);
+
     while (it.hasNext())
     {
         if(it.next().contains(".bsa"))
         {
             log->appendPlainText("BSA found ! Extracting...\n");
             log->repaint();
-            QProcess bsarch;
-            QStringList bsarchArgs;
+
+            bsarchArgs.clear();
             bsarchArgs << "unpack" << it.filePath() << it.path() ;
             bsarch.start("ressources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished();
 
             if(bsarch.readAllStandardOutput().contains("Done."))
             {
-                log->appendPlainText("BSA successfully extracted.\n");
+                log->appendHtml("<font color=Blue>BSA successfully extracted.</font>\n\n");
                 log->repaint();
                 if(deleteBsa)
                 {
@@ -38,13 +49,97 @@ void processBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
                 }
             }
             else{
-                log->appendHtml("<font color=\"Red\">An error occured during the extraction. Please extract it manually. The BSA was not deleted.</font>\n");
+                log->appendHtml("<font color=Red>An error occured during the extraction. Please extract it manually. The BSA was not deleted.</font>\n");
                 log->repaint();
             }
         }
     }
 }
 
+void createBsa(QPlainTextEdit *log)
+{
+    log->appendPlainText("Creating a new BSA...\n");
+    log->repaint();
+
+    bool hasEsp=false;
+    bool hasSound=false;
+
+    QDirIterator it(modPath);
+    QProcess bsarch;
+    QStringList bsarchArgs;
+    QString espName;
+    QDir modPathDir(modPath);
+
+
+    modPathDir.mkdir("data");
+
+    while (it.hasNext())
+    {
+        if(it.fileName().contains(".es"))
+        {
+            espName=it.fileName();
+            log->appendPlainText("Esp found.\n");
+            hasEsp=true;
+            it.next();
+        }
+        else if (!hasEsp)
+        {
+            espName="dummy_plugin.esp";
+            it.next();
+        }
+        else
+        {
+            it.next();
+        }
+
+
+
+        if(it.fileName() == "textures")
+        {
+            log->appendPlainText("Textures folder found. Compressing...\n");
+            log->repaint();
+
+            QString tBsaName= it.path() + "/" + espName.chopped(4) + " - Textures.bsa";
+            bsarchArgs.clear();
+            bsarchArgs << "pack" << it.filePath() << tBsaName << "-sse" << "-z" << "-share";
+            bsarch.start("ressources/bsarch.exe", bsarchArgs);
+            bsarch.waitForFinished();
+            log->appendHtml("<font color=Blue> Textures BSA successfully compressed.</font>\n");
+        }
+
+        else if(it.fileName() == "sound")
+        {
+            hasSound=true;
+            modPathDir.rename(it.filePath(), "data/" + it.fileName());
+        }
+        else if(it.fileName() == "meshes" || it.fileName() == "seq" || it.fileName() == "scripts" || it.fileName() == "dialogueviews")
+        {
+            modPathDir.rename(it.filePath(), "data/" + it.fileName());
+        }
+    }
+
+    QString bsaName = modPath + "/data/" + espName.chopped(4) + ".bsa";
+    QString folderName = modPath + "/data";
+    bsarchArgs.clear();
+    bsarchArgs << "pack" << folderName << bsaName << "-sse" << "-share";
+
+    log->appendPlainText("Compressing...\n");
+
+    if (!hasSound)
+    {
+        bsarchArgs << "-z";
+    }
+
+    bsarch.start("ressources/bsarch.exe", bsarchArgs);
+    bsarch.waitForFinished();
+
+    if(bsarch.readAllStandardOutput().contains("Done."))
+    {
+        log->appendHtml("<font color=Blue> BSA successfully compressed.</font>\n");
+        modPathDir.rename(bsaName, modPath + "/" + espName.chopped(4) + ".bsa");
+        modPathDir.remove("data");
+    }
+}
 
 
 void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncompressed. WORKING
@@ -140,13 +235,12 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
             }
         }
         nifScan_file.remove(modPath + "/NifScan.exe");
-        log->appendPlainText("All the meshes were processed.\n");
-        log->appendHtml("<font color=\"Blue\">Please use SSE Nif Optimizer on the \"meshes_to_optimize\" folder. Then, move \\meshes_to_optimize\\meshes to \\meshes</font>\n");
+        log->appendHtml("<font color=Blue>All the meshes were processed.</font>\n");
         log->repaint();
 
     }else
     {
-        log->appendHtml("<font color=\"Red\">Please ensure that NifScan.exe is located in the ressources folder</font>");
+        log->appendHtml("<font color=\"Red\">Please ensure that NifScan.exe is located in the ressources folder</font>\n");
         log->repaint();
     }
 }

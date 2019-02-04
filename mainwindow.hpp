@@ -6,6 +6,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QSpacerItem>
 
 class MainWindow : public QWidget
 {
@@ -16,14 +17,17 @@ public:
 
 private:
     QFileDialog *fileDialog;
-    QPlainTextEdit *textEdit;
+    QPlainTextEdit *modpathTextEdit;
     QPlainTextEdit *log;
     QPushButton *pathButton;
     QPushButton *processButton;
+
     QCheckBox *extractBsaCheckbox;
     QCheckBox *deleteBsaCheckbox;
     QCheckBox *textOptCheckbox;
     QCheckBox *nifOptCheckbox;
+    QCheckBox *createBsaCheckbox;
+    QCheckBox *animOptCheckbox;
 
     QGridLayout *gridLayout;
 
