@@ -1,6 +1,6 @@
-# SSE Assets Optimizer
+# SSE Assets Optimiser
 
-This tool aims to automate assets optimization for Skyrim Special Edition. 
+This tool aims to automate assets optimisation for Skyrim Special Edition. 
 Made with Qt and C++. Command line arguments currently not supported. 
 
 Meshes : 
