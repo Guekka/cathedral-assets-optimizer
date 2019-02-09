@@ -117,7 +117,6 @@ void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncomp
         }
         else if(it.fileName().contains(".tga"))
         {
-            qDebug() <<"tga";
 
             log->appendPlainText(QPlainTextEdit::tr("TGA file found: \n") + it.fileName() + QPlainTextEdit::tr("\nCompressing...\n"));
             log->repaint();
@@ -126,9 +125,6 @@ void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncomp
             texconvArg << "-nologo" << "-m" << "0" << "-y" << "-pow2" << "-if" << "FANT" << "-f" << "R8G8B8A8_UNORM" << it.filePath();
             texconv.start("resources/texconv.exe",  texconvArg);
             texconv.waitForFinished();
-
-            qDebug() << texconvArg;
-            qDebug() << texconv.readAllStandardOutput();
 
             QFile tga(it.filePath());
             tga.remove();
@@ -218,37 +214,38 @@ void createBsa(QPlainTextEdit *log) //Once all the optimizations are done, creat
     bool hasEsp=false;
     bool hasSound=false;
 
-    QDirIterator it(modPath);
+    QDirIterator it1(modPath), it(modPath);
     QProcess bsarch;
     QStringList bsarchArgs;
     QString espName;
     QDir modPathDir(modPath);
 
+    QStringList assetsFolder;
+    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews";
 
     modPathDir.mkdir("data");
 
-    while (it.hasNext())
+    while (it1.hasNext())
     {
-        if(it.fileName().contains(".es"))
+        it1.next();
+
+        if(it1.fileName().contains(".es"))
         {
-            espName=it.fileName();
-            log->appendPlainText("Esp found.\n");
+            espName=it1.fileName();
+            log->appendPlainText(QPlainTextEdit::tr("Esp found.\n"));
             hasEsp=true;
-            it.next();
         }
-        else if (!hasEsp)
+        if (!hasEsp)
         {
             espName="dummy_plugin.esp";
-            it.next();
         }
-        else
-        {
-            it.next();
-        }
+    }
 
+    while (it.hasNext())
+    {
+        it.next();
 
-
-        if(it.fileName() == "textures")
+        if(it.fileName().toLower() == "textures")
         {
             log->appendPlainText(QPlainTextEdit::tr("Textures folder found. Compressing...\n"));
             log->repaint();
@@ -272,12 +269,12 @@ void createBsa(QPlainTextEdit *log) //Once all the optimizations are done, creat
             log->appendHtml(QPlainTextEdit::tr("<font color=Blue> Textures BSA successfully compressed.</font>\n"));
         }
 
-        else if(it.fileName() == "sound")
+        if(it.fileName().toLower() == "sound")
         {
             hasSound=true;
             modPathDir.rename(it.filePath(), "data/" + it.fileName());
         }
-        else if(it.fileName() == "meshes" || it.fileName() == "seq" || it.fileName() == "scripts" || it.fileName() == "dialogueviews")
+        if(assetsFolder.contains(it.fileName().toLower()))
         {
             modPathDir.rename(it.filePath(), "data/" + it.fileName());
         }
