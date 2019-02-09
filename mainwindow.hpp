@@ -6,7 +6,6 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QCheckBox>
-#include <QSpacerItem>
 
 class MainWindow : public QWidget
 {

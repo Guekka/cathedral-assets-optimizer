@@ -78,6 +78,7 @@ MainWindow::MainWindow()
         }else
         {
             createBsaCheckbox->setDisabled(true);
+            createBsaCheckbox->setChecked(false);
             greyedCreateBsa=true;
         }
     });
@@ -90,7 +91,7 @@ MainWindow::MainWindow()
 
         if(extractBsaCheckbox->isChecked())
         {
-            processBsa(deleteBsaCheckbox->isChecked(), log);
+            extractBsa(deleteBsaCheckbox->isChecked(), log);
         }
         if(textOptCheckbox->isChecked())
         {

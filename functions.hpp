@@ -4,16 +4,17 @@
 #include <QDirIterator>
 #include <QProcess>
 #include <QDebug>
-#include <mainwindow.hpp>
 #include <QMessageBox>
+#include <QPlainTextEdit>
 
 extern QString modPath;
 
-void processBsa(bool deleteBsa, bool createBsa, QPlainTextEdit *log);
+void extractBsa(bool deleteBsa, bool createBsa, QPlainTextEdit *log);
+void createBsa(QPlainTextEdit *log);
 void textOpt(QPlainTextEdit *log);
 void nifOpt(QPlainTextEdit *log);
 
-void processBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and delete the BSA if DeleteBSA==true. WORKING
+void extractBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and delete the BSA if DeleteBSA==true.
 {
     QString espName;
     QProcess bsarch;
@@ -34,7 +35,7 @@ void processBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
 
             bsarchArgs.clear();
             bsarchArgs << "unpack" << it.filePath() << it.path() ;
-            bsarch.start("ressources/bsarch.exe", bsarchArgs);
+            bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished();
 
             if(bsarch.readAllStandardOutput().contains("Done."))
@@ -56,7 +57,7 @@ void processBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
     }
 }
 
-void createBsa(QPlainTextEdit *log)
+void createBsa(QPlainTextEdit *log) //Once all the optimizations are done, create a new BSA
 {
     log->appendPlainText("Creating a new BSA...\n");
     log->repaint();
@@ -100,10 +101,21 @@ void createBsa(QPlainTextEdit *log)
             log->repaint();
 
             QString tBsaName= it.path() + "/" + espName.chopped(4) + " - Textures.bsa";
+            QString tFolder = it.path() + "/temp_t";
+
+            modPathDir.mkdir("temp_t");
+
+            modPathDir.rename(it.filePath(), "temp_t/" + it.fileName());
+
             bsarchArgs.clear();
-            bsarchArgs << "pack" << it.filePath() << tBsaName << "-sse" << "-z" << "-share";
-            bsarch.start("ressources/bsarch.exe", bsarchArgs);
+            bsarchArgs << "pack" << tFolder << tBsaName << "-sse" << "-z" << "-share";
+
+            bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished();
+
+            modPathDir.setPath(modPath + "/temp_t/");
+            modPathDir.removeRecursively();
+
             log->appendHtml("<font color=Blue> Textures BSA successfully compressed.</font>\n");
         }
 
@@ -125,19 +137,20 @@ void createBsa(QPlainTextEdit *log)
 
     log->appendPlainText("Compressing...\n");
 
-    if (!hasSound)
+    if (!hasSound) //Compressing BSA breaks sounds
     {
         bsarchArgs << "-z";
     }
 
-    bsarch.start("ressources/bsarch.exe", bsarchArgs);
+    bsarch.start("resources/bsarch.exe", bsarchArgs);
     bsarch.waitForFinished();
 
     if(bsarch.readAllStandardOutput().contains("Done."))
     {
         log->appendHtml("<font color=Blue> BSA successfully compressed.</font>\n");
         modPathDir.rename(bsaName, modPath + "/" + espName.chopped(4) + ".bsa");
-        modPathDir.remove("data");
+        modPathDir.setPath(modPath + "/data");
+        modPathDir.removeRecursively();
     }
 }
 
@@ -157,7 +170,7 @@ void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncomp
             QStringList texdiagArg;
             texdiagArg << "info" << it.filePath();
 
-            texDiag.start("ressources/texdiag.exe", texdiagArg);
+            texDiag.start("resources/texdiag.exe", texdiagArg);
             texDiag.waitForFinished();
 
             if(texDiag.readAllStandardOutput().contains("compressed = no"))
@@ -167,7 +180,7 @@ void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncomp
                 QStringList texconvArg;
                 texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it.filePath();
 
-                texconv.start("ressources/texconv.exe",  texconvArg);
+                texconv.start("resources/texconv.exe",  texconvArg);
                 texconv.waitForFinished();
                 log->appendPlainText("Uncompressed normal map found :\n" + it.fileName() + "\nCompressing...\n");
                 log->repaint();
@@ -189,7 +202,7 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
     QString readLine;
     QString currentFile;
 
-    QFile nifScan_file("ressources/NifScan.exe");
+    QFile nifScan_file("resources/NifScan.exe");
     QFile optFile;
 
     QProcess nifScan;
@@ -197,7 +210,7 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
 
     if(nifScan_file.exists())
     {
-        nifScan_file.copy("ressources/NifScan.exe", modPath + "/NifScan.exe");
+        nifScan_file.copy("resources/NifScan.exe", modPath + "/NifScan.exe");
         nifScan.setReadChannel(QProcess::StandardOutput);
         nifScan.setProgram(modPath + "/NifScan.exe");
         nifScan.setWorkingDirectory(modPath);
@@ -218,7 +231,7 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
             else if((readLine.contains("unsupported") || readLine.contains("not supported")) && !meshProcessed)
             {
                 meshProcessed=true;
-                nifOpt.start("ressources/nifopt.exe \"" + currentFile + "\"");
+                nifOpt.start("resources/nifopt.exe \"" + currentFile + "\"");
                 nifOpt.waitForFinished();
 
                 optFile.setFileName(currentFile.chopped(4) + ".opt.nif");
@@ -240,7 +253,7 @@ void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
 
     }else
     {
-        log->appendHtml("<font color=\"Red\">Please ensure that NifScan.exe is located in the ressources folder</font>\n");
+        log->appendHtml("<font color=\"Red\">Please ensure that NifScan.exe is located in the resources folder</font>\n");
         log->repaint();
     }
 }
