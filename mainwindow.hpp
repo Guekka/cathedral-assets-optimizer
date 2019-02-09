@@ -19,7 +19,7 @@ public:
 private:
     QFileDialog *fileDialog;
     QPlainTextEdit *modpathTextEdit;
-    QPlainTextEdit *log;
+    QPlainTextEdit *mw_log;
     QPushButton *pathButton;
     QPushButton *processButton;
 

@@ -25,11 +25,12 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    Optimiser.cpp
 
 HEADERS += \
         mainwindow.hpp \
-    functions.hpp
+    Optimiser.hpp
 
 
 TRANSLATIONS += \

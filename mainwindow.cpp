@@ -1,12 +1,12 @@
 #include "mainwindow.hpp"
-#include "functions.hpp"
+#include "Optimiser.hpp"
 
-QString modPath;
+
 
 MainWindow::MainWindow()
 {
     bool greyedCreateBsa = false;
-
+    QString modPath;
 
     // Window construction
 
@@ -34,9 +34,9 @@ MainWindow::MainWindow()
     nifOptCheckbox->setChecked(true);
     animOptCheckbox->setChecked(true);
 
-    log = new QPlainTextEdit(this);
-    log->setMinimumHeight(100);
-    log->setReadOnly(true);
+    mw_log = new QPlainTextEdit(this);
+    mw_log->setMinimumHeight(100);
+    mw_log->setReadOnly(true);
 
     this->setLayout(gridLayout);
 
@@ -57,14 +57,14 @@ MainWindow::MainWindow()
     gridLayout->addWidget(nifOptCheckbox,5,1);
     gridLayout->addWidget(animOptCheckbox, 5, 2);
 
-    gridLayout->addWidget(log, 6, 0, 3, 0);
+    gridLayout->addWidget(mw_log, 6, 0, 3, 0);
 
-    connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=](){
+    connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=, &modPath](){
         modPath = modpathTextEdit->toPlainText();
     });
 
 
-    connect(pathButton, &QPushButton::pressed, this, [=](){
+    connect(pathButton, &QPushButton::pressed, this, [=, &modPath](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", modPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         modpathTextEdit->setPlainText(dir);
         modPath = dir;
@@ -85,32 +85,34 @@ MainWindow::MainWindow()
 
     connect(processButton, &QPushButton::pressed, this, [=]()
     {
-        log->clear();
-        log->appendPlainText(tr("Beginning...\n"));
-        log->repaint();
+        mw_log->clear();
+        mw_log->appendPlainText(tr("Beginning...\n"));
+        mw_log->repaint();
+
+        Optimiser optimiser(modPath, mw_log);
 
         if(extractBsaCheckbox->isChecked())
         {
-            extractBsa(deleteBsaCheckbox->isChecked(), log);
+            optimiser.extractBsa(deleteBsaCheckbox->isChecked());
         }
         if(textOptCheckbox->isChecked())
         {
-            textOpt(log);
+            optimiser.textOpt();
         }
         if(nifOptCheckbox->isChecked())
         {
-            nifOpt(log);
+            optimiser.nifOpt();
         }
         if(animOptCheckbox->isChecked())
         {
-            animOpt(log);
+            optimiser.animOpt();
         }
         if(createBsaCheckbox->isChecked())
         {
-            createBsa(log);
+            optimiser.createBsa();
         }
 
-        log->appendHtml(tr("<font color=blue>Completed. Please check the log to check if there have been any errors (in red) </font>\n"));
-        log->repaint();
+        mw_log->appendHtml(tr("<font color=blue>Completed. Please check the log to check if there have been any errors (in red) </font>\n"));
+        mw_log->repaint();
     });
 }
