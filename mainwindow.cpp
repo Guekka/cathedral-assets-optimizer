@@ -101,6 +101,10 @@ MainWindow::MainWindow()
         {
             nifOpt(log);
         }
+        if(animOptCheckbox->isChecked())
+        {
+            animOpt(log);
+        }
         if(createBsaCheckbox->isChecked())
         {
             createBsa(log);

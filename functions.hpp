@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QPlainTextEdit>
+#include <QSettings>
 
 extern QString modPath;
 
@@ -13,6 +14,8 @@ void extractBsa(bool deleteBsa, bool createBsa, QPlainTextEdit *log);
 void textOpt(QPlainTextEdit *log);
 void nifOpt(QPlainTextEdit *log);
 void createBsa(QPlainTextEdit *log);
+void animOpt(QPlainTextEdit *log);
+
 
 void extractBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and delete the BSA if DeleteBSA==true.
 {
@@ -63,16 +66,38 @@ void extractBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
 void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncompressed. WORKING
 {
     log->appendPlainText(QPlainTextEdit::tr("Processing textures...\n"));
+    log->repaint();
+
+    QFile nifScan_file("resources/NifScan.exe");
+    QProcess nifScan;
+    QStringList NifscanArgs;
+
+    QProcess texDiag;
+    QStringList texdiagArg;
+
+    QProcess texconv;
+    QStringList texconvArg;
+
     QDirIterator it(modPath, QDirIterator::Subdirectories);
+
+    if(nifScan_file.exists())
+    {
+        NifscanArgs << "-fixdds";
+
+        nifScan_file.copy("resources/NifScan.exe", modPath + "/NifScan.exe");
+        nifScan.setWorkingDirectory(modPath);
+
+        nifScan.start(modPath + "/NifScan.exe", NifscanArgs);
+        nifScan.waitForFinished();
+    }
+
     while (it.hasNext())
     {
-        if(it.next().contains("_n.dds"))
+        if(it.fileName().contains("_n.dds"))
         {
             log->appendPlainText(QPlainTextEdit::tr("Currently scanning :\n") + it.fileName() + "\n");
             log->repaint();
-            QProcess texDiag;
 
-            QStringList texdiagArg;
             texdiagArg << "info" << it.filePath();
 
             texDiag.start("resources/texdiag.exe", texdiagArg);
@@ -80,16 +105,39 @@ void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncomp
 
             if(texDiag.readAllStandardOutput().contains("compressed = no"))
             {
-                QProcess texconv;
-
-                QStringList texconvArg;
+                texconvArg.clear();
                 texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it.filePath();
 
                 texconv.start("resources/texconv.exe",  texconvArg);
                 texconv.waitForFinished();
-                log->appendPlainText(QPlainTextEdit::tr("Uncompressed normal map found :\n") + it.fileName() + QPlainTextEdit::tr("\nCompressing...\n"));
+                log->appendPlainText(QPlainTextEdit::tr("Uncompressed normal map found:\n") + it.fileName() + QPlainTextEdit::tr("\nCompressing...\n"));
                 log->repaint();
             }
+            it.next();
+        }
+        else if(it.fileName().contains(".tga"))
+        {
+            qDebug() <<"tga";
+
+            log->appendPlainText(QPlainTextEdit::tr("TGA file found: \n") + it.fileName() + QPlainTextEdit::tr("\nCompressing...\n"));
+            log->repaint();
+
+            texconvArg.clear();
+            texconvArg << "-nologo" << "-m" << "0" << "-y" << "-pow2" << "-if" << "FANT" << "-f" << "R8G8B8A8_UNORM" << it.filePath();
+            texconv.start("resources/texconv.exe",  texconvArg);
+            texconv.waitForFinished();
+
+            qDebug() << texconvArg;
+            qDebug() << texconv.readAllStandardOutput();
+
+            QFile tga(it.filePath());
+            tga.remove();
+
+            it.next();
+        }
+        else
+        {
+            it.next();
         }
     }
     log->repaint();
@@ -257,6 +305,46 @@ void createBsa(QPlainTextEdit *log) //Once all the optimizations are done, creat
         modPathDir.setPath(modPath + "/data");
         modPathDir.removeRecursively();
     }
+}
+
+
+void animOpt(QPlainTextEdit *log)
+{
+    log->appendPlainText(QPlainTextEdit::tr("Processing animations..."));
+
+    QSettings SkyrimReg("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Bethesda Softworks\\Skyrim Special Edition", QSettings::NativeFormat);
+    QDir SkyrimDir = QDir::cleanPath(SkyrimReg.value("Installed Path").toString());
+
+    QFile havokFile(SkyrimDir.path() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
+
+    if(havokFile.exists())
+    {
+        log->appendPlainText(QPlainTextEdit::tr("Havok tool found. Processing animations...\n"));
+
+        QProcess havokProcess;
+        QStringList havokArgs;
+
+        QDirIterator it(modPath);
+
+        while (it.hasNext())
+        {
+            if(it.next().contains(".hkx"))
+            {
+                log->appendPlainText(QPlainTextEdit::tr("Current file: ") + it.filePath() + QPlainTextEdit::tr("\nProcessing...\n"));
+                log->repaint();
+
+                havokArgs << "--platformamd64" << it.filePath() << it.filePath();
+
+                log->appendHtml(QPlainTextEdit::tr("<font color=Blue>Animation successfully ported.</font>\n\n"));
+            }
+
+        }
+    }
+    else
+    {
+        log->appendHtml(QPlainTextEdit::tr("<font color=Red>Havok Tool not found. Are you sure the Creation Kit is installed ?</font>\n"));
+    }
+
 }
 
 #endif // FUNCTIONS_H
