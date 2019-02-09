@@ -15,16 +15,16 @@ MainWindow::MainWindow()
 
     gridLayout = new QGridLayout(this);
     fileDialog = new QFileDialog(this);
-    pathButton = new QPushButton("Open directory", this);
-    processButton = new QPushButton("Process directory", this);
+    pathButton = new QPushButton(tr("Open directory"), this);
+    processButton = new QPushButton(tr("Process directory"), this);
 
-    extractBsaCheckbox = new QCheckBox("Extract old BSA", this);
-    deleteBsaCheckbox = new QCheckBox("Delete old BSA", this);
+    extractBsaCheckbox = new QCheckBox(tr("Extract old BSA"), this);
+    deleteBsaCheckbox = new QCheckBox(tr("Delete old BSA"), this);
     createBsaCheckbox = new QCheckBox("Create new BSA", this);
 
-    textOptCheckbox = new QCheckBox("Optimize textures", this);
-    nifOptCheckbox = new QCheckBox("Optimize meshes", this);
-    animOptCheckbox = new QCheckBox("Optimize animations", this);
+    textOptCheckbox = new QCheckBox(tr("Optimize textures"), this);
+    nifOptCheckbox = new QCheckBox(tr("Optimize meshes"), this);
+    animOptCheckbox = new QCheckBox(tr("Optimize animations"), this);
 
     extractBsaCheckbox->setChecked(true);
     deleteBsaCheckbox->setChecked(true);
@@ -86,7 +86,7 @@ MainWindow::MainWindow()
     connect(processButton, &QPushButton::pressed, this, [=]()
     {
         log->clear();
-        log->appendPlainText("Beginning...\n");
+        log->appendPlainText(tr("Beginning...\n"));
         log->repaint();
 
         if(extractBsaCheckbox->isChecked())
@@ -106,7 +106,7 @@ MainWindow::MainWindow()
             createBsa(log);
         }
 
-        log->appendHtml("<font color=blue>Completed. Please check the log to check if there have been any errors (in red) </font>\n");
+        log->appendHtml(tr("<font color=blue>Completed. Please check the log to check if there have been any errors (in red) </font>\n"));
         log->repaint();
     });
 }

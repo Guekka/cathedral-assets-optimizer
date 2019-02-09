@@ -10,9 +10,9 @@
 extern QString modPath;
 
 void extractBsa(bool deleteBsa, bool createBsa, QPlainTextEdit *log);
-void createBsa(QPlainTextEdit *log);
 void textOpt(QPlainTextEdit *log);
 void nifOpt(QPlainTextEdit *log);
+void createBsa(QPlainTextEdit *log);
 
 void extractBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and delete the BSA if DeleteBSA==true.
 {
@@ -21,7 +21,7 @@ void extractBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
     QStringList bsarchArgs;
     QDir modPathDir(modPath);
 
-    log->appendPlainText("Processing BSA...\n");
+    log->appendPlainText(QPlainTextEdit::tr("Processing BSA...\n"));
     log->repaint();
 
     QDirIterator it(modPath);
@@ -30,7 +30,7 @@ void extractBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
     {
         if(it.next().contains(".bsa"))
         {
-            log->appendPlainText("BSA found ! Extracting...\n");
+            log->appendPlainText(QPlainTextEdit::tr("BSA found ! Extracting...\n"));
             log->repaint();
 
             bsarchArgs.clear();
@@ -40,20 +40,125 @@ void extractBsa(bool deleteBsa, QPlainTextEdit *log) //Extracts the BSA, and del
 
             if(bsarch.readAllStandardOutput().contains("Done."))
             {
-                log->appendHtml("<font color=Blue>BSA successfully extracted.</font>\n\n");
+                log->appendHtml(QPlainTextEdit::tr("<font color=Blue>BSA successfully extracted.</font>\n\n"));
                 log->repaint();
                 if(deleteBsa)
                 {
                     QFile::remove(it.filePath());
-                    log->appendPlainText("BSA successfully deleted.\n");
+                    log->appendPlainText(QPlainTextEdit::tr("BSA successfully deleted.\n"));
                     log->repaint();
                 }
             }
             else{
-                log->appendHtml("<font color=Red>An error occured during the extraction. Please extract it manually. The BSA was not deleted.</font>\n");
+                log->appendHtml(QPlainTextEdit::tr("<font color=Red>An error occured during the extraction. Please extract it manually. The BSA was not deleted.</font>\n"));
                 log->repaint();
             }
         }
+    }
+}
+
+
+
+
+void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncompressed. WORKING
+{
+    log->appendPlainText(QPlainTextEdit::tr("Processing textures...\n"));
+    QDirIterator it(modPath, QDirIterator::Subdirectories);
+    while (it.hasNext())
+    {
+        if(it.next().contains("_n.dds"))
+        {
+            log->appendPlainText(QPlainTextEdit::tr("Currently scanning :\n") + it.fileName() + "\n");
+            log->repaint();
+            QProcess texDiag;
+
+            QStringList texdiagArg;
+            texdiagArg << "info" << it.filePath();
+
+            texDiag.start("resources/texdiag.exe", texdiagArg);
+            texDiag.waitForFinished();
+
+            if(texDiag.readAllStandardOutput().contains("compressed = no"))
+            {
+                QProcess texconv;
+
+                QStringList texconvArg;
+                texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it.filePath();
+
+                texconv.start("resources/texconv.exe",  texconvArg);
+                texconv.waitForFinished();
+                log->appendPlainText(QPlainTextEdit::tr("Uncompressed normal map found :\n") + it.fileName() + QPlainTextEdit::tr("\nCompressing...\n"));
+                log->repaint();
+            }
+        }
+    }
+    log->repaint();
+}
+
+
+void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
+{
+    log->appendPlainText(QPlainTextEdit::tr("Processing meshes...\n"));
+    log->repaint();
+
+    bool meshProcessed=false; //To avoid processing twice the same mesh
+
+    QString readLine;
+    QString currentFile;
+
+    QFile nifScan_file("resources/NifScan.exe");
+    QFile optFile;
+
+    QProcess nifScan;
+    QProcess nifOpt;
+
+    if(nifScan_file.exists())
+    {
+        nifScan_file.copy("resources/NifScan.exe", modPath + "/NifScan.exe");
+        nifScan.setReadChannel(QProcess::StandardOutput);
+        nifScan.setProgram(modPath + "/NifScan.exe");
+        nifScan.setWorkingDirectory(modPath);
+
+        nifScan.start();
+        nifScan.waitForFinished();
+
+        while(nifScan.canReadLine())
+        {
+            readLine=QString::fromLocal8Bit(nifScan.readLine());
+
+            if(readLine.contains("meshes\\"))
+            {
+                currentFile = QDir::cleanPath(modPath + "/" + readLine.simplified());
+                log->appendPlainText(QPlainTextEdit::tr("\nProcessing : ") + currentFile);
+                meshProcessed=false;
+            }
+            else if((readLine.contains("unsupported") || readLine.contains("not supported")) && !meshProcessed)
+            {
+                meshProcessed=true;
+                nifOpt.start("resources/nifopt.exe \"" + currentFile + "\"");
+                nifOpt.waitForFinished();
+
+                optFile.setFileName(currentFile.chopped(4) + ".opt.nif");
+
+                if(optFile.exists())
+                {
+                    log->appendHtml(QPlainTextEdit::tr("<font color=\"Blue\"> Mesh ported to SSE\n"));
+                    optFile.remove(currentFile);
+                    optFile.rename(currentFile);
+                }else
+                {
+                    log->appendHtml(QPlainTextEdit::tr("<font color=\"Red\"> Error while porting the mesh\n"));
+                }
+            }
+        }
+        nifScan_file.remove(modPath + "/NifScan.exe");
+        log->appendHtml(QPlainTextEdit::tr("<font color=Blue>All the meshes were processed.</font>\n"));
+        log->repaint();
+
+    }else
+    {
+        log->appendHtml(QPlainTextEdit::tr("<font color=\"Red\">Please ensure that NifScan.exe is located in the resources folder</font>\n"));
+        log->repaint();
     }
 }
 
@@ -97,7 +202,7 @@ void createBsa(QPlainTextEdit *log) //Once all the optimizations are done, creat
 
         if(it.fileName() == "textures")
         {
-            log->appendPlainText("Textures folder found. Compressing...\n");
+            log->appendPlainText(QPlainTextEdit::tr("Textures folder found. Compressing...\n"));
             log->repaint();
 
             QString tBsaName= it.path() + "/" + espName.chopped(4) + " - Textures.bsa";
@@ -116,7 +221,7 @@ void createBsa(QPlainTextEdit *log) //Once all the optimizations are done, creat
             modPathDir.setPath(modPath + "/temp_t/");
             modPathDir.removeRecursively();
 
-            log->appendHtml("<font color=Blue> Textures BSA successfully compressed.</font>\n");
+            log->appendHtml(QPlainTextEdit::tr("<font color=Blue> Textures BSA successfully compressed.</font>\n"));
         }
 
         else if(it.fileName() == "sound")
@@ -135,7 +240,7 @@ void createBsa(QPlainTextEdit *log) //Once all the optimizations are done, creat
     bsarchArgs.clear();
     bsarchArgs << "pack" << folderName << bsaName << "-sse" << "-share";
 
-    log->appendPlainText("Compressing...\n");
+    log->appendPlainText(QPlainTextEdit::tr("Compressing...\n"));
 
     if (!hasSound) //Compressing BSA breaks sounds
     {
@@ -147,114 +252,10 @@ void createBsa(QPlainTextEdit *log) //Once all the optimizations are done, creat
 
     if(bsarch.readAllStandardOutput().contains("Done."))
     {
-        log->appendHtml("<font color=Blue> BSA successfully compressed.</font>\n");
+        log->appendHtml(QPlainTextEdit::tr("<font color=Blue> BSA successfully compressed.</font>\n"));
         modPathDir.rename(bsaName, modPath + "/" + espName.chopped(4) + ".bsa");
         modPathDir.setPath(modPath + "/data");
         modPathDir.removeRecursively();
-    }
-}
-
-
-void textOpt(QPlainTextEdit *log) //Compress the nmaps to BC7 if they are uncompressed. WORKING
-{
-    log->appendPlainText("Processing textures...\n");
-    QDirIterator it(modPath, QDirIterator::Subdirectories);
-    while (it.hasNext())
-    {
-        if(it.next().contains("_n.dds"))
-        {
-            log->appendPlainText("Currently scanning :\n" + it.fileName() + "\n");
-            log->repaint();
-            QProcess texDiag;
-
-            QStringList texdiagArg;
-            texdiagArg << "info" << it.filePath();
-
-            texDiag.start("resources/texdiag.exe", texdiagArg);
-            texDiag.waitForFinished();
-
-            if(texDiag.readAllStandardOutput().contains("compressed = no"))
-            {
-                QProcess texconv;
-
-                QStringList texconvArg;
-                texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it.filePath();
-
-                texconv.start("resources/texconv.exe",  texconvArg);
-                texconv.waitForFinished();
-                log->appendPlainText("Uncompressed normal map found :\n" + it.fileName() + "\nCompressing...\n");
-                log->repaint();
-            }
-        }
-    }
-    log->appendPlainText("All the textures were processed.\n");
-    log->repaint();
-}
-
-
-void nifOpt(QPlainTextEdit *log) // Optimize the meshes if Nifscan report them.
-{
-    log->appendPlainText("Processing meshes...\n");
-    log->repaint();
-
-    bool meshProcessed=false; //To avoid processing twice the same mesh
-
-    QString readLine;
-    QString currentFile;
-
-    QFile nifScan_file("resources/NifScan.exe");
-    QFile optFile;
-
-    QProcess nifScan;
-    QProcess nifOpt;
-
-    if(nifScan_file.exists())
-    {
-        nifScan_file.copy("resources/NifScan.exe", modPath + "/NifScan.exe");
-        nifScan.setReadChannel(QProcess::StandardOutput);
-        nifScan.setProgram(modPath + "/NifScan.exe");
-        nifScan.setWorkingDirectory(modPath);
-
-        nifScan.start();
-        nifScan.waitForFinished();
-
-        while(nifScan.canReadLine())
-        {
-            readLine=QString::fromLocal8Bit(nifScan.readLine());
-
-            if(readLine.contains("meshes\\"))
-            {
-                currentFile = QDir::cleanPath(modPath + "/" + readLine.simplified());
-                log->appendPlainText("\nProcessing : " + currentFile);
-                meshProcessed=false;
-            }
-            else if((readLine.contains("unsupported") || readLine.contains("not supported")) && !meshProcessed)
-            {
-                meshProcessed=true;
-                nifOpt.start("resources/nifopt.exe \"" + currentFile + "\"");
-                nifOpt.waitForFinished();
-
-                optFile.setFileName(currentFile.chopped(4) + ".opt.nif");
-
-                if(optFile.exists())
-                {
-                    log->appendHtml("<font color=\"Blue\"> Mesh ported to SSE\n");
-                    optFile.remove(currentFile);
-                    optFile.rename(currentFile);
-                }else
-                {
-                    log->appendHtml("<font color=\"Red\"> Error while porting the mesh\n");
-                }
-            }
-        }
-        nifScan_file.remove(modPath + "/NifScan.exe");
-        log->appendHtml("<font color=Blue>All the meshes were processed.</font>\n");
-        log->repaint();
-
-    }else
-    {
-        log->appendHtml("<font color=\"Red\">Please ensure that NifScan.exe is located in the resources folder</font>\n");
-        log->repaint();
     }
 }
 

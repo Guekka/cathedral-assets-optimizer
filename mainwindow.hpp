@@ -6,9 +6,11 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QCoreApplication>
 
 class MainWindow : public QWidget
 {
+    Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
     MainWindow();

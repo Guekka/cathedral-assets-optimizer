@@ -30,3 +30,7 @@ SOURCES += \
 HEADERS += \
         mainwindow.hpp \
     functions.hpp
+
+
+TRANSLATIONS += \
+AssetsOpt_fr.ts
