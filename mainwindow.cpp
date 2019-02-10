@@ -6,7 +6,7 @@
 MainWindow::MainWindow()
 {
     bool greyedCreateBsa = false;
-    QString modPath;
+    Optimiser optimiser("C:/", mw_log);
 
     // Window construction
 
@@ -59,15 +59,15 @@ MainWindow::MainWindow()
 
     gridLayout->addWidget(mw_log, 6, 0, 3, 0);
 
-    connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=, &modPath](){
-        modPath = modpathTextEdit->toPlainText();
+    connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=, &optimiser](){
+        optimiser.setModPath(modpathTextEdit->toPlainText());
     });
 
 
-    connect(pathButton, &QPushButton::pressed, this, [=, &modPath](){
-        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", modPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    connect(pathButton, &QPushButton::pressed, this, [=, &optimiser](){
+        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", optimiser.getmodPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         modpathTextEdit->setPlainText(dir);
-        modPath = dir;
+        optimiser.setModPath(dir);
     });
 
     connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=, &greyedCreateBsa](){
@@ -83,17 +83,16 @@ MainWindow::MainWindow()
         }
     });
 
-    connect(processButton, &QPushButton::pressed, this, [=]()
+    connect(processButton, &QPushButton::pressed, this, [=, &optimiser]()
     {
         mw_log->clear();
         mw_log->appendPlainText(tr("Beginning...\n"));
         mw_log->repaint();
 
-        Optimiser optimiser(modPath, mw_log);
 
         if(extractBsaCheckbox->isChecked())
             optimiser.extractBsa();
-
+/*
         if(deleteBsaCheckbox->isChecked())
             optimiser.deleteBsa();
 
@@ -107,7 +106,7 @@ MainWindow::MainWindow()
             optimiser.animOpt();
 
         if(createBsaCheckbox->isChecked())
-            optimiser.createBsa();
+            optimiser.createBsa();*/
 
         mw_log->appendHtml(tr("<font color=blue>Completed. Please check the log to check if any errors occured(in red) </font>\n"));
         mw_log->repaint();

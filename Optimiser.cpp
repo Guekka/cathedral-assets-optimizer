@@ -1,13 +1,12 @@
 #include "Optimiser.hpp"
 
-Optimiser::Optimiser(QString mod, QPlainTextEdit* textEdit) : modPath(mod), log(textEdit){}
+Optimiser::Optimiser(QString mod, QPlainTextEdit* textEdit) : modPath(std::move(mod)), log(textEdit){}
 
 
 void Optimiser::extractBsa() //Extracts the BSA
 {
     QProcess bsarch;
     QStringList bsarchArgs;
-    QDir modPathDir(modPath);
 
     log->appendPlainText(QPlainTextEdit::tr("Processing BSA...\n"));
     log->repaint();
@@ -42,7 +41,6 @@ void Optimiser::extractBsa() //Extracts the BSA
 void Optimiser::deleteBsa() //Deletes the BSA.
 {
     QStringList bsarchArgs;
-    QDir modPathDir(modPath);
 
     log->appendPlainText(QPlainTextEdit::tr("Processing BSA...\n"));
     log->repaint();
@@ -82,7 +80,7 @@ void Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
     {
         NifscanArgs << "-fixdds";
 
-        nifScan_file.copy("resources/NifScan.exe", modPath + "/NifScan.exe");
+        QFile::copy("resources/NifScan.exe", modPath + "/NifScan.exe");
         nifScan.setWorkingDirectory(modPath);
 
         nifScan.start(modPath + "/NifScan.exe", NifscanArgs);
@@ -156,7 +154,7 @@ void Optimiser::nifOpt() // Optimize the meshes if Nifscan report them.
 
     if(nifScan_file.exists())
     {
-        nifScan_file.copy("resources/NifScan.exe", modPath + "/NifScan.exe");
+        QFile::copy("resources/NifScan.exe", modPath + "/NifScan.exe");
         nifScan.setReadChannel(QProcess::StandardOutput);
         nifScan.setProgram(modPath + "/NifScan.exe");
         nifScan.setWorkingDirectory(modPath);
@@ -185,7 +183,7 @@ void Optimiser::nifOpt() // Optimize the meshes if Nifscan report them.
                 if(optFile.exists())
                 {
                     log->appendHtml(QPlainTextEdit::tr("<font color=\"Blue\"> Mesh ported to SSE\n"));
-                    optFile.remove(currentFile);
+                    QFile::remove(currentFile);
                     optFile.rename(currentFile);
                 }else
                 {
@@ -193,7 +191,7 @@ void Optimiser::nifOpt() // Optimize the meshes if Nifscan report them.
                 }
             }
         }
-        nifScan_file.remove(modPath + "/NifScan.exe");
+        QFile::remove(modPath + "/NifScan.exe");
         log->appendHtml(QPlainTextEdit::tr("<font color=Blue>All the meshes were processed.</font>\n"));
         log->repaint();
 
@@ -340,10 +338,28 @@ void Optimiser::animOpt() //Uses Bethesda Havok Tool to port animations
 
 }
 
+bool Optimiser::setModPath(const QString& path)
+{
+    QDir modDir(path);
+    if(modDir.exists())
+    {
+        modPath = path;
+        return true;
+    }
+
+    return false;
+
+}
+
+QString Optimiser::getmodPath() const
+{
+    return modPath;
+}
+
 
 QString Optimiser::findSkyrimDir() //Find Skyrim dir using Registry keys
 {
-    QSettings SkyrimReg("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Bethesda Softworks\\Skyrim Special Edition", QSettings::NativeFormat);
+    QSettings SkyrimReg(R"(HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Bethesda Softworks\Skyrim Special Edition)", QSettings::NativeFormat);
     QDir SkyrimDir = QDir::cleanPath(SkyrimReg.value("Installed Path").toString());
     return SkyrimDir.path();
 }
@@ -353,7 +369,6 @@ QString Optimiser::findEspName()
 {
     QDirIterator it(modPath);
     QString espName;
-    QDir modPathDir(modPath);
 
     while (it.hasNext())
     {

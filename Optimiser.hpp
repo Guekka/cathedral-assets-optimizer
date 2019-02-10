@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QSettings>
+#include <utility>
 
 class Optimiser
 {
@@ -23,6 +24,9 @@ public:
     void deleteBsa();
     void animOpt();
 
+    bool setModPath(const QString& path);
+
+    QString getmodPath() const;
     QString findEspName();
     QString findSkyrimDir();
 
@@ -31,8 +35,6 @@ private:
     QPlainTextEdit* log;
 
 };
-
-
 
 
 #endif // FUNCTIONS_H
