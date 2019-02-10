@@ -15,15 +15,20 @@ public:
 
     Optimiser(QString mod, QPlainTextEdit* textEdit);
 
-    void extractBsa(bool deleteBsa);
+    void extractBsa();
     void textOpt();
     void nifOpt();
     void createBsa();
+    void createTexturesBsa();
+    void deleteBsa();
     void animOpt();
+
+    QString findEspName();
+    QString findSkyrimDir();
 
 private:
     QString modPath;
-    QPlainTextEdit log;
+    QPlainTextEdit* log;
 
 };
 

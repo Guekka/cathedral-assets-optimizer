@@ -92,27 +92,24 @@ MainWindow::MainWindow()
         Optimiser optimiser(modPath, mw_log);
 
         if(extractBsaCheckbox->isChecked())
-        {
-            optimiser.extractBsa(deleteBsaCheckbox->isChecked());
-        }
-        if(textOptCheckbox->isChecked())
-        {
-            optimiser.textOpt();
-        }
-        if(nifOptCheckbox->isChecked())
-        {
-            optimiser.nifOpt();
-        }
-        if(animOptCheckbox->isChecked())
-        {
-            optimiser.animOpt();
-        }
-        if(createBsaCheckbox->isChecked())
-        {
-            optimiser.createBsa();
-        }
+            optimiser.extractBsa();
 
-        mw_log->appendHtml(tr("<font color=blue>Completed. Please check the log to check if there have been any errors (in red) </font>\n"));
+        if(deleteBsaCheckbox->isChecked())
+            optimiser.deleteBsa();
+
+        if(textOptCheckbox->isChecked())
+            optimiser.textOpt();
+
+        if(nifOptCheckbox->isChecked())
+            optimiser.nifOpt();
+
+        if(animOptCheckbox->isChecked())
+            optimiser.animOpt();
+
+        if(createBsaCheckbox->isChecked())
+            optimiser.createBsa();
+
+        mw_log->appendHtml(tr("<font color=blue>Completed. Please check the log to check if any errors occured(in red) </font>\n"));
         mw_log->repaint();
     });
 }
