@@ -63,14 +63,14 @@ MainWindow::MainWindow()
 
 
     connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=](){
-        optimiser->setModPath(modpathTextEdit->toPlainText());
+        optimiser->setmodPath(modpathTextEdit->toPlainText());
     });
 
 
     connect(pathButton, &QPushButton::pressed, this, [=](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", optimiser->getmodPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         modpathTextEdit->setPlainText(dir);
-        optimiser->setModPath(dir);
+        optimiser->setmodPath(dir);
     });
 
     connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=, &greyedCreateBsa](){
@@ -88,31 +88,13 @@ MainWindow::MainWindow()
 
     connect(processButton, &QPushButton::pressed, this, [=]()
     {
-        mw_log->clear();
-        mw_log->appendPlainText(tr("Beginning...\n"));
-        mw_log->repaint();
+        optimiser->setExtractBsaBool(extractBsaCheckbox->isChecked());
+        optimiser->setDeleteBsaBool(deleteBsaCheckbox->isChecked());
+        optimiser->setTextOptBool(textOptCheckbox->isChecked());
+        optimiser->setNifOptBool(nifOptCheckbox->isChecked());
+        optimiser->setAnimOptBool(animOptCheckbox->isChecked());
+        optimiser->setCreateBsaBool(createBsaCheckbox->isChecked());
 
-        //optimiser->setLog(mw_log);
-
-        if(extractBsaCheckbox->isChecked())
-            optimiser->extractBsa();
-
-        if(deleteBsaCheckbox->isChecked())
-            optimiser->deleteBsa();
-
-        if(textOptCheckbox->isChecked())
-            optimiser->textOpt();
-
-        if(nifOptCheckbox->isChecked())
-            optimiser->nifOpt();
-
-        if(animOptCheckbox->isChecked())
-            optimiser->animOpt();
-
-        if(createBsaCheckbox->isChecked())
-            optimiser->createBsa();
-
-        mw_log->appendHtml(tr("<font color=blue>Completed. Please check the log to check if any errors occured(in red) </font>\n"));
-        mw_log->repaint();
+        optimiser->mainProcess();
     });
 }

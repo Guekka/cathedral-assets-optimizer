@@ -16,24 +16,40 @@ public:
 
     Optimiser(QString mod, QPlainTextEdit* textEdit);
 
-    void extractBsa();
-    void textOpt();
-    void nifOpt();
-    void createBsa();
-    void createTexturesBsa();
-    void deleteBsa();
-    void animOpt();
+    int mainProcess();
 
-    bool setModPath(const QString& path);
-    bool setLog(QPlainTextEdit *textEdit);
+    bool extractBsa();
+    bool textOpt();
+    bool nifOpt();
+    bool createBsa();
+    bool createTexturesBsa();
+    bool deleteBsa();
+    bool animOpt();
+
+    bool setmodPath(const QString& path);
+    bool checkResourcesFolder(const QString& exe);
 
     QString getmodPath() const;
     QString findEspName();
     QString findSkyrimDir();
 
+    void setExtractBsaBool(bool state);
+    void setTextOptBool(bool state);
+    void setNifOptBool(bool state);
+    void setCreateBsaBool(bool state);
+    void setDeleteBsaBool(bool state);
+    void setAnimOptBool(bool state);
+
 private:
     QString modPath;
     QPlainTextEdit* log;
+
+    bool extractBsaBool{};
+    bool textOptBool{};
+    bool nifOptBool{};
+    bool createBsaBool{};
+    bool deleteBsaBool{};
+    bool animOptBool{};
 
 };
 

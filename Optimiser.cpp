@@ -3,13 +3,44 @@
 Optimiser::Optimiser(QString mod, QPlainTextEdit* textEdit) : modPath(std::move(mod)), log(textEdit){}
 
 
-void Optimiser::extractBsa() //Extracts the BSA
+int Optimiser::mainProcess()
 {
+    if(extractBsaBool)
+        extractBsa();
+
+    if(deleteBsaBool)
+        deleteBsa();
+
+    if(nifOptBool)
+        nifOpt();
+
+    if(textOptBool)
+        textOpt();
+
+    if(animOptBool)
+        animOpt();
+
+    if(createBsaBool)
+        createBsa();
+        createTexturesBsa();
+
+
+    log->appendHtml(QPlainTextEdit::tr("<font color=blue>Completed. Please check the log to check if any errors occured(in red) </font>\n"));
+    log->repaint();
+
+    return 0;
+}
+
+bool Optimiser::extractBsa() //Extracts the BSA
+{
+    log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Processing BSA..."));
+    log->repaint();
+
+    if(!checkResourcesFolder("bsarch.exe"))
+        return false;
+
     QProcess bsarch;
     QStringList bsarchArgs;
-
-    log->appendPlainText(QPlainTextEdit::tr("Processing BSA...\n"));
-    log->repaint();
 
     QDirIterator it(modPath);
 
@@ -17,7 +48,7 @@ void Optimiser::extractBsa() //Extracts the BSA
     {
         if(it.next().contains(".bsa"))
         {
-            log->appendPlainText(QPlainTextEdit::tr("BSA found ! Extracting...\n"));
+            log->appendPlainText(QPlainTextEdit::tr("BSA found ! Extracting..."));
             log->repaint();
 
             bsarchArgs.clear();
@@ -27,7 +58,7 @@ void Optimiser::extractBsa() //Extracts the BSA
 
             if(bsarch.readAllStandardOutput().contains("Done."))
             {
-                log->appendHtml(QPlainTextEdit::tr("<font color=Blue>BSA successfully extracted.</font>\n\n"));
+                log->appendHtml(QPlainTextEdit::tr("<font color=Blue>BSA successfully extracted.</font>\n"));
                 log->repaint();
             }
             else{
@@ -36,15 +67,16 @@ void Optimiser::extractBsa() //Extracts the BSA
             }
         }
     }
+    return true;
 }
 
-void Optimiser::deleteBsa() //Deletes the BSA.
-{
-    QStringList bsarchArgs;
 
-    log->appendPlainText(QPlainTextEdit::tr("Processing BSA...\n"));
+bool Optimiser::deleteBsa() //Deletes the BSA.
+{
+    log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Deleting BSA..."));
     log->repaint();
 
+    QStringList bsarchArgs;
     QDirIterator it(modPath);
 
     while (it.hasNext())
@@ -56,13 +88,18 @@ void Optimiser::deleteBsa() //Deletes the BSA.
             log->repaint();
         }
     }
+    return true;
 }
 
 
-void Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
+bool Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
 {
-    log->appendPlainText(QPlainTextEdit::tr("Processing textures...\n"));
+
+    log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Processing textures..."));
     log->repaint();
+
+    if(!checkResourcesFolder("NifScan.exe") || !checkResourcesFolder("texconv.exe") || !checkResourcesFolder("texdiag.exe"))
+        return false;
 
     QFile nifScan_file("resources/NifScan.exe");
     QProcess nifScan;
@@ -76,22 +113,21 @@ void Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
 
     QDirIterator it(modPath, QDirIterator::Subdirectories);
 
-    if(nifScan_file.exists())
-    {
-        NifscanArgs << "-fixdds";
+    NifscanArgs << "-fixdds";
 
-        QFile::copy("resources/NifScan.exe", modPath + "/NifScan.exe");
-        nifScan.setWorkingDirectory(modPath);
+    QFile::copy("resources/NifScan.exe", modPath + "/NifScan.exe");
+    nifScan.setWorkingDirectory(modPath);
 
-        nifScan.start(modPath + "/NifScan.exe", NifscanArgs);
-        nifScan.waitForFinished();
-    }
+    nifScan.start(modPath + "/NifScan.exe", NifscanArgs);
+    nifScan.waitForFinished();
 
     while (it.hasNext())
     {
+        it.next();
+
         if(it.fileName().contains("_n.dds"))
         {
-            log->appendPlainText(QPlainTextEdit::tr("Currently scanning :\n") + it.fileName() + "\n");
+            log->appendPlainText(QPlainTextEdit::tr("\nCurrently scanning :\n") + it.fileName());
             log->repaint();
 
             texdiagArg << "info" << it.filePath();
@@ -106,7 +142,7 @@ void Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
 
                 texconv.start("resources/texconv.exe",  texconvArg);
                 texconv.waitForFinished();
-                log->appendPlainText(QPlainTextEdit::tr("Uncompressed normal map found:\n") + it.fileName() + QPlainTextEdit::tr("\nCompressing...\n"));
+                log->appendPlainText(QPlainTextEdit::tr("\nUncompressed normal map found:\n") + it.fileName() + QPlainTextEdit::tr("\nCompressing..."));
                 log->repaint();
             }
             it.next();
@@ -114,7 +150,7 @@ void Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
         else if(it.fileName().contains(".tga"))
         {
 
-            log->appendPlainText(QPlainTextEdit::tr("TGA file found: \n") + it.fileName() + QPlainTextEdit::tr("\nCompressing...\n"));
+            log->appendPlainText(QPlainTextEdit::tr("\nTGA file found: \n") + it.fileName() + QPlainTextEdit::tr("\nCompressing..."));
             log->repaint();
 
             texconvArg.clear();
@@ -127,19 +163,18 @@ void Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
 
             it.next();
         }
-        else
-        {
-            it.next();
-        }
     }
-    log->repaint();
+    return true;
 }
 
 
-void Optimiser::nifOpt() // Optimise the meshes if Nifscan report them.
+bool Optimiser::nifOpt() // Optimise the meshes if Nifscan report them.
 {
-    log->appendPlainText(QPlainTextEdit::tr("Processing meshes...\n"));
+    log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Processing meshes..."));
     log->repaint();
+
+    if(!checkResourcesFolder("nifopt.exe") || !checkResourcesFolder("NifScan.exe"))
+        return false;
 
     bool meshProcessed=false; //To avoid processing twice the same mesh
 
@@ -151,64 +186,62 @@ void Optimiser::nifOpt() // Optimise the meshes if Nifscan report them.
     QProcess nifScan;
     QProcess nifOpt;
 
-    if(nifScan_file.exists())
+
+    QFile::copy("resources/NifScan.exe", modPath + "/NifScan.exe");
+    nifScan.setReadChannel(QProcess::StandardOutput);
+    nifScan.setProgram(modPath + "/NifScan.exe");
+    nifScan.setWorkingDirectory(modPath);
+
+    nifScan.start();
+    nifScan.waitForFinished();
+
+    while(nifScan.canReadLine())
     {
-        nifScan_file.copy("resources/NifScan.exe", modPath + "/NifScan.exe");
-        nifScan.setReadChannel(QProcess::StandardOutput);
-        nifScan.setProgram(modPath + "/NifScan.exe");
-        nifScan.setWorkingDirectory(modPath);
+        readLine=QString::fromLocal8Bit(nifScan.readLine());
 
-        nifScan.start();
-        nifScan.waitForFinished();
 
-        while(nifScan.canReadLine())
+        if(readLine.contains("meshes\\", Qt::CaseInsensitive))
         {
-            readLine=QString::fromLocal8Bit(nifScan.readLine());
-
-
-            if(readLine.toLower().contains("meshes\\"))
-            {
-                currentFile = QDir::cleanPath(modPath + "/" + readLine.simplified());
-                log->appendPlainText(QPlainTextEdit::tr("\nProcessing : ") + currentFile);
-                meshProcessed=false;
-            }
-            else if((readLine.contains("unsupported") || readLine.contains("not supported")) && !meshProcessed)
-            {
-                meshProcessed=true;
-                nifOpt.start("resources/nifopt.exe \"" + currentFile + "\" -head 0");
-                nifOpt.waitForFinished();
-
-                //   log->appendHtml(QPlainTextEdit::tr("<font color=\"Blue\"> Mesh ported to SSE\n"));
-                //   log->appendHtml(QPlainTextEdit::tr("<font color=\"Red\"> Error while porting the mesh\n"));
-            }
-            if(readLine.toLower().contains("facegendata"))
-            {
-                nifOpt.start("resources/nifopt.exe \"" + currentFile + "\" -head 1");
-                nifOpt.waitForFinished();
-            }
+            currentFile = QDir::cleanPath(modPath + "/" + readLine.simplified());
+            log->appendPlainText(QPlainTextEdit::tr("\nProcessing : ") + currentFile);
+            meshProcessed=false;
         }
-        nifScan_file.remove(modPath + "/NifScan.exe");
-        log->appendHtml(QPlainTextEdit::tr("<font color=Blue>All the meshes were processed.</font>\n"));
-        log->repaint();
+        else if((readLine.contains("unsupported") || readLine.contains("not supported")) && !meshProcessed)
+        {
+            meshProcessed=true;
+            nifOpt.start("resources/nifopt.exe \"" + currentFile + "\" -head 0");
+            nifOpt.waitForFinished();
 
-    }else
-    {
-        log->appendHtml(QPlainTextEdit::tr("<font color=\"Red\">Please ensure that NifScan.exe is located in the resources folder</font>\n"));
-        log->repaint();
+            //   log->appendHtml(QPlainTextEdit::tr("<font color=\"Blue\"> Mesh ported to SSE\n"));
+            //   log->appendHtml(QPlainTextEdit::tr("<font color=\"Red\"> Error while porting the mesh\n"));
+        }
+        if(readLine.contains("facegendata", Qt::CaseInsensitive))
+        {
+            nifOpt.start("resources/nifopt.exe \"" + currentFile + "\" -head 1");
+            nifOpt.waitForFinished();
+        }
     }
+    QFile::remove(modPath + "/NifScan.exe");
+
+    return true;
 }
 
 
-void Optimiser::createBsa() //Once all the optimizations are done, create a new BSA
-{
-    log->appendPlainText("Creating a new BSA...\n");
+bool Optimiser::createBsa() //Once all the optimizations are done, create a new BSA
+{    
+    log->appendHtml(QPlainTextEdit::tr("<font color=blue>\n\n\nCreating a new BSA...</font>"));
     log->repaint();
+
+    if(!checkResourcesFolder("bsarch.exe"))
+        return false;
 
     bool hasSound=false;
 
     QDirIterator it(modPath);
+
     QProcess bsarch;
     QStringList bsarchArgs;
+
     QString espName = findEspName();
     QDir modPathDir(modPath);
 
@@ -253,12 +286,20 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
         modPathDir.rename(bsaName, modPath + "/" + espName.chopped(4) + ".bsa");
         modPathDir.setPath(modPath + "/data");
         modPathDir.removeRecursively();
+        return true;
     }
+    return false;
 }
 
 
-void Optimiser::createTexturesBsa()
+bool Optimiser::createTexturesBsa()
 {
+    log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Creating a new textures BSA...</font>"));
+    log->repaint();
+
+    if(!checkResourcesFolder("bsarch.exe"))
+        return false;
+
     QDirIterator it(modPath);
     QProcess bsarch;
     QStringList bsarchArgs;
@@ -291,20 +332,23 @@ void Optimiser::createTexturesBsa()
             modPathDir.removeRecursively();
 
             log->appendHtml(QPlainTextEdit::tr("<font color=Blue> Textures BSA successfully compressed.</font>\n"));
+            return true;
         }
     }
+    return false;
 }
 
-void Optimiser::animOpt() //Uses Bethesda Havok Tool to port animations
+
+bool Optimiser::animOpt() //Uses Bethesda Havok Tool to port animations
 {
-    log->appendPlainText(QPlainTextEdit::tr("Processing animations...\n"));
+    log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Processing animations..."));
     log->repaint();
 
     QFile havokFile(findSkyrimDir() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
 
     if(havokFile.exists())
     {
-        log->appendPlainText(QPlainTextEdit::tr("Havok tool found. Processing animations...\n"));
+        log->appendPlainText(QPlainTextEdit::tr("Havok tool found.\n"));
 
         QProcess havokProcess;
         QStringList havokArgs;
@@ -323,19 +367,23 @@ void Optimiser::animOpt() //Uses Bethesda Havok Tool to port animations
                 havokProcess.start(havokFile.fileName(), havokArgs);
                 havokProcess.waitForFinished();
 
-                log->appendHtml(QPlainTextEdit::tr("<font color=Blue>Animation successfully ported.</font>\n\n"));
+                if(havokProcess.readAllStandardOutput().isEmpty())
+                    log->appendHtml(QPlainTextEdit::tr("<font color=Blue>Animation successfully ported.</font>\n\n"));
+                else
+                    log->appendHtml(QPlainTextEdit::tr("<font color=Red> An error occured during the animation porting. Maybe it is already compatible with SSE ?</font>\n"));
             }
-
         }
     }
     else
     {
         log->appendHtml(QPlainTextEdit::tr("<font color=Red>Havok Tool not found. Are you sure the Creation Kit is installed ?</font>\n"));
+        return false;
     }
-
+    return true;
 }
 
-bool Optimiser::setModPath(const QString& path)
+
+bool Optimiser::setmodPath(const QString& path)
 {
     QDir modDir(path);
     if(modDir.exists())
@@ -347,6 +395,7 @@ bool Optimiser::setModPath(const QString& path)
     return false;
 
 }
+
 
 QString Optimiser::getmodPath() const
 {
@@ -362,7 +411,7 @@ QString Optimiser::findSkyrimDir() //Find Skyrim dir using Registry keys
 }
 
 
-QString Optimiser::findEspName()
+QString Optimiser::findEspName() //Find esp name using an iterator
 {
     QDirIterator it(modPath);
     QString espName;
@@ -381,12 +430,51 @@ QString Optimiser::findEspName()
     return "dummy_plugin.esp";
 }
 
-/*bool Optimiser::setLog(QPlainTextEdit *textEdit)
+
+bool Optimiser::checkResourcesFolder(const QString& exe)
 {
-    if(textEdit != nullptr)
+    QFile file("resources/" + exe);
+    if(file.exists())
     {
-        log = textEdit;
         return true;
     }
+    log->appendHtml("<font color=red>" + exe + QPlainTextEdit::tr(" not found.\n"));
     return false;
-}*/
+}
+
+
+void Optimiser::setExtractBsaBool(bool state)
+{
+    extractBsaBool = state;
+}
+
+
+void Optimiser::setTextOptBool(bool state)
+{
+    textOptBool = state;
+}
+
+
+void Optimiser::setNifOptBool(bool state)
+{
+    nifOptBool = state;
+}
+
+
+void Optimiser::setCreateBsaBool(bool state)
+{
+    createBsaBool = state;
+}
+
+
+void Optimiser::setDeleteBsaBool(bool state)
+{
+    deleteBsaBool = state;
+}
+
+
+void Optimiser::setAnimOptBool(bool state)
+{
+    animOptBool = state;
+}
+
