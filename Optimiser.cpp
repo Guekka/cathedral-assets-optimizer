@@ -136,7 +136,7 @@ void Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
 }
 
 
-void Optimiser::nifOpt() // Optimize the meshes if Nifscan report them.
+void Optimiser::nifOpt() // Optimise the meshes if Nifscan report them.
 {
     log->appendPlainText(QPlainTextEdit::tr("Processing meshes...\n"));
     log->repaint();
@@ -147,14 +147,13 @@ void Optimiser::nifOpt() // Optimize the meshes if Nifscan report them.
     QString currentFile;
 
     QFile nifScan_file("resources/NifScan.exe");
-    QFile optFile;
 
     QProcess nifScan;
     QProcess nifOpt;
 
     if(nifScan_file.exists())
     {
-        QFile::copy("resources/NifScan.exe", modPath + "/NifScan.exe");
+        nifScan_file.copy("resources/NifScan.exe", modPath + "/NifScan.exe");
         nifScan.setReadChannel(QProcess::StandardOutput);
         nifScan.setProgram(modPath + "/NifScan.exe");
         nifScan.setWorkingDirectory(modPath);
@@ -166,7 +165,8 @@ void Optimiser::nifOpt() // Optimize the meshes if Nifscan report them.
         {
             readLine=QString::fromLocal8Bit(nifScan.readLine());
 
-            if(readLine.contains("meshes\\"))
+
+            if(readLine.toLower().contains("meshes\\"))
             {
                 currentFile = QDir::cleanPath(modPath + "/" + readLine.simplified());
                 log->appendPlainText(QPlainTextEdit::tr("\nProcessing : ") + currentFile);
@@ -175,23 +175,19 @@ void Optimiser::nifOpt() // Optimize the meshes if Nifscan report them.
             else if((readLine.contains("unsupported") || readLine.contains("not supported")) && !meshProcessed)
             {
                 meshProcessed=true;
-                nifOpt.start("resources/nifopt.exe \"" + currentFile + "\"");
+                nifOpt.start("resources/nifopt.exe \"" + currentFile + "\" -head 0");
                 nifOpt.waitForFinished();
 
-                optFile.setFileName(currentFile.chopped(4) + ".opt.nif");
-
-                if(optFile.exists())
-                {
-                    log->appendHtml(QPlainTextEdit::tr("<font color=\"Blue\"> Mesh ported to SSE\n"));
-                    QFile::remove(currentFile);
-                    optFile.rename(currentFile);
-                }else
-                {
-                    log->appendHtml(QPlainTextEdit::tr("<font color=\"Red\"> Error while porting the mesh\n"));
-                }
+                //   log->appendHtml(QPlainTextEdit::tr("<font color=\"Blue\"> Mesh ported to SSE\n"));
+                //   log->appendHtml(QPlainTextEdit::tr("<font color=\"Red\"> Error while porting the mesh\n"));
+            }
+            if(readLine.toLower().contains("facegendata"))
+            {
+                nifOpt.start("resources/nifopt.exe \"" + currentFile + "\" -head 1");
+                nifOpt.waitForFinished();
             }
         }
-        QFile::remove(modPath + "/NifScan.exe");
+        nifScan_file.remove(modPath + "/NifScan.exe");
         log->appendHtml(QPlainTextEdit::tr("<font color=Blue>All the meshes were processed.</font>\n"));
         log->repaint();
 
@@ -201,6 +197,7 @@ void Optimiser::nifOpt() // Optimize the meshes if Nifscan report them.
         log->repaint();
     }
 }
+
 
 void Optimiser::createBsa() //Once all the optimizations are done, create a new BSA
 {
@@ -383,3 +380,13 @@ QString Optimiser::findEspName()
     }
     return "dummy_plugin.esp";
 }
+
+/*bool Optimiser::setLog(QPlainTextEdit *textEdit)
+{
+    if(textEdit != nullptr)
+    {
+        log = textEdit;
+        return true;
+    }
+    return false;
+}*/

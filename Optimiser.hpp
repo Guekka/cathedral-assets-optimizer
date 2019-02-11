@@ -25,6 +25,7 @@ public:
     void animOpt();
 
     bool setModPath(const QString& path);
+    bool setLog(QPlainTextEdit *textEdit);
 
     QString getmodPath() const;
     QString findEspName();

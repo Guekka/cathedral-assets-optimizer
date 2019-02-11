@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QCoreApplication>
+#include "Optimiser.hpp"
 
 class MainWindow : public QWidget
 {
@@ -32,6 +33,7 @@ private:
 
     QGridLayout *gridLayout;
 
+    Optimiser *optimiser;
 };
 
 #endif // MAINWINDOW_H

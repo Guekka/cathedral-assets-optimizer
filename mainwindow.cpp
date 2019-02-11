@@ -1,12 +1,11 @@
 #include "mainwindow.hpp"
-#include "Optimiser.hpp"
+#include "optimiser.hpp"
 
 
 
 MainWindow::MainWindow()
 {
     bool greyedCreateBsa = false;
-    Optimiser optimiser("C:/", mw_log);
 
     // Window construction
 
@@ -22,9 +21,9 @@ MainWindow::MainWindow()
     deleteBsaCheckbox = new QCheckBox(tr("Delete old BSA"), this);
     createBsaCheckbox = new QCheckBox("Create new BSA", this);
 
-    textOptCheckbox = new QCheckBox(tr("Optimize textures"), this);
-    nifOptCheckbox = new QCheckBox(tr("Optimize meshes"), this);
-    animOptCheckbox = new QCheckBox(tr("Optimize animations"), this);
+    textOptCheckbox = new QCheckBox(tr("Optimise textures"), this);
+    nifOptCheckbox = new QCheckBox(tr("Optimise meshes"), this);
+    animOptCheckbox = new QCheckBox(tr("Optimise animations"), this);
 
     extractBsaCheckbox->setChecked(true);
     deleteBsaCheckbox->setChecked(true);
@@ -59,15 +58,19 @@ MainWindow::MainWindow()
 
     gridLayout->addWidget(mw_log, 6, 0, 3, 0);
 
-    connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=, &optimiser](){
-        optimiser.setModPath(modpathTextEdit->toPlainText());
+
+    optimiser = new Optimiser("C:/", mw_log);
+
+
+    connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=](){
+        optimiser->setModPath(modpathTextEdit->toPlainText());
     });
 
 
-    connect(pathButton, &QPushButton::pressed, this, [=, &optimiser](){
-        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", optimiser.getmodPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    connect(pathButton, &QPushButton::pressed, this, [=](){
+        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", optimiser->getmodPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         modpathTextEdit->setPlainText(dir);
-        optimiser.setModPath(dir);
+        optimiser->setModPath(dir);
     });
 
     connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=, &greyedCreateBsa](){
@@ -83,30 +86,31 @@ MainWindow::MainWindow()
         }
     });
 
-    connect(processButton, &QPushButton::pressed, this, [=, &optimiser]()
+    connect(processButton, &QPushButton::pressed, this, [=]()
     {
         mw_log->clear();
         mw_log->appendPlainText(tr("Beginning...\n"));
         mw_log->repaint();
 
+        //optimiser->setLog(mw_log);
 
         if(extractBsaCheckbox->isChecked())
-            optimiser.extractBsa();
-/*
+            optimiser->extractBsa();
+
         if(deleteBsaCheckbox->isChecked())
-            optimiser.deleteBsa();
+            optimiser->deleteBsa();
 
         if(textOptCheckbox->isChecked())
-            optimiser.textOpt();
+            optimiser->textOpt();
 
         if(nifOptCheckbox->isChecked())
-            optimiser.nifOpt();
+            optimiser->nifOpt();
 
         if(animOptCheckbox->isChecked())
-            optimiser.animOpt();
+            optimiser->animOpt();
 
         if(createBsaCheckbox->isChecked())
-            optimiser.createBsa();*/
+            optimiser->createBsa();
 
         mw_log->appendHtml(tr("<font color=blue>Completed. Please check the log to check if any errors occured(in red) </font>\n"));
         mw_log->repaint();
