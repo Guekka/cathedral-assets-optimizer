@@ -23,7 +23,7 @@ public:
     bool nifOpt();
     bool createBsa();
     bool createTexturesBsa();
-    bool deleteBsa();
+    bool renameBsa();
     bool animOpt();
 
     bool setUserPath(const QString& path);
@@ -39,14 +39,14 @@ public:
     void setTextOptBool(bool state);
     void setNifOptBool(bool state);
     void setCreateBsaBool(bool state);
-    void setDeleteBsaBool(bool state);
+    void setRenameBsaBool(bool state);
     void setAnimOptBool(bool state);
 
     bool getExtractBsaBool();
     bool getTextOptBool();
     bool getNifOptBool();
     bool getCreateBsaBool();
-    bool getDeleteBsaBool();
+    bool getrenameBsaBool();
     bool getAnimOptBool();
 
     void saveSettings();
@@ -62,7 +62,7 @@ private:
     bool textOptBool{};
     bool nifOptBool{};
     bool createBsaBool{};
-    bool deleteBsaBool{};
+    bool renameBsaBool{};
     bool animOptBool{};
 
     int mode{};

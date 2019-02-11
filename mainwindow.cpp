@@ -31,7 +31,7 @@ MainWindow::MainWindow()
     dropDown->addItem("Several mods");
 
     extractBsaCheckbox = new QCheckBox(tr("Extract old BSA"), this);
-    deleteBsaCheckbox = new QCheckBox(tr("Delete old BSA"), this);
+    renameBsaCheckbox = new QCheckBox(tr("Rename old BSA"), this);
     createBsaCheckbox = new QCheckBox("Create new BSA", this);
 
     textOptCheckbox = new QCheckBox(tr("Optimise textures"), this);
@@ -40,10 +40,10 @@ MainWindow::MainWindow()
 
 
     extractBsaCheckbox->setChecked(optimiser->getExtractBsaBool());
-    deleteBsaCheckbox->setChecked(optimiser->getDeleteBsaBool());
+    renameBsaCheckbox->setChecked(optimiser->getrenameBsaBool());
     createBsaCheckbox->setChecked(optimiser->getCreateBsaBool());
 
-    if(!deleteBsaCheckbox->isChecked())
+    if(!renameBsaCheckbox->isChecked())
     {
         createBsaCheckbox->setEnabled(false);
         createBsaCheckbox->setChecked(false);
@@ -66,7 +66,7 @@ MainWindow::MainWindow()
     gridLayout->setRowMinimumHeight(3, 15);
 
     gridLayout->addWidget(extractBsaCheckbox,4, 0);
-    gridLayout->addWidget(deleteBsaCheckbox,4,1);
+    gridLayout->addWidget(renameBsaCheckbox,4,1);
     gridLayout->addWidget(createBsaCheckbox,4, 2);
 
     gridLayout->addWidget(textOptCheckbox,5,0);
@@ -89,8 +89,8 @@ MainWindow::MainWindow()
         optimiser->setUserPath(dir);
     });
 
-    connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=](){
-        if(deleteBsaCheckbox->isChecked())
+    connect(renameBsaCheckbox, &QCheckBox::pressed, this, [=](){
+        if(renameBsaCheckbox->isChecked())
         {
             createBsaCheckbox->setDisabled(true);
             createBsaCheckbox->setChecked(false);
@@ -106,9 +106,9 @@ MainWindow::MainWindow()
     });
 
 
-    connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=]()
+    connect(renameBsaCheckbox, &QCheckBox::pressed, this, [=]()
     {
-        optimiser->setDeleteBsaBool(deleteBsaCheckbox->isChecked());
+        optimiser->setRenameBsaBool(renameBsaCheckbox->isChecked());
     });
 
     connect(textOptCheckbox, &QCheckBox::pressed, this, [=]()

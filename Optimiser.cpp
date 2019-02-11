@@ -48,8 +48,8 @@ int Optimiser::mainProcess()
         if(extractBsaBool)
             extractBsa();
 
-        if(deleteBsaBool)
-            deleteBsa();
+        if(renameBsaBool)
+            renameBsa();
 
         if(nifOptBool)
             nifOpt();
@@ -111,9 +111,9 @@ bool Optimiser::extractBsa() //Extracts the BSA
 }
 
 
-bool Optimiser::deleteBsa() //Deletes the BSA.
+bool Optimiser::renameBsa() //Deletes the BSA.
 {
-    log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Deleting BSA..."));
+    log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Renaming BSA..."));
     log->repaint();
 
     QStringList bsarchArgs;
@@ -123,8 +123,8 @@ bool Optimiser::deleteBsa() //Deletes the BSA.
     {
         if(it.next().contains(".bsa"))
         {
-            QFile::remove(it.filePath());
-            log->appendPlainText(QPlainTextEdit::tr("BSA successfully deleted.\n"));
+            QFile::rename(it.filePath(), it.filePath() + ".bak");
+            log->appendPlainText(QPlainTextEdit::tr("BSA successfully renamed.\n"));
             log->repaint();
         }
     }
@@ -267,6 +267,8 @@ bool Optimiser::nifOpt() // Optimise the meshes if Nifscan report them.
 
 bool Optimiser::createBsa() //Once all the optimizations are done, create a new BSA
 {    
+
+
     log->appendHtml(QPlainTextEdit::tr("<font color=blue>\n\n\nCreating a new BSA...</font>"));
     log->repaint();
 
@@ -312,9 +314,8 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
         bsarchArgs << "-z";
     }
 
-    bsarch.start("resources/bsarch.exe", bsarchArgs);
-    bsarch.waitForFinished(-1);
-
+    if(QFileInfo(modPath + "/data").size() > 2000000000)
+        return false;
 
     modPathDir.rmdir(modPath + "/data/");
 
@@ -359,6 +360,9 @@ bool Optimiser::createTexturesBsa()
 
             bsarchArgs.clear();
             bsarchArgs << "pack" << tFolder << tBsaName << "-sse" << "-z" << "-share";
+
+            if(QFileInfo(modPath + "/temp_t").size() > 2000000000)
+                return false;
 
             bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished(-1);
@@ -501,9 +505,9 @@ void Optimiser::setCreateBsaBool(bool state)
 }
 
 
-void Optimiser::setDeleteBsaBool(bool state)
+void Optimiser::setRenameBsaBool(bool state)
 {
-    deleteBsaBool = !state;
+    renameBsaBool = !state;
     saveSettings();
 }
 
@@ -539,9 +543,9 @@ bool Optimiser::getCreateBsaBool()
 }
 
 
-bool Optimiser::getDeleteBsaBool()
+bool Optimiser::getrenameBsaBool()
 {
-    return deleteBsaBool;
+    return renameBsaBool;
 }
 
 
@@ -562,7 +566,7 @@ void Optimiser::saveSettings()
     settings.setValue("SelectedPath", userPath);
     settings.setValue("CreateBSA", createBsaBool);
     settings.setValue("ExtractBSA", extractBsaBool);
-    settings.setValue("DeleteBSA", deleteBsaBool);
+    settings.setValue("RenameBsa", renameBsaBool);
     settings.setValue("OptimiseMeshes", nifOptBool);
     settings.setValue("OptimiseTextures", textOptBool);
     settings.setValue("OptimiseAnimations", animOptBool);
@@ -580,11 +584,11 @@ void Optimiser::loadSettings()
     userPath = settings.value("SelectedPath").toString();
     createBsaBool = settings.value("CreateBSA").toBool();
     extractBsaBool = settings.value("ExtractBSA").toBool();
-    deleteBsaBool = settings.value("DeleteBSA").toBool();
+    renameBsaBool = settings.value("RenameBsa").toBool();
     nifOptBool = settings.value("OptimiseMeshes").toBool();
     textOptBool = settings.value("OptimiseTextures").toBool();
     animOptBool = settings.value("OptimiseAnimations").toBool();
 
-    if(!deleteBsaBool)
+    if(!renameBsaBool)
         createBsaBool = false;
 }

@@ -28,7 +28,7 @@ private:
     QComboBox *dropDown;
 
     QCheckBox *extractBsaCheckbox;
-    QCheckBox *deleteBsaCheckbox;
+    QCheckBox *renameBsaCheckbox;
     QCheckBox *textOptCheckbox;
     QCheckBox *nifOptCheckbox;
     QCheckBox *createBsaCheckbox;
