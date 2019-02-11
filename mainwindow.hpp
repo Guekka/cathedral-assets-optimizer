@@ -1,12 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QApplication>
+#include <QTranslator>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QCheckBox>
-#include <QCoreApplication>
+#include <QComboBox>
 #include "Optimiser.hpp"
 
 class MainWindow : public QWidget
@@ -23,6 +25,7 @@ private:
     QPlainTextEdit *mw_log;
     QPushButton *pathButton;
     QPushButton *processButton;
+    QComboBox *dropDown;
 
     QCheckBox *extractBsaCheckbox;
     QCheckBox *deleteBsaCheckbox;

@@ -1,21 +1,34 @@
 #include "mainwindow.hpp"
-#include "optimiser.hpp"
+#include "Optimiser.hpp"
 
 
 
 MainWindow::MainWindow()
 {
-    bool greyedCreateBsa = false;
+    //Constructing log before the rest to give a pointer to Optimiser
+
+    mw_log = new QPlainTextEdit(this);
+    mw_log->setMinimumHeight(100);
+    mw_log->setReadOnly(true);
+
+    optimiser = new Optimiser("C:/", mw_log);
+    optimiser->loadSettings();
 
     // Window construction
 
     modpathTextEdit = new QPlainTextEdit(this);
     modpathTextEdit->setFixedHeight(25);
+    modpathTextEdit->appendPlainText(optimiser->getUserPath());
 
     gridLayout = new QGridLayout(this);
     fileDialog = new QFileDialog(this);
     pathButton = new QPushButton(tr("Open directory"), this);
     processButton = new QPushButton(tr("Process directory"), this);
+
+
+    dropDown = new QComboBox(this);
+    dropDown->addItem("One mod");
+    dropDown->addItem("Several mods");
 
     extractBsaCheckbox = new QCheckBox(tr("Extract old BSA"), this);
     deleteBsaCheckbox = new QCheckBox(tr("Delete old BSA"), this);
@@ -25,26 +38,30 @@ MainWindow::MainWindow()
     nifOptCheckbox = new QCheckBox(tr("Optimise meshes"), this);
     animOptCheckbox = new QCheckBox(tr("Optimise animations"), this);
 
-    extractBsaCheckbox->setChecked(true);
-    deleteBsaCheckbox->setChecked(true);
-    createBsaCheckbox->setChecked(true);
 
-    textOptCheckbox->setChecked(true);
-    nifOptCheckbox->setChecked(true);
-    animOptCheckbox->setChecked(true);
+    extractBsaCheckbox->setChecked(optimiser->getExtractBsaBool());
+    deleteBsaCheckbox->setChecked(optimiser->getDeleteBsaBool());
+    createBsaCheckbox->setChecked(optimiser->getCreateBsaBool());
 
-    mw_log = new QPlainTextEdit(this);
-    mw_log->setMinimumHeight(100);
-    mw_log->setReadOnly(true);
+    if(!deleteBsaCheckbox->isChecked())
+    {
+        createBsaCheckbox->setEnabled(false);
+        createBsaCheckbox->setChecked(false);
+    }
+
+    textOptCheckbox->setChecked(optimiser->getTextOptBool());
+    nifOptCheckbox->setChecked(optimiser->getNifOptBool());
+    animOptCheckbox->setChecked(optimiser->getAnimOptBool());
 
     this->setLayout(gridLayout);
 
-    gridLayout->addWidget(modpathTextEdit, 0, 0, 1, 2);
-    gridLayout->addWidget(pathButton, 0, 2);
+    gridLayout->addWidget(modpathTextEdit, 0, 0, 2, 0);
 
     gridLayout->setRowMinimumHeight(1, 15);
 
+    gridLayout->addWidget(pathButton, 2, 0);
     gridLayout->addWidget(processButton, 2,1);
+    gridLayout->addWidget(dropDown, 2,2);
 
     gridLayout->setRowMinimumHeight(3, 15);
 
@@ -56,45 +73,73 @@ MainWindow::MainWindow()
     gridLayout->addWidget(nifOptCheckbox,5,1);
     gridLayout->addWidget(animOptCheckbox, 5, 2);
 
-    gridLayout->addWidget(mw_log, 6, 0, 3, 0);
+    gridLayout->addWidget(mw_log, 6, 0, 2, 0);
 
 
-    optimiser = new Optimiser("C:/", mw_log);
 
 
     connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=](){
-        optimiser->setmodPath(modpathTextEdit->toPlainText());
+        optimiser->setUserPath(modpathTextEdit->toPlainText());
     });
 
 
     connect(pathButton, &QPushButton::pressed, this, [=](){
-        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", optimiser->getmodPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", optimiser->getUserPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         modpathTextEdit->setPlainText(dir);
-        optimiser->setmodPath(dir);
+        optimiser->setUserPath(dir);
     });
 
-    connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=, &greyedCreateBsa](){
-        if(greyedCreateBsa)
-        {
-            createBsaCheckbox->setDisabled(false);
-            greyedCreateBsa=false;
-        }else
+    connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=](){
+        if(deleteBsaCheckbox->isChecked())
         {
             createBsaCheckbox->setDisabled(true);
             createBsaCheckbox->setChecked(false);
-            greyedCreateBsa=true;
+        }else
+        {
+            createBsaCheckbox->setDisabled(false);
         }
     });
 
-    connect(processButton, &QPushButton::pressed, this, [=]()
+    connect(extractBsaCheckbox, &QCheckBox::pressed, this, [=]()
     {
         optimiser->setExtractBsaBool(extractBsaCheckbox->isChecked());
-        optimiser->setDeleteBsaBool(deleteBsaCheckbox->isChecked());
-        optimiser->setTextOptBool(textOptCheckbox->isChecked());
-        optimiser->setNifOptBool(nifOptCheckbox->isChecked());
-        optimiser->setAnimOptBool(animOptCheckbox->isChecked());
-        optimiser->setCreateBsaBool(createBsaCheckbox->isChecked());
+    });
 
+
+    connect(deleteBsaCheckbox, &QCheckBox::pressed, this, [=]()
+    {
+        optimiser->setDeleteBsaBool(deleteBsaCheckbox->isChecked());
+    });
+
+    connect(textOptCheckbox, &QCheckBox::pressed, this, [=]()
+    {
+        optimiser->setTextOptBool(textOptCheckbox->isChecked());
+    });
+
+    connect(nifOptCheckbox, &QCheckBox::pressed, this, [=]()
+    {
+        optimiser->setNifOptBool(nifOptCheckbox->isChecked());
+    });
+
+    connect(animOptCheckbox, &QCheckBox::pressed, this, [=]()
+    {
+        optimiser->setAnimOptBool(animOptCheckbox->isChecked());
+    });
+
+    connect(createBsaCheckbox, &QCheckBox::pressed, this, [=]()
+    {
+        optimiser->setCreateBsaBool(createBsaCheckbox->isChecked());
+    });
+
+    connect(dropDown, QOverload<int>::of(&QComboBox::activated), this, [=](int index)
+    {
+        optimiser->setMode(index);
+    });
+
+
+    connect(processButton, &QPushButton::pressed, this, [=]()
+    {
         optimiser->mainProcess();
     });
 }
+

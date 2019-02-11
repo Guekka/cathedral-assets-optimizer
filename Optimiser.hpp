@@ -26,12 +26,14 @@ public:
     bool deleteBsa();
     bool animOpt();
 
-    bool setmodPath(const QString& path);
+    bool setUserPath(const QString& path);
     bool checkResourcesFolder(const QString& exe);
 
-    QString getmodPath() const;
+    QString getUserPath() const;
     QString findEspName();
     QString findSkyrimDir();
+
+    void setMode(int index);
 
     void setExtractBsaBool(bool state);
     void setTextOptBool(bool state);
@@ -40,8 +42,20 @@ public:
     void setDeleteBsaBool(bool state);
     void setAnimOptBool(bool state);
 
+    bool getExtractBsaBool();
+    bool getTextOptBool();
+    bool getNifOptBool();
+    bool getCreateBsaBool();
+    bool getDeleteBsaBool();
+    bool getAnimOptBool();
+
+    void saveSettings();
+    void loadSettings();
+
 private:
     QString modPath;
+    QString userPath;
+
     QPlainTextEdit* log;
 
     bool extractBsaBool{};
@@ -50,6 +64,8 @@ private:
     bool createBsaBool{};
     bool deleteBsaBool{};
     bool animOptBool{};
+
+    int mode{};
 
 };
 
