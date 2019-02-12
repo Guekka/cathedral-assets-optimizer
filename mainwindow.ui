@@ -21,10 +21,10 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
+    <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="simple">
        <attribute name="title">
@@ -92,6 +92,12 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item alignment="Qt::AlignHCenter">
           <widget class="QCheckBox" name="bsaOptCheckbox">
+           <property name="cursor">
+            <cursorShape>WhatsThisCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will extract the BSA, rename it and create a new one. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Optimise BSA</string>
            </property>
@@ -99,6 +105,12 @@
          </item>
          <item alignment="Qt::AlignHCenter">
           <widget class="QCheckBox" name="textOptCheckbox">
+           <property name="cursor">
+            <cursorShape>WhatsThisCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGA to DDS, unsupported textures to supported ones and compress normal maps to BC7&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Optimise textures</string>
            </property>
@@ -118,6 +130,12 @@
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item alignment="Qt::AlignHCenter">
           <widget class="QCheckBox" name="meshOptCheckbox">
+           <property name="cursor">
+            <cursorShape>WhatsThisCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will run the full Nif Optimizer on the crashing meshes, and a light one on the others. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Optimise meshes</string>
            </property>
@@ -125,6 +143,12 @@
          </item>
          <item alignment="Qt::AlignHCenter">
           <widget class="QCheckBox" name="animOptCheckbox">
+           <property name="cursor">
+            <cursorShape>WhatsThisCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will port animations to SSE. If the animation is already compatible, nothing will be done but you will get an error message. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Optimise animations</string>
            </property>
@@ -289,9 +313,35 @@
           </rect>
          </property>
          <property name="text">
-          <string>Only hard crashing meshes</string>
+          <string>Hard crashing meshes</string>
          </property>
         </widget>
+        <widget class="QCheckBox" name="otherMeshesCheckBox">
+         <property name="geometry">
+          <rect>
+           <x>281</x>
+           <y>40</y>
+           <width>191</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Other meshes</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QPushButton" name="dryRunPushButton">
+        <property name="geometry">
+         <rect>
+          <x>310</x>
+          <y>340</y>
+          <width>131</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Dry run</string>
+        </property>
        </widget>
       </widget>
      </widget>

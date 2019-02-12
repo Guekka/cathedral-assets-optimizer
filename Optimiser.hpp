@@ -16,29 +16,23 @@
 
 struct optOptions
 {
-    bool bsaOpt{};
+
 
     bool extractBsa{};
     bool createBsa{};
     bool renameBsa{};
 
 
-    bool textOpt{};
-
     bool tgaConv{};
     bool bc7Conv{};
     bool nifscanTextures{};
 
 
-    bool nifOpt{};
-
-    bool hardCrashingNif;
-
-    bool animOpt{};
+    bool hardCrashingMeshes;
+    bool otherMeshes;
 
 
     int mode{};
-
 
     QString userPath;
 };
@@ -68,6 +62,7 @@ public:
     bool nifscanTextures();
 
 
+    bool nifScan();
     bool nifOpt(QDirIterator* it);
 
     bool animOpt(QDirIterator* it);
@@ -80,14 +75,31 @@ public:
     void saveSettings();
     void loadSettings();
 
+    bool getBsaOptBool();
+    bool getTextOptBool();
+    bool getNifOptBool();
+    bool getAnimOptBool();
+
+    void setBsaOptBool(bool state);
+    void setTextOptBool(bool state);
+    void setNifOptBool(bool state);
+    void setAnimOptBool(bool state);
+
+    void dryRun();
+
 private:
     QString modPath;
 
     QPlainTextEdit* log;
     QProgressBar* progressBar;
 
+    QStringList meshes;
+    QStringList hardCrashingMeshes;
 
-
+    bool bsaOptBool{};
+    bool textOptBool{};
+    bool nifOptBool{};
+    bool animOptBool{};
 };
 
 
