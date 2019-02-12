@@ -2,11 +2,14 @@
 #define FUNCTIONS_H
 
 #include <QDirIterator>
+#include <QCoreApplication>
 #include <QProcess>
 #include <QDebug>
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QSettings>
+#include <QProgressBar>
+
 #include <utility>
 
 class Optimiser
@@ -14,7 +17,7 @@ class Optimiser
 
 public:
 
-    Optimiser(QString mod, QPlainTextEdit* textEdit);
+    Optimiser(QString mod, QPlainTextEdit* textEdit, QProgressBar* bar);
 
     int mainProcess();
 
@@ -35,6 +38,7 @@ public:
 
     void setMode(int index);
 
+    void setBsaOptBool(bool state);
     void setExtractBsaBool(bool state);
     void setTextOptBool(bool state);
     void setNifOptBool(bool state);
@@ -42,6 +46,7 @@ public:
     void setRenameBsaBool(bool state);
     void setAnimOptBool(bool state);
 
+    bool getBsaOptBool();
     bool getExtractBsaBool();
     bool getTextOptBool();
     bool getNifOptBool();
@@ -57,13 +62,16 @@ private:
     QString userPath;
 
     QPlainTextEdit* log;
+    QProgressBar* progressBar;
 
+    bool bsaOptBool{};
     bool extractBsaBool{};
     bool textOptBool{};
     bool nifOptBool{};
     bool createBsaBool{};
     bool renameBsaBool{};
     bool animOptBool{};
+
 
     int mode{};
 

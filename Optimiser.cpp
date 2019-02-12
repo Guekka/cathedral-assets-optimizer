@@ -1,12 +1,13 @@
 #include "Optimiser.hpp"
 
 
-Optimiser::Optimiser(QString mod, QPlainTextEdit* textEdit) : userPath(std::move(mod)), log(textEdit){}
+Optimiser::Optimiser(QString mod, QPlainTextEdit* textEdit, QProgressBar* bar) : userPath(std::move(mod)), log(textEdit), progressBar(bar){}
 
 
 int Optimiser::mainProcess()
 {
     saveSettings();
+    progressBar->reset();
 
     log->clear();
     log->appendHtml(QPlainTextEdit::tr("<font color=Blue>Beginning...</font>"));
@@ -21,7 +22,7 @@ int Optimiser::mainProcess()
         QFile file("resources/" + requirements.at(i));
         if(!file.exists())
         {
-            log->appendHtml("<font color=Red>" + requirements.at(i) + QPlainTextEdit::tr("not found. Cancelling."));
+            log->appendHtml("<font color=Red>" + requirements.at(i) + QPlainTextEdit::tr(" not found. Cancelling."));
             return 1;
         }
     }
@@ -38,6 +39,7 @@ int Optimiser::mainProcess()
         modDirs << "";
     }
 
+    progressBar->setMaximum(modDirs.size()*6);
 
     for(int i=0; i < modDirs.size(); ++i)
     {
@@ -46,27 +48,48 @@ int Optimiser::mainProcess()
         log->appendHtml("<font color=Orange>" + QPlainTextEdit::tr("Current mod: ") + modPath+ + "</font>");
 
         if(extractBsaBool)
+        {
             extractBsa();
+            progressBar->setValue(progressBar->value() + 1);
+            progressBar->repaint();
+        }
 
         if(renameBsaBool)
+        {
             renameBsa();
+        }
 
         if(nifOptBool)
+        {
             nifOpt();
+            progressBar->setValue(progressBar->value() + 1);
+            progressBar->repaint();
+        }
 
         if(textOptBool)
+        {
             textOpt();
+            progressBar->setValue(progressBar->value() + 1);
+            progressBar->repaint();
+        }
 
         if(animOptBool)
             animOpt();
+        progressBar->setValue(progressBar->value() + 1);
+        progressBar->repaint();
 
         if(createBsaBool)
         {
             createBsa();
+            progressBar->setValue(progressBar->value() + 1);
             createTexturesBsa();
+            progressBar->setValue(progressBar->value() + 1);
         }
+
+        QCoreApplication::processEvents();
     }
 
+    progressBar->setValue(progressBar->maximum());
     log->appendHtml(QPlainTextEdit::tr("<font color=blue>Completed. Please check the log to check if any errors occured(in red) </font>\n"));
     log->repaint();
 
@@ -86,7 +109,7 @@ bool Optimiser::extractBsa() //Extracts the BSA
 
     while (it.hasNext())
     {
-        if(it.next().contains(".bsa"))
+        if(it.next().contains(".bsa") && !it.fileName().contains(".bak"))
         {
             log->appendPlainText(QPlainTextEdit::tr("BSA found ! Extracting..."));
             log->repaint();
@@ -95,6 +118,7 @@ bool Optimiser::extractBsa() //Extracts the BSA
             bsarchArgs << "unpack" << it.filePath() << it.path() ;
             bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished(-1);
+
 
             if(bsarch.readAllStandardOutput().contains("Done."))
             {
@@ -121,7 +145,7 @@ bool Optimiser::renameBsa() //Deletes the BSA.
 
     while (it.hasNext())
     {
-        if(it.next().contains(".bsa"))
+        if(it.next().contains(".bsa") && !it.fileName().contains(".bak"))
         {
             QFile::rename(it.filePath(), it.filePath() + ".bak");
             log->appendPlainText(QPlainTextEdit::tr("BSA successfully renamed.\n"));
@@ -174,6 +198,7 @@ bool Optimiser::textOpt() //Compress the nmaps to BC7 if they are uncompressed.
 
             texDiag.start("resources/texdiag.exe", texdiagArg);
             texDiag.waitForFinished(-1);
+
 
             if(texDiag.readAllStandardOutput().contains("compressed = no"))
             {
@@ -283,7 +308,7 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
     QDir modPathDir(modPath);
 
     QStringList assetsFolder;
-    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews" << "interface" << "source";
+    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews" << "interface" << "source" << "lodsettings";
 
     modPathDir.mkdir("data");
 
@@ -319,6 +344,10 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
     modPathDir.rmdir(modPath + "/data/");
 
+    bsarch.start("resources/bsarch.exe", bsarchArgs);
+    bsarch.waitForFinished(-1);
+
+
     if(bsarch.readAllStandardOutput().contains("Done."))
     {
         log->appendHtml(QPlainTextEdit::tr("<font color=Blue> BSA successfully compressed.</font>\n"));
@@ -331,7 +360,7 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
 }
 
 
-bool Optimiser::createTexturesBsa()
+bool Optimiser::createTexturesBsa() // Create a BSA containing only textures
 {
     log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Creating a new textures BSA...</font>"));
     log->repaint();
@@ -367,10 +396,17 @@ bool Optimiser::createTexturesBsa()
             bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished(-1);
 
-            modPathDir.setPath(modPath + "/temp_t/");
-            modPathDir.removeRecursively();
 
-            log->appendHtml(QPlainTextEdit::tr("<font color=Blue> Textures BSA successfully compressed.</font>\n"));
+            if(bsarch.readAllStandardOutput().contains("Done"))
+            {
+                modPathDir.setPath(modPath + "/temp_t/");
+                modPathDir.removeRecursively();
+                log->appendHtml(QPlainTextEdit::tr("<font color=Blue> Textures BSA successfully compressed.</font>\n"));
+            }
+            else
+            {
+                log->appendHtml(QPlainTextEdit::tr("<font color=Red> An error occured during the Textures BSA compression."));
+            }
             return true;
         }
     }
@@ -472,8 +508,8 @@ QString Optimiser::findEspName() //Find esp name using an iterator
 
 void Optimiser::setMode(int index)
 {
-        mode = index;
-        saveSettings();
+    mode = index;
+    saveSettings();
 }
 
 
@@ -516,6 +552,22 @@ void Optimiser::setAnimOptBool(bool state)
 {
     animOptBool = !state;
     saveSettings();
+}
+
+
+void Optimiser::setBsaOptBool(bool state)
+{
+    bsaOptBool = !state;
+    renameBsaBool = !state;
+    extractBsaBool = !state;
+    createBsaBool = !state;
+    saveSettings();
+}
+
+
+bool Optimiser::getBsaOptBool()
+{
+    return bsaOptBool;
 }
 
 
@@ -566,6 +618,7 @@ void Optimiser::saveSettings()
     settings.setValue("SelectedPath", userPath);
     settings.setValue("CreateBSA", createBsaBool);
     settings.setValue("ExtractBSA", extractBsaBool);
+    settings.setValue("OptimiseBSA", bsaOptBool);
     settings.setValue("RenameBsa", renameBsaBool);
     settings.setValue("OptimiseMeshes", nifOptBool);
     settings.setValue("OptimiseTextures", textOptBool);
@@ -585,6 +638,7 @@ void Optimiser::loadSettings()
     createBsaBool = settings.value("CreateBSA").toBool();
     extractBsaBool = settings.value("ExtractBSA").toBool();
     renameBsaBool = settings.value("RenameBsa").toBool();
+    bsaOptBool = settings.value("OptimiseBSA").toBool();
     nifOptBool = settings.value("OptimiseMeshes").toBool();
     textOptBool = settings.value("OptimiseTextures").toBool();
     animOptBool = settings.value("OptimiseAnimations").toBool();

@@ -9,32 +9,26 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QMessageBox>
+#include <QMainWindow>
+
 #include "Optimiser.hpp"
 
-class MainWindow : public QWidget
+namespace Ui {
+    class MainWindow;
+}
+
+class MainWindow : public QMainWindow
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
     MainWindow();
 
-
 private:
     QFileDialog *fileDialog;
-    QPlainTextEdit *modpathTextEdit;
-    QPlainTextEdit *mw_log;
-    QPushButton *pathButton;
-    QPushButton *processButton;
-    QComboBox *dropDown;
 
-    QCheckBox *extractBsaCheckbox;
-    QCheckBox *renameBsaCheckbox;
-    QCheckBox *textOptCheckbox;
-    QCheckBox *nifOptCheckbox;
-    QCheckBox *createBsaCheckbox;
-    QCheckBox *animOptCheckbox;
-
-    QGridLayout *gridLayout;
+    Ui::MainWindow *ui;
 
     Optimiser *optimiser;
 };

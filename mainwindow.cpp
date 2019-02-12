@@ -1,145 +1,105 @@
 #include "mainwindow.hpp"
 #include "Optimiser.hpp"
+#include "ui_mainwindow.h"
 
-
-
-MainWindow::MainWindow()
+MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
-    //Constructing log before the rest to give a pointer to Optimiser
-
-    mw_log = new QPlainTextEdit(this);
-    mw_log->setMinimumHeight(100);
-    mw_log->setReadOnly(true);
-
-    optimiser = new Optimiser("C:/", mw_log);
+    ui->setupUi(this);
+    optimiser = new Optimiser("C:/", ui->mw_log, ui->progressBar);
     optimiser->loadSettings();
 
-    // Window construction
-
-    modpathTextEdit = new QPlainTextEdit(this);
-    modpathTextEdit->setFixedHeight(25);
-    modpathTextEdit->appendPlainText(optimiser->getUserPath());
-
-    gridLayout = new QGridLayout(this);
-    fileDialog = new QFileDialog(this);
-    pathButton = new QPushButton(tr("Open directory"), this);
-    processButton = new QPushButton(tr("Process directory"), this);
+    ui->bsaOptCheckbox->setChecked(optimiser->getBsaOptBool());
 
 
-    dropDown = new QComboBox(this);
-    dropDown->addItem("One mod");
-    dropDown->addItem("Several mods");
+    ui->extractBsaCheckbox->setChecked(optimiser->getExtractBsaBool());
+    ui->renameBsaCheckbox->setChecked(optimiser->getrenameBsaBool());
+    ui->createBsaCheckbox->setChecked(optimiser->getCreateBsaBool());
 
-    extractBsaCheckbox = new QCheckBox(tr("Extract old BSA"), this);
-    renameBsaCheckbox = new QCheckBox(tr("Rename old BSA"), this);
-    createBsaCheckbox = new QCheckBox("Create new BSA", this);
-
-    textOptCheckbox = new QCheckBox(tr("Optimise textures"), this);
-    nifOptCheckbox = new QCheckBox(tr("Optimise meshes"), this);
-    animOptCheckbox = new QCheckBox(tr("Optimise animations"), this);
-
-
-    extractBsaCheckbox->setChecked(optimiser->getExtractBsaBool());
-    renameBsaCheckbox->setChecked(optimiser->getrenameBsaBool());
-    createBsaCheckbox->setChecked(optimiser->getCreateBsaBool());
-
-    if(!renameBsaCheckbox->isChecked())
+    if(!ui->renameBsaCheckbox->isChecked())
     {
-        createBsaCheckbox->setEnabled(false);
-        createBsaCheckbox->setChecked(false);
+        ui->createBsaCheckbox->setEnabled(false);
+        ui->createBsaCheckbox->setChecked(false);
     }
 
-    textOptCheckbox->setChecked(optimiser->getTextOptBool());
-    nifOptCheckbox->setChecked(optimiser->getNifOptBool());
-    animOptCheckbox->setChecked(optimiser->getAnimOptBool());
-
-    this->setLayout(gridLayout);
-
-    gridLayout->addWidget(modpathTextEdit, 0, 0, 2, 0);
-
-    gridLayout->setRowMinimumHeight(1, 15);
-
-    gridLayout->addWidget(pathButton, 2, 0);
-    gridLayout->addWidget(processButton, 2,1);
-    gridLayout->addWidget(dropDown, 2,2);
-
-    gridLayout->setRowMinimumHeight(3, 15);
-
-    gridLayout->addWidget(extractBsaCheckbox,4, 0);
-    gridLayout->addWidget(renameBsaCheckbox,4,1);
-    gridLayout->addWidget(createBsaCheckbox,4, 2);
-
-    gridLayout->addWidget(textOptCheckbox,5,0);
-    gridLayout->addWidget(nifOptCheckbox,5,1);
-    gridLayout->addWidget(animOptCheckbox, 5, 2);
-
-    gridLayout->addWidget(mw_log, 6, 0, 2, 0);
+    ui->textOptCheckbox->setChecked(optimiser->getTextOptBool());
+    ui->meshOptCheckbox->setChecked(optimiser->getNifOptBool());
+    ui->animOptCheckbox->setChecked(optimiser->getAnimOptBool());
 
 
 
-
-    connect(modpathTextEdit, &QPlainTextEdit::textChanged, this, [=](){
-        optimiser->setUserPath(modpathTextEdit->toPlainText());
+    connect(ui->userPathTextEdit, &QPlainTextEdit::textChanged, this, [=](){
+        optimiser->setUserPath(ui->userPathTextEdit->toPlainText());
     });
 
 
-    connect(pathButton, &QPushButton::pressed, this, [=](){
+    connect(ui->userPathButton, &QPushButton::pressed, this, [=](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", optimiser->getUserPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        modpathTextEdit->setPlainText(dir);
+        ui->userPathTextEdit->setPlainText(dir);
         optimiser->setUserPath(dir);
     });
 
-    connect(renameBsaCheckbox, &QCheckBox::pressed, this, [=](){
-        if(renameBsaCheckbox->isChecked())
+    connect(ui->renameBsaCheckbox, &QCheckBox::pressed, this, [=](){
+        if(ui->renameBsaCheckbox->isChecked())
         {
-            createBsaCheckbox->setDisabled(true);
-            createBsaCheckbox->setChecked(false);
+            ui->createBsaCheckbox->setDisabled(true);
+            ui->createBsaCheckbox->setChecked(false);
         }else
         {
-            createBsaCheckbox->setDisabled(false);
+            ui->createBsaCheckbox->setDisabled(false);
         }
     });
 
-    connect(extractBsaCheckbox, &QCheckBox::pressed, this, [=]()
+    connect(ui->extractBsaCheckbox, &QCheckBox::pressed, this, [=]()
     {
-        optimiser->setExtractBsaBool(extractBsaCheckbox->isChecked());
+        optimiser->setExtractBsaBool(ui->extractBsaCheckbox->isChecked());
     });
 
 
-    connect(renameBsaCheckbox, &QCheckBox::pressed, this, [=]()
+    connect(ui->renameBsaCheckbox, &QCheckBox::pressed, this, [=]()
     {
-        optimiser->setRenameBsaBool(renameBsaCheckbox->isChecked());
+        optimiser->setRenameBsaBool(ui->renameBsaCheckbox->isChecked());
     });
 
-    connect(textOptCheckbox, &QCheckBox::pressed, this, [=]()
+    connect(ui->bsaOptCheckbox, &QCheckBox::pressed, this, [=]()
     {
-        optimiser->setTextOptBool(textOptCheckbox->isChecked());
+        optimiser->setBsaOptBool(ui->bsaOptCheckbox->isChecked());
+        ui->extractBsaCheckbox->setChecked(optimiser->getExtractBsaBool());
+        ui->renameBsaCheckbox->setChecked(optimiser->getrenameBsaBool());
+        ui->createBsaCheckbox->setChecked(optimiser->getCreateBsaBool());
     });
 
-    connect(nifOptCheckbox, &QCheckBox::pressed, this, [=]()
+    connect(ui->textOptCheckbox, &QCheckBox::pressed, this, [=]()
     {
-        optimiser->setNifOptBool(nifOptCheckbox->isChecked());
+        optimiser->setTextOptBool(ui->textOptCheckbox->isChecked());
     });
 
-    connect(animOptCheckbox, &QCheckBox::pressed, this, [=]()
+    connect(ui->meshOptCheckbox, &QCheckBox::pressed, this, [=]()
     {
-        optimiser->setAnimOptBool(animOptCheckbox->isChecked());
+        optimiser->setNifOptBool(ui->meshOptCheckbox->isChecked());
     });
 
-    connect(createBsaCheckbox, &QCheckBox::pressed, this, [=]()
+    connect(ui->animOptCheckbox, &QCheckBox::pressed, this, [=]()
     {
-        optimiser->setCreateBsaBool(createBsaCheckbox->isChecked());
+        optimiser->setAnimOptBool(ui->animOptCheckbox->isChecked());
     });
 
-    connect(dropDown, QOverload<int>::of(&QComboBox::activated), this, [=](int index)
+    connect(ui->createBsaCheckbox, &QCheckBox::pressed, this, [=]()
+    {
+        optimiser->setCreateBsaBool(ui->createBsaCheckbox->isChecked());
+    });
+
+    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [=](int index)
     {
         optimiser->setMode(index);
+        if(index == 1)
+            QMessageBox::warning(this, tr("Several mods option"), tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. The program may look frozen, but it will work.\nThis process has only been tested on the Mod Organizer mods folder."), QMessageBox::Ok);
     });
 
 
-    connect(processButton, &QPushButton::pressed, this, [=]()
+    connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
         optimiser->mainProcess();
     });
 }
+
 

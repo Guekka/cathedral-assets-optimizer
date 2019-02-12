@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="simple">
+       <attribute name="title">
+        <string>Simple</string>
+       </attribute>
+       <widget class="QPlainTextEdit" name="userPathTextEdit">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>741</width>
+          <height>41</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="horizontalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>119</y>
+          <width>731</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="userPathButton">
+           <property name="text">
+            <string>Open Directory</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="processButton">
+           <property name="text">
+            <string>Process Directory</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="modeChooserComboBox">
+           <item>
+            <property name="text">
+             <string>One mod</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Several mods (MO)</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="horizontalLayoutWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>200</y>
+          <width>731</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item alignment="Qt::AlignHCenter">
+          <widget class="QCheckBox" name="bsaOptCheckbox">
+           <property name="text">
+            <string>Optimise BSA</string>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignHCenter">
+          <widget class="QCheckBox" name="textOptCheckbox">
+           <property name="text">
+            <string>Optimise textures</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="horizontalLayoutWidget_3">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>250</y>
+          <width>731</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item alignment="Qt::AlignHCenter">
+          <widget class="QCheckBox" name="meshOptCheckbox">
+           <property name="text">
+            <string>Optimise meshes</string>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignHCenter">
+          <widget class="QCheckBox" name="animOptCheckbox">
+           <property name="text">
+            <string>Optimise animations</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QPlainTextEdit" name="mw_log">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>310</y>
+          <width>731</width>
+          <height>151</height>
+         </rect>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>490</y>
+          <width>731</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="advanced">
+       <attribute name="title">
+        <string>Advanced</string>
+       </attribute>
+       <widget class="QGroupBox" name="bsaGroupBox">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>60</y>
+          <width>621</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>BSA</string>
+        </property>
+        <widget class="QCheckBox" name="extractBsaCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>40</y>
+           <width>99</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Extract old BSA</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="renameBsaCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>240</x>
+           <y>40</y>
+           <width>103</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Rename old BSA</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="createBsaCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>450</x>
+           <y>40</y>
+           <width>103</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Create new BSA</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

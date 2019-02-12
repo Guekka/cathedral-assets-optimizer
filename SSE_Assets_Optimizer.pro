@@ -35,3 +35,6 @@ HEADERS += \
 
 TRANSLATIONS += \
 AssetsOpt_fr.ts
+
+FORMS += \
+    mainwindow.ui
