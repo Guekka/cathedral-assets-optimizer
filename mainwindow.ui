@@ -21,7 +21,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="0" column="1">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
@@ -166,9 +166,9 @@
        <widget class="QGroupBox" name="bsaGroupBox">
         <property name="geometry">
          <rect>
-          <x>70</x>
-          <y>60</y>
-          <width>621</width>
+          <x>30</x>
+          <y>30</y>
+          <width>721</width>
           <height>80</height>
          </rect>
         </property>
@@ -191,7 +191,7 @@
         <widget class="QCheckBox" name="renameBsaCheckbox">
          <property name="geometry">
           <rect>
-           <x>240</x>
+           <x>280</x>
            <y>40</y>
            <width>103</width>
            <height>19</height>
@@ -204,7 +204,7 @@
         <widget class="QCheckBox" name="createBsaCheckbox">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>540</x>
            <y>40</y>
            <width>103</width>
            <height>19</height>
@@ -212,6 +212,84 @@
          </property>
          <property name="text">
           <string>Create new BSA</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="texturesGroupBox">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>130</y>
+          <width>721</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Textures</string>
+        </property>
+        <widget class="QCheckBox" name="tgaConvCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>40</y>
+           <width>121</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TGA conversion</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="bc7ConvCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>280</x>
+           <y>40</y>
+           <width>131</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>BC7 nmaps conversion</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="nifscanTexturesCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>540</x>
+           <y>40</y>
+           <width>121</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Nifscan -fixdds</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="meshesGroupBox">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>230</y>
+          <width>721</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Meshes</string>
+        </property>
+        <widget class="QCheckBox" name="HardCrashingNifCheckbox">
+         <property name="geometry">
+          <rect>
+           <x>41</x>
+           <y>40</y>
+           <width>161</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Only hard crashing meshes</string>
          </property>
         </widget>
        </widget>

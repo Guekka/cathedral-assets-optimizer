@@ -12,68 +12,81 @@
 
 #include <utility>
 
+
+
+struct optOptions
+{
+    bool bsaOpt{};
+
+    bool extractBsa{};
+    bool createBsa{};
+    bool renameBsa{};
+
+
+    bool textOpt{};
+
+    bool tgaConv{};
+    bool bc7Conv{};
+    bool nifscanTextures{};
+
+
+    bool nifOpt{};
+
+    bool hardCrashingNif;
+
+    bool animOpt{};
+
+
+    int mode{};
+
+
+    QString userPath;
+};
+
+
 class Optimiser
 {
 
+
+
 public:
 
-    Optimiser(QString mod, QPlainTextEdit* textEdit, QProgressBar* bar);
+    Optimiser(QPlainTextEdit* textEdit, QProgressBar* bar);
+
+    optOptions options;
 
     int mainProcess();
 
     bool extractBsa();
-    bool textOpt();
-    bool nifOpt();
     bool createBsa();
     bool createTexturesBsa();
     bool renameBsa();
-    bool animOpt();
 
-    bool setUserPath(const QString& path);
+
+    bool tgaConv(QDirIterator* it);
+    bool bc7Conv(QDirIterator* it);
+    bool nifscanTextures();
+
+
+    bool nifOpt(QDirIterator* it);
+
+    bool animOpt(QDirIterator* it);
+
     bool checkResourcesFolder(const QString& exe);
 
-    QString getUserPath() const;
     QString findEspName();
     QString findSkyrimDir();
-
-    void setMode(int index);
-
-    void setBsaOptBool(bool state);
-    void setExtractBsaBool(bool state);
-    void setTextOptBool(bool state);
-    void setNifOptBool(bool state);
-    void setCreateBsaBool(bool state);
-    void setRenameBsaBool(bool state);
-    void setAnimOptBool(bool state);
-
-    bool getBsaOptBool();
-    bool getExtractBsaBool();
-    bool getTextOptBool();
-    bool getNifOptBool();
-    bool getCreateBsaBool();
-    bool getrenameBsaBool();
-    bool getAnimOptBool();
 
     void saveSettings();
     void loadSettings();
 
 private:
     QString modPath;
-    QString userPath;
 
     QPlainTextEdit* log;
     QProgressBar* progressBar;
 
-    bool bsaOptBool{};
-    bool extractBsaBool{};
-    bool textOptBool{};
-    bool nifOptBool{};
-    bool createBsaBool{};
-    bool renameBsaBool{};
-    bool animOptBool{};
 
-
-    int mode{};
 
 };
 
