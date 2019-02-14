@@ -60,9 +60,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        qDebug() << state;
         optimiser->options.extractBsa = state;
-        qDebug() << optimiser->options.extractBsa;
     });
 
 
@@ -116,7 +114,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->dryRunPushButton, &QPushButton::pressed, this, [=]()
     {
         QMessageBox warning(this);
-        warning.setText(tr("You have selected the dry run option. No files willl be affected. BSA will be extracted if the option is checked."));
+        warning.setText(tr("You have selected the dry run option. No files will be affected. BSA will be extracted if the option is checked."));
         warning.setStandardButtons(QMessageBox::Button::Abort | QMessageBox::Button::Ok);
         warning.exec();
 
