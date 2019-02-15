@@ -17,6 +17,15 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     {
         optimizer->setBsaOptBool(state);
         this->loadUIFromVars();
+        if(state)
+        {
+            ui->createBsaCheckbox->setDisabled(false);
+
+        }else
+        {
+            ui->createBsaCheckbox->setDisabled(true);
+            ui->createBsaCheckbox->setChecked(false);
+        }
     });
 
     connect(ui->textOptCheckbox, &QCheckBox::clicked, this, [=](bool state)
@@ -120,7 +129,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
         if (warning.result() == 0x00000400)
         {
-            ui->tabWidget->setCurrentIndex(0);
+            ui->tabWidget->setCurrentIndex(1);
             optimizer->dryRun();
         }
     });
@@ -148,6 +157,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
         optimizer->mainProcess();
+        ui->tabWidget->setCurrentIndex(1);
     });
 
 

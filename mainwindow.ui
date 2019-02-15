@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1094</width>
-    <height>893</height>
+    <width>792</width>
+    <height>795</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -34,7 +34,7 @@
       </property>
       <widget class="QWidget" name="simple">
        <attribute name="title">
-        <string>Simple</string>
+        <string>Options</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -43,7 +43,7 @@
            <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
+           <enum>QSizePolicy::Maximum</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -75,7 +75,7 @@
            <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
+           <enum>QSizePolicy::Maximum</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -86,23 +86,238 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="userPathButton">
-            <property name="text">
-             <string>Open Directory</string>
+         <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0" columnstretch="0,0,0">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>15</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>0</number>
+          </property>
+          <item row="4" column="2">
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="2" column="0" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="bsaOptCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts, renames, and backs up discovered BSAs, then repacks after optimization.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Optimize BSA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="textOptCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts TGA to DDS, unsupported texture types to supported ones, and compresses normal maps to BC7 format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Optimize textures</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="otherMeshesCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lightly optimizes typically non-crashing meshes. This may fix some visual issues, but also lowers quality.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Other meshes</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="nifscanTexturesCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Strongly Recommended. Attempts to convert and fix any textures that would crash the game, as some older formats are incompatible with SSE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Nifscan -fixdds</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" alignment="Qt::AlignHCenter">
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>228</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Advanced options. They override simple options.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="renameBsaCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Backs up any BSAs present in the mod folder, adding .bak to the filename.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Rename old BSA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" alignment="Qt::AlignHCenter">
            <widget class="QPushButton" name="processButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>250</width>
+              <height>40</height>
+             </size>
+            </property>
             <property name="text">
              <string>Process Directory</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="3" column="2" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="animOptCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to SSE format. If an animation is already compatible, no change will be made and an error is logged.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Optimize animations</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="extractBsaCheckbox">
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Extract Old BSA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="2" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="bc7ConvCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>BC7 nmaps conversion</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
            <widget class="QComboBox" name="modeChooserComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>250</width>
+              <height>38</height>
+             </size>
+            </property>
             <item>
              <property name="text">
               <string>One mod</string>
@@ -115,143 +330,10 @@
             </item>
            </widget>
           </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>30</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QCheckBox" name="bsaOptCheckbox">
-            <property name="cursor">
-             <cursorShape>WhatsThisCursor</cursorShape>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts, renames, and backs up discovered BSAs, then repacks after optimization.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Optimize BSA</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="textOptCheckbox">
-            <property name="cursor">
-             <cursorShape>WhatsThisCursor</cursorShape>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts TGA to DDS, unsupported texture types to supported ones, and compresses normal maps to BC7 format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Optimize textures</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>5</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QCheckBox" name="meshOptCheckbox">
-            <property name="cursor">
-             <cursorShape>WhatsThisCursor</cursorShape>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Runs NIF Optimizer, repairing crashing meshes and optimizing others.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Optimize meshes</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="animOptCheckbox">
-            <property name="cursor">
-             <cursorShape>WhatsThisCursor</cursorShape>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to SSE format. If an animation is already compatible, no change will be made and an error is logged.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Optimize animations</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPlainTextEdit" name="mw_log">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QProgressBar" name="progressBar">
-          <property name="value">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="advanced">
-       <attribute name="title">
-        <string>Advanced</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="4" column="0">
+          <item row="9" column="1" alignment="Qt::AlignHCenter">
            <widget class="QPushButton" name="dryRunPushButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -285,217 +367,84 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QGroupBox" name="meshesGroupBox">
+          <item row="8" column="0" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="HardCrashingNifCheckbox">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>90</height>
-             </size>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
             </property>
-            <property name="title">
-             <string>Meshes</string>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Strongly Recommended. Attempts to repair which are guaranteed to crash the game. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
-            <widget class="QCheckBox" name="HardCrashingNifCheckbox">
-             <property name="geometry">
-              <rect>
-               <x>41</x>
-               <y>40</y>
-               <width>161</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended. Will fix meshes which would crash the game. Some headparts may still need to be optimised manually.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Hard crashing meshes</string>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="otherMeshesCheckBox">
-             <property name="geometry">
-              <rect>
-               <x>281</x>
-               <y>40</y>
-               <width>191</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will optimise other meshes. May fix visual issues, and reduce meshes quality.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Other meshes</string>
-             </property>
-            </widget>
+            <property name="text">
+             <string>Hard crashing meshes</string>
+            </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QGroupBox" name="texturesGroupBox">
+          <item row="2" column="2" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="meshOptCheckbox">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>90</height>
-             </size>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
             </property>
-            <property name="title">
-             <string>Textures</string>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Runs NIF Optimizer, repairing crashing meshes and optimizing others.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
-            <widget class="QCheckBox" name="tgaConvCheckbox">
-             <property name="geometry">
-              <rect>
-               <x>40</x>
-               <y>40</y>
-               <width>121</width>
-               <height>19</height>
-              </rect>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended. SSE can't read TGA files. Will convert TGA to DDS.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>TGA conversion</string>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="bc7ConvCheckbox">
-             <property name="geometry">
-              <rect>
-               <x>280</x>
-               <y>40</y>
-               <width>131</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is an efficient compression format, which will reduce VRAM usage without reducing quality. Will convert uncompressed normal maps, a type of textures, to BC7.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>BC7 nmaps conversion</string>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="nifscanTexturesCheckbox">
-             <property name="geometry">
-              <rect>
-               <x>540</x>
-               <y>40</y>
-               <width>121</width>
-               <height>19</height>
-              </rect>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended. Will fix textures which would crash the game. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Nifscan -fixdds</string>
-             </property>
-            </widget>
+            <property name="text">
+             <string>Optimize meshes</string>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QGroupBox" name="bsaGroupBox">
+           <widget class="QPushButton" name="userPathButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>90</height>
+              <width>250</width>
+              <height>40</height>
              </size>
             </property>
-            <property name="title">
-             <string>BSA</string>
+            <property name="text">
+             <string>Open Directory</string>
             </property>
-            <widget class="QCheckBox" name="extractBsaCheckbox">
-             <property name="geometry">
-              <rect>
-               <x>40</x>
-               <y>40</y>
-               <width>99</width>
-               <height>19</height>
-              </rect>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts the BSA already present&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Extract old BSA</string>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="renameBsaCheckbox">
-             <property name="geometry">
-              <rect>
-               <x>280</x>
-               <y>40</y>
-               <width>103</width>
-               <height>19</height>
-              </rect>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Renames the old BSA to .bak&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Rename old BSA</string>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="createBsaCheckbox">
-             <property name="geometry">
-              <rect>
-               <x>540</x>
-               <y>40</y>
-               <width>103</width>
-               <height>19</height>
-              </rect>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Creates a new BSA. If the mod doesn't have a plugin, the BSA will be named &amp;quot;dummy_plugin.bsa&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Create new BSA</string>
-             </property>
-            </widget>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
+          <item row="6" column="2" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="createBsaCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Creates a new BSA after processing the previously extracted assets.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Create new BSA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" alignment="Qt::AlignHCenter">
+           <widget class="QLabel" name="label_3">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -505,11 +454,30 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>28</height>
+              <height>50</height>
              </size>
             </property>
             <property name="text">
-             <string>                                                                          Advanced options will take precedence on simple options</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Simple options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0" alignment="Qt::AlignHCenter">
+           <widget class="QCheckBox" name="tgaConvCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended. Converts any TGA files into DDS, as SSE cannot read these.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>TGA conversion</string>
             </property>
            </widget>
           </item>
@@ -517,6 +485,34 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="advanced">
+       <attribute name="title">
+        <string>Log</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Log</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="mw_log">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>0</number>
+      </property>
      </widget>
     </item>
    </layout>

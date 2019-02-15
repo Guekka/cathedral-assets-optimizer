@@ -255,7 +255,7 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
 
     otherMeshes.clear();
     hardCrashingMeshes.clear();
-    headparts.clear();
+    otherHeadparts.clear();
 
     QString readLine;
     QString currentFile;
@@ -303,7 +303,7 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
     {
         readLine=QString::fromLocal8Bit(listHeadparts.readLine());
         if(!readLine.simplified().isEmpty())
-            headparts << QDir::cleanPath(modPath + "/" + readLine.simplified());
+            otherHeadparts << QDir::cleanPath(modPath + "/" + readLine.simplified());
     }
 
 
@@ -320,15 +320,22 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
         otherMeshes.removeAll(it.next());
     }
 
-    QStringListIterator it2(headparts);
+    QStringListIterator it2(otherHeadparts);
+    QString temp;
 
     while(it2.hasNext())
     {
-        hardCrashingMeshes.removeAll(it.next());
+        QString temp = it.next();
+        if(hardCrashingMeshes.contains(temp, Qt::CaseInsensitive))
+        {
+            crashingHeadparts << temp;
+            otherHeadparts.removeAll(temp);
+        }
     }
 
-    headparts.removeDuplicates();
+    otherHeadparts.removeDuplicates();
     otherMeshes.removeDuplicates();
+    crashingHeadparts.removeDuplicates();
     hardCrashingMeshes.removeDuplicates();
 
     return true;
@@ -345,14 +352,14 @@ bool Optimiser::nifOpt(QDirIterator *it) // Optimise the meshes according to use
     QStringList nifOptArgs;
 
 
-    if(options.hardCrashingMeshes && it->filePath().contains("facegendata", Qt::CaseInsensitive))
+    if(options.hardCrashingMeshes && crashingHeadparts.contains(it->filePath(), Qt::CaseInsensitive))
     {
         hardCrashingMeshes.removeAll(it->filePath());
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "1" << "-bsTriShape" << "1";
     }
 
-    else if (options.hardCrashingMeshes && headparts.contains(it->filePath(), Qt::CaseInsensitive))
+    else if (options.otherMeshes && otherHeadparts.contains(it->filePath(), Qt::CaseInsensitive))
     {
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "1" << "-bsTriShape" << "1";
@@ -429,7 +436,7 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
     QFileInfo data(modPath + "data");
     qDebug() << modPath + "data" << data.size();
 
-    if(data.size() > 2000000000) //Cancel if there are more than 2gb of assets
+    if(data.size() > 2000000000) //Cancel if there are more than 2gb of assets. Not working currently.
     {
         QDirIterator restore(modPath + "data");
         while (restore.hasNext())

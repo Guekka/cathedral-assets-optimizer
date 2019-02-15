@@ -95,7 +95,8 @@ private:
 
     QStringList hardCrashingMeshes;
     QStringList otherMeshes;
-    QStringList headparts;
+    QStringList otherHeadparts;
+    QStringList crashingHeadparts;
 
     bool bsaOptBool{};
     bool textOptBool{};
