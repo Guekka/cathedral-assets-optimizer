@@ -93,8 +93,9 @@ private:
     QPlainTextEdit* log;
     QProgressBar* progressBar;
 
-    QStringList meshes;
     QStringList hardCrashingMeshes;
+    QStringList otherMeshes;
+    QStringList headparts;
 
     bool bsaOptBool{};
     bool textOptBool{};

@@ -24,14 +24,14 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
-    void loadAllCheckboxesFromVars();
+    void loadUIFromVars();
 
 private:
     QFileDialog *fileDialog;
 
     Ui::MainWindow *ui;
 
-    Optimiser *optimiser;
+    Optimiser *optimizer;
 };
 
 #endif // MAINWINDOW_H

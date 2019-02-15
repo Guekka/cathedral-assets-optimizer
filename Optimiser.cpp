@@ -102,7 +102,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     }
 
     progressBar->setValue(progressBar->maximum());
-    log->appendHtml(QPlainTextEdit::tr("<font color=blue>Completed. Please read the above   text to check if any errors occured(in red) </font>\n"));
+    log->appendHtml(QPlainTextEdit::tr("<font color=blue>Completed. Please read the above text to check if any errors occurred (displayed in red).</font>\n"));
     log->repaint();
 
     return 0;
@@ -253,15 +253,19 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
     log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Running NifScan..."));
     log->repaint();
 
+    otherMeshes.clear();
+    hardCrashingMeshes.clear();
+    headparts.clear();
+
     QString readLine;
     QString currentFile;
 
     QFile nifScan_file("resources/NifScan.exe");
 
     QProcess nifScan;
+    QProcess listHeadparts;
 
-    meshes.clear();
-    hardCrashingMeshes.clear();
+    QStringList listHeadpartsArgs;
 
     QFile::copy("resources/NifScan.exe", modPath + "NifScan.exe");
     nifScan.setReadChannel(QProcess::StandardOutput);
@@ -278,7 +282,7 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
         if(readLine.contains("meshes\\", Qt::CaseInsensitive))
         {
             currentFile = readLine;
-            meshes << QDir::cleanPath(modPath + currentFile.simplified());
+            otherMeshes << QDir::cleanPath(modPath + currentFile.simplified());
         }
 
         else if(readLine.contains("unsupported", Qt::CaseInsensitive) || readLine.contains("not supported", Qt::CaseInsensitive))
@@ -287,10 +291,45 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
         }
     }
 
-    meshes.removeDuplicates();
-    hardCrashingMeshes.removeDuplicates();
+
 
     QFile::remove(modPath + "NifScan.exe");
+
+    listHeadpartsArgs << modPath;
+    listHeadparts.start("resources/ListHeadParts.exe", listHeadpartsArgs);
+    listHeadparts.waitForFinished(-1);
+
+    while(listHeadparts.canReadLine())
+    {
+        readLine=QString::fromLocal8Bit(listHeadparts.readLine());
+        if(!readLine.simplified().isEmpty())
+            headparts << QDir::cleanPath(modPath + "/" + readLine.simplified());
+    }
+
+
+    //Cleaning the lists
+
+
+
+    //Removing hard crashing meshes from other meshes list
+
+    QStringListIterator it(hardCrashingMeshes);
+
+    while (it.hasNext())
+    {
+        otherMeshes.removeAll(it.next());
+    }
+
+    QStringListIterator it2(headparts);
+
+    while(it2.hasNext())
+    {
+        hardCrashingMeshes.removeAll(it.next());
+    }
+
+    headparts.removeDuplicates();
+    otherMeshes.removeDuplicates();
+    hardCrashingMeshes.removeDuplicates();
 
     return true;
 }
@@ -306,19 +345,26 @@ bool Optimiser::nifOpt(QDirIterator *it) // Optimise the meshes according to use
     QStringList nifOptArgs;
 
 
-    if(options.hardCrashingMeshes && !hardCrashingMeshes.contains(it->filePath(), Qt::CaseInsensitive) && it->filePath().contains("facegendata", Qt::CaseInsensitive))
+    if(options.hardCrashingMeshes && it->filePath().contains("facegendata", Qt::CaseInsensitive))
+    {
+        hardCrashingMeshes.removeAll(it->filePath());
+        nifOptArgs.clear();
+        nifOptArgs << it->filePath() << "-head" << "1" << "-bsTriShape" << "1";
+    }
+
+    else if (options.hardCrashingMeshes && headparts.contains(it->filePath(), Qt::CaseInsensitive))
     {
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "1" << "-bsTriShape" << "1";
     }
 
-    else if(options.otherMeshes && !hardCrashingMeshes.contains(it->filePath(), Qt::CaseInsensitive) && meshes.contains(it->filePath()))
+    else if(options.otherMeshes && otherMeshes.contains(it->filePath()))
     {
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "0" << "-bsTriShape" << "0";
     }
 
-    else if(hardCrashingMeshes.contains(it->filePath(), Qt::CaseInsensitive))
+    else if(options.hardCrashingMeshes && hardCrashingMeshes.contains(it->filePath(), Qt::CaseInsensitive))
     {
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "0" << "-bsTriShape" << "1";
@@ -347,7 +393,7 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
     QDir modPathDir(modPath);
 
     QStringList assetsFolder;
-    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews" << "interface" << "source" << "lodsettings";
+    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews" << "interface" << "source" << "lodsettings" << "strings";
 
     modPathDir.mkdir("data");
 
@@ -355,7 +401,7 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
     {
         it.next();
 
-        if(it.fileName().toLower() == "sound")
+        if(it.fileName().toLower() == "sound" || it.fileName().toLower() == "music")
         {
             hasSound=true;
             modPathDir.rename(it.filePath(), "data/" + it.fileName());
@@ -381,9 +427,9 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
     }
 
     QFileInfo data(modPath + "data");
-qDebug() << modPath + "data" << data.size();
+    qDebug() << modPath + "data" << data.size();
 
-    if(data.size() > 2000000000)
+    if(data.size() > 2000000000) //Cancel if there are more than 2gb of assets
     {
         QDirIterator restore(modPath + "data");
         while (restore.hasNext())
@@ -441,8 +487,17 @@ bool Optimiser::createTexturesBsa() // Create a BSA containing only textures
             bsarchArgs.clear();
             bsarchArgs << "pack" << tFolder << tBsaName << "-sse" << "-z" << "-share";
 
-            if(QFileInfo(modPath + "temp_t").size() > 2000000000)
+            QFileInfo temp_t(modPath + "/temp_t");
+
+            if(temp_t.size() > 2000000000) //Cancel if there are more than 2gb of assets
+            {
+                QDirIterator restore(modPath + "/temp_t");
+                while (restore.hasNext())
+                {
+                    modPathDir.rename(restore.next(), modPath + restore.fileName());
+                }
                 return false;
+            }
 
             bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished(-1);
@@ -750,17 +805,17 @@ void Optimiser::dryRun()
 
                 if(options.hardCrashingMeshes && !hardCrashingMeshes.contains(it.filePath(), Qt::CaseInsensitive) && it.filePath().contains("facegendata", Qt::CaseInsensitive))
                 {
-                    log->appendPlainText(it.filePath() + QPlainTextEdit::tr(" would be optimised with headparts mesh option.\n"));
+                    log->appendPlainText(it.filePath() + QPlainTextEdit::tr(" would be optimized by Headparts meshes option.\n"));
                 }
 
-                else if(options.otherMeshes && !hardCrashingMeshes.contains(it.filePath(), Qt::CaseInsensitive) && meshes.contains(it.filePath()))
+                else if(options.otherMeshes && !hardCrashingMeshes.contains(it.filePath(), Qt::CaseInsensitive) && otherMeshes.contains(it.filePath()))
                 {
-                    log->appendPlainText(it.filePath() + QPlainTextEdit::tr(" would be lightly optimised.\n"));
+                    log->appendPlainText(it.filePath() + QPlainTextEdit::tr(" would be optimized lightly by the Other Meshes option.\n"));
                 }
 
                 else if(hardCrashingMeshes.contains(it.filePath(), Qt::CaseInsensitive))
                 {
-                    log->appendPlainText(it.filePath() + QPlainTextEdit::tr(" would be fully optimised(fixes crashing).\n"));
+                    log->appendPlainText(it.filePath() + QPlainTextEdit::tr(" would be optimized in full by the Hard Crashing Meshes option.\n"));
                 }
 
             }
@@ -776,7 +831,7 @@ void Optimiser::dryRun()
 
                 if(texDiag.readAllStandardOutput().contains("compressed = no"))
                 {
-                    log->appendPlainText(it.filePath() + QPlainTextEdit::tr(" would be compressed to BC7\n"));
+                    log->appendPlainText(it.filePath() + QPlainTextEdit::tr(" would be optimized using BC7 compression.\n"));
                 }
             }
 
