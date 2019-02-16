@@ -156,8 +156,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
-        optimizer->mainProcess();
         ui->tabWidget->setCurrentIndex(1);
+        optimizer->mainProcess();
     });
 
 

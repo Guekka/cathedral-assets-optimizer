@@ -15,7 +15,20 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     QStringList modDirs;
     QStringList requirements;
 
-    requirements << "bsarch.exe" << "NifScan.exe" << "nifopt.exe" << "texconv.exe" << "texdiag.exe";
+    QFile havokFile(findSkyrimDir() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
+
+    if(havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
+    {
+        havokFile.copy("resources/HavokBehaviorPostProcess.exe");
+    }
+    else if(!havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
+    {
+        log->appendHtml(QPlainTextEdit::tr("<font color=Red>Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder.</font>\n"));
+        return 1;
+    }
+
+
+    requirements << "bsarch.exe" << "NifScan.exe" << "nifopt.exe" << "texconv.exe" << "texdiag.exe" << "HavokBehaviorPostProcess.exe";
 
     for (int i = 0; i < requirements.size(); ++i)
     {
@@ -250,6 +263,8 @@ bool Optimiser::tgaConv(QDirIterator* it) //Compress the nmaps to BC7 if they ar
 
 bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
 {
+
+
     log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Running NifScan..."));
     log->repaint();
 
@@ -292,8 +307,8 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
     }
 
 
-
     QFile::remove(modPath + "NifScan.exe");
+
 
     listHeadpartsArgs << modPath;
     listHeadparts.start("resources/ListHeadParts.exe", listHeadpartsArgs);
@@ -302,13 +317,21 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
     while(listHeadparts.canReadLine())
     {
         readLine=QString::fromLocal8Bit(listHeadparts.readLine());
-        if(!readLine.simplified().isEmpty())
-            otherHeadparts << QDir::cleanPath(modPath + "/" + readLine.simplified());
+        otherHeadparts << QDir::cleanPath(modPath + "/" + readLine.simplified());
     }
 
 
     //Cleaning the lists
 
+    otherHeadparts.removeDuplicates();
+    otherMeshes.removeDuplicates();
+    crashingHeadparts.removeDuplicates();
+    hardCrashingMeshes.removeDuplicates();
+
+    otherHeadparts.removeAll(QString(""));
+    otherMeshes.removeAll(QString(""));
+    crashingHeadparts.removeAll(QString(""));
+    hardCrashingMeshes.removeAll(QString(""));
 
 
     //Removing hard crashing meshes from other meshes list
@@ -325,18 +348,14 @@ bool Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
 
     while(it2.hasNext())
     {
-        QString temp = it.next();
+        temp = it2.next();
         if(hardCrashingMeshes.contains(temp, Qt::CaseInsensitive))
         {
             crashingHeadparts << temp;
             otherHeadparts.removeAll(temp);
+            hardCrashingMeshes.removeAll(temp);
         }
     }
-
-    otherHeadparts.removeDuplicates();
-    otherMeshes.removeDuplicates();
-    crashingHeadparts.removeDuplicates();
-    hardCrashingMeshes.removeDuplicates();
 
     return true;
 }
@@ -532,17 +551,6 @@ bool Optimiser::animOpt(QDirIterator *it) //Uses Bethesda Havok Tool to port ani
     log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Processing animations..."));
     log->repaint();
 
-    QFile havokFile(findSkyrimDir() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
-
-    if(!havokFile.exists() && QFile("resources/HavokBehaviorPostProcess.exe").exists())
-    {
-        havokFile.setFileName("resources/HavokBehaviorPostProcess.exe");
-    }
-    else
-    {
-        log->appendHtml(QPlainTextEdit::tr("<font color=Red>Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder.</font>\n"));
-        return false;
-    }
 
     QProcess havokProcess;
     QStringList havokArgs;
@@ -552,10 +560,9 @@ bool Optimiser::animOpt(QDirIterator *it) //Uses Bethesda Havok Tool to port ani
 
     havokArgs.clear();
     havokArgs << "--platformamd64" << it->filePath() << it->filePath();
-    havokProcess.start(havokFile.fileName(), havokArgs);
-    havokProcess.waitForFinished(-1);
+    havokProcess.start("resources/HavokBehaviorPostProcess.exe", havokArgs);
 
-    qDebug() << havokProcess.readAllStandardOutput();
+    havokProcess.waitForFinished(-1);
 
     if(havokProcess.readAllStandardOutput().isEmpty())
         log->appendHtml(QPlainTextEdit::tr("<font color=Blue>Animation successfully ported.</font>\n\n"));
