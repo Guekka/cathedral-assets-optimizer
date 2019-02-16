@@ -67,8 +67,6 @@ public:
 
     bool animOpt(QDirIterator* it);
 
-    bool checkResourcesFolder(const QString& exe);
-
     QString findEspName();
     QString findSkyrimDir();
 

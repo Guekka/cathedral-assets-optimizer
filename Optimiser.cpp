@@ -534,31 +534,34 @@ bool Optimiser::animOpt(QDirIterator *it) //Uses Bethesda Havok Tool to port ani
 
     QFile havokFile(findSkyrimDir() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
 
-    if(havokFile.exists())
+    if(!havokFile.exists() && QFile("resources/HavokBehaviorPostProcess.exe").exists())
     {
-        log->appendPlainText(QPlainTextEdit::tr("Havok tool found.\n"));
-
-        QProcess havokProcess;
-        QStringList havokArgs;
-
-        log->appendPlainText(QPlainTextEdit::tr("Current file: ") + it->filePath() + QPlainTextEdit::tr("\nProcessing...\n"));
-        log->repaint();
-
-        havokArgs.clear();
-        havokArgs << "--platformamd64" << it->filePath() << it->filePath();
-        havokProcess.start(havokFile.fileName(), havokArgs);
-        havokProcess.waitForFinished(-1);
-
-        if(havokProcess.readAllStandardOutput().isEmpty())
-            log->appendHtml(QPlainTextEdit::tr("<font color=Blue>Animation successfully ported.</font>\n\n"));
-        else
-            log->appendHtml(QPlainTextEdit::tr("<font color=Grey> An error occured during the animation porting. Maybe it is already compatible with SSE ?</font>\n"));
+        havokFile.setFileName("resources/HavokBehaviorPostProcess.exe");
     }
     else
     {
-        log->appendHtml(QPlainTextEdit::tr("<font color=Red>Havok Tool not found. Are you sure the Creation Kit is installed ?</font>\n"));
+        log->appendHtml(QPlainTextEdit::tr("<font color=Red>Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder.</font>\n"));
         return false;
     }
+
+    QProcess havokProcess;
+    QStringList havokArgs;
+
+    log->appendPlainText(QPlainTextEdit::tr("Current file: ") + it->filePath() + QPlainTextEdit::tr("\nProcessing...\n"));
+    log->repaint();
+
+    havokArgs.clear();
+    havokArgs << "--platformamd64" << it->filePath() << it->filePath();
+    havokProcess.start(havokFile.fileName(), havokArgs);
+    havokProcess.waitForFinished(-1);
+
+    qDebug() << havokProcess.readAllStandardOutput();
+
+    if(havokProcess.readAllStandardOutput().isEmpty())
+        log->appendHtml(QPlainTextEdit::tr("<font color=Blue>Animation successfully ported.</font>\n\n"));
+    else
+        log->appendHtml(QPlainTextEdit::tr("<font color=Grey> An error occured during the animation porting. Maybe it is already compatible with SSE ?</font>\n"));
+
     return true;
 }
 
