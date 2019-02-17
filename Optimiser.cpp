@@ -122,26 +122,45 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 }
 
 
+
 bool Optimiser::extractBsa() //Extracts the BSA
 {
     log->appendHtml(QPlainTextEdit::tr("\n\n\n<font color=Blue>Extracting BSA..."));
     log->repaint();
-
 
     QProcess bsarch;
     QStringList bsarchArgs;
 
     QDirIterator it(modPath);
 
+    QStringList assetsFolder;
+
+    QDir modPathDir(modPath);
+
+    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews" << "interface" << "source" << "lodsettings" << "strings" << "grass" << "textures" << "sound" << "music";
+    modPathDir.mkdir("temp_data");
+
     while (it.hasNext())
     {
-        if(it.next().contains(".bsa") && !it.fileName().contains(".bak"))
+        it.next();
+
+        if(assetsFolder.contains(it.fileName(), Qt::CaseInsensitive))
+        {
+            modPathDir.rename(it.filePath(), "temp_data/" + it.fileName());
+        }
+    }
+
+    QDirIterator it2(modPath);
+
+    while (it2.hasNext())
+    {
+        if(it2.next().contains(".bsa") && !it2.fileName().contains(".bak"))
         {
             log->appendPlainText(QPlainTextEdit::tr("BSA found ! Extracting..."));
             log->repaint();
 
             bsarchArgs.clear();
-            bsarchArgs << "unpack" << it.filePath() << it.path() ;
+            bsarchArgs << "unpack" << it2.filePath() << it2.path() ;
             bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished(-1);
 
@@ -154,9 +173,29 @@ bool Optimiser::extractBsa() //Extracts the BSA
             else{
                 log->appendHtml(QPlainTextEdit::tr("<font color=Red>An error occured during the extraction. Please extract it manually. The BSA was not deleted.</font>\n"));
                 log->repaint();
+                return false;
             }
         }
     }
+
+    QDirIterator it3(modPath + "temp_data", QDirIterator::Subdirectories);
+    QFile looseAsset;
+    QFile extractedAsset;
+
+    while(it3.hasNext())
+    {
+        looseAsset.setFileName(it3.next());
+        extractedAsset.setFileName(looseAsset.fileName().replace("/temp_data", ""));
+
+        if(extractedAsset.exists())
+            extractedAsset.remove();
+        looseAsset.rename(extractedAsset.fileName());
+    }
+
+
+    modPathDir.setPath(modPath + "/temp_data");
+    modPathDir.removeRecursively();
+
     return true;
 }
 
@@ -419,7 +458,7 @@ bool Optimiser::createBsa() //Once all the optimizations are done, create a new 
     QDir modPathDir(modPath);
 
     QStringList assetsFolder;
-    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews" << "interface" << "source" << "lodsettings" << "strings";
+    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews" << "interface" << "source" << "lodsettings" << "strings" << "grass";
 
     modPathDir.mkdir("data");
 
