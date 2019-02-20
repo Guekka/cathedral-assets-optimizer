@@ -184,3 +184,10 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
     ui->HardCrashingNifCheckbox->setChecked(optimizer->options.hardCrashingMeshes);
     ui->otherMeshesCheckBox->setChecked(optimizer->options.otherMeshes);
 }
+
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    delete optimizer;
+    event->accept();
+}

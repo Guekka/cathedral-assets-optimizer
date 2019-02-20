@@ -10,7 +10,6 @@
 #include <QSettings>
 #include <QProgressBar>
 
-
 #include <utility>
 
 
@@ -39,9 +38,8 @@ struct optOptions
 };
 
 
-class Optimiser
+class Optimiser : public QObject
 {
-
 
 
 public:
@@ -51,28 +49,42 @@ public:
     optOptions options;
 
     int mainProcess();
+    void dryRun();
 
-    bool extractBsa();
-    bool createBsa();
-    bool createTexturesBsa();
-    bool renameBsa();
+    //Assets optimization
 
-
-    bool tgaConv(QDirIterator* it);
-    bool bc7Conv(QDirIterator* it);
-    bool nifscanTextures();
+    void extractBsa();
+    void createBsa();
+    void createTexturesBsa();
+    void renameBsa();
 
 
-    bool nifScan();
-    bool nifOpt(QDirIterator* it);
+    void tgaConv(QDirIterator* it);
+    void bc7Conv(QDirIterator* it);
+    void nifscanTextures();
 
-    bool animOpt(QDirIterator* it);
+
+    void nifScan();
+    void nifOpt(QDirIterator* it);
+
+
+    void animOpt(QDirIterator* it);
+
+    //Some operations
 
     QString findEspName();
     QString findSkyrimDir();
 
     void saveSettings();
     void loadSettings();
+
+    //Filesystem operations
+
+    void moveToTemp();
+    void deleteEmptyDirs(QString path);
+    qint64 dirSize(QString Path);
+
+    //Getters and setters
 
     bool getBsaOptBool();
     bool getTextOptBool();
@@ -83,8 +95,6 @@ public:
     void setTextOptBool(bool state);
     void setNifOptBool(bool state);
     void setAnimOptBool(bool state);
-
-    void dryRun();
 
 private:
     QString modPath;
