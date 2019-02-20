@@ -1,17 +1,38 @@
-# SSE Assets Optimiser
+# SSE Assets Optimizer
 
-This tool aims to automate assets optimisation for Skyrim Special Edition. 
-Made with Qt and C++. Command line arguments currently not supported. 
+## Description
 
-Meshes : 
-It uses Nifscan to detect hard crashing meshes, and only optimize them. 
-This method can have downsides. I plan to create a tweaked Nif Optimizer.
+SSE Assets Optimizer is a tool aiming to automate assets optimization for Skyrim Special Edition.
 
-Textures :
-It uses Texconv to automatically convert uncompressed normal maps to BC7 and to convert TGA to DDS. It also use Nifscan to convert incompatible DDS. 
+**Meshes :**
 
-Animations : 
-It uses Havok Tool to port Oldrim animations. 
+ * It optimizes hard crashing meshes, headparts and lightly optimize other meshes. 
+ * New method to handle headparts
 
-BSA : 
-It uses BSArch to extract the old BSA, and to create a new one. 
+**Textures :**
+
+ * It converts uncompressed normal maps to BC7 
+ * It converts TGA to DDS. 
+ * It uses Nifscan to convert incompatible DDS
+
+
+**Animations :**
+ * It uses Bethesda's Havok Tool to port Oldrim animations.
+
+
+**BSA :**
+ * It extracts the old BSA before processing (existing loose files are preserved)
+ * Rename it 
+ * Create a new one
+
+
+All of this can be done on **multiple mods at once**, meaning that you can pack your whole load order in BSA after optimizing it, with only one click. 
+Each option is **independently configurable.**
+
+
+
+
+## Compilation
+
+Compilation was only tested with Qt Creator and GCC. 
+Simply clone this repo and import the pro file in Qt Creator.
