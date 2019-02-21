@@ -290,10 +290,10 @@
              <cursorShape>WhatsThisCursor</cursorShape>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss. Will convert uncompressed textures to BC7.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>BC7 nmaps conversion</string>
+             <string>BC7 conversion</string>
             </property>
            </widget>
           </item>

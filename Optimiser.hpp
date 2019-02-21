@@ -81,8 +81,9 @@ public:
     //Filesystem operations
 
     void moveToTemp();
-    void deleteEmptyDirs(QString path);
-    qint64 dirSize(QString Path);
+    void restoreFromTemp(bool data, bool textures);
+    void deleteEmptyDirs(const QString& path);
+    qint64 dirSize(const QString& Path);
 
     //Getters and setters
 

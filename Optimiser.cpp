@@ -49,7 +49,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
     if(options.mode == 0)
     {
-        modDirs << "";
+        modDirs << ""; //if modDirs is empty, the mod won't be processed
     }
 
 
@@ -111,6 +111,8 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
             progressBar->setValue(progressBar->value() + 1);
         }
 
+        restoreFromTemp(true, true);
+
         QCoreApplication::processEvents();
     }
 
@@ -162,7 +164,7 @@ void Optimiser::dryRun()
 
     for(int i=0; i < modDirs.size(); ++i)
     {
-        modPath = options.userPath + "/" + modDirs.at(i);
+        modPath = QDir::cleanPath(options.userPath + "/" + modDirs.at(i));
         QDirIterator it(modPath, QDirIterator::Subdirectories);
 
         nifScan();
@@ -202,7 +204,7 @@ void Optimiser::dryRun()
                 }
 
             }
-            if((options.bc7Conv) && it.fileName().contains("_n.dds", Qt::CaseInsensitive))
+            if((options.bc7Conv) && it.fileName().contains(".dds", Qt::CaseInsensitive))
             {
                 QProcess texDiag;
                 QStringList texdiagArg;
@@ -227,13 +229,12 @@ void Optimiser::dryRun()
         progressBar->setValue(progressBar->value() + 1);
 
         QCoreApplication::processEvents();
+        restoreFromTemp(true, true);
     }
 
     progressBar->setValue(progressBar->maximum());
     log->appendHtml(tr("<font color=blue>Completed.</font>\n"));
     log->repaint();
-
-    return;
 }
 
 
@@ -251,8 +252,6 @@ void Optimiser::extractBsa() //Extracts the BSA
     QDirIterator it(modPath);
 
     moveToTemp();
-
-
 
     while (it.hasNext())
     {
@@ -310,6 +309,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
     if(dirSize(modPath + "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi") > 2147483648)
     {
         log->appendHtml("<font color=Red>The BSA can't be created : more than 2gb of assets were detected</font>");
+        restoreFromTemp(true, false);
         return;
     }
 
@@ -321,6 +321,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
     QStringList bsarchArgs;
 
     QString espName = findEspName();
+    QString tempPath = "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi/";
     QDir modPathDir(modPath);
 
     QString bsaName = modPath + "/" + espName.chopped(4) + ".bsa";
@@ -352,7 +353,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
     if(bsarch.readAllStandardOutput().contains("Done."))
     {
         log->appendHtml(tr("<font color=Blue> BSA successfully compressed.</font>\n"));
-        modPathDir.setPath(modPath + "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi/");
+        modPathDir.setPath(modPath + tempPath);
         modPathDir.removeRecursively();
     }
 }
@@ -368,9 +369,10 @@ void Optimiser::createTexturesBsa() // Create a BSA containing only textures
     QString espName = findEspName();
     QDir modPathDir;
 
-    if(dirSize(modPath + "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi") > 2147483648)
+    if(dirSize(modPath + "/TempFolderForTexturesThisTimeWithRandomCharsAlsodqzhduqz") > 2147483648)
     {
         log->appendHtml("<font color=Red>The BSA can't be created : more than 2gb of assets were detected</font>");
+        restoreFromTemp(false, true);
         return;
     }
 
@@ -706,25 +708,61 @@ void Optimiser::moveToTemp()
     while (it2.hasNext())
     {
         it2.next();
-        if(modPathDir.exists(modPath + tempPath + it2.fileName()) && dirSize(modPath + tempPath + it2.fileName()) == dirSize(modPath + "/" + it2.fileName()))
+
+        if(assetsFolder.contains(it2.fileName(), Qt::CaseInsensitive))
         {
-            log->appendHtml("<font color=Blue>Removing duplicated assets: </font>" + it2.fileName());
-            modPathDir.setPath(modPath + "/" + it2.fileName());
-            modPathDir.removeRecursively();
+
+            if(modPathDir.exists(modPath + tempPath + it2.fileName()) && dirSize(modPath + tempPath + it2.fileName()) == dirSize(modPath + "/" + it2.fileName()))
+            {
+                log->appendHtml("<font color=Blue>Removing duplicated assets: </font>" + it2.fileName());
+                modPathDir.setPath(modPath + "/" + it2.fileName());
+                modPathDir.removeRecursively();
+            }
+            else if(modPathDir.exists(modPath + tempTexturesPath + it2.fileName()) && dirSize(modPath + tempTexturesPath + it2.fileName()) == dirSize(modPath + "/" + it2.fileName()))
+            {
+                log->appendHtml("<font color=Blue>Removing duplicated assets: </font>" + it2.fileName());
+                modPathDir.setPath(modPath + "/" + it2.fileName());
+                modPathDir.removeRecursively();
+            }
+
+            QCoreApplication::processEvents();
         }
-        else if(modPathDir.exists(modPath + tempTexturesPath + it2.fileName()) && dirSize(modPath + tempTexturesPath + it2.fileName()) == dirSize(modPath + "/" + it2.fileName()))
-        {
-            log->appendHtml("<font color=Blue>Removing duplicated assets: </font>" + it2.fileName());
-            modPathDir.setPath(modPath + "/" + it2.fileName());
-            modPathDir.removeRecursively();
-        }
-        QCoreApplication::processEvents();
     }
 }
 
 
+void Optimiser::restoreFromTemp(bool data, bool textures)
+{
+    QString tempPath = "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi/";
+    QString tempTexturesPath = "/TempFolderForTexturesThisTimeWithRandomCharsAlsodqzhduqz/";
 
-void Optimiser::deleteEmptyDirs(QString path)
+    QDir modPathDir(modPath);
+
+    if(data)
+    {
+        QDirIterator dataIt(modPath + tempPath);
+        while(dataIt.hasNext())
+        {
+            dataIt.next();
+            modPathDir.rename(dataIt.filePath(), dataIt.filePath().replace(tempPath, "/"));
+        }
+    }
+
+    if(textures)
+    {
+        QDirIterator texturesIt(modPath + tempTexturesPath);
+        while(texturesIt.hasNext())
+        {
+            texturesIt.next();
+            modPathDir.rename(texturesIt.filePath(), texturesIt.filePath().replace(tempTexturesPath, "/"));
+        }
+    }
+
+    deleteEmptyDirs(modPath);
+}
+
+
+void Optimiser::deleteEmptyDirs(const QString& path)
 {
     QDirIterator it(path, QDirIterator::Subdirectories);
     QDir modPathDir(modPath);
@@ -740,19 +778,19 @@ void Optimiser::deleteEmptyDirs(QString path)
 }
 
 
-qint64 Optimiser::dirSize(QString path)
+qint64 Optimiser::dirSize(const QString& path)
 {
     qint64 size = 0;
     QDir dir(path);
     //calculate total size of current directories' files
     QDir::Filters fileFilters = QDir::Files|QDir::System|QDir::Hidden;
-    for(QString filePath : dir.entryList(fileFilters)) {
+    for(const QString& filePath : dir.entryList(fileFilters)) {
         QFileInfo fi(dir, filePath);
         size+= fi.size();
     }
     //add size of child directories recursively
     QDir::Filters dirFilters = QDir::Dirs|QDir::NoDotAndDotDot|QDir::System|QDir::Hidden;
-    for(QString childDirPath : dir.entryList(dirFilters))
+    for(const QString& childDirPath : dir.entryList(dirFilters))
         size+= dirSize(path + QDir::separator() + childDirPath);
     return size;
 }
@@ -789,7 +827,7 @@ void Optimiser::saveSettings() //Saves settings to an ini file
         textOptBool = false;
     }
 
-    settings.setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
     settings.clear();
 
     settings.setValue("options.mode", options.mode);
@@ -820,7 +858,7 @@ void Optimiser::loadSettings() //Loads settings from the ini file
 {
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
 
-    settings.setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
     options.mode = settings.value("options.mode").toInt();
     options.userPath = settings.value("SelectedPath").toString();

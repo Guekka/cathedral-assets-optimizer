@@ -111,13 +111,15 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="293"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 est le format de compression le plus efficace que SSE supporte, réduisant l&apos;usage de VRAM sans perte de qualité visible. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss. Will convert uncompressed textures to BC7.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 est le format de compression le plus efficace que SSE supporte, réduisant l&apos;usage de VRAM sans perte de qualité visible.Cette option convertira les les textures non compressées en BC7. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="296"/>
-        <source>BC7 nmaps conversion</source>
-        <translation>Compression des nmaps en BC7</translation>
+        <source>BC7 conversion</source>
+        <oldsource>BC7 nmaps conversion</oldsource>
+        <translation>Compression en BC7</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="323"/>
@@ -226,6 +228,307 @@ Ce procédé a seulement été testé sur le dossier mods de Mod Organizer.</tra
     </message>
 </context>
 <context>
+    <name>Optimiser</name>
+    <message>
+        <location filename="Optimiser.cpp" line="13"/>
+        <location filename="Optimiser.cpp" line="133"/>
+        <source>&lt;font color=Blue&gt;Beginning...&lt;/font&gt;</source>
+        <translation>&lt;font color=Blue&gt;Commencement...&lt;/font&gt;</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="26"/>
+        <source>&lt;font color=Red&gt;Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder.&lt;/font&gt;
+</source>
+        <translation>&lt;font color=Red&gt;Outil Havok non trouvé. Êtes vous sûr que le Creation Kit est installé ? Vous pouvez aussi mettre le fichier HavokBehaviorPostProcess.exe  dans le dossier resources.&lt;/font&gt;
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="38"/>
+        <location filename="Optimiser.cpp" line="145"/>
+        <source> not found. Cancelling.</source>
+        <translation> non trouvé. Annulation.</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="66"/>
+        <location filename="Optimiser.cpp" line="172"/>
+        <source>Current mod: </source>
+        <translation>Mod actuel : </translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="120"/>
+        <source>&lt;font color=blue&gt;Completed. Please read the above text to check if any errors occurred (displayed in red).&lt;/font&gt;
+</source>
+        <translation>&lt;font color=blue&gt;Complété. Veuillez lire le texte au dessus pour vérifier qu&apos;aucune erreur n&apos;a eu lieu (affiché en rouge)&lt;/font&gt;
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="193"/>
+        <source> would be optimized by Headparts meshes option.
+</source>
+        <translation> serait optimisé avec l&apos;option meshes de têtes.
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="198"/>
+        <source> would be optimized lightly by the Other Meshes option.
+</source>
+        <translation> serait légèrement optimisé avec l&apos;option autre meshes.
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="203"/>
+        <source> would be optimized in full by the Hard Crashing Meshes option.
+</source>
+        <translation> serait complètement optimisé avec l&apos;option meshes faisant crasher le jeu.
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="219"/>
+        <source> would be optimized using BC7 compression.
+</source>
+        <translation> serait optimisé en utilisant la compression BC7.
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="225"/>
+        <source> would be converted to DDS</source>
+        <translation> serait converti en DDS</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="236"/>
+        <source>&lt;font color=blue&gt;Completed.&lt;/font&gt;
+</source>
+        <translation>&lt;font color=blue&gt;Complété.&lt;/font&gt;
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="244"/>
+        <source>
+
+
+&lt;font color=Blue&gt;Extracting BSA...</source>
+        <translation>
+
+
+&lt;font color=Blue&gt;Extraction du BSA...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="260"/>
+        <source>BSA found ! Extracting...</source>
+        <translation>BSA trouvé ! Extraction...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="270"/>
+        <source>&lt;font color=Blue&gt;BSA successfully extracted.&lt;/font&gt;
+</source>
+        <translation>&lt;font color=Blue&gt;BSA extrait avec succès.&lt;/font&gt;
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="274"/>
+        <source>&lt;font color=Red&gt;An error occured during the extraction. Please extract it manually. The BSA was not deleted.&lt;/font&gt;
+</source>
+        <translation>&lt;font color=Red&gt;Une erreur a eu lieu durant l&apos;extraction. Veuillez extraire le BSA manuellement. Le BSA n&apos;a pas été supprimé
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="287"/>
+        <source>
+
+
+&lt;font color=Blue&gt;Renaming BSA...</source>
+        <translation>
+
+
+&lt;font color=Blue&gt;Renommage du BSA...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="298"/>
+        <source>BSA successfully renamed.
+</source>
+        <translation>BSA renommé avec succès.
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="306"/>
+        <source>&lt;font color=blue&gt;
+
+
+Creating a new BSA...&lt;/font&gt;</source>
+        <translation>&lt;font color=blue&gt;
+
+
+Création d&apos;un nouveau BSA...&lt;/font&gt;</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="346"/>
+        <source>Compressing...(this may take a long time, do not force close the program)
+</source>
+        <translation>Compression...(cela pourrait prendre un temps très long, ne forcez pas l&apos;arrêt du programme)
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="354"/>
+        <source>&lt;font color=Blue&gt; BSA successfully compressed.&lt;/font&gt;
+</source>
+        <translation>&lt;font color=Blue&gt;BSA compressé avec succès&lt;/font&gt;
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="363"/>
+        <source>
+
+
+&lt;font color=Blue&gt;Creating a new textures BSA...&lt;/font&gt;</source>
+        <translation>
+
+
+&lt;font color=Blue&gt;Création d&apos;un nouveau BSA de textures...&lt;/font&gt;</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="380"/>
+        <source>Textures folder found. Compressing...(this may take a long time, do not force close the program)
+</source>
+        <translation>Dossier textures trouvé. Compression...(cela pourrait prendre un temps très long, ne forcez pas l&apos;arrêt du programme)
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="396"/>
+        <source>&lt;font color=Blue&gt; Textures BSA successfully compressed.&lt;/font&gt;
+</source>
+        <translation>&lt;font color=Blue&gt;BSA de textures compressé avec succès.&lt;/font&gt;
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="400"/>
+        <source>&lt;font color=Red&gt; An error occured during the Textures BSA compression.</source>
+        <translation>&lt;font color=Red&gt; Une erreur a eu lieu durant la compression du BSA de textures..</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="425"/>
+        <source>
+Uncompressed texture found:
+</source>
+        <translation>
+Texture non compressée trouvée :
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="425"/>
+        <location filename="Optimiser.cpp" line="462"/>
+        <source>
+Compressing...</source>
+        <translation>
+Compression...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="434"/>
+        <source>
+
+
+&lt;font color=Blue&gt;Running Nifscan on the textures...</source>
+        <translation>
+
+
+&lt;font color=Blue&gt;Lancement des Nifscan sur les textures...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="456"/>
+        <source>
+
+
+&lt;font color=Blue&gt;Converting TGA files...</source>
+        <translation>
+
+
+&lt;font color=Blue&gt;Conversion des fichiers TGA...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="462"/>
+        <source>
+TGA file found: 
+</source>
+        <translation>
+Fichier TGA trouvé : 
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="480"/>
+        <source>
+
+
+&lt;font color=Blue&gt;Running NifScan...</source>
+        <translation>
+
+
+&lt;font color=Blue&gt;Lancement de NifScan...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="576"/>
+        <source>
+
+
+&lt;font color=Blue&gt;Running NifOpt...</source>
+        <translation>
+
+
+&lt;font color=Blue&gt;Lancement de NifOpt...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="577"/>
+        <source>Processing: </source>
+        <translation>Traitement: </translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="620"/>
+        <source>
+
+
+&lt;font color=Blue&gt;Processing animations...</source>
+        <translation>
+
+
+&lt;font color=Blue&gt;Traitement des animations...</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="627"/>
+        <source>Current file: </source>
+        <translation>Fichier actuel: </translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="627"/>
+        <source>
+Processing...
+</source>
+        <translation>
+Traitement...
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="639"/>
+        <source>&lt;font color=Blue&gt;Animation successfully ported.&lt;/font&gt;
+
+</source>
+        <translation>&lt;font color=Blue&gt;Animation portée avec succès.&lt;/font&gt;
+
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="641"/>
+        <source>&lt;font color=Grey&gt; An error occured during the animation porting. Maybe it is already compatible with SSE ?&lt;/font&gt;
+</source>
+        <translation>&lt;font color=Grey&gt; Une erreur a eu lieu durant le portage de l&apos;animation. Peut-être est-elle déjà compatible avec SSE?&lt;/font&gt;
+</translation>
+    </message>
+    <message>
+        <location filename="Optimiser.cpp" line="666"/>
+        <source>Esp found.
+</source>
+        <translation>Esp trouvé.
+</translation>
+    </message>
+</context>
+<context>
     <name>QPlainTextEdit</name>
     <message>
         <source>Processing BSA...
@@ -254,10 +557,9 @@ Ce procédé a seulement été testé sur le dossier mods de Mod Organizer.</tra
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="174"/>
         <source>&lt;font color=Red&gt;An error occured during the extraction. Please extract it manually. The BSA was not deleted.&lt;/font&gt;
 </source>
-        <translation>&lt;font color=Red&gt;Une erreur a eu lieu durant l&apos;extraction. Veuillez extraire le BSA manuellement. Le BSA n&apos;a pas été supprimé
+        <translation type="vanished">&lt;font color=Red&gt;Une erreur a eu lieu durant l&apos;extraction. Veuillez extraire le BSA manuellement. Le BSA n&apos;a pas été supprimé
 </translation>
     </message>
     <message>
@@ -335,10 +637,9 @@ Traitement en cours : </translation>
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="575"/>
         <source>&lt;font color=Blue&gt; Textures BSA successfully compressed.&lt;/font&gt;
 </source>
-        <translation>&lt;font color=Blue&gt;BSA de textures compressé avec succès.&lt;/font&gt;
+        <translation type="vanished">&lt;font color=Blue&gt;BSA de textures compressé avec succès.&lt;/font&gt;
 </translation>
     </message>
     <message>
@@ -348,10 +649,9 @@ Traitement en cours : </translation>
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="515"/>
         <source>&lt;font color=Blue&gt; BSA successfully compressed.&lt;/font&gt;
 </source>
-        <translation>&lt;font color=Blue&gt;BSA compressé avec succès&lt;/font&gt;
+        <translation type="vanished">&lt;font color=Blue&gt;BSA compressé avec succès&lt;/font&gt;
 </translation>
     </message>
     <message>
@@ -365,283 +665,244 @@ Traitement en cours : </translation>
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="13"/>
-        <location filename="Optimiser.cpp" line="804"/>
         <source>&lt;font color=Blue&gt;Beginning...&lt;/font&gt;</source>
-        <translation>&lt;font color=Blue&gt;Commencement...&lt;/font&gt;</translation>
+        <translation type="vanished">&lt;font color=Blue&gt;Commencement...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="65"/>
-        <location filename="Optimiser.cpp" line="843"/>
         <source>Current mod: </source>
-        <translation>Mod actuel : </translation>
+        <translation type="vanished">Mod actuel : </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="159"/>
         <source>BSA found ! Extracting...</source>
-        <translation>BSA trouvé ! Extraction...</translation>
+        <translation type="vanished">BSA trouvé ! Extraction...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="170"/>
         <source>&lt;font color=Blue&gt;BSA successfully extracted.&lt;/font&gt;
 </source>
-        <translation>&lt;font color=Blue&gt;BSA extrait avec succès.&lt;/font&gt;
+        <translation type="vanished">&lt;font color=Blue&gt;BSA extrait avec succès.&lt;/font&gt;
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="245"/>
         <source>
 Uncompressed normal map found:
 </source>
-        <translation>
+        <translation type="vanished">
 Normal map non compressée trouvée :
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="245"/>
-        <location filename="Optimiser.cpp" line="288"/>
         <source>
 Compressing...</source>
-        <translation>
+        <translation type="vanished">
 Compression...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="288"/>
         <source>
 TGA file found: 
 </source>
-        <translation>
+        <translation type="vanished">
 Fichier TGA trouvé : 
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="26"/>
         <source>&lt;font color=Red&gt;Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder.&lt;/font&gt;
 </source>
-        <translation>&lt;font color=Red&gt;Outil Havok non trouvé. Êtes vous sûr que le Creation Kit est installé ? Vous pouvez aussi mettre le fichier HavokBehaviorPostProcess.exe  dans le dossier resources.&lt;/font&gt;
+        <translation type="vanished">&lt;font color=Red&gt;Outil Havok non trouvé. Êtes vous sûr que le Creation Kit est installé ? Vous pouvez aussi mettre le fichier HavokBehaviorPostProcess.exe  dans le dossier resources.&lt;/font&gt;
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="38"/>
-        <location filename="Optimiser.cpp" line="816"/>
         <source> not found. Cancelling.</source>
-        <translation> non trouvé. Annulation.</translation>
+        <translation type="vanished"> non trouvé. Annulation.</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="118"/>
         <source>&lt;font color=blue&gt;Completed. Please read the above text to check if any errors occurred (displayed in red).&lt;/font&gt;
 </source>
-        <translation>&lt;font color=blue&gt;Complété. Veuillez lire le texte au dessus pour vérifier qu&apos;aucune erreur n&apos;a eu lieu (affiché en rouge)&lt;/font&gt;
+        <translation type="vanished">&lt;font color=blue&gt;Complété. Veuillez lire le texte au dessus pour vérifier qu&apos;aucune erreur n&apos;a eu lieu (affiché en rouge)&lt;/font&gt;
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="128"/>
         <source>
 
 
 &lt;font color=Blue&gt;Extracting BSA...</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Extraction du BSA...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="205"/>
         <source>
 
 
 &lt;font color=Blue&gt;Renaming BSA...</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Renommage du BSA...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="216"/>
         <source>BSA successfully renamed.
 </source>
-        <translation>BSA renommé avec succès.
+        <translation type="vanished">BSA renommé avec succès.
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="226"/>
         <source>
 
 
 &lt;font color=Blue&gt;Converting normal maps to BC7...</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Conversion des normal maps en BC7...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="259"/>
         <source>
 
 
 &lt;font color=Blue&gt;Running Nifscan on the textures...</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Lancement des Nifscan sur les textures...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="282"/>
         <source>
 
 
 &lt;font color=Blue&gt;Converting TGA files...</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Conversion des fichiers TGA...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="307"/>
         <source>
 
 
 &lt;font color=Blue&gt;Running NifScan...</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Lancement de NifScan...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="405"/>
         <source>
 
 
 &lt;font color=Blue&gt;Running NifOpt...</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Lancement de NifOpt...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="406"/>
         <source>Processing: </source>
-        <translation>Traitement: </translation>
+        <translation type="vanished">Traitement: </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="447"/>
         <source>&lt;font color=blue&gt;
 
 
 Creating a new BSA...&lt;/font&gt;</source>
-        <translation>&lt;font color=blue&gt;
+        <translation type="vanished">&lt;font color=blue&gt;
 
 
 Création d&apos;un nouveau BSA...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="487"/>
         <source>Compressing...(this may take a long time, do not force close the program)
 </source>
-        <translation>Compression...(cela pourrait prendre un temps très long, ne forcez pas l&apos;arrêt du programme)
+        <translation type="vanished">Compression...(cela pourrait prendre un temps très long, ne forcez pas l&apos;arrêt du programme)
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="527"/>
         <source>
 
 
 &lt;font color=Blue&gt;Creating a new textures BSA...&lt;/font&gt;</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Création d&apos;un nouveau BSA de textures...&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="542"/>
         <source>Textures folder found. Compressing...(this may take a long time, do not force close the program)
 </source>
-        <translation>Dossier textures trouvé. Compression...(cela pourrait prendre un temps très long, ne forcez pas l&apos;arrêt du programme)
+        <translation type="vanished">Dossier textures trouvé. Compression...(cela pourrait prendre un temps très long, ne forcez pas l&apos;arrêt du programme)
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="579"/>
         <source>&lt;font color=Red&gt; An error occured during the Textures BSA compression.</source>
-        <translation>&lt;font color=Red&gt; Une erreur a eu lieu durant la compression du BSA de textures..</translation>
+        <translation type="vanished">&lt;font color=Red&gt; Une erreur a eu lieu durant la compression du BSA de textures..</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="590"/>
         <source>
 
 
 &lt;font color=Blue&gt;Processing animations...</source>
-        <translation>
+        <translation type="vanished">
 
 
 &lt;font color=Blue&gt;Traitement des animations...</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="609"/>
         <source>&lt;font color=Grey&gt; An error occured during the animation porting. Maybe it is already compatible with SSE ?&lt;/font&gt;
 </source>
-        <translation>&lt;font color=Grey&gt; Une erreur a eu lieu durant le portage de l&apos;animation. Peut-être est-elle déjà compatible avec SSE?&lt;/font&gt;
+        <translation type="vanished">&lt;font color=Grey&gt; Une erreur a eu lieu durant le portage de l&apos;animation. Peut-être est-elle déjà compatible avec SSE?&lt;/font&gt;
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="864"/>
         <source> would be optimized by Headparts meshes option.
 </source>
-        <translation> serait optimisé avec l&apos;option meshes de têtes.
+        <translation type="vanished"> serait optimisé avec l&apos;option meshes de têtes.
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="869"/>
         <source> would be optimized lightly by the Other Meshes option.
 </source>
-        <translation> serait légèrement optimisé avec l&apos;option autre meshes.
+        <translation type="vanished"> serait légèrement optimisé avec l&apos;option autre meshes.
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="874"/>
         <source> would be optimized in full by the Hard Crashing Meshes option.
 </source>
-        <translation> serait complètement optimisé avec l&apos;option meshes faisant crasher le jeu.
+        <translation type="vanished"> serait complètement optimisé avec l&apos;option meshes faisant crasher le jeu.
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="890"/>
         <source> would be optimized using BC7 compression.
 </source>
-        <translation> serait optimisé en utilisant la compression BC7.
+        <translation type="vanished"> serait optimisé en utilisant la compression BC7.
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="896"/>
         <source> would be converted to DDS</source>
-        <translation> serait converti en DDS</translation>
+        <translation type="vanished"> serait converti en DDS</translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="906"/>
         <source>&lt;font color=blue&gt;Completed.&lt;/font&gt;
 </source>
-        <translation>&lt;font color=blue&gt;Complété.&lt;/font&gt;
+        <translation type="vanished">&lt;font color=blue&gt;Complété.&lt;/font&gt;
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="597"/>
         <source>Current file: </source>
-        <translation>Fichier actuel: </translation>
+        <translation type="vanished">Fichier actuel: </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="597"/>
         <source>
 Processing...
 </source>
-        <translation>
+        <translation type="vanished">
 Traitement...
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="607"/>
         <source>&lt;font color=Blue&gt;Animation successfully ported.&lt;/font&gt;
 
 </source>
-        <translation>&lt;font color=Blue&gt;Animation portée avec succès.&lt;/font&gt;
+        <translation type="vanished">&lt;font color=Blue&gt;Animation portée avec succès.&lt;/font&gt;
 
 </translation>
     </message>
@@ -652,10 +913,9 @@ Traitement...
 </translation>
     </message>
     <message>
-        <location filename="Optimiser.cpp" line="635"/>
         <source>Esp found.
 </source>
-        <translation>Esp trouvé.
+        <translation type="vanished">Esp trouvé.
 </translation>
     </message>
 </context>

@@ -159,14 +159,23 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
         ui->tabWidget->setCurrentIndex(1);
         optimizer->mainProcess();
     });
-
-
-
 }
+
+
 void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the checkboxes
 
 {
     ui->userPathTextEdit->setPlainText(optimizer->options.userPath);
+    if(ui->userPathTextEdit->toPlainText() == "")
+    {
+        ui->processButton->setDisabled(true);
+        ui->dryRunPushButton->setDisabled(true);
+    }
+    else
+    {
+        ui->processButton->setDisabled(false);
+        ui->dryRunPushButton->setDisabled(false);
+    }
 
     ui->bsaOptCheckbox->setChecked(optimizer->getBsaOptBool());
     ui->textOptCheckbox->setChecked(optimizer->getTextOptBool());

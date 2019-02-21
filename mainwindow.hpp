@@ -28,7 +28,7 @@ public:
     void closeEvent(QCloseEvent *event);
 
 private:
-    QFileDialog *fileDialog;
+    QFileDialog *fileDialog{};
 
     Ui::MainWindow *ui;
 
