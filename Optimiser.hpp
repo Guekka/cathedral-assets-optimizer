@@ -9,6 +9,7 @@
 #include <QPlainTextEdit>
 #include <QSettings>
 #include <QProgressBar>
+#include <QCryptographicHash>
 
 #include <utility>
 
@@ -19,20 +20,21 @@ struct optOptions
 
 
     bool extractBsa{};
-    bool createBsa{};
-    bool renameBsa{};
-
+    bool recreateBsa{};
+    bool packExistingFiles{};
 
     bool tgaConv{};
     bool bc7Conv{};
     bool nifscanTextures{};
 
-
     bool hardCrashingMeshes;
     bool otherMeshes;
 
+    bool animOptBool{};
 
     int mode{};
+
+    bool dryRun{};
 
     QString userPath;
 };
@@ -77,6 +79,7 @@ public:
 
     void saveSettings();
     void loadSettings();
+    void resetToDefaultSettings();
 
     //Filesystem operations
 
@@ -85,17 +88,6 @@ public:
     void deleteEmptyDirs(const QString& path);
     qint64 dirSize(const QString& Path);
 
-    //Getters and setters
-
-    bool getBsaOptBool();
-    bool getTextOptBool();
-    bool getNifOptBool();
-    bool getAnimOptBool();
-
-    void setBsaOptBool(bool state);
-    void setTextOptBool(bool state);
-    void setNifOptBool(bool state);
-    void setAnimOptBool(bool state);
 
 private:
     QString modPath;
@@ -108,10 +100,6 @@ private:
     QStringList otherHeadparts;
     QStringList crashingHeadparts;
 
-    bool bsaOptBool{};
-    bool textOptBool{};
-    bool nifOptBool{};
-    bool animOptBool{};
 };
 
 

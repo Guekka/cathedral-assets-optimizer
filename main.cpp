@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     app.installTranslator(&AssetsOptTranslator);
 
+
+
     MainWindow w;
 
     w.show();

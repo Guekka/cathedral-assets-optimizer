@@ -38,3 +38,5 @@ AssetsOpt_fr.ts
 
 FORMS += \
     mainwindow.ui
+
+RESOURCES += qdarkstyle/style.qrc

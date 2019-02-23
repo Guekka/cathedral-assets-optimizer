@@ -26,6 +26,8 @@ public:
     MainWindow();
     void loadUIFromVars();
     void closeEvent(QCloseEvent *event);
+    void saveSettings();
+    void loadSettings();
 
 private:
     QFileDialog *fileDialog{};
@@ -33,6 +35,9 @@ private:
     Ui::MainWindow *ui;
 
     Optimiser *optimizer;
+
+    bool simpleMode = true;
+    bool darkMode = true;
 };
 
 #endif // MAINWINDOW_H
