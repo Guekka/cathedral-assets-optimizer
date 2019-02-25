@@ -1,10 +1,10 @@
 #include "mainwindow.hpp"
 #include "Optimiser.hpp"
 #include "ui_mainwindow.h"
-#include "log.h"
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
+    //TODO move log to another window
     ui->setupUi(this);
     optimizer = new Optimiser(ui->mw_log, ui->progressBar);
 
@@ -23,6 +23,13 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->recreateBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
         optimizer->options.recreateBsa = state;
+        optimizer->saveSettings();
+    });
+
+
+    connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, [=](bool state)
+    {
+        optimizer->options.packExistingFiles = state;
         optimizer->saveSettings();
     });
 

@@ -83,10 +83,10 @@ public:
 
     //Filesystem operations
 
-    void moveToTemp();
-    void restoreFromTemp(bool data, bool textures);
+    void moveAssets(const QString& dest);
     void deleteEmptyDirs(const QString& path);
     qint64 dirSize(const QString& Path);
+    bool compareFiles(QFile* file1, QFile* file2);
 
 
 private:

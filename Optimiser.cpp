@@ -1,5 +1,11 @@
 #include "Optimiser.hpp"
 
+const QString redColor("<font color=Red>");
+const QString greenColor("<font color=Green>");
+const QString greyColor("<font color=Grey>");
+const QString orangeColor("<font color=Orange>");
+const QString endColor("</font>");
+
 
 Optimiser::Optimiser(QPlainTextEdit* textEdit, QProgressBar* bar) : log(textEdit), progressBar(bar){}
 
@@ -22,7 +28,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     }
     else if(!havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
     {
-        log->appendHtml(tr("<font color=Red>Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder.</font>\n"));
+        log->appendHtml(redColor + tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder") + endColor);
         return 1;
     }
 
@@ -34,7 +40,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
         QFile file("resources/" + requirements.at(i));
         if(!file.exists())
         {
-            log->appendHtml("<font color=Red>" + requirements.at(i) + tr(" not found. Cancelling."));
+            log->appendHtml(redColor + requirements.at(i) + tr(" not found. Cancelling.") + endColor);
             return 1;
         }
     }
@@ -60,7 +66,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
         return 2;
     }
 
-    log->appendHtml(tr("<font color=Blue>Beginning...</font>"));
+    log->appendHtml(greenColor + tr("Beginning...") + endColor);
 
     for(int i=0; i < modDirs.size(); ++i)
     {
@@ -68,9 +74,8 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
         QDirIterator it(modPath, QDirIterator::Subdirectories);
 
         nifScan();
-        moveToTemp();
 
-        log->appendHtml("<font color=Orange>" + tr("Current mod: ") + modPath + "</font>");
+        log->appendHtml(orangeColor + tr("Current mod: ") + modPath + endColor);
 
         if(options.extractBsa)
         {
@@ -114,13 +119,11 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
             progressBar->setValue(progressBar->value() + 1);
         }
 
-        restoreFromTemp(true, true);
-
         QCoreApplication::processEvents();
     }
 
     progressBar->setValue(progressBar->maximum());
-    log->appendHtml(tr("<font color=blue>Completed. Please read the above text to check if any errors occurred (displayed in red).</font>\n"));
+    log->appendHtml(greenColor + tr("Completed. Please read the above text to check if any errors occurred (displayed in red).") + endColor + "\n");
 
 
     return 0;
@@ -154,7 +157,7 @@ void Optimiser::dryRun()
 
         nifScan();
 
-        log->appendHtml("<font color=Orange>" + tr("Current mod: ") + modPath + "</font>");
+        log->appendHtml(orangeColor + tr("Current mod: ") + modPath + endColor);
 
         if(options.extractBsa)
         {
@@ -214,11 +217,10 @@ void Optimiser::dryRun()
         progressBar->setValue(progressBar->value() + 1);
 
         QCoreApplication::processEvents();
-        restoreFromTemp(true, true);
     }
 
     progressBar->setValue(progressBar->maximum());
-    log->appendHtml(tr("<font color=blue>Completed.</font>\n"));
+    log->appendHtml(greenColor + tr("Completed.") + endColor);
 
 }
 
@@ -226,7 +228,7 @@ void Optimiser::dryRun()
 
 void Optimiser::extractBsa() //Extracts the BSA
 {
-    log->appendHtml(tr("\n\n\n<font color=Blue>Extracting BSA..."));
+    log->appendHtml(greenColor + tr("Extracting BSA...") + endColor);
 
 
     QProcess bsarch;
@@ -238,16 +240,13 @@ void Optimiser::extractBsa() //Extracts the BSA
 
     renameBsa();
 
-    //    moveToTemp();
-
     while (it.hasNext())
     {
         if(it.next().contains(".bsa.bak"))
         {
             log->appendPlainText(tr("BSA found ! Extracting..."));
 
-
-            QString bsaFolder = modPath + QDir::separator() + it.fileName().chopped(4);
+            QString bsaFolder = QDir::cleanPath(modPath + QDir::separator() + it.fileName().chopped(4));
             modPathDir.mkdir(bsaFolder);
 
             bsarchArgs.clear();
@@ -257,24 +256,22 @@ void Optimiser::extractBsa() //Extracts the BSA
 
             if(bsarch.readAllStandardOutput().contains("Done."))
             {
-                log->appendHtml(tr("<font color=Blue>BSA successfully extracted.</font>\n"));
-
+                log->appendHtml(greenColor + tr("BSA successfully extracted.") + endColor + "\n");
             }
-            else{
-                log->appendHtml(tr("<font color=Red>An error occured during the extraction. Please extract it manually. The BSA was not deleted.</font>\n"));
-
+            else
+            {
+                log->appendHtml(redColor + tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.") + endColor + "\n");
             }
         }
     }
 
-    //    moveToTemp();
 
 }
 
 
 void Optimiser::renameBsa() //Renames the BSA.
 {
-    log->appendHtml(tr("\n\n\n<font color=Blue>Renaming BSA..."));
+    log->appendHtml(greenColor + tr("Renaming BSA...") + endColor + "\n");
 
     QDirIterator it(modPath);
 
@@ -284,22 +281,9 @@ void Optimiser::renameBsa() //Renames the BSA.
         {
             QFile bakBsa(it.filePath());
             QFile currentBsa(it.filePath().chopped(4));
-            if(currentBsa.exists())
+            if(currentBsa.exists() && !QFileInfo(currentBsa).isDir())
             {
-                QCryptographicHash hash(QCryptographicHash::Sha1);
-
-                bakBsa.open(QIODevice::ReadOnly);
-                hash.addData(bakBsa.readAll());
-
-                QByteArray bakBsaSig = hash.result();
-                hash.reset();
-
-                currentBsa.open(QIODevice::ReadOnly);
-                hash.addData(currentBsa.readAll());
-
-                QByteArray currentBsaSig = hash.result();
-
-                if(currentBsaSig == bakBsaSig)
+                if(compareFiles(&bakBsa, &currentBsa))
                 {
                     currentBsa.remove();
                 }
@@ -310,7 +294,7 @@ void Optimiser::renameBsa() //Renames the BSA.
                 }
             }
         }
-        else if(it.fileName().contains(".bsa"))
+        else if(it.fileName().contains(".bsa") && !it.fileInfo().isDir())
         {
             QFile::rename(it.filePath(), it.filePath() + ".bak");
         }
@@ -320,39 +304,46 @@ void Optimiser::renameBsa() //Renames the BSA.
 
 void Optimiser::createBsa() //Once all the optimizations are done, create a new BSA
 {
-    log->appendHtml(tr("<font color=blue>\n\n\nCreating a new BSA...</font>"));
-
-
-    if(dirSize(modPath + "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi") > 2147483648)
-    {
-        log->appendHtml("<font color=Red>The BSA can't be created : more than 2gb of assets were detected</font>");
-        restoreFromTemp(true, false);
-        return;
-    }
+    log->appendHtml(greenColor + tr("Creating a new BSA...") + endColor);
 
     bool hasSound=false;
 
-    QDirIterator it(modPath);
+    QDirIterator it(modPath, QDirIterator::Subdirectories);
 
     QProcess bsarch;
     QStringList bsarchArgs;
 
     QString espName = findEspName();
-    QString tempPath = "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi/";
     QDir modPathDir(modPath);
 
     QString bsaName = modPath + "/" + espName.chopped(4) + ".bsa";
-    QString folderName = modPath + "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi";
+    QString folderName;
 
-    bsarchArgs.clear();
-    bsarchArgs << "pack" << folderName << bsaName << "-sse" << "-share";
 
     while (it.hasNext())
     {
         it.next();
         if(it.fileName().toLower() == "sound" || it.fileName().toLower() == "music")
             hasSound=true;
+
+        if(it.fileName().right(3) == "bsa")
+            folderName = modPath + "/" + it.fileName();
     }
+
+
+    if(options.packExistingFiles)
+    {
+        moveAssets(folderName + "/");
+    }
+
+
+    if(dirSize(modPath + "/" + folderName) > 2147483648)
+    {
+        log->appendHtml(redColor + tr("The BSA can't be created : more than 2gb of assets were detected") + endColor);
+        return;
+    }
+
+    bsarchArgs << "pack" << folderName << bsaName << "-sse" << "-share";
 
     if (!hasSound) //Compressing BSA breaks sounds
     {
@@ -361,7 +352,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
     modPathDir.rename("TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi/meshes/actors/character/animations", "meshes/actors/character/animations");
 
-    log->appendPlainText(tr("Compressing...(this may take a long time, do not force close the program)\n"));
+    log->appendPlainText(tr("Compressing...(this may take a long time, do not force close the program)") + "\n");
 
     bsarch.start("resources/bsarch.exe", bsarchArgs);
 
@@ -369,7 +360,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
     if(bsarch.readAllStandardOutput().contains("Done."))
     {
-        log->appendHtml(tr("<font color=Blue> BSA successfully compressed.</font>\n"));
+        log->appendHtml(greenColor + tr("BSA successfully compressed.") + endColor + "\n");
         modPathDir.setPath(modPath + tempPath);
         modPathDir.removeRecursively();
     }
@@ -378,7 +369,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
 void Optimiser::createTexturesBsa() // Create a BSA containing only textures
 {
-    log->appendHtml(tr("\n\n\n<font color=Blue>Creating a new textures BSA...</font>"));
+    log->appendHtml(greenColor + tr("Creating a new textures BSA...") + endColor);
 
 
     QProcess bsarch;
@@ -388,14 +379,13 @@ void Optimiser::createTexturesBsa() // Create a BSA containing only textures
 
     if(dirSize(modPath + "/TempFolderForTexturesThisTimeWithRandomCharsAlsodqzhduqz") > 2147483648)
     {
-        log->appendHtml("<font color=Red>The BSA can't be created : more than 2gb of assets were detected</font>");
-        restoreFromTemp(false, true);
+        log->appendHtml(redColor + tr("The BSA can't be created : more than 2gb of assets were detected") + endColor);
         return;
     }
 
     if(modPathDir.exists(modPath + "/TempFolderForTexturesThisTimeWithRandomCharsAlsodqzhduqz/textures"))
     {
-        log->appendPlainText(tr("Textures folder found. Compressing...(this may take a long time, do not force close the program)\n"));
+        log->appendPlainText(tr("Textures folder found. Compressing...(this may take a long time, do not force close the program)") + "\n");
 
 
         QString tBsaName= modPath + "/" + espName.chopped(4) + " - Textures.bsa";
@@ -411,11 +401,11 @@ void Optimiser::createTexturesBsa() // Create a BSA containing only textures
         {
             modPathDir.setPath(modPath + "/TempFolderForTexturesThisTimeWithRandomCharsAlsodqzhduqz/");
             modPathDir.removeRecursively();
-            log->appendHtml(tr("<font color=Blue> Textures BSA successfully compressed.</font>\n"));
+            log->appendHtml(greenColor + tr(" Textures BSA successfully compressed.") + endColor + "\n");
         }
         else
         {
-            log->appendHtml(tr("<font color=Red> An error occured during the Textures BSA compression."));
+            log->appendHtml(redColor + tr(" An error occured during the Textures BSA compression.") + endColor);
         }
     }
 }
@@ -449,7 +439,7 @@ void Optimiser::bc7Conv(QDirIterator *it) //Compress the nmaps to BC7 if they ar
 
 void Optimiser::nifscanTextures() // Uses Nifscan with -fixdds option
 {
-    log->appendHtml(tr("\n\n\n<font color=Blue>Running Nifscan on the textures..."));
+    log->appendHtml(greenColor + tr("Running Nifscan on the textures...") + endColor);
 
 
     QFile nifScan_file("resources/NifScan.exe");
@@ -471,7 +461,7 @@ void Optimiser::nifscanTextures() // Uses Nifscan with -fixdds option
 
 void Optimiser::tgaConv(QDirIterator* it) //Compress the nmaps to BC7 if they are uncompressed.
 {
-    log->appendHtml(tr("\n\n\n<font color=Blue>Converting TGA files..."));
+    log->appendHtml(greenColor + tr("Converting TGA files...") + endColor);
 
 
     QProcess texconv;
@@ -495,7 +485,7 @@ void Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
 {
 
 
-    log->appendHtml(tr("\n\n\n<font color=Blue>Running NifScan..."));
+    log->appendHtml(greenColor + tr("Running NifScan...") + endColor);
 
 
     otherMeshes.clear();
@@ -591,7 +581,7 @@ void Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
 
 void Optimiser::nifOpt(QDirIterator *it) // Optimise the meshes according to users option
 {
-    log->appendHtml(tr("\n\n\n<font color=Blue>Running NifOpt..."));
+    log->appendHtml(greenColor +  tr("Running NifOpt...") + endColor);
     log->appendPlainText(tr("Processing: ") + it->filePath());
 
 
@@ -635,7 +625,7 @@ void Optimiser::nifOpt(QDirIterator *it) // Optimise the meshes according to use
 
 void Optimiser::animOpt(QDirIterator *it) //Uses Bethesda Havok Tool to port animations
 {
-    log->appendHtml(tr("\n\n\n<font color=Blue>Processing animations..."));
+    log->appendHtml(greenColor + tr("Processing animations...") + endColor);
 
 
 
@@ -654,9 +644,9 @@ void Optimiser::animOpt(QDirIterator *it) //Uses Bethesda Havok Tool to port ani
 
 
     if(havokProcess.readAllStandardOutput().isEmpty())
-        log->appendHtml(tr("<font color=Blue>Animation successfully ported.</font>\n\n"));
+        log->appendHtml(greenColor + tr("Animation successfully ported.") + endColor + "\n");
     else
-        log->appendHtml(tr("<font color=Grey> An error occured during the animation porting. Maybe it is already compatible with SSE ?</font>\n"));
+        log->appendHtml(greyColor + tr("An error occured during the animation porting. Maybe it is already compatible with SSE ?") + endColor + "\n");
 
 }
 
@@ -692,94 +682,37 @@ QString Optimiser::findEspName() //Find esp name using an iterator
 //Filesystem operations
 
 
-void Optimiser::moveToTemp()
+void Optimiser::moveAssets(const QString& dest) //Move files with extensions present in assets list to specified folder
 {
-    QStringList assetsFolder;
+    QStringList assets;
     QDir modPathDir(modPath);
     QDirIterator it(modPath, QDirIterator::Subdirectories);
+    QFile looseAsset, bsaAsset;
 
-    QString tempPath = "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi/";
-    QString tempTexturesPath = "/TempFolderForTexturesThisTimeWithRandomCharsAlsodqzhduqz/";
-
-    assetsFolder << "meshes" << "seq" << "scripts" << "dialogueviews" << "interface" << "source" << "lodsettings" << "strings" << "grass" << "sound" << "music";
-    modPathDir.mkdir(modPath + tempPath);
-    modPathDir.mkdir(modPath + tempTexturesPath);
+    assets << "nif" << "seq" << "pex" << "dds" << "psc" << "lod" << "fuz" << "waw" << "xwm" << "swf" << "txt" << "hkx";
 
     while (it.hasNext())
     {
-        it.next();
-        if(!it.filePath().contains(tempPath, Qt::CaseInsensitive) && assetsFolder.contains(it.fileName(), Qt::CaseInsensitive))
-        {
-            modPathDir.rename(it.fileName(), modPath + tempPath + it.fileName());
-            log->appendHtml("<font color=Blue>Moving " + it.fileName() + " to a temporary folder\n</font>");
-        }
 
-        else if(!it.filePath().contains(tempPath, Qt::CaseInsensitive) && it.fileName().toLower() == "textures")
+        if(!dest.contains(it.filePath()) && assets.contains(it.fileName().right(3)))
         {
-            modPathDir.rename(it.fileName(), modPath + tempTexturesPath + it.fileName());
-            log->appendHtml("<font color=Blue>Moving " + it.fileName() + " to a temporary folder\n</font>");
-        }
+            looseAsset.setFileName(it.next());
+            QString file(modPathDir.relativeFilePath(it.filePath()));
+            bsaAsset.setFileName(dest + file);
 
+            if(bsaAsset.exists() && compareFiles(&looseAsset, &bsaAsset))
+            {
+                QFile::remove(dest + file);
+            }
+            modPathDir.rename(file, dest + file);
+            log->appendHtml(greenColor + tr("Moving ") + endColor + it.fileName() + greenColor + tr(" to a temporary folder") + endColor + "\n");
+        }
         QCoreApplication::processEvents();
-    }
-
-    QDirIterator it2(modPath);
-
-    while (it2.hasNext())
-    {
-        it2.next();
-
-        if(assetsFolder.contains(it2.fileName(), Qt::CaseInsensitive))
-        {
-
-            if(modPathDir.exists(modPath + tempPath + it2.fileName()) && dirSize(modPath + tempPath + it2.fileName()) == dirSize(modPath + "/" + it2.fileName()))
-            {
-                log->appendHtml("<font color=Blue>Removing duplicated assets: </font>" + it2.fileName());
-                modPathDir.setPath(modPath + "/" + it2.fileName());
-                modPathDir.removeRecursively();
-            }
-            else if(modPathDir.exists(modPath + tempTexturesPath + it2.fileName()) && dirSize(modPath + tempTexturesPath + it2.fileName()) == dirSize(modPath + "/" + it2.fileName()))
-            {
-                log->appendHtml("<font color=Blue>Removing duplicated assets: </font>" + it2.fileName());
-                modPathDir.setPath(modPath + "/" + it2.fileName());
-                modPathDir.removeRecursively();
-            }
-
-            QCoreApplication::processEvents();
-        }
-    }
-}
-
-
-void Optimiser::restoreFromTemp(bool data, bool textures)
-{
-    QString tempPath = "/TempFolderWithRandomCharactersJustInCaseqzhdizqdhiqzdhi/";
-    QString tempTexturesPath = "/TempFolderForTexturesThisTimeWithRandomCharsAlsodqzhduqz/";
-
-    QDir modPathDir(modPath);
-
-    if(data)
-    {
-        QDirIterator dataIt(modPath + tempPath);
-        while(dataIt.hasNext())
-        {
-            dataIt.next();
-            modPathDir.rename(dataIt.filePath(), dataIt.filePath().replace(tempPath, "/"));
-        }
-    }
-
-    if(textures)
-    {
-        QDirIterator texturesIt(modPath + tempTexturesPath);
-        while(texturesIt.hasNext())
-        {
-            texturesIt.next();
-            modPathDir.rename(texturesIt.filePath(), texturesIt.filePath().replace(tempTexturesPath, "/"));
-        }
     }
 
     deleteEmptyDirs(modPath);
 }
+
 
 
 void Optimiser::deleteEmptyDirs(const QString& path)
@@ -792,9 +725,21 @@ void Optimiser::deleteEmptyDirs(const QString& path)
     while(it.hasNext())
     {
         fileInfo.setFile(it.next());
-        if(fileInfo.isDir() && dirSize(fileInfo.filePath()) == 0)
+        if(fileInfo.isDir() && dirSize(fileInfo.filePath()) == 0 && !it.fileName().contains("_separator"))
             modPathDir.rmdir(it.filePath());
     }
+
+    //Doing it twice because sometimes empty directories are still there
+
+    QDirIterator it2(path, QDirIterator::Subdirectories);
+
+    while(it2.hasNext())
+    {
+        fileInfo.setFile(it2.next());
+        if(fileInfo.isDir() && dirSize(fileInfo.filePath()) == 0 && !it2.fileName().contains("_separator"))
+            modPathDir.rmdir(it2.filePath());
+    }
+
 }
 
 
@@ -813,6 +758,30 @@ qint64 Optimiser::dirSize(const QString& path)
     for(const QString& childDirPath : dir.entryList(dirFilters))
         size+= dirSize(path + QDir::separator() + childDirPath);
     return size;
+}
+
+
+bool Optimiser::compareFiles(QFile* file1, QFile* file2)
+{
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+
+    file1->open(QIODevice::ReadOnly);
+    hash.addData(file1->readAll());
+
+    QByteArray file1Sig = hash.result();
+    hash.reset();
+
+    file2->open(QIODevice::ReadOnly);
+    hash.addData(file2->readAll());
+
+    QByteArray file2Sig = hash.result();
+
+    if(file1Sig == file2Sig)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 
