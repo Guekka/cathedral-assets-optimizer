@@ -65,6 +65,12 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     });
 
 
+    connect(ui->animOptCheckbox, &QCheckBox::clicked, this, [=](bool state)
+    {
+        optimizer->options.animOptBool = state;
+        optimizer->saveSettings();
+    });
+
     connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [=](bool state)
     {
         if(state)
@@ -109,6 +115,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, [=](){
         optimizer->options.userPath = ui->userPathTextEdit->text();
+        this->loadUIFromVars();
     });
 
 
@@ -120,7 +127,11 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
-        optimizer->mainProcess();
+        if(QDir(ui->userPathTextEdit->text()).exists())
+            optimizer->mainProcess();
+        else
+            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
+
     });
 
 
@@ -155,19 +166,10 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
 {
     ui->userPathTextEdit->setText(optimizer->options.userPath);
 
-    if(ui->userPathTextEdit->text() == "")
-    {
-        ui->processButton->setDisabled(true);
-    }
-    else
-    {
-        ui->processButton->setDisabled(false);
-    }
-
     if(simpleMode)
     {
         simpleMode = false;
-        ui->processButton->setText("Process directory with default settings");
+        ui->processButton->setText("Run with default settings");
         ui->BsaGroupBox->hide();
         ui->animGroupBox->hide();
         ui->meshesGroupBox->hide();
@@ -176,7 +178,7 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
     }
     else
     {
-        ui->processButton->setText("Process directory");
+        ui->processButton->setText("Run");
         ui->BsaGroupBox->show();
         ui->animGroupBox->show();
         ui->meshesGroupBox->show();

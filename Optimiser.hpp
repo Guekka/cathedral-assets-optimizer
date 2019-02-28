@@ -10,6 +10,8 @@
 #include <QSettings>
 #include <QProgressBar>
 #include <QCryptographicHash>
+#include <QTemporaryDir>
+#include <QRegularExpression>
 
 #include <utility>
 
@@ -57,7 +59,6 @@ public:
 
     void extractBsa();
     void createBsa();
-    void createTexturesBsa();
     void renameBsa();
 
 
@@ -84,9 +85,6 @@ public:
     //Filesystem operations
 
     void moveAssets(const QString& dest);
-    void deleteEmptyDirs(const QString& path);
-    qint64 dirSize(const QString& Path);
-    bool compareFiles(QFile* file1, QFile* file2);
 
 
 private:
@@ -99,6 +97,8 @@ private:
     QStringList otherMeshes;
     QStringList otherHeadparts;
     QStringList crashingHeadparts;
+
+    int dummyPluginsCounter;
 
 };
 
