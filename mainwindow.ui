@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>766</width>
-    <height>679</height>
+    <height>704</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -185,26 +185,7 @@
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Extract Old BSA</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="recreateBsaCheckbox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Creates a new BSA after processing the previously extracted assets.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Recreate existing BSA</string>
+          <string>Optimize assets in BSA</string>
          </property>
         </widget>
        </item>
@@ -413,7 +394,7 @@
   </action>
   <action name="actionOpen_log">
    <property name="text">
-    <string>Open log</string>
+    <string>Dev mode </string>
    </property>
   </action>
  </widget>

@@ -26,17 +26,20 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    Optimiser.cpp
+    Optimiser.cpp \
+    devmodeui.cpp
 
 HEADERS += \
         mainwindow.hpp \
-    Optimiser.hpp
+    Optimiser.hpp \
+    devmodeui.h
 
 
 TRANSLATIONS += \
 AssetsOpt_fr.ts
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    devmodeui.ui
 
 RESOURCES += qdarkstyle/style.qrc

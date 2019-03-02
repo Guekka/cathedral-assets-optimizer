@@ -1,12 +1,14 @@
 #include "mainwindow.hpp"
 #include "Optimiser.hpp"
 #include "ui_mainwindow.h"
+#include "devmodeui.h"
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
-    //TODO move log to another window
+    devmode  = new devModeUI();
+
     ui->setupUi(this);
-    optimizer = new Optimiser(ui->mw_log, ui->progressBar);
+    optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar);
 
     this->loadSettings();
     optimizer->loadSettings();
@@ -16,14 +18,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.extractBsa = state;
-    });
-
-
-    connect(ui->recreateBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
-    {
-        optimizer->options.recreateBsa = state;
-        optimizer->saveSettings();
+        optimizer->options.bsaContent = state;
     });
 
 
@@ -158,6 +153,12 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
         this->loadUIFromVars();
     });
 
+    connect(ui->actionOpen_log, &QAction::triggered, this, [=]()
+    {
+        optimizer->saveSettings();
+        devmode->show();
+    });
+
 }
 
 
@@ -185,8 +186,7 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
         ui->texturesGroupBox->show();
     }
 
-    ui->extractBsaCheckbox->setChecked(optimizer->options.extractBsa);
-    ui->recreateBsaCheckbox->setChecked(optimizer->options.recreateBsa);
+    ui->extractBsaCheckbox->setChecked(optimizer->options.bsaContent);
     ui->packExistingAssetsCheckbox->setChecked(optimizer->options.packExistingFiles);
 
     ui->bc7ConvCheckbox->setChecked(optimizer->options.bc7Conv);
@@ -225,6 +225,7 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     delete optimizer;
+    delete  devmode;
     event->accept();
 }
 

@@ -6,18 +6,20 @@ const QString greyColor("<font color=Grey>");
 const QString orangeColor("<font color=Orange>");
 const QString endColor("</font>\n");
 
+Optimiser::Optimiser(QPlainTextEdit* log, QPlainTextEdit* debugLog, QProgressBar* bar) : log(log), debugLog(debugLog), progressBar(bar), dummyPluginsCounter(0)
+{
+    if(options.verbose)
+        debugLog = log;
+}
 
-Optimiser::Optimiser(QPlainTextEdit* textEdit, QProgressBar* bar) : log(textEdit), progressBar(bar), dummyPluginsCounter(0){}
 
-
-int Optimiser::mainProcess() // Process the userPath according to all user options
+void Optimiser::setup()
 {
     saveSettings();
     progressBar->reset();
 
     log->clear();
 
-    QStringList modDirs;
     QStringList requirements;
 
     QFile havokFile(findSkyrimDir() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
@@ -29,7 +31,6 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     else if(!havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
     {
         log->appendHtml(redColor + tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder") + endColor);
-        return 1;
     }
 
 
@@ -41,7 +42,6 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
         if(!file.exists())
         {
             log->appendHtml(redColor + requirements.at(i) + tr(" not found. Cancelling.") + endColor);
-            return 1;
         }
     }
 
@@ -52,13 +52,23 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
         modDirs = dir.entryList();
     }
 
-    if(options.mode == 0)
+    else
     {
         modDirs << ""; //if modDirs is empty, the mod won't be processed
+
     }
 
+    modPath = QDir::cleanPath(options.userPath + "/" + modDirs.at(0)); //In case it is ran from debug mode
+    debugLog->appendPlainText("Modpath: " + modPath);
 
-    progressBar->setMaximum(modDirs.size()*(options.extractBsa + 1 + options.recreateBsa));
+    progressBar->setMaximum(modDirs.size()*((options.bsaContent *2)+ 1));
+}
+
+
+
+int Optimiser::mainProcess() // Process the userPath according to all user options
+{
+    setup();
 
     if(options.dryRun)
     {
@@ -77,12 +87,11 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
         log->appendHtml(orangeColor + tr("Current mod: ") + modPath + endColor);
 
-        if(options.extractBsa)
+        if(options.bsaContent)
         {
             extractBsa();
             progressBar->setValue(progressBar->value() + 1);
         }
-
 
         if(options.nifscanTextures)
         {
@@ -110,7 +119,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
         progressBar->setValue(progressBar->value() + 1);
 
-        if(options.recreateBsa)
+        if(options.bsaContent)
         {
             createBsa();
             progressBar->setValue(progressBar->value() + 1);
@@ -120,7 +129,8 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     }
 
     //Deleting empty dirs
-    system(QString("cd /d \"" + options.userPath + "\" && for /f \"delims=\" %d in ('dir /s /b /ad ^| sort /r') do rd \"%d\"").toStdString().c_str());
+
+    system(QString("cd /d \"" + options.userPath + "\" && for /f \"delims=\" %d in ('dir /s /b /ad ^| sort /r') do rd \"%d\" >nul 2>&1").toStdString().c_str());
 
     progressBar->setValue(progressBar->maximum());
     log->appendHtml(greenColor + tr("Completed. Please read the above text to check if any errors occurred (displayed in red).") + endColor);
@@ -132,23 +142,9 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
 void Optimiser::dryRun()
 {
+    setup();
+
     log->appendHtml(tr("Beginning the dry run..."));
-
-    QStringList modDirs;
-
-    if(options.mode == 1)
-    {
-        QDir dir(options.userPath);
-        dir.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
-        modDirs = dir.entryList();
-    }
-
-    if(options.mode == 0)
-    {
-        modDirs << "";
-    }
-
-    progressBar->setMaximum(modDirs.size()*6);
 
     for(int i=0; i < modDirs.size(); ++i)
     {
@@ -159,17 +155,15 @@ void Optimiser::dryRun()
 
         log->appendHtml(orangeColor + tr("Current mod: ") + modPath + endColor);
 
-        if(options.extractBsa)
+        if(options.bsaContent)
         {
             extractBsa();
             progressBar->setValue(progressBar->value() + 1);
         }
 
-
         while(it.hasNext())
         {
             it.next();
-
 
             QCoreApplication::processEvents();
 
@@ -230,46 +224,41 @@ void Optimiser::extractBsa() //Extracts the BSA
 {
     log->appendHtml(greenColor + tr("Extracting BSA...") + endColor);
 
-
     QProcess bsarch;
     QStringList bsarchArgs;
 
     QDir modPathDir(modPath);
-
-    QDirIterator it(modPath);
+    QStringList files(modPathDir.entryList());
 
     renameBsa();
 
-    while (it.hasNext())
+    for (int i = 0; i < files.size(); ++i)
     {
-        if(it.next().contains(".bsa.bak"))
+        if(files.at(i).contains(".bsa.bak"))
         {
             log->appendPlainText(tr("BSA found ! Extracting..."));
 
-            QString bsaFolder = QDir::cleanPath(modPath + QDir::separator() + it.fileName().chopped(4));
+            QString bsaName = QDir::cleanPath(modPath + QDir::separator() + files.at(i));
+            QString bsaFolder = QDir::cleanPath(modPath + QDir::separator() + files.at(i).chopped(4) + ".extracted");
             modPathDir.mkdir(bsaFolder);
 
             bsarchArgs.clear();
-            bsarchArgs << "unpack" << it.filePath() << bsaFolder ;
+            bsarchArgs << "unpack" << bsaName << bsaFolder ;
             bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished(-1);
 
-            if(bsarch.readAllStandardOutput().contains("Done."))
-            {
+            debugLog->appendPlainText("<EXTRACT BSA FUNC>\nBSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolder + "\nBSA Name :" + bsaName + "\n</EXTRACT BSA FUNC>\n\n\n\n\n");
+
+            if(bsarch.readAllStandardOutput().contains("Done"))
                 log->appendHtml(greenColor + tr("BSA successfully extracted.") + endColor);
-            }
             else
-            {
                 log->appendHtml(redColor + tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.") + endColor);
-            }
         }
     }
-
-
 }
 
 
-void Optimiser::renameBsa() //Renames the BSA. TODO optimize execute time
+void Optimiser::renameBsa() //Renames the BSA.
 {
     log->appendHtml(greenColor + tr("Renaming BSA...") + endColor);
 
@@ -306,25 +295,21 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 {
     log->appendHtml(greenColor + tr("Creating a new BSA...") + endColor);
 
-
     QDir modPathDir(modPath);
-    QStringList dirs;
+    QStringList dirs(modPathDir.entryList(QDir::Dirs));
 
     QProcess bsarch;
 
-    modPathDir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
-    dirs = modPathDir.entryList();
-
     for (int i = 0; i < dirs.size(); ++i)
     {
-        if(dirs.at(i).right(3) == "bsa")
+        if(dirs.at(i).right(13) == "bsa.extracted")
         {
             bool hasSound=false;
 
             QTemporaryDir tempDir;
             QStringList bsarchArgs;
 
-            QString folderName = modPath + "/" + dirs.at(i).right(dirs.size() - dirs.at(i).lastIndexOf("/)"));
+            QString folderName = modPath + "/" + dirs.at(i).mid(dirs.at(i).lastIndexOf("/"));
             QString bsaName;
 
             QDir bsaDir(folderName);
@@ -336,15 +321,15 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
             for (int j = 0; j < bsaDirs.size(); ++j)
             {
-                if(bsaDirs.at(i).toLower() == "sound" || bsaDirs.at(i).toLower() == "music")
-                        hasSound=true;
+                if(bsaDirs.at(j).toLower() == "sound" || bsaDirs.at(j).toLower() == "music")
+                    hasSound=true;
             }
 
             if(options.packExistingFiles)
             {
                 if(folderName.isEmpty())
                 {
-                    folderName.replace(i, modPath + "/" + findEspName().chopped(4) + ".bsa");
+                    folderName = modPath + "/" + findEspName().chopped(4) + ".bsa.extracted";
                     if(folderName.isEmpty())
                     {
                         folderName = tempDir.path() + QString::number(i);
@@ -361,13 +346,13 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
             //Checking if it a textures BSA
 
-            if(bsaDir.count() == 1 && bsaDirs.at(0).toLower() == "textures")
+            if(bsaDir.count() == 1 && bsaDirs.at(0).toLower() == "textures" && !folderName.contains("textures", Qt::CaseInsensitive))
             {
-                bsaName = folderName + " - Textures.bsa";
+                bsaName = folderName.chopped(14) + " - Textures.bsa";
             }
             else
             {
-                bsaName = folderName + ".bsa";
+                bsaName = folderName.chopped(14) + ".bsa";
             }
 
             bsarchArgs << "pack" << folderName << bsaName << "-sse" << "-share";
@@ -384,11 +369,11 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
             bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished(-1);
 
-            qDebug() << "BSArch Args :" << bsarchArgs << "\nBSArch output :\n" << bsarch.readAllStandardOutput() << "\nBSA folder :" << folderName << "\nBsaName : " << bsaName;
+            debugLog->appendPlainText("<CREATE BSA FUNC>\nBSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + folderName + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()) + "\n</CREATE BSA FUNC>\n\n\n\n\n");
 
             if(bsarch.readAllStandardOutput().contains("Done."))
             {
-                if(QFile(bsaName).size() < 240000000)
+                if(QFile(bsaName).size() < 2400000000)
                 {
                     log->appendHtml(tr("BSA successfully compressed.") + "\n");
                     modPathDir.setPath(folderName);
@@ -407,6 +392,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
                 }
             }
         }
+        QCoreApplication::processEvents();
     }
 }
 
@@ -677,7 +663,7 @@ QString Optimiser::findEspName() //Find esp name using an iterator
         }
     }
     ++dummyPluginsCounter;
-    qDebug() << "dummy_plugin" + QString::number(dummyPluginsCounter) + ".esp";
+    debugLog->appendPlainText("dummy_plugin" + QString::number(dummyPluginsCounter) + ".esp");
     return "dummy_plugin" + QString::number(dummyPluginsCounter) + ".esp";
 }
 
@@ -750,8 +736,7 @@ void Optimiser::saveSettings() //Saves settings to an ini file
     settings.setValue("DryRun", options.dryRun);
     settings.setValue("SelectedPath", options.userPath);
 
-    settings.setValue("RecreateBSA", options.recreateBsa);
-    settings.setValue("ExtractBSA", options.extractBsa);
+    settings.setValue("bsaContent", options.bsaContent);
     settings.setValue("PackExistingFiles", options.packExistingFiles);
 
     settings.setValue("HardCrashingMeshes", options.hardCrashingMeshes);
@@ -768,15 +753,13 @@ void Optimiser::saveSettings() //Saves settings to an ini file
 void Optimiser::loadSettings() //Loads settings from the ini file
 {
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
-
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
     options.mode = settings.value("options.mode").toInt();
     options.dryRun = settings.value("DryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
 
-    options.recreateBsa = settings.value("RecreateBSA").toBool();
-    options.extractBsa = settings.value("ExtractBSA").toBool();
+    options.bsaContent = settings.value("bsaContent").toBool();
     options.packExistingFiles = settings.value("PackExistingFiles").toBool();
 
     options.hardCrashingMeshes = settings.value("HardCrashingMeshes").toBool();
@@ -795,8 +778,7 @@ void Optimiser::resetToDefaultSettings()
     options.mode = 0;
     options.userPath = "";
 
-    options.recreateBsa = true;
-    options.extractBsa = true;
+    options.bsaContent = true;
     options.packExistingFiles = false;
 
     options.hardCrashingMeshes = true;
@@ -809,4 +791,28 @@ void Optimiser::resetToDefaultSettings()
     options.animOptBool = true;
 
     options.dryRun = false;
+}
+
+
+void Optimiser::printSettings()
+{
+    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+
+
+    debugLog->appendPlainText("mode: : " + QString::number(options.mode));
+    debugLog->appendPlainText("DryRun: " + QString::number(options.dryRun));
+    debugLog->appendPlainText("SelectedPath: "+ options.userPath);
+
+    debugLog->appendPlainText("bsaContent: "+ QString::number(options.bsaContent));
+    debugLog->appendPlainText("PackExistingFiles: "+ QString::number(options.packExistingFiles));
+
+    debugLog->appendPlainText("HardCrashingMeshes: "+ QString::number(options.hardCrashingMeshes));
+    debugLog->appendPlainText("OtherMeshes: "+ QString::number(options.otherMeshes));
+
+    debugLog->appendPlainText("TGAConv: "+ QString::number( options.tgaConv));
+    debugLog->appendPlainText("BC7Conv: " + QString::number( options.bc7Conv));
+    debugLog->appendPlainText("nifscanTextures: " + QString::number( options.nifscanTextures));
+
+    debugLog->appendPlainText("AnimOpt: " + QString::number(options.animOptBool));
 }

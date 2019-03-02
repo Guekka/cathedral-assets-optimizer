@@ -21,8 +21,7 @@ struct optOptions
 {
 
 
-    bool extractBsa{};
-    bool recreateBsa{};
+    bool bsaContent{};
     bool packExistingFiles{};
 
     bool tgaConv{};
@@ -39,6 +38,8 @@ struct optOptions
     bool dryRun{};
 
     QString userPath;
+
+    bool verbose{};
 };
 
 
@@ -48,9 +49,11 @@ class Optimiser : public QObject
 
 public:
 
-    Optimiser(QPlainTextEdit* textEdit, QProgressBar* bar);
+    Optimiser(QPlainTextEdit* log, QPlainTextEdit* debugLog, QProgressBar* bar);
 
     optOptions options;
+
+    void setup();
 
     int mainProcess();
     void dryRun();
@@ -81,6 +84,7 @@ public:
     void saveSettings();
     void loadSettings();
     void resetToDefaultSettings();
+    void printSettings();
 
     //Filesystem operations
 
@@ -89,8 +93,10 @@ public:
 
 private:
     QString modPath;
+    QStringList modDirs;
 
     QPlainTextEdit* log;
+    QPlainTextEdit* debugLog;
     QProgressBar* progressBar;
 
     QStringList hardCrashingMeshes;

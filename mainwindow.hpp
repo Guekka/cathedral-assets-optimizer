@@ -13,6 +13,7 @@
 #include <QMainWindow>
 
 #include "Optimiser.hpp"
+#include "devmodeui.h"
 
 namespace Ui {
     class MainWindow;
@@ -33,6 +34,8 @@ private:
     QFileDialog *fileDialog{};
 
     Ui::MainWindow *ui;
+
+    devModeUI *devmode;
 
     Optimiser *optimizer;
 
