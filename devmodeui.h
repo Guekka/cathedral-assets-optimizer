@@ -12,17 +12,12 @@ class devModeUI : public QWidget
 {
 
 public:
-    explicit devModeUI(QWidget *parent = nullptr);
+    explicit devModeUI(Optimiser* optimiser);
     ~devModeUI();
-
-
 
 private:
 
     Ui::devModeUI *ui;
-    Optimiser *optimiser;
-
-
 };
 
 #endif // DEVMODEUI_H

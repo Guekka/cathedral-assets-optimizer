@@ -827,3 +827,10 @@ void Optimiser::printSettings()
 
     debugLog->appendPlainText("AnimOpt: " + QString::number(options.animOptBool));
 }
+
+
+
+void Optimiser::setDebugLog(QPlainTextEdit *log)
+{
+    debugLog = log;
+}

@@ -91,6 +91,8 @@ public:
 
     void moveAssets(const QString& dest);
 
+    void setDebugLog(QPlainTextEdit* log);
+
 private:
     QString modPath;
     QStringList modDirs;
