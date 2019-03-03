@@ -49,7 +49,7 @@ class Optimiser : public QObject
 
 public:
 
-    Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar);
+    Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar, bool verbose);
     ~Optimiser();
 
     optOptions options;

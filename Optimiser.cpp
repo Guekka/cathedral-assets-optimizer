@@ -6,9 +6,9 @@ const QString greyColor("<font color=Grey>");
 const QString orangeColor("<font color=Orange>");
 const QString endColor("</font>\n");
 
-Optimiser::Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar) : log(textedit), debugLog(debuglog), progressBar(bar), dummyPluginsCounter(0)
+Optimiser::Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar, bool verbose) : log(textedit), debugLog(debuglog), progressBar(bar), dummyPluginsCounter(0)
 {
-    if(debugLog == log)
+    if(!verbose)
     {
         trash = new QPlainTextEdit();
         debugLog = trash;

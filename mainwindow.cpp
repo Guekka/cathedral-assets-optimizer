@@ -6,8 +6,8 @@
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar);
-    devmode  = new devModeUI(optimizer);
+    optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar, false);
+    devmode  = new devModeUI();
 
     this->loadSettings();
     optimizer->loadSettings();
