@@ -3,14 +3,12 @@
 #include "Optimiser.hpp"
 
 
-devModeUI::devModeUI(QWidget *parent) :
-    QWidget (parent),
+devModeUI::devModeUI( Optimiser *optimiser) :
     ui(new Ui::devModeUI)
 {
-    ui->setupUi(this);
+    ui->devModeLog->appendPlainText("test");
 
-    optimiser = new Optimiser(ui->log, ui->log, ui->progressBar);
-    optimiser->loadSettings();
+    ui->setupUi(this);
 
     connect(ui->CreateBSA, &QPushButton::clicked, this, [=]()
     {
@@ -39,7 +37,7 @@ devModeUI::devModeUI(QWidget *parent) :
 
     connect(ui->pushButton_2, &QPushButton::clicked, this, [=]()
     {
-        ui->log->clear();
+        ui->devModeLog->clear();
     });
 
     connect(ui->Setup, &QPushButton::clicked, this, [=]()

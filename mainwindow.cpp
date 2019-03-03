@@ -5,10 +5,9 @@
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
-    devmode  = new devModeUI();
-
     ui->setupUi(this);
     optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar);
+    devmode  = new devModeUI(optimizer);
 
     this->loadSettings();
     optimizer->loadSettings();
@@ -18,7 +17,12 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.bsaContent = state;
+        optimizer->options.extractBsa = state;
+    });
+
+    connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
+    {
+        optimizer->options.recreateBsa = state;
     });
 
 
@@ -186,7 +190,8 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
         ui->texturesGroupBox->show();
     }
 
-    ui->extractBsaCheckbox->setChecked(optimizer->options.bsaContent);
+    ui->extractBsaCheckbox->setChecked(optimizer->options.extractBsa);
+    ui->recreatetBsaCheckbox->setChecked(optimizer->options.recreateBsa);
     ui->packExistingAssetsCheckbox->setChecked(optimizer->options.packExistingFiles);
 
     ui->bc7ConvCheckbox->setChecked(optimizer->options.bc7Conv);

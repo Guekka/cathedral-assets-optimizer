@@ -73,7 +73,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="log"/>
+    <widget class="QPlainTextEdit" name="devModeLog"/>
    </item>
    <item>
     <widget class="QProgressBar" name="progressBar">

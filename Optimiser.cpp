@@ -6,10 +6,19 @@ const QString greyColor("<font color=Grey>");
 const QString orangeColor("<font color=Orange>");
 const QString endColor("</font>\n");
 
-Optimiser::Optimiser(QPlainTextEdit* log, QPlainTextEdit* debugLog, QProgressBar* bar) : log(log), debugLog(debugLog), progressBar(bar), dummyPluginsCounter(0)
+Optimiser::Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar) : log(textedit), debugLog(debuglog), progressBar(bar), dummyPluginsCounter(0)
 {
-    if(options.verbose)
-        debugLog = log;
+    if(debugLog == log)
+    {
+        trash = new QPlainTextEdit();
+        debugLog = trash;
+    }
+}
+
+
+Optimiser::~Optimiser()
+{
+    delete trash;
 }
 
 
@@ -52,7 +61,7 @@ void Optimiser::setup()
         modDirs = dir.entryList();
     }
 
-    else
+    if(options.mode == 0)
     {
         modDirs << ""; //if modDirs is empty, the mod won't be processed
 
@@ -61,7 +70,7 @@ void Optimiser::setup()
     modPath = QDir::cleanPath(options.userPath + "/" + modDirs.at(0)); //In case it is ran from debug mode
     debugLog->appendPlainText("Modpath: " + modPath);
 
-    progressBar->setMaximum(modDirs.size()*((options.bsaContent *2)+ 1));
+    progressBar->setMaximum(modDirs.size()*(options.extractBsa + 1 + options.recreateBsa));
 }
 
 
@@ -87,7 +96,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
         log->appendHtml(orangeColor + tr("Current mod: ") + modPath + endColor);
 
-        if(options.bsaContent)
+        if(options.extractBsa)
         {
             extractBsa();
             progressBar->setValue(progressBar->value() + 1);
@@ -119,7 +128,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
         progressBar->setValue(progressBar->value() + 1);
 
-        if(options.bsaContent)
+        if(options.recreateBsa)
         {
             createBsa();
             progressBar->setValue(progressBar->value() + 1);
@@ -130,7 +139,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
     //Deleting empty dirs
 
-    system(QString("cd /d \"" + options.userPath + "\" && for /f \"delims=\" %d in ('dir /s /b /ad ^| sort /r') do rd \"%d\" >nul 2>&1").toStdString().c_str());
+    system(QString("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)").toStdString().c_str());
 
     progressBar->setValue(progressBar->maximum());
     log->appendHtml(greenColor + tr("Completed. Please read the above text to check if any errors occurred (displayed in red).") + endColor);
@@ -155,7 +164,7 @@ void Optimiser::dryRun()
 
         log->appendHtml(orangeColor + tr("Current mod: ") + modPath + endColor);
 
-        if(options.bsaContent)
+        if(options.extractBsa)
         {
             extractBsa();
             progressBar->setValue(progressBar->value() + 1);
@@ -293,7 +302,7 @@ void Optimiser::renameBsa() //Renames the BSA.
 
 void Optimiser::createBsa() //Once all the optimizations are done, create a new BSA
 {
-    log->appendHtml(greenColor + tr("Creating a new BSA...") + endColor);
+    log->appendHtml(greenColor + tr("Creating a new BSA...(this may take a long time, do not force close the program)") + endColor);
 
     QDir modPathDir(modPath);
     QStringList dirs(modPathDir.entryList(QDir::Dirs));
@@ -364,18 +373,16 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
             modPathDir.rename(folderName + "/meshes/actors/character/animations", "meshes/actors/character/animations"); //Moving animations because FNIS can't see them in BSA
 
-            log->appendPlainText(tr("Compressing...(this may take a long time, do not force close the program)") + "\n");
-
             bsarch.start("resources/bsarch.exe", bsarchArgs);
             bsarch.waitForFinished(-1);
 
             debugLog->appendPlainText("<CREATE BSA FUNC>\nBSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + folderName + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()) + "\n</CREATE BSA FUNC>\n\n\n\n\n");
 
-            if(bsarch.readAllStandardOutput().contains("Done."))
+            if(bsarch.readAllStandardOutput().contains("Done"))
             {
                 if(QFile(bsaName).size() < 2400000000)
                 {
-                    log->appendHtml(tr("BSA successfully compressed.") + "\n");
+                    log->appendHtml(tr("BSA successfully compressed: ") + bsaName + "\n");
                     modPathDir.setPath(folderName);
                     modPathDir.removeRecursively();
                     modPathDir.rename(bsaName, folderName);
@@ -736,7 +743,8 @@ void Optimiser::saveSettings() //Saves settings to an ini file
     settings.setValue("DryRun", options.dryRun);
     settings.setValue("SelectedPath", options.userPath);
 
-    settings.setValue("bsaContent", options.bsaContent);
+    settings.setValue("extractBSA", options.extractBsa);
+    settings.setValue("recreateBSA", options.recreateBsa);
     settings.setValue("PackExistingFiles", options.packExistingFiles);
 
     settings.setValue("HardCrashingMeshes", options.hardCrashingMeshes);
@@ -759,7 +767,8 @@ void Optimiser::loadSettings() //Loads settings from the ini file
     options.dryRun = settings.value("DryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
 
-    options.bsaContent = settings.value("bsaContent").toBool();
+    options.extractBsa = settings.value("extractBSA").toBool();
+    options.recreateBsa = settings.value("recreateBSA").toBool();
     options.packExistingFiles = settings.value("PackExistingFiles").toBool();
 
     options.hardCrashingMeshes = settings.value("HardCrashingMeshes").toBool();
@@ -778,7 +787,8 @@ void Optimiser::resetToDefaultSettings()
     options.mode = 0;
     options.userPath = "";
 
-    options.bsaContent = true;
+    options.extractBsa = true;
+    options.recreateBsa = true;
     options.packExistingFiles = false;
 
     options.hardCrashingMeshes = true;
@@ -804,7 +814,8 @@ void Optimiser::printSettings()
     debugLog->appendPlainText("DryRun: " + QString::number(options.dryRun));
     debugLog->appendPlainText("SelectedPath: "+ options.userPath);
 
-    debugLog->appendPlainText("bsaContent: "+ QString::number(options.bsaContent));
+    debugLog->appendPlainText("Extract BSA: "+ QString::number(options.extractBsa));
+    debugLog->appendPlainText("Recreate BSA: " + QString::number(options.recreateBsa));
     debugLog->appendPlainText("PackExistingFiles: "+ QString::number(options.packExistingFiles));
 
     debugLog->appendPlainText("HardCrashingMeshes: "+ QString::number(options.hardCrashingMeshes));

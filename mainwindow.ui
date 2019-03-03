@@ -170,10 +170,20 @@
        <string>BSA</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
+       <item alignment="Qt::AlignLeft">
         <widget class="QCheckBox" name="extractBsaCheckbox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Extract old BSA</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="recreatetBsaCheckbox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -182,14 +192,14 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;Creates a new BSA after processing the previously extracted assets&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Optimize assets in BSA</string>
+          <string>Recreate BSA</string>
          </property>
         </widget>
        </item>
-       <item alignment="Qt::AlignLeft">
+       <item alignment="Qt::AlignRight">
         <widget class="QCheckBox" name="packExistingAssetsCheckbox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">

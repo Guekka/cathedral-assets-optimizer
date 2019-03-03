@@ -1,5 +1,5 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#ifndef OPTIMISER
+#define OPTIMISER
 
 #include <QDirIterator>
 #include <QCoreApplication>
@@ -21,7 +21,9 @@ struct optOptions
 {
 
 
-    bool bsaContent{};
+    bool extractBsa{};
+    bool recreateBsa{};
+
     bool packExistingFiles{};
 
     bool tgaConv{};
@@ -38,8 +40,6 @@ struct optOptions
     bool dryRun{};
 
     QString userPath;
-
-    bool verbose{};
 };
 
 
@@ -49,7 +49,8 @@ class Optimiser : public QObject
 
 public:
 
-    Optimiser(QPlainTextEdit* log, QPlainTextEdit* debugLog, QProgressBar* bar);
+    Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar);
+    ~Optimiser();
 
     optOptions options;
 
@@ -90,13 +91,14 @@ public:
 
     void moveAssets(const QString& dest);
 
-
 private:
     QString modPath;
     QStringList modDirs;
 
     QPlainTextEdit* log;
     QPlainTextEdit* debugLog;
+    QPlainTextEdit* trash;
+
     QProgressBar* progressBar;
 
     QStringList hardCrashingMeshes;
@@ -106,7 +108,9 @@ private:
 
     int dummyPluginsCounter;
 
+
+
 };
 
 
-#endif // FUNCTIONS_H
+#endif // OPTIMISER
