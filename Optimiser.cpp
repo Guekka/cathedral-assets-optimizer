@@ -281,9 +281,7 @@ void Optimiser::renameBsa() //Renames all BSA in modPath
             if(currentBsa.exists() && !QFileInfo(currentBsa).isDir())
             {
                 if(bakBsa.size() == currentBsa.size())
-                {
                     currentBsa.remove();
-                }
                 else
                 {
                     bakBsa.rename(bakBsa.fileName() + ".bak");
@@ -292,9 +290,7 @@ void Optimiser::renameBsa() //Renames all BSA in modPath
             }
         }
         else if(it.fileName().contains(".bsa") && !it.fileInfo().isDir())
-        {
             QFile::rename(it.filePath(), it.filePath() + ".bak");
-        }
     }
 }
 
@@ -324,7 +320,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
         else if(options.bPackExistingFiles)
         {
-            folderName = modPath + "/" + findEspName().chopped(4) + ".bsa.extracted";
+            folderName = modPath + "/" + findEspName().replace(".esp", ".bsa.extracted");
             moveAssets(folderName);
         }
         else
@@ -333,9 +329,9 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
         if(!folderName.isEmpty())
         {
             bsaDir.setPath(folderName);
-            bsaDirs = bsaDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+            bsaDirs = bsaDir.entryList(QDir::Dirs);
 
-            //Detecting if BSA will contain sounds, since compressing sounds breaks them
+            //Detecting if BSA will contain sounds, since compressing BSA breaks sounds
 
             for (int j = 0; j < bsaDirs.size(); ++j)
             {
@@ -343,24 +339,17 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
                     hasSound=true;
             }
 
-
             //Checking if it a textures BSA
 
-            if(bsaDir.count() == 1 && bsaDirs.at(0).toLower() == "textures" && !folderName.contains("textures", Qt::CaseInsensitive))
-            {
+            if(bsaDir.count() == 1 && bsaDirs.at(0) == "TEXTURES" && !folderName.contains("textures", Qt::CaseInsensitive))
                 bsaName = folderName.chopped(14) + " - Textures.bsa";
-            }
             else
-            {
                 bsaName = folderName.chopped(14) + ".bsa";
-            }
 
             bsarchArgs << "pack" << folderName << bsaName << "-sse" << "-share";
 
             if (!hasSound) //Compressing BSA breaks sounds
-            {
                 bsarchArgs << "-z";
-            }
 
             modPathDir.rename(folderName + "/meshes/actors/character/animations", "meshes/actors/character/animations"); //Moving animations because FNIS can't see them in BSA
 
@@ -376,7 +365,6 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
                     log->appendHtml(tr("BSA successfully compressed: ") + bsaName + "\n");
                     modPathDir.setPath(folderName);
                     modPathDir.removeRecursively();
-                    modPathDir.rename(bsaName, folderName.chopped(10));
                 }
                 else
                 {
@@ -385,9 +373,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
                 }
 
                 if(QFile(bsaName).size() > 2147483648)
-                {
                     log->appendHtml(greyColor + "Warning: the BSA is nearly over its maximum size. It still should work." + endColor);
-                }
             }
         }
         QCoreApplication::processEvents();
@@ -655,7 +641,8 @@ void Optimiser::moveAssets(QString dest) //Moves files reported in assets list t
     QDir modPathDir(modPath);
     QDirIterator it(modPath, QDirIterator::Subdirectories);
     QDirIterator firstIt(modPath);
-    QFile looseAsset, bsaAsset;
+    QFile oldAsset;
+    QFile newAsset;
     QString relativeFilename;
     dest = QDir::cleanPath(dest) + "/";
 
@@ -677,28 +664,28 @@ void Optimiser::moveAssets(QString dest) //Moves files reported in assets list t
         it.next();
         if(it.filePath().contains("TEXTURES") && !it.filePath().contains(".bsa", Qt::CaseInsensitive))
         {
-            looseAsset.setFileName(it.filePath());
+            oldAsset.setFileName(it.filePath());
             relativeFilename = modPathDir.relativeFilePath(it.filePath());
-            bsaAsset.setFileName(dest.chopped(15) + " - Textures.bsa/" + relativeFilename);
+            newAsset.setFileName(dest.chopped(15) + " - Textures.bsa.extracted/" + relativeFilename);
 
-            if(bsaAsset.exists() && looseAsset.size() == bsaAsset.size())
-                QFile::remove(bsaAsset.fileName());
+            if(newAsset.exists() && oldAsset.size() == newAsset.size())
+                QFile::remove(newAsset.fileName());
 
-            modPathDir.mkpath(bsaAsset.fileName().left(bsaAsset.fileName().lastIndexOf("/")));
-            modPathDir.rename(looseAsset.fileName(), bsaAsset.fileName());
+            modPathDir.mkpath(newAsset.fileName().left(newAsset.fileName().lastIndexOf("/")));
+            modPathDir.rename(oldAsset.fileName(), newAsset.fileName());
         }
 
-        else if(!dest.contains(it.filePath()) && assets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !it.filePath().contains(".bsa", Qt::CaseInsensitive))
+        else if(!it.filePath().contains(".bsa.extracted") && assets.contains(it.fileName().right(3), Qt::CaseInsensitive))
         {
-            looseAsset.setFileName(it.filePath());
+            oldAsset.setFileName(it.filePath());
             relativeFilename = modPathDir.relativeFilePath(it.filePath());
-            bsaAsset.setFileName(dest + relativeFilename);
+            newAsset.setFileName(dest + relativeFilename);
 
-            if(bsaAsset.exists() && looseAsset.size() == bsaAsset.size())
-                QFile::remove(bsaAsset.fileName());
+            if(newAsset.exists() && oldAsset.size() == newAsset.size())
+                QFile::remove(newAsset.fileName());
 
-            modPathDir.mkpath(bsaAsset.fileName().left(bsaAsset.fileName().lastIndexOf("/")));
-            modPathDir.rename(looseAsset.fileName(), bsaAsset.fileName());
+            modPathDir.mkpath(newAsset.fileName().left(newAsset.fileName().lastIndexOf("/")));
+            modPathDir.rename(oldAsset.fileName(), newAsset.fileName());
         }
         QCoreApplication::processEvents();
     }

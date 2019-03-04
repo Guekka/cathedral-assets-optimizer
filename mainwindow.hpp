@@ -26,6 +26,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
 
+    void closeEvent(QCloseEvent *event);
+
 private:
     QFileDialog *fileDialog{};
     Ui::MainWindow *ui;
@@ -36,7 +38,6 @@ private:
     bool bDarkMode = true;
 
     void loadUIFromVars();
-    void closeEvent(QCloseEvent *event);
     void saveSettings();
     void loadSettings();
 };
