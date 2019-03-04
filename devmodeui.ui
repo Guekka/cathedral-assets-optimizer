@@ -20,52 +20,72 @@
       <string>GroupBox</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="2" column="0">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="Setup">
+        <property name="text">
+         <string>Setup</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QPushButton" name="PrintOptions">
+        <property name="text">
+         <string>Print options</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
        <widget class="QPushButton" name="CreateBSA">
         <property name="text">
          <string>Create BSA()</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="ExtractBSA">
-        <property name="text">
-         <string>Extract BSA()</string>
-        </property>
-       </widget>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="MoveAssetsPath"/>
       </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="RenameBSA">
-        <property name="text">
-         <string>Rename BSA()</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>Clear</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
+      <item row="5" column="1">
        <widget class="QPushButton" name="FindEspName">
         <property name="text">
          <string>FindEspName()</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QPushButton" name="pushButton">
+      <item row="7" column="1">
+       <widget class="QPushButton" name="ClearLog">
         <property name="text">
-         <string>Print options</string>
+         <string>Clear</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="Setup">
+      <item row="3" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>Setup</string>
+         <string>MoveAssets() destination</string>
+        </property>
+        <property name="buddy">
+         <cstring>MoveAssetsPath</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="MoveAssets">
+        <property name="text">
+         <string>MoveAssets()</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="RenameBSA">
+        <property name="text">
+         <string>Rename BSA()</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="ExtractBSA">
+        <property name="text">
+         <string>Extract BSA()</string>
         </property>
        </widget>
       </item>

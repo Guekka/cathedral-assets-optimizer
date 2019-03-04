@@ -25,22 +25,20 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
+
+private:
+    QFileDialog *fileDialog{};
+    Ui::MainWindow *ui;
+    devModeUI *devmode;
+    Optimiser *optimizer;
+
+    bool bSimpleMode = true;
+    bool bDarkMode = true;
+
     void loadUIFromVars();
     void closeEvent(QCloseEvent *event);
     void saveSettings();
     void loadSettings();
-
-private:
-    QFileDialog *fileDialog{};
-
-    Ui::MainWindow *ui;
-
-    devModeUI *devmode;
-
-    Optimiser *optimizer;
-
-    bool simpleMode = true;
-    bool darkMode = true;
 };
 
 #endif // MAINWINDOW_H

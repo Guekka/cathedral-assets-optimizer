@@ -351,16 +351,16 @@
      </widget>
     </item>
     <item>
-     <widget class="QProgressBar" name="progressBar">
-      <property name="value">
-       <number>0</number>
+     <widget class="QPlainTextEdit" name="mw_log">
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPlainTextEdit" name="mw_log">
-      <property name="readOnly">
-       <bool>true</bool>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>0</number>
       </property>
      </widget>
     </item>
@@ -383,6 +383,7 @@
     <addaction name="actionReset_to_default_settings"/>
     <addaction name="actionShow_advanced_settings"/>
     <addaction name="actionSwitch_to_dark_theme"/>
+    <addaction name="separator"/>
     <addaction name="actionOpen_log"/>
    </widget>
    <addaction name="menuTools"/>
@@ -404,7 +405,7 @@
   </action>
   <action name="actionOpen_log">
    <property name="text">
-    <string>Dev mode </string>
+    <string>Dev mode (DANGEROUS)</string>
    </property>
   </action>
  </widget>

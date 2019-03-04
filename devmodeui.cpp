@@ -2,6 +2,9 @@
 #include "ui_devmodeui.h"
 #include "Optimiser.hpp"
 
+//UI used to test some functions. Will be removed once the concerned functions will be 100% working. Debug log will probably be kept.
+//Once this will be removed, public Optimiser functions will be able to be switched to private
+
 
 devModeUI::devModeUI(Optimiser *optimiser) :
     ui(new Ui::devModeUI)
@@ -31,12 +34,12 @@ devModeUI::devModeUI(Optimiser *optimiser) :
         optimiser->renameBsa();
     });
 
-    connect(ui->pushButton, &QPushButton::clicked, this, [=]()
+    connect(ui->PrintOptions, &QPushButton::clicked, this, [=]()
     {
         optimiser->printSettings();
     });
 
-    connect(ui->pushButton_2, &QPushButton::clicked, this, [=]()
+    connect(ui->ClearLog, &QPushButton::clicked, this, [=]()
     {
         ui->log->clear();
     });
@@ -44,6 +47,11 @@ devModeUI::devModeUI(Optimiser *optimiser) :
     connect(ui->Setup, &QPushButton::clicked, this, [=]()
     {
         optimiser->setup();
+    });
+
+    connect(ui->MoveAssets, &QPushButton::clicked, this, [=]()
+    {
+        optimiser->moveAssets(ui->MoveAssetsPath->text() + "/");
     });
 }
 

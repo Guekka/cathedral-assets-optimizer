@@ -6,15 +6,7 @@ const QString greyColor("<font color=Grey>");
 const QString orangeColor("<font color=Orange>");
 const QString endColor("</font>\n");
 
-Optimiser::Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar, bool verbose) : log(textedit), debugLog(debuglog), progressBar(bar), dummyPluginsCounter(0)
-{
-    if(!verbose)
-    {
-        trash = new QPlainTextEdit();
-        debugLog = trash;
-    }
-}
-
+Optimiser::Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar) : log(textedit), debugLog(debuglog), progressBar(bar), dummyPluginsCounter(0) {}
 
 Optimiser::~Optimiser()
 {
@@ -22,26 +14,24 @@ Optimiser::~Optimiser()
 }
 
 
-void Optimiser::setup()
+bool Optimiser::setup() //Some necessary operations before running
 {
     saveSettings();
-    progressBar->reset();
 
+    modDirs.clear();
+    progressBar->reset();
     log->clear();
 
-    QStringList requirements;
+    //Checking if all the requirements are in the resources folder
 
-    QFile havokFile(findSkyrimDir() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
+    QStringList requirements;
+    QFile havokFile(findSkyrimDirectory() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
 
     if(havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
-    {
         havokFile.copy("resources/HavokBehaviorPostProcess.exe");
-    }
-    else if(!havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
-    {
-        log->appendHtml(redColor + tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder") + endColor);
-    }
 
+    else if(!havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
+        log->appendHtml(redColor + tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder") + endColor);
 
     requirements << "bsarch.exe" << "NifScan.exe" << "nifopt.exe" << "texconv.exe" << "texdiag.exe" << "HavokBehaviorPostProcess.exe";
 
@@ -51,35 +41,38 @@ void Optimiser::setup()
         if(!file.exists())
         {
             log->appendHtml(redColor + requirements.at(i) + tr(" not found. Cancelling.") + endColor);
+            return false;
         }
     }
 
-    if(options.mode == 1)
+    //Adding all dirs to process to modDirs
+
+    if(options.mode == 1) //Several mods mode
     {
         QDir dir(options.userPath);
         dir.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
         modDirs = dir.entryList();
     }
 
-    if(options.mode == 0)
-    {
-        modDirs << ""; //if modDirs is empty, the mod won't be processed
+    if(options.mode == 0) //One mod mode
+        modDirs << ""; //if modDirs is empty, the loop won't be run
 
-    }
+    modPath = QDir::cleanPath(options.userPath + "/" + modDirs.at(0)); //In case it is ran from debug UI
+    debugLog->appendPlainText("<SETUP FUNC>\nModpath: " + modPath + "\n</SETUP FUNC>");
 
-    modPath = QDir::cleanPath(options.userPath + "/" + modDirs.at(0)); //In case it is ran from debug mode
-    debugLog->appendPlainText("Modpath: " + modPath);
+    progressBar->setMaximum(modDirs.size()*(options.bExtractBsa + 1 + options.bCreateBsa));
 
-    progressBar->setMaximum(modDirs.size()*(options.extractBsa + 1 + options.recreateBsa));
+    QCoreApplication::processEvents();
+    return true;
 }
-
 
 
 int Optimiser::mainProcess() // Process the userPath according to all user options
 {
-    setup();
+    if(!setup())
+        return 1;
 
-    if(options.dryRun)
+    if(options.bDryRun)
     {
         dryRun();
         return 2;
@@ -87,48 +80,57 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
     log->appendHtml(greenColor + tr("Beginning...") + endColor);
 
+    int progressBarMax = progressBar->maximum();
+    int progressBarValue = progressBar->value();
+
+    //This loop applies the selected optimizations to each mod specified in ModDirs
+
     for(int i=0; i < modDirs.size(); ++i)
     {
         modPath = QDir::cleanPath(options.userPath + "/" + modDirs.at(i));
         QDirIterator it(modPath, QDirIterator::Subdirectories);
 
-        nifScan();
-
+        debugLog->appendPlainText("<MAIN PROCESS FUNC>\nModDirs size: " + QString::number(modDirs.size()) + "\nCurrent index: " + QString::number(i));
         log->appendHtml(orangeColor + tr("Current mod: ") + modPath + endColor);
 
-        if(options.extractBsa)
+        listMeshes();
+
+        if(options.bExtractBsa)
         {
+            renameBsa();
             extractBsa();
             progressBar->setValue(progressBar->value() + 1);
         }
 
-        if(options.nifscanTextures)
-        {
+        if(options.bNifscanOnTextures)
             nifscanTextures();
-        }
 
         while(it.hasNext())
         {
+            progressBarValue = progressBar->value();
+            progressBar->setMaximum(0); //This will show a busy indicator on the progress bar
+            progressBar->setMinimum(0);
+
             it.next();
             QCoreApplication::processEvents();
 
-            if((options.hardCrashingMeshes || options.otherMeshes) && it.fileName().contains(".nif", Qt::CaseInsensitive))
-                nifOpt(&it);
+            if((options.bOptimizeHardCrashingMeshes || options.bOptimizeOtherMeshes) && it.fileName().contains(".nif", Qt::CaseInsensitive))
+                optimizeMesh(&it);
 
-            if((options.bc7Conv) && it.fileName().contains(".dds", Qt::CaseInsensitive))
-                bc7Conv(&it);
+            if((options.bBc7Conversion) && it.fileName().contains(".dds", Qt::CaseInsensitive))
+                bc7TexturesConversion(&it);
 
-            if((options.tgaConv) && it.fileName().contains(".tga", Qt::CaseInsensitive))
-                tgaConv(&it);
+            if((options.bTgaConversion) && it.fileName().contains(".tga", Qt::CaseInsensitive))
+                tgaToDdsConversion(&it);
 
-            if(options.animOptBool && it.fileName().contains(".hkx", Qt::CaseInsensitive))
-                animOpt(&it);
-
+            if(options.bOptimizeAnimations && it.fileName().contains(".hkx", Qt::CaseInsensitive))
+                optimizeAnimation(&it);
         }
 
-        progressBar->setValue(progressBar->value() + 1);
+        progressBar->setValue(progressBarValue + 1);
+        progressBar->setMaximum(progressBarMax);
 
-        if(options.recreateBsa)
+        if(options.bCreateBsa)
         {
             createBsa();
             progressBar->setValue(progressBar->value() + 1);
@@ -144,12 +146,12 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     progressBar->setValue(progressBar->maximum());
     log->appendHtml(greenColor + tr("Completed. Please read the above text to check if any errors occurred (displayed in red).") + endColor);
 
-
+    debugLog->appendPlainText("\n</MAIN PROCESS FUNC>");
     return 0;
 }
 
 
-void Optimiser::dryRun()
+void Optimiser::dryRun() // Perform a dry run : list files without actually modifying them
 {
     setup();
 
@@ -160,12 +162,13 @@ void Optimiser::dryRun()
         modPath = QDir::cleanPath(options.userPath + "/" + modDirs.at(i));
         QDirIterator it(modPath, QDirIterator::Subdirectories);
 
-        nifScan();
+        listMeshes();
 
         log->appendHtml(orangeColor + tr("Current mod: ") + modPath + endColor);
 
-        if(options.extractBsa)
+        if(options.bExtractBsa)
         {
+            renameBsa();
             extractBsa();
             progressBar->setValue(progressBar->value() + 1);
         }
@@ -176,15 +179,15 @@ void Optimiser::dryRun()
 
             QCoreApplication::processEvents();
 
-            if((options.hardCrashingMeshes || options.otherMeshes) && it.fileName().contains(".nif", Qt::CaseInsensitive))
+            if((options.bOptimizeHardCrashingMeshes || options.bOptimizeOtherMeshes) && it.fileName().contains(".nif", Qt::CaseInsensitive))
             {
 
-                if(options.hardCrashingMeshes && !hardCrashingMeshes.contains(it.filePath(), Qt::CaseInsensitive) && it.filePath().contains("facegendata", Qt::CaseInsensitive))
+                if(options.bOptimizeHardCrashingMeshes && !hardCrashingMeshes.contains(it.filePath(), Qt::CaseInsensitive) && it.filePath().contains("facegendata", Qt::CaseInsensitive))
                 {
                     log->appendPlainText(it.filePath() + tr(" would be optimized by Headparts meshes option.\n"));
                 }
 
-                else if(options.otherMeshes && !hardCrashingMeshes.contains(it.filePath(), Qt::CaseInsensitive) && otherMeshes.contains(it.filePath()))
+                else if(options.bOptimizeOtherMeshes && !hardCrashingMeshes.contains(it.filePath(), Qt::CaseInsensitive) && otherMeshes.contains(it.filePath()))
                 {
                     log->appendPlainText(it.filePath() + tr(" would be optimized lightly by the Other Meshes option.\n"));
                 }
@@ -195,7 +198,7 @@ void Optimiser::dryRun()
                 }
 
             }
-            if((options.bc7Conv) && it.fileName().contains(".dds", Qt::CaseInsensitive))
+            if((options.bBc7Conversion) && it.fileName().contains(".dds", Qt::CaseInsensitive))
             {
                 QProcess texDiag;
                 QStringList texdiagArg;
@@ -211,7 +214,7 @@ void Optimiser::dryRun()
                 }
             }
 
-            if((options.tgaConv) && it.fileName().contains(".tga", Qt::CaseInsensitive))
+            if((options.bTgaConversion) && it.fileName().contains(".tga", Qt::CaseInsensitive))
             {
                 log->appendPlainText(it.filePath() + tr(" would be converted to DDS"));
             }
@@ -228,8 +231,7 @@ void Optimiser::dryRun()
 }
 
 
-
-void Optimiser::extractBsa() //Extracts the BSA
+void Optimiser::extractBsa() //Extracts all BSA in modPath
 {
     log->appendHtml(greenColor + tr("Extracting BSA...") + endColor);
 
@@ -239,13 +241,11 @@ void Optimiser::extractBsa() //Extracts the BSA
     QDir modPathDir(modPath);
     QStringList files(modPathDir.entryList());
 
-    renameBsa();
-
     for (int i = 0; i < files.size(); ++i)
     {
         if(files.at(i).contains(".bsa.bak"))
         {
-            log->appendPlainText(tr("BSA found ! Extracting..."));
+            log->appendPlainText(tr("BSA found ! Extracting...(this may take a long time, do not force close the program): " + files.at(i).toLocal8Bit()));
 
             QString bsaName = QDir::cleanPath(modPath + QDir::separator() + files.at(i));
             QString bsaFolder = QDir::cleanPath(modPath + QDir::separator() + files.at(i).chopped(4) + ".extracted");
@@ -258,16 +258,15 @@ void Optimiser::extractBsa() //Extracts the BSA
 
             debugLog->appendPlainText("<EXTRACT BSA FUNC>\nBSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolder + "\nBSA Name :" + bsaName + "\n</EXTRACT BSA FUNC>\n\n\n\n\n");
 
-            if(bsarch.readAllStandardOutput().contains("Done"))
-                log->appendHtml(greenColor + tr("BSA successfully extracted.") + endColor);
-            else
+            if(!bsarch.readAllStandardOutput().contains("Done"))
                 log->appendHtml(redColor + tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.") + endColor);
         }
+        QCoreApplication::processEvents();
     }
 }
 
 
-void Optimiser::renameBsa() //Renames the BSA.
+void Optimiser::renameBsa() //Renames all BSA in modPath
 {
     log->appendHtml(greenColor + tr("Renaming BSA...") + endColor);
 
@@ -307,24 +306,34 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
     QDir modPathDir(modPath);
     QStringList dirs(modPathDir.entryList(QDir::Dirs));
 
+    QStringList bsarchArgs;
+    QString folderName;
+    QString bsaName;
+
+    QDir bsaDir;
+    QStringList bsaDirs;
     QProcess bsarch;
+
+    bool hasSound=false;
 
     for (int i = 0; i < dirs.size(); ++i)
     {
+        bsarchArgs.clear();
         if(dirs.at(i).right(13) == "bsa.extracted")
+            folderName = modPath + "/" + dirs.at(i).mid(dirs.at(i).lastIndexOf("/"));
+
+        else if(options.bPackExistingFiles)
         {
-            bool hasSound=false;
+            folderName = modPath + "/" + findEspName().chopped(4) + ".bsa.extracted";
+            moveAssets(folderName + "/");
+        }
+        else
+            folderName.clear();
 
-            QTemporaryDir tempDir;
-            QStringList bsarchArgs;
-
-            QString folderName = modPath + "/" + dirs.at(i).mid(dirs.at(i).lastIndexOf("/"));
-            QString bsaName;
-
-            QDir bsaDir(folderName);
-            QStringList bsaDirs;
-            bsaDir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
-            bsaDirs = bsaDir.entryList();
+        if(!folderName.isEmpty())
+        {
+            bsaDir.setPath(folderName);
+            bsaDirs = bsaDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 
             //Detecting if BSA will contain sounds, since compressing sounds breaks them
 
@@ -334,24 +343,6 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
                     hasSound=true;
             }
 
-            if(options.packExistingFiles)
-            {
-                if(folderName.isEmpty())
-                {
-                    folderName = modPath + "/" + findEspName().chopped(4) + ".bsa.extracted";
-                    if(folderName.isEmpty())
-                    {
-                        folderName = tempDir.path() + QString::number(i);
-                    }
-                }
-                moveAssets(folderName + "/");
-            }
-
-            else if(folderName.isEmpty())
-            {
-                log->appendHtml(tr("No files to compress were found.") + "\n");
-                return;
-            }
 
             //Checking if it a textures BSA
 
@@ -385,7 +376,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
                     log->appendHtml(tr("BSA successfully compressed: ") + bsaName + "\n");
                     modPathDir.setPath(folderName);
                     modPathDir.removeRecursively();
-                    modPathDir.rename(bsaName, folderName);
+                    modPathDir.rename(bsaName, folderName.chopped(10));
                 }
                 else
                 {
@@ -404,9 +395,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 }
 
 
-
-
-void Optimiser::bc7Conv(QDirIterator *it) //Compress the nmaps to BC7 if they are uncompressed.
+void Optimiser::bc7TexturesConversion(QDirIterator *it) //Compress uncompressed textures to BC7
 {
     QProcess texDiag;
     QStringList texdiagArg;
@@ -431,10 +420,9 @@ void Optimiser::bc7Conv(QDirIterator *it) //Compress the nmaps to BC7 if they ar
 }
 
 
-void Optimiser::nifscanTextures() // Uses Nifscan with -fixdds option
+void Optimiser::nifscanTextures() // Runs Nifscan with -fixdds option. Will convert unsupported textures to a supported format.
 {
     log->appendHtml(greenColor + tr("Running Nifscan on the textures...") + endColor);
-
 
     QFile nifScan_file("resources/NifScan.exe");
     QProcess nifScan;
@@ -453,10 +441,9 @@ void Optimiser::nifscanTextures() // Uses Nifscan with -fixdds option
 }
 
 
-void Optimiser::tgaConv(QDirIterator* it) //Compress the nmaps to BC7 if they are uncompressed.
+void Optimiser::tgaToDdsConversion(QDirIterator* it) //Convert TGA textures to DDS
 {
     log->appendHtml(greenColor + tr("Converting TGA files...") + endColor);
-
 
     QProcess texconv;
     QStringList texconvArg;
@@ -475,12 +462,9 @@ void Optimiser::tgaConv(QDirIterator* it) //Compress the nmaps to BC7 if they ar
 }
 
 
-void Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
+void Optimiser::listMeshes() //Run NifScan on modPath. Detected meshes will be stored to a list, accorded to their types.
 {
-
-
     log->appendHtml(greenColor + tr("Running NifScan...") + endColor);
-
 
     otherMeshes.clear();
     hardCrashingMeshes.clear();
@@ -573,7 +557,7 @@ void Optimiser::nifScan() //Nifscan all meshes and store it to a QStringList
 }
 
 
-void Optimiser::nifOpt(QDirIterator *it) // Optimise the meshes according to users option
+void Optimiser::optimizeMesh(QDirIterator *it) // Optimize the selected mesh
 {
     log->appendHtml(greenColor +  tr("Running NifOpt...") + endColor);
     log->appendPlainText(tr("Processing: ") + it->filePath());
@@ -583,26 +567,26 @@ void Optimiser::nifOpt(QDirIterator *it) // Optimise the meshes according to use
     QStringList nifOptArgs;
 
 
-    if(options.hardCrashingMeshes && crashingHeadparts.contains(it->filePath(), Qt::CaseInsensitive))
+    if(options.bOptimizeHardCrashingMeshes && crashingHeadparts.contains(it->filePath(), Qt::CaseInsensitive))
     {
         hardCrashingMeshes.removeAll(it->filePath());
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "1" << "-bsTriShape" << "1";
     }
 
-    else if (options.otherMeshes && otherHeadparts.contains(it->filePath(), Qt::CaseInsensitive))
+    else if (options.bOptimizeOtherMeshes && otherHeadparts.contains(it->filePath(), Qt::CaseInsensitive))
     {
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "1" << "-bsTriShape" << "1";
     }
 
-    else if(options.otherMeshes && otherMeshes.contains(it->filePath()))
+    else if(options.bOptimizeOtherMeshes && otherMeshes.contains(it->filePath()))
     {
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "0" << "-bsTriShape" << "0";
     }
 
-    else if(options.hardCrashingMeshes && hardCrashingMeshes.contains(it->filePath(), Qt::CaseInsensitive))
+    else if(options.bOptimizeHardCrashingMeshes && hardCrashingMeshes.contains(it->filePath(), Qt::CaseInsensitive))
     {
         nifOptArgs.clear();
         nifOptArgs << it->filePath() << "-head" << "0" << "-bsTriShape" << "1";
@@ -610,24 +594,17 @@ void Optimiser::nifOpt(QDirIterator *it) // Optimise the meshes according to use
 
     nifOpt.start("resources/nifopt.exe", nifOptArgs);
     nifOpt.waitForFinished(-1);
-
 }
 
 
-
-
-
-void Optimiser::animOpt(QDirIterator *it) //Uses Bethesda Havok Tool to port animations
+void Optimiser::optimizeAnimation(QDirIterator *it) //Run Bethesda Havok Tool to port the selected animation
 {
     log->appendHtml(greenColor + tr("Processing animations...") + endColor);
-
-
 
     QProcess havokProcess;
     QStringList havokArgs;
 
     log->appendPlainText(tr("Current file: ") + it->filePath() + tr("\nProcessing...\n"));
-
 
     havokArgs.clear();
     havokArgs << "--platformamd64" << it->filePath() << it->filePath();
@@ -635,17 +612,14 @@ void Optimiser::animOpt(QDirIterator *it) //Uses Bethesda Havok Tool to port ani
 
     havokProcess.waitForFinished(-1);
 
-
-
     if(havokProcess.readAllStandardOutput().isEmpty())
         log->appendHtml(greenColor + tr("Animation successfully ported.") + endColor);
     else
         log->appendHtml(greyColor + tr("An error occured during the animation porting. Maybe it is already compatible with SSE ?") + endColor);
-
 }
 
 
-QString Optimiser::findSkyrimDir() //Find Skyrim dir using Registry keys
+QString Optimiser::findSkyrimDirectory() //Find Skyrim directory using the registry key
 {
     QSettings SkyrimReg(R"(HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Bethesda Softworks\Skyrim Special Edition)", QSettings::NativeFormat);
     QDir SkyrimDir = QDir::cleanPath(SkyrimReg.value("Installed Path").toString());
@@ -653,7 +627,7 @@ QString Optimiser::findSkyrimDir() //Find Skyrim dir using Registry keys
 }
 
 
-QString Optimiser::findEspName() //Find esp name using an iterator
+QString Optimiser::findEspName() //Find esp/esl/esm name using an iterator and regex
 {
     QDirIterator it(modPath);
     QString espName;
@@ -665,7 +639,7 @@ QString Optimiser::findEspName() //Find esp name using an iterator
         if(it.fileName().contains(QRegularExpression("\\.es[plm]")))
         {
             espName=it.fileName();
-            log->appendPlainText(tr("Esp found:") + espName + "\n");
+            log->appendPlainText(tr("Esp found: ") + espName + "\n");
             return espName;
         }
     }
@@ -675,10 +649,7 @@ QString Optimiser::findEspName() //Find esp name using an iterator
 }
 
 
-//Filesystem operations
-
-
-void Optimiser::moveAssets(const QString& dest) //Move files with extensions present in assets list to specified folder
+void Optimiser::moveAssets(const QString& dest) //Moves files reported in assets list to specified folder
 {
     QStringList assets;
     QDir modPathDir(modPath);
@@ -687,7 +658,11 @@ void Optimiser::moveAssets(const QString& dest) //Move files with extensions pre
     QFile looseAsset, bsaAsset;
     QString relativeFilename;
 
-    assets << "nif" << "seq" << "pex" << "psc" << "lod" << "fuz" << "waw" << "xwm" << "swf" << "txt" << "hkx" << "dds" << "wav";
+    debugLog->appendPlainText("\n<MOVE ASSETS FUNC>\ndest folder: " + dest);
+
+    assets << "nif" << "seq" << "pex" << "psc" << "lod" << "fuz" << "waw" << "xwm" << "swf" << "txt" << "hkx" << "dds" << "wav" << "tri";
+
+    modPathDir.mkdir(dest);
 
     while (firstIt.hasNext())
     {
@@ -703,7 +678,7 @@ void Optimiser::moveAssets(const QString& dest) //Move files with extensions pre
         {
             looseAsset.setFileName(it.filePath());
             relativeFilename = modPathDir.relativeFilePath(it.filePath());
-            bsaAsset.setFileName(dest.chopped(4) + " - Textures.bsa/" + relativeFilename);
+            bsaAsset.setFileName(dest.chopped(14) + " - Textures.bsa/" + relativeFilename);
 
             if(bsaAsset.exists() && looseAsset.size() == bsaAsset.size())
             {
@@ -726,12 +701,12 @@ void Optimiser::moveAssets(const QString& dest) //Move files with extensions pre
             modPathDir.mkpath(bsaAsset.fileName().left(bsaAsset.fileName().lastIndexOf("/")));
             modPathDir.rename(looseAsset.fileName(), bsaAsset.fileName());
         }
-
-
         QCoreApplication::processEvents();
     }
-}
+    system(QString("cd /d \"" + modPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)").toStdString().c_str());
+    debugLog->appendPlainText("\n</MOVE ASSETS FUNC>\n");
 
+}
 
 
 void Optimiser::saveSettings() //Saves settings to an ini file
@@ -740,21 +715,21 @@ void Optimiser::saveSettings() //Saves settings to an ini file
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
     settings.setValue("options.mode", options.mode);
-    settings.setValue("DryRun", options.dryRun);
+    settings.setValue("DryRun", options.bDryRun);
     settings.setValue("SelectedPath", options.userPath);
 
-    settings.setValue("extractBSA", options.extractBsa);
-    settings.setValue("recreateBSA", options.recreateBsa);
-    settings.setValue("PackExistingFiles", options.packExistingFiles);
+    settings.setValue("extractBSA", options.bExtractBsa);
+    settings.setValue("recreateBSA", options.bCreateBsa);
+    settings.setValue("PackExistingFiles", options.bPackExistingFiles);
 
-    settings.setValue("HardCrashingMeshes", options.hardCrashingMeshes);
-    settings.setValue("OtherMeshes", options.otherMeshes);
+    settings.setValue("HardCrashingMeshes", options.bOptimizeHardCrashingMeshes);
+    settings.setValue("OtherMeshes", options.bOptimizeOtherMeshes);
 
-    settings.setValue("TGAConv", options.tgaConv);
-    settings.setValue("BC7Conv", options.bc7Conv);
-    settings.setValue("nifscanTextures", options.nifscanTextures);
+    settings.setValue("TGAConv", options.bTgaConversion);
+    settings.setValue("BC7Conv", options.bBc7Conversion);
+    settings.setValue("nifscanTextures", options.bNifscanOnTextures);
 
-    settings.setValue("AnimOpt", options.animOptBool);
+    settings.setValue("AnimOpt", options.bOptimizeAnimations);
 }
 
 
@@ -764,73 +739,72 @@ void Optimiser::loadSettings() //Loads settings from the ini file
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
     options.mode = settings.value("options.mode").toInt();
-    options.dryRun = settings.value("DryRun").toBool();
+    options.bDryRun = settings.value("DryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
 
-    options.extractBsa = settings.value("extractBSA").toBool();
-    options.recreateBsa = settings.value("recreateBSA").toBool();
-    options.packExistingFiles = settings.value("PackExistingFiles").toBool();
+    options.bExtractBsa = settings.value("extractBSA").toBool();
+    options.bCreateBsa = settings.value("recreateBSA").toBool();
+    options.bPackExistingFiles = settings.value("PackExistingFiles").toBool();
 
-    options.hardCrashingMeshes = settings.value("HardCrashingMeshes").toBool();
-    options.otherMeshes = settings.value("OtherMeshes").toBool();
+    options.bOptimizeHardCrashingMeshes = settings.value("HardCrashingMeshes").toBool();
+    options.bOptimizeOtherMeshes = settings.value("OtherMeshes").toBool();
 
-    options.tgaConv = settings.value("TGAConv").toBool();
-    options.bc7Conv = settings.value("BC7Conv").toBool();
-    options.nifscanTextures = settings.value("nifscanTextures").toBool();
+    options.bTgaConversion = settings.value("TGAConv").toBool();
+    options.bBc7Conversion = settings.value("BC7Conv").toBool();
+    options.bNifscanOnTextures = settings.value("nifscanTextures").toBool();
 
-    options.animOptBool = settings.value("AnimOpt").toBool();
+    options.bOptimizeAnimations = settings.value("AnimOpt").toBool();
 }
 
 
-void Optimiser::resetToDefaultSettings()
+void Optimiser::resetToDefaultSettings() //Reset to default (recommended) settings
 {
     options.mode = 0;
     options.userPath = "";
 
-    options.extractBsa = true;
-    options.recreateBsa = true;
-    options.packExistingFiles = false;
+    options.bExtractBsa = true;
+    options.bCreateBsa = true;
+    options.bPackExistingFiles = false;
 
-    options.hardCrashingMeshes = true;
-    options.otherMeshes = false;
+    options.bOptimizeHardCrashingMeshes = true;
+    options.bOptimizeOtherMeshes = false;
 
-    options.tgaConv = true;
-    options.bc7Conv = true;
-    options.nifscanTextures = true;
+    options.bTgaConversion = true;
+    options.bBc7Conversion = true;
+    options.bNifscanOnTextures = true;
 
-    options.animOptBool = true;
+    options.bOptimizeAnimations = true;
 
-    options.dryRun = false;
+    options.bDryRun = false;
 }
 
 
-void Optimiser::printSettings()
+void Optimiser::printSettings() //Used by debug UI
 {
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
 
     debugLog->appendPlainText("mode: : " + QString::number(options.mode));
-    debugLog->appendPlainText("DryRun: " + QString::number(options.dryRun));
+    debugLog->appendPlainText("DryRun: " + QString::number(options.bDryRun));
     debugLog->appendPlainText("SelectedPath: "+ options.userPath);
 
-    debugLog->appendPlainText("Extract BSA: "+ QString::number(options.extractBsa));
-    debugLog->appendPlainText("Recreate BSA: " + QString::number(options.recreateBsa));
-    debugLog->appendPlainText("PackExistingFiles: "+ QString::number(options.packExistingFiles));
+    debugLog->appendPlainText("Extract BSA: "+ QString::number(options.bExtractBsa));
+    debugLog->appendPlainText("Recreate BSA: " + QString::number(options.bCreateBsa));
+    debugLog->appendPlainText("PackExistingFiles: "+ QString::number(options.bPackExistingFiles));
 
-    debugLog->appendPlainText("HardCrashingMeshes: "+ QString::number(options.hardCrashingMeshes));
-    debugLog->appendPlainText("OtherMeshes: "+ QString::number(options.otherMeshes));
+    debugLog->appendPlainText("HardCrashingMeshes: "+ QString::number(options.bOptimizeHardCrashingMeshes));
+    debugLog->appendPlainText("OtherMeshes: "+ QString::number(options.bOptimizeOtherMeshes));
 
-    debugLog->appendPlainText("TGAConv: "+ QString::number( options.tgaConv));
-    debugLog->appendPlainText("BC7Conv: " + QString::number( options.bc7Conv));
-    debugLog->appendPlainText("nifscanTextures: " + QString::number( options.nifscanTextures));
+    debugLog->appendPlainText("TGAConv: "+ QString::number( options.bTgaConversion));
+    debugLog->appendPlainText("BC7Conv: " + QString::number( options.bBc7Conversion));
+    debugLog->appendPlainText("nifscanTextures: " + QString::number( options.bNifscanOnTextures));
 
-    debugLog->appendPlainText("AnimOpt: " + QString::number(options.animOptBool));
+    debugLog->appendPlainText("AnimOpt: " + QString::number(options.bOptimizeAnimations));
 }
 
 
-
-void Optimiser::setDebugLog(QPlainTextEdit *log)
+void Optimiser::setDebugLog(QPlainTextEdit *log) //Setter for debugLog
 {
     debugLog = log;
 }

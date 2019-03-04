@@ -4,69 +4,74 @@
 #include "devmodeui.h"
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
+//TODO Allows the log to be saved to a file
+//TODO Disable pack loose assets checkbox when create bsa is unchecked
+
 {
     ui->setupUi(this);
-    optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar, false);
+    optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar);
     devmode  = new devModeUI(optimizer);
+
+    //Loading remembered settings
 
     this->loadSettings();
     optimizer->loadSettings();
     this->loadUIFromVars();
 
-    //Connecting checkboxes to variables
+    //Connecting checkboxes to optimizer variables
 
     connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.extractBsa = state;
+        optimizer->options.bExtractBsa = state;
     });
 
     connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.recreateBsa = state;
+        optimizer->options.bCreateBsa = state;
     });
 
 
     connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.packExistingFiles = state;
+        optimizer->options.bPackExistingFiles = state;
         optimizer->saveSettings();
     });
 
 
     connect(ui->bc7ConvCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.bc7Conv = state;
+        optimizer->options.bBc7Conversion = state;
         optimizer->saveSettings();
     });
 
     connect(ui->tgaConvCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.tgaConv = state;
+        optimizer->options.bTgaConversion = state;
         optimizer->saveSettings();
     });
 
     connect(ui->nifscanTexturesCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.nifscanTextures = state;
+        optimizer->options.bNifscanOnTextures = state;
         optimizer->saveSettings();
     });
 
     connect(ui->HardCrashingNifCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.hardCrashingMeshes = state;
+        optimizer->options.bOptimizeHardCrashingMeshes = state;
         optimizer->saveSettings();
     });
 
     connect(ui->otherMeshesCheckBox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.otherMeshes = state;
+        optimizer->options.bOptimizeOtherMeshes = state;
         optimizer->saveSettings();
     });
 
 
     connect(ui->animOptCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.animOptBool = state;
+        optimizer->options.bOptimizeAnimations = state;
         optimizer->saveSettings();
     });
 
@@ -81,20 +86,20 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
             if (warning.result() == 0x00000400)
             {
-                optimizer->options.dryRun = true;
+                optimizer->options.bDryRun = true;
                 optimizer->saveSettings();
                 this->loadUIFromVars();
             }
             else
             {
-                optimizer->options.dryRun = false;
+                optimizer->options.bDryRun = false;
                 optimizer->saveSettings();
                 this->loadUIFromVars();
             }
         }
         else
         {
-            optimizer->options.dryRun = false;
+            optimizer->options.bDryRun = false;
             optimizer->saveSettings();
             this->loadUIFromVars();
         }
@@ -107,7 +112,9 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     {
         optimizer->options.mode = index;
         if(index == 1)
-            QMessageBox::warning(this, tr("Several mods option"), tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. The program may look frozen, but it will work.\nThis process has only been tested on the Mod Organizer mods folder."), QMessageBox::Ok);
+            QMessageBox::warning(this, tr("Several mods option"),
+                                 tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. The program may look frozen, but it will work.\nThis process has only been tested on the Mod Organizer mods folder."),
+                                 QMessageBox::Ok);
     });
 
 
@@ -119,7 +126,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
 
     connect(ui->userPathButton, &QPushButton::pressed, this, [=](){
-        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", optimizer->options.userPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
+                                                        optimizer->options.userPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         ui->userPathTextEdit->setText(dir);
         optimizer->options.userPath = dir;
     });
@@ -140,20 +148,20 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->actionReset_to_default_settings, &QAction::triggered, this, [=]()
     {
-        simpleMode=true;
+        bSimpleMode=true;
         optimizer->resetToDefaultSettings();
         this->loadUIFromVars();
     });
 
     connect(ui->actionShow_advanced_settings, &QAction::triggered, this, [=]()
     {
-        simpleMode=false;
+        bSimpleMode=false;
         this->loadUIFromVars();
     });
 
     connect(ui->actionSwitch_to_dark_theme, &QAction::triggered, this, [=]()
     {
-        darkMode = !darkMode;
+        bDarkMode = !bDarkMode;
         this->loadUIFromVars();
     });
 
@@ -171,9 +179,9 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
 {
     ui->userPathTextEdit->setText(optimizer->options.userPath);
 
-    if(simpleMode)
+    if(bSimpleMode)
     {
-        simpleMode = false;
+        bSimpleMode = false;
         ui->processButton->setText("Run with default settings");
         ui->BsaGroupBox->hide();
         ui->animGroupBox->hide();
@@ -190,36 +198,36 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
         ui->texturesGroupBox->show();
     }
 
-    ui->extractBsaCheckbox->setChecked(optimizer->options.extractBsa);
-    ui->recreatetBsaCheckbox->setChecked(optimizer->options.recreateBsa);
-    ui->packExistingAssetsCheckbox->setChecked(optimizer->options.packExistingFiles);
+    ui->extractBsaCheckbox->setChecked(optimizer->options.bExtractBsa);
+    ui->recreatetBsaCheckbox->setChecked(optimizer->options.bCreateBsa);
+    ui->packExistingAssetsCheckbox->setChecked(optimizer->options.bPackExistingFiles);
 
-    ui->bc7ConvCheckbox->setChecked(optimizer->options.bc7Conv);
-    ui->tgaConvCheckbox->setChecked(optimizer->options.tgaConv);
-    ui->nifscanTexturesCheckbox->setChecked(optimizer->options.nifscanTextures);
+    ui->bc7ConvCheckbox->setChecked(optimizer->options.bBc7Conversion);
+    ui->tgaConvCheckbox->setChecked(optimizer->options.bTgaConversion);
+    ui->nifscanTexturesCheckbox->setChecked(optimizer->options.bNifscanOnTextures);
 
-    ui->HardCrashingNifCheckbox->setChecked(optimizer->options.hardCrashingMeshes);
-    ui->otherMeshesCheckBox->setChecked(optimizer->options.otherMeshes);
+    ui->HardCrashingNifCheckbox->setChecked(optimizer->options.bOptimizeHardCrashingMeshes);
+    ui->otherMeshesCheckBox->setChecked(optimizer->options.bOptimizeOtherMeshes);
 
-    ui->animOptCheckbox->setChecked(optimizer->options.animOptBool);
+    ui->animOptCheckbox->setChecked(optimizer->options.bOptimizeAnimations);
 
     ui->modeChooserComboBox->setCurrentIndex(optimizer->options.mode);
 
-    ui->dryRunCheckBox->setChecked(optimizer->options.dryRun);
+    ui->dryRunCheckBox->setChecked(optimizer->options.bDryRun);
 
-    if(darkMode)
+    if(bDarkMode)
     {
         QFile f(":qdarkstyle/style.qss");
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
         qApp->setStyleSheet(ts.readAll());
-        darkMode = true;
+        bDarkMode = true;
         ui->actionSwitch_to_dark_theme->setText(tr("Switch to light theme"));
     }
-    else if(!darkMode)
+    else if(!bDarkMode)
     {
         qApp->setStyleSheet("");
-        darkMode=false;
+        bDarkMode=false;
         ui->actionSwitch_to_dark_theme->setText(tr("Switch to dark theme"));
     }
 
@@ -241,8 +249,8 @@ void MainWindow::saveSettings() //Saves settings to an ini file
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
-    settings.setValue("darkMode", darkMode);
-    settings.setValue("simpleMode", simpleMode);
+    settings.setValue("darkMode", bDarkMode);
+    settings.setValue("simpleMode", bSimpleMode);
 }
 
 
@@ -251,6 +259,6 @@ void MainWindow::loadSettings() //Loads settings from the ini file
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
-    darkMode = settings.value("darkMode").toBool();
-    simpleMode = settings.value("simpleMode").toBool();
+    bDarkMode = settings.value("darkMode").toBool();
+    bSimpleMode = settings.value("simpleMode").toBool();
 }

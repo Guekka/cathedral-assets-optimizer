@@ -10,7 +10,6 @@
 #include <QSettings>
 #include <QProgressBar>
 #include <QCryptographicHash>
-#include <QTemporaryDir>
 #include <QRegularExpression>
 
 #include <utility>
@@ -19,25 +18,22 @@
 
 struct optOptions
 {
+    bool bExtractBsa{};
+    bool bCreateBsa{};
+    bool bPackExistingFiles{};
 
+    bool bTgaConversion{};
+    bool bBc7Conversion{};
+    bool bNifscanOnTextures{};
 
-    bool extractBsa{};
-    bool recreateBsa{};
+    bool bOptimizeHardCrashingMeshes;
+    bool bOptimizeOtherMeshes;
 
-    bool packExistingFiles{};
+    bool bOptimizeAnimations{};
 
-    bool tgaConv{};
-    bool bc7Conv{};
-    bool nifscanTextures{};
-
-    bool hardCrashingMeshes;
-    bool otherMeshes;
-
-    bool animOptBool{};
+    bool bDryRun{};
 
     int mode{};
-
-    bool dryRun{};
 
     QString userPath;
 };
@@ -48,14 +44,14 @@ class Optimiser : public QObject
 
 
 public:
-
-    Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar, bool verbose);
+    Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar);
     ~Optimiser();
 
     optOptions options;
 
-    void setup();
+    //Main functions
 
+    bool setup();
     int mainProcess();
     void dryRun();
 
@@ -65,31 +61,29 @@ public:
     void createBsa();
     void renameBsa();
 
-
-    void tgaConv(QDirIterator* it);
-    void bc7Conv(QDirIterator* it);
+    void tgaToDdsConversion(QDirIterator* it);
+    void bc7TexturesConversion(QDirIterator* it);
     void nifscanTextures();
-
 
     void nifScan();
     void nifOpt(QDirIterator* it);
 
-
     void animOpt(QDirIterator* it);
 
-    //Some operations
+    //Filesystem operations
 
     QString findEspName();
     QString findSkyrimDir();
+    void moveAssets(const QString& dest);
+
+    //Settings operations
 
     void saveSettings();
     void loadSettings();
     void resetToDefaultSettings();
     void printSettings();
 
-    //Filesystem operations
-
-    void moveAssets(const QString& dest);
+    //Setters and getters
 
     void setDebugLog(QPlainTextEdit* log);
 
@@ -109,9 +103,6 @@ private:
     QStringList crashingHeadparts;
 
     int dummyPluginsCounter;
-
-
-
 };
 
 
