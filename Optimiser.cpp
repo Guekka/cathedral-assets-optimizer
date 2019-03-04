@@ -267,6 +267,7 @@ void Optimiser::extractBsa() //Extracts all BSA in modPath
 
 
 void Optimiser::renameBsa() //Renames all BSA in modPath
+//FIXME BSA are sometimes renamed even if they shouldn't
 {
     log->appendHtml(greenColor + tr("Renaming BSA...") + endColor);
 
@@ -274,7 +275,8 @@ void Optimiser::renameBsa() //Renames all BSA in modPath
 
     while (it.hasNext())
     {
-        if(it.next().contains(".bsa.bak"))
+        it.next();
+        if(it.fileName().contains(".bsa.bak"))
         {
             QFile bakBsa(it.filePath());
             QFile currentBsa(it.filePath().chopped(4));
@@ -301,6 +303,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
     QDir modPathDir(modPath);
     QStringList dirs(modPathDir.entryList(QDir::Dirs));
+    QStringList processedFolders; //To avoid processing twice the same folder
 
     QStringList bsarchArgs;
     QString folderName;
@@ -314,20 +317,22 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
     for (int i = 0; i < dirs.size(); ++i)
     {
+        qDebug() << dirs.at(i);
         bsarchArgs.clear();
         if(dirs.at(i).right(13) == "bsa.extracted")
-            folderName = modPath + "/" + dirs.at(i).mid(dirs.at(i).lastIndexOf("/"));
-
+            folderName = QDir::cleanPath(modPath + "/" + dirs.at(i).mid(dirs.at(i).lastIndexOf("/")));
         else if(options.bPackExistingFiles)
-        {
-            folderName = modPath + "/" + findEspName().replace(".esp", ".bsa.extracted");
-            moveAssets(folderName);
-        }
+            folderName = QDir::cleanPath(modPath + "/" + findEspName().replace(".esp", ".bsa.extracted"));
         else
             folderName.clear();
 
-        if(!folderName.isEmpty())
+        if(!folderName.isEmpty() && !processedFolders.contains(folderName))
         {
+            processedFolders << folderName;
+
+            if(options.bPackExistingFiles)
+                moveAssets(folderName);
+
             bsaDir.setPath(folderName);
             bsaDirs = bsaDir.entryList(QDir::Dirs);
 
@@ -341,7 +346,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
             //Checking if it a textures BSA
 
-            if(bsaDir.count() == 1 && bsaDirs.at(0) == "TEXTURES" && !folderName.contains("textures", Qt::CaseInsensitive))
+            if(bsaDir.count() == 3 && bsaDirs.contains("TEXTURES") && !folderName.contains("textures", Qt::CaseInsensitive))
                 bsaName = folderName.chopped(14) + " - Textures.bsa";
             else
                 bsaName = folderName.chopped(14) + ".bsa";
@@ -353,8 +358,13 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
 
             modPathDir.rename(folderName + "/meshes/actors/character/animations", "meshes/actors/character/animations"); //Moving animations because FNIS can't see them in BSA
 
-            bsarch.start("resources/bsarch.exe", bsarchArgs);
-            bsarch.waitForFinished(-1);
+            if(!QFile(bsaName).exists())
+            {
+                bsarch.start("resources/bsarch.exe", bsarchArgs);
+                bsarch.waitForFinished(-1);
+            }
+            else
+                log->appendHtml(redColor + tr("Cannot pack existing loose files: a BSA already exists.") + endColor);
 
             debugLog->appendPlainText("<CREATE BSA FUNC>\nBSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + folderName + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()) + "\n</CREATE BSA FUNC>\n\n\n\n\n");
 
