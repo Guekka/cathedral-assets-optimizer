@@ -142,7 +142,6 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     });
 
 
-
     //Connecting menu buttons
 
 

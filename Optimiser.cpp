@@ -325,7 +325,7 @@ void Optimiser::createBsa() //Once all the optimizations are done, create a new 
         else if(options.bPackExistingFiles)
         {
             folderName = modPath + "/" + findEspName().chopped(4) + ".bsa.extracted";
-            moveAssets(folderName + "/");
+            moveAssets(folderName);
         }
         else
             folderName.clear();
@@ -649,7 +649,7 @@ QString Optimiser::findEspName() //Find esp/esl/esm name using an iterator and r
 }
 
 
-void Optimiser::moveAssets(const QString& dest) //Moves files reported in assets list to specified folder
+void Optimiser::moveAssets(QString dest) //Moves files reported in assets list to specified folder
 {
     QStringList assets;
     QDir modPathDir(modPath);
@@ -657,6 +657,7 @@ void Optimiser::moveAssets(const QString& dest) //Moves files reported in assets
     QDirIterator firstIt(modPath);
     QFile looseAsset, bsaAsset;
     QString relativeFilename;
+    dest = QDir::cleanPath(dest) + "/";
 
     debugLog->appendPlainText("\n<MOVE ASSETS FUNC>\ndest folder: " + dest);
 
@@ -674,36 +675,34 @@ void Optimiser::moveAssets(const QString& dest) //Moves files reported in assets
     while (it.hasNext())
     {
         it.next();
-        if(it.filePath().contains("TEXTURES") && !it.filePath().contains(".bsa"))
+        if(it.filePath().contains("TEXTURES") && !it.filePath().contains(".bsa", Qt::CaseInsensitive))
         {
             looseAsset.setFileName(it.filePath());
             relativeFilename = modPathDir.relativeFilePath(it.filePath());
-            bsaAsset.setFileName(dest.chopped(14) + " - Textures.bsa/" + relativeFilename);
+            bsaAsset.setFileName(dest.chopped(15) + " - Textures.bsa/" + relativeFilename);
 
             if(bsaAsset.exists() && looseAsset.size() == bsaAsset.size())
-            {
                 QFile::remove(bsaAsset.fileName());
-            }
+
             modPathDir.mkpath(bsaAsset.fileName().left(bsaAsset.fileName().lastIndexOf("/")));
             modPathDir.rename(looseAsset.fileName(), bsaAsset.fileName());
         }
 
-        else if(!dest.contains(it.filePath()) && assets.contains(it.fileName().right(3)) && !it.filePath().contains(".bsa"))
+        else if(!dest.contains(it.filePath()) && assets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !it.filePath().contains(".bsa", Qt::CaseInsensitive))
         {
             looseAsset.setFileName(it.filePath());
             relativeFilename = modPathDir.relativeFilePath(it.filePath());
             bsaAsset.setFileName(dest + relativeFilename);
 
             if(bsaAsset.exists() && looseAsset.size() == bsaAsset.size())
-            {
                 QFile::remove(bsaAsset.fileName());
-            }
+
             modPathDir.mkpath(bsaAsset.fileName().left(bsaAsset.fileName().lastIndexOf("/")));
             modPathDir.rename(looseAsset.fileName(), bsaAsset.fileName());
         }
         QCoreApplication::processEvents();
     }
-    system(QString("cd /d \"" + modPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)").toStdString().c_str());
+    system(QString("cd /d \"" + modPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)").toStdString().c_str()); //Deleting empty folders
     debugLog->appendPlainText("\n</MOVE ASSETS FUNC>\n");
 
 }

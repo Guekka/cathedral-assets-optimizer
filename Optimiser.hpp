@@ -65,16 +65,16 @@ public:
     void bc7TexturesConversion(QDirIterator* it);
     void nifscanTextures();
 
-    void nifScan();
-    void nifOpt(QDirIterator* it);
+    void listMeshes();
+    void optimizeMesh(QDirIterator* it);
 
-    void animOpt(QDirIterator* it);
+    void optimizeAnimation(QDirIterator* it);
 
     //Filesystem operations
 
     QString findEspName();
-    QString findSkyrimDir();
-    void moveAssets(const QString& dest);
+    QString findSkyrimDirectory();
+    void moveAssets(QString dest);
 
     //Settings operations
 
