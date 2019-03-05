@@ -234,15 +234,6 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
 }
 
 
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    delete optimizer;
-    delete  devmode;
-    event->accept();
-}
-
-
-
 void MainWindow::saveSettings() //Saves settings to an ini file
 {
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
@@ -260,4 +251,12 @@ void MainWindow::loadSettings() //Loads settings from the ini file
 
     bDarkMode = settings.value("darkMode").toBool();
     bSimpleMode = settings.value("simpleMode").toBool();
+}
+
+
+MainWindow::~MainWindow()
+{
+    delete optimizer;
+    delete  devmode;
+    delete ui;
 }

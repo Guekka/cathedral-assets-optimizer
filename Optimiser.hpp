@@ -74,7 +74,7 @@ public:
 
     QString findEspName();
     QString findSkyrimDirectory();
-    void moveAssets(QString dest);
+    void moveAssets(QString source, QString dest);
 
     //Settings operations
 

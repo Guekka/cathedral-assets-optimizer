@@ -25,8 +25,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
-
-    void closeEvent(QCloseEvent *event);
+    ~MainWindow();
 
 private:
     QFileDialog *fileDialog{};
