@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
-    <height>704</height>
+    <width>712</width>
+    <height>708</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -28,15 +28,49 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLineEdit" name="userPathTextEdit"/>
+     <widget class="QLineEdit" name="userPathTextEdit">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="title">
        <string/>
       </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="1">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>9</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item row="0" column="1" alignment="Qt::AlignHCenter">
         <widget class="QPushButton" name="processButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -46,7 +80,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>230</width>
+           <width>220</width>
            <height>40</height>
           </size>
          </property>
@@ -61,7 +95,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="2" alignment="Qt::AlignHCenter">
         <widget class="QComboBox" name="modeChooserComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -71,7 +105,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>230</width>
+           <width>220</width>
            <height>38</height>
           </size>
          </property>
@@ -93,7 +127,7 @@
          </item>
         </widget>
        </item>
-       <item row="1" column="1" alignment="Qt::AlignRight|Qt::AlignVCenter">
+       <item row="1" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
         <widget class="QCheckBox" name="dryRunCheckBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -103,13 +137,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>230</width>
+           <width>220</width>
            <height>40</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>200</width>
            <height>16777215</height>
           </size>
          </property>
@@ -128,6 +162,9 @@
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will list all files that would be modified, without actually processing them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
@@ -136,7 +173,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
+       <item row="0" column="0" alignment="Qt::AlignHCenter">
         <widget class="QPushButton" name="userPathButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -146,7 +183,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>230</width>
+           <width>220</width>
            <height>40</height>
           </size>
          </property>
@@ -166,12 +203,33 @@
     </item>
     <item>
      <widget class="QGroupBox" name="BsaGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="title">
        <string>BSA</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <item alignment="Qt::AlignLeft">
+       <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="extractBsaCheckbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>29</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
@@ -180,13 +238,19 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="recreatetBsaCheckbox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>29</height>
+          </size>
          </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
@@ -199,13 +263,25 @@
          </property>
         </widget>
        </item>
-       <item alignment="Qt::AlignRight">
+       <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="packExistingAssetsCheckbox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>29</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;By default, loose assets aren't packed. This option put them into BSA.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Pack existing loose assets</string>
@@ -217,17 +293,29 @@
     </item>
     <item>
      <widget class="QGroupBox" name="texturesGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="title">
        <string>Textures</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="nifscanTexturesCheckbox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
@@ -240,13 +328,19 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="tgaConvCheckbox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
@@ -259,13 +353,19 @@
          </property>
         </widget>
        </item>
-       <item alignment="Qt::AlignLeft">
+       <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="bc7ConvCheckbox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
@@ -283,17 +383,29 @@
     </item>
     <item>
      <widget class="QGroupBox" name="meshesGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="title">
        <string>Meshes</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="HardCrashingNifCheckbox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
@@ -309,10 +421,16 @@
        <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="otherMeshesCheckBox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
@@ -325,6 +443,31 @@
          </property>
         </widget>
        </item>
+       <item alignment="Qt::AlignHCenter">
+        <widget class="QCheckBox" name="allMeshesCheckbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Not recommended. Optimize all meshes. Only apply if standard mesh optimization ignored necessary files.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>All meshes</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -333,14 +476,35 @@
       <property name="enabled">
        <bool>true</bool>
       </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="title">
        <string>Animations</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
+       <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="animOptCheckbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to SSE format. If an animation is already compatible, no change will be made and an error is logged.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Optimize animations</string>
@@ -372,7 +536,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>766</width>
+     <width>712</width>
      <height>20</height>
     </rect>
    </property>

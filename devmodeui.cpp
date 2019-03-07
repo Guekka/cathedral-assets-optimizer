@@ -26,7 +26,7 @@ devModeUI::devModeUI(Optimiser *optimiser) :
 
     connect(ui->FindEspName, &QPushButton::clicked, this, [=]()
     {
-        optimiser->findEspName();
+        optimiser->getPlugin();
     });
 
     connect(ui->RenameBSA, &QPushButton::clicked, this, [=]()

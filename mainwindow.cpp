@@ -14,8 +14,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     //Loading remembered settings
 
-    this->loadSettings();
     optimizer->loadSettings();
+    this->loadSettings();
     this->loadUIFromVars();
 
     //Connecting checkboxes to optimizer variables
@@ -23,11 +23,14 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
         optimizer->options.bExtractBsa = state;
+        optimizer->saveSettings();
     });
 
     connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
         optimizer->options.bCreateBsa = state;
+        optimizer->saveSettings();
+        this->loadUIFromVars();
     });
 
 
@@ -65,6 +68,12 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->otherMeshesCheckBox, &QCheckBox::clicked, this, [=](bool state)
     {
         optimizer->options.bOptimizeOtherMeshes = state;
+        optimizer->saveSettings();
+    });
+
+    connect(ui->allMeshesCheckbox, &QCheckBox::clicked, this, [=](bool state)
+    {
+        optimizer->options.bOptimizeAllMeshes = state;
         optimizer->saveSettings();
     });
 
@@ -130,6 +139,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
                                                         optimizer->options.userPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         ui->userPathTextEdit->setText(dir);
         optimizer->options.userPath = dir;
+        optimizer->saveSettings();
     });
 
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
@@ -138,7 +148,6 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
             optimizer->mainProcess();
         else
             QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
-
     });
 
 
@@ -180,13 +189,11 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
 
     if(bSimpleMode)
     {
-        bSimpleMode = false;
         ui->processButton->setText("Run with default settings");
         ui->BsaGroupBox->hide();
         ui->animGroupBox->hide();
         ui->meshesGroupBox->hide();
         ui->texturesGroupBox->hide();
-
     }
     else
     {
@@ -230,7 +237,13 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
         ui->actionSwitch_to_dark_theme->setText(tr("Switch to dark theme"));
     }
 
-    saveSettings();
+    if(optimizer->options.bCreateBsa)
+        ui->packExistingAssetsCheckbox->setEnabled(true);
+    else
+    {
+        ui->packExistingAssetsCheckbox->setEnabled(false);
+        ui->packExistingAssetsCheckbox->setChecked(false);
+    }
 }
 
 

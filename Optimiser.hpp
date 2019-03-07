@@ -26,8 +26,9 @@ struct optOptions
     bool bBc7Conversion{};
     bool bNifscanOnTextures{};
 
-    bool bOptimizeHardCrashingMeshes;
-    bool bOptimizeOtherMeshes;
+    bool bOptimizeHardCrashingMeshes{};
+    bool bOptimizeOtherMeshes{};
+    bool bOptimizeAllMeshes{};
 
     bool bOptimizeAnimations{};
 
@@ -72,7 +73,7 @@ public:
 
     //Filesystem operations
 
-    QString findEspName();
+    QString getPlugin();
     QString findSkyrimDirectory();
     void moveAssets(QString source, QString dest);
 
@@ -97,10 +98,11 @@ private:
 
     QProgressBar* progressBar;
 
-    QStringList hardCrashingMeshes;
+    QStringList crashingMeshes;
     QStringList otherMeshes;
-    QStringList otherHeadparts;
     QStringList crashingHeadparts;
+    QStringList otherHeadparts;
+    QStringList customHeadparts;
 
     int dummyPluginsCounter;
 };
