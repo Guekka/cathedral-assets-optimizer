@@ -436,7 +436,7 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lightly optimizes typically non-crashing meshes. This may fix some visual issues, but also lowers quality.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optimizes typically non-crashing meshes. This may fix some visual issues, but also lowers quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Other meshes</string>
@@ -515,11 +515,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QPlainTextEdit" name="mw_log">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
+     <widget class="QTextEdit" name="mw_log"/>
     </item>
     <item>
      <widget class="QProgressBar" name="progressBar">

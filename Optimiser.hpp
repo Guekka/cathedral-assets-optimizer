@@ -6,11 +6,14 @@
 #include <QProcess>
 #include <QDebug>
 #include <QMessageBox>
-#include <QPlainTextEdit>
+#include <QTextEdit>
 #include <QSettings>
 #include <QProgressBar>
 #include <QCryptographicHash>
 #include <QRegularExpression>
+#include <QTextCodec>
+#include <QDateTime>
+
 
 #include <utility>
 
@@ -45,7 +48,7 @@ class Optimiser : public QObject
 
 
 public:
-    Optimiser(QPlainTextEdit* textedit, QPlainTextEdit* debuglog, QProgressBar* bar);
+    Optimiser(QTextEdit* textedit, QTextEdit* debuglog, QProgressBar* bar);
     ~Optimiser();
 
     optOptions options;
@@ -68,6 +71,7 @@ public:
 
     void listMeshes();
     void optimizeMesh(QDirIterator* it);
+    void textureCaseFixMesh(QDirIterator* it);
 
     void optimizeAnimation(QDirIterator* it);
 
@@ -86,15 +90,16 @@ public:
 
     //Setters and getters
 
-    void setDebugLog(QPlainTextEdit* log);
+    void setDebugLog(QTextEdit* log);
 
 private:
     QString modPath;
+    QDir modpathDir;
     QStringList modDirs;
 
-    QPlainTextEdit* log;
-    QPlainTextEdit* debugLog;
-    QPlainTextEdit* trash;
+    QTextEdit* log;
+    QTextEdit* debugLog;
+    QTextEdit* trash;
 
     QProgressBar* progressBar;
 
@@ -103,6 +108,8 @@ private:
     QStringList crashingHeadparts;
     QStringList otherHeadparts;
     QStringList customHeadparts;
+
+    QStringList textures;
 
     int dummyPluginsCounter;
 };

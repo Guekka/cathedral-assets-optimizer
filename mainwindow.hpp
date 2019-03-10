@@ -5,7 +5,7 @@
 #include <QTranslator>
 #include <QFileDialog>
 #include <QGridLayout>
-#include <QPlainTextEdit>
+#include <QTextEdit>
 #include <QPushButton>
 #include <QCheckBox>
 #include <QComboBox>

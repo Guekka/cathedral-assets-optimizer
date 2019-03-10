@@ -3,10 +3,8 @@
 #include "ui_mainwindow.h"
 #include "devmodeui.h"
 
-MainWindow::MainWindow() : ui(new Ui::MainWindow)
+MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(1)
 //TODO Allows the log to be saved to a file
-//TODO Disable pack loose assets checkbox when create bsa is unchecked
-
 {
     ui->setupUi(this);
     optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar);
@@ -124,6 +122,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
             QMessageBox::warning(this, tr("Several mods option"),
                                  tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. The program may look frozen, but it will work.\nThis process has only been tested on the Mod Organizer mods folder."),
                                  QMessageBox::Ok);
+
+        loadUIFromVars();
     });
 
 
@@ -159,17 +159,20 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
         bSimpleMode=true;
         optimizer->resetToDefaultSettings();
         this->loadUIFromVars();
+        this->saveSettings();
     });
 
     connect(ui->actionShow_advanced_settings, &QAction::triggered, this, [=]()
     {
         bSimpleMode=false;
         this->loadUIFromVars();
+        this->saveSettings();
     });
 
     connect(ui->actionSwitch_to_dark_theme, &QAction::triggered, this, [=]()
     {
         bDarkMode = !bDarkMode;
+        this->saveSettings();
         this->loadUIFromVars();
     });
 
@@ -214,6 +217,7 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
 
     ui->HardCrashingNifCheckbox->setChecked(optimizer->options.bOptimizeHardCrashingMeshes);
     ui->otherMeshesCheckBox->setChecked(optimizer->options.bOptimizeOtherMeshes);
+    ui->allMeshesCheckbox->setChecked(optimizer->options.bOptimizeAllMeshes);
 
     ui->animOptCheckbox->setChecked(optimizer->options.bOptimizeAnimations);
 
@@ -237,12 +241,30 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
         ui->actionSwitch_to_dark_theme->setText(tr("Switch to dark theme"));
     }
 
-    if(optimizer->options.bCreateBsa)
-        ui->packExistingAssetsCheckbox->setEnabled(true);
+    if(!optimizer->options.bCreateBsa)
+    {
+        ui->packExistingAssetsCheckbox->setChecked(false);
+        optimizer->options.bPackExistingFiles = false;
+        ui->packExistingAssetsCheckbox->setDisabled(true);
+    }
     else
     {
-        ui->packExistingAssetsCheckbox->setEnabled(false);
-        ui->packExistingAssetsCheckbox->setChecked(false);
+        ui->packExistingAssetsCheckbox->setDisabled(false);
+    }
+
+    if(ui->modeChooserComboBox->currentIndex() == 1)
+    {
+        ui->otherMeshesCheckBox->setDisabled(true);
+        ui->otherMeshesCheckBox->setChecked(false);
+        ui->allMeshesCheckbox->setChecked(false);
+        ui->allMeshesCheckbox->setDisabled(true);
+        optimizer->options.bOptimizeAllMeshes = false;
+        optimizer->options.bOptimizeOtherMeshes = false;
+    }
+    else
+    {
+        ui->otherMeshesCheckBox->setDisabled(false);
+        ui->allMeshesCheckbox->setDisabled(false);
     }
 }
 
