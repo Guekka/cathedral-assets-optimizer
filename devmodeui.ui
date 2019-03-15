@@ -20,20 +20,6 @@
       <string>GroupBox</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="6" column="0">
-       <widget class="QPushButton" name="CreateBSA">
-        <property name="text">
-         <string>Create BSA()</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="RenameBSA">
-        <property name="text">
-         <string>Rename BSA()</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="1">
        <widget class="QPushButton" name="MoveAssets">
         <property name="text">
@@ -48,17 +34,23 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="MoveAssetsSource"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="Setup">
+        <property name="text">
+         <string>Setup</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="MoveAssetsDest"/>
+      </item>
       <item row="6" column="1">
        <widget class="QPushButton" name="FindEspName">
         <property name="text">
          <string>FindEspName()</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QPushButton" name="PrintOptions">
-        <property name="text">
-         <string>Print options</string>
         </property>
        </widget>
       </item>
@@ -69,10 +61,24 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="Setup">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="RenameBSA">
         <property name="text">
-         <string>Setup</string>
+         <string>Rename BSA()</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>MoveAssets() source</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QPushButton" name="PrintOptions">
+        <property name="text">
+         <string>Print options</string>
         </property>
        </widget>
       </item>
@@ -86,18 +92,19 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="QLineEdit" name="MoveAssetsDest"/>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_2">
+      <item row="6" column="0">
+       <widget class="QPushButton" name="CreateBSA">
         <property name="text">
-         <string>MoveAssets() source</string>
+         <string>Create BSA()</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="MoveAssetsSource"/>
+      <item row="5" column="1">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>MoveAssets() bool allFiles</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

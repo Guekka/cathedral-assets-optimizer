@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>712</width>
-    <height>708</height>
+    <width>684</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,7 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>SSE Assets Optimizer 4.0.2</string>
   </property>
   <property name="whatsThis">
    <string>Will write which files would be affected, without actually processing them</string>
@@ -38,7 +38,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="mainGroupBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -212,6 +212,9 @@
       <property name="title">
        <string>BSA</string>
       </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item alignment="Qt::AlignHCenter">
         <widget class="QCheckBox" name="extractBsaCheckbox">
@@ -301,6 +304,9 @@
       </property>
       <property name="title">
        <string>Textures</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item alignment="Qt::AlignHCenter">
@@ -392,9 +398,12 @@
       <property name="title">
        <string>Meshes</string>
       </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="HardCrashingNifCheckbox">
+        <widget class="QRadioButton" name="necessaryMeshesOptimizationRadioButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -411,15 +420,15 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Strongly Recommended. Attempts to repair which are guaranteed to crash the game. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to repair meshes which are guaranteed to crash the game. Headparts are included.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Hard crashing meshes</string>
+          <string>Necessary optimization</string>
          </property>
         </widget>
        </item>
        <item alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="otherMeshesCheckBox">
+        <widget class="QRadioButton" name="mediumMeshesOptimizationRadioButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -436,15 +445,15 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optimizes typically non-crashing meshes. This may fix some visual issues, but also lowers quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perform necessary optimization, and also lightly optimizes typically non-crashing meshes. This may fix some visual issues, but also lowers quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Other meshes</string>
+          <string>Medium optimization</string>
          </property>
         </widget>
        </item>
        <item alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="allMeshesCheckbox">
+        <widget class="QRadioButton" name="fullMeshesOptimizationRadioButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -461,10 +470,10 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Not recommended. Optimize all meshes. Only apply if standard mesh optimization ignored necessary files.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only apply if standard mesh optimization ignored necessary files.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>All meshes</string>
+          <string>Full optimization</string>
          </property>
         </widget>
        </item>
@@ -485,8 +494,11 @@
       <property name="title">
        <string>Animations</string>
       </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item alignment="Qt::AlignHCenter">
+       <item>
         <widget class="QCheckBox" name="animOptCheckbox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -532,7 +544,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>712</width>
+     <width>684</width>
      <height>20</height>
     </rect>
    </property>

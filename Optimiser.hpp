@@ -29,11 +29,11 @@ struct optOptions
     bool bBc7Conversion{};
     bool bNifscanOnTextures{};
 
-    bool bOptimizeHardCrashingMeshes{};
-    bool bOptimizeOtherMeshes{};
-    bool bOptimizeAllMeshes{};
+    bool bMeshesNecessaryOptimization{};
+    bool bMeshesMediumOptimization{};
+    bool bMeshesFullOptimization{};
 
-    bool bOptimizeAnimations{};
+    bool bAnimationsOptimization{};
 
     bool bDryRun{};
 
@@ -79,7 +79,7 @@ public:
 
     QString getPlugin();
     QString findSkyrimDirectory();
-    void moveAssets(QString source, QString dest);
+    void moveAssets(QString source, QString dest, bool allFiles);
 
     //Settings operations
 
@@ -99,14 +99,13 @@ private:
 
     QTextEdit* log;
     QTextEdit* debugLog;
-    QTextEdit* trash;
+    QTextEdit* trash{};
 
     QProgressBar* progressBar;
 
     QStringList crashingMeshes;
     QStringList otherMeshes;
-    QStringList crashingHeadparts;
-    QStringList otherHeadparts;
+    QStringList headparts;
     QStringList customHeadparts;
 
     QStringList textures;

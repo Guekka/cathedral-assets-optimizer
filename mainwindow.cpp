@@ -3,8 +3,8 @@
 #include "ui_mainwindow.h"
 #include "devmodeui.h"
 
-MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(1)
-//TODO Allows the log to be saved to a file
+MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true)
+  //TODO Allows the log to be saved to a file
 {
     ui->setupUi(this);
     optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar);
@@ -57,28 +57,34 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(1)
         optimizer->saveSettings();
     });
 
-    connect(ui->HardCrashingNifCheckbox, &QCheckBox::clicked, this, [=](bool state)
+    connect(ui->necessaryMeshesOptimizationRadioButton, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.bOptimizeHardCrashingMeshes = state;
+        optimizer->options.bMeshesNecessaryOptimization = state;
+        optimizer->options.bMeshesMediumOptimization = !state;
+        optimizer->options.bMeshesFullOptimization = !state;
         optimizer->saveSettings();
     });
 
-    connect(ui->otherMeshesCheckBox, &QCheckBox::clicked, this, [=](bool state)
+    connect(ui->mediumMeshesOptimizationRadioButton, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.bOptimizeOtherMeshes = state;
+        optimizer->options.bMeshesNecessaryOptimization = state;
+        optimizer->options.bMeshesMediumOptimization = state;
+        optimizer->options.bMeshesFullOptimization = !state;
         optimizer->saveSettings();
     });
 
-    connect(ui->allMeshesCheckbox, &QCheckBox::clicked, this, [=](bool state)
+    connect(ui->fullMeshesOptimizationRadioButton, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.bOptimizeAllMeshes = state;
+        optimizer->options.bMeshesNecessaryOptimization = state;
+        optimizer->options.bMeshesMediumOptimization = state;
+        optimizer->options.bMeshesFullOptimization = state;
         optimizer->saveSettings();
     });
 
 
     connect(ui->animOptCheckbox, &QCheckBox::clicked, this, [=](bool state)
     {
-        optimizer->options.bOptimizeAnimations = state;
+        optimizer->options.bAnimationsOptimization = state;
         optimizer->saveSettings();
     });
 
@@ -188,7 +194,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(1)
 void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the checkboxes
 
 {
-    ui->userPathTextEdit->setText(optimizer->options.userPath);
+    //Simple mode
 
     if(bSimpleMode)
     {
@@ -207,6 +213,10 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
         ui->texturesGroupBox->show();
     }
 
+    ui->userPathTextEdit->setText(optimizer->options.userPath);
+
+    //Options
+
     ui->extractBsaCheckbox->setChecked(optimizer->options.bExtractBsa);
     ui->recreatetBsaCheckbox->setChecked(optimizer->options.bCreateBsa);
     ui->packExistingAssetsCheckbox->setChecked(optimizer->options.bPackExistingFiles);
@@ -215,15 +225,28 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
     ui->tgaConvCheckbox->setChecked(optimizer->options.bTgaConversion);
     ui->nifscanTexturesCheckbox->setChecked(optimizer->options.bNifscanOnTextures);
 
-    ui->HardCrashingNifCheckbox->setChecked(optimizer->options.bOptimizeHardCrashingMeshes);
-    ui->otherMeshesCheckBox->setChecked(optimizer->options.bOptimizeOtherMeshes);
-    ui->allMeshesCheckbox->setChecked(optimizer->options.bOptimizeAllMeshes);
+    if(optimizer->options.bMeshesFullOptimization)
+        ui->fullMeshesOptimizationRadioButton->setChecked(true);
+    else if(optimizer->options.bMeshesMediumOptimization)
+        ui->mediumMeshesOptimizationRadioButton->setChecked(true);
+    else
+        ui->necessaryMeshesOptimizationRadioButton->setChecked(true);
 
-    ui->animOptCheckbox->setChecked(optimizer->options.bOptimizeAnimations);
+    ui->animOptCheckbox->setChecked(optimizer->options.bAnimationsOptimization);
 
     ui->modeChooserComboBox->setCurrentIndex(optimizer->options.mode);
-
     ui->dryRunCheckBox->setChecked(optimizer->options.bDryRun);
+
+    if(!optimizer->options.bCreateBsa)
+    {
+        ui->packExistingAssetsCheckbox->setChecked(false);
+        optimizer->options.bPackExistingFiles = false;
+        ui->packExistingAssetsCheckbox->setDisabled(true);
+    }
+    else
+        ui->packExistingAssetsCheckbox->setDisabled(false);
+
+    //Dark mode
 
     if(bDarkMode)
     {
@@ -241,30 +264,20 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
         ui->actionSwitch_to_dark_theme->setText(tr("Switch to dark theme"));
     }
 
-    if(!optimizer->options.bCreateBsa)
-    {
-        ui->packExistingAssetsCheckbox->setChecked(false);
-        optimizer->options.bPackExistingFiles = false;
-        ui->packExistingAssetsCheckbox->setDisabled(true);
-    }
-    else
-    {
-        ui->packExistingAssetsCheckbox->setDisabled(false);
-    }
+    //Disabling some meshes options when several mods mode is enabled
 
     if(ui->modeChooserComboBox->currentIndex() == 1)
     {
-        ui->otherMeshesCheckBox->setDisabled(true);
-        ui->otherMeshesCheckBox->setChecked(false);
-        ui->allMeshesCheckbox->setChecked(false);
-        ui->allMeshesCheckbox->setDisabled(true);
-        optimizer->options.bOptimizeAllMeshes = false;
-        optimizer->options.bOptimizeOtherMeshes = false;
+        ui->mediumMeshesOptimizationRadioButton->setDisabled(true);
+        ui->fullMeshesOptimizationRadioButton->setDisabled(true);
+        ui->necessaryMeshesOptimizationRadioButton->setChecked(true);
+        optimizer->options.bMeshesFullOptimization = false;
+        optimizer->options.bMeshesMediumOptimization = false;
     }
     else
     {
-        ui->otherMeshesCheckBox->setDisabled(false);
-        ui->allMeshesCheckbox->setDisabled(false);
+        ui->mediumMeshesOptimizationRadioButton->setDisabled(false);
+        ui->fullMeshesOptimizationRadioButton->setDisabled(false);
     }
 }
 
