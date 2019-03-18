@@ -142,15 +142,15 @@ void MainWindow::saveUIToVars()
         optimizer->options.bTexturesNecessaryOptimization = false;
         optimizer->options.bTexturesFullOptimization = false;
     }
+    else if(ui->TexturesFullOptimizationRadioButton->isChecked())
+    {
+        optimizer->options.bTexturesNecessaryOptimization = true;
+        optimizer->options.bTexturesFullOptimization = true;
+    }
     else if(ui->texturesGroupBox->isChecked())
     {
         optimizer->options.bTexturesNecessaryOptimization = true;
         optimizer->options.bTexturesFullOptimization = false;
-    }
-    if(ui->TexturesFullOptimizationRadioButton->isChecked())
-    {
-        optimizer->options.bTexturesNecessaryOptimization = true;
-        optimizer->options.bTexturesFullOptimization = true;
     }
 
     //Meshes radio buttons
@@ -160,6 +160,7 @@ void MainWindow::saveUIToVars()
         optimizer->options.bMeshesNecessaryOptimization = true;
         optimizer->options.bMeshesMediumOptimization = true;
         optimizer->options.bMeshesFullOptimization = true;
+
     }
     else if(ui->MeshesMediumOptimizationRadioButton->isChecked())
     {
@@ -173,12 +174,14 @@ void MainWindow::saveUIToVars()
         optimizer->options.bMeshesMediumOptimization = false;
         optimizer->options.bMeshesFullOptimization = false;
     }
-    else
+    if(!ui->meshesGroupBox->isChecked())
     {
         optimizer->options.bMeshesNecessaryOptimization = false;
         optimizer->options.bMeshesMediumOptimization = false;
         optimizer->options.bMeshesFullOptimization = false;
     }
+
+    optimizer->printSettings();
 
     //Animations
 

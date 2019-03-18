@@ -32,6 +32,7 @@ bool Optimiser::setup() //Some necessary operations before running
         options.bBsaExtract = false;
         options.bBsaCreate = false;
         options.bBsaPackLooseFiles = false;
+        options.bBsaDeleteBackup = false;
     }
 
     //Checking if all the requirements are in the resources folder
@@ -150,6 +151,8 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
             progressBar->setValue(progressBar->value() + 1);
 
         }
+
+        debugLog->append(stepsColor + "Optimizing textures and meshes..." + endColor);
 
         while(it.hasNext())
         {
@@ -479,14 +482,23 @@ void Optimiser::texturesBc7Conversion(QDirIterator *it) //Compress uncompressed 
     texDiag.start("resources/texdiag.exe", texdiagArg);
     texDiag.waitForFinished(-1);
 
-    if(texDiag.readAllStandardOutput().contains("compressed = no"))
-    {
-        texconvArg.clear();
-        texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it->filePath();
+    QString texDiagOutput = texDiag.readAllStandardOutput();
 
-        log->append(tr("\nUncompressed texture found:\n") + it->fileName() + tr("\nCompressing..."));
-        texconv.start("resources/texconv.exe",  texconvArg);
-        texconv.waitForFinished(-1);
+    if(texDiagOutput.contains("compressed = no"))
+    {
+        QString width = texDiagOutput.mid(texDiagOutput.indexOf("width = ")+8, 4);
+        QString height = texDiagOutput.mid(texDiagOutput.indexOf("height = ")+9, 4);
+        int textureSize = width.simplified().toInt() * height.simplified().toInt();
+
+        if(textureSize > 128*128)
+        {
+            texconvArg.clear();
+            texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it->filePath();
+
+            log->append(tr("\nUncompressed texture found:\n") + it->fileName() + tr("\nCompressing..."));
+            texconv.start("resources/texconv.exe",  texconvArg);
+            texconv.waitForFinished(-1);
+        }
     }
 }
 
@@ -884,7 +896,7 @@ void Optimiser::resetToDefaultSettings() //Reset to default (recommended) settin
 }
 
 
-void Optimiser::printSettings() //Used by debug UI
+void Optimiser::printSettings() //Will print settings into debug log
 {
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
