@@ -21,14 +21,15 @@
 
 struct optOptions
 {
-    bool bExtractBsa{};
-    bool bCreateBsa{};
-    bool bPackExistingFiles{};
+    bool bBsaExtract{};
+    bool bBsaCreate{};
+    bool bBsaPackLooseFiles{};
+    bool bBsaDeleteBackup{};
 
-    bool bTgaConversion{};
-    bool bBc7Conversion{};
-    bool bNifscanOnTextures{};
+    bool bTexturesNecessaryOptimization{};
+    bool bTexturesFullOptimization{};
 
+    bool bMeshesHeadparts{};
     bool bMeshesNecessaryOptimization{};
     bool bMeshesMediumOptimization{};
     bool bMeshesFullOptimization{};
@@ -61,19 +62,18 @@ public:
 
     //Assets optimization
 
-    void extractBsa();
-    void createBsa();
-    void renameBsa();
+    void bsaExtract();
+    void bsaCreate();
+    void bsaRename();
 
-    void tgaToDdsConversion(QDirIterator* it);
-    void bc7TexturesConversion(QDirIterator* it);
-    void nifscanTextures();
+    void texturesTgaToDds(QDirIterator* it);
+    void texturesBc7Conversion(QDirIterator* it);
 
-    void listMeshes();
-    void optimizeMesh(QDirIterator* it);
-    void textureCaseFixMesh(QDirIterator* it);
+    void meshesList();
+    void meshesOptimize(QDirIterator* it);
+    void meshesTexturesCaseFix(QDirIterator* it);
 
-    void optimizeAnimation(QDirIterator* it);
+    void animationsOptimize(QDirIterator* it);
 
     //Filesystem operations
 
@@ -107,10 +107,6 @@ private:
     QStringList otherMeshes;
     QStringList headparts;
     QStringList customHeadparts;
-
-    QStringList textures;
-
-    int dummyPluginsCounter;
 };
 
 

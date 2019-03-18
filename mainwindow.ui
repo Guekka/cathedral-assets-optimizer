@@ -137,7 +137,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>220</width>
+           <width>200</width>
            <height>40</height>
           </size>
          </property>
@@ -215,33 +215,11 @@
       <property name="flat">
        <bool>true</bool>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="extractBsaCheckbox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>29</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Extract old BSA</string>
-         </property>
-        </widget>
-       </item>
-       <item alignment="Qt::AlignHCenter">
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="2">
         <widget class="QCheckBox" name="recreatetBsaCheckbox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -266,7 +244,32 @@
          </property>
         </widget>
        </item>
-       <item alignment="Qt::AlignHCenter">
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="extractBsaCheckbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>29</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Extract old BSA</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
         <widget class="QCheckBox" name="packExistingAssetsCheckbox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -291,6 +294,13 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="bsaDeleteBackupsCheckbox">
+         <property name="text">
+          <string>Delete backups </string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -308,9 +318,12 @@
       <property name="flat">
        <bool>true</bool>
       </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="nifscanTexturesCheckbox">
+       <item alignment="Qt::AlignLeft">
+        <widget class="QRadioButton" name="TexturesNecessaryOptimizationRadioButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -323,19 +336,13 @@
            <height>0</height>
           </size>
          </property>
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Strongly Recommended. Attempts to convert and fix any textures that would crash the game, as some older formats are incompatible with SSE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
          <property name="text">
-          <string>Nifscan -fixdds</string>
+          <string>Necessary optimization</string>
          </property>
         </widget>
        </item>
-       <item alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="tgaConvCheckbox">
+       <item alignment="Qt::AlignRight">
+        <widget class="QRadioButton" name="TexturesFullOptimizationRadioButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -348,39 +355,8 @@
            <height>0</height>
           </size>
          </property>
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended. Converts any TGA files into DDS, as SSE cannot read these.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
          <property name="text">
-          <string>TGA conversion</string>
-         </property>
-        </widget>
-       </item>
-       <item alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="bc7ConvCheckbox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss. Will convert uncompressed textures to BC7.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>BC7 conversion</string>
+          <string>Full optimization</string>
          </property>
         </widget>
        </item>
@@ -401,9 +377,12 @@
       <property name="flat">
        <bool>true</bool>
       </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item alignment="Qt::AlignHCenter">
-        <widget class="QRadioButton" name="necessaryMeshesOptimizationRadioButton">
+       <item alignment="Qt::AlignLeft">
+        <widget class="QRadioButton" name="MeshesNecessaryOptimizationRadioButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -428,7 +407,7 @@
         </widget>
        </item>
        <item alignment="Qt::AlignHCenter">
-        <widget class="QRadioButton" name="mediumMeshesOptimizationRadioButton">
+        <widget class="QRadioButton" name="MeshesMediumOptimizationRadioButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -452,8 +431,8 @@
          </property>
         </widget>
        </item>
-       <item alignment="Qt::AlignHCenter">
-        <widget class="QRadioButton" name="fullMeshesOptimizationRadioButton">
+       <item alignment="Qt::AlignRight">
+        <widget class="QRadioButton" name="MeshesFullOptimizationRadioButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -481,7 +460,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="animGroupBox">
+     <widget class="QGroupBox" name="animationsGroupBox">
       <property name="enabled">
        <bool>true</bool>
       </property>
@@ -497,11 +476,14 @@
       <property name="flat">
        <bool>true</bool>
       </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QCheckBox" name="animOptCheckbox">
+        <widget class="QRadioButton" name="animationOptimizationRadioButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -519,7 +501,7 @@
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to SSE format. If an animation is already compatible, no change will be made and an error is logged.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Optimize animations</string>
+          <string>Necessary optimization</string>
          </property>
         </widget>
        </item>

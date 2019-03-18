@@ -36,6 +36,7 @@ private:
     bool bSimpleMode = true;
     bool bDarkMode = true;
 
+    void saveUIToVars();
     void loadUIFromVars();
     void saveSettings();
     void loadSettings();
