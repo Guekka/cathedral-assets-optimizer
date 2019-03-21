@@ -79,7 +79,8 @@ public:
 
     QString getPlugin();
     QString findSkyrimDirectory();
-    void moveAssets(QString source, QString dest, bool allFiles);
+    bool moveAssets(QString destination);
+    bool moveFiles(QString source, QString destination, bool overwriteExisting);
 
     //Settings operations
 
@@ -93,7 +94,6 @@ public:
     void setDebugLog(QTextEdit* log);
 
 private:
-    QString modPath;
     QDir modpathDir;
     QStringList modDirs;
 

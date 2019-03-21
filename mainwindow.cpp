@@ -181,8 +181,6 @@ void MainWindow::saveUIToVars()
         optimizer->options.bMeshesFullOptimization = false;
     }
 
-    optimizer->printSettings();
-
     //Animations
 
     if(ui->animationsGroupBox->isChecked())

@@ -51,7 +51,7 @@ devModeUI::devModeUI(Optimiser *optimiser) :
 
     connect(ui->MoveAssets, &QPushButton::clicked, this, [=]()
     {
-        optimiser->moveAssets(ui->MoveAssetsSource->text(), ui->MoveAssetsDest->text(), ui->checkBox);
+        optimiser->moveAssets(ui->MoveAssetsDest->text());
     });
 }
 
