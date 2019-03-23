@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += widgets
+QT       += widgets \
+        concurrent
 
 TARGET = SSE_Assets_Optimiser
 TEMPLATE = app
@@ -36,7 +37,9 @@ HEADERS += \
 
 
 TRANSLATIONS += \
-AssetsOpt_fr.ts
+translations/AssetsOpt_fr.ts \
+translations/AssetsOpt_ja.ts
+
 
 FORMS += \
     mainwindow.ui \

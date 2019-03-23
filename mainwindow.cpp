@@ -318,8 +318,8 @@ void MainWindow::loadSettings() //Loads settings from the ini file
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
-    bDarkMode = settings.value("darkMode").toBool();
-    bSimpleMode = settings.value("simpleMode").toBool();
+    bDarkMode = settings.value("bDarkMode").toBool();
+    bSimpleMode = settings.value("bSimpleMode").toBool();
 
     ui->BsaGroupBox->setChecked(settings.value("BsaGroupBox").toBool());
     ui->texturesGroupBox->setChecked(settings.value("texturesGroupBox").toBool());

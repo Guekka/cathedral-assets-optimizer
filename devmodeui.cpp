@@ -21,7 +21,7 @@ devModeUI::devModeUI(Optimiser *optimiser) :
 
     connect(ui->ExtractBSA, &QPushButton::clicked, this, [=]()
     {
-        optimiser->bsaExtract();
+        //optimiser->bsaExtract();
     });
 
     connect(ui->FindEspName, &QPushButton::clicked, this, [=]()
@@ -29,10 +29,7 @@ devModeUI::devModeUI(Optimiser *optimiser) :
         optimiser->getPlugin();
     });
 
-    connect(ui->RenameBSA, &QPushButton::clicked, this, [=]()
-    {
-        optimiser->bsaRename();
-    });
+
 
     connect(ui->PrintOptions, &QPushButton::clicked, this, [=]()
     {

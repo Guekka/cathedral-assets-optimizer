@@ -14,7 +14,6 @@
 #include <QTextCodec>
 #include <QDateTime>
 
-
 #include <utility>
 
 
@@ -62,9 +61,8 @@ public:
 
     //Assets optimization
 
-    void bsaExtract();
+    void bsaExtract(const QString& bsaPath);
     void bsaCreate();
-    void bsaRename();
 
     void texturesTgaToDds(QDirIterator* it);
     void texturesBc7Conversion(QDirIterator* it);

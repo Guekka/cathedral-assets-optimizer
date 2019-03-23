@@ -145,10 +145,26 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
         if(options.bBsaExtract)
         {
-            bsaRename();
-            bsaExtract();
-            progressBar->setValue(progressBar->value() + 1);
+            log->append(stepsColor + tr("Extracting BSA...") + endColor);
 
+            QDirIterator bsaIt(modpathDir);
+
+            while(bsaIt.hasNext())
+            {
+                if(bsaIt.next().right(4) == ".bsa")
+                {
+                    log->append(tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
+                    try
+                    {
+                        bsaExtract(bsaIt.filePath());
+                    }
+                    catch(QString e)
+                    {
+                        log->append(errorColor + e + endColor);
+                    }
+                }
+            }
+            progressBar->setValue(progressBar->value() + 1);
         }
 
         log->append(stepsColor + "Optimizing textures and meshes..." + endColor);
@@ -228,8 +244,25 @@ void Optimiser::dryRun() // Perform a dry run : list files without actually modi
 
         if(options.bBsaExtract)
         {
-            bsaRename();
-            bsaExtract();
+            log->append(stepsColor + tr("Extracting BSA...") + endColor);
+
+            QDirIterator bsaIt(modpathDir);
+
+            while(bsaIt.hasNext())
+            {
+                if(bsaIt.next().right(4) == ".bsa")
+                {
+                    log->append(tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
+                    try
+                    {
+                        bsaExtract(bsaIt.filePath());
+                    }
+                    catch(QString e)
+                    {
+                        log->append(errorColor + e + endColor);
+                    }
+                }
+            }
             progressBar->setValue(progressBar->value() + 1);
         }
 
@@ -283,76 +316,53 @@ void Optimiser::dryRun() // Perform a dry run : list files without actually modi
 }
 
 
-void Optimiser::bsaExtract() //Extracts all BSA in modPath
+void Optimiser::bsaExtract(const QString& bsaPath) //Extracts all BSA in modPath
 {
-    log->append(stepsColor + tr("Extracting BSA...") + endColor);
-
     QProcess bsarch;
     QStringList bsarchArgs;
 
     QStringList files(modpathDir.entryList());
 
-    for (int i = 0; i < files.size(); ++i)
+    QString bsaFolder = modpathDir.filePath(bsaPath + ".extracted");
+
+    modpathDir.mkdir(bsaFolder);
+
+    if(options.bBsaDeleteBackup)
+        bsarchArgs << "unpack" << bsaPath << bsaFolder ;
+    else
     {
-        if(files.at(i).right(8) == ".bsa.bak")
+        QFile bsaBackupFile(bsaPath + ".bak");
+        QFile bsaFile(bsaPath);
+
+        if(!bsaBackupFile.exists())
+            QFile::rename(bsaPath, bsaBackupFile.fileName());
+        else
         {
-            log->append(tr("BSA found ! Extracting...(this may take a long time, do not force close the program): " + files.at(i).toLocal8Bit()));
-            QCoreApplication::processEvents();
-
-            QString bsaName = QDir::cleanPath(modpathDir.path() + QDir::separator() + files.at(i));
-            QString bsaFolder = QDir::cleanPath(modpathDir.path() + QDir::separator() + files.at(i).chopped(4) + ".extracted");
-            modpathDir.mkdir(bsaFolder);
-
-            bsarchArgs.clear();
-            bsarchArgs << "unpack" << bsaName << bsaFolder ;
-            bsarch.start("resources/bsarch.exe", bsarchArgs);
-            bsarch.waitForFinished(-1);
-
-            debugLog->append(stepsColor + "[EXTRACT BSA FUNC]" + endColor + "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolder + "\nBSA Name :" + bsaName + "\n" + stepsColor + "[/EXTRACT BSA FUNC]" + endColor);
-
-            if(!bsarch.readAllStandardOutput().contains("Done"))
-                log->append(errorColor + tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.") + endColor);
+            if(bsaFile.size() == bsaBackupFile.size())
+                QFile::remove(bsaBackupFile.fileName());
             else
-            {
-                if(!options.bBsaCreate)
-                    if(!moveFiles(bsaFolder, modpathDir.path(), false))
-                        log->append(errorColor + tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum") + endColor);
-                if(options.bBsaDeleteBackup)
-                    QFile::remove(bsaName);
-            }
+                QFile::rename(bsaBackupFile.fileName(), bsaBackupFile.fileName() + ".bak");
         }
-        QCoreApplication::processEvents();
+
+        QFile::rename(bsaPath, bsaBackupFile.fileName());
+        bsarchArgs << "unpack" << bsaBackupFile.fileName() << bsaFolder ;
     }
-}
 
+    bsarch.start("resources/bsarch.exe", bsarchArgs);
+    bsarch.waitForFinished(-1);
 
-void Optimiser::bsaRename() //Renames all BSA in modPath
-//FIXME BSA are sometimes renamed even if they shouldn't
-{
-    log->append(stepsColor + tr("Renaming BSA...") + endColor);
+    //debugLog->append(stepsColor + "[EXTRACT BSA FUNC]" + endColor + "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolder + "\nBSA Name :" + bsaName + "\n" + stepsColor + "[/EXTRACT BSA FUNC]" + endColor);
+    //NOTE Since I'm going to run this in another thread, I can't access GUI. Gonna have to find a way to write this.
 
-    QDirIterator it(modpathDir);
-
-    while (it.hasNext())
+    if(!bsarch.readAllStandardOutput().contains("Done"))
+        throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
+    else
     {
-        it.next();
-        if(it.fileName().contains(".bsa.bak"))
-        {
-            QFile bakBsa(it.filePath());
-            QFile currentBsa(it.filePath().chopped(4));
-            if(currentBsa.exists() && !QFileInfo(currentBsa).isDir())
-            {
-                if(bakBsa.size() == currentBsa.size())
-                    currentBsa.remove();
-                else
-                {
-                    bakBsa.rename(bakBsa.fileName() + ".bak");
-                    currentBsa.rename(currentBsa.fileName() + ".bak");
-                }
-            }
-        }
-        else if(it.fileName().contains(".bsa") && !it.fileInfo().isDir())
-            QFile::rename(it.filePath(), it.filePath() + ".bak");
+        if(!options.bBsaCreate)
+            if(!moveFiles(bsaFolder, modpathDir.path(), false))
+                throw tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum");
+        if(options.bBsaDeleteBackup)
+            QFile::remove(bsaPath);
     }
 }
 
@@ -464,8 +474,8 @@ void Optimiser::bsaCreate() //Once all the optimizations are done, create a new 
                 //QFile::remove(bsaName);
                 if(QFile(modpathDir.path() + "/" + espName).size() == QFile("resources/BlankSSEPlugin.esp").size())
                     //QFile::remove(modpathDir.path() + "/" + espName);
-                if(!moveFiles(FoldersToProcess.at(i), modpathDir.path(), false))
-                    log->append(errorColor + tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum") + endColor);
+                    if(!moveFiles(FoldersToProcess.at(i), modpathDir.path(), false))
+                        log->append(errorColor + tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum") + endColor);
             }
         }
     }
