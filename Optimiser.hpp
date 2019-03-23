@@ -77,7 +77,7 @@ public:
 
     QString getPlugin();
     QString findSkyrimDirectory();
-    bool moveAssets(QString destination);
+    void splitAssets();
     bool moveFiles(QString source, QString destination, bool overwriteExisting);
 
     //Settings operations

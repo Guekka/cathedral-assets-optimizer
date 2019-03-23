@@ -24,12 +24,6 @@ devModeUI::devModeUI(Optimiser *optimiser) :
         //optimiser->bsaExtract();
     });
 
-    connect(ui->FindEspName, &QPushButton::clicked, this, [=]()
-    {
-        optimiser->getPlugin();
-    });
-
-
 
     connect(ui->PrintOptions, &QPushButton::clicked, this, [=]()
     {
@@ -48,7 +42,7 @@ devModeUI::devModeUI(Optimiser *optimiser) :
 
     connect(ui->MoveAssets, &QPushButton::clicked, this, [=]()
     {
-        optimiser->moveAssets(ui->MoveAssetsDest->text());
+        optimiser->splitAssets();
     });
 }
 
