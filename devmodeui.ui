@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>648</height>
+    <width>538</width>
+    <height>107</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,38 +20,10 @@
       <string>GroupBox</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="5" column="0">
-       <widget class="QPushButton" name="PrintOptions">
-        <property name="text">
-         <string>Print options</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0">
        <widget class="QPushButton" name="CreateBSA">
         <property name="text">
          <string>Create BSA()</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="Setup">
-        <property name="text">
-         <string>Setup</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QPushButton" name="ClearLog">
-        <property name="text">
-         <string>Clear</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="ExtractBSA">
-        <property name="text">
-         <string>Extract BSA()</string>
         </property>
        </widget>
       </item>
@@ -62,17 +34,21 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="ExtractBSA">
+        <property name="text">
+         <string>Extract BSA()</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="Setup">
+        <property name="text">
+         <string>Setup</string>
+        </property>
+       </widget>
+      </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTextEdit" name="log"/>
-   </item>
-   <item>
-    <widget class="QProgressBar" name="progressBar">
-     <property name="value">
-      <number>24</number>
-     </property>
     </widget>
    </item>
   </layout>

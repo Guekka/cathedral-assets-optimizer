@@ -6,12 +6,7 @@ const QString noteColor("<font color=Grey>");
 const QString currentModColor("<font color=Orange>");
 const QString endColor("</font>\n");
 
-Optimiser::Optimiser(QTextEdit* textedit, QTextEdit* debuglog, QProgressBar* bar) : log(textedit), debugLog(debuglog), progressBar(bar){}
-
-Optimiser::~Optimiser()
-{
-    delete trash;
-}
+Optimiser::Optimiser(QTextEdit* textedit, QProgressBar* bar) : log(textedit), progressBar(bar), debugLogFile("debugLog.html"), debugLogStream(&debugLogFile){}
 
 
 bool Optimiser::setup() //Some necessary operations before running
@@ -22,7 +17,6 @@ bool Optimiser::setup() //Some necessary operations before running
     modDirs.clear();
     progressBar->reset();
     log->clear();
-    debugLog->clear();
 
     //Disabling BSA process if Skyrim folder is choosed
 
@@ -91,7 +85,7 @@ bool Optimiser::setup() //Some necessary operations before running
         modDirs << ""; //if modDirs is empty, the loop won't be run
 
     modpathDir.setPath(options.userPath + "/" + modDirs.at(0)); //In case it is ran from debug UI
-    debugLog->append(stepsColor + "[SETUP FUNC]" + endColor + "Modpath: " + modpathDir.path() + "\n" + stepsColor + "[/SETUP FUNC]" + endColor);
+    debugLogStream << stepsColor << "[SETUP FUNC]" << endColor << "Modpath: " << modpathDir.path() << "\n" << stepsColor << "[/SETUP FUNC]" << endColor;
 
     progressBar->setMaximum(modDirs.size()*(options.bBsaExtract + 1 + options.bBsaCreate));
 
@@ -120,16 +114,13 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     printSettings();
 
     QFile fileLog("log.html");
-    QFile debugFileLog("debugLog.html");
-
     QTextStream fileLogStream(&fileLog);
-    QTextStream debugFileLogStream(&debugFileLog);
 
     fileLog.open(QFile::WriteOnly);
-    debugFileLog.open(QFile::WriteOnly);
+    debugLogFile.open(QFile::WriteOnly);
 
     fileLogStream << "<h1>" << QDateTime::currentDateTime().toString() << "</h1>";
-    debugFileLogStream << "<h1>" << QDateTime::currentDateTime().toString() << "</h1>";
+    debugLogStream << "<h1>" << QDateTime::currentDateTime().toString() << "</h1>";
 
     //This loop applies the selected optimizations to each mod specified in ModDirs
 
@@ -138,7 +129,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
         modpathDir.setPath(options.userPath + "/" + modDirs.at(i));
         QDirIterator it(modpathDir, QDirIterator::Subdirectories);
 
-        debugLog->append(stepsColor + "[MAIN PROCESS FUNC]" + endColor + "ModDirs size: " + QString::number(modDirs.size()) + "\nCurrent index: " + QString::number(i));
+        debugLogStream << stepsColor << "[MAIN PROCESS FUNC]" << endColor << "ModDirs size: " << QString::number(modDirs.size()) << "\nCurrent index: " << QString::number(i);
         log->append(currentModColor + tr("Current mod: ") + modpathDir.path() + endColor);
 
         meshesList();
@@ -202,13 +193,18 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
         if(options.bBsaCreate)
         {
-            bsaCreate();
+            try {
+                bsaCreate();
+            } catch (QString e) {
+                log->append(errorColor + e + endColor);
+                fileLogStream << log->toHtml();
+            }
+
             progressBar->setValue(progressBar->value() + 1);
         }
 
         QCoreApplication::processEvents();
 
-        debugFileLogStream << debugLog->toHtml();
         fileLogStream << log->toHtml();
 
     }
@@ -220,9 +216,8 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     progressBar->setValue(progressBar->maximum());
     log->append(stepsColor + tr("Completed. Please read the above text to check if any errors occurred (displayed in red).") + endColor);
 
-    debugLog->append(stepsColor + "[/MAIN PROCESS FUNC]" + endColor);
+    debugLogStream << stepsColor << "[/MAIN PROCESS FUNC]" << endColor;
 
-    debugFileLogStream << debugLog->toHtml();
     fileLogStream << log->toHtml();
 
     return 0;
@@ -353,16 +348,24 @@ void Optimiser::bsaExtract(const QString& bsaPath) //Extracts all BSA in modPath
     bsarch.start("resources/bsarch.exe", bsarchArgs);
     bsarch.waitForFinished(-1);
 
-    //debugLog->append(stepsColor + "[EXTRACT BSA FUNC]" + endColor + "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolder + "\nBSA Name :" + bsaName + "\n" + stepsColor + "[/EXTRACT BSA FUNC]" + endColor);
-    //NOTE Since I'm going to run this in another thread, I can't access GUI. Gonna have to find a way to write this.
+    debugLogStream << stepsColor + "[EXTRACT BSA FUNC]" + endColor + "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolder + "\nBSA Name :" + bsaPath + "\n" + stepsColor + "[/EXTRACT BSA FUNC]" + endColor;
 
     if(!bsarch.readAllStandardOutput().contains("Done"))
         throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
     else
     {
         if(!options.bBsaCreate)
-            if(!moveFiles(bsaFolder, modpathDir.path(), false))
-                throw tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum");
+        {
+            try
+            {
+                moveFiles(bsaFolder, modpathDir.path(), false);
+            }
+            catch (QString e)
+            {
+                log->append(errorColor + e + endColor);
+                throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
+            }
+        }
         if(options.bBsaDeleteBackup)
             QFile::remove(bsaPath);
     }
@@ -427,12 +430,12 @@ void Optimiser::bsaCreate() //Once all the optimizations are done, create a new 
         bsaDir.setPath(bsaList.at(i));
         bsaDirs = bsaDir.entryList(QDir::Dirs);
 
-        //Detecting if BSA will contain sounds, since compressing BSA breaks sounds
+        //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
 
         hasSound = false;
         for (int j = 0; j < bsaDirs.size(); ++j)
         {
-            if(bsaDirs.at(j).toLower() == "sound" || bsaDirs.at(j).toLower() == "music")
+            if(bsaDirs.at(j).toLower() == "sound" || bsaDirs.at(j).toLower() == "music" || bsaDirs.at(j).toLower() == "strings")
                 hasSound=true;
         }
 
@@ -458,11 +461,17 @@ void Optimiser::bsaCreate() //Once all the optimizations are done, create a new 
         else
         {
             log->append(errorColor + tr("Cannot pack existing loose files: a BSA already exists.") + endColor);
-            if(!moveFiles(bsaList.at(i), modpathDir.path(), false))
-                log->append(errorColor + tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum") + endColor);
+            try
+            {
+                moveFiles(bsaList.at(i), modpathDir.path(), false);
+            }
+            catch (QString e)
+            {
+                log->append(errorColor + e + endColor);
+            }
         }
 
-        debugLog->append(stepsColor + "[CREATE BSA FUNC]" + endColor + "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaList.at(i) + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()) + "\n" + stepsColor + "[/CREATE BSA FUNC]" + endColor);
+        debugLogStream << stepsColor << "[CREATE BSA FUNC]" << endColor << "BSArch Args :" << bsarchArgs.join(" ") << "\nBSA folder :" << bsaList.at(i) << "\nBsaName : " << bsaName << "\nBSAsize: " << QString::number(QFile(bsaName).size()) << "\n" << stepsColor << "[/CREATE BSA FUNC]" << endColor;
 
         if(bsarch.readAllStandardOutput().contains("Done"))
         {
@@ -473,19 +482,22 @@ void Optimiser::bsaCreate() //Once all the optimizations are done, create a new 
                 bsaDir.removeRecursively();
             }
             else if(QFile(bsaName).size() < 2400000000)
-            {
                 log->append(noteColor + "Warning: the BSA is nearly over its maximum size. It still should work." + endColor);
-                if(options.bBsaDeleteBackup)
-                    QFile::remove(bsaName + ".bak");
-            }
+
             else
             {
                 log->append(errorColor + tr("The BSA was not compressed: it is over 2.2gb: ") + bsaName + endColor);
-                //QFile::remove(bsaName);
+                QFile::remove(bsaName);
                 if(QFile(modpathDir.path() + "/" + espName).size() == QFile("resources/BlankSSEPlugin.esp").size())
-                    //QFile::remove(modpathDir.path() + "/" + espName);
-                    if(!moveFiles(bsaList.at(i), modpathDir.path(), false))
-                        log->append(errorColor + tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum") + endColor);
+                    QFile::remove(modpathDir.filePath(espName));
+                try
+                {
+                    moveFiles(bsaList.at(i), modpathDir.path(), false);
+                }
+                catch (QString e)
+                {
+                    log->append(errorColor + e + endColor);
+                }
             }
         }
     }
@@ -513,9 +525,9 @@ void Optimiser::texturesBc7Conversion(QDirIterator *it) //Compress uncompressed 
     {
         QString width = texDiagOutput.mid(texDiagOutput.indexOf("width = ")+8, 4);
         QString height = texDiagOutput.mid(texDiagOutput.indexOf("height = ")+9, 4);
-        int textureSize = width.simplified().toInt() * height.simplified().toInt();
+        int textureSize = width.split("\\n")[0].toInt() * height.split("\\n")[0].toInt();
 
-        if(textureSize > 128*128)
+        if(textureSize > 16)
         {
             texconvArg.clear();
             texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << it->filePath();
@@ -865,7 +877,7 @@ void Optimiser::splitAssets() //Split assets between several folders
 }
 
 
-bool Optimiser::moveFiles(QString source, QString destination, bool overwriteExisting)
+void Optimiser::moveFiles(QString source, QString destination, bool overwriteExisting)
 {
     QString relativeFilename;
 
@@ -878,7 +890,7 @@ bool Optimiser::moveFiles(QString source, QString destination, bool overwriteExi
     source = QDir::cleanPath(source) + "/";
     destination = QDir::cleanPath(destination) + "/";
 
-    debugLog->append(stepsColor + "[MOVE FILES FUNC]" + endColor + "dest folder: " + destination + "\nsource folder: " + source);
+    debugLogStream << stepsColor << "[MOVE FILES FUNC]" << endColor << "dest folder: " << destination << "\nsource folder: " << source;
 
     sourceDir.mkdir(destination);
 
@@ -894,7 +906,7 @@ bool Optimiser::moveFiles(QString source, QString destination, bool overwriteExi
             //removing the duplicate files from new folder (if overwriteExisting) or from old folder (if !overwriteExisting)
 
             if(newFile.fileName().size() >= 260)
-                return false;
+                throw  tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)");
 
             else if(oldFile.size() == newFile.size() && overwriteExisting)
                 QFile::remove(newFile.fileName());
@@ -906,8 +918,7 @@ bool Optimiser::moveFiles(QString source, QString destination, bool overwriteExi
         }
         QCoreApplication::processEvents();
     }
-    debugLog->append(stepsColor + "[/MOVE FILES FUNC]" + endColor);
-    return true;
+    debugLogStream << stepsColor << "[/MOVE FILES FUNC]" << endColor;
 }
 
 

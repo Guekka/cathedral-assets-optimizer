@@ -48,7 +48,7 @@ class Optimiser : public QObject
 
 
 public:
-    Optimiser(QTextEdit* textedit, QTextEdit* debuglog, QProgressBar* bar);
+    Optimiser(QTextEdit* textedit, QProgressBar* bar);
     ~Optimiser();
 
     optOptions options;
@@ -78,7 +78,7 @@ public:
     QString getPlugin();
     QString findSkyrimDirectory();
     void splitAssets();
-    bool moveFiles(QString source, QString destination, bool overwriteExisting);
+    void moveFiles(QString source, QString destination, bool overwriteExisting);
 
     //Settings operations
 
@@ -96,8 +96,6 @@ private:
     QStringList modDirs;
 
     QTextEdit* log;
-    QTextEdit* debugLog;
-    QTextEdit* trash{};
 
     QProgressBar* progressBar;
 
@@ -105,6 +103,9 @@ private:
     QStringList otherMeshes;
     QStringList headparts;
     QStringList customHeadparts;
+
+    QFile debugLogFile;
+    QTextStream debugLogStream;
 };
 
 
