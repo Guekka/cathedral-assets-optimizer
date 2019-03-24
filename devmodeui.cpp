@@ -10,7 +10,6 @@ devModeUI::devModeUI(Optimiser *optimiser) :
     ui(new Ui::devModeUI)
 {
     ui->setupUi(this);
-    optimiser->setDebugLog(ui->log);
 
     optimiser->loadSettings();
 
@@ -22,17 +21,6 @@ devModeUI::devModeUI(Optimiser *optimiser) :
     connect(ui->ExtractBSA, &QPushButton::clicked, this, [=]()
     {
         //optimiser->bsaExtract();
-    });
-
-
-    connect(ui->PrintOptions, &QPushButton::clicked, this, [=]()
-    {
-        optimiser->printSettings();
-    });
-
-    connect(ui->ClearLog, &QPushButton::clicked, this, [=]()
-    {
-        ui->log->clear();
     });
 
     connect(ui->Setup, &QPushButton::clicked, this, [=]()

@@ -35,11 +35,15 @@ private:
 
     bool bSimpleMode = true;
     bool bDarkMode = true;
+    bool bLockVariables = false;
 
     void saveUIToVars();
     void loadUIFromVars();
     void saveSettings();
     void loadSettings();
+
+    int progressBarValue;
+
 };
 
 #endif // MAINWINDOW_H

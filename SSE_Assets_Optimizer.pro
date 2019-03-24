@@ -4,8 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets \
-        concurrent
+QT       += widgets
 
 TARGET = SSE_Assets_Optimiser
 TEMPLATE = app

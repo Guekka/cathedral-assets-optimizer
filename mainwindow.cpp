@@ -3,10 +3,10 @@
 #include "ui_mainwindow.h"
 #include "devmodeui.h"
 
-MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true)
+MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariables(false)
 {
     ui->setupUi(this);
-    optimizer = new Optimiser(ui->mw_log, ui->mw_log, ui->progressBar);
+    optimizer = new Optimiser();
     devmode  = new devModeUI(optimizer);
 
     //Loading remembered settings
@@ -14,6 +14,39 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true)
     optimizer->loadSettings();
     this->loadSettings();
     this->loadUIFromVars();
+
+    //Preparing thread
+
+    QThread* thread = new QThread;
+    connect(thread, &QThread::started, optimizer, &Optimiser::mainProcess);
+    connect(optimizer, &Optimiser::end, thread, &QThread::quit);
+    connect(optimizer, &Optimiser::end, optimizer, &QThread::deleteLater);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    connect(thread, &QThread::finished, this, [=](){ui->processButton->setDisabled(false);});
+    optimizer->moveToThread(thread);
+
+    //Connecting Optimiser to progress bar
+
+    connect(optimizer, &Optimiser::progressBarReset, this, [=](){ui->progressBar->reset();});
+    connect(optimizer, &Optimiser::progressBarMaximumChanged, this, [=](int maximum){ui->progressBar->setMaximum(maximum);});
+
+    connect(optimizer, &Optimiser::end, this, [=]()
+    {
+        ui->progressBar->setValue(ui->progressBar->maximum());
+        bLockVariables = false;
+    });
+
+    connect(optimizer, &Optimiser::progressBarBusy, this, [=](){
+        progressBarValue = ui->progressBar->value();
+        ui->progressBar->setMaximum(0);
+        ui->progressBar->setValue(0);
+    });
+
+    connect(optimizer, &Optimiser::progressBarIncrease, this, [=]
+    {
+        ui->progressBar->setValue(progressBarValue + 1);
+        progressBarValue = ui->progressBar->value();
+    });
 
     //Connecting checkboxes to optimizer variables
 
@@ -75,12 +108,16 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true)
 
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
-        if(QDir(ui->userPathTextEdit->text()).exists() && !ui->userPathTextEdit->text().isEmpty())
-            optimizer->mainProcess();
+        if(QDir(ui->userPathTextEdit->text()).exists())
+        {
+            ui->processButton->setDisabled(true);
+            bLockVariables = true;
+            thread->start();
+        }
         else
             QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
-    });
 
+    });
 
     //Connecting menu buttons
 
@@ -112,11 +149,17 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true)
         devmode->show();
     });
 
+
+
+
 }
 
 
 void MainWindow::saveUIToVars()
 {
+    if(bLockVariables)
+        return;
+
 
     //BSA checkboxes
 
@@ -204,9 +247,7 @@ void MainWindow::saveUIToVars()
     this->loadUIFromVars();
 }
 
-
-void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the checkboxes
-
+void MainWindow::loadUIFromVars()//Apply the Optimiser settings to the checkboxes
 {
     //Simple mode
 
@@ -297,7 +338,6 @@ void MainWindow::loadUIFromVars()     //Apply the Optimiser settings to the chec
     }
 }
 
-
 void MainWindow::saveSettings() //Saves settings to an ini file
 {
     QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
@@ -327,10 +367,8 @@ void MainWindow::loadSettings() //Loads settings from the ini file
     ui->animationsGroupBox->setChecked(settings.value("animationsGroupBox").toBool());
 }
 
-
 MainWindow::~MainWindow()
 {
-    delete optimizer;
     delete devmode;
     delete ui;
 }

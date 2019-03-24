@@ -13,10 +13,9 @@
 #include <QRegularExpression>
 #include <QTextCodec>
 #include <QDateTime>
+#include <QThread>
 
 #include <utility>
-
-
 
 struct optOptions
 {
@@ -45,11 +44,10 @@ struct optOptions
 
 class Optimiser : public QObject
 {
-
+    Q_OBJECT
 
 public:
-    Optimiser(QTextEdit* textedit, QProgressBar* bar);
-    ~Optimiser();
+    Optimiser();
 
     optOptions options;
 
@@ -87,25 +85,30 @@ public:
     void resetToDefaultSettings();
     void printSettings();
 
-    //Setters and getters
-
-    void setDebugLog(QTextEdit* log);
 
 private:
     QDir modpathDir;
     QStringList modDirs;
-
-    QTextEdit* log;
-
-    QProgressBar* progressBar;
 
     QStringList crashingMeshes;
     QStringList otherMeshes;
     QStringList headparts;
     QStringList customHeadparts;
 
+    QFile logFile;
+    QTextStream logStream;
     QFile debugLogFile;
     QTextStream debugLogStream;
+
+
+signals:
+    void progressBarMaximumChanged(int maximum);
+    void progressBarIncrease();
+    void progressBarReset();
+    void progressBarBusy();
+    void end();
+
+
 };
 
 
