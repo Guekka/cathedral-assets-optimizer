@@ -108,7 +108,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
     if(!setup())
     {
         emit end();
-        return 1;
+        throw tr("The setup function did not run as expected. Exiting the process.");
     }
 
     if(options.bDryRun)
@@ -127,8 +127,6 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
         debugLogStream << stepsColor << "[MAIN PROCESS FUNC]" << endColor << "ModDirs size: " << QString::number(modDirs.size()) << "\nCurrent index: " << QString::number(i) << "\n";
         logStream << currentModColor << tr("Current mod: ") << modpathDir.path() << endColor;
-
-        meshesList();
 
         if(options.bBsaExtract)
         {
@@ -200,10 +198,12 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
     system(QString("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)").toStdString().c_str());
 
-    logStream << stepsColor << tr("Completed. Please read the above text to check if any errors occurred (displayed in red).") << endColor << "</pre>";
+    logStream << "</pre>";
     debugLogStream << stepsColor << "[/MAIN PROCESS FUNC]" << endColor << "</pre>";
 
     emit end();
+    this->moveToThread(QCoreApplication::instance()->thread());
+
     return 0;
 }
 
@@ -250,7 +250,6 @@ void Optimiser::dryRun() // Perform a dry run : list files without actually modi
         while(it.hasNext())
         {
             it.next();
-
 
 
             if(it.fileName().contains(".nif", Qt::CaseInsensitive))
@@ -645,6 +644,8 @@ void Optimiser::meshesOptimize(QDirIterator *it) // Optimize the selected mesh
     QProcess nifOpt;
     QStringList nifOptArgs;
 
+    meshesList();
+
     if(options.bMeshesNecessaryOptimization && headparts.contains(it->filePath(), Qt::CaseInsensitive) && options.bMeshesHeadparts)
     {
         crashingMeshes.removeAll(it->filePath());
@@ -950,27 +951,7 @@ void Optimiser::loadSettings() //Loads settings from the ini file
 }
 
 
-void Optimiser::resetToDefaultSettings() //Reset to default (recommended) settings
-{
-    options.mode = 0;
-    options.userPath = "";
 
-    options.bBsaExtract = true;
-    options.bBsaCreate = true;
-    options.bBsaPackLooseFiles = false;
-    options.bBsaDeleteBackup = false;
-
-    options.bMeshesNecessaryOptimization = true;
-    options.bMeshesMediumOptimization = false;
-    options.bMeshesFullOptimization = false;
-
-    options.bTexturesNecessaryOptimization = true;
-    options.bTexturesFullOptimization = true;
-
-    options.bAnimationsOptimization = true;
-
-    options.bDryRun = false;
-}
 
 
 void Optimiser::printSettings() //Will print settings into debug log

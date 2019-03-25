@@ -19,6 +19,29 @@
 
 struct optOptions
 {
+    optOptions()
+    {
+        mode = 0;
+        userPath = "";
+
+        bBsaExtract = true;
+        bBsaCreate = true;
+        bBsaPackLooseFiles = false;
+        bBsaDeleteBackup = false;
+
+        bMeshesNecessaryOptimization = true;
+        bMeshesMediumOptimization = false;
+        bMeshesFullOptimization = false;
+
+        bTexturesNecessaryOptimization = true;
+        bTexturesFullOptimization = true;
+
+        bAnimationsOptimization = true;
+
+        bDryRun = false;
+
+    }
+
     bool bBsaExtract{};
     bool bBsaCreate{};
     bool bBsaPackLooseFiles{};
@@ -55,7 +78,6 @@ public:
 
     bool setup();
     int mainProcess();
-    void dryRun();
 
     //Assets optimization
 
@@ -65,7 +87,6 @@ public:
     void texturesTgaToDds(QDirIterator* it);
     void texturesBc7Conversion(QDirIterator* it);
 
-    void meshesList();
     void meshesOptimize(QDirIterator* it);
     void meshesTexturesCaseFix(QDirIterator* it);
 
@@ -82,7 +103,6 @@ public:
 
     void saveSettings();
     void loadSettings();
-    void resetToDefaultSettings();
     void printSettings();
 
 
@@ -99,6 +119,15 @@ private:
     QTextStream logStream;
     QFile debugLogFile;
     QTextStream debugLogStream;
+
+    //Main functions
+
+    void dryRun();
+
+    //Assets optimization
+
+    void meshesList();
+
 
 
 signals:

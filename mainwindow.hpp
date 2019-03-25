@@ -44,6 +44,8 @@ private:
 
     int progressBarValue;
 
+    QThread* workerThread;
+
 };
 
 #endif // MAINWINDOW_H

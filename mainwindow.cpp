@@ -17,24 +17,28 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariabl
 
     //Preparing thread
 
-    QThread* thread = new QThread;
-    connect(thread, &QThread::started, optimizer, &Optimiser::mainProcess);
-    connect(optimizer, &Optimiser::end, thread, &QThread::quit);
-    connect(optimizer, &Optimiser::end, optimizer, &QThread::deleteLater);
-    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    connect(thread, &QThread::finished, this, [=](){ui->processButton->setDisabled(false);});
-    optimizer->moveToThread(thread);
+    workerThread = new QThread(this);
+    thread()->setObjectName("WorkerThread");
+
+    connect(workerThread, &QThread::started, optimizer, &Optimiser::mainProcess);
+    connect(optimizer, &Optimiser::end, workerThread, &QThread::quit);
+    connect(optimizer, &Optimiser::end, optimizer, &Optimiser::deleteLater);
+    connect(workerThread, &QThread::finished, this, [=]()
+    {
+        ui->processButton->setDisabled(false);
+        ui->progressBar->setValue(ui->progressBar->maximum());
+        QMessageBox warning(this);
+        warning.setText(tr("Completed. Please read the log to check if any errors occurred (displayed in red)."));
+        warning.addButton(QMessageBox::Ok);
+        warning.exec();
+        qApp->quit();
+        QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+    });
 
     //Connecting Optimiser to progress bar
 
     connect(optimizer, &Optimiser::progressBarReset, this, [=](){ui->progressBar->reset();});
     connect(optimizer, &Optimiser::progressBarMaximumChanged, this, [=](int maximum){ui->progressBar->setMaximum(maximum);});
-
-    connect(optimizer, &Optimiser::end, this, [=]()
-    {
-        ui->progressBar->setValue(ui->progressBar->maximum());
-        bLockVariables = false;
-    });
 
     connect(optimizer, &Optimiser::progressBarBusy, this, [=](){
         progressBarValue = ui->progressBar->value();
@@ -110,9 +114,11 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariabl
     {
         if(QDir(ui->userPathTextEdit->text()).exists())
         {
+            optimizer->moveToThread(workerThread);
+            workerThread->start();
+            workerThread->setPriority(QThread::HighestPriority);
             ui->processButton->setDisabled(true);
             bLockVariables = true;
-            thread->start();
         }
         else
             QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
@@ -124,7 +130,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariabl
     connect(ui->actionReset_to_default_settings, &QAction::triggered, this, [=]()
     {
         bSimpleMode=true;
-        optimizer->resetToDefaultSettings();
+        optimizer->options = {};
         this->loadUIFromVars();
         this->saveSettings();
     });
@@ -159,7 +165,6 @@ void MainWindow::saveUIToVars()
 {
     if(bLockVariables)
         return;
-
 
     //BSA checkboxes
 
