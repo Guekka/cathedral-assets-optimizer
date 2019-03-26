@@ -14,6 +14,7 @@
 #include <QTextCodec>
 #include <QDateTime>
 #include <QThread>
+#include <QtMath>
 
 #include <utility>
 
@@ -98,6 +99,7 @@ public:
     QString findSkyrimDirectory();
     void splitAssets();
     void moveFiles(QString source, QString destination, bool overwriteExisting);
+    QPair<qint64, qint64> assetsSize(const QString& path);
 
     //Settings operations
 

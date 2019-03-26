@@ -31,7 +31,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariabl
         warning.setText(tr("Completed. Please read the log to check if any errors occurred (displayed in red)."));
         warning.addButton(QMessageBox::Ok);
         warning.exec();
-        qApp->quit();
+        qApp->quit(); //FIXME Restarting app shouldn't be necessary
         QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
     });
 

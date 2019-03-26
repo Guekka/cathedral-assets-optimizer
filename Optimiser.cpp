@@ -764,7 +764,7 @@ QString Optimiser::getPlugin() //Find esp/esl/esm name using an iterator and reg
         if(it.fileName().contains(QRegularExpression("\\.es[plm]")))
         {
             espName=it.fileName();
-            logStream << tr("Esp found: ") << espName << "\n";
+            debugLogStream << tr("Esp found: ") << espName << "\n";
             return espName;
         }
     }
@@ -777,6 +777,7 @@ void Optimiser::splitAssets() //Split assets between several folders
 {
     QStringList assets;
     QString relativeFilename;
+    QString espName = getPlugin().chopped(4);
 
     QStringList bsaList;
     QStringList texturesBsaList;
@@ -805,11 +806,30 @@ void Optimiser::splitAssets() //Split assets between several folders
         }
     }
 
-    if(bsaList.isEmpty())
-        bsaList << modpathDir.dirName() + ".bsa.extracted";
+    //Creating enough folders to contain all the files
 
-    if(texturesBsaList.isEmpty())
-        texturesBsaList << bsaList.at(0).chopped(14) + "- Textures.bsa.extracted";
+    {
+        QPair<qint64, qint64> size = assetsSize(modpathDir.path());
+
+        int i = 0;
+        while(texturesBsaList.size() < qCeil(size.first/2900000000.0))
+        {
+            ++i;
+            modpathDir.mkdir(espName + " - Textures" + QString::number(i) + ".bsa.extracted");
+            texturesBsaList << espName + " - Textures" + QString::number(i) + ".bsa.extracted";
+            texturesBsaList.removeDuplicates();
+        }
+        i = 0;
+        while(bsaList.size() < qCeil(size.second/2076980377.0))
+        {
+            ++i;
+            modpathDir.mkdir(espName + QString::number(i) + ".bsa.extracted");
+            bsaList << espName + QString::number(i) + ".bsa.extracted" ;
+            bsaList.removeDuplicates();
+        }
+    }
+
+    //Moving files
 
     int i = 0;
     int j = 0;
@@ -817,6 +837,7 @@ void Optimiser::splitAssets() //Split assets between several folders
     while(it.hasNext())
     {
         it.next();
+        qDebug() << it.filePath();
 
         if(assets.contains(it.fileName().right(3), Qt::CaseInsensitive) || it.fileName().right(3).toLower() == "dds" || it.fileName().right(3).toLower() == "png")
         {
@@ -852,7 +873,7 @@ void Optimiser::splitAssets() //Split assets between several folders
         }
     }
 
-    system(QString("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)").toStdString().c_str());
+    system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)"));
 }
 
 
@@ -898,6 +919,33 @@ void Optimiser::moveFiles(QString source, QString destination, bool overwriteExi
     }
     debugLogStream << stepsColor << "[/MOVE FILES FUNC]" << endColor;
 }
+
+
+QPair <qint64, qint64> Optimiser::assetsSize(const QString& path) // Return textures size and other assets size in a directory
+{
+    QPair <qint64, qint64> size;
+    //First will be textures, second will be other assets
+
+    QDirIterator it(path, QDirIterator::Subdirectories);
+    QStringList assets;
+    QFile file;
+
+    assets << "nif" << "seq" << "pex" << "psc" << "lod" << "fuz" << "waw" << "xwm" << "swf" << "hkx" << "wav" << "tri" << "btr" << "bto" << "btt" << "lip";
+
+    while (it.hasNext())
+    {
+        file.setFileName(it.next());
+
+        if(file.fileName().right(3).toLower() == "dds" || file.fileName().right(3).toLower() == "png")
+            size.first += file.size();
+        else if(assets.contains(file.fileName().right(3), Qt::CaseInsensitive))
+            size.second += file.size();
+    }
+
+    return size;
+
+}
+
 
 
 void Optimiser::saveSettings() //Saves settings to an ini file
