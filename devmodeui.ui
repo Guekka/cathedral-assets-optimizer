@@ -20,13 +20,6 @@
       <string>GroupBox</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="3" column="0">
-       <widget class="QPushButton" name="CreateBSA">
-        <property name="text">
-         <string>Create BSA()</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="1">
        <widget class="QPushButton" name="MoveAssets">
         <property name="text">
@@ -34,17 +27,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="ExtractBSA">
-        <property name="text">
-         <string>Extract BSA()</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QPushButton" name="Setup">
         <property name="text">
          <string>Setup</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="CreateBSA">
+        <property name="text">
+         <string>Create BSA()</string>
         </property>
        </widget>
       </item>

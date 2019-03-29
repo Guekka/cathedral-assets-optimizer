@@ -1,8 +1,7 @@
 #ifndef DEVMODEUI_H
 #define DEVMODEUI_H
 
-#include <QWidget>
-#include "Optimiser.hpp"
+#include "Optimiser.h"
 
 namespace Ui {
 class devModeUI;

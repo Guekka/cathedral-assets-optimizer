@@ -1,7 +1,7 @@
-#include "mainwindow.hpp"
-#include "Optimiser.hpp"
+#include "Mainwindow.h"
+#include "Optimiser.h"
 #include "ui_mainwindow.h"
-#include "devmodeui.h"
+#include "Devmodeui.h"
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariables(false)
 {
@@ -174,6 +174,7 @@ void MainWindow::saveUIToVars()
         optimizer->options.bBsaCreate = ui->recreatetBsaCheckbox->isChecked();
         optimizer->options.bBsaPackLooseFiles = ui->packExistingAssetsCheckbox->isChecked();
         optimizer->options.bBsaDeleteBackup = ui->bsaDeleteBackupsCheckbox->isChecked();
+        optimizer->options.bBsaSplitAssets = ui->bsaSplitAssetsCheckBox->isChecked();
     }
     else
     {
@@ -181,6 +182,7 @@ void MainWindow::saveUIToVars()
         optimizer->options.bBsaCreate = false;
         optimizer->options.bBsaPackLooseFiles = false;
         optimizer->options.bBsaDeleteBackup = false;
+        optimizer->options.bBsaSplitAssets = false;
     }
 
     //Textures radio buttons

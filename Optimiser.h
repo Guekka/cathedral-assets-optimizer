@@ -1,22 +1,8 @@
-#ifndef OPTIMISER
-#define OPTIMISER
+#ifndef OPTIMISER_H
+#define OPTIMISER_H
 
-#include <QDirIterator>
-#include <QCoreApplication>
-#include <QProcess>
-#include <QDebug>
-#include <QMessageBox>
-#include <QTextEdit>
-#include <QSettings>
-#include <QProgressBar>
-#include <QCryptographicHash>
-#include <QRegularExpression>
-#include <QTextCodec>
-#include <QDateTime>
-#include <QThread>
-#include <QtMath>
-
-#include <utility>
+#include "pch.h"
+#include "QLogger.h"
 
 struct optOptions
 {
@@ -29,6 +15,7 @@ struct optOptions
         bBsaCreate = true;
         bBsaPackLooseFiles = false;
         bBsaDeleteBackup = false;
+        bBsaSplitAssets = false;
 
         bMeshesNecessaryOptimization = true;
         bMeshesMediumOptimization = false;
@@ -40,13 +27,13 @@ struct optOptions
         bAnimationsOptimization = true;
 
         bDryRun = false;
-
     }
 
     bool bBsaExtract{};
     bool bBsaCreate{};
     bool bBsaPackLooseFiles{};
     bool bBsaDeleteBackup{};
+    bool bBsaSplitAssets{};
 
     bool bTexturesNecessaryOptimization{};
     bool bTexturesFullOptimization{};
@@ -85,13 +72,13 @@ public:
     void bsaExtract(const QString& bsaPath);
     void bsaCreate();
 
-    void texturesTgaToDds(QDirIterator* it);
-    void texturesBc7Conversion(QDirIterator* it);
+    void texturesTgaToDds(const QString& filePath);
+    void texturesBc7Conversion(const QString& filePath);
 
-    void meshesOptimize(QDirIterator* it);
-    void meshesTexturesCaseFix(QDirIterator* it);
+    void meshesOptimize(const QString& filePath);
+    void meshesTexturesCaseFix(const QString& filePath);
 
-    void animationsOptimize(QDirIterator* it);
+    void animationsOptimize(const QString& filePath);
 
     //Filesystem operations
 
@@ -117,11 +104,9 @@ private:
     QStringList headparts;
     QStringList customHeadparts;
 
-    QFile logFile;
-    QTextStream logStream;
-    QFile debugLogFile;
-    QTextStream debugLogStream;
+    QLogger::LogLevel *logLevel;
 
+    QLogger::QLoggerManager *logManager;
     //Main functions
 
     void dryRun();
@@ -143,4 +128,4 @@ signals:
 };
 
 
-#endif // OPTIMISER
+#endif // OPTIMISER_H

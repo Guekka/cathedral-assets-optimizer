@@ -20,20 +20,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++11
+CONFIG += c++11 precompile_header
 
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
     Optimiser.cpp \
-    devmodeui.cpp
+    Mainwindow.cpp \
+    Devmodeui.cpp \
+    QLogger.cpp
 
 HEADERS += \
-        mainwindow.hpp \
-    Optimiser.hpp \
-    devmodeui.h
+    Optimiser.h \
+    Mainwindow.h \
+    Devmodeui.h \
+    pch.h \
+    QLogger.h
 
+PRECOMPILED_HEADER = pch.h
 
 TRANSLATIONS += \
 translations/AssetsOpt_fr.ts \

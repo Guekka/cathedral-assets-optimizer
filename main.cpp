@@ -1,4 +1,4 @@
-#include "mainwindow.hpp"
+#include "Mainwindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,8 +11,6 @@ int main(int argc, char *argv[])
     QTranslator AssetsOptTranslator;
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     app.installTranslator(&AssetsOptTranslator);
-
-
 
     MainWindow w;
 

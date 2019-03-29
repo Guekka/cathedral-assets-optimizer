@@ -1,19 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QApplication>
-#include <QTranslator>
-#include <QFileDialog>
-#include <QGridLayout>
-#include <QTextEdit>
-#include <QPushButton>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QMessageBox>
-#include <QMainWindow>
-
-#include "Optimiser.hpp"
-#include "devmodeui.h"
+#include "Optimiser.h"
+#include "Devmodeui.h"
+#include "pch.h"
 
 namespace Ui {
     class MainWindow;
