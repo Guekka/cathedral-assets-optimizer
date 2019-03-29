@@ -41,6 +41,9 @@ namespace QLogger
      */
     enum class LogLevel { Trace = 0, Debug, Note, Info, Warning, Error, Fatal };
 
+    LogLevel intToLogLevel(const int& value);
+    int logLevelToInt(const LogLevel &level);
+
     /**
        * @brief Here is done the call to write the message in the module. First of all is confirmed
        * that the log level we want to write is less or equal to the level defined when we create the

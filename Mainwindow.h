@@ -23,7 +23,6 @@ private:
     devModeUI *devmode;
     Optimiser *optimizer;
 
-    bool bSimpleMode = true;
     bool bDarkMode = true;
     bool bLockVariables = false;
 

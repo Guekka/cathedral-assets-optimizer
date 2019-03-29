@@ -95,6 +95,8 @@ public:
     void printSettings();
 
 
+    void setLogLevel(const QLogger::LogLevel &value);
+
 private:
     QDir modpathDir;
     QStringList modDirs;
@@ -104,9 +106,9 @@ private:
     QStringList headparts;
     QStringList customHeadparts;
 
-    QLogger::LogLevel *logLevel;
-
     QLogger::QLoggerManager *logManager;
+    QLogger::LogLevel logLevel;
+
     //Main functions
 
     void dryRun();
@@ -114,8 +116,6 @@ private:
     //Assets optimization
 
     void meshesList();
-
-
 
 signals:
     void progressBarMaximumChanged(int maximum);

@@ -127,21 +127,6 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariabl
 
     //Connecting menu buttons
 
-    connect(ui->actionReset_to_default_settings, &QAction::triggered, this, [=]()
-    {
-        bSimpleMode=true;
-        optimizer->options = {};
-        this->loadUIFromVars();
-        this->saveSettings();
-    });
-
-    connect(ui->actionShow_advanced_settings, &QAction::triggered, this, [=]()
-    {
-        bSimpleMode=false;
-        this->loadUIFromVars();
-        this->saveSettings();
-    });
-
     connect(ui->actionSwitch_to_dark_theme, &QAction::triggered, this, [=]()
     {
         bDarkMode = !bDarkMode;
@@ -155,9 +140,25 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariabl
         devmode->show();
     });
 
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=]()
+    {
+        optimizer->setLogLevel(QLogger::LogLevel::Info);
+    });
 
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=]()
+    {
+        optimizer->setLogLevel(QLogger::LogLevel::Note);
+    });
 
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=]()
+    {
+        optimizer->setLogLevel(QLogger::LogLevel::Trace);
+    });
 
+    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=]()
+    {
+        optimizer->setLogLevel(QLogger::LogLevel::Warning);
+    });
 }
 
 
@@ -256,25 +257,6 @@ void MainWindow::saveUIToVars()
 
 void MainWindow::loadUIFromVars()//Apply the Optimiser settings to the checkboxes
 {
-    //Simple mode
-
-    if(bSimpleMode)
-    {
-        ui->processButton->setText("Run with default settings");
-        ui->BsaGroupBox->hide();
-        ui->animationsGroupBox->hide();
-        ui->meshesGroupBox->hide();
-        ui->texturesGroupBox->hide();
-    }
-    else
-    {
-        ui->processButton->setText("Run");
-        ui->BsaGroupBox->show();
-        ui->animationsGroupBox->show();
-        ui->meshesGroupBox->show();
-        ui->texturesGroupBox->show();
-    }
-
     ui->userPathTextEdit->setText(optimizer->options.userPath);
 
     //Options
@@ -316,6 +298,7 @@ void MainWindow::loadUIFromVars()//Apply the Optimiser settings to the checkboxe
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
         qApp->setStyleSheet(ts.readAll());
+        f.close();
         bDarkMode = true;
         ui->actionSwitch_to_dark_theme->setText(tr("Switch to light theme"));
     }
@@ -351,7 +334,6 @@ void MainWindow::saveSettings() //Saves settings to an ini file
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
     settings.setValue("bDarkMode", bDarkMode);
-    settings.setValue("bSimpleMode", bSimpleMode);
 
     settings.setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
     settings.setValue("texturesGroupBox", ui->texturesGroupBox->isChecked());
@@ -366,7 +348,6 @@ void MainWindow::loadSettings() //Loads settings from the ini file
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
     bDarkMode = settings.value("bDarkMode").toBool();
-    bSimpleMode = settings.value("bSimpleMode").toBool();
 
     ui->BsaGroupBox->setChecked(settings.value("BsaGroupBox").toBool());
     ui->texturesGroupBox->setChecked(settings.value("texturesGroupBox").toBool());

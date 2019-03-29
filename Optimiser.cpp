@@ -8,7 +8,7 @@ Optimiser::Optimiser(){}
 bool Optimiser::setup() //Some necessary operations before running
 {     
     logManager = QLoggerManager::getInstance();
-    logManager->addDestination("log.html", "Optimiser", LogLevel::Trace); //TODO Allows the user to change the log level
+    logManager->addDestination("log.html", "Optimiser", logLevel);
 
     saveSettings();
 
@@ -627,8 +627,7 @@ void Optimiser::meshesList() //Run NifScan on modPath. Detected meshes will be s
     otherMeshes.removeAll("");
     crashingMeshes.removeAll("");
 
-    QLog_Debug("Optimiser", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n" + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));
-
+    QLog_Trace("Optimiser", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n" + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));
 }
 
 
@@ -881,7 +880,7 @@ void Optimiser::splitAssets() //Split assets between several folders
 }
 
 
-void Optimiser::moveFiles(QString source, QString destination, bool overwriteExisting)
+void Optimiser::moveFiles(QString source, QString destination, bool overwriteExisting) //FIXME the last file is not moved
 {
     QString relativeFilename;
 
@@ -962,6 +961,8 @@ void Optimiser::saveSettings() //Saves settings to an ini file
     settings.setValue("DryRun", options.bDryRun);
     settings.setValue("SelectedPath", options.userPath);
 
+    settings.setValue("logLevel", logLevelToInt(logLevel));
+
     settings.setValue("bBsaExtract", options.bBsaExtract);
     settings.setValue("bBsaCreate", options.bBsaCreate);
     settings.setValue("bBsaPackLooseFiles", options.bBsaPackLooseFiles);
@@ -987,6 +988,8 @@ void Optimiser::loadSettings() //Loads settings from the ini file
     options.mode = settings.value("options.mode").toInt();
     options.bDryRun = settings.value("DryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
+
+    logLevel = intToLogLevel(settings.value("logLevel").toInt());
 
     options.bBsaExtract = settings.value("bBsaExtract").toBool();
     options.bBsaCreate = settings.value("bBsaCreate").toBool();
@@ -1014,6 +1017,8 @@ void Optimiser::printSettings() //Will print settings into debug log
     QLog_Debug("Optimiser", "DryRun: " + QString::number(options.bDryRun));
     QLog_Debug("Optimiser", "userPath: "+ options.userPath);
 
+    QLog_Debug("Optimiser", "LogLevel: " + QString::number(logLevelToInt(logLevel)));
+
     QLog_Debug("Optimiser", "bBsaExtract: " + QString::number(options.bBsaExtract));
     QLog_Debug("Optimiser", "bBsaCreate: " + QString::number(options.bBsaCreate));
     QLog_Debug("Optimiser", "bBsaPackLooseFiles: " + QString::number(options.bBsaPackLooseFiles));
@@ -1028,4 +1033,9 @@ void Optimiser::printSettings() //Will print settings into debug log
     QLog_Debug("Optimiser", "bTexturesFullOptimization: " + QString::number( options.bTexturesFullOptimization));
 
     QLog_Debug("Optimiser", "bAnimationsOptimization: " + QString::number(options.bAnimationsOptimization));
+}
+
+void Optimiser::setLogLevel(const QLogger::LogLevel &value)
+{
+    logLevel = value;
 }

@@ -20,7 +20,7 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>SSE Assets Optimizer 4.0.2</string>
+   <string>SSE Assets Optimizer 4.2</string>
   </property>
   <property name="whatsThis">
    <string>Will write which files would be affected, without actually processing them</string>
@@ -553,24 +553,23 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionReset_to_default_settings"/>
-    <addaction name="actionShow_advanced_settings"/>
+    <widget class="QMenu" name="menuLog_verbosity">
+     <property name="title">
+      <string>Log verbosity</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionLogVerbosityTrace"/>
+     <addaction name="actionLogVerbosityNote"/>
+     <addaction name="actionLogVerbosityInfo"/>
+     <addaction name="actionLogVerbosityWarning"/>
+    </widget>
+    <addaction name="menuLog_verbosity"/>
     <addaction name="actionSwitch_to_dark_theme"/>
     <addaction name="separator"/>
     <addaction name="actionOpen_log"/>
    </widget>
    <addaction name="menuTools"/>
   </widget>
-  <action name="actionReset_to_default_settings">
-   <property name="text">
-    <string>Reset to default settings</string>
-   </property>
-  </action>
-  <action name="actionShow_advanced_settings">
-   <property name="text">
-    <string>Show advanced settings</string>
-   </property>
-  </action>
   <action name="actionSwitch_to_dark_theme">
    <property name="text">
     <string>Switch to dark theme</string>
@@ -579,6 +578,44 @@
   <action name="actionOpen_log">
    <property name="text">
     <string>Dev mode (DANGEROUS)</string>
+   </property>
+  </action>
+  <action name="actionLogVerbosityTrace">
+   <property name="text">
+    <string>Maximal</string>
+   </property>
+   <property name="toolTip">
+    <string>Maximal</string>
+   </property>
+   <property name="statusTip">
+    <string>Use it only if you want to report a bug</string>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+  </action>
+  <action name="actionLogVerbosityNote">
+   <property name="text">
+    <string>High</string>
+   </property>
+   <property name="whatsThis">
+    <string>Normal log with a bit more details</string>
+   </property>
+  </action>
+  <action name="actionLogVerbosityInfo">
+   <property name="text">
+    <string>Normal</string>
+   </property>
+   <property name="statusTip">
+    <string>Normal log</string>
+   </property>
+  </action>
+  <action name="actionLogVerbosityWarning">
+   <property name="text">
+    <string>Minimal</string>
+   </property>
+   <property name="statusTip">
+    <string>Will only show warnings and errors</string>
    </property>
   </action>
  </widget>
