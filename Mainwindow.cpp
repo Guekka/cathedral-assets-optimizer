@@ -265,6 +265,7 @@ void MainWindow::loadUIFromVars()//Apply the Optimiser settings to the checkboxe
     ui->recreatetBsaCheckbox->setChecked(optimizer->options.bBsaCreate);
     ui->packExistingAssetsCheckbox->setChecked(optimizer->options.bBsaPackLooseFiles);
     ui->bsaDeleteBackupsCheckbox->setChecked(optimizer->options.bBsaDeleteBackup);
+    ui->bsaSplitAssetsCheckBox->setChecked(optimizer->options.bBsaSplitAssets);
 
     ui->TexturesNecessaryOptimizationRadioButton->setChecked(optimizer->options.bTexturesNecessaryOptimization);
     ui->TexturesFullOptimizationRadioButton->setChecked(optimizer->options.bTexturesFullOptimization);

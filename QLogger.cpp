@@ -129,7 +129,7 @@ namespace QLogger
     {
         switch (level)
         {
-        case LogLevel::Trace:   return "<font color=Yellow>Trace";
+        case LogLevel::Trace:   return "<font color=BlueViolet>Trace";
         case LogLevel::Debug:   return "<font color=Blue>Debug";
         case LogLevel::Note:    return "Note";
         case LogLevel::Info:    return "<font color=Green>Info";
@@ -227,3 +227,5 @@ namespace QLogger
         }
     }
 }
+
+

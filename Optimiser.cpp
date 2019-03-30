@@ -5,7 +5,7 @@ using namespace QLogger;
 Optimiser::Optimiser(){}
 
 
-bool Optimiser::setup() //Some necessary operations before running
+bool Optimiser::init() //Some necessary operations before running
 {     
     logManager = QLoggerManager::getInstance();
     logManager->addDestination("log.html", "Optimiser", logLevel);
@@ -98,10 +98,10 @@ bool Optimiser::setup() //Some necessary operations before running
 
 int Optimiser::mainProcess() // Process the userPath according to all user options
 {
-    if(!setup())
+    if(!init())
     {
         emit end();
-        QLog_Error("Optimiser", tr("The setup function did not run as expected. Exiting the process."));
+        QLog_Fatal("Optimiser", tr("The setup function did not run as expected. Exiting the process."));
         return 1;
     }
 
@@ -160,10 +160,8 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
             currentFile = it.next();
 
             if((options.bMeshesNecessaryOptimization || options.bMeshesMediumOptimization || options.bMeshesFullOptimization) && it.fileName().right(4).toLower() == ".nif")
-            {
                 meshesOptimize(currentFile);
-                //textureCaseFixMesh(&it); Currently not working, WIP
-            }
+
             if((options.bTexturesFullOptimization) && it.fileName().right(4).toLower() == ".dds")
                 texturesBc7Conversion(currentFile);
 
@@ -179,10 +177,26 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
         if(options.bBsaCreate)
         {
-            try {
-                bsaCreate();
-            } catch (QString e) {
+            try
+            {
+                if (options.bBsaPackLooseFiles)
+                    splitAssets();
+
+                QDirIterator bsaIt(modpathDir);
+                while(bsaIt.hasNext())
+                {
+                    bsaIt.next();
+                    if(bsaIt.fileName().right(13) == "bsa.extracted")
+                    {
+                        QLog_Trace("Optimiser", "bsa folder found: " + bsaIt.fileName());
+                        bsaCreate(bsaIt.filePath());
+                    }
+                }
+            }
+            catch (QString e)
+            {
                 QLog_Error("Optimiser", e);
+                QLog_Error("Optimiser", tr("BSA packing canceled."));
             }
             emit progressBarIncrease();
         }
@@ -190,10 +204,9 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
     //Deleting empty dirs
 
-    system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)"));
+    system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>nul)"));
 
     emit end();
-    this->moveToThread(QCoreApplication::instance()->thread());
 
     QLog_Info("Optimiser", tr("Completed."));
 
@@ -203,7 +216,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
 
 void Optimiser::dryRun() // Perform a dry run : list files without actually modifying them
 {
-    setup();
+    init();
 
     QLog_Info("Optimiser", tr("Beginning the dry run..."));
 
@@ -343,137 +356,90 @@ void Optimiser::bsaExtract(const QString& bsaPath) //Extracts all BSA in modPath
 }
 
 
-void Optimiser::bsaCreate() //Once all the optimizations are done, create a new BSA
+void Optimiser::bsaCreate(const QString& bsaFolderPath) //Once all the optimizations are done, create a new BSA
 {
     QStringList dirs(modpathDir.entryList(QDir::Dirs));
-    QStringList bsaList(modpathDir.entryList(QDir::Dirs));
 
     QStringList bsarchArgs;
     QString bsaName;
-    QString espName = getPlugin();
 
     QDir bsaDir;
-    QStringList bsaDirs;
+    QStringList bsaSubDirs;
     QProcess bsarch;
 
     bool doNotCompress=false;
 
-    for (int i = 0; i < dirs.size(); ++i)
+    bsaDir.setPath(bsaFolderPath);
+    bsaSubDirs = bsaDir.entryList(QDir::Dirs);
+
+    //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
+
+    doNotCompress = false;
+    for (int j = 0; j < bsaSubDirs.size(); ++j)
     {
-        if(dirs.at(i).right(13) == "bsa.extracted" && dirs.at(i).contains("- Textures", Qt::CaseInsensitive))
-            bsaList << modpathDir.filePath(dirs.at(i));
+        if(bsaSubDirs.at(j).toLower() == "sound" || bsaSubDirs.at(j).toLower() == "music" || bsaSubDirs.at(j).toLower() == "strings")
+            doNotCompress=true;
     }
 
+    //Checking if it a textures BSA
 
-    if(options.bBsaPackLooseFiles && bsaList.isEmpty())
+    bsaName = bsaFolderPath.chopped(10); //Removing ".extracted"
+    bsarchArgs << "pack" << bsaFolderPath << bsaName << "-sse" << "-share";
+
+    if (!doNotCompress) //Compressing BSA breaks sounds
+        bsarchArgs << "-z";
+
+    if(!QFile(bsaName).exists())
     {
-        QFile::copy("resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + espName);
-        bsaList << QDir::cleanPath(modpathDir.path() + "/" + espName.chopped(4) + ".bsa.extracted");
+        bsarch.start("resources/bsarch.exe", bsarchArgs);
+        bsarch.waitForFinished(-1);
     }
-
-    if(options.bBsaPackLooseFiles)
+    else
     {
+        QLog_Error("Optimiser", tr("Cannot pack existing loose files: a BSA already exists."));
         try
         {
-            splitAssets();
+            moveFiles(bsaFolderPath, modpathDir.path(), false);
         }
         catch (QString e)
         {
             QLog_Error("Optimiser", e);
-            throw tr("BSA creation cancelled");
         }
     }
 
-    //Doing twice the same list since moveAssets() can create dirs
+    QLog_Debug("Optimiser", "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolderPath + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()));
 
-    bsaList.clear();
-    dirs = modpathDir.entryList(QDir::Dirs);
-
-    for (int i = 0; i < dirs.size(); ++i)
+    if(bsarch.readAllStandardOutput().contains("Done"))
     {
-        if(dirs.at(i).right(13) == "bsa.extracted")
-            bsaList << modpathDir.filePath(dirs.at(i));
-    }
-
-    for (int i = 0; i < bsaList.size(); ++i)
-    {
-        bsarchArgs.clear();
-        bsaDir.setPath(bsaList.at(i));
-        bsaDirs = bsaDir.entryList(QDir::Dirs);
-
-        //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
-
-        doNotCompress = false;
-        for (int j = 0; j < bsaDirs.size(); ++j)
+        if(QFile(bsaName).size() < 2147483648)
         {
-            if(bsaDirs.at(j).toLower() == "sound" || bsaDirs.at(j).toLower() == "music" || bsaDirs.at(j).toLower() == "strings")
-                doNotCompress=true;
+            QLog_Note("Optimiser", tr("BSA successfully compressed: ") + bsaName);
+            bsaDir.setPath(bsaFolderPath);
+            bsaDir.removeRecursively();
         }
-
-        //Checking if it a textures BSA
-
-        if(bsaDir.count() == 3 && bsaDirs.contains("TEXTURES") && !bsaList.at(i).contains("textures", Qt::CaseInsensitive))
-            bsaName = bsaList.at(i).chopped(14) + " - Textures.bsa";
-        else
-            bsaName = bsaList.at(i).chopped(14) + ".bsa";
-
-        bsarchArgs << "pack" << bsaList.at(i) << bsaName << "-sse" << "-share";
-
-        if (!doNotCompress) //Compressing BSA breaks sounds
-            bsarchArgs << "-z";
-
-        if(!QFile(bsaName).exists())
+        else if(QFile(bsaName).size() < 2400000000)
         {
-            modpathDir.rename(bsaName + "/meshes/actors/character/animations", "meshes/actors/character/animations");
-            modpathDir.rename(bsaName + "/meshes/actors/character/behaviors", "meshes/actors/character/behaviors");
-            bsarch.start("resources/bsarch.exe", bsarchArgs);
-            bsarch.waitForFinished(-1);
+            QLog_Warning("Optimiser", tr("The BSA is nearly over its maximum size. It still should work."));
+            bsaDir.setPath(bsaFolderPath);
+            bsaDir.removeRecursively();
         }
         else
         {
-            QLog_Error("Optimiser", tr("Cannot pack existing loose files: a BSA already exists."));
+            QLog_Error("Optimiser", tr("The BSA was not compressed: it is over 2.2gb: ") + bsaName);
+            QFile::remove(bsaName);
+            if(QFile(bsaName.chopped(3) + "esp").size() == QFile("resources/BlankSSEPlugin.esp").size())
+                QFile::remove(modpathDir.filePath(bsaName.chopped(3) + "esp"));
             try
             {
-                moveFiles(bsaList.at(i), modpathDir.path(), false);
+                moveFiles(bsaFolderPath, modpathDir.path(), false);
             }
             catch (QString e)
             {
                 QLog_Error("Optimiser", e);
             }
         }
-
-        QLog_Debug("Optimiser", "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaList.at(i) + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()));
-
-        if(bsarch.readAllStandardOutput().contains("Done"))
-        {
-            if(QFile(bsaName).size() < 2147483648)
-            {
-                QLog_Note("Optimiser", tr("BSA successfully compressed: ") + bsaName);
-                bsaDir.setPath(bsaList.at(i));
-                bsaDir.removeRecursively();
-            }
-            else if(QFile(bsaName).size() < 2400000000)
-                QLog_Warning("Optimiser", tr("The BSA is nearly over its maximum size. It still should work."));
-
-            else
-            {
-                QLog_Error("Optimiser", tr("The BSA was not compressed: it is over 2.2gb: ") + bsaName);
-                QFile::remove(bsaName);
-                if(QFile(modpathDir.path() + "/" + espName).size() == QFile("resources/BlankSSEPlugin.esp").size())
-                    QFile::remove(modpathDir.filePath(espName));
-                try
-                {
-                    moveFiles(bsaList.at(i), modpathDir.path(), false);
-                }
-                catch (QString e)
-                {
-                    QLog_Error("Optimiser", e);
-                }
-            }
-        }
     }
 }
-
 
 
 void Optimiser::texturesBc7Conversion(const QString &filePath) //Compress uncompressed textures to BC7
@@ -500,9 +466,9 @@ void Optimiser::texturesBc7Conversion(const QString &filePath) //Compress uncomp
         if(textureSize > 16)
         {
             texconvArg.clear();
-            texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << filePath;
+            texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << "-bcmax" << filePath;
 
-            QLog_Note("Optimiser", tr("Uncompressed texture found: ") + filePath.mid(filePath.lastIndexOf("/")) + tr("Compressing..."));
+            QLog_Note("Optimiser", tr("Compressing uncompressed texture: ") + filePath.mid(filePath.lastIndexOf("/")+1));
             texconv.start("resources/texconv.exe", texconvArg);
             texconv.waitForFinished(-1);
         }
@@ -808,8 +774,8 @@ void Optimiser::splitAssets() //Split assets between several folders
         while(texturesBsaList.size() < qCeil(size.first/2900000000.0))
         {
             ++i;
-            modpathDir.mkdir(espName + " - Textures" + QString::number(i) + ".bsa.extracted");
-            texturesBsaList << espName + " - Textures" + QString::number(i) + ".bsa.extracted";
+            modpathDir.mkdir(espName + QString::number(i) + " - Textures.bsa.extracted");
+            texturesBsaList << espName + QString::number(i) + " - Textures.bsa.extracted";
             texturesBsaList.removeDuplicates();
         }
         i = 0;
@@ -874,7 +840,26 @@ void Optimiser::splitAssets() //Split assets between several folders
         }
     }
 
-    system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>&1)"));
+    QLog_Trace("Optimiser", "Creating dummy plugins to load BSAs");
+
+    for (int i = 0; i < bsaList.size(); ++i)
+    {
+        if(!QFile(bsaList.at(i).chopped(13) + "esp").exists())
+        {
+            QFile::copy("resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + bsaList.at(i).chopped(3) + "esp");
+            QLog_Trace("Optimiser", "Created standard bsa plugin:" + bsaList.at(i).chopped(3) + "esp");
+        }
+    }
+    for (int i = 0; i < texturesBsaList.size(); ++i)
+    {
+        if(!QFile(texturesBsaList.at(i).chopped(25) + ".esp").exists())
+        {
+            QFile::copy("resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + texturesBsaList.at(i).chopped(25) + ".esp");
+            QLog_Trace("Optimiser", "Created textures bsa plugin:" + texturesBsaList.at(i).chopped(25) + ".esp");
+        }
+    }
+
+    system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>nul)"));
 
     QLog_Trace("Optimiser", "Exiting splitAssets function");
 }
@@ -900,9 +885,9 @@ void Optimiser::moveFiles(QString source, QString destination, bool overwriteExi
     while (it.hasNext())
     {
         it.next();
-        if(it.path() != destination)
+        if(it.path() != destination && it.fileName().right(1) != ".")
         {
-            relativeFilename = sourceDir.relativeFilePath(it.filePath());
+            relativeFilename = QDir::cleanPath(sourceDir.relativeFilePath(it.filePath()));
             oldFile.setFileName(it.filePath());
             newFile.setFileName(destination + relativeFilename);
 
@@ -917,7 +902,7 @@ void Optimiser::moveFiles(QString source, QString destination, bool overwriteExi
                 QFile::remove(oldFile.fileName());
 
             sourceDir.mkpath(newFile.fileName().left(newFile.fileName().lastIndexOf("/")));
-            sourceDir.rename(oldFile.fileName(), newFile.fileName());
+            QFile::rename(oldFile.fileName(), newFile.fileName());
         }
     }
     QLog_Trace("Optimiser", "Exiting moveFiles function");

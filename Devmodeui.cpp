@@ -13,14 +13,9 @@ devModeUI::devModeUI(Optimiser *optimiser) :
 
     optimiser->loadSettings();
 
-    connect(ui->CreateBSA, &QPushButton::clicked, this, [=]()
-    {
-        optimiser->bsaCreate();
-    });
-
     connect(ui->Setup, &QPushButton::clicked, this, [=]()
     {
-        optimiser->setup();
+        optimiser->init();
     });
 
     connect(ui->MoveAssets, &QPushButton::clicked, this, [=]()

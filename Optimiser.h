@@ -4,6 +4,7 @@
 #include "pch.h"
 #include "QLogger.h"
 
+
 struct optOptions
 {
     optOptions()
@@ -64,13 +65,13 @@ public:
 
     //Main functions
 
-    bool setup();
+    bool init();
     int mainProcess();
 
     //Assets optimization
 
     void bsaExtract(const QString& bsaPath);
-    void bsaCreate();
+    void bsaCreate(const QString& bsaFolderPath);
 
     void texturesTgaToDds(const QString& filePath);
     void texturesBc7Conversion(const QString& filePath);
