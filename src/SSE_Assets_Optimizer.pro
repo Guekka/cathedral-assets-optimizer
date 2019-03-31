@@ -45,4 +45,4 @@ translations/AssetsOpt_ja.ts
 FORMS += \
     mainwindow.ui \
 
-RESOURCES += qdarkstyle/style.qrc
+RESOURCES += styles/qdarkstyle/style.qrc

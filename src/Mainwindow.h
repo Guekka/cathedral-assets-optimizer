@@ -28,6 +28,7 @@ private:
     void loadUIFromVars();
     void saveSettings();
     void loadSettings();
+    void updateLog();
 
     int progressBarValue;
 

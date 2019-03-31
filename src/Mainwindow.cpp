@@ -13,6 +13,11 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     this->loadSettings();
     this->loadUIFromVars();
 
+    //Preparing log
+
+    ui->plainTextEdit->setReadOnly(true);
+    ui->plainTextEdit->setMaximumBlockCount(25);
+
     //Preparing thread
 
     workerThread = new QThread(this);
@@ -42,12 +47,14 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
         progressBarValue = ui->progressBar->value();
         ui->progressBar->setMaximum(0);
         ui->progressBar->setValue(0);
+        updateLog();
     });
 
     connect(optimizer, &Optimiser::progressBarIncrease, this, [=]
     {
         ui->progressBar->setValue(progressBarValue + 1);
         progressBarValue = ui->progressBar->value();
+        updateLog();
     });
 
     //Connecting checkboxes to optimizer variables
@@ -351,7 +358,20 @@ void MainWindow::loadSettings() //Loads settings from the ini file
     ui->animationsGroupBox->setChecked(settings.value("animationsGroupBox").toBool());
 }
 
+
+void MainWindow::updateLog()
+{
+    QFile log("logs/log.html");
+    log.open(QFile::Text | QFile::ReadOnly);
+    ui->plainTextEdit->clear();
+    ui->plainTextEdit->appendHtml(log.readAll());
+    log.close();
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
+

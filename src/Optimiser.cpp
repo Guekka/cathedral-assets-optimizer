@@ -482,15 +482,12 @@ void Optimiser::texturesTgaToDds(const QString &filePath) //Convert TGA textures
 
     QLog_Note("Optimiser", tr("TGA file found: ") + filePath.mid(filePath.lastIndexOf("/")) + tr("Compressing..."));
 
-
-    texconvArg.clear();
     texconvArg << "-nologo" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "R8G8B8A8_UNORM" << filePath;
     texconv.start(QCoreApplication::applicationDirPath() + "/resources/texconv.exe", texconvArg);
     texconv.waitForFinished(-1);
 
     QFile tga(filePath);
     tga.remove();
-
 }
 
 

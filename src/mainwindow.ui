@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>684</width>
-    <height>535</height>
+    <height>779</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -529,6 +529,9 @@
        </item>
       </layout>
      </widget>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="plainTextEdit"/>
     </item>
     <item>
      <widget class="QProgressBar" name="progressBar">

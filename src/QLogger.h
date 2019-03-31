@@ -119,7 +119,7 @@ namespace QLogger
             LogLevel getLevel() const { return m_level; }
             /**
              * @brief Within this method the message is written in the log file. If it would exceed
-             * from 1 MByte, another file will be created and the log message will be stored in the
+             * from 4 MByte, another file will be created and the log message will be stored in the
              * new one. The older file will be renamed with the date and time of this message to know
              * where it is updated.
              *
