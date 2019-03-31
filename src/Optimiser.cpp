@@ -197,6 +197,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
                 QLog_Error("Optimiser", e);
                 QLog_Error("Optimiser", tr("BSA packing canceled."));
             }
+            makeDummyPlugins(modpathDir.path());
             emit progressBarIncrease();
         }
     }
@@ -344,8 +345,8 @@ void Optimiser::bsaExtract(const QString& bsaPath) //Extracts all BSA in modPath
             QLog_Error("Optimiser", e);
             throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
         }
-    if(options.bBsaDeleteBackup)
-        QFile::remove(bsaPath);
+        if(options.bBsaDeleteBackup)
+            QFile::remove(bsaPath);
     }
     else
         throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
@@ -705,6 +706,33 @@ QString Optimiser::findSkyrimDirectory() //Find Skyrim directory using the regis
 }
 
 
+void Optimiser::makeDummyPlugins(const QString& directory)
+{
+    QLog_Trace("Optimiser", "Entering makeDummyPluginsfunction: creating enough dummy plugins to load BSAs");
+
+    QDirIterator it(directory);
+    QString espName;
+
+    while (it.hasNext())
+    {
+        it.next();
+        if(it.fileName().right(4).toLower() == ".bsa" && it.fileName().contains("- Textures", Qt::CaseInsensitive))
+        {
+            espName = it.fileName().remove("- Textures.bsa") + ".esp";
+            QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", directory + "/" + espName);
+            QLog_Trace("Optimiser", "Created textures bsa plugin:" + espName);
+        }
+        else if(it.fileName().right(4).toLower() == ".bsa")
+        {
+            espName = it.fileName().remove(".bsa") + ".esp";
+            QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", directory + "/" + espName);
+            QLog_Trace("Optimiser", "Created standard bsa plugin:" + espName);
+        }
+    }
+    QLog_Trace("Optimiser", "Exiting makeDummyPlugins function");
+}
+
+
 QString Optimiser::getPlugin() //Find esp/esl/esm name using an iterator and regex. Also creates a plugin if there isn't one.
 {
     QDirIterator it(modpathDir);
@@ -807,7 +835,7 @@ void Optimiser::splitAssets() //Split assets between several folders
     system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>nul)"));
 
     QLog_Trace("Optimiser", "Total: " + QString::number(bsaList.size()) + " bsa folders:\n" + bsaList.join("\n") + "\n"
-    + QString::number(texturesBsaList.size()) + " textures bsa folders:\n" + texturesBsaList.join("\n"));
+               + QString::number(texturesBsaList.size()) + " textures bsa folders:\n" + texturesBsaList.join("\n"));
     QLog_Trace("Optimiser", "Splitting files between bsa folders");
 
     int i = 0;
@@ -852,25 +880,6 @@ void Optimiser::splitAssets() //Split assets between several folders
 
             modpathDir.mkpath(newAssetRelativeFilename.left(newAssetRelativeFilename.lastIndexOf("/")));
             modpathDir.rename(oldAssetRelativeFilename, newAssetRelativeFilename);
-        }
-    }
-
-    QLog_Trace("Optimiser", "Creating dummy plugins to load BSAs");
-
-    for (int i = 0; i < bsaList.size(); ++i)
-    {
-        if(!QFile(bsaList.at(i).chopped(13) + "esp").exists())
-        {
-            QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + bsaList.at(i).chopped(13) + "esp");
-            QLog_Trace("Optimiser", "Created standard bsa plugin:" + bsaList.at(i).chopped(13) + "esp");
-        }
-    }
-    for (int i = 0; i < texturesBsaList.size(); ++i)
-    {
-        if(!QFile(texturesBsaList.at(i).chopped(25) + ".esp").exists())
-        {
-            QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + texturesBsaList.at(i).chopped(25) + ".esp");
-            QLog_Trace("Optimiser", "Created textures bsa plugin:" + texturesBsaList.at(i).chopped(25) + ".esp");
         }
     }
 

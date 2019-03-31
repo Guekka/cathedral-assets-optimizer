@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include "Optimiser.h"
-#include "Devmodeui.h"
 #include "pch.h"
 
 namespace Ui {
@@ -20,7 +19,6 @@ public:
 private:
     QFileDialog *fileDialog{};
     Ui::MainWindow *ui;
-    devModeUI *devmode;
     Optimiser *optimizer;
 
     bool bDarkMode = true;

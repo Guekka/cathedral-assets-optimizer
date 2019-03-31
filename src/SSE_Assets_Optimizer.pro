@@ -24,17 +24,15 @@ CONFIG += c++11 precompile_header
 
 
 SOURCES += \
-        main.cpp \
+    main.cpp \
     Optimiser.cpp \
     Mainwindow.cpp \
-    Devmodeui.cpp \
     QLogger.cpp
 
 HEADERS += \
+    pch.h \
     Optimiser.h \
     Mainwindow.h \
-    Devmodeui.h \
-    pch.h \
     QLogger.h
 
 PRECOMPILED_HEADER = pch.h
@@ -46,6 +44,5 @@ translations/AssetsOpt_ja.ts
 
 FORMS += \
     mainwindow.ui \
-    devmodeui.ui
 
 RESOURCES += qdarkstyle/style.qrc

@@ -565,8 +565,6 @@
     </widget>
     <addaction name="menuLog_verbosity"/>
     <addaction name="actionSwitch_to_dark_theme"/>
-    <addaction name="separator"/>
-    <addaction name="actionOpen_log"/>
    </widget>
    <addaction name="menuTools"/>
   </widget>

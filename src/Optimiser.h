@@ -84,6 +84,7 @@ public:
     //Filesystem operations
 
     QString getPlugin();
+    void makeDummyPlugins(const QString& directory);
     QString findSkyrimDirectory();
     void splitAssets();
     void moveFiles(QString source, QString destination, bool overwriteExisting);

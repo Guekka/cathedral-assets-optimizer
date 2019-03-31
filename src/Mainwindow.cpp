@@ -1,13 +1,11 @@
 #include "Mainwindow.h"
 #include "Optimiser.h"
 #include "ui_mainwindow.h"
-#include "Devmodeui.h"
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     optimizer = new Optimiser();
-    devmode  = new devModeUI(optimizer);
 
     //Loading remembered settings
 
@@ -136,11 +134,6 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
         this->loadUIFromVars();
     });
 
-    connect(ui->actionOpen_log, &QAction::triggered, this, [=]()
-    {
-        optimizer->saveSettings();
-        devmode->show();
-    });
 
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=]()
     {
@@ -360,6 +353,5 @@ void MainWindow::loadSettings() //Loads settings from the ini file
 
 MainWindow::~MainWindow()
 {
-    delete devmode;
     delete ui;
 }
