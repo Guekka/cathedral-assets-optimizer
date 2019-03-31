@@ -598,8 +598,11 @@
    <property name="text">
     <string>High</string>
    </property>
-   <property name="whatsThis">
+   <property name="statusTip">
     <string>Normal log with a bit more details</string>
+   </property>
+   <property name="whatsThis">
+    <string/>
    </property>
   </action>
   <action name="actionLogVerbosityInfo">

@@ -3,7 +3,7 @@
 #include "ui_mainwindow.h"
 #include "Devmodeui.h"
 
-MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariables(false)
+MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     optimizer = new Optimiser();
@@ -60,6 +60,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow), bDarkMode(true), bLockVariabl
     connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
     connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
     connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, [=](){this->saveUIToVars();});
+    connect(ui->bsaSplitAssetsCheckBox, &QCheckBox::clicked, this, [=](){this->saveUIToVars();});
+
 
     connect(ui->texturesGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToVars();});
 

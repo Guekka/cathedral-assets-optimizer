@@ -2,12 +2,11 @@
 
 using namespace QLogger;
 
-Optimiser::Optimiser(){}
+Optimiser::Optimiser() : logManager(QLoggerManager::getInstance()), logLevel(LogLevel::Info) {}
 
 
 bool Optimiser::init() //Some necessary operations before running
 {     
-    logManager = QLoggerManager::getInstance();
     logManager->addDestination("log.html", "Optimiser", logLevel);
 
     saveSettings();
@@ -36,11 +35,11 @@ bool Optimiser::init() //Some necessary operations before running
     QStringList requirements;
     QFile havokFile(findSkyrimDirectory() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
 
-    if(havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
-        havokFile.copy("resources/HavokBehaviorPostProcess.exe");
+    if(havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
+        havokFile.copy(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe");
 
-    else if(!havokFile.exists() && !QFile("resources/HavokBehaviorPostProcess.exe").exists())
-        QLog_Error("Optimiser", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
+    else if(!havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
+        QLog_Warning("Optimiser", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
 
     requirements << "bsarch.exe" << "NifScan.exe" << "nifopt.exe" << "texconv.exe" << "texdiag.exe" << "ListHeadParts.exe";
 
@@ -49,7 +48,7 @@ bool Optimiser::init() //Some necessary operations before running
 
     for (int i = 0; i < requirements.size(); ++i)
     {
-        QFile file("resources/" + requirements.at(i));
+        QFile file(QCoreApplication::applicationDirPath() + "/resources/" + requirements.at(i));
         if(!file.exists())
         {
             QLog_Error("Optimiser", requirements.at(i) + tr(" not found. Cancelling."));
@@ -59,7 +58,7 @@ bool Optimiser::init() //Some necessary operations before running
 
     //Reading custom headparts
 
-    QFile customHeadpartsFile("resources/customHeadparts.txt");
+    QFile customHeadpartsFile(QCoreApplication::applicationDirPath() + "/resources/customHeadparts.txt");
     QString readLine;
     if(customHeadpartsFile.open(QIODevice::ReadOnly))
     {
@@ -140,7 +139,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
                     {
                         bsaExtract(bsaIt.filePath());
                     }
-                    catch(QString e)
+                    catch(const QString& e)
                     {
                         QLog_Error("Optimiser", e);
                     }
@@ -193,7 +192,7 @@ int Optimiser::mainProcess() // Process the userPath according to all user optio
                     }
                 }
             }
-            catch (QString e)
+            catch(const QString& e)
             {
                 QLog_Error("Optimiser", e);
                 QLog_Error("Optimiser", tr("BSA packing canceled."));
@@ -244,7 +243,7 @@ void Optimiser::dryRun() // Perform a dry run : list files without actually modi
                     {
                         bsaExtract(bsaIt.filePath());
                     }
-                    catch(QString e)
+                    catch(const QString& e)
                     {
                         QLog_Error("Optimiser", e);
                     }
@@ -279,7 +278,7 @@ void Optimiser::dryRun() // Perform a dry run : list files without actually modi
 
                 texdiagArg << "info" << it.filePath();
 
-                texDiag.start("resources/texdiag.exe", texdiagArg);
+                texDiag.start(QCoreApplication::applicationDirPath() + "/resources/texdiag.exe", texdiagArg);
                 texDiag.waitForFinished(-1);
 
                 if(texDiag.readAllStandardOutput().contains("compressed = no"))
@@ -329,30 +328,27 @@ void Optimiser::bsaExtract(const QString& bsaPath) //Extracts all BSA in modPath
         bsarchArgs << "unpack" << bsaBackupFile.fileName() << bsaFolder ;
     }
 
-    bsarch.start("resources/bsarch.exe", bsarchArgs);
+    bsarch.start(QCoreApplication::applicationDirPath() + "/resources/bsarch.exe", bsarchArgs);
     bsarch.waitForFinished(-1);
 
     QLog_Debug("Optimiser", "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolder + "\nBSA Name :" + bsaPath);
 
-    if(!bsarch.readAllStandardOutput().contains("Done"))
-        throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
-    else
+    if(bsarch.readAllStandardOutput().contains("Done"))
     {
-        if(!options.bBsaCreate)
+        try
         {
-            try
-            {
-                moveFiles(bsaFolder, modpathDir.path(), false);
-            }
-            catch (QString e)
-            {
-                QLog_Error("Optimiser", e);
-                throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
-            }
+            moveFiles(bsaFolder, modpathDir.path(), false);
         }
-        if(options.bBsaDeleteBackup)
-            QFile::remove(bsaPath);
+        catch(const QString& e)
+        {
+            QLog_Error("Optimiser", e);
+            throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
+        }
+    if(options.bBsaDeleteBackup)
+        QFile::remove(bsaPath);
     }
+    else
+        throw tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted.");
 }
 
 
@@ -391,7 +387,7 @@ void Optimiser::bsaCreate(const QString& bsaFolderPath) //Once all the optimizat
 
     if(!QFile(bsaName).exists())
     {
-        bsarch.start("resources/bsarch.exe", bsarchArgs);
+        bsarch.start(QCoreApplication::applicationDirPath() + "/resources/bsarch.exe", bsarchArgs);
         bsarch.waitForFinished(-1);
     }
     else
@@ -401,7 +397,7 @@ void Optimiser::bsaCreate(const QString& bsaFolderPath) //Once all the optimizat
         {
             moveFiles(bsaFolderPath, modpathDir.path(), false);
         }
-        catch (QString e)
+        catch(const QString& e)
         {
             QLog_Error("Optimiser", e);
         }
@@ -411,13 +407,13 @@ void Optimiser::bsaCreate(const QString& bsaFolderPath) //Once all the optimizat
 
     if(bsarch.readAllStandardOutput().contains("Done"))
     {
-        if(QFile(bsaName).size() < 2147483648)
+        if(QFile(bsaName).size() < 2362232012)
         {
             QLog_Note("Optimiser", tr("BSA successfully compressed: ") + bsaName);
             bsaDir.setPath(bsaFolderPath);
             bsaDir.removeRecursively();
         }
-        else if(QFile(bsaName).size() < 2400000000)
+        else if(QFile(bsaName).size() < 2469606195)
         {
             QLog_Warning("Optimiser", tr("The BSA is nearly over its maximum size. It still should work."));
             bsaDir.setPath(bsaFolderPath);
@@ -427,13 +423,13 @@ void Optimiser::bsaCreate(const QString& bsaFolderPath) //Once all the optimizat
         {
             QLog_Error("Optimiser", tr("The BSA was not compressed: it is over 2.2gb: ") + bsaName);
             QFile::remove(bsaName);
-            if(QFile(bsaName.chopped(3) + "esp").size() == QFile("resources/BlankSSEPlugin.esp").size())
+            if(QFile(bsaName.chopped(3) + "esp").size() == QFile(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp").size())
                 QFile::remove(modpathDir.filePath(bsaName.chopped(3) + "esp"));
             try
             {
                 moveFiles(bsaFolderPath, modpathDir.path(), false);
             }
-            catch (QString e)
+            catch(const QString& e)
             {
                 QLog_Error("Optimiser", e);
             }
@@ -452,7 +448,7 @@ void Optimiser::texturesBc7Conversion(const QString &filePath) //Compress uncomp
 
     texdiagArg << "info" << filePath;
 
-    texDiag.start("resources/texdiag.exe", texdiagArg);
+    texDiag.start(QCoreApplication::applicationDirPath() + "/resources/texdiag.exe", texdiagArg);
     texDiag.waitForFinished(-1);
 
     QString texDiagOutput = texDiag.readAllStandardOutput();
@@ -469,7 +465,7 @@ void Optimiser::texturesBc7Conversion(const QString &filePath) //Compress uncomp
             texconvArg << "-nologo" << "-y" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "BC7_UNORM" << "-bcmax" << filePath;
 
             QLog_Note("Optimiser", tr("Compressing uncompressed texture: ") + filePath.mid(filePath.lastIndexOf("/")+1));
-            texconv.start("resources/texconv.exe", texconvArg);
+            texconv.start(QCoreApplication::applicationDirPath() + "/resources/texconv.exe", texconvArg);
             texconv.waitForFinished(-1);
         }
     }
@@ -488,7 +484,7 @@ void Optimiser::texturesTgaToDds(const QString &filePath) //Convert TGA textures
 
     texconvArg.clear();
     texconvArg << "-nologo" << "-m" << "0" << "-pow2" << "-if" << "FANT" << "-f" << "R8G8B8A8_UNORM" << filePath;
-    texconv.start("resources/texconv.exe", texconvArg);
+    texconv.start(QCoreApplication::applicationDirPath() + "/resources/texconv.exe", texconvArg);
     texconv.waitForFinished(-1);
 
     QFile tga(filePath);
@@ -508,7 +504,7 @@ void Optimiser::meshesList() //Run NifScan on modPath. Detected meshes will be s
     QString readLine;
     QString currentFile;
 
-    QFile nifScan_file("resources/NifScan.exe");
+    QFile nifScan_file(QCoreApplication::applicationDirPath() + "/resources/NifScan.exe");
 
     QProcess nifScan;
     QProcess listHeadparts;
@@ -521,7 +517,7 @@ void Optimiser::meshesList() //Run NifScan on modPath. Detected meshes will be s
     nifScan.setReadChannel(QProcess::StandardOutput);
     nifscanArgs << modpathDir.path() << "-fixdds";
 
-    nifScan.start("resources/NifScan.exe", nifscanArgs);
+    nifScan.start(QCoreApplication::applicationDirPath() + "/resources/NifScan.exe", nifscanArgs);
 
     if(!nifScan.waitForFinished(180000))
         QLog_Error("Optimiser", tr("Nifscan has not finished withing 3 minutes. Skipping mesh optimization for this mod."));
@@ -548,7 +544,7 @@ void Optimiser::meshesList() //Run NifScan on modPath. Detected meshes will be s
 
 
     listHeadpartsArgs << modpathDir.path();
-    listHeadparts.start("resources/ListHeadParts.exe", listHeadpartsArgs);
+    listHeadparts.start(QCoreApplication::applicationDirPath() + "/resources/ListHeadParts.exe", listHeadpartsArgs);
     listHeadparts.waitForFinished(-1);
 
     while(listHeadparts.canReadLine())
@@ -593,7 +589,8 @@ void Optimiser::meshesList() //Run NifScan on modPath. Detected meshes will be s
     otherMeshes.removeAll("");
     crashingMeshes.removeAll("");
 
-    QLog_Trace("Optimiser", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n" + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));
+    //QLog_Trace("Optimiser", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n"
+    // + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));
 }
 
 
@@ -633,12 +630,12 @@ void Optimiser::meshesOptimize(const QString &filePath) // Optimize the selected
         QLog_Note("Optimiser", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to all meshes option"));
     }
 
-    nifOpt.start("resources/nifopt.exe", nifOptArgs);
+    nifOpt.start(QCoreApplication::applicationDirPath() + "/resources/nifopt.exe", nifOptArgs);
     nifOpt.waitForFinished(-1);
 }
 
-
-void Optimiser::meshesTexturesCaseFix(const QString &filePath) //Unused. Work in progress. Same func as NIF Texcase Fixer
+/* WORK IN PROGRESS */
+/*void Optimiser::meshesTexturesCaseFix(const QString &filePath) //Unused. Work in progress. Same func as NIF Texcase Fixer
 {
     QFile file(filePath);
     QString binaryData;
@@ -657,7 +654,7 @@ void Optimiser::meshesTexturesCaseFix(const QString &filePath) //Unused. Work in
     file.open(QFile::ReadWrite);
     binaryData = QTextCodec::codecForMib(106)->toUnicode(file.read(999999));
 
-    qDebug() << filePath;
+    //qDebug() << filePath;
 
     if(binaryData.contains(".dds"))
     {
@@ -669,7 +666,7 @@ void Optimiser::meshesTexturesCaseFix(const QString &filePath) //Unused. Work in
                 if(match == tex)
                     break;
 
-                else if(match.toString().toLower() == tex.toLower())
+                if(match.toString().toLower() == tex.toLower())
                     binaryData.replace(match.toString().toUtf8(), tex.toUtf8());
 
                 else if(match.endsWith(tex, Qt::CaseInsensitive))
@@ -681,8 +678,8 @@ void Optimiser::meshesTexturesCaseFix(const QString &filePath) //Unused. Work in
     }
 
     file.close();
-}
-
+}*/
+/* END WORK IN PROGRESS */
 
 void Optimiser::animationsOptimize(const QString &filePath) //Run Bethesda Havok Tool to port the selected animation
 {
@@ -691,7 +688,7 @@ void Optimiser::animationsOptimize(const QString &filePath) //Run Bethesda Havok
 
     havokArgs.clear();
     havokArgs << "--platformamd64" << filePath << filePath;
-    havokProcess.start("resources/HavokBehaviorPostProcess.exe", havokArgs);
+    havokProcess.start(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe", havokArgs);
 
     havokProcess.waitForFinished(-1);
 
@@ -735,6 +732,8 @@ void Optimiser::splitAssets() //Split assets between several folders
 
     QStringList assets;
     QString relativeFilename;
+    QString newAssetRelativeFilename;
+    QString oldAssetRelativeFilename;
     QString espName = getPlugin().chopped(4);
 
     QStringList bsaList;
@@ -771,32 +770,44 @@ void Optimiser::splitAssets() //Split assets between several folders
         QPair<qint64, qint64> size = assetsSize(modpathDir.path());
 
         int i = 0;
+        QString bsaName;
         while(texturesBsaList.size() < qCeil(size.first/2900000000.0))
         {
-            ++i;
-            modpathDir.mkdir(espName + QString::number(i) + " - Textures.bsa.extracted");
-            texturesBsaList << espName + QString::number(i) + " - Textures.bsa.extracted";
+            if(i == 0)
+                bsaName = espName + " - Textures.bsa.extracted";
+            else
+                bsaName = espName + QString::number(i) + " - Textures.bsa.extracted";
+
+            texturesBsaList << bsaName;
             texturesBsaList.removeDuplicates();
+            ++i;
         }
+
         i = 0;
         while(bsaList.size() < qCeil(size.second/2076980377.0))
         {
-            ++i;
-            modpathDir.mkdir(espName + QString::number(i) + ".bsa.extracted");
-            bsaList << espName + QString::number(i) + ".bsa.extracted" ;
-            bsaList.removeDuplicates();
-        }
+            if(i == 0)
+                bsaName = espName + ".bsa.extracted";
+            else
+                bsaName = espName + QString::number(i) + ".bsa.extracted";
 
-        QLog_Trace("Optimiser", "Total: " + QString::number(bsaList.size()) + " bsa folders and " + QString::number(texturesBsaList.size()) + " textures bsa folders");
+            bsaList << bsaName ;
+            bsaList.removeDuplicates();
+            ++i;
+        }
     }
-    else
+    else //If assets splitting is disabled, use only one bsa folder and one textures bsa folder
     {
         if(texturesBsaList.isEmpty())
-            texturesBsaList << modpathDir.dirName() + " - Textures.bsa.extracted";
+            texturesBsaList << espName + " - Textures.bsa.extracted";
         if(bsaList.isEmpty())
-            bsaList << modpathDir.dirName() + ".bsa.extracted";
+            bsaList << espName + ".bsa.extracted";
     }
 
+    system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>nul)"));
+
+    QLog_Trace("Optimiser", "Total: " + QString::number(bsaList.size()) + " bsa folders:\n" + bsaList.join("\n") + "\n"
+    + QString::number(texturesBsaList.size()) + " textures bsa folders:\n" + texturesBsaList.join("\n"));
     QLog_Trace("Optimiser", "Splitting files between bsa folders");
 
     int i = 0;
@@ -808,6 +819,8 @@ void Optimiser::splitAssets() //Split assets between several folders
 
         if(assets.contains(it.fileName().right(3), Qt::CaseInsensitive) || it.fileName().right(3).toLower() == "dds" || it.fileName().right(3).toLower() == "png")
         {
+            relativeFilename = modpathDir.relativeFilePath(it.filePath());
+
             if(assets.contains(it.fileName().right(3), Qt::CaseInsensitive))
             {
                 ++i;
@@ -825,18 +838,20 @@ void Optimiser::splitAssets() //Split assets between several folders
             }
 
             oldAsset.setFileName(it.filePath());
-            relativeFilename = modpathDir.relativeFilePath(it.filePath());
 
             //removing the duplicate assets and checking for path size
 
-            if(newAsset.fileName().size() >= 260) //Max path size for Windows
+            newAssetRelativeFilename = modpathDir.relativeFilePath(newAsset.fileName());
+            oldAssetRelativeFilename = modpathDir.relativeFilePath(oldAsset.fileName());
+
+            if(newAssetRelativeFilename.size() >= 255) //Max path size for Windows
                 throw tr("The filepath is more than 260 characters long. Please reduce it.");
 
-            else if(oldAsset.size() == newAsset.size())
+            if(oldAsset.size() == newAsset.size())
                 QFile::remove(newAsset.fileName());
 
-            modpathDir.mkpath(newAsset.fileName().left(newAsset.fileName().lastIndexOf("/")));
-            modpathDir.rename(oldAsset.fileName(), newAsset.fileName());
+            modpathDir.mkpath(newAssetRelativeFilename.left(newAssetRelativeFilename.lastIndexOf("/")));
+            modpathDir.rename(oldAssetRelativeFilename, newAssetRelativeFilename);
         }
     }
 
@@ -846,15 +861,15 @@ void Optimiser::splitAssets() //Split assets between several folders
     {
         if(!QFile(bsaList.at(i).chopped(13) + "esp").exists())
         {
-            QFile::copy("resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + bsaList.at(i).chopped(3) + "esp");
-            QLog_Trace("Optimiser", "Created standard bsa plugin:" + bsaList.at(i).chopped(3) + "esp");
+            QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + bsaList.at(i).chopped(13) + "esp");
+            QLog_Trace("Optimiser", "Created standard bsa plugin:" + bsaList.at(i).chopped(13) + "esp");
         }
     }
     for (int i = 0; i < texturesBsaList.size(); ++i)
     {
         if(!QFile(texturesBsaList.at(i).chopped(25) + ".esp").exists())
         {
-            QFile::copy("resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + texturesBsaList.at(i).chopped(25) + ".esp");
+            QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", modpathDir.path() + "/" + texturesBsaList.at(i).chopped(25) + ".esp");
             QLog_Trace("Optimiser", "Created textures bsa plugin:" + texturesBsaList.at(i).chopped(25) + ".esp");
         }
     }
@@ -865,11 +880,14 @@ void Optimiser::splitAssets() //Split assets between several folders
 }
 
 
-void Optimiser::moveFiles(QString source, QString destination, bool overwriteExisting) //FIXME the last file is not moved
+void Optimiser::moveFiles(QString source, QString destination, bool overwriteExisting)
 {
     QString relativeFilename;
+    QString newFileRelativeFilename;
+    QString oldFileRelativeFilename;
 
     QDir sourceDir(source);
+    QDir destinationDir(destination);
     QDirIterator it(source, QDirIterator::Subdirectories);
 
     QFile oldFile;
@@ -891,18 +909,21 @@ void Optimiser::moveFiles(QString source, QString destination, bool overwriteExi
             oldFile.setFileName(it.filePath());
             newFile.setFileName(destination + relativeFilename);
 
-            //removing the duplicate files from new folder (if overwriteExisting) or from old folder (if !overwriteExisting)
+            newFileRelativeFilename = destinationDir.relativeFilePath(newFile.fileName());
+            oldFileRelativeFilename = destinationDir.relativeFilePath(oldFile.fileName());
 
-            if(newFile.fileName().size() >= 260)
+            if(newFileRelativeFilename.size() >= 255)
                 throw tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)");
 
-            else if(oldFile.size() == newFile.size() && overwriteExisting)
-                QFile::remove(newFile.fileName());
-            else if(oldFile.size() == newFile.size() && !overwriteExisting)
-                QFile::remove(oldFile.fileName());
+            //removing the duplicate files from new folder (if overwriteExisting) or from old folder (if !overwriteExisting)
 
-            sourceDir.mkpath(newFile.fileName().left(newFile.fileName().lastIndexOf("/")));
-            QFile::rename(oldFile.fileName(), newFile.fileName());
+            if(overwriteExisting)
+                destinationDir.remove(newFileRelativeFilename);
+            else if(!overwriteExisting)
+                destinationDir.remove(oldFileRelativeFilename);
+
+            destinationDir.mkpath(newFileRelativeFilename.left(newFileRelativeFilename.lastIndexOf("/")));
+            destinationDir.rename(oldFileRelativeFilename, newFileRelativeFilename);
         }
     }
     QLog_Trace("Optimiser", "Exiting moveFiles function");

@@ -96,7 +96,7 @@ namespace QLogger
    {
        const auto manager = QLoggerManager::getInstance();
 
-       QMutexLocker(&manager->mutex);
+       QMutexLocker give_me_a_name(&manager->mutex);
 
        const auto logWriter = manager->getLogWriter(module);
 
@@ -107,7 +107,7 @@ namespace QLogger
     //QLoggerManager
     QLoggerManager * QLoggerManager::INSTANCE = nullptr;
 
-    QLoggerManager::QLoggerManager() : QThread(), mutex(QMutex::Recursive)
+    QLoggerManager::QLoggerManager() : mutex(QMutex::Recursive)
     {
         start();
 
@@ -198,8 +198,8 @@ namespace QLogger
         {
             //Creem un fixer nou
             const auto currentTime = QDateTime::currentDateTime();
-            newName = newName.arg(currentTime.date().toString("dd_MM_yy")).arg(currentTime.time().toString("hh_mm_ss"));
-            renamed = file.rename(mFileDestination, newName);
+            newName = newName.arg(currentTime.date().toString("dd_MM_yy"), (currentTime.time().toString("hh_mm_ss")));
+            renamed = QFile::rename(mFileDestination, newName);
         }
 
         return renamed ? newName : "";
@@ -217,10 +217,10 @@ namespace QLogger
             const auto dtFormat = QDateTime::currentDateTime().toString("dd-MM hh:mm:ss");
 
             if (!newName.isEmpty())
-                out << QString("%1 - Previous log %2\n").arg(dtFormat).arg(newName);
+                out << QString("%1 - Previous log %2\n").arg(dtFormat, newName);
 
             const auto logLevel = QLoggerManager::levelToStartingText(messageLogLevel);
-            const auto text = QString("<pre>[%1] [%2] {%3} %4</font></pre>\n").arg(dtFormat).arg(logLevel).arg(module).arg(message);
+            const auto text = QString("<pre>[%1] [%2] {%3} %4</font></pre>\n").arg(dtFormat, logLevel, module, message);
 
             out << text;
             file.close();
