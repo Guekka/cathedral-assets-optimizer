@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "Optimiser.h"
+#include "MainOptimizer.h"
 #include "pch.h"
+#include "QLogger.h"
 
 namespace Ui {
     class MainWindow;
@@ -19,13 +20,13 @@ public:
 private:
     QFileDialog *fileDialog{};
     Ui::MainWindow *ui;
-    Optimiser *optimizer;
+    MainOptimizer *optimizer;
 
     bool bDarkMode = true;
     bool bLockVariables = false;
 
-    void saveUIToVars();
-    void loadUIFromVars();
+    void saveUIToFile();
+    void loadUIFromFile();
     void saveSettings();
     void loadSettings();
     void updateLog();
@@ -34,6 +35,7 @@ private:
 
     QThread* workerThread;
 
+    QSettings *settings;
 };
 
 #endif // MAINWINDOW_H

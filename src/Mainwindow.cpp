@@ -1,17 +1,18 @@
 #include "Mainwindow.h"
-#include "Optimiser.h"
+#include "MainOptimizer.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    optimizer = new Optimiser();
+    optimizer = new MainOptimizer();
 
     //Loading remembered settings
-
-    optimizer->loadSettings();
+    settings = new QSettings("SSE Assets Optimiser.ini", QSettings::IniFormat, this);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+    optimizer->loadSettings(); //FIXME
     this->loadSettings();
-    this->loadUIFromVars();
+    this->loadUIFromFile();
 
     //Preparing log
 
@@ -23,9 +24,9 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     workerThread = new QThread(this);
     thread()->setObjectName("WorkerThread");
 
-    connect(workerThread, &QThread::started, optimizer, &Optimiser::mainProcess);
-    connect(optimizer, &Optimiser::end, workerThread, &QThread::quit);
-    connect(optimizer, &Optimiser::end, optimizer, &Optimiser::deleteLater);
+    connect(workerThread, &QThread::started, optimizer, &MainOptimizer::mainProcess);
+    connect(optimizer, &MainOptimizer::end, workerThread, &QThread::quit);
+    connect(optimizer, &MainOptimizer::end, optimizer, &MainOptimizer::deleteLater);
     connect(workerThread, &QThread::finished, this, [=]()
     {
         ui->processButton->setDisabled(false);
@@ -40,17 +41,17 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     //Connecting Optimiser to progress bar
 
-    connect(optimizer, &Optimiser::progressBarReset, this, [=](){ui->progressBar->reset();});
-    connect(optimizer, &Optimiser::progressBarMaximumChanged, this, [=](int maximum){ui->progressBar->setMaximum(maximum);});
+    connect(optimizer, &MainOptimizer::progressBarReset, this, [=](){ui->progressBar->reset();});
+    connect(optimizer, &MainOptimizer::progressBarMaximumChanged, this, [=](int maximum){ui->progressBar->setMaximum(maximum);});
 
-    connect(optimizer, &Optimiser::progressBarBusy, this, [=](){
+    connect(optimizer, &MainOptimizer::progressBarBusy, this, [=](){
         progressBarValue = ui->progressBar->value();
         ui->progressBar->setMaximum(0);
         ui->progressBar->setValue(0);
         updateLog();
     });
 
-    connect(optimizer, &Optimiser::progressBarIncrease, this, [=]
+    connect(optimizer, &MainOptimizer::progressBarIncrease, this, [=]
     {
         ui->progressBar->setValue(progressBarValue + 1);
         progressBarValue = ui->progressBar->value();
@@ -59,29 +60,29 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     //Connecting checkboxes to optimizer variables
 
-    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToVars();});
+    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToFile();});
 
-    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, [=](){saveUIToVars();});
-    connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
-    connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
-    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, [=](){this->saveUIToVars();});
-    connect(ui->bsaSplitAssetsCheckBox, &QCheckBox::clicked, this, [=](){this->saveUIToVars();});
+    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, [=](){saveUIToFile();});
+    connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
+    connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
+    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, [=](){this->saveUIToFile();});
+    connect(ui->bsaSplitAssetsCheckBox, &QCheckBox::clicked, this, [=](){this->saveUIToFile();});
 
 
-    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToVars();});
+    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToFile();});
 
-    connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
-    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
+    connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
+    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
 
-    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToVars();});
+    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToFile();});
 
-    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
-    connect(ui->MeshesMediumOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
-    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
+    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
+    connect(ui->MeshesMediumOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
+    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
 
-    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToVars();});
+    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToFile();});
 
-    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToVars();});
+    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
 
     connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [=](bool state)
     {
@@ -92,7 +93,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
             warning.addButton(QMessageBox::Ok);
             warning.exec();
         }
-        this->saveUIToVars();
+        this->saveUIToFile();
     });
 
     //Connecting the other widgets
@@ -105,16 +106,16 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
             warning.setText(tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. The program may look frozen, but it will work.\nThis process has only been tested on the Mod Organizer mods folder."));
             warning.exec();
         }
-        this->saveUIToVars();
+        this->saveUIToFile();
     });
 
-    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, [=](){this->saveUIToVars();});
+    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, [=](){this->saveUIToFile();});
 
     connect(ui->userPathButton, &QPushButton::pressed, this, [=](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
-                                                        optimizer->options.userPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+                                                        settings->value("SelectedPath").toString(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         ui->userPathTextEdit->setText(dir);
-        this->saveUIToVars();
+        this->saveUIToFile();
     });
 
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
@@ -138,157 +139,153 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     {
         bDarkMode = !bDarkMode;
         this->saveSettings();
-        this->loadUIFromVars();
+        this->loadUIFromFile();
     });
 
 
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=]()
     {
-        optimizer->setLogLevel(QLogger::LogLevel::Info);
+        this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));
     });
 
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=]()
     {
-        optimizer->setLogLevel(QLogger::LogLevel::Note);
+        this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Note));
     });
 
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=]()
     {
-        optimizer->setLogLevel(QLogger::LogLevel::Trace);
+        this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Trace));
     });
 
     connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=]()
     {
-        optimizer->setLogLevel(QLogger::LogLevel::Warning);
+        this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Warning));
     });
 }
 
 
-void MainWindow::saveUIToVars()
+void MainWindow::saveUIToFile()
 {
     if(bLockVariables)
         return;
+
+    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
 
     //BSA checkboxes
 
     if(ui->BsaGroupBox->isChecked())
     {
-        optimizer->options.bBsaExtract = ui->extractBsaCheckbox->isChecked();
-        optimizer->options.bBsaCreate = ui->recreatetBsaCheckbox->isChecked();
-        optimizer->options.bBsaPackLooseFiles = ui->packExistingAssetsCheckbox->isChecked();
-        optimizer->options.bBsaDeleteBackup = ui->bsaDeleteBackupsCheckbox->isChecked();
-        optimizer->options.bBsaSplitAssets = ui->bsaSplitAssetsCheckBox->isChecked();
+        settings.setValue("bBsaExtract", ui->extractBsaCheckbox->isChecked());
+        settings.setValue("bBsaCreate", ui->recreatetBsaCheckbox->isChecked());
+        settings.setValue("bBsaPackLooseFiles", ui->packExistingAssetsCheckbox->isChecked());
+        settings.setValue("bBsaDeleteBackup", ui->bsaDeleteBackupsCheckbox->isChecked());
+        settings.setValue("bBsaSplitAssets", ui->bsaSplitAssetsCheckBox->isChecked());
     }
     else
     {
-        optimizer->options.bBsaExtract = false;
-        optimizer->options.bBsaCreate = false;
-        optimizer->options.bBsaPackLooseFiles = false;
-        optimizer->options.bBsaDeleteBackup = false;
-        optimizer->options.bBsaSplitAssets = false;
+        settings.setValue("bBsaExtract", false);
+        settings.setValue("bBsaCreate", false);
+        settings.setValue("bBsaPackLooseFiles", false);
+        settings.setValue("bBsaDeleteBackup", false);
+        settings.setValue("bBsaSplitAssets", false);
     }
 
     //Textures radio buttons
 
     if(!ui->texturesGroupBox->isChecked())
     {
-        optimizer->options.bTexturesNecessaryOptimization = false;
-        optimizer->options.bTexturesFullOptimization = false;
+        settings.setValue("bTexturesNecessaryOptimization", false);
+        settings.setValue("bTexturesFullOptimization", false);
     }
     else if(ui->TexturesFullOptimizationRadioButton->isChecked())
     {
-        optimizer->options.bTexturesNecessaryOptimization = true;
-        optimizer->options.bTexturesFullOptimization = true;
+        settings.setValue("bTexturesNecessaryOptimization", true);
+        settings.setValue("bTexturesFullOptimization", true);
     }
     else if(ui->texturesGroupBox->isChecked())
     {
-        optimizer->options.bTexturesNecessaryOptimization = true;
-        optimizer->options.bTexturesFullOptimization = false;
+        settings.setValue("bTexturesNecessaryOptimization", true);
+        settings.setValue("bTexturesFullOptimization", false);
     }
 
     //Meshes radio buttons
 
     if(ui->MeshesFullOptimizationRadioButton->isChecked())
     {
-        optimizer->options.bMeshesNecessaryOptimization = true;
-        optimizer->options.bMeshesMediumOptimization = true;
-        optimizer->options.bMeshesFullOptimization = true;
-
+        settings.setValue("bMeshesNecessaryOptimization", true);
+        settings.setValue("bMeshesMediumOptimization", true);
+        settings.setValue("bMeshesFullOptimization", true);
     }
     else if(ui->MeshesMediumOptimizationRadioButton->isChecked())
     {
-        optimizer->options.bMeshesNecessaryOptimization = true;
-        optimizer->options.bMeshesMediumOptimization = true;
-        optimizer->options.bMeshesFullOptimization = false;
+        settings.setValue("bMeshesNecessaryOptimization", true);
+        settings.setValue("bMeshesMediumOptimization", true);
+        settings.setValue("bMeshesFullOptimization", false);
     }
     else if(ui->meshesGroupBox->isChecked())
     {
-        optimizer->options.bMeshesNecessaryOptimization = true;
-        optimizer->options.bMeshesMediumOptimization = false;
-        optimizer->options.bMeshesFullOptimization = false;
+        settings.setValue("bMeshesNecessaryOptimization", true);
+        settings.setValue("bMeshesMediumOptimization", false);
+        settings.setValue("bMeshesFullOptimization", false);
     }
     if(!ui->meshesGroupBox->isChecked())
     {
-        optimizer->options.bMeshesNecessaryOptimization = false;
-        optimizer->options.bMeshesMediumOptimization = false;
-        optimizer->options.bMeshesFullOptimization = false;
+        settings.setValue("bMeshesNecessaryOptimization", false);
+        settings.setValue("bMeshesMediumOptimization", false);
+        settings.setValue("bMeshesFullOptimization", false);
     }
 
     //Animations
 
     if(ui->animationsGroupBox->isChecked())
-        optimizer->options.bAnimationsOptimization = true;
+        settings.setValue("bAnimationsOptimization", true);
     else
-        optimizer->options.bAnimationsOptimization = false;
+        settings.setValue("bAnimationsOptimization", false);
 
-    //Dry run
+    //Dry run and mode
+    settings.setValue("DryRun", ui->dryRunCheckBox->isChecked());
+    settings.setValue("mode", ui->modeChooserComboBox->currentIndex());
+    settings.setValue("SelectedPath", ui->userPathTextEdit->text());
 
-    optimizer->options.bDryRun = ui->dryRunCheckBox->isChecked();
-
-    //mode chooser combo box
-
-    optimizer->options.mode = ui->modeChooserComboBox->currentIndex();
-
-    //Other widgets
-    optimizer->options.userPath = ui->userPathTextEdit->text();
-
-    optimizer->saveSettings();
     this->saveSettings();
-    this->loadUIFromVars();
+    this->loadUIFromFile();
 }
 
-void MainWindow::loadUIFromVars()//Apply the Optimiser settings to the checkboxes
+void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
-    ui->userPathTextEdit->setText(optimizer->options.userPath);
+    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+
+    ui->userPathTextEdit->setText(settings.value("SelectedPath").toString());
 
     //Options
 
-    ui->extractBsaCheckbox->setChecked(optimizer->options.bBsaExtract);
-    ui->recreatetBsaCheckbox->setChecked(optimizer->options.bBsaCreate);
-    ui->packExistingAssetsCheckbox->setChecked(optimizer->options.bBsaPackLooseFiles);
-    ui->bsaDeleteBackupsCheckbox->setChecked(optimizer->options.bBsaDeleteBackup);
-    ui->bsaSplitAssetsCheckBox->setChecked(optimizer->options.bBsaSplitAssets);
+    ui->extractBsaCheckbox->setChecked(settings.value("bBsaExtract").toBool());
+    ui->recreatetBsaCheckbox->setChecked(settings.value("bBsaCreate").toBool());
+    ui->packExistingAssetsCheckbox->setChecked(settings.value("bBsaPackLooseFiles").toBool());
+    ui->bsaDeleteBackupsCheckbox->setChecked(settings.value("bBsaDeleteBackup").toBool());
+    ui->bsaSplitAssetsCheckBox->setChecked(settings.value("bBsaSplitAssets").toBool());
 
-    ui->TexturesNecessaryOptimizationRadioButton->setChecked(optimizer->options.bTexturesNecessaryOptimization);
-    ui->TexturesFullOptimizationRadioButton->setChecked(optimizer->options.bTexturesFullOptimization);
+    ui->TexturesNecessaryOptimizationRadioButton->setChecked(settings.value("bTexturesNecessaryOptimization").toBool());
+    ui->TexturesFullOptimizationRadioButton->setChecked(settings.value("bTexturesFullOptimization").toBool());
 
-    ui->MeshesNecessaryOptimizationRadioButton->setChecked(optimizer->options.bMeshesNecessaryOptimization);
-    ui->MeshesMediumOptimizationRadioButton->setChecked(optimizer->options.bMeshesMediumOptimization);
-    ui->MeshesFullOptimizationRadioButton->setChecked(optimizer->options.bMeshesFullOptimization);
+    ui->MeshesNecessaryOptimizationRadioButton->setChecked(settings.value("bMeshesNecessaryOptimization").toBool());
+    ui->MeshesMediumOptimizationRadioButton->setChecked(settings.value("bMeshesMediumOptimization").toBool());
+    ui->MeshesFullOptimizationRadioButton->setChecked(settings.value("bMeshesFullOptimization").toBool());
 
-    ui->animationOptimizationRadioButton->setChecked(optimizer->options.bAnimationsOptimization);
+    ui->animationOptimizationRadioButton->setChecked(settings.value("bAnimationsOptimization").toBool());
 
-    ui->modeChooserComboBox->setCurrentIndex(optimizer->options.mode);
-    ui->dryRunCheckBox->setChecked(optimizer->options.bDryRun);
+    ui->modeChooserComboBox->setCurrentIndex(settings.value("mode").toInt());
+    ui->dryRunCheckBox->setChecked(settings.value("DryRun").toBool());
 
-    if(optimizer->options.bBsaCreate)
-    {
+    if(settings.value("bBsaCreate").toBool())
         ui->packExistingAssetsCheckbox->setDisabled(false);
-    }
     else
     {
         ui->packExistingAssetsCheckbox->setChecked(false);
-        optimizer->options.bBsaPackLooseFiles = false;
+        settings.setValue("bBsaPackLooseFiles", false);
         ui->packExistingAssetsCheckbox->setDisabled(true);
     }
 
@@ -319,15 +316,16 @@ void MainWindow::loadUIFromVars()//Apply the Optimiser settings to the checkboxe
         ui->MeshesMediumOptimizationRadioButton->setDisabled(true);
         ui->MeshesFullOptimizationRadioButton->setDisabled(true);
         ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);
-        optimizer->options.bMeshesFullOptimization = false;
-        optimizer->options.bMeshesMediumOptimization = false;
-        optimizer->options.bMeshesHeadparts = false;
+        settings.setValue("bMeshesNecessaryOptimization", false);
+        settings.setValue("bMeshesMediumOptimization", false);
+        settings.setValue("bMeshesFullOptimization", false);
+        settings.setValue("bMeshesHeadparts", false);
     }
     else
     {
         ui->MeshesMediumOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
         ui->MeshesFullOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
-        optimizer->options.bMeshesHeadparts = true;
+        settings.setValue("bMeshesHeadparts", true); //FIXME Make Optimizer use this var
     }
 }
 

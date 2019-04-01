@@ -25,15 +25,27 @@ CONFIG += c++11 precompile_header
 
 SOURCES += \
     main.cpp \
-    Optimiser.cpp \
     Mainwindow.cpp \
-    QLogger.cpp
+    QLogger.cpp \
+    TexturesOptimizer.cpp \
+    MeshesOptimizer.cpp \
+    BsaOptimizer.cpp \
+    FilesystemOperations.cpp \
+    PluginsOperations.cpp \
+    AnimationsOptimizer.cpp \
+    MainOptimizer.cpp
 
 HEADERS += \
     pch.h \
-    Optimiser.h \
     Mainwindow.h \
-    QLogger.h
+    QLogger.h \
+    TexturesOptimizer.h \
+    MeshesOptimizer.h \
+    BsaOptimizer.h \
+    FilesystemOperations.h \
+    PluginsOperations.h \
+    AnimationsOptimizer.h \
+    MainOptimizer.h
 
 PRECOMPILED_HEADER = pch.h
 
