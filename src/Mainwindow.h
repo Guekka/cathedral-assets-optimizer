@@ -27,8 +27,6 @@ private:
 
     void saveUIToFile();
     void loadUIFromFile();
-    void saveSettings();
-    void loadSettings();
     void updateLog();
 
     int progressBarValue;

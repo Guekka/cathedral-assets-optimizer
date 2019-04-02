@@ -3,7 +3,12 @@
 
 #include "pch.h"
 #include "QLogger.h"
-
+#include "AnimationsOptimizer.h"
+#include "BsaOptimizer.h"
+#include "FilesystemOperations.h"
+#include "MeshesOptimizer.h"
+#include "PluginsOperations.h"
+#include "TexturesOptimizer.h"
 
 struct optOptions
 {
@@ -22,6 +27,14 @@ struct optOptions
 
     bool bBsaExtract{};
     bool bBsaCreate{};
+    bool bBsaPackLooseFiles{};
+    bool bBsaDeleteBackup{};
+    bool bBsaSplitAssets{};
+
+    bool bMeshesProcess{};
+
+    bool bTexturesNecessaryOptimization{};
+    bool bTexturesFullOptimization{};
 
     bool bAnimationsOptimization{};
 
@@ -44,14 +57,11 @@ public:
 
     //Main functions
 
-    bool init();
     int mainProcess();
 
     //Settings operations
 
-    void saveSettings();
     void loadSettings();
-    void printSettings();
 
     void setLogLevel(const QLogger::LogLevel &value);
 
@@ -62,7 +72,10 @@ private:
     QLogger::QLoggerManager *logManager;
     QLogger::LogLevel logLevel;
 
+    void init();
     void dryRun();
+    bool checkRequirements();
+    void fillModsLists();
 
 
 signals:
@@ -71,8 +84,6 @@ signals:
     void progressBarReset();
     void progressBarBusy();
     void end();
-
-
 };
 
 

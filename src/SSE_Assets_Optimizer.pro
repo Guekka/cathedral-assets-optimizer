@@ -53,8 +53,9 @@ TRANSLATIONS += \
 translations/AssetsOpt_fr.ts \
 translations/AssetsOpt_ja.ts
 
-
 FORMS += \
     mainwindow.ui \
 
 RESOURCES += styles/qdarkstyle/style.qrc
+
+QMAKE_EXTRA_TARGETS = makefile.txt

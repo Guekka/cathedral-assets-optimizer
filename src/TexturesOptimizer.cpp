@@ -1,7 +1,7 @@
 #include "TexturesOptimizer.h"
 
 
-void TexturesOptimizer::texturesBc7Conversion(const QString &filePath) //Compress uncompressed textures to BC7
+void TexturesOptimizer::convertToBc7IfUncompressed(const QString &filePath) //Compress uncompressed textures to BC7
 {
     QProcess texDiag;
     QProcess texconv;
@@ -21,7 +21,7 @@ void TexturesOptimizer::texturesBc7Conversion(const QString &filePath) //Compres
         {
             QStringList texconvArg{ "-nologo", "-y", "-m", "0", "-pow2", "-if", "FANT", "-f", "BC7_UNORM", "-bcmax", filePath};
 
-            QLogger::QLog_Note("Optimiser", tr("Compressing uncompressed texture: ") + filePath.mid(filePath.lastIndexOf("/")+1));
+            QLogger::QLog_Note("TexturesOptimizer", tr("Compressing uncompressed texture: ") + filePath.mid(filePath.lastIndexOf("/")+1));
             texconv.start(QCoreApplication::applicationDirPath() + "/resources/texconv.exe", texconvArg);
             texconv.waitForFinished(-1);
         }
@@ -29,9 +29,9 @@ void TexturesOptimizer::texturesBc7Conversion(const QString &filePath) //Compres
 }
 
 
-void TexturesOptimizer::texturesTgaToDds(const QString &filePath) //Convert TGA textures to DDS
+void TexturesOptimizer::convertTgaToDds(const QString &filePath) //Convert TGA textures to DDS
 {
-    QLogger::QLog_Note("Optimiser", tr("Converting TGA files...") + "\n"
+    QLogger::QLog_Note("TexturesOptimizer", tr("Converting TGA files...") + "\n"
     + tr("TGA file found: ") + filePath.mid(filePath.lastIndexOf("/")) + tr("Compressing..."));
 
     QStringList texconvArg {"-nologo", "-m", "0", "-pow2", "-if", "FANT", "-f", "R8G8B8A8_UNORM", filePath};

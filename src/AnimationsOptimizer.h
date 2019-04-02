@@ -14,14 +14,10 @@ class AnimationsOptimizer : public QObject
 
 public:
     /*!
-     * \brief Default constructor
-     */
-    AnimationsOptimizer();
-    /*!
      * \brief Port an Oldrim animation to Skyrim Special Edition using Bethesda Havok Post Processing Tool
      * \param filePath The path of the file to optimize
      */
-    void optimize(const QString& filePath);
+    static void optimize(const QString& filePath);
 };
 
 #endif // ANIMATIONSOPTIMIZER_H

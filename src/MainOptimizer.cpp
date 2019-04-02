@@ -1,27 +1,24 @@
 #include "MainOptimizer.h"
 
-MainOptimizer::MainOptimizer() : logManager(QLoggerManager::getInstance()), logLevel(LogLevel::Info) {}
+MainOptimizer::MainOptimizer() : logManager(QLogger::QLoggerManager::getInstance()), logLevel(QLogger::LogLevel::Info) {}
 
 
-bool MainOptimizer::init() //Some necessary operations before running
+void MainOptimizer::init() //Some necessary operations before running
 {     
-    logManager->addDestination("log.html", "Optimiser", logLevel);
-
-    saveSettings();
-
-    modDirs.clear();
-    emit progressBarReset();
-
+    loadSettings();
     //Preparing logging
+    QLogger::QLoggerManager *logManager = QLogger::QLoggerManager::getInstance();
+    logManager->addDestination("log.html", QStringList() << "MainWindow" << "MainOptimizer" << "AnimationsOptimizer"
+                               << "BsaOptimizer" << "FilesystemOperations" << "MeshesOptimizer" << "PluginsOperations"
+                               << "TexturesOptimizer", logLevel);
 
-    QLog_Info("Optimiser", tr("Beginning..."));
-    printSettings();
+    QLogger::QLog_Info("MainOptimizer", tr("Beginning..."));
 
     //Disabling BSA process if Skyrim folder is choosed
 
-    if(options.userPath == findSkyrimDirectory() + "/data" && (options.bBsaExtract || options.bBsaCreate))
+    if(options.userPath == FilesystemOperations::findSkyrimDirectory() + "/data" && (options.bBsaExtract || options.bBsaCreate))
     {
-        QLogger::QLog_Error("Optimiser", tr("You are currently in the Skyrim directory. BSA won't be processed"));
+        QLogger::QLog_Error("MainOptimizer", tr("You are currently in the Skyrim directory. BSA won't be processed"));
         options.bBsaExtract = false;
         options.bBsaCreate = false;
         options.bBsaPackLooseFiles = false;
@@ -29,68 +26,39 @@ bool MainOptimizer::init() //Some necessary operations before running
         options.bBsaSplitAssets = false;
     }
 
-    //Checking if all the requirements are in the resources folder
-
-    QStringList requirements;
-    QFile havokFile(findSkyrimDirectory() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
-
-    if(havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
-        havokFile.copy(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe");
-
-    else if(!havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
-        QLogger::QLog_Warning("Optimiser", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
-
-    requirements << "bsarch.exe" << "NifScan.exe" << "nifopt.exe" << "texconv.exe" << "texdiag.exe" << "ListHeadParts.exe";
-
-    if(options.bAnimationsOptimization)
-        requirements << "HavokBehaviorPostProcess.exe";
-
-    for (int i = 0; i < requirements.size(); ++i)
-    {
-        QFile file(QCoreApplication::applicationDirPath() + "/resources/" + requirements.at(i));
-        if(!file.exists())
-        {
-            QLogger::QLog_Error("Optimiser", requirements.at(i) + tr(" not found. Cancelling."));
-            return false;
-        }
-    }
-
-    //Adding all dirs to process to modDirs
-
-    if(options.mode == 1) //Several mods mode
-    {
-        QDir dir(options.userPath);
-        dir.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
-        modDirs = dir.entryList();
-    }
-
-    if(options.mode == 0) //One mod mode
-        modDirs << ""; //if modDirs is empty, the loop won't be run
+    fillModsLists();
 
     modpathDir.setPath(options.userPath + "/" + modDirs.at(0)); //In case it is ran from debug UI
-    QLogger::QLog_Debug("Optimiser", "Modpath: " + modpathDir.path() + "\n");
+    QLogger::QLog_Debug("MainOptimizer", "Modpath: " + modpathDir.path() + "\n");
 
     emit progressBarMaximumChanged((modDirs.size()*(options.bBsaExtract + 1 + options.bBsaCreate)));
-
-
-    return true;
 }
 
 
 int MainOptimizer::mainProcess() // Process the userPath according to all user options
 {
-    if(!init())
+    init();
+
+    //Base logging
+
+    QLogger::QLog_Info("MainOptimizer", tr("Beginning..."));
+
+    //Requirements
+
+    if(!checkRequirements())
     {
+        QLogger::QLog_Fatal("MainOptimizer", tr("The setup function did not run as expected. Exiting the process."));
         emit end();
-        QLog_Fatal("Optimiser", tr("The setup function did not run as expected. Exiting the process."));
         return 1;
     }
 
+    //Run dry mode instead of normal mode if dry run is choosed
+
     if(options.bDryRun)
     {
-        dryRun();
+        //dryRun();
         emit end();
-        return 2;
+        return 0;
     }
 
     //This loop applies the selected optimizations to each mod specified in ModDirs
@@ -100,14 +68,17 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
         modpathDir.setPath(options.userPath + "/" + modDirs.at(i));
         QDirIterator it(modpathDir, QDirIterator::Subdirectories);
 
-        QLogger::QLog_Debug("Optimiser", "ModDirs size: " + QString::number(modDirs.size()) + "\nCurrent index: " + QString::number(i));
-        QLog_Info("Optimiser", tr("Current mod: ") + modpathDir.path());
+        QLogger::QLog_Debug("MainOptimizer", "ModDirs size: " + QString::number(modDirs.size()) + "\nCurrent index: " + QString::number(i));
+        QLogger::QLog_Info("MainOptimizer", tr("Current mod: ") + modpathDir.path());
 
-        meshesList();
+        MeshesOptimizer meshesOptimizer;
+        meshesOptimizer.list(modpathDir.path());
+
+        BsaOptimizer bsaOptimizer;
 
         if(options.bBsaExtract)
         {
-            QLog_Info("Optimiser", tr("Extracting BSA..."));
+            QLogger::QLog_Info("MainOptimizer", tr("Extracting BSA..."));
 
             QDirIterator bsaIt(modpathDir);
 
@@ -115,42 +86,30 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
             {
                 if(bsaIt.next().right(4) == ".bsa")
                 {
-                    QLogger::QLog_Note("Optimiser", tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
-
-                    try
-                    {
-                        bsaExtract(bsaIt.filePath());
-                    }
-                    catch(const QString& e)
-                    {
-                        QLogger::QLog_Error("Optimiser", e);
-                    }
+                    QLogger::QLog_Note("MainOptimizer", tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
+                    bsaOptimizer.bsaExtract(bsaIt.filePath(), !options.bBsaDeleteBackup);
                 }
             }
             emit progressBarIncrease();
         }
 
-        QLog_Info("Optimiser", tr("Optimizing animations, textures and meshes..."));
-
-        QString currentFile;
+        QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes..."));
 
         while(it.hasNext())
         {
             emit progressBarBusy();
 
-            currentFile = it.next();
+            if((options.bMeshesProcess && it.fileName().right(4).toLower() == ".nif"))
+                meshesOptimizer.optimize(it.filePath());
 
-            if((options.bMeshesNecessaryOptimization || options.bMeshesMediumOptimization || options.bMeshesFullOptimization) && it.fileName().right(4).toLower() == ".nif")
-                meshesOptimize(currentFile);
+            if(options.bTexturesFullOptimization && it.fileName().right(4).toLower() == ".dds")
+                TexturesOptimizer::convertToBc7IfUncompressed(it.filePath());
 
-            if((options.bTexturesFullOptimization) && it.fileName().right(4).toLower() == ".dds")
-                texturesBc7Conversion(currentFile);
-
-            if((options.bTexturesNecessaryOptimization) && it.fileName().right(4).toLower() == ".tga")
-                texturesTgaToDds(currentFile);
+            if(options.bTexturesNecessaryOptimization && it.fileName().right(4).toLower() == ".tga")
+                TexturesOptimizer::convertTgaToDds(it.filePath());
 
             if(options.bAnimationsOptimization && it.fileName().right(4).toLower() == ".hkx")
-                animationsOptimize(currentFile);
+                AnimationsOptimizer::optimize(it.filePath());
         }
 
         emit progressBarMaximumChanged((modDirs.size()*(options.bBsaExtract + 1 + options.bBsaCreate)));
@@ -161,7 +120,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
             try
             {
                 if (options.bBsaPackLooseFiles)
-                    splitAssets();
+                    FilesystemOperations::splitAssets(modpathDir.path());
 
                 QDirIterator bsaIt(modpathDir);
                 while(bsaIt.hasNext())
@@ -169,17 +128,17 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
                     bsaIt.next();
                     if(bsaIt.fileName().right(13) == "bsa.extracted")
                     {
-                        QLogger::QLog_Trace("Optimiser", "bsa folder found: " + bsaIt.fileName());
-                        bsaCreate(bsaIt.filePath());
+                        QLogger::QLog_Trace("MainOptimizer", "bsa folder found: " + bsaIt.fileName());
+                        bsaOptimizer.bsaCreate(bsaIt.filePath());
                     }
                 }
             }
             catch(const QString& e)
             {
-                QLogger::QLog_Error("Optimiser", e);
-                QLogger::QLog_Error("Optimiser", tr("BSA packing canceled."));
+                QLogger::QLog_Error("MainOptimizer", e);
+                QLogger::QLog_Error("MainOptimizer", tr("BSA packing canceled."));
             }
-            makeDummyPlugins(modpathDir.path());
+            PluginsOperations::makeDummyPlugins(modpathDir.path());
             emit progressBarIncrease();
         }
     }
@@ -190,17 +149,17 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
     emit end();
 
-    QLog_Info("Optimiser", tr("Completed."));
+    QLogger::QLog_Info("MainOptimizer", tr("Completed."));
 
     return 0;
 }
 
-
+/*
 void MainOptimizer::dryRun() // Perform a dry run : list files without actually modifying them
 {
     init();
 
-    QLog_Info("Optimiser", tr("Beginning the dry run..."));
+    QLogger::QLog_Info("MainOptimizer", tr("Beginning the dry run..."));
 
     for(int i=0; i < modDirs.size(); ++i)
     {
@@ -209,11 +168,11 @@ void MainOptimizer::dryRun() // Perform a dry run : list files without actually 
 
         meshesList();
 
-        QLog_Info("Optimiser", tr("Current mod: ") + modpathDir.path());
+        QLogger::QLog_Info("MainOptimizer", tr("Current mod: ") + modpathDir.path());
 
         if(options.bBsaExtract)
         {
-            QLog_Info("Optimiser", tr("Extracting BSA..."));
+            QLogger::QLog_Info("MainOptimizer", tr("Extracting BSA..."));
 
             QDirIterator bsaIt(modpathDir);
 
@@ -221,14 +180,14 @@ void MainOptimizer::dryRun() // Perform a dry run : list files without actually 
             {
                 if(bsaIt.next().right(4) == ".bsa")
                 {
-                    QLogger::QLog_Note("Optimiser", tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
+                    QLogger::QLog_Note("MainOptimizer", tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
                     try
                     {
                         bsaExtract(bsaIt.filePath());
                     }
                     catch(const QString& e)
                     {
-                        QLogger::QLog_Error("Optimiser", e);
+                        QLogger::QLog_Error("MainOptimizer", e);
                     }
                 }
             }
@@ -243,16 +202,16 @@ void MainOptimizer::dryRun() // Perform a dry run : list files without actually 
             if(it.fileName().contains(".nif", Qt::CaseInsensitive))
             {
                 if(options.bMeshesNecessaryOptimization && headparts.contains(it.filePath(), Qt::CaseInsensitive))
-                    QLog_Info("Optimiser", it.filePath() + tr(" would be optimized by Headparts meshes option"));
+                    QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be optimized by Headparts meshes option"));
 
                 else if(options.bMeshesMediumOptimization && otherMeshes.contains(it.filePath()))
-                    QLog_Info("Optimiser", it.filePath() + tr(" would be optimized lightly by the Other Meshes option"));
+                    QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be optimized lightly by the Other Meshes option"));
 
                 else if(options.bMeshesNecessaryOptimization && crashingMeshes.contains(it.filePath(), Qt::CaseInsensitive))
-                    QLog_Info("Optimiser", it.filePath() + tr(" would be optimized in full by the Hard Crashing Meshes option."));
+                    QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be optimized in full by the Hard Crashing Meshes option."));
 
                 else if(options.bMeshesFullOptimization)
-                    QLog_Info("Optimiser", it.filePath() + tr(" would be optimized lightly by the Other Meshes option"));
+                    QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be optimized lightly by the Other Meshes option"));
             }
             if((options.bTexturesFullOptimization) && it.fileName().contains(".dds", Qt::CaseInsensitive))
             {
@@ -265,102 +224,59 @@ void MainOptimizer::dryRun() // Perform a dry run : list files without actually 
                 texDiag.waitForFinished(-1);
 
                 if(texDiag.readAllStandardOutput().contains("compressed = no"))
-                    QLog_Info("Optimiser", it.filePath() + tr(" would be optimized using BC7 compression."));
+                    QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be optimized using BC7 compression."));
             }
 
             if((options.bTexturesNecessaryOptimization) && it.fileName().contains(".tga", Qt::CaseInsensitive))
-                QLog_Info("Optimiser", it.filePath() + tr(" would be converted to DDS"));
+                QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be converted to DDS"));
         }
 
         emit progressBarIncrease();
 
 
     }
-    QLog_Info("Optimiser", tr("Completed."));
+    QLogger::QLog_Info("MainOptimizer", tr("Completed."));
+}
+*/
+
+void MainOptimizer::fillModsLists()    //Adding all dirs to process to modDirs
+{
+    if(options.mode == 1) //Several mods mode
+    {
+        QDir dir(options.userPath);
+        dir.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
+        modDirs = dir.entryList();
+    }
+
+    if(options.mode == 0) //One mod mode
+        modDirs << ""; //if modDirs is empty, the loop won't be run
 }
 
 
-
-
-/* WORK IN PROGRESS */
-/*void Optimiser::meshesTexturesCaseFix(const QString &filePath) //Unused. Work in progress. Same func as NIF Texcase Fixer
+bool MainOptimizer::checkRequirements()  //Checking if all the requirements are in the resources folder
 {
-    QFile file(filePath);
-    QString binaryData;
-    QString texturePath;
-    QStringList storedTextures;
-    QVector <QStringRef> matches;
+    QStringList requirements {"bsarch.exe", "NifScan.exe", "nifopt.exe", "texconv.exe", "texdiag.exe", "ListHeadParts.exe"};
+    QFile havokFile(FilesystemOperations::findSkyrimDirectory() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
 
-    QDirIterator textures(modpathDir, QDirIterator::Subdirectories);
+    if(havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
+        havokFile.copy(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe");
 
-    while (textures.hasNext())
+    else if(!havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
+        QLogger::QLog_Warning("MainOptimizer", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
+
+    if(options.bAnimationsOptimization)
+        requirements << "HavokBehaviorPostProcess.exe";
+
+    for (int i = 0; i < requirements.size(); ++i)
     {
-        if(textures.next().right(3).toLower() == "dds")
-            storedTextures << modpathDir.relativeFilePath(textures.filePath());
-    }
-
-    file.open(QFile::ReadWrite);
-    binaryData = QTextCodec::codecForMib(106)->toUnicode(file.read(999999));
-
-    //qDebug() << filePath;
-
-    if(binaryData.contains(".dds"))
-    {
-        matches = binaryData.splitRef(QRegularExpression(R"(?:[a-zA-Z]:(?:.*?))?textures(?:.*?)dds)"));
-        for (const auto& match : matches)
+        QFile file(QCoreApplication::applicationDirPath() + "/resources/" + requirements.at(i));
+        if(!file.exists())
         {
-            for (const auto& tex : storedTextures)
-            {
-                if(match == tex)
-                    break;
-
-                if(match.toString().toLower() == tex.toLower())
-                    binaryData.replace(match.toString().toUtf8(), tex.toUtf8());
-
-                else if(match.endsWith(tex, Qt::CaseInsensitive))
-                {
-                    binaryData.replace(match.toString().toUtf8(), tex.toUtf8());
-                }
-            }
+            QLogger::QLog_Error("MainOptimizer", requirements.at(i) + tr(" not found. Cancelling."));
+            return false;
         }
     }
-
-    file.close();
-}*/
-/* END WORK IN PROGRESS */
-
-
-
-
-
-
-
-void MainOptimizer::saveSettings() //Saves settings to an ini file
-{
-    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
-
-
-    settings.setValue("options.mode", options.mode);
-    settings.setValue("DryRun", options.bDryRun);
-    settings.setValue("SelectedPath", options.userPath);
-
-    settings.setValue("logLevel", logLevelToInt(logLevel));
-
-    settings.setValue("bBsaExtract", options.bBsaExtract);
-    settings.setValue("bBsaCreate", options.bBsaCreate);
-    settings.setValue("bBsaPackLooseFiles", options.bBsaPackLooseFiles);
-    settings.setValue("bBsaDeleteBackup", options.bBsaDeleteBackup);
-    settings.setValue("bBsaSplitAssets", options.bBsaSplitAssets);
-
-    settings.setValue("bMeshesNecessaryOptimization", options.bMeshesNecessaryOptimization);
-    settings.setValue("bMeshesMediumOptimization", options.bMeshesMediumOptimization);
-    settings.setValue("bMeshesFullOptimization", options.bMeshesFullOptimization);
-
-    settings.setValue("bTexturesNecessaryOptimization", options.bTexturesNecessaryOptimization);
-    settings.setValue("bTexturesFullOptimization", options.bTexturesFullOptimization);
-
-    settings.setValue("bAnimationsOptimization", options.bAnimationsOptimization);
+    return true;
 }
 
 
@@ -373,7 +289,7 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
     options.bDryRun = settings.value("DryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
 
-    logLevel = intToLogLevel(settings.value("logLevel").toInt());
+    logLevel = QLogger::intToLogLevel(settings.value("logLevel").toInt());
 
     options.bBsaExtract = settings.value("bBsaExtract").toBool();
     options.bBsaCreate = settings.value("bBsaCreate").toBool();
@@ -381,42 +297,12 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
     options.bBsaDeleteBackup = settings.value("bBsaDeleteBackup").toBool();
     options.bBsaSplitAssets = settings.value("bBsaSplitAssets").toBool();
 
-    options.bMeshesNecessaryOptimization = settings.value("bMeshesNecessaryOptimization").toBool();
-    options.bMeshesMediumOptimization = settings.value("bMeshesMediumOptimization").toBool();
-    options.bMeshesFullOptimization = settings.value("bMeshesFullOptimization").toBool();
+    options.bMeshesProcess = settings.value(" meshesGroupBox").toBool();
 
     options.bTexturesNecessaryOptimization = settings.value("bTexturesNecessaryOptimization").toBool();
     options.bTexturesFullOptimization = settings.value("bTexturesFullOptimization").toBool();
 
     options.bAnimationsOptimization = settings.value("bAnimationsOptimization").toBool();
-}
-
-
-void MainOptimizer::printSettings() //Will print settings into debug log
-{
-    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
-
-    QLogger::QLog_Debug("Optimiser", "mode: " + QString::number(options.mode));
-    QLogger::QLog_Debug("Optimiser", "DryRun: " + QString::number(options.bDryRun));
-    QLogger::QLog_Debug("Optimiser", "userPath: "+ options.userPath);
-
-    QLogger::QLog_Debug("Optimiser", "LogLevel: " + QString::number(logLevelToInt(logLevel)));
-
-    QLogger::QLog_Debug("Optimiser", "bBsaExtract: " + QString::number(options.bBsaExtract));
-    QLogger::QLog_Debug("Optimiser", "bBsaCreate: " + QString::number(options.bBsaCreate));
-    QLogger::QLog_Debug("Optimiser", "bBsaPackLooseFiles: " + QString::number(options.bBsaPackLooseFiles));
-    QLogger::QLog_Debug("Optimiser", "bBsaDeleteBackup: " + QString::number(options.bBsaDeleteBackup));
-    QLogger::QLog_Debug("Optimiser", "bBsaSplitAssets" + QString::number(options.bBsaSplitAssets));
-
-    QLogger::QLog_Debug("Optimiser", "bMeshesNecessaryOptimization: " + QString::number(options.bMeshesNecessaryOptimization));
-    QLogger::QLog_Debug("Optimiser", "bMeshesMediumOptimization: " + QString::number(options.bMeshesMediumOptimization));
-    QLogger::QLog_Debug("Optimiser", "bMeshesFullOptimization: " + QString::number(options.bMeshesFullOptimization));
-
-    QLogger::QLog_Debug("Optimiser", "bTexturesNecessaryOptimization: " + QString::number( options.bTexturesNecessaryOptimization));
-    QLogger::QLog_Debug("Optimiser", "bTexturesFullOptimization: " + QString::number( options.bTexturesFullOptimization));
-
-    QLogger::QLog_Debug("Optimiser", "bAnimationsOptimization: " + QString::number(options.bAnimationsOptimization));
 }
 
 void MainOptimizer::setLogLevel(const QLogger::LogLevel &value)

@@ -1,5 +1,7 @@
 #include "FilesystemOperations.h"
 
+
+
 void FilesystemOperations::splitAssets(const QString& folderPath) //Split assets between several folders
 {
     QLogger::QLog_Trace("FilesystemOperations", "Entering splitAssets function");

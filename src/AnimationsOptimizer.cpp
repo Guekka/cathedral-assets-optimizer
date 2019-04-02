@@ -1,7 +1,5 @@
 #include "AnimationsOptimizer.h"
 
-AnimationsOptimizer::AnimationsOptimizer() {}
-
 
 void AnimationsOptimizer::optimize(const QString &filePath)
 {

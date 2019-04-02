@@ -9,11 +9,8 @@ class TexturesOptimizer : public QObject
     Q_DECLARE_TR_FUNCTIONS(TexturesOptimizer)
 
 public:
-    static void texturesTgaToDds(const QString& filePath);
-    static void texturesBc7Conversion(const QString& filePath);
-
-    bool bTexturesNecessaryOptimization{};
-    bool bTexturesFullOptimization{};
+    static void convertTgaToDds(const QString& filePath);
+    static void convertToBc7IfUncompressed(const QString& filePath);
 };
 
 #endif // TEXTURESOPTIMIZER_H

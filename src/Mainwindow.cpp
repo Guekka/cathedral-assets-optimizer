@@ -10,8 +10,6 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     //Loading remembered settings
     settings = new QSettings("SSE Assets Optimiser.ini", QSettings::IniFormat, this);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
-    optimizer->loadSettings(); //FIXME
-    this->loadSettings();
     this->loadUIFromFile();
 
     //Preparing log
@@ -138,7 +136,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->actionSwitch_to_dark_theme, &QAction::triggered, this, [=]()
     {
         bDarkMode = !bDarkMode;
-        this->saveSettings();
+        this->saveUIToFile();
         this->loadUIFromFile();
     });
 
@@ -249,7 +247,14 @@ void MainWindow::saveUIToFile()
     settings.setValue("mode", ui->modeChooserComboBox->currentIndex());
     settings.setValue("SelectedPath", ui->userPathTextEdit->text());
 
-    this->saveSettings();
+    //GUI
+
+    settings.setValue("bDarkMode", bDarkMode);
+    settings.setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
+    settings.setValue("texturesGroupBox", ui->texturesGroupBox->isChecked());
+    settings.setValue("meshesGroupBox", ui->meshesGroupBox->isChecked());
+    settings.setValue("animationsGroupBox", ui->animationsGroupBox->isChecked());
+
     this->loadUIFromFile();
 }
 
@@ -289,7 +294,6 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         ui->packExistingAssetsCheckbox->setDisabled(true);
     }
 
-
     //Dark mode
 
     if(bDarkMode)
@@ -325,28 +329,10 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
     {
         ui->MeshesMediumOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
         ui->MeshesFullOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
-        settings.setValue("bMeshesHeadparts", true); //FIXME Make Optimizer use this var
+        settings.setValue("bMeshesHeadparts", true);
     }
-}
 
-void MainWindow::saveSettings() //Saves settings to an ini file
-{
-    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
-
-    settings.setValue("bDarkMode", bDarkMode);
-
-    settings.setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
-    settings.setValue("texturesGroupBox", ui->texturesGroupBox->isChecked());
-    settings.setValue("meshesGroupBox", ui->meshesGroupBox->isChecked());
-    settings.setValue("animationsGroupBox", ui->animationsGroupBox->isChecked());
-
-}
-
-void MainWindow::loadSettings() //Loads settings from the ini file
-{
-    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+    //GUI options
 
     bDarkMode = settings.value("bDarkMode").toBool();
 
@@ -355,6 +341,7 @@ void MainWindow::loadSettings() //Loads settings from the ini file
     ui->meshesGroupBox->setChecked(settings.value("meshesGroupBox").toBool());
     ui->animationsGroupBox->setChecked(settings.value("animationsGroupBox").toBool());
 }
+
 
 
 void MainWindow::updateLog()

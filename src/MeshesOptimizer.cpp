@@ -17,11 +17,22 @@ MeshesOptimizer::MeshesOptimizer()
         }
     }
     else
-        QLogger::QLog_Warning("Optimiser", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
+        QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
+
+
+    //Reading settings from file
+
+    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+
+    bMeshesHeadparts = settings.value("bMeshesHeadparts").toBool();
+    bMeshesNecessaryOptimization = settings.value("bMeshesNecessaryOptimization").toBool();
+    bMeshesMediumOptimization = settings.value("bMeshesMediumOptimization").toBool();
+    bMeshesFullOptimization = settings.value("bMeshesFullOptimization").toBool();
 }
 
 
-void MeshesOptimizer::meshesList(const QString& folderPath) //Run NifScan on modPath. Detected meshes will be stored to a list, accorded to their types.
+void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. Detected meshes will be stored to a list, accorded to their types.
 {
     QLogger::QLog_Note("MeshesOptimizer", tr("Listing meshes..."));
 
@@ -102,7 +113,7 @@ void MeshesOptimizer::listHeadparts(const QDir& directory)
     listHeadparts.start(QCoreApplication::applicationDirPath() + "/resources/ListHeadParts.exe", QStringList() << directory.path());
 
     if(!listHeadparts.waitForFinished(180000))
-            QLogger::QLog_Error("MeshesOptimizer", tr("ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod."));
+        QLogger::QLog_Error("MeshesOptimizer", tr("ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod."));
 
     while(listHeadparts.canReadLine())
     {
@@ -119,12 +130,12 @@ void MeshesOptimizer::listHeadparts(const QDir& directory)
 }
 
 
-void MeshesOptimizer::meshesOptimize(const QString &filePath) // Optimize the selected mesh
+void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected mesh
 {
     QProcess nifOpt;
     QStringList nifOptArgs;
 
-    if(bMeshesNecessaryOptimization && headparts.contains(filePath, Qt::CaseInsensitive) && bMeshesHeadparts)
+    if(bMeshesNecessaryOptimization && bMeshesHeadparts && headparts.contains(filePath, Qt::CaseInsensitive))
     {
         crashingMeshes.removeAll(filePath);
         nifOptArgs << filePath << "-head" << "1" << "-bsTriShape" << "1";
@@ -158,5 +169,56 @@ void MeshesOptimizer::meshesOptimize(const QString &filePath) // Optimize the se
     nifOpt.start(QCoreApplication::applicationDirPath() + "/resources/nifopt.exe", nifOptArgs);
     nifOpt.waitForFinished(-1);
 }
+
+
+
+/* WORK IN PROGRESS */
+/*void MeshesOptimizer::meshesTexturesCaseFix(const QString &filePath) //Unused. Work in progress. Same func as NIF Texcase Fixer
+{
+    QFile file(filePath);
+    QString binaryData;
+    QString texturePath;
+    QStringList storedTextures;
+    QVector <QStringRef> matches;
+
+    QDirIterator textures(modpathDir, QDirIterator::Subdirectories);
+
+    while (textures.hasNext())
+    {
+        if(textures.next().right(3).toLower() == "dds")
+            storedTextures << modpathDir.relativeFilePath(textures.filePath());
+    }
+
+    file.open(QFile::ReadWrite);
+    binaryData = QTextCodec::codecForMib(106)->toUnicode(file.read(999999));
+
+    //qDebug() << filePath;
+
+    if(binaryData.contains(".dds"))
+    {
+        matches = binaryData.splitRef(QRegularExpression(R"(?:[a-zA-Z]:(?:.*?))?textures(?:.*?)dds)"));
+        for (const auto& match : matches)
+        {
+            for (const auto& tex : storedTextures)
+            {
+                if(match == tex)
+                    break;
+
+                if(match.toString().toLower() == tex.toLower())
+                    binaryData.replace(match.toString().toUtf8(), tex.toUtf8());
+
+                else if(match.endsWith(tex, Qt::CaseInsensitive))
+                {
+                    binaryData.replace(match.toString().toUtf8(), tex.toUtf8());
+                }
+            }
+        }
+    }
+
+    file.close();
+}*/
+/* END WORK IN PROGRESS */
+
+
 
 
