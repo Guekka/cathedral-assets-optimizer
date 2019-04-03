@@ -55,8 +55,6 @@ public:
 
     optOptions options;
 
-    //Main functions
-
     int mainProcess();
 
     //Settings operations
@@ -66,7 +64,6 @@ public:
     void setLogLevel(const QLogger::LogLevel &value);
 
 private:
-    QDir modpathDir;
     QStringList modDirs;
 
     QLogger::QLoggerManager *logManager;
@@ -76,6 +73,9 @@ private:
     void dryRun();
     bool checkRequirements();
     void fillModsLists();
+    void optimizeAssets(const QString& folderPath);
+    void dryOptimizeAssets(const QString& folderPath);
+
 
 
 signals:

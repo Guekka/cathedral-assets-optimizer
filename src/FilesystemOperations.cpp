@@ -30,49 +30,49 @@ void FilesystemOperations::splitAssets(const QString& folderPath) //Split assets
         }
     }
 
-    QString espName = PluginsOperations::findPlugin(folderPath).chopped(4);
+    QString espName = PluginsOperations::findPlugin(folderPath).remove(".esp");
 
-/*TODO Restore the if(bBsaSplitAsset) statement */
+    /*TODO Restore the if(bBsaSplitAsset) statement */
 
     QLogger::QLog_Trace("FilesystemOperations", "Creating enough folders to contain all the files");
 
-        QPair<qint64, qint64> size = assetsSize(directory.path());
+    QPair<qint64, qint64> size = assetsSize(directory.path());
 
-        int i = 0;
-        QString bsaName;
-        while(texturesBsaList.size() < qCeil(size.first/2900000000.0))
-        {
-            if(i == 0)
-                bsaName = espName + " - Textures.bsa.extracted";
-            else
-                bsaName = espName + QString::number(i) + " - Textures.bsa.extracted";
+    int i = 0;
+    QString bsaName;
+    while(texturesBsaList.size() < qCeil(size.first/2900000000.0))
+    {
+        if(i == 0)
+            bsaName = espName + " - Textures.bsa.extracted";
+        else
+            bsaName = espName + QString::number(i) + " - Textures.bsa.extracted";
 
-            texturesBsaList << bsaName;
-            texturesBsaList.removeDuplicates();
-            ++i;
-        }
+        texturesBsaList << bsaName;
+        texturesBsaList.removeDuplicates();
+        ++i;
+    }
 
-        i = 0;
-        while(bsaList.size() < qCeil(size.second/2076980377.0))
-        {
-            if(i == 0)
-                bsaName = espName + ".bsa.extracted";
-            else
-                bsaName = espName + QString::number(i) + ".bsa.extracted";
+    i = 0;
+    while(bsaList.size() < qCeil(size.second/2076980377.0))
+    {
+        if(i == 0)
+            bsaName = espName + ".bsa.extracted";
+        else
+            bsaName = espName + QString::number(i) + ".bsa.extracted";
 
-            bsaList << bsaName ;
-            bsaList.removeDuplicates();
-            ++i;
-        }
+        bsaList << bsaName ;
+        bsaList.removeDuplicates();
+        ++i;
+    }
 
-/* END OF IF STATEMENT TO RESTORE */
+    /* END OF IF STATEMENT TO RESTORE */
 
     //else //If assets splitting is disabled, use only one bsa folder and one textures bsa folder
 
-        if(texturesBsaList.isEmpty())
-            texturesBsaList << espName + " - Textures.bsa.extracted";
-        if(bsaList.isEmpty())
-            bsaList << espName + ".bsa.extracted";
+    if(texturesBsaList.isEmpty())
+        texturesBsaList << espName + " - Textures.bsa.extracted";
+    if(bsaList.isEmpty())
+        bsaList << espName + ".bsa.extracted";
     /*END OF ELSE STATEMENT TO RESTORE*/
 
     system(qPrintable("cd /d \"" + folderPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>nul)"));
@@ -125,7 +125,7 @@ void FilesystemOperations::splitAssets(const QString& folderPath) //Split assets
             if(oldAsset.size() == newAsset.size())
                 QFile::remove(newAsset.fileName());
 
-            directory.mkpath(newAssetRelativeFilename.left(newAssetRelativeFilename.lastIndexOf("/")));
+            directory.mkpath(QFileInfo(newAssetRelativeFilename).path());
             directory.rename(oldAssetRelativeFilename, newAssetRelativeFilename);
         }
     }
@@ -154,7 +154,7 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
         {
             QString relativeFilename = QDir::cleanPath(sourceDir.relativeFilePath(it.filePath()));
             QFile oldFile(it.filePath());
-            QFile newFile(destination + relativeFilename);
+            QFile newFile(QDir::cleanPath(destination) + QDir::separator() + relativeFilename);
 
             QString newFileRelativeFilename = destinationDir.relativeFilePath(newFile.fileName());
             QString oldFileRelativeFilename = destinationDir.relativeFilePath(oldFile.fileName());
@@ -169,7 +169,7 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
             else if(!overwriteExisting)
                 destinationDir.remove(oldFileRelativeFilename);
 
-            destinationDir.mkpath(newFileRelativeFilename.left(newFileRelativeFilename.lastIndexOf("/")));
+            destinationDir.mkpath(QFileInfo(newFileRelativeFilename).path());
             destinationDir.rename(oldFileRelativeFilename, newFileRelativeFilename);
         }
     }

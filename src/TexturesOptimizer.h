@@ -11,6 +11,8 @@ class TexturesOptimizer : public QObject
 public:
     static void convertTgaToDds(const QString& filePath);
     static void convertToBc7IfUncompressed(const QString& filePath);
+    static bool isCompressed(const QString &filePath);
+
 };
 
 #endif // TEXTURESOPTIMIZER_H

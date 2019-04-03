@@ -5,7 +5,7 @@ BsaOptimizer::BsaOptimizer() {}
 
 void BsaOptimizer::bsaExtract(const QString& bsaPath, bool makeBackup) //Extracts all BSA in modPath
 {
-    QDir directory(bsaPath.left(bsaPath.lastIndexOf("/")));
+    QDir directory(QFileInfo(bsaPath).path());
     QStringList files(directory.entryList());
     QString bsaFolder = directory.filePath(bsaPath + ".extracted");
 
@@ -102,7 +102,7 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
 
 bool BsaOptimizer::moveFilesFromBsaFolderToRootFolder(const QString &bsaFolderPath)
 {
-    QString rootFolderPath(bsaFolderPath.left(bsaFolderPath.lastIndexOf("/")));
+    QString rootFolderPath = QFileInfo(bsaFolderPath).path();
 
     try
     {

@@ -5,7 +5,6 @@
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    optimizer = new MainOptimizer();
 
     //Loading remembered settings
     settings = new QSettings("SSE Assets Optimiser.ini", QSettings::IniFormat, this);
@@ -16,6 +15,95 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     ui->plainTextEdit->setReadOnly(true);
     ui->plainTextEdit->setMaximumBlockCount(25);
+    updateLog();
+
+    //Connecting checkboxes to file
+
+    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->bsaSplitAssetsCheckBox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+
+    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+
+    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->MeshesMediumOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+
+    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+
+    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [=](bool state)
+    {
+        if(state)
+        {
+            QMessageBox warning(this);
+            warning.setText(tr("You have selected to perform a dry run. No files will be modified, but BSAs will be extracted if that option was selected."));
+            warning.addButton(QMessageBox::Ok);
+            warning.exec();
+        }
+        this->saveUIToFile();
+    });
+
+    //Connecting the other widgets
+
+    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [=]
+    {
+        if(ui->modeChooserComboBox->currentIndex() == 1)
+        {
+            QMessageBox warning(this);
+            warning.setText(tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. "
+                               "\nThis process has only been tested on the Mod Organizer mods folder."));
+            warning.exec();
+        }
+        this->saveUIToFile();
+    });
+
+    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &MainWindow::saveUIToFile);
+
+    connect(ui->userPathButton, &QPushButton::pressed, this, [=](){
+        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
+                                                        settings->value("SelectedPath").toString(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        ui->userPathTextEdit->setText(dir);
+        this->saveUIToFile();
+    });
+
+    connect(ui->processButton, &QPushButton::pressed, this, [=]()
+    {
+        if(QDir(ui->userPathTextEdit->text()).exists())
+        {
+            this->initProcess();
+        }
+        else
+            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
+
+    });
+
+    //Connecting menu buttons
+
+    connect(ui->actionSwitch_to_dark_theme, &QAction::triggered, this, [=]()
+    {
+        bDarkMode = !bDarkMode;
+        this->saveUIToFile();
+        this->loadUIFromFile();
+    });
+
+
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Note));});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Trace));});
+    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Warning));});
+}
+
+
+void MainWindow::initProcess()
+{
+    optimizer = new MainOptimizer();
 
     //Preparing thread
 
@@ -24,17 +112,15 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(workerThread, &QThread::started, optimizer, &MainOptimizer::mainProcess);
     connect(optimizer, &MainOptimizer::end, workerThread, &QThread::quit);
-    connect(optimizer, &MainOptimizer::end, optimizer, &MainOptimizer::deleteLater);
     connect(workerThread, &QThread::finished, this, [=]()
     {
+        this->endProcess();
         ui->processButton->setDisabled(false);
         ui->progressBar->setValue(ui->progressBar->maximum());
         QMessageBox warning(this);
         warning.setText(tr("Completed. Please read the log to check if any errors occurred (displayed in red)."));
         warning.addButton(QMessageBox::Ok);
         warning.exec();
-        qApp->quit(); //FIXME Restarting app shouldn't be necessary
-        QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
     });
 
     //Connecting Optimiser to progress bar
@@ -56,110 +142,20 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
         updateLog();
     });
 
-    //Connecting checkboxes to optimizer variables
+    optimizer->moveToThread(workerThread);
+    workerThread->start();
+    workerThread->setPriority(QThread::HighestPriority);
+    ui->processButton->setDisabled(true);
+    bLockVariables = true;
 
-    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToFile();});
-
-    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, [=](){saveUIToFile();});
-    connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
-    connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
-    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, [=](){this->saveUIToFile();});
-    connect(ui->bsaSplitAssetsCheckBox, &QCheckBox::clicked, this, [=](){this->saveUIToFile();});
+}
 
 
-    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToFile();});
-
-    connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
-    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
-
-    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToFile();});
-
-    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
-    connect(ui->MeshesMediumOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
-    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
-
-    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, [=](){this->saveUIToFile();});
-
-    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, [=]{this->saveUIToFile();});
-
-    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [=](bool state)
-    {
-        if(state)
-        {
-            QMessageBox warning(this);
-            warning.setText(tr("You have selected to perform a dry run. No files will be modified, but BSAs will be extracted if that option was selected."));
-            warning.addButton(QMessageBox::Ok);
-            warning.exec();
-        }
-        this->saveUIToFile();
-    });
-
-    //Connecting the other widgets
-
-    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [=]
-    {
-        if(ui->modeChooserComboBox->currentIndex() == 1)
-        {
-            QMessageBox warning(this);
-            warning.setText(tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. The program may look frozen, but it will work.\nThis process has only been tested on the Mod Organizer mods folder."));
-            warning.exec();
-        }
-        this->saveUIToFile();
-    });
-
-    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, [=](){this->saveUIToFile();});
-
-    connect(ui->userPathButton, &QPushButton::pressed, this, [=](){
-        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
-                                                        settings->value("SelectedPath").toString(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        ui->userPathTextEdit->setText(dir);
-        this->saveUIToFile();
-    });
-
-    connect(ui->processButton, &QPushButton::pressed, this, [=]()
-    {
-        if(QDir(ui->userPathTextEdit->text()).exists())
-        {
-            optimizer->moveToThread(workerThread);
-            workerThread->start();
-            workerThread->setPriority(QThread::HighestPriority);
-            ui->processButton->setDisabled(true);
-            bLockVariables = true;
-        }
-        else
-            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
-
-    });
-
-    //Connecting menu buttons
-
-    connect(ui->actionSwitch_to_dark_theme, &QAction::triggered, this, [=]()
-    {
-        bDarkMode = !bDarkMode;
-        this->saveUIToFile();
-        this->loadUIFromFile();
-    });
-
-
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=]()
-    {
-        this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));
-    });
-
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=]()
-    {
-        this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Note));
-    });
-
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=]()
-    {
-        this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Trace));
-    });
-
-    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=]()
-    {
-        this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Warning));
-    });
+void MainWindow::endProcess()
+{
+    bLockVariables = false;
+    delete optimizer;
+    delete workerThread;
 }
 
 

@@ -28,6 +28,8 @@ private:
     void saveUIToFile();
     void loadUIFromFile();
     void updateLog();
+    void initProcess();
+    void endProcess();
 
     int progressBarValue;
 

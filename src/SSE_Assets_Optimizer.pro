@@ -6,7 +6,7 @@
 
 QT       += widgets
 
-TARGET = SSE_Assets_Optimiser
+TARGET = Bethesda_Assets_Optimizer
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -58,4 +58,7 @@ FORMS += \
 
 RESOURCES += styles/qdarkstyle/style.qrc
 
-QMAKE_EXTRA_TARGETS = makefile.txt
+docs.depends = $(SOURCES)
+docs.commands = "E:\Edgar\Documents\Perso\Informatique\Code\Doxygen\doxygen.exe" "E:\Edgar\Documents\Perso\Informatique\Code\Qt Creator\SSE_Assets_Optimizer\doc\Doxyfile"
+
+QMAKE_EXTRA_TARGETS = docs

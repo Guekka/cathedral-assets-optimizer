@@ -14,7 +14,7 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 
         if(it.fileName().right(4).toLower() == ".bsa" && it.fileName().contains("- Textures", Qt::CaseInsensitive))
         {
-            espName = it.fileName().remove("- Textures.bsa") + ".esp";
+            espName = it.fileName().remove(" - Textures.bsa") + ".esp";
             QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", folderPath + "/" + espName);
             QLogger::QLog_Trace("PluginsOperations", "Created textures bsa plugin:" + espName);
         }
@@ -38,7 +38,7 @@ QString PluginsOperations::findPlugin(const QString& folderPath) //Find esp/esl/
     {
         it.next();
 
-        if(it.fileName().contains(QRegularExpression("\\.es[plm]")))
+        if(it.fileName().contains(QRegularExpression("\\.es[plm]$")))
         {
             espName=it.fileName();
             QLogger::QLog_Note("PluginsOperations", tr("Esp found: ") + espName);
@@ -46,6 +46,7 @@ QString PluginsOperations::findPlugin(const QString& folderPath) //Find esp/esl/
         }
     }
     espName = QDir(folderPath).dirName();
+    QLogger::QLog_Debug("PluginsOperations", "Using: " + espName + " as esp name.");
     return espName;
 }
 

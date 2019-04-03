@@ -171,6 +171,22 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
 }
 
 
+void MeshesOptimizer::dryOptimize(const QString &filePath)
+{
+    if(bMeshesNecessaryOptimization && bMeshesHeadparts && headparts.contains(filePath, Qt::CaseInsensitive))
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized as an headpart due to crashing meshes option"));
+
+    else if(bMeshesNecessaryOptimization && crashingMeshes.contains(filePath, Qt::CaseInsensitive))
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to crashing meshes option"));
+
+    else if(bMeshesMediumOptimization && otherMeshes.contains(filePath, Qt::CaseInsensitive))
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to other meshes option"));
+
+    else if(bMeshesFullOptimization)
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to all meshes option"));
+}
+
+
 
 /* WORK IN PROGRESS */
 /*void MeshesOptimizer::meshesTexturesCaseFix(const QString &filePath) //Unused. Work in progress. Same func as NIF Texcase Fixer

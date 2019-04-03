@@ -20,7 +20,7 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>SSE Assets Optimizer 4.2</string>
+   <string>Bethesda Assets Optimizer 4.2</string>
   </property>
   <property name="whatsThis">
    <string>Will write which files would be affected, without actually processing them</string>

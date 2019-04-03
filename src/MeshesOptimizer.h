@@ -13,6 +13,7 @@ public:
 
     void list(const QString& folderPath);
     void optimize(const QString& filePath);
+    void dryOptimize(const QString& filePath);
     //void meshesTexturesCaseFix(const QString& filePath); WIP
 
 private:
