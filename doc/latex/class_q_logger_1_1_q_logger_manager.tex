@@ -1,0 +1,147 @@
+\hypertarget{class_q_logger_1_1_q_logger_manager}{}\section{Q\+Logger\+::Q\+Logger\+Manager Class Reference}
+\label{class_q_logger_1_1_q_logger_manager}\index{QLogger::QLoggerManager@{QLogger::QLoggerManager}}
+
+
+The \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager}{Q\+Logger\+Manager}} class manages the different destination files that we would like to have.  
+
+
+
+
+{\ttfamily \#include $<$Q\+Logger.\+h$>$}
+
+Inheritance diagram for Q\+Logger\+::Q\+Logger\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_q_logger_1_1_q_logger_manager}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager_a1da2cf60ef400dd30394144754184f8b}{add\+Destination}} (const Q\+String \&file\+Dest, const Q\+String \&module, Log\+Level level)
+\begin{DoxyCompactList}\small\item\em This method creates a Q\+Looger\+Writer that stores the name of the file and the log level assigned to it. Here is added to the map the different modules assigned to each log file. The method returns {\itshape false} if a module is configured to be stored in more than one file. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager_a2ea9564f1c4036f5ac182f92b7b07ed7}{add\+Destination}} (const Q\+String \&file\+Dest, const Q\+String\+List \&modules, Log\+Level level)
+\begin{DoxyCompactList}\small\item\em This method creates a Q\+Looger\+Writer that stores the name of the file and the log level assigned to it. Here is added to the map the different modules assigned to each log file. The method returns {\itshape false} if a module is configured to be stored in more than one file. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_q_logger_1_1_q_logger_writer}{Q\+Logger\+Writer}} $\ast$ \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager_ae0f85687fdbcd17760c38f5b31a61cc9}{get\+Log\+Writer}} (const Q\+String \&module)
+\begin{DoxyCompactList}\small\item\em Gets the \mbox{\hyperlink{class_q_logger_1_1_q_logger_writer}{Q\+Logger\+Writer}} instance corresponding to the module {\itshape module}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_q_logger_1_1_q_logger_manager_ab242b0fffe9b8d33bcdadf5138de2433}\label{class_q_logger_1_1_q_logger_manager_ab242b0fffe9b8d33bcdadf5138de2433}} 
+void \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager_ab242b0fffe9b8d33bcdadf5138de2433}{close\+Logger}} ()
+\begin{DoxyCompactList}\small\item\em This method closes the logger and the thread it represents. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager}{Q\+Logger\+Manager}} $\ast$ \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager_a5d6305b64fa8cee64386576b0be74030}{get\+Instance}} ()
+\begin{DoxyCompactList}\small\item\em Gets an instance to the \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager}{Q\+Logger\+Manager}}. \end{DoxyCompactList}\item 
+static Q\+String \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager_ab52ab18b57d37af78cbeec50b31b790f}{level\+To\+Starting\+Text}} (const Log\+Level \&level)
+\begin{DoxyCompactList}\small\item\em Converts the given level in a Q\+String that will start the line. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_q_logger_1_1_q_logger_manager_ae03dea2e1d77ba17b9d96a52fad582a0}\label{class_q_logger_1_1_q_logger_manager_ae03dea2e1d77ba17b9d96a52fad582a0}} 
+Q\+Mutex \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager_ae03dea2e1d77ba17b9d96a52fad582a0}{mutex}}
+\begin{DoxyCompactList}\small\item\em Mutex to make the method thread-\/safe. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager}{Q\+Logger\+Manager}} class manages the different destination files that we would like to have. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_q_logger_1_1_q_logger_manager_a1da2cf60ef400dd30394144754184f8b}\label{class_q_logger_1_1_q_logger_manager_a1da2cf60ef400dd30394144754184f8b}} 
+\index{QLogger::QLoggerManager@{QLogger::QLoggerManager}!addDestination@{addDestination}}
+\index{addDestination@{addDestination}!QLogger::QLoggerManager@{QLogger::QLoggerManager}}
+\subsubsection{\texorpdfstring{addDestination()}{addDestination()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Q\+Logger\+::\+Q\+Logger\+Manager\+::add\+Destination (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{file\+Dest,  }\item[{const Q\+String \&}]{module,  }\item[{Log\+Level}]{level }\end{DoxyParamCaption})}
+
+
+
+This method creates a Q\+Looger\+Writer that stores the name of the file and the log level assigned to it. Here is added to the map the different modules assigned to each log file. The method returns {\itshape false} if a module is configured to be stored in more than one file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Dest} & The file name and path to print logs. \\
+\hline
+{\em module} & The module that will be stored in the file. \\
+\hline
+{\em level} & The maximum level allowed. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns true if any error have been done. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_q_logger_1_1_q_logger_manager_a2ea9564f1c4036f5ac182f92b7b07ed7}\label{class_q_logger_1_1_q_logger_manager_a2ea9564f1c4036f5ac182f92b7b07ed7}} 
+\index{QLogger::QLoggerManager@{QLogger::QLoggerManager}!addDestination@{addDestination}}
+\index{addDestination@{addDestination}!QLogger::QLoggerManager@{QLogger::QLoggerManager}}
+\subsubsection{\texorpdfstring{addDestination()}{addDestination()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Q\+Logger\+::\+Q\+Logger\+Manager\+::add\+Destination (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{file\+Dest,  }\item[{const Q\+String\+List \&}]{modules,  }\item[{Log\+Level}]{level }\end{DoxyParamCaption})}
+
+
+
+This method creates a Q\+Looger\+Writer that stores the name of the file and the log level assigned to it. Here is added to the map the different modules assigned to each log file. The method returns {\itshape false} if a module is configured to be stored in more than one file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Dest} & The file name and path to print logs. \\
+\hline
+{\em modules} & The modules that will be stored in the file. \\
+\hline
+{\em level} & The maximum level allowed. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns true if any error have been done. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_q_logger_1_1_q_logger_manager_a5d6305b64fa8cee64386576b0be74030}\label{class_q_logger_1_1_q_logger_manager_a5d6305b64fa8cee64386576b0be74030}} 
+\index{QLogger::QLoggerManager@{QLogger::QLoggerManager}!getInstance@{getInstance}}
+\index{getInstance@{getInstance}!QLogger::QLoggerManager@{QLogger::QLoggerManager}}
+\subsubsection{\texorpdfstring{getInstance()}{getInstance()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager}{Q\+Logger\+Manager}} $\ast$ Q\+Logger\+::\+Q\+Logger\+Manager\+::get\+Instance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Gets an instance to the \mbox{\hyperlink{class_q_logger_1_1_q_logger_manager}{Q\+Logger\+Manager}}. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the instance. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_q_logger_1_1_q_logger_manager_ae0f85687fdbcd17760c38f5b31a61cc9}\label{class_q_logger_1_1_q_logger_manager_ae0f85687fdbcd17760c38f5b31a61cc9}} 
+\index{QLogger::QLoggerManager@{QLogger::QLoggerManager}!getLogWriter@{getLogWriter}}
+\index{getLogWriter@{getLogWriter}!QLogger::QLoggerManager@{QLogger::QLoggerManager}}
+\subsubsection{\texorpdfstring{getLogWriter()}{getLogWriter()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_q_logger_1_1_q_logger_writer}{Q\+Logger\+Writer}}$\ast$ Q\+Logger\+::\+Q\+Logger\+Manager\+::get\+Log\+Writer (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{module }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the \mbox{\hyperlink{class_q_logger_1_1_q_logger_writer}{Q\+Logger\+Writer}} instance corresponding to the module {\itshape module}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em module} & The module we look for. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Retrns a pointer to the object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_q_logger_1_1_q_logger_manager_ab52ab18b57d37af78cbeec50b31b790f}\label{class_q_logger_1_1_q_logger_manager_ab52ab18b57d37af78cbeec50b31b790f}} 
+\index{QLogger::QLoggerManager@{QLogger::QLoggerManager}!levelToStartingText@{levelToStartingText}}
+\index{levelToStartingText@{levelToStartingText}!QLogger::QLoggerManager@{QLogger::QLoggerManager}}
+\subsubsection{\texorpdfstring{levelToStartingText()}{levelToStartingText()}}
+{\footnotesize\ttfamily Q\+String Q\+Logger\+::\+Q\+Logger\+Manager\+::level\+To\+Starting\+Text (\begin{DoxyParamCaption}\item[{const Log\+Level \&}]{level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Converts the given level in a Q\+String that will start the line. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em level} & The log level in Log\+Level format. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The string with the name of the log level. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+E\+:/\+Edgar/\+Documents/\+Perso/\+Informatique/\+Code/\+Qt Creator/\+S\+S\+E\+\_\+\+Assets\+\_\+\+Optimizer/src/Q\+Logger.\+h\item 
+E\+:/\+Edgar/\+Documents/\+Perso/\+Informatique/\+Code/\+Qt Creator/\+S\+S\+E\+\_\+\+Assets\+\_\+\+Optimizer/src/Q\+Logger.\+cpp\end{DoxyCompactItemize}
