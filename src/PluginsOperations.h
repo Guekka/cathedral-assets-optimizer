@@ -10,11 +10,15 @@ class PluginsOperations : public QObject
 
 public:
     /*!
-     * \brief findPlugin
-     * \param folderPath
-     * \return
+     * \brief Will try to find a plugin (.esp ; .esl ; .esm) in the given folder
+     * \param folderPath The folder to check
+     * \return a QString containing the name of the plugin. If no plugin is found, it will return the name of the directory.
      */
     static QString findPlugin(const QString& folderPath);
+    /*!
+     * \brief Will create enough plugins to load all BSAs
+     * \param folderPath The folder to create plugins into
+     */
     static void makeDummyPlugins(const QString& folderPath);
 };
 

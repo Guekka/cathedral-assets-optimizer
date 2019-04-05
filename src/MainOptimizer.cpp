@@ -39,6 +39,9 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
     //Base logging
 
     QLogger::QLog_Info("MainOptimizer", tr("Beginning..."));
+    QFile iniFile(QCoreApplication::applicationDirPath() + "/SSE Assets Optimiser.ini");
+    iniFile.open(QIODevice::ReadOnly);
+    QLogger::QLog_Debug("MainOptimizer", iniFile.readAll());
 
     //Requirements
 
@@ -91,29 +94,22 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
         emit progressBarMaximumChanged((modDirs.size()*(options.bBsaExtract + 1 + options.bBsaCreate)));
         emit progressBarIncrease();
 
+        if (options.bBsaPackLooseFiles || options.bBsaSplitAssets)
+            FilesystemOperations::prepareBsas(modpathDir, options.bBsaSplitAssets);
+
         if(options.bBsaCreate)
         {
-            try
+            QDirIterator bsaIt(modpathDir);
+            while(bsaIt.hasNext())
             {
-                if (options.bBsaPackLooseFiles)
-                    FilesystemOperations::splitAssets(modpathDir);
-
-                QDirIterator bsaIt(modpathDir);
-                while(bsaIt.hasNext())
+                bsaIt.next();
+                if(bsaIt.fileName().right(13) == "bsa.extracted")
                 {
-                    bsaIt.next();
-                    if(bsaIt.fileName().right(13) == "bsa.extracted")
-                    {
-                        QLogger::QLog_Trace("MainOptimizer", "bsa folder found: " + bsaIt.fileName());
-                        bsaOptimizer.bsaCreate(bsaIt.filePath());
-                    }
+                    QLogger::QLog_Trace("MainOptimizer", "bsa folder found: " + bsaIt.fileName());
+                    bsaOptimizer.bsaCreate(bsaIt.filePath());
                 }
             }
-            catch(const QString& e)
-            {
-                QLogger::QLog_Error("MainOptimizer", e);
-                QLogger::QLog_Error("MainOptimizer", tr("BSA packing canceled."));
-            }
+
             PluginsOperations::makeDummyPlugins(modpathDir);
             emit progressBarIncrease();
         }
@@ -125,7 +121,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
     emit end();
 
-    QLogger::QLog_Info("MainOptimizer", tr("Completed."));
+    QLogger::QLog_Info("MainOptimizer", tr("Assets optimization completed."));
 
     return 0;
 }

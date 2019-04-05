@@ -15,10 +15,11 @@ class FilesystemOperations : public QObject
 
 public:
     /*!
-     * \brief Will split assets into several folders. What file is an asset is defined by an hardcoded list.
-     * \param folderPath The path of the folder where assets will be splitted
+     * \brief Will prepare for bsa creation.
+     * \param folderPath The path of the folder where assets will be processed
+     * \param splitAssets Whether the assets will be splitted or not
      */
-    static void splitAssets(const QString& folderPath);
+    static void prepareBsas(const QString& folderPath, const bool& splitAssets);
     /*!
      * \brief Will move all files from source folder into destination folder.
      * \param source The source directory
@@ -30,6 +31,15 @@ public:
      * \brief Will find skyrim directory using the registry key.
      * \return A QString containing the path of the Skyrim directory, or an empty QString if the path is not found
      */
+
+    /*!
+     * \brief Will separate assets into several folders. What file is an asset is defined by an hardcoded list.
+     * \param path The folder to process
+     * \param bsaList The list of all normal bsa (all assets except textures)
+     * \param texturesBsaList The list of all textures bsa
+     */
+    static void moveAssets(const QString& path, const QStringList& bsaList, const QStringList& texturesBsaList);
+
     static QString findSkyrimDirectory();
     /*!
      * \brief Will calculate the size of all assets in the given path

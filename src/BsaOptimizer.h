@@ -38,6 +38,12 @@ private:
      * \return A bool that indicates the sucess of the operation
      */
     bool moveFilesFromBsaFolderToRootFolder(const QString& bsaFolderPath);
+    /*!
+     * \brief Will add .bak to the bsa name. If a bak file already exist, their sizes are compared. If the size is the same, the current bsa is removed. Otherwise, the bak file
+     * is also renamed.
+     * \param bsaPath The BSA to backup
+     * \return a QString containing the name of the backup-ed bsa
+     */
     QString backupOldBsa(const QString& bsaPath);
 };
 
