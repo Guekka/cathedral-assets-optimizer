@@ -1,6 +1,9 @@
 #include "FilesystemOperations.h"
 
-const QStringList assets {"nif", "seq", "pex", "psc", "lod", "fuz", "waw", "xwm", "swf", "hkx", "wav", "tri", "btr", "bto", "btt", "lip"};
+const QStringList texturesAssets {"png", "dds"};
+const QStringList otherAssets {"nif", "seq", "pex", "psc", "lod", "fuz", "waw", "xwm", "swf", "hkx", "wav", "tri", "btr", "bto", "btt", "lip", "txt"};
+const QStringList allAssets = texturesAssets + otherAssets;
+
 
 void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &splitAssets) //Split assets between several folders
 {
@@ -38,7 +41,8 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
         QPair<qint64, qint64> size = assetsSize(directory.path());
         int i = 0;
 
-        while(texturesBsaList.size() < qCeil(size.first/2900000000.0))
+        QLogger::QLog_Error("FilesystemOperations", QString::number(size.first));
+        while(texturesBsaList.size() < qCeil(size.first/2695668920.0))
         {
             if(i == 0)
                 bsaName = espName + " - Textures.bsa.extracted";
@@ -63,7 +67,6 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
             ++i;
         }
     }
-
 
     else //If assets splitting is disabled, use only one bsa folder and one textures bsa folder
     {
@@ -92,7 +95,7 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
     QDir destinationDir(destination);
     QDirIterator it(source, QDirIterator::Subdirectories);
 
-    QLogger::QLog_Trace("FilesystemOperations", "Entering" + QString(__FUNCTION__) + "function");
+    QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
     QLogger::QLog_Debug("FilesystemOperations", "dest folder: " + destination + "\nsource folder: " + source);
 
     sourceDir.mkdir(destination);
@@ -100,8 +103,9 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
     while (it.hasNext())
     {
         it.next();
-        if(it.path() != destination && it.fileName().right(1) != ".")
+        if (!QFileInfo(it.filePath()).isDir() && it.path() != destination) //Skipping all directories and avoiding to copy from the destination folder
         {
+
             QString relativeFilename = QDir::cleanPath(sourceDir.relativeFilePath(it.filePath()));
             QFile oldFile(it.filePath());
             QFile newFile(QDir::cleanPath(destination) + QDir::separator() + relativeFilename);
@@ -114,13 +118,15 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
 
             //removing the duplicate files from new folder (if overwriteExisting) or from old folder (if !overwriteExisting)
 
+            destinationDir.mkpath(QFileInfo(newFileRelativeFilename).path());
+
             if(overwriteExisting)
                 destinationDir.remove(newFileRelativeFilename);
-            else if(!overwriteExisting)
-                destinationDir.remove(oldFileRelativeFilename);
 
-            destinationDir.mkpath(QFileInfo(newFileRelativeFilename).path());
             destinationDir.rename(oldFileRelativeFilename, newFileRelativeFilename);
+
+            if(!overwriteExisting)
+                destinationDir.remove(oldFileRelativeFilename);
         }
     }
     QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
@@ -136,59 +142,39 @@ void FilesystemOperations::moveAssets(const QString &path, const QStringList &bs
 
     QDir directory(path);
     QDirIterator it(directory, QDirIterator::Subdirectories);
-    QStringList movedAssets;
-    QStringList correspondingBsas;
 
     while(it.hasNext())
     {
         it.next();
-
-        if(assets.contains(it.fileName().right(3), Qt::CaseInsensitive) || it.fileName().right(3).toLower() == "dds" || it.fileName().right(3).toLower() == "png")
+        //Skipping all directories and avoiding unnecessary files
+        if(!QFileInfo(it.filePath()).isDir() && allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
         {
-            QFile oldAsset;
-            QFile newAsset;
             QString relativeFilename = directory.relativeFilePath(it.filePath());
+            QString newAssetRelativeFilename;
 
-            if(assets.contains(it.fileName().right(3), Qt::CaseInsensitive))
+            if(otherAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
             {
                 ++k;
                 if(k >= bsaList.size() || k < 0)
                     k = 0;
-                correspondingBsas << bsaList.at(k);
-                newAsset.setFileName(directory.filePath(bsaList.at(k) + "/" + relativeFilename));
+                newAssetRelativeFilename = directory.relativeFilePath(bsaList.at(k) + "/" + relativeFilename);
             }
 
-            else if(it.fileName().right(3).toLower() == "dds" || it.fileName().right(3).toLower() == "png")
+            else if(texturesAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
             {
                 ++j;
                 if(j >= texturesBsaList.size() || j < 0)
                     j = 0;
 
-                if(movedAssets.contains(it.fileName().chopped(6)))
-                {
-                    correspondingBsas << correspondingBsas.at(movedAssets.indexOf(it.fileName().chopped(6)));
-                    newAsset.setFileName(directory.filePath(correspondingBsas.last() + "/" + relativeFilename));
-                }
-                else
-                {
-                    newAsset.setFileName(directory.filePath(texturesBsaList.at(j) + "/" + relativeFilename));
-                    correspondingBsas << texturesBsaList.at(j);
-                }
+                newAssetRelativeFilename = directory.relativeFilePath(texturesBsaList.at(j) + "/" + relativeFilename);
             }
 
-            movedAssets << it.fileName().chopped(6);
-            oldAsset.setFileName(it.filePath());
+            QString oldAssetRelativeFilename = directory.relativeFilePath(it.filePath());
 
             //removing the duplicate assets and checking for path size
 
-            QString newAssetRelativeFilename = directory.relativeFilePath(newAsset.fileName());
-            QString oldAssetRelativeFilename = directory.relativeFilePath(oldAsset.fileName());
-
             if(newAssetRelativeFilename.size() >= 255) //Max path size for Windows
                 throw tr("The filepath is more than 260 characters long. Please reduce it.");
-
-            if(oldAsset.size() == newAsset.size())
-                QFile::remove(newAsset.fileName());
 
             directory.mkpath(QFileInfo(newAssetRelativeFilename).path());
             directory.rename(oldAssetRelativeFilename, newAssetRelativeFilename);
@@ -208,9 +194,9 @@ QPair <qint64, qint64> FilesystemOperations::assetsSize(const QString& path) // 
     {
         QFile currentFile(it.next());
 
-        if(currentFile.fileName().right(3).toLower() == "dds" || currentFile.fileName().right(3).toLower() == "png")
+        if(texturesAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
             size.first += currentFile.size();
-        else if(assets.contains(currentFile.fileName().right(3), Qt::CaseInsensitive))
+        else if(otherAssets.contains(currentFile.fileName().right(3), Qt::CaseInsensitive))
             size.second += currentFile.size();
     }
     return size;

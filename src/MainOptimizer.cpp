@@ -12,8 +12,6 @@ void MainOptimizer::init() //Some necessary operations before running
                                << "BsaOptimizer" << "FilesystemOperations" << "MeshesOptimizer" << "PluginsOperations"
                                << "TexturesOptimizer", logLevel);
 
-    QLogger::QLog_Info("MainOptimizer", tr("Beginning..."));
-
     //Disabling BSA process if Skyrim folder is choosed
 
     if(options.userPath == FilesystemOperations::findSkyrimDirectory() + "/data" && (options.bBsaExtract || options.bBsaCreate))
@@ -39,9 +37,10 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
     //Base logging
 
     QLogger::QLog_Info("MainOptimizer", tr("Beginning..."));
-    QFile iniFile(QCoreApplication::applicationDirPath() + "/SSE Assets Optimiser.ini");
+    QFile iniFile(QCoreApplication::applicationDirPath() + "/Bethesda Assets Optimizer.ini");
     iniFile.open(QIODevice::ReadOnly);
     QLogger::QLog_Debug("MainOptimizer", iniFile.readAll());
+    iniFile.close();
 
     //Requirements
 
@@ -121,7 +120,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
     emit end();
 
-    QLogger::QLog_Info("MainOptimizer", tr("Assets optimization completed."));
+    QLogger::QLog_Info("MainOptimizer", tr("Assets optimization completed.") + "\n\nEND OF LOG\n\n");
 
     return 0;
 }
@@ -220,10 +219,10 @@ void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
 
 void MainOptimizer::loadSettings() //Loads settings from the ini file
 {
-    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+    QSettings settings("Bethesda Assets Optimizer.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
 
-    options.mode = settings.value("options.mode").toInt();
+    options.mode = settings.value("mode").toInt();
     options.bDryRun = settings.value("DryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
 

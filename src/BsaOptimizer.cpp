@@ -76,21 +76,15 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
 
     if(bsarch.readAllStandardOutput().contains("Done"))
     {
-        if(QFile(bsaName).size() < 2362232012)
+        if(QFile(bsaName).size() < 2308544921.6)
         {
             QLogger::QLog_Note("BsaOptimizer", tr("BSA successfully compressed: ") + bsaName);
             bsaDir.setPath(bsaFolderPath);
             bsaDir.removeRecursively();
         }
-        else if(QFile(bsaName).size() < 2469606195)
-        {
-            QLogger::QLog_Warning("BsaOptimizer", tr("The BSA is nearly over its maximum size. It still should work."));
-            bsaDir.setPath(bsaFolderPath);
-            bsaDir.removeRecursively();
-        }
         else
         {
-            QLogger::QLog_Error("BsaOptimizer", tr("The BSA was not compressed: it is over 2.2gb: ") + bsaName);
+            QLogger::QLog_Error("BsaOptimizer", tr("The BSA was not compressed: it is over 2.15gb: ") + bsaName);
             moveFilesFromBsaFolderToRootFolder(bsaFolderPath);
             QFile::remove(bsaName);
             if(QFile(bsaName.chopped(3) + "esp").size() == QFile(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp").size())

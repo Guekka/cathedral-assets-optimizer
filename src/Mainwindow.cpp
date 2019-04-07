@@ -7,8 +7,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     ui->setupUi(this);
 
     //Loading remembered settings
-    settings = new QSettings("SSE Assets Optimiser.ini", QSettings::IniFormat, this);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+    settings = new QSettings("Bethesda Assets Optimizer.ini", QSettings::IniFormat, this);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
     this->loadUIFromFile();
 
     //Preparing log
@@ -154,6 +154,7 @@ void MainWindow::initProcess()
 void MainWindow::endProcess()
 {
     bLockVariables = false;
+    updateLog();
     delete optimizer;
     delete workerThread;
 }
@@ -164,8 +165,8 @@ void MainWindow::saveUIToFile()
     if(bLockVariables)
         return;
 
-    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+    QSettings settings("Bethesda Assets Optimizer.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
 
     //BSA checkboxes
 
@@ -256,8 +257,8 @@ void MainWindow::saveUIToFile()
 
 void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
-    QSettings settings("SSE Assets Optimiser.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "SSE Assets Optimiser.ini");
+    QSettings settings("Bethesda Assets Optimizer.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
 
     ui->userPathTextEdit->setText(settings.value("SelectedPath").toString());
 
@@ -289,6 +290,15 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         settings.setValue("bBsaPackLooseFiles", false);
         ui->packExistingAssetsCheckbox->setDisabled(true);
     }
+
+    //GUI options
+
+    bDarkMode = settings.value("bDarkMode").toBool();
+
+    ui->BsaGroupBox->setChecked(settings.value("BsaGroupBox").toBool());
+    ui->texturesGroupBox->setChecked(settings.value("texturesGroupBox").toBool());
+    ui->meshesGroupBox->setChecked(settings.value("meshesGroupBox").toBool());
+    ui->animationsGroupBox->setChecked(settings.value("animationsGroupBox").toBool());
 
     //Dark mode
 
@@ -328,14 +338,6 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         settings.setValue("bMeshesHeadparts", true);
     }
 
-    //GUI options
-
-    bDarkMode = settings.value("bDarkMode").toBool();
-
-    ui->BsaGroupBox->setChecked(settings.value("BsaGroupBox").toBool());
-    ui->texturesGroupBox->setChecked(settings.value("texturesGroupBox").toBool());
-    ui->meshesGroupBox->setChecked(settings.value("meshesGroupBox").toBool());
-    ui->animationsGroupBox->setChecked(settings.value("animationsGroupBox").toBool());
 }
 
 
