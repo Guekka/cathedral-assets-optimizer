@@ -17,7 +17,7 @@ FilesystemOperations::FilesystemOperations()
         while (!ts.atEnd())
         {
             QString readLine = ts.readLine();
-            if(readLine.left(1) != "#")
+            if(readLine.left(1) != "#" && !readLine.isEmpty())
                 filesToNotPack << readLine;
         }
     }
@@ -62,7 +62,6 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
         QPair<qint64, qint64> size = assetsSize(directory.path());
         int i = 0;
 
-        QLogger::QLog_Error("FilesystemOperations", QString::number(size.first));
         while(texturesBsaList.size() < qCeil(size.first/2695668920.0))
         {
             if(i == 0)
@@ -170,7 +169,16 @@ void FilesystemOperations::moveAssets(const QString &path, const QStringList &bs
         //Skipping all directories and avoiding unnecessary files
         bool isDir = QFileInfo(it.filePath()).isDir();
         bool hasAssets = allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive);
-        bool canBePacked = !filesToNotPack.contains(directory.relativeFilePath(it.path()), Qt::CaseInsensitive);
+        bool canBePacked = true;
+
+        for(int i = 0 ; i < filesToNotPack.size() ; ++i)
+        {
+            if(it.filePath().contains(filesToNotPack.at(i)))
+            {
+                //qDebug() << it.filePath() << filesToNotPack.at(i);
+                canBePacked = false;
+            }
+        }
 
         if(!isDir && hasAssets && canBePacked)
         {

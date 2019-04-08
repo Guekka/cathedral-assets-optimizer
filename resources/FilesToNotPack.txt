@@ -2,5 +2,9 @@
 
 meshes/actors/character/animations
 meshes/actors/character/behaviors
+meshes/actors/character/_1stperson/animations
+meshes/actors/character/_1stperson/behaviors
 meshes/animationdatasinglefile.txt
 meshes/animationsetdatasinglefile.txt
+
+readme

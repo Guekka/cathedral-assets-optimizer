@@ -12,7 +12,7 @@ MeshesOptimizer::MeshesOptimizer()
         while (!ts.atEnd())
         {
             QString readLine = ts.readLine();
-            if(readLine.left(1) != "#")
+            if(readLine.left(1) != "#" && !readLine.isEmpty())
                 customHeadparts << readLine;
         }
     }

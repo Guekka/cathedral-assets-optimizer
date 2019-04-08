@@ -93,8 +93,10 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
         emit progressBarMaximumChanged((modDirs.size()*(options.bBsaExtract + 1 + options.bBsaCreate)));
         emit progressBarIncrease();
 
+        FilesystemOperations fsOperations;
+
         if (options.bBsaPackLooseFiles || options.bBsaSplitAssets)
-            FilesystemOperations::prepareBsas(modpathDir, options.bBsaSplitAssets);
+            fsOperations.prepareBsas(modpathDir, options.bBsaSplitAssets);
 
         if(options.bBsaCreate)
         {
