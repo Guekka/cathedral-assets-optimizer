@@ -11,7 +11,7 @@ MeshesOptimizer::MeshesOptimizer()
         QTextStream ts(&customHeadpartsFile);
         while (!ts.atEnd())
         {
-            QString readLine = QDir::cleanPath(ts.readLine());
+            QString readLine = ts.readLine();
             if(readLine.left(1) != "#")
                 customHeadparts << readLine;
         }

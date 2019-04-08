@@ -14,12 +14,15 @@ class FilesystemOperations : public QObject
     Q_DECLARE_TR_FUNCTIONS(FilesystemOperations)
 
 public:
+
+    FilesystemOperations();
+
     /*!
      * \brief Will prepare for bsa creation.
      * \param folderPath The path of the folder where assets will be processed
      * \param splitAssets Whether the assets will be splitted or not
      */
-    static void prepareBsas(const QString& folderPath, const bool& splitAssets);
+    void prepareBsas(const QString& folderPath, const bool& splitAssets);
     /*!
      * \brief Will move all files from source folder into destination folder.
      * \param source The source directory
@@ -31,22 +34,24 @@ public:
      * \brief Will find skyrim directory using the registry key.
      * \return A QString containing the path of the Skyrim directory, or an empty QString if the path is not found
      */
-
+    static QString findSkyrimDirectory();
     /*!
      * \brief Will separate assets into several folders. What file is an asset is defined by an hardcoded list.
      * \param path The folder to process
      * \param bsaList The list of all normal bsa (all assets except textures)
      * \param texturesBsaList The list of all textures bsa
      */
-    static void moveAssets(const QString& path, const QStringList& bsaList, const QStringList& texturesBsaList);
+    void moveAssets(const QString& path, const QStringList& bsaList, const QStringList& texturesBsaList);
 
-    static QString findSkyrimDirectory();
     /*!
      * \brief Will calculate the size of all assets in the given path
      * \param path The path of the directory to scan
      * \return  A QPair containing two qint64. The first will contain the textures size, the second will contain the other assets size.
      */
     static QPair<qint64, qint64> assetsSize(const QString& path);
+
+private:
+    QStringList filesToNotPack;
 };
 
 #endif // FILESYSTEMOPERATIONS_H

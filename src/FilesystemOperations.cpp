@@ -5,6 +5,27 @@ const QStringList otherAssets {"nif", "seq", "pex", "psc", "lod", "fuz", "waw", 
 const QStringList allAssets = texturesAssets + otherAssets;
 
 
+FilesystemOperations::FilesystemOperations()
+{
+    //Reading filesToNotPack to add them to the list.
+    //Done in the constructor since the file won't change at runtime.
+
+    QFile filesToNotPackFile(QCoreApplication::applicationDirPath() + "/resources/FilesToNotPack.txt");
+    if(filesToNotPackFile.open(QIODevice::ReadOnly))
+    {
+        QTextStream ts(&filesToNotPackFile);
+        while (!ts.atEnd())
+        {
+            QString readLine = ts.readLine();
+            if(readLine.left(1) != "#")
+                filesToNotPack << readLine;
+        }
+    }
+    else
+        QLogger::QLog_Warning("FilesystemOperations", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
+}
+
+
 void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &splitAssets) //Split assets between several folders
 {
     QLogger::QLog_Trace("FilesystemOperations", "Entering" + QString(__FUNCTION__) + "function");
@@ -147,7 +168,11 @@ void FilesystemOperations::moveAssets(const QString &path, const QStringList &bs
     {
         it.next();
         //Skipping all directories and avoiding unnecessary files
-        if(!QFileInfo(it.filePath()).isDir() && allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
+        bool isDir = QFileInfo(it.filePath()).isDir();
+        bool hasAssets = allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive);
+        bool canBePacked = !filesToNotPack.contains(directory.relativeFilePath(it.path()), Qt::CaseInsensitive);
+
+        if(!isDir && hasAssets && canBePacked)
         {
             QString relativeFilename = directory.relativeFilePath(it.filePath());
             QString newAssetRelativeFilename;

@@ -1,0 +1,6 @@
+# These files won't be packed into a BSA, even if the BSA pack loose files options is enabled
+
+meshes/actors/character/animations
+meshes/actors/character/behaviors
+meshes/animationdatasinglefile.txt
+meshes/animationsetdatasinglefile.txt
