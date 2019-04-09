@@ -171,6 +171,14 @@ namespace QLogger
         return allAdded;
     }
 
+    void QLoggerManager::setLogLevelForAllWriters(LogLevel level)
+    {
+        for (const auto& module : moduleDest)
+        {
+            module->setLevel(level);
+        }
+    }
+
     void QLoggerManager::closeLogger()
     {
         deleteLater();

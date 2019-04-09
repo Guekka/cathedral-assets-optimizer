@@ -117,6 +117,7 @@ namespace QLogger
              * @return The LogLevel.
              */
             LogLevel getLevel() const { return m_level; }
+            void setLevel(LogLevel level) {m_level = level; }
             /**
              * @brief Within this method the message is written in the log file. If it would exceed
              * from 4 MByte, another file will be created and the log message will be stored in the
@@ -128,6 +129,7 @@ namespace QLogger
              * @param messageLogLevel The level of the message
              */
             void write(const QString &module, const QString &message, const LogLevel& messageLogLevel);
+
 
         private:
             /**
@@ -197,6 +199,8 @@ namespace QLogger
              * @brief Mutex to make the method thread-safe.
              */
             QMutex mutex;
+
+            void setLogLevelForAllWriters(LogLevel level);
 
         private:
             /**

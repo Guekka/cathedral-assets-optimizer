@@ -28,7 +28,7 @@ FilesystemOperations::FilesystemOperations()
 
 void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &splitAssets) //Split assets between several folders
 {
-    QLogger::QLog_Trace("FilesystemOperations", "Entering" + QString(__FUNCTION__) + "function");
+    QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
 
     QDir directory(folderPath);
 
@@ -62,7 +62,7 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
         QPair<qint64, qint64> size = assetsSize(directory.path());
         int i = 0;
 
-        while(texturesBsaList.size() < qCeil(size.first/2695668920.0))
+        while(texturesBsaList.size() < qCeil(size.first/2547483647.0))
         {
             if(i == 0)
                 bsaName = espName + " - Textures.bsa.extracted";
@@ -75,7 +75,7 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
         }
 
         i = 0;
-        while(bsaList.size() < qCeil(size.second/2076980377.0))
+        while(bsaList.size() < qCeil(size.second/2107483647.0))
         {
             if(i == 0)
                 bsaName = espName + ".bsa.extracted";

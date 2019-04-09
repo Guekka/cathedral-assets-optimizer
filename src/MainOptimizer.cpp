@@ -12,6 +12,8 @@ void MainOptimizer::init() //Some necessary operations before running
                                << "BsaOptimizer" << "FilesystemOperations" << "MeshesOptimizer" << "PluginsOperations"
                                << "TexturesOptimizer", logLevel);
 
+    logManager->setLogLevelForAllWriters(logLevel);
+
     //Disabling BSA process if Skyrim folder is choosed
 
     if(options.userPath == FilesystemOperations::findSkyrimDirectory() + "/data" && (options.bBsaExtract || options.bBsaCreate))
@@ -97,6 +99,8 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
         if (options.bBsaPackLooseFiles || options.bBsaSplitAssets)
             fsOperations.prepareBsas(modpathDir, options.bBsaSplitAssets);
+
+        QLogger::QLog_Info("MainOptimizer", tr("Creating BSAs..."));
 
         if(options.bBsaCreate)
         {
@@ -248,3 +252,6 @@ void MainOptimizer::setLogLevel(const QLogger::LogLevel &value)
 {
     logLevel = value;
 }
+
+
+

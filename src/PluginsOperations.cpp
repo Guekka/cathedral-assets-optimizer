@@ -33,6 +33,7 @@ QString PluginsOperations::findPlugin(const QString& folderPath) //Find esp/esl/
 {
     QDirIterator it(folderPath);
     QString espName;
+    QString bsaName;
 
     while (it.hasNext())
     {
@@ -44,8 +45,14 @@ QString PluginsOperations::findPlugin(const QString& folderPath) //Find esp/esl/
             QLogger::QLog_Note("PluginsOperations", tr("Esp found: ") + espName);
             return espName;
         }
+
+        if(it.fileName().right(4) == ".bsa")
+            bsaName = it.fileName().chopped(4) + ".esp";
     }
-    espName = QDir(folderPath).dirName();
+    if(!bsaName.isEmpty())
+        return bsaName;
+
+    espName = QDir(folderPath).dirName() + ".esp";
     QLogger::QLog_Debug("PluginsOperations", "Using: " + espName + " as esp name.");
     return espName;
 }

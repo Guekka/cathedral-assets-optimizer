@@ -76,7 +76,7 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
 
     if(bsarch.readAllStandardOutput().contains("Done"))
     {
-        if(QFile(bsaName).size() < 2308544921.6)
+        if(QFile(bsaName).size() < LONG_MAX)
         {
             QLogger::QLog_Note("BsaOptimizer", tr("BSA successfully compressed: ") + bsaName);
             bsaDir.setPath(bsaFolderPath);

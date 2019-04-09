@@ -9,6 +9,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     //Loading remembered settings
     settings = new QSettings("Bethesda Assets Optimizer.ini", QSettings::IniFormat, this);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
+    settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));
     this->loadUIFromFile();
 
     //Preparing log
