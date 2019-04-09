@@ -15,6 +15,9 @@ class FilesystemOperations : public QObject
 
 public:
 
+    /*!
+     * \brief Constructor that will read FilesToNotPack.txt and add them to filesToNotPack QStringList
+     */
     FilesystemOperations();
 
     /*!
@@ -51,6 +54,9 @@ public:
     static QPair<qint64, qint64> assetsSize(const QString& path);
 
 private:
+    /*!
+     * \brief List of files or folder that won't be packed to BSA
+     */
     QStringList filesToNotPack;
 };
 

@@ -20,4 +20,6 @@
 *.db-shm
 *.ilk
 *.qm
-Doxyfile
+*.user*
+*.user.6d0bbc2
+*.autosave

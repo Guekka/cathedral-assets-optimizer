@@ -9,8 +9,14 @@ class MeshesOptimizer : public QObject
     Q_DECLARE_TR_FUNCTIONS(MeshesOptimizer)
 
 public:
+    /*!
+     * \brief Constructor that will read CustomHeadparts.txt and read settings from file
+     */
     MeshesOptimizer();
-
+    /*!
+     * \brief Will list all the meshes that need to be optimized in the directory
+     * \param folderPath The folder to analyze
+     */
     void list(const QString& folderPath);
     void optimize(const QString& filePath);
     void dryOptimize(const QString& filePath);
