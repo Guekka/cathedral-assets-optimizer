@@ -22,8 +22,8 @@ MeshesOptimizer::MeshesOptimizer()
 
     //Reading settings from file
 
-    QSettings settings("Bethesda Assets Optimizer.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
+    QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
     bMeshesHeadparts = settings.value("bMeshesHeadparts").toBool();
     bMeshesNecessaryOptimization = settings.value("bMeshesNecessaryOptimization").toBool();

@@ -7,8 +7,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     ui->setupUi(this);
 
     //Loading remembered settings
-    settings = new QSettings("Bethesda Assets Optimizer.ini", QSettings::IniFormat, this);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
+    settings = new QSettings("Cathedral Assets Optimizer.ini", QSettings::IniFormat, this);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
     settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));
     this->loadUIFromFile();
 
@@ -166,8 +166,8 @@ void MainWindow::saveUIToFile()
     if(bLockVariables)
         return;
 
-    QSettings settings("Bethesda Assets Optimizer.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
+    QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
     //BSA checkboxes
 
@@ -258,8 +258,8 @@ void MainWindow::saveUIToFile()
 
 void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
-    QSettings settings("Bethesda Assets Optimizer.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Bethesda Assets Optimizer.ini");
+    QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
     ui->userPathTextEdit->setText(settings.value("SelectedPath").toString());
 
