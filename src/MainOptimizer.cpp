@@ -14,6 +14,7 @@ void MainOptimizer::init() //Some necessary operations before running
 
     logManager->setLogLevelForAllWriters(logLevel);
 
+
     //Disabling BSA process if Skyrim folder is choosed
 
     if(options.userPath == FilesystemOperations::findSkyrimDirectory() + "/data" && (options.bBsaExtract || options.bBsaCreate))
@@ -98,12 +99,12 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
         FilesystemOperations fsOperations;
 
         if (options.bBsaPackLooseFiles || options.bBsaSplitAssets)
-            fsOperations.prepareBsas(modpathDir, options.bBsaSplitAssets);
+            fsOperations.prepareBsas(modpathDir, options.bBsaSplitAssets, options.bBsaMergeLoose);
 
-        QLogger::QLog_Info("MainOptimizer", tr("Creating BSAs..."));
 
         if(options.bBsaCreate)
         {
+            QLogger::QLog_Info("MainOptimizer", tr("Creating BSAs..."));
             QDirIterator bsaIt(modpathDir);
             while(bsaIt.hasNext())
             {
@@ -205,6 +206,8 @@ void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
     MeshesOptimizer meshesOptimizer;
     meshesOptimizer.list(folderPath);
 
+    logManager->setLogLevelForAllWriters(QLogger::LogLevel::Note);
+
     while(it.hasNext())
     {
         it.next();
@@ -221,6 +224,8 @@ void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
         if(options.bAnimationsOptimization && it.fileName().right(4).toLower() == ".hkx")
             QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be ported to SSE"));
     }
+
+    logManager->setLogLevelForAllWriters(logLevel);
 }
 
 void MainOptimizer::loadSettings() //Loads settings from the ini file
@@ -239,6 +244,7 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
     options.bBsaPackLooseFiles = settings.value("bBsaPackLooseFiles").toBool();
     options.bBsaDeleteBackup = settings.value("bBsaDeleteBackup").toBool();
     options.bBsaSplitAssets = settings.value("bBsaSplitAssets").toBool();
+    options.bBsaMergeLoose = settings.value("bBsaMergeLoose").toBool();
 
     options.bMeshesProcess = settings.value(" meshesGroupBox").toBool();
 
@@ -247,11 +253,5 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
 
     options.bAnimationsOptimization = settings.value("bAnimationsOptimization").toBool();
 }
-
-void MainOptimizer::setLogLevel(const QLogger::LogLevel &value)
-{
-    logLevel = value;
-}
-
 
 

@@ -7,16 +7,16 @@ int main(int argc, char *argv[])
 
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + QLocale::system().name(), "translations");
-    app.installTranslator(&qtTranslator);
+    QApplication::installTranslator(&qtTranslator);
 
     QTranslator AssetsOptTranslator;
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
-    app.installTranslator(&AssetsOptTranslator);
+    QApplication::installTranslator(&AssetsOptTranslator);
 
     QLogger::QLoggerManager::getInstance();
 
     MainWindow w;
     w.show();
 
-    return app.exec();
+    return QApplication::exec();
 }

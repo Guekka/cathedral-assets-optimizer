@@ -50,8 +50,5 @@ bool TexturesOptimizer::isCompressed(const QString &filePath)
     texDiag.start(QCoreApplication::applicationDirPath() + "/resources/texdiag.exe", QStringList {"info", filePath});
     texDiag.waitForFinished(-1);
 
-    if(texDiag.readAllStandardOutput().contains("compressed = no"))
-        return false;
-    else
-        return true;
+    return !texDiag.readAllStandardOutput().contains("compressed = no");
 }

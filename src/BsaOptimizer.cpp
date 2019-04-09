@@ -1,6 +1,6 @@
 #include "BsaOptimizer.h"
 
-BsaOptimizer::BsaOptimizer() {}
+BsaOptimizer::BsaOptimizer() = default;
 
 
 void BsaOptimizer::bsaExtract(const QString& bsaPath, bool makeBackup) //Extracts all BSA in modPath

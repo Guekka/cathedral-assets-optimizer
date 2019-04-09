@@ -96,7 +96,7 @@ namespace QLogger
    {
        const auto manager = QLoggerManager::getInstance();
 
-       QMutexLocker(&manager->mutex);
+       QMutexLocker give_me_a_name(&manager->mutex);
 
        const auto logWriter = manager->getLogWriter(module);
 

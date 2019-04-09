@@ -6,7 +6,7 @@
 #include "PluginsOperations.h"
 
 /*!
- * \brief The FilesystemOperations class
+ * \brief Manages filesystem operations : move files, calculate folder size...
  */
 
 class FilesystemOperations : public QObject
@@ -24,8 +24,9 @@ public:
      * \brief Will prepare for bsa creation.
      * \param folderPath The path of the folder where assets will be processed
      * \param splitAssets Whether the assets will be splitted or not
+     * \param mergeLoose Wheter loose assets will be merged with existing BSAs or not
      */
-    void prepareBsas(const QString& folderPath, const bool& splitAssets);
+    void prepareBsas(const QString& folderPath, const bool& splitAssets, const bool& mergeLoose);
     /*!
      * \brief Will move all files from source folder into destination folder.
      * \param source The source directory
@@ -52,6 +53,11 @@ public:
      * \return  A QPair containing two qint64. The first will contain the textures size, the second will contain the other assets size.
      */
     static QPair<qint64, qint64> assetsSize(const QString& path);
+    /*!
+     * \brief Delete empty directories in the given directory
+     * \param folderPath The path of the folder where empty dirs will be deleted
+     */
+    static void deleteEmptyDirectories(const QString& folderPath);
 
 private:
     /*!

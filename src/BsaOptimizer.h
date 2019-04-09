@@ -6,7 +6,7 @@
 #include "FilesystemOperations.h"
 
 /*!
- * \brief The BsaOptimizer class
+ * \brief Manages BSA : extract and create them
  */
 
 class BsaOptimizer : public QObject
