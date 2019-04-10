@@ -1,7 +1,11 @@
-# SSE Assets Optimizer
+# Cathedral Assets Optimizer
 
 
-SSE Assets Optimizer is a tool aiming to automate asset conversion and optimization for Skyrim Special Edition. 
+Cathedral Assets Optimizer is a tool aiming to automate asset conversion and optimization for Skyrim Special Edition. 
+
+# Documentation
+
+Documentation is incomplete. It is available [here](https://g_ka.gitlab.io/sse-assets-optimiser/).
 
 # Features
 
@@ -20,6 +24,7 @@ BSAs :
 *    Recreate original BSAs after processing
 *    Existing loose assets can be added to the archives during repack
 *    Delete backups to save space
+*    Split assets into several BSAs (since a BSAs can't be greater than 2gb)
 
 
 Textures :
@@ -53,8 +58,8 @@ Animations :
 
 # Installation
 
-*    Download a binary from [NexusMods](https://www.nexusmods.com/skyrimspecialedition/mods) or compile this repo with QMake.
-*    Download and extract the SSE Assets Optimizer archive into a new folder anywhere you wish.
+*    Download a binary from [NexusMods](https://www.nexusmods.com/skyrimspecialedition/mods/23316/) or compile this repo with QMake.
+*    Download and extract the Cathedral Assets Optimizer archive into a new folder anywhere you wish.
 *    Download BSArch and extract bsarch.exe into the (SSEAO)\resources folder.
 *    If you intend to process animations: Download the SSE Creation Kit from the Bethesda Launcher.
 *    Havok Tool should then be autodetected. If not, navigate to Skyrim Special Edition\Tools\HavokBehaviorPostProcess and copy HavokBehaviorPostProcess.exe into the (SSEAO)\resources folder.
