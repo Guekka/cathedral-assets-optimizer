@@ -174,16 +174,16 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
 void MeshesOptimizer::dryOptimize(const QString &filePath)
 {
     if(bMeshesNecessaryOptimization && bMeshesHeadparts && headparts.contains(filePath, Qt::CaseInsensitive))
-        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized as an headpart due to crashing meshes option"));
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized as an headpart due to necessary optimization"));
 
     else if(bMeshesNecessaryOptimization && crashingMeshes.contains(filePath, Qt::CaseInsensitive))
-        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to crashing meshes option"));
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to necessary optimization"));
 
     else if(bMeshesMediumOptimization && otherMeshes.contains(filePath, Qt::CaseInsensitive))
-        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to other meshes option"));
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to medium optimization"));
 
     else if(bMeshesFullOptimization)
-        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to all meshes option"));
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to full optimization"));
 }
 
 

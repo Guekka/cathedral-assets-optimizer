@@ -74,6 +74,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
         if(options.bBsaExtract)
         {
             QLogger::QLog_Info("MainOptimizer", tr("Extracting BSA..."));
+            emit updateLog();
 
             QDirIterator bsaIt(modpathDir);
 
@@ -85,12 +86,8 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
                     bsaOptimizer.bsaExtract(bsaIt.filePath(), !options.bBsaDeleteBackup);
                 }
             }
-            emit progressBarIncrease();
+             emit progressBarIncrease();
         }
-
-        QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes..."));
-
-        emit progressBarBusy();
 
         if(options.bDryRun)
             dryOptimizeAssets(modpathDir);
@@ -125,9 +122,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
         }
     }
 
-    //Deleting empty dirs
-
-    system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>nul)"));
+    FilesystemOperations::deleteEmptyDirectories(options.userPath);
 
     emit end();
 
@@ -179,6 +174,9 @@ bool MainOptimizer::checkRequirements()  //Checking if all the requirements are 
 
 void MainOptimizer::optimizeAssets(const QString& folderPath)
 {
+    QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes..."));
+    emit progressBarBusy();
+
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
     MeshesOptimizer meshesOptimizer;
@@ -205,6 +203,9 @@ void MainOptimizer::optimizeAssets(const QString& folderPath)
 
 void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
 {
+    QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes..."));
+    emit progressBarBusy();
+
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
     MeshesOptimizer meshesOptimizer;

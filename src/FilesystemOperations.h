@@ -53,10 +53,12 @@ public:
      */
     static QPair<qint64, qint64> assetsSize(const QString& path);
 
-private:
     /*!
-     * \brief List of files or folder that won't be packed to BSA
-     */
+    * \brief Delete empty directories in the given directory
+    * \param folderPath The path of the folder where empty dirs will be deleted
+    */
+    static void deleteEmptyDirectories(const QString &folderPath);
+
     QStringList filesToNotPack;
 };
 

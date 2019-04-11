@@ -145,6 +145,8 @@ void MainWindow::initProcess()
         updateLog();
     });
 
+    connect(optimizer, &MainOptimizer::updateLog, this, &MainWindow::updateLog);
+
     optimizer->moveToThread(workerThread);
     workerThread->start();
     workerThread->setPriority(QThread::HighestPriority);
@@ -168,92 +170,89 @@ void MainWindow::saveUIToFile()
     if(bLockVariables)
         return;
 
-    QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
-
     //BSA checkboxes
 
     if(ui->BsaGroupBox->isChecked())
     {
-        settings.setValue("bBsaExtract", ui->extractBsaCheckbox->isChecked());
-        settings.setValue("bBsaCreate", ui->recreatetBsaCheckbox->isChecked());
-        settings.setValue("bBsaPackLooseFiles", ui->packExistingAssetsCheckbox->isChecked());
-        settings.setValue("bBsaDeleteBackup", ui->bsaDeleteBackupsCheckbox->isChecked());
-        settings.setValue("bBsaSplitAssets", ui->bsaSplitAssetsCheckBox->isChecked());
+        settings->setValue("bBsaExtract", ui->extractBsaCheckbox->isChecked());
+        settings->setValue("bBsaCreate", ui->recreatetBsaCheckbox->isChecked());
+        settings->setValue("bBsaPackLooseFiles", ui->packExistingAssetsCheckbox->isChecked());
+        settings->setValue("bBsaDeleteBackup", ui->bsaDeleteBackupsCheckbox->isChecked());
+        settings->setValue("bBsaSplitAssets", ui->bsaSplitAssetsCheckBox->isChecked());
     }
     else
     {
-        settings.setValue("bBsaExtract", false);
-        settings.setValue("bBsaCreate", false);
-        settings.setValue("bBsaPackLooseFiles", false);
-        settings.setValue("bBsaDeleteBackup", false);
-        settings.setValue("bBsaSplitAssets", false);
+        settings->setValue("bBsaExtract", false);
+        settings->setValue("bBsaCreate", false);
+        settings->setValue("bBsaPackLooseFiles", false);
+        settings->setValue("bBsaDeleteBackup", false);
+        settings->setValue("bBsaSplitAssets", false);
     }
 
     //Textures radio buttons
 
     if(!ui->texturesGroupBox->isChecked())
     {
-        settings.setValue("bTexturesNecessaryOptimization", false);
-        settings.setValue("bTexturesFullOptimization", false);
+        settings->setValue("bTexturesNecessaryOptimization", false);
+        settings->setValue("bTexturesFullOptimization", false);
     }
     else if(ui->TexturesFullOptimizationRadioButton->isChecked())
     {
-        settings.setValue("bTexturesNecessaryOptimization", true);
-        settings.setValue("bTexturesFullOptimization", true);
+        settings->setValue("bTexturesNecessaryOptimization", true);
+        settings->setValue("bTexturesFullOptimization", true);
     }
     else if(ui->texturesGroupBox->isChecked())
     {
-        settings.setValue("bTexturesNecessaryOptimization", true);
-        settings.setValue("bTexturesFullOptimization", false);
+        settings->setValue("bTexturesNecessaryOptimization", true);
+        settings->setValue("bTexturesFullOptimization", false);
     }
 
     //Meshes radio buttons
 
     if(ui->MeshesFullOptimizationRadioButton->isChecked())
     {
-        settings.setValue("bMeshesNecessaryOptimization", true);
-        settings.setValue("bMeshesMediumOptimization", true);
-        settings.setValue("bMeshesFullOptimization", true);
+        settings->setValue("bMeshesNecessaryOptimization", true);
+        settings->setValue("bMeshesMediumOptimization", true);
+        settings->setValue("bMeshesFullOptimization", true);
     }
     else if(ui->MeshesMediumOptimizationRadioButton->isChecked())
     {
-        settings.setValue("bMeshesNecessaryOptimization", true);
-        settings.setValue("bMeshesMediumOptimization", true);
-        settings.setValue("bMeshesFullOptimization", false);
+        settings->setValue("bMeshesNecessaryOptimization", true);
+        settings->setValue("bMeshesMediumOptimization", true);
+        settings->setValue("bMeshesFullOptimization", false);
     }
     else if(ui->meshesGroupBox->isChecked())
     {
-        settings.setValue("bMeshesNecessaryOptimization", true);
-        settings.setValue("bMeshesMediumOptimization", false);
-        settings.setValue("bMeshesFullOptimization", false);
+        settings->setValue("bMeshesNecessaryOptimization", true);
+        settings->setValue("bMeshesMediumOptimization", false);
+        settings->setValue("bMeshesFullOptimization", false);
     }
     if(!ui->meshesGroupBox->isChecked())
     {
-        settings.setValue("bMeshesNecessaryOptimization", false);
-        settings.setValue("bMeshesMediumOptimization", false);
-        settings.setValue("bMeshesFullOptimization", false);
+        settings->setValue("bMeshesNecessaryOptimization", false);
+        settings->setValue("bMeshesMediumOptimization", false);
+        settings->setValue("bMeshesFullOptimization", false);
     }
 
     //Animations
 
     if(ui->animationsGroupBox->isChecked())
-        settings.setValue("bAnimationsOptimization", true);
+        settings->setValue("bAnimationsOptimization", true);
     else
-        settings.setValue("bAnimationsOptimization", false);
+        settings->setValue("bAnimationsOptimization", false);
 
     //Dry run and mode
-    settings.setValue("DryRun", ui->dryRunCheckBox->isChecked());
-    settings.setValue("mode", ui->modeChooserComboBox->currentIndex());
-    settings.setValue("SelectedPath", ui->userPathTextEdit->text());
+    settings->setValue("DryRun", ui->dryRunCheckBox->isChecked());
+    settings->setValue("mode", ui->modeChooserComboBox->currentIndex());
+    settings->setValue("SelectedPath", QDir::cleanPath(ui->userPathTextEdit->text()));
 
     //GUI
 
-    settings.setValue("bDarkMode", bDarkMode);
-    settings.setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
-    settings.setValue("texturesGroupBox", ui->texturesGroupBox->isChecked());
-    settings.setValue("meshesGroupBox", ui->meshesGroupBox->isChecked());
-    settings.setValue("animationsGroupBox", ui->animationsGroupBox->isChecked());
+    settings->setValue("bDarkMode", bDarkMode);
+    settings->setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
+    settings->setValue("texturesGroupBox", ui->texturesGroupBox->isChecked());
+    settings->setValue("meshesGroupBox", ui->meshesGroupBox->isChecked());
+    settings->setValue("animationsGroupBox", ui->animationsGroupBox->isChecked());
 
     this->loadUIFromFile();
 }

@@ -84,6 +84,7 @@ signals:
     void progressBarReset();
     void progressBarBusy();
     void end();
+    void updateLog();
 };
 
 
