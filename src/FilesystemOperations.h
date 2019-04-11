@@ -52,6 +52,7 @@ public:
      * \param path The path of the directory to scan
      * \return  A QPair containing two qint64. The first will contain the textures size, the second will contain the other assets size.
      */
+
     static QPair<qint64, qint64> assetsSize(const QString& path);
     /*!
      * \brief Delete empty directories in the given directory

@@ -127,7 +127,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
     //Deleting empty dirs
 
-    system(qPrintable("cd /d \"" + options.userPath + R"(" && for /f "delims=" %d in ('dir /s /b /ad ^| sort /r') do rd "%d" >nul 2>nul)"));
+    FilesystemOperations::deleteEmptyDirectories(options.userPath);
 
     emit end();
 
