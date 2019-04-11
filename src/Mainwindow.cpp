@@ -9,7 +9,9 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     //Loading remembered settings
     settings = new QSettings("Cathedral Assets Optimizer.ini", QSettings::IniFormat, this);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
-    settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));
+
+    if(!settings->contains("logLevel"))
+        settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));
     this->loadUIFromFile();
 
     //Preparing log

@@ -45,7 +45,7 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
     //Running Nifscan and ListHeadparts to fill lists
 
     QProcess nifScan;
-    nifScan.start(QCoreApplication::applicationDirPath() + "/resources/NifScan.exe", QStringList() << directory.path() << "fixdds");
+    nifScan.start(QCoreApplication::applicationDirPath() + "/resources/NifScan.exe", QStringList { folderPath, "-fixdds" });
 
     if(!nifScan.waitForFinished(180000))
         QLogger::QLog_Error("MeshesOptimizer", tr("Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod."));
@@ -74,8 +74,8 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
     listHeadparts(directory);
     cleanMeshesLists();
 
-    //QLogger::QLog_Trace("MeshesOptimizer", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n"
-    // + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));
+    QLogger::QLog_Debug("MeshesOptimizer", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n"
+     + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));
 }
 
 

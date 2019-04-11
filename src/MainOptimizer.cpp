@@ -14,6 +14,11 @@ void MainOptimizer::init() //Some necessary operations before running
 
     logManager->setLogLevelForAllWriters(logLevel);
 
+    //Note log level is required for dry run
+
+    if(options.bDryRun && QLogger::logLevelToInt(logLevel) > 2)
+        logManager->setLogLevelForAllWriters(QLogger::LogLevel::Note);
+
     //Disabling BSA process if Skyrim folder is choosed
 
     if(options.userPath == FilesystemOperations::findSkyrimDirectory() + "/data" && (options.bBsaExtract || options.bBsaCreate))
@@ -100,10 +105,10 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
         if (options.bBsaPackLooseFiles || options.bBsaSplitAssets)
             fsOperations.prepareBsas(modpathDir, options.bBsaSplitAssets);
 
-        QLogger::QLog_Info("MainOptimizer", tr("Creating BSAs..."));
-
         if(options.bBsaCreate)
         {
+            QLogger::QLog_Info("MainOptimizer", tr("Creating BSAs..."));
+
             QDirIterator bsaIt(modpathDir);
             while(bsaIt.hasNext())
             {
@@ -213,13 +218,16 @@ void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
             meshesOptimizer.dryOptimize(it.filePath());
 
         if(options.bTexturesFullOptimization && it.fileName().right(4).toLower() == ".dds")
-            TexturesOptimizer::isCompressed(it.filePath());
+        {
+            if(TexturesOptimizer::isCompressed(it.filePath()))
+                QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be compressed to BC7"));
+        }
 
         if(options.bTexturesNecessaryOptimization && it.fileName().right(4).toLower() == ".tga")
-            QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be converted to DDS"));
+            QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be converted to DDS"));
 
         if(options.bAnimationsOptimization && it.fileName().right(4).toLower() == ".hkx")
-            QLogger::QLog_Info("MainOptimizer", it.filePath() + tr(" would be ported to SSE"));
+            QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be ported to SSE"));
     }
 }
 
@@ -240,7 +248,7 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
     options.bBsaDeleteBackup = settings.value("bBsaDeleteBackup").toBool();
     options.bBsaSplitAssets = settings.value("bBsaSplitAssets").toBool();
 
-    options.bMeshesProcess = settings.value(" meshesGroupBox").toBool();
+    options.bMeshesProcess = settings.value("meshesGroupBox").toBool();
 
     options.bTexturesNecessaryOptimization = settings.value("bTexturesNecessaryOptimization").toBool();
     options.bTexturesFullOptimization = settings.value("bTexturesFullOptimization").toBool();

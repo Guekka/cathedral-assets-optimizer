@@ -17,7 +17,7 @@ void TexturesOptimizer::convertToBc7IfUncompressed(const QString &filePath) //Co
 
         if(textureSize > 16)
         {
-            QLogger::QLog_Note("TexturesOptimizer", tr("Compressing uncompressed texture: ") + filePath.mid(filePath.lastIndexOf("/")+1));
+            QLogger::QLog_Note("TexturesOptimizer", tr("Compressing uncompressed texture: ") + QFileInfo(filePath).fileName());
 
             QProcess texconv;
             QStringList texconvArg{ "-nologo", "-y", "-m", "0", "-pow2", "-if", "FANT", "-f", "BC7_UNORM", "-bcmax", filePath};
@@ -50,8 +50,5 @@ bool TexturesOptimizer::isCompressed(const QString &filePath)
     texDiag.start(QCoreApplication::applicationDirPath() + "/resources/texdiag.exe", QStringList {"info", filePath});
     texDiag.waitForFinished(-1);
 
-    if(texDiag.readAllStandardOutput().contains("compressed = no"))
-        return false;
-    else
-        return true;
+    return texDiag.readAllStandardOutput().contains("compressed = no");
 }
