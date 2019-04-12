@@ -1,5 +1,8 @@
 #include "Mainwindow.h"
 #include "QLogger.h"
+#include "IntegrationTests.h"
+
+#define ENABLE_TEST 1
 
 int main(int argc, char *argv[])
 {
@@ -15,8 +18,13 @@ int main(int argc, char *argv[])
 
     QLogger::QLoggerManager::getInstance();
 
+#if ENABLE_TEST
+    IntegrationTests tests(QCoreApplication::arguments().at(1));
+    tests.runAllTests();
+#else
     MainWindow w;
     w.show();
+#endif
 
     return app.exec();
 }

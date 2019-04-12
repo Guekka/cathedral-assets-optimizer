@@ -174,12 +174,13 @@ bool MainOptimizer::checkRequirements()  //Checking if all the requirements are 
 
 void MainOptimizer::optimizeAssets(const QString& folderPath)
 {
-    QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes..."));
+    QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes...") + "\n" + tr("Listing meshes..."));
     emit progressBarBusy();
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
     MeshesOptimizer meshesOptimizer;
+
     meshesOptimizer.list(folderPath);
 
     while(it.hasNext())

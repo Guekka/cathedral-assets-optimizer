@@ -259,48 +259,45 @@ void MainWindow::saveUIToFile()
 
 void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
-    QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
-
-    ui->userPathTextEdit->setText(settings.value("SelectedPath").toString());
+    ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
 
     //Options
 
-    ui->extractBsaCheckbox->setChecked(settings.value("bBsaExtract").toBool());
-    ui->recreatetBsaCheckbox->setChecked(settings.value("bBsaCreate").toBool());
-    ui->packExistingAssetsCheckbox->setChecked(settings.value("bBsaPackLooseFiles").toBool());
-    ui->bsaDeleteBackupsCheckbox->setChecked(settings.value("bBsaDeleteBackup").toBool());
-    ui->bsaSplitAssetsCheckBox->setChecked(settings.value("bBsaSplitAssets").toBool());
+    ui->extractBsaCheckbox->setChecked(settings->value("bBsaExtract").toBool());
+    ui->recreatetBsaCheckbox->setChecked(settings->value("bBsaCreate").toBool());
+    ui->packExistingAssetsCheckbox->setChecked(settings->value("bBsaPackLooseFiles").toBool());
+    ui->bsaDeleteBackupsCheckbox->setChecked(settings->value("bBsaDeleteBackup").toBool());
+    ui->bsaSplitAssetsCheckBox->setChecked(settings->value("bBsaSplitAssets").toBool());
 
-    ui->TexturesNecessaryOptimizationRadioButton->setChecked(settings.value("bTexturesNecessaryOptimization").toBool());
-    ui->TexturesFullOptimizationRadioButton->setChecked(settings.value("bTexturesFullOptimization").toBool());
+    ui->TexturesNecessaryOptimizationRadioButton->setChecked(settings->value("bTexturesNecessaryOptimization").toBool());
+    ui->TexturesFullOptimizationRadioButton->setChecked(settings->value("bTexturesFullOptimization").toBool());
 
-    ui->MeshesNecessaryOptimizationRadioButton->setChecked(settings.value("bMeshesNecessaryOptimization").toBool());
-    ui->MeshesMediumOptimizationRadioButton->setChecked(settings.value("bMeshesMediumOptimization").toBool());
-    ui->MeshesFullOptimizationRadioButton->setChecked(settings.value("bMeshesFullOptimization").toBool());
+    ui->MeshesNecessaryOptimizationRadioButton->setChecked(settings->value("bMeshesNecessaryOptimization").toBool());
+    ui->MeshesMediumOptimizationRadioButton->setChecked(settings->value("bMeshesMediumOptimization").toBool());
+    ui->MeshesFullOptimizationRadioButton->setChecked(settings->value("bMeshesFullOptimization").toBool());
 
-    ui->animationOptimizationRadioButton->setChecked(settings.value("bAnimationsOptimization").toBool());
+    ui->animationOptimizationRadioButton->setChecked(settings->value("bAnimationsOptimization").toBool());
 
-    ui->modeChooserComboBox->setCurrentIndex(settings.value("mode").toInt());
-    ui->dryRunCheckBox->setChecked(settings.value("DryRun").toBool());
+    ui->modeChooserComboBox->setCurrentIndex(settings->value("mode").toInt());
+    ui->dryRunCheckBox->setChecked(settings->value("DryRun").toBool());
 
-    if(settings.value("bBsaCreate").toBool())
+    if(settings->value("bBsaCreate").toBool())
         ui->packExistingAssetsCheckbox->setDisabled(false);
     else
     {
         ui->packExistingAssetsCheckbox->setChecked(false);
-        settings.setValue("bBsaPackLooseFiles", false);
+        settings->setValue("bBsaPackLooseFiles", false);
         ui->packExistingAssetsCheckbox->setDisabled(true);
     }
 
     //GUI options
 
-    bDarkMode = settings.value("bDarkMode").toBool();
+    bDarkMode = settings->value("bDarkMode").toBool();
 
-    ui->BsaGroupBox->setChecked(settings.value("BsaGroupBox").toBool());
-    ui->texturesGroupBox->setChecked(settings.value("texturesGroupBox").toBool());
-    ui->meshesGroupBox->setChecked(settings.value("meshesGroupBox").toBool());
-    ui->animationsGroupBox->setChecked(settings.value("animationsGroupBox").toBool());
+    ui->BsaGroupBox->setChecked(settings->value("BsaGroupBox").toBool());
+    ui->texturesGroupBox->setChecked(settings->value("texturesGroupBox").toBool());
+    ui->meshesGroupBox->setChecked(settings->value("meshesGroupBox").toBool());
+    ui->animationsGroupBox->setChecked(settings->value("animationsGroupBox").toBool());
 
     //Dark mode
 
@@ -328,16 +325,16 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         ui->MeshesMediumOptimizationRadioButton->setDisabled(true);
         ui->MeshesFullOptimizationRadioButton->setDisabled(true);
         ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);
-        settings.setValue("bMeshesNecessaryOptimization", false);
-        settings.setValue("bMeshesMediumOptimization", false);
-        settings.setValue("bMeshesFullOptimization", false);
-        settings.setValue("bMeshesHeadparts", false);
+        settings->setValue("bMeshesNecessaryOptimization", false);
+        settings->setValue("bMeshesMediumOptimization", false);
+        settings->setValue("bMeshesFullOptimization", false);
+        settings->setValue("bMeshesHeadparts", false);
     }
     else
     {
         ui->MeshesMediumOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
         ui->MeshesFullOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
-        settings.setValue("bMeshesHeadparts", true);
+        settings->setValue("bMeshesHeadparts", true);
     }
 
 }
@@ -346,10 +343,16 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
 
 void MainWindow::updateLog()
 {
+    ui->plainTextEdit->clear();
+
     QFile log("logs/log.html");
     log.open(QFile::Text | QFile::ReadOnly);
-    ui->plainTextEdit->clear();
-    ui->plainTextEdit->appendHtml(log.readAll());
+
+    QTextStream ts(&log);
+    ts.setCodec(QTextCodec::codecForName("UTF-8"));
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+
+    ui->plainTextEdit->appendHtml(ts.readAll());
     log.close();
 }
 

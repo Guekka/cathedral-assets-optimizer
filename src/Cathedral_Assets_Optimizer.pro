@@ -33,7 +33,8 @@ SOURCES += \
     FilesystemOperations.cpp \
     PluginsOperations.cpp \
     AnimationsOptimizer.cpp \
-    MainOptimizer.cpp
+    MainOptimizer.cpp \
+    IntegrationTests.cpp
 
 HEADERS += \
     pch.h \
@@ -45,7 +46,8 @@ HEADERS += \
     FilesystemOperations.h \
     PluginsOperations.h \
     AnimationsOptimizer.h \
-    MainOptimizer.h
+    MainOptimizer.h \
+    IntegrationTests.h
 
 PRECOMPILED_HEADER = pch.h
 
