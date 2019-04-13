@@ -50,10 +50,11 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
     if(!nifScan.waitForFinished(180000))
         QLogger::QLog_Error("MeshesOptimizer", tr("Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod."));
 
+    QString currentFile;
+
     while(nifScan.canReadLine())
     {
         QString readLine = QString::fromLocal8Bit(nifScan.readLine());
-        QString currentFile;
 
         if(readLine.contains("meshes\\", Qt::CaseInsensitive) && !readLine.contains("Error", Qt::CaseInsensitive))
         {
@@ -66,7 +67,7 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
 
         else if(readLine.contains("unsupported", Qt::CaseInsensitive) || readLine.contains("not supported", Qt::CaseInsensitive))
         {
-            crashingMeshes << directory.filePath(currentFile);;
+            crashingMeshes << directory.filePath(currentFile);
             otherMeshes.removeAll(directory.filePath(currentFile));
         }
     }
