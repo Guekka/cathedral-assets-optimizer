@@ -3,7 +3,7 @@
 BsaOptimizer::BsaOptimizer() {}
 
 
-void BsaOptimizer::bsaExtract(const QString& bsaPath, bool makeBackup) //Extracts all BSA in modPath
+void BsaOptimizer::bsaExtract(const QString &bsaPath, const bool &makeBackup, const bool &keepFileInBsaFolder)
 {
     QDir directory(QFileInfo(bsaPath).path());
     QStringList files(directory.entryList());
@@ -26,12 +26,14 @@ void BsaOptimizer::bsaExtract(const QString& bsaPath, bool makeBackup) //Extract
 
     if(bsarch.readAllStandardOutput().contains("Done"))
     {
-        //TODO only move if bsa create is disabled
-        if(!moveFilesFromBsaFolderToRootFolder(bsaFolder))
-            QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory."));
+        if(!keepFileInBsaFolder)
+            if(!moveFilesFromBsaFolderToRootFolder(bsaFolder))
+                QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory."));
 
-        else if(!makeBackup)
+        if(!makeBackup)
             QFile::remove(bsaPath);
+
+        QLogger::QLog_Info("BsaOptimizer", tr("BSA successfully extracted: ") + bsaPath);
     }
     else
         QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted."));

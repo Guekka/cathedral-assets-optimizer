@@ -80,10 +80,10 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
             while(bsaIt.hasNext())
             {
-                if(bsaIt.next().right(4) == ".bsa")
+                if(bsaIt.next().endsWith(".bsa"))
                 {
                     QLogger::QLog_Note("MainOptimizer", tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
-                    bsaOptimizer.bsaExtract(bsaIt.filePath(), !options.bBsaDeleteBackup);
+                    bsaOptimizer.bsaExtract(bsaIt.filePath(), !options.bBsaDeleteBackup, options.bBsaCreate);
                 }
             }
              emit progressBarIncrease();
@@ -112,7 +112,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
             while(bsaIt.hasNext())
             {
                 bsaIt.next();
-                if(bsaIt.fileName().right(13) == "bsa.extracted")
+                if(bsaIt.fileName().endsWith("bsa.extracted"))
                 {
                     QLogger::QLog_Trace("MainOptimizer", "bsa folder found: " + bsaIt.fileName());
                     bsaOptimizer.bsaCreate(bsaIt.filePath());
@@ -189,16 +189,16 @@ void MainOptimizer::optimizeAssets(const QString& folderPath)
     {
         it.next();
 
-        if((options.bMeshesProcess && it.fileName().right(4).toLower() == ".nif"))
+        if(options.bMeshesProcess && it.fileName().endsWith(".nif", Qt::CaseInsensitive))
             meshesOptimizer.optimize(it.filePath());
 
-        if(options.bTexturesFullOptimization && it.fileName().right(4).toLower() == ".dds")
+        if(options.bTexturesFullOptimization && it.fileName().endsWith(".dds", Qt::CaseInsensitive))
             TexturesOptimizer::convertToBc7IfUncompressed(it.filePath());
 
-        if(options.bTexturesNecessaryOptimization && it.fileName().right(4).toLower() == ".tga")
+        if(options.bTexturesNecessaryOptimization && it.fileName().endsWith(".tga", Qt::CaseInsensitive))
             TexturesOptimizer::convertTgaToDds(it.filePath());
 
-        if(options.bAnimationsOptimization && it.fileName().right(4).toLower() == ".hkx")
+        if(options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive))
             AnimationsOptimizer::optimize(it.filePath());
     }
 }
@@ -218,19 +218,19 @@ void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
     {
         it.next();
 
-        if((options.bMeshesProcess && it.fileName().right(4).toLower() == ".nif"))
+        if(options.bMeshesProcess && it.fileName().endsWith(".nif", Qt::CaseInsensitive))
             meshesOptimizer.dryOptimize(it.filePath());
 
-        if(options.bTexturesFullOptimization && it.fileName().right(4).toLower() == ".dds")
+        if(options.bTexturesFullOptimization && it.fileName().endsWith(".dds", Qt::CaseInsensitive))
         {
             if(TexturesOptimizer::isCompressed(it.filePath()))
                 QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be compressed to BC7"));
         }
 
-        if(options.bTexturesNecessaryOptimization && it.fileName().right(4).toLower() == ".tga")
+        if(options.bTexturesNecessaryOptimization && it.fileName().endsWith(".tga", Qt::CaseInsensitive))
             QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be converted to DDS"));
 
-        if(options.bAnimationsOptimization && it.fileName().right(4).toLower() == ".hkx")
+        if(options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive))
             QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be ported to SSE"));
     }
 }

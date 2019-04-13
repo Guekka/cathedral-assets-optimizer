@@ -22,8 +22,9 @@ public:
      * \brief Will extract a BSA
      * \param bsaPath The path of the BSA to extract
      * \param deleteBsaBackup Backup the existing bsa
+     * \param keepFileInBsaFolder Whether files will be moved to mod root or not
      */
-    void bsaExtract(const QString& bsaPath, bool makeBackup);
+    void bsaExtract(const QString& bsaPath, const bool& makeBackup, const bool& keepFileInBsaFolder);
     /*!
      * \brief Will create a BSA
      * \param bsaFolderPath The path of the folder to pack into a BSA

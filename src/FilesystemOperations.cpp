@@ -40,12 +40,12 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
 
     for (int i = 0; i < dirs.size(); ++i)
     {
-        if(dirs.at(i).right(13) == "bsa.extracted" && dirs.at(i).contains("- Textures", Qt::CaseInsensitive))
+        if(dirs.at(i).endsWith("bsa.extracted") && dirs.at(i).contains("- Textures", Qt::CaseInsensitive))
         {
             texturesBsaList << directory.filePath(dirs.at(i));
             moveFiles(directory.filePath(dirs.at(i)), directory.path(), false);
         }
-        else if(dirs.at(i).right(13) == "bsa.extracted")
+        else if(dirs.at(i).endsWith("bsa.extracted"))
         {
             bsaList << directory.filePath(dirs.at(i));
             moveFiles(directory.filePath(dirs.at(i)), directory.path(), false);

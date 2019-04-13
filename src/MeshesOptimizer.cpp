@@ -200,7 +200,7 @@ void MeshesOptimizer::dryOptimize(const QString &filePath)
 
     while (textures.hasNext())
     {
-        if(textures.next().right(3).toLower() == "dds")
+        if(textures.next().endsWith(".dds", Qt::CaseInsensitive))
             storedTextures << modpathDir.relativeFilePath(textures.filePath());
     }
 
