@@ -41,19 +41,10 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
     connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
 
-    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [=](bool state)
-    {
-        if(state)
-        {
-            QMessageBox warning(this);
-            warning.setText(tr("You have selected to perform a dry run. No files will be modified, but BSAs will be extracted if that option was selected."));
-            warning.addButton(QMessageBox::Ok);
-            warning.exec();
-        }
-        this->saveUIToFile();
-    });
-
     //Connecting the other widgets
+
+    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &MainWindow::saveUIToFile);
 
     connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [=]
     {
@@ -67,7 +58,6 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
         this->saveUIToFile();
     });
 
-    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &MainWindow::saveUIToFile);
 
     connect(ui->userPathButton, &QPushButton::pressed, this, [=](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
@@ -79,9 +69,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
         if(QDir(ui->userPathTextEdit->text()).exists())
-        {
             this->initProcess();
-        }
         else
             QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
 
@@ -243,6 +231,20 @@ void MainWindow::saveUIToFile()
 
     //Dry run and mode
     settings->setValue("DryRun", ui->dryRunCheckBox->isChecked());
+
+    if(ui->dryRunCheckBox->isChecked())
+    {
+        ui->BsaGroupBox->setChecked(false);
+        ui->BsaGroupBox->setEnabled(false);
+        settings->setValue("bBsaExtract", false);
+        settings->setValue("bBsaCreate", false);
+        settings->setValue("bBsaPackLooseFiles", false);
+        settings->setValue("bBsaDeleteBackup", false);
+        settings->setValue("bBsaSplitAssets", false);
+    }
+    else
+        ui->BsaGroupBox->setEnabled(true);
+
     settings->setValue("mode", ui->modeChooserComboBox->currentIndex());
     settings->setValue("SelectedPath", QDir::cleanPath(ui->userPathTextEdit->text()));
 

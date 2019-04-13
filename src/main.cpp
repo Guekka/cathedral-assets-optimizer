@@ -2,7 +2,7 @@
 #include "QLogger.h"
 #include "IntegrationTests.h"
 
-#define ENABLE_TEST 1
+#define ENABLE_TEST 0
 
 int main(int argc, char *argv[])
 {

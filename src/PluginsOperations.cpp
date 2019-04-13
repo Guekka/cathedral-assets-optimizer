@@ -54,7 +54,7 @@ QString PluginsOperations::findPlugin(const QString& folderPath) //Find esp/esl/
 
     espName = QDir(folderPath).dirName() + ".esp";
     QLogger::QLog_Debug("PluginsOperations", "Using: " + espName + " as esp name.");
-    return espName;
+    return espName.chopped(4);
 }
 
 

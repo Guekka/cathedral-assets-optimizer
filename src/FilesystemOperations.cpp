@@ -52,7 +52,7 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
         }
     }
 
-    QString espName = PluginsOperations::findPlugin(folderPath).remove(".esp");
+    QString espName = PluginsOperations::findPlugin(folderPath);
     QString bsaName;
 
     if(splitAssets)

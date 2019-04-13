@@ -59,9 +59,7 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
         if(readLine.contains("meshes\\", Qt::CaseInsensitive) && !readLine.contains("Error", Qt::CaseInsensitive))
         {
             currentFile = QDir::cleanPath(readLine.simplified());
-            if(currentFile.contains("facegendata"))
-                headparts << directory.filePath(currentFile);
-            else
+            if(!currentFile.contains("facegendata"))
                 otherMeshes << directory.filePath(currentFile);
         }
 

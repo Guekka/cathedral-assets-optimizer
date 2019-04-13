@@ -89,6 +89,8 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
              emit progressBarIncrease();
         }
 
+        FilesystemOperations::deleteEmptyDirectories(options.userPath);
+
         if(options.bDryRun)
             dryOptimizeAssets(modpathDir);
         else
