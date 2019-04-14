@@ -14,13 +14,13 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 
         if(it.fileName().endsWith(".bsa", Qt::CaseInsensitive) && it.fileName().contains("- Textures", Qt::CaseInsensitive))
         {
-            espName = it.fileName().remove(" - Textures.bsa") + ".esp";
+            espName = it.fileName().remove(" - Textures.bsa", Qt::CaseInsensitive) + ".esp";
             QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", folderPath + "/" + espName);
             QLogger::QLog_Trace("PluginsOperations", "Created textures bsa plugin:" + espName);
         }
         else if(it.fileName().endsWith(".bsa", Qt::CaseInsensitive))
         {
-            espName = it.fileName().remove(".bsa") + ".esp";
+            espName = it.fileName().remove(".bsa", Qt::CaseInsensitive) + ".esp";
             QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", folderPath + "/" + espName);
             QLogger::QLog_Trace("PluginsOperations", "Created standard bsa plugin:" + espName);
         }

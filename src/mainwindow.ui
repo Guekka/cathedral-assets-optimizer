@@ -591,6 +591,9 @@
    </property>
   </action>
   <action name="actionLogVerbosityTrace">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Maximal</string>
    </property>
@@ -605,6 +608,9 @@
    </property>
   </action>
   <action name="actionLogVerbosityNote">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>High</string>
    </property>
@@ -616,6 +622,9 @@
    </property>
   </action>
   <action name="actionLogVerbosityInfo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Normal</string>
    </property>
@@ -624,6 +633,9 @@
    </property>
   </action>
   <action name="actionLogVerbosityWarning">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Minimal</string>
    </property>

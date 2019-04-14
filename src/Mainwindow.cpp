@@ -86,9 +86,16 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
 
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &MainWindow::loadUIFromFile);
+
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Note));});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &MainWindow::loadUIFromFile);
+
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Trace));});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &MainWindow::loadUIFromFile);
+
     connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Warning));});
+    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 }
 
 
@@ -301,6 +308,21 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
     ui->meshesGroupBox->setChecked(settings->value("meshesGroupBox").toBool());
     ui->animationsGroupBox->setChecked(settings->value("animationsGroupBox").toBool());
 
+    //Log level actions
+
+    ui->actionLogVerbosityInfo->setChecked(false);
+    ui->actionLogVerbosityNote->setChecked(false);
+    ui->actionLogVerbosityTrace->setChecked(false);
+    ui->actionLogVerbosityWarning->setChecked(false);
+
+    switch (settings->value("logLevel").toInt())
+    {
+    case 0: ui->actionLogVerbosityTrace->setChecked(true); break;
+    case 2: ui->actionLogVerbosityNote->setChecked(true); break;
+    case 3: ui->actionLogVerbosityInfo->setChecked(true); break;
+    case 4: ui->actionLogVerbosityWarning->setChecked(true); break;
+    }
+
     //Dark mode
 
     if(bDarkMode)
@@ -338,7 +360,6 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         ui->MeshesFullOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
         settings->setValue("bMeshesHeadparts", true);
     }
-
 }
 
 
@@ -348,14 +369,15 @@ void MainWindow::updateLog()
     ui->plainTextEdit->clear();
 
     QFile log("logs/log.html");
-    log.open(QFile::Text | QFile::ReadOnly);
+    if(log.open(QFile::Text | QFile::ReadOnly))
+    {
+        QTextStream ts(&log);
+        ts.setCodec(QTextCodec::codecForName("UTF-8"));
+        QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 
-    QTextStream ts(&log);
-    ts.setCodec(QTextCodec::codecForName("UTF-8"));
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-
-    ui->plainTextEdit->appendHtml(ts.readAll());
-    log.close();
+        ui->plainTextEdit->appendHtml(ts.readAll());
+        log.close();
+    }
 }
 
 MainWindow::~MainWindow()
