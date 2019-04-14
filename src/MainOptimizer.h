@@ -61,7 +61,7 @@ public:
 
     void loadSettings();
 
-    void setLogLevel(const QLogger::LogLevel &value);
+    void setLogLevel(const QLogger::LogLevel &value) { logLevel = value; }
 
 private:
     QStringList modDirs;

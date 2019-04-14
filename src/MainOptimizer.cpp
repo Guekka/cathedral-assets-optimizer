@@ -260,10 +260,5 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
     options.bAnimationsOptimization = settings.value("bAnimationsOptimization").toBool();
 }
 
-void MainOptimizer::setLogLevel(const QLogger::LogLevel &value)
-{
-    logLevel = value;
-}
-
 
 

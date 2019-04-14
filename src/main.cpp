@@ -16,8 +16,6 @@ int main(int argc, char *argv[])
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     app.installTranslator(&AssetsOptTranslator);
 
-    QLogger::QLoggerManager::getInstance();
-
 #if ENABLE_TEST
     IntegrationTests tests(QCoreApplication::arguments().at(1));
     tests.runAllTests();
