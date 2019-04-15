@@ -243,20 +243,21 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
     options.iMode = settings.value("iMode").toInt();
     options.bDryRun = settings.value("bDryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
-
     logLevel = QLogger::intToLogLevel(settings.value("iLogLevel").toInt());
 
+    settings.beginGroup("BSA");
     options.bBsaExtract = settings.value("bBsaExtract").toBool();
     options.bBsaCreate = settings.value("bBsaCreate").toBool();
     options.bBsaPackLooseFiles = settings.value("bBsaPackLooseFiles").toBool();
     options.bBsaDeleteBackup = settings.value("bBsaDeleteBackup").toBool();
     options.bBsaSplitAssets = settings.value("bBsaSplitAssets").toBool();
+    settings.endGroup();
 
-    options.iMeshesOptimizationLevel = settings.value("iMeshesOptimizationLevel").toInt();
+    options.iMeshesOptimizationLevel = settings.value("Meshes/iMeshesOptimizationLevel").toInt();
 
-    options.iTexturesOptimizationLevel = settings.value("iTexturesOptimizationLevel").toInt();
+    options.iTexturesOptimizationLevel = settings.value("Textures/iTexturesOptimizationLevel").toInt();
 
-    options.bAnimationsOptimization = settings.value("bAnimationsOptimization").toBool();
+    options.bAnimationsOptimization = settings.value("Animations/bAnimationsOptimization").toBool();
 }
 
 

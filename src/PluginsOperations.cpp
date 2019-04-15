@@ -29,7 +29,7 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 }
 
 
-QString PluginsOperations::findPlugin(const QString& folderPath) //Find esp/esl/esm name using an iterator and regex. Also creates a plugin if there isn't one.
+QString PluginsOperations::findPlugin(const QString& folderPath)
 {
     QDirIterator it(folderPath);
     QString espName;
@@ -43,18 +43,21 @@ QString PluginsOperations::findPlugin(const QString& folderPath) //Find esp/esl/
         {
             espName=it.fileName();
             QLogger::QLog_Note("PluginsOperations", tr("Esp found: ") + espName);
-            return espName;
         }
 
         if(it.fileName().endsWith(".bsa", Qt::CaseInsensitive))
             bsaName = it.fileName().chopped(4) + ".esp";
     }
-    if(!bsaName.isEmpty())
-        return bsaName;
+    if(!bsaName.isEmpty() && espName.isEmpty())
+        espName = bsaName;
 
-    espName = QDir(folderPath).dirName() + ".esp";
-    QLogger::QLog_Debug("PluginsOperations", "Using: " + espName + " as esp name.");
-    return espName.chopped(4);
+    if(espName.isEmpty())
+    {
+        espName = QDir(folderPath).dirName() + ".esp";
+        QLogger::QLog_Debug("PluginsOperations", "Using: " + espName + " as esp name.");
+    }
+
+    return espName.remove(QRegularExpression("\\.es[plm]$"));
 }
 
 

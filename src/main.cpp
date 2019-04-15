@@ -55,35 +55,23 @@ bool parseArguments()
     }
     settings.setValue("iMode", parser.value("mode"));
 
-    if(!parser.value("dr").isEmpty())
-        settings.setValue("bDryRun", true);
+    settings.setValue("bDryRun", parser.isSet("dr"));
 
-    if(!parser.value("l").isEmpty())
+    if(parser.isSet("l"))
         settings.setValue("iLogLevel", parser.value("l").toInt());
 
-    if(!parser.value("m").isEmpty())
+    if(parser.isSet("m"))
         settings.setValue("iMeshesOptimizationLevel", parser.value("m").toInt());
 
-    if(!parser.value("t").isEmpty())
+    if(parser.isSet("t"))
         settings.setValue("iTexturesOptimizationLevel", parser.value("t").toInt());
 
-    if(!parser.value("a").isEmpty())
-        settings.setValue("bAnimationsOptimization", true);
-
-    if(!parser.value("be").isEmpty())
-        settings.setValue("bBsaExtract", true);
-
-    if(!parser.value("bc").isEmpty())
-        settings.setValue("bBsaCreate", true);
-
-    if(!parser.value("bl").isEmpty())
-        settings.setValue("bBsaPackLooseFiles", true);
-
-    if(!parser.value("bd").isEmpty())
-        settings.setValue("bBsaDeleteBackup", true);
-
-    if(!parser.value("bs").isEmpty())
-        settings.setValue("bBsaSplitAssets", true);
+    settings.setValue("bAnimationsOptimization", parser.isSet("a"));
+    settings.setValue("bBsaExtract", parser.isSet("be"));
+    settings.setValue("bBsaCreate", parser.isSet("bc"));
+    settings.setValue("bBsaPackLooseFiles", parser.isSet("bl"));
+    settings.setValue("bBsaDeleteBackup", parser.isSet("bd"));
+    settings.setValue("bBsaSplitAssets", parser.isSet("bs"));
 
     return true;
 }

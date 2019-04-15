@@ -77,7 +77,10 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
 
     QLogger::QLog_Debug("BsaOptimizer", "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolderPath + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()));
 
-    if(bsarch.readAllStandardOutput().contains("Done"))
+    QString bsarchOutput = bsarch.readAllStandardOutput();
+    QLogger::QLog_Debug("BsaOptimizer", bsarchOutput);
+
+    if(bsarchOutput.contains("Done"))
     {
         if(QFile(bsaName).size() < LONG_MAX)
         {

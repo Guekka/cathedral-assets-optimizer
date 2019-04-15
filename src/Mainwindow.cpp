@@ -219,7 +219,7 @@ void MainWindow::saveUIToFile()
 
     settings->beginGroup("Meshes");
 
-    if(ui->MeshesNecessaryOptimizationRadioButton->isChecked())
+    if(ui->meshesGroupBox->isChecked())
         settings->setValue("iMeshesOptimizationLevel", 1);
     if(ui->MeshesMediumOptimizationRadioButton->isChecked())
         settings->setValue("iMeshesOptimizationLevel", 2);
@@ -359,7 +359,7 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         ui->MeshesFullOptimizationRadioButton->setDisabled(true);
         ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);
     }
-    else
+    else if(ui->meshesGroupBox->isChecked())
     {
         ui->MeshesMediumOptimizationRadioButton->setDisabled(false);
         ui->MeshesFullOptimizationRadioButton->setDisabled(false);

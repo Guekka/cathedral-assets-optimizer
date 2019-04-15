@@ -131,7 +131,7 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
         QString relativeFilename = sourceDir.relativeFilePath(oldFiles.at(i));
         QString newFileRelativeFilename = destinationDir.relativeFilePath(QDir::cleanPath(destination + QDir::separator() + relativeFilename));
 
-        if(newFileRelativeFilename.size() >= 255)
+        if(newFileRelativeFilename.size() >= 255 || oldFiles.at(i).size() >=255)
         {
             QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
             return;
@@ -211,7 +211,7 @@ void FilesystemOperations::moveAssets(const QString &path, const QStringList &bs
         QLogger::QLog_Debug("FilesystemOperations", "\nOld file: " + oldFiles.at(i)
                             + "\nNew file: " + newFile);
 
-        if(newFile.size() >= 255)
+        if(newFile.size() >= 255 || oldFiles.at(i).size() >=255)
         {
             QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
             return;
