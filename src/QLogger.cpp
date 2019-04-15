@@ -94,7 +94,7 @@ namespace QLogger
 
        const auto logWriter = manager->getLogWriter(module);
 
-       if (logWriter and logWriter->getLevel() <= level)
+       if (logWriter && logWriter->getLevel() <= level)
                logWriter->write(module,message, level);
 }
 
