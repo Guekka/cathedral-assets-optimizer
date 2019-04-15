@@ -359,7 +359,7 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
     }
     QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
 
-    QDir::setCurrent(QApplication::applicationDirPath());
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
 }
 
 

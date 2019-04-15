@@ -20,7 +20,7 @@
  ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  ***************************************************************************************/
 
-#include "pch.h"
+#include "pch_core.h"
 
 /**************************************************************************************************/
 /***                                     GENERAL USAGE                                          ***/
@@ -102,8 +102,6 @@ namespace QLogger
      */
     class QLoggerWriter : public QObject
     {
-        Q_OBJECT
-
         public:
             /**
              * @brief Constructor that gets the complete path and filename to create the file. It also

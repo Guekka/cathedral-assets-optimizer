@@ -1,7 +1,7 @@
-#ifndef OPTIMISER_H
-#define OPTIMISER_H
+#ifndef MAIN_OPTIMIZER_H
+#define MAIN_OPTIMIZER_H
 
-#include "pch.h"
+#include "pch_core.h"
 #include "QLogger.h"
 #include "AnimationsOptimizer.h"
 #include "BsaOptimizer.h"
@@ -12,35 +12,17 @@
 
 struct optOptions
 {
-    optOptions()
-    {
-        mode = 0;
-        userPath = "";
-
-        bBsaExtract = true;
-        bBsaCreate = true;
-
-        bAnimationsOptimization = true;
-
-        bDryRun = false;
-    }
-
     bool bBsaExtract{};
     bool bBsaCreate{};
     bool bBsaPackLooseFiles{};
     bool bBsaDeleteBackup{};
     bool bBsaSplitAssets{};
-
-    bool bMeshesProcess{};
-
-    bool bTexturesNecessaryOptimization{};
-    bool bTexturesFullOptimization{};
-
     bool bAnimationsOptimization{};
-
     bool bDryRun{};
 
-    int mode{};
+    int iMeshesOptimizationLevel{};
+    int iTexturesOptimizationLevel{};
+    int iMode{};
 
     QString userPath;
 };
@@ -62,6 +44,8 @@ public:
     void loadSettings();
 
     void setLogLevel(const QLogger::LogLevel &value) { logLevel = value; }
+
+    static void resetSettings();
 
 private:
     QStringList modDirs;

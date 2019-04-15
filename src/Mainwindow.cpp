@@ -1,6 +1,7 @@
 #include "Mainwindow.h"
-#include "MainOptimizer.h"
 #include "ui_mainwindow.h"
+#include "MainOptimizer.h"
+#include "QLogger.h"
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {
@@ -11,7 +12,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
     if(!settings->contains("logLevel"))
-        settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));
+        settings->setValue("logLevel",  QLogger::logLevelToInt(QLogger::LogLevel::Info));
     this->loadUIFromFile();
 
     //Preparing log
@@ -81,20 +82,19 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     {
         bDarkMode = !bDarkMode;
         this->saveUIToFile();
-        this->loadUIFromFile();
     });
 
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Info));});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", QLogger::logLevelToInt(QLogger::LogLevel::Info));});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Note));});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", QLogger::logLevelToInt(QLogger::LogLevel::Note));});
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Trace));});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", QLogger::logLevelToInt(QLogger::LogLevel::Trace));});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", logLevelToInt(QLogger::LogLevel::Warning));});
+    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", QLogger::logLevelToInt(QLogger::LogLevel::Warning));});
     connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 }
 
@@ -165,7 +165,11 @@ void MainWindow::saveUIToFile()
     if(bLockVariables)
         return;
 
-    //BSA checkboxes
+    //BSA
+
+    settings->beginGroup("BSA");
+
+    settings->setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
 
     if(ui->BsaGroupBox->isChecked())
     {
@@ -184,84 +188,73 @@ void MainWindow::saveUIToFile()
         settings->setValue("bBsaSplitAssets", false);
     }
 
-    //Textures radio buttons
-
-    if(!ui->texturesGroupBox->isChecked())
-    {
-        settings->setValue("bTexturesNecessaryOptimization", false);
-        settings->setValue("bTexturesFullOptimization", false);
-    }
-    else if(ui->TexturesFullOptimizationRadioButton->isChecked())
-    {
-        settings->setValue("bTexturesNecessaryOptimization", true);
-        settings->setValue("bTexturesFullOptimization", true);
-    }
-    else if(ui->texturesGroupBox->isChecked())
-    {
-        settings->setValue("bTexturesNecessaryOptimization", true);
-        settings->setValue("bTexturesFullOptimization", false);
-    }
-
-    //Meshes radio buttons
-
-    if(ui->MeshesFullOptimizationRadioButton->isChecked())
-    {
-        settings->setValue("bMeshesNecessaryOptimization", true);
-        settings->setValue("bMeshesMediumOptimization", true);
-        settings->setValue("bMeshesFullOptimization", true);
-    }
-    else if(ui->MeshesMediumOptimizationRadioButton->isChecked())
-    {
-        settings->setValue("bMeshesNecessaryOptimization", true);
-        settings->setValue("bMeshesMediumOptimization", true);
-        settings->setValue("bMeshesFullOptimization", false);
-    }
-    else if(ui->meshesGroupBox->isChecked())
-    {
-        settings->setValue("bMeshesNecessaryOptimization", true);
-        settings->setValue("bMeshesMediumOptimization", false);
-        settings->setValue("bMeshesFullOptimization", false);
-    }
-    if(!ui->meshesGroupBox->isChecked())
-    {
-        settings->setValue("bMeshesNecessaryOptimization", false);
-        settings->setValue("bMeshesMediumOptimization", false);
-        settings->setValue("bMeshesFullOptimization", false);
-    }
-
-    //Animations
-
-    if(ui->animationsGroupBox->isChecked())
-        settings->setValue("bAnimationsOptimization", true);
-    else
-        settings->setValue("bAnimationsOptimization", false);
-
-    //Dry run and mode
-    settings->setValue("DryRun", ui->dryRunCheckBox->isChecked());
+    //Disabling BSA options if dry run is enabled
 
     if(ui->dryRunCheckBox->isChecked())
     {
-        ui->BsaGroupBox->setChecked(false);
-        ui->BsaGroupBox->setEnabled(false);
         settings->setValue("bBsaExtract", false);
         settings->setValue("bBsaCreate", false);
         settings->setValue("bBsaPackLooseFiles", false);
         settings->setValue("bBsaDeleteBackup", false);
         settings->setValue("bBsaSplitAssets", false);
     }
-    else
-        ui->BsaGroupBox->setEnabled(true);
 
-    settings->setValue("mode", ui->modeChooserComboBox->currentIndex());
+
+    settings->endGroup();
+
+    //Textures
+
+    settings->beginGroup("Textures");
+
+    if(ui->texturesGroupBox->isChecked())
+        settings->setValue("iTexturesOptimizationLevel", 1);
+    if(ui->TexturesFullOptimizationRadioButton->isChecked())
+        settings->setValue("iTexturesOptimizationLevel", 2);
+    if(!ui->texturesGroupBox->isChecked())
+        settings->setValue("iTexturesOptimizationLevel", 0);
+
+    settings->endGroup();
+
+    //Meshes
+
+    settings->beginGroup("Meshes");
+
+    if(ui->MeshesNecessaryOptimizationRadioButton->isChecked())
+        settings->setValue("iMeshesOptimizationLevel", 1);
+    if(ui->MeshesMediumOptimizationRadioButton->isChecked())
+        settings->setValue("iMeshesOptimizationLevel", 2);
+    if(ui->MeshesFullOptimizationRadioButton->isChecked())
+        settings->setValue("iMeshesOptimizationLevel", 3);
+    if(!ui->meshesGroupBox->isChecked())
+        settings->setValue("iMeshesOptimizationLevel", 0);
+
+    settings->endGroup();
+
+    //Animations
+
+    settings->beginGroup("Animations");
+    settings->setValue("bAnimationsOptimization", ui->animationsGroupBox->isChecked());
+    settings->endGroup();
+
+    //Dry run and mode
+
+    settings->setValue("bDryRun", ui->dryRunCheckBox->isChecked());
+    settings->setValue("iMode", ui->modeChooserComboBox->currentIndex());
     settings->setValue("SelectedPath", QDir::cleanPath(ui->userPathTextEdit->text()));
+
+    //Disabling some meshes options when several mods mode is enabled
+
+    if(settings->value("General/iMode").toInt() == 1)
+    {
+        settings->setValue("Meshes/iMeshesOptimizationLevel", 1);
+        settings->setValue("Meshes/bMeshesHeadparts", false);
+    }
+    else
+        settings->setValue("Meshes/bMeshesHeadparts", true);
 
     //GUI
 
     settings->setValue("bDarkMode", bDarkMode);
-    settings->setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
-    settings->setValue("texturesGroupBox", ui->texturesGroupBox->isChecked());
-    settings->setValue("meshesGroupBox", ui->meshesGroupBox->isChecked());
-    settings->setValue("animationsGroupBox", ui->animationsGroupBox->isChecked());
 
     this->loadUIFromFile();
 }
@@ -270,25 +263,15 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
 
-    //Options
+    //BSA
 
+    settings->beginGroup("BSA");
+    ui->BsaGroupBox->setChecked(settings->value("BsaGroupBox").toBool());
     ui->extractBsaCheckbox->setChecked(settings->value("bBsaExtract").toBool());
     ui->recreatetBsaCheckbox->setChecked(settings->value("bBsaCreate").toBool());
     ui->packExistingAssetsCheckbox->setChecked(settings->value("bBsaPackLooseFiles").toBool());
     ui->bsaDeleteBackupsCheckbox->setChecked(settings->value("bBsaDeleteBackup").toBool());
     ui->bsaSplitAssetsCheckBox->setChecked(settings->value("bBsaSplitAssets").toBool());
-
-    ui->TexturesNecessaryOptimizationRadioButton->setChecked(settings->value("bTexturesNecessaryOptimization").toBool());
-    ui->TexturesFullOptimizationRadioButton->setChecked(settings->value("bTexturesFullOptimization").toBool());
-
-    ui->MeshesNecessaryOptimizationRadioButton->setChecked(settings->value("bMeshesNecessaryOptimization").toBool());
-    ui->MeshesMediumOptimizationRadioButton->setChecked(settings->value("bMeshesMediumOptimization").toBool());
-    ui->MeshesFullOptimizationRadioButton->setChecked(settings->value("bMeshesFullOptimization").toBool());
-
-    ui->animationOptimizationRadioButton->setChecked(settings->value("bAnimationsOptimization").toBool());
-
-    ui->modeChooserComboBox->setCurrentIndex(settings->value("mode").toInt());
-    ui->dryRunCheckBox->setChecked(settings->value("DryRun").toBool());
 
     if(settings->value("bBsaCreate").toBool())
         ui->packExistingAssetsCheckbox->setDisabled(false);
@@ -299,23 +282,52 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         ui->packExistingAssetsCheckbox->setDisabled(true);
     }
 
-    //GUI options
+    settings->endGroup();
 
+    //Textures
+
+    settings->beginGroup("Textures");
+    switch (settings->value("iTexturesOptimizationLevel").toInt())
+    {
+    case 0: ui->texturesGroupBox->setChecked(false); break;
+    case 1: ui->texturesGroupBox->setChecked(true);     ui->TexturesNecessaryOptimizationRadioButton->setChecked(true);  break;
+    case 2: ui->texturesGroupBox->setChecked(true);     ui->TexturesFullOptimizationRadioButton->setChecked(true); break;
+    }
+    settings->endGroup();
+
+    //Meshes
+
+    settings->beginGroup("Meshes");
+    switch(settings->value("iMeshesOptimizationLevel").toInt())
+    {
+    case 0: ui->meshesGroupBox->setChecked(false); break;
+    case 1: ui->meshesGroupBox->setChecked(true);     ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);  break;
+    case 2: ui->meshesGroupBox->setChecked(true);     ui->MeshesMediumOptimizationRadioButton->setChecked(true); break;
+    case 3: ui->meshesGroupBox->setChecked(true);     ui->MeshesFullOptimizationRadioButton->setChecked(true); break;
+    }
+    settings->endGroup();
+
+    //Animations
+
+    settings->beginGroup("Animations");
+    ui->animationsGroupBox->setChecked(settings->value("bAnimationsOptimization").toBool());
+    settings->endGroup();
+
+    //General and GUI
+
+    ui->modeChooserComboBox->setCurrentIndex(settings->value("iMode").toInt());
+    ui->dryRunCheckBox->setChecked(settings->value("bDryRun").toBool());
     bDarkMode = settings->value("bDarkMode").toBool();
 
-    ui->BsaGroupBox->setChecked(settings->value("BsaGroupBox").toBool());
-    ui->texturesGroupBox->setChecked(settings->value("texturesGroupBox").toBool());
-    ui->meshesGroupBox->setChecked(settings->value("meshesGroupBox").toBool());
-    ui->animationsGroupBox->setChecked(settings->value("animationsGroupBox").toBool());
 
-    //Log level actions
+    //Log level
 
     ui->actionLogVerbosityInfo->setChecked(false);
     ui->actionLogVerbosityNote->setChecked(false);
     ui->actionLogVerbosityTrace->setChecked(false);
     ui->actionLogVerbosityWarning->setChecked(false);
 
-    switch (settings->value("logLevel").toInt())
+    switch (settings->value("iLogLevel").toInt())
     {
     case 0: ui->actionLogVerbosityTrace->setChecked(true); break;
     case 2: ui->actionLogVerbosityNote->setChecked(true); break;
@@ -323,43 +335,48 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
     case 4: ui->actionLogVerbosityWarning->setChecked(true); break;
     }
 
-    //Dark mode
+    //Enabling dark mode
 
     if(bDarkMode)
     {
         QFile f(":qdarkstyle/style.qss");
         f.open(QFile::ReadOnly | QFile::Text);
-        QTextStream ts(&f);
-        qApp->setStyleSheet(ts.readAll());
+        qApp->setStyleSheet(f.readAll());
         f.close();
-        bDarkMode = true;
         ui->actionSwitch_to_dark_theme->setText(tr("Switch to light theme"));
     }
     else if(!bDarkMode)
     {
         qApp->setStyleSheet("");
-        bDarkMode=false;
         ui->actionSwitch_to_dark_theme->setText(tr("Switch to dark theme"));
     }
 
     //Disabling some meshes options when several mods mode is enabled
 
-    if(ui->modeChooserComboBox->currentIndex() == 1)
+    if(settings->value("iMode").toInt() == 1)
     {
         ui->MeshesMediumOptimizationRadioButton->setDisabled(true);
         ui->MeshesFullOptimizationRadioButton->setDisabled(true);
         ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);
-        settings->setValue("bMeshesNecessaryOptimization", false);
-        settings->setValue("bMeshesMediumOptimization", false);
-        settings->setValue("bMeshesFullOptimization", false);
-        settings->setValue("bMeshesHeadparts", false);
     }
     else
     {
-        ui->MeshesMediumOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
-        ui->MeshesFullOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
-        settings->setValue("bMeshesHeadparts", true);
+        ui->MeshesMediumOptimizationRadioButton->setDisabled(false);
+        ui->MeshesFullOptimizationRadioButton->setDisabled(false);
     }
+
+    //Disabling BSA options if dry run is enabled
+
+    if(ui->dryRunCheckBox->isChecked())
+    {
+        ui->BsaGroupBox->setChecked(false);
+        ui->BsaGroupBox->setEnabled(false);
+    }
+    else
+        ui->BsaGroupBox->setEnabled(true);
+
+
+    // TODO add headparts checkbox to UI
 }
 
 

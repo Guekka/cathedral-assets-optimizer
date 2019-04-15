@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include "MainOptimizer.h"
-#include "pch.h"
+#include "pch_gui.h"
 #include "QLogger.h"
 
 namespace Ui {

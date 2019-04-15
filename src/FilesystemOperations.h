@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMOPERATIONS_H
 #define FILESYSTEMOPERATIONS_H
 
-#include "pch.h"
+#include "pch_core.h"
 #include "QLogger.h"
 #include "PluginsOperations.h"
 

@@ -1,7 +1,7 @@
 #ifndef BSAOPTIMIZER_H
 #define BSAOPTIMIZER_H
 
-#include "pch.h"
+#include "pch_core.h"
 #include "QLogger.h"
 #include "FilesystemOperations.h"
 

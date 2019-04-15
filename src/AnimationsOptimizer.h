@@ -1,7 +1,7 @@
 #ifndef ANIMATIONSOPTIMIZER_H
 #define ANIMATIONSOPTIMIZER_H
 
-#include "pch.h"
+#include "pch_core.h"
 #include "QLogger.h"
 
 /*!

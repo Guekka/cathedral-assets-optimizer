@@ -26,7 +26,7 @@ void BsaOptimizer::bsaExtract(const QString &bsaPath, const bool &makeBackup, co
 
     if(bsarch.readAllStandardOutput().contains("Done"))
     {
-        if(!keepFileInBsaFolder)
+         if(!keepFileInBsaFolder)
             if(!moveFilesFromBsaFolderToRootFolder(bsaFolder))
                 QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory."));
 

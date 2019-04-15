@@ -20,12 +20,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++17 precompile_header
-
+CONFIG += c++17 precompile_header static
 
 SOURCES += \
     main.cpp \
-    Mainwindow.cpp \
+    mainwindow.cpp \
     QLogger.cpp \
     TexturesOptimizer.cpp \
     MeshesOptimizer.cpp \
@@ -36,9 +35,9 @@ SOURCES += \
     MainOptimizer.cpp \
     IntegrationTests.cpp
 
+
 HEADERS += \
-    pch.h \
-    Mainwindow.h \
+    mainwindow.h \
     QLogger.h \
     TexturesOptimizer.h \
     MeshesOptimizer.h \
@@ -49,19 +48,15 @@ HEADERS += \
     MainOptimizer.h \
     IntegrationTests.h
 
-PRECOMPILED_HEADER = pch.h
+
+PRECOMPILED_HEADER += pch_core.h \
+                    pch_gui.h
 
 TRANSLATIONS += \
 translations/AssetsOpt_fr.ts \
 translations/AssetsOpt_ja.ts \
 translations/AssetsOpt_de.ts
 
-FORMS += \
-    mainwindow.ui \
+FORMS +=  mainwindow.ui
 
 RESOURCES += styles/qdarkstyle/style.qrc
-
-docs.depends = $(SOURCES)
-docs.commands = "E:\Edgar\Documents\Perso\Informatique\Code\Doxygen\doxygen.exe" "E:\Edgar\Documents\Perso\Informatique\Code\Qt Creator\SSE_Assets_Optimizer\doc\Doxyfile"
-
-QMAKE_EXTRA_TARGETS = docs

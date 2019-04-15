@@ -1,7 +1,7 @@
 #ifndef MESHESOPTIMIZER_H
 #define MESHESOPTIMIZER_H
 
-#include "pch.h"
+#include "pch_core.h"
 #include "QLogger.h"
 
 class MeshesOptimizer : public QObject
@@ -36,9 +36,7 @@ private:
     QStringList customHeadparts;
 
     bool bMeshesHeadparts{};
-    bool bMeshesNecessaryOptimization{};
-    bool bMeshesMediumOptimization{};
-    bool bMeshesFullOptimization{};
+    int iMeshesOptimizationLevel{};
 
     void cleanMeshesLists();
     void listHeadparts(const QDir& directory);

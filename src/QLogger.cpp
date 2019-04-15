@@ -1,6 +1,3 @@
-#include <QDir>
-#include <QDateTime>
-#include <QTextStream>
 #include "QLogger.h"
 
 /****************************************************************************************
@@ -36,7 +33,6 @@ namespace QLogger
             case 5:   return LogLevel::Error;
             case 6:   return LogLevel::Fatal;
             }
-
             return LogLevel();
         }
 
@@ -52,8 +48,6 @@ namespace QLogger
             case LogLevel::Error:   return 5;
             case LogLevel::Fatal:   return 6;
             }
-
-            return int();
         }
 
 

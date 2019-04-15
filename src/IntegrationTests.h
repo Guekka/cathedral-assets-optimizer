@@ -1,9 +1,9 @@
 #ifndef INTEGRATIONTESTS_H
 #define INTEGRATIONTESTS_H
 
-#include "pch.h"
+#include "pch_core.h"
+#include "FilesystemOperations.h"
 #include "MainOptimizer.h"
-#include <QTemporaryDir>
 
 class IntegrationTests
 {
