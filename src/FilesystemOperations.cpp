@@ -1,7 +1,7 @@
 #include "FilesystemOperations.h"
 
 const QStringList texturesAssets {"png", "dds"};
-const QStringList otherAssets {"nif", "seq", "pex", "psc", "lod", "fuz", "waw", "xwm", "swf", "hkx", "wav", "tri", "btr", "bto", "btt", "lip", "txt"};
+const QStringList otherAssets {"nif", "seq", "pex", "psc", "lod", "fuz", "waw", "xwm", "swf", "hkx", "wav", "tri", "btr", "bto", "btt", "lip", "txt", "lst"};
 const QStringList allAssets = texturesAssets + otherAssets;
 
 
