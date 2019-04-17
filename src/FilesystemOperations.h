@@ -56,15 +56,6 @@ public:
          * \param folderPath The path of the folder where empty dirs will be deleted
          */
     static void deleteEmptyDirectories(const QString& folderPath);
-
-
-
-
-    /*!
-    * \brief Delete empty directories in the given directory
-    * \param folderPath The path of the folder where empty dirs will be deleted
-    */
-    static void deleteEmptyDirectories(const QString &folderPath);
     /*!
      * \brief Compares if two folders have the same file structure. Currently only used for testing.
      * \param folder1 The first folder
