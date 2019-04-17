@@ -42,7 +42,21 @@ void BsaOptimizer::bsaExtract(const QString &bsaPath, const bool &makeBackup, co
 
 void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimizations are done, create a new BSA
 {
-    QDir bsaDir(bsaFolderPath);
+    bsa_archive_t archive = bsa_create();
+
+    bsa_entry_list_t entries = bsa_entry_list_create();
+    bsa_entry_list_add(entries, L"test.pfx");
+
+    bsa_create_archive(archive, L"test_write.bsa", baSSE, entries);
+    bsa_add_file_from_disk(archive, L"C:\\", L"C:\\test.pfx");
+    bsa_save(archive);
+    bsa_close(archive);
+
+    bsa_entry_list_free(entries);
+
+    bsa_free(archive);
+
+   /* QDir bsaDir(bsaFolderPath);
     QStringList bsaSubDirs(bsaDir.entryList(QDir::Dirs));
 
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
@@ -54,32 +68,51 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
             doNotCompress=true;
     }
 
-    //Checking if it a textures BSA
+    wchar_t *bsaFolderPathWc = new wchar_t[sizeof (bsaFolderPath)];
+    bsaFolderPath.toWCharArray(bsaFolderPathWc);
 
-    QString bsaName = bsaFolderPath.chopped(10); //Removing ".extracted"
-    QStringList bsarchArgs {"pack", bsaFolderPath, bsaName, "-sse", "-share"};
+    QString bsaNameQS = QString(bsaFolderPath).remove(".extracted"); //Removing ".extracted"
+    wchar_t *bsaName = new wchar_t(sizeof(bsaNameQS));
+    bsaNameQS.toWCharArray(bsaName);
 
-    if (!doNotCompress) //Compressing BSA breaks sounds
-        bsarchArgs << "-z";
+    bsa_archive_t archive = bsa_create();
 
-    QProcess bsarch;
+    if(!doNotCompress) //Compressing BSA breaks sounds
+      bsa_compress_set(archive, true);
 
-    if(!QFile(bsaName).exists())
+    bsa_entry_list_t entries = bsa_entry_list_create();
+
+    QDirIterator it(bsaFolderPath, QDirIterator::Subdirectories);
+    QStringList files;
+    while (it.hasNext())
     {
-        bsarch.start(QCoreApplication::applicationDirPath() + "/resources/bsarch.exe", bsarchArgs);
-        bsarch.waitForFinished(-1);
+      files << it.next().replace("/", "\\");
     }
-    else
+
+    qDebug() << *bsaFolderPathWc;
+
+    for (auto file : files)
+    {
+        const int arraySize = file.size() + 1;
+        wchar_t* array = new wchar_t[static_cast<unsigned long long>(arraySize)];
+        file.toWCharArray(array);
+        qDebug() << array;
+        bsa_entry_list_add(entries, array);
+        bsa_add_file_from_disk(archive, bsaFolderPathWc, array);
+        delete [] array;
+    }
+
+    bsa_create_archive(archive, bsaName, baSSE, entries);
+
+    if(QFile(bsaNameQS).exists())
     {
         QLogger::QLog_Error("BsaOptimizer", tr("Cannot pack existing loose files: a BSA already exists."));
         moveFilesFromBsaFolderToRootFolder(bsaFolderPath);
     }
 
-    QLogger::QLog_Debug("BsaOptimizer", "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolderPath + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()));
+    //QLogger::QLog_Debug("BsaOptimizer", "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolderPath + "\nBsaName : " + bsaName + "\nBSAsize: " + QString::number(QFile(bsaName).size()));
 
-    QString bsarchOutput = bsarch.readAllStandardOutput();
-    QLogger::QLog_Debug("BsaOptimizer", bsarchOutput);
-
+    /*
     if(bsarchOutput.contains("Done"))
     {
         if(QFile(bsaName).size() < LONG_MAX)
@@ -97,6 +130,12 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
                 QFile::remove(QDir(bsaFolderPath).filePath(bsaName.chopped(3) + "esp"));
         }
     }
+
+    bsa_save(archive);
+    bsa_close(archive);
+
+    bsa_entry_list_free(entries);
+    bsa_free(archive);*/
 }
 
 

@@ -391,8 +391,8 @@ void MainWindow::updateLog()
         QTextStream ts(&log);
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
         QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-
         ui->plainTextEdit->appendHtml(ts.readAll());
+        
         log.close();
     }
 }

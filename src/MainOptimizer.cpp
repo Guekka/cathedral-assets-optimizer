@@ -101,7 +101,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
         FilesystemOperations fsOperations;
 
-        if (options.bBsaPackLooseFiles || options.bBsaSplitAssets)
+        if(options.bBsaPackLooseFiles || options.bBsaSplitAssets)
             fsOperations.prepareBsas(modpathDir, options.bBsaSplitAssets);
 
         if(options.bBsaCreate)

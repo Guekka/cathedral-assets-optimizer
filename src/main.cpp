@@ -89,6 +89,8 @@ int main(int argc, char *argv[])
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     app.installTranslator(&AssetsOptTranslator);
 
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
     //If tests are enabled, run tests instead of running standard process
 
 #if ENABLE_TEST
@@ -103,11 +105,11 @@ int main(int argc, char *argv[])
 
     MainWindow w;
 
-    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    if(AttachConsole(ATTACH_PARENT_PROCESS))
     {
         freopen("CONOUT$", "w", stdout);
         freopen("CONOUT$", "w", stderr);
-        if (parseArguments())
+        if(parseArguments())
         {
             MainOptimizer optimizer;
             return optimizer.mainProcess();
