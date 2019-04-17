@@ -60,3 +60,10 @@ translations/AssetsOpt_de.ts
 FORMS +=  mainwindow.ui
 
 RESOURCES += styles/qdarkstyle/style.qrc
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/./ -llibbsarch
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/./ -llibbsarch
+else:unix: LIBS += -L$$PWD/./ -llibbsarch
+
+INCLUDEPATH += $$PWD/.
+DEPENDPATH += $$PWD/.

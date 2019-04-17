@@ -48,6 +48,8 @@ namespace QLogger
             case LogLevel::Error:   return 5;
             case LogLevel::Fatal:   return 6;
             }
+
+            return int();
         }
 
 
