@@ -10,10 +10,6 @@
 #include "PluginsOperations.h"
 #include "TexturesOptimizer.h"
 
-/*!
- * \brief Manages the optimization options
- */
-
 struct optOptions
 {
     optOptions()
@@ -23,30 +19,17 @@ struct optOptions
 
         bBsaExtract = true;
         bBsaCreate = true;
-        bBsaPackLooseFiles = false;
-        bBsaDeleteBackup = false;
-        bBsaSplitAssets = false;
-        bBsaMergeLoose = false;
-
-        bMeshesProcess = true;
-
-        bTexturesNecessaryOptimization = true;
-        bTexturesFullOptimization = true;
 
         bAnimationsOptimization = true;
 
         bDryRun = false;
     }
 
-    QString userPath;
-    int mode{};
-
     bool bBsaExtract{};
     bool bBsaCreate{};
     bool bBsaPackLooseFiles{};
     bool bBsaDeleteBackup{};
     bool bBsaSplitAssets{};
-    bool bBsaMergeLoose{};
 
     bool bMeshesProcess{};
 
@@ -56,11 +39,12 @@ struct optOptions
     bool bAnimationsOptimization{};
 
     bool bDryRun{};
+
+    int mode{};
+
+    QString userPath;
 };
 
-/*!
- * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
- */
 
 class MainOptimizer : public QObject
 {
@@ -75,14 +59,9 @@ public:
 
     //Settings operations
 
-    /*!
-     * \brief Loads settings from the ini file to variables
-     */
     void loadSettings();
-    /*!
-     * \brief setLogLevel
-     * \param value
-     */
+
+    void setLogLevel(const QLogger::LogLevel &value);
 
 private:
     QStringList modDirs;

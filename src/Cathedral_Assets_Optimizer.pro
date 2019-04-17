@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++17 precompile_header
 
+
 SOURCES += \
     main.cpp \
     Mainwindow.cpp \

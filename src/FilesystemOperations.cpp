@@ -26,14 +26,14 @@ FilesystemOperations::FilesystemOperations()
 }
 
 
-void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &splitAssets, const bool &mergeLoose)
+void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &splitAssets) //Split assets between several folders
 {
     QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
 
     QDir directory(folderPath);
 
-    QStringList foundBsa;
-    QStringList foundTexturesBsa;
+    QStringList bsaList;
+    QStringList texturesBsaList;
     QStringList dirs(directory.entryList(QDir::Dirs));
 
     QLogger::QLog_Trace("FilesystemOperations", "Listing all BSA folders and moving files to modpath root directory");
@@ -42,23 +42,18 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
     {
         if(dirs.at(i).right(13) == "bsa.extracted" && dirs.at(i).contains("- Textures", Qt::CaseInsensitive))
         {
-            foundTexturesBsa << directory.filePath(dirs.at(i));
-            if(mergeLoose)
-                moveFiles(directory.filePath(dirs.at(i)), directory.path(), false);
+            texturesBsaList << directory.filePath(dirs.at(i));
+            moveFiles(directory.filePath(dirs.at(i)), directory.path(), false);
         }
         else if(dirs.at(i).right(13) == "bsa.extracted")
         {
-            foundBsa << directory.filePath(dirs.at(i));
-            if(mergeLoose)
-                moveFiles(directory.filePath(dirs.at(i)), directory.path(), false);
+            bsaList << directory.filePath(dirs.at(i));
+            moveFiles(directory.filePath(dirs.at(i)), directory.path(), false);
         }
     }
 
     QString espName = PluginsOperations::findPlugin(folderPath).remove(".esp");
     QString bsaName;
-
-    QStringList addedBsa;
-    QStringList addedTexturesBsa;
 
     if(splitAssets)
     {
@@ -67,54 +62,46 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
         QPair<qint64, qint64> size = assetsSize(directory.path());
         int i = 0;
 
-        while(foundTexturesBsa.size() < qCeil(size.first/2547483647.0))
+        while(texturesBsaList.size() < qCeil(size.first/2547483647.0))
         {
             if(i == 0)
                 bsaName = espName + " - Textures.bsa.extracted";
             else
                 bsaName = espName + QString::number(i) + " - Textures.bsa.extracted";
 
-            if(!foundTexturesBsa.contains(bsaName))
-                addedTexturesBsa << bsaName;
-            addedTexturesBsa.removeDuplicates();
+            texturesBsaList << bsaName;
+            texturesBsaList.removeDuplicates();
             ++i;
         }
 
         i = 0;
-        while(foundBsa.size() < qCeil(size.second/2107483647.0))
+        while(bsaList.size() < qCeil(size.second/2107483647.0))
         {
             if(i == 0)
                 bsaName = espName + ".bsa.extracted";
             else
                 bsaName = espName + QString::number(i) + ".bsa.extracted";
 
-            if(!foundBsa.contains(bsaName))
-                addedBsa << bsaName ;
-            addedBsa.removeDuplicates();
+            bsaList << bsaName ;
+            bsaList.removeDuplicates();
             ++i;
         }
     }
 
     else //If assets splitting is disabled, use only one bsa folder and one textures bsa folder
     {
-        if(foundTexturesBsa.isEmpty())
-            addedTexturesBsa << espName + " - Textures.bsa.extracted";
-        if(foundBsa.isEmpty())
-            addedBsa << espName + ".bsa.extracted";
-    }
-
-    if(mergeLoose)
-    {
-        foundBsa += addedBsa;
-        foundTexturesBsa += addedTexturesBsa;
+        if(texturesBsaList.isEmpty())
+            texturesBsaList << espName + " - Textures.bsa.extracted";
+        if(bsaList.isEmpty())
+            bsaList << espName + ".bsa.extracted";
     }
 
     QLogger::QLog_Debug("FilesystemOperations", "main folders:\n" + directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot).join("\n"));
 
-    moveAssets(folderPath, foundBsa, foundTexturesBsa);
+    moveAssets(folderPath, bsaList, texturesBsaList);
 
-    QLogger::QLog_Trace("FilesystemOperations", "Total: " + QString::number(foundBsa.size()) + " bsa folders:\n" + foundBsa.join("\n") + "\n"
-                        + QString::number(foundTexturesBsa.size()) + " textures bsa folders:\n" + foundTexturesBsa.join("\n"));
+    QLogger::QLog_Trace("FilesystemOperations", "Total: " + QString::number(bsaList.size()) + " bsa folders:\n" + bsaList.join("\n") + "\n"
+                        + QString::number(texturesBsaList.size()) + " textures bsa folders:\n" + texturesBsaList.join("\n"));
 
     deleteEmptyDirectories(folderPath);
 

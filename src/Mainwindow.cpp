@@ -180,7 +180,6 @@ void MainWindow::saveUIToFile()
         settings.setValue("bBsaPackLooseFiles", ui->packExistingAssetsCheckbox->isChecked());
         settings.setValue("bBsaDeleteBackup", ui->bsaDeleteBackupsCheckbox->isChecked());
         settings.setValue("bBsaSplitAssets", ui->bsaSplitAssetsCheckBox->isChecked());
-        settings.setValue("bBsaMergeLoose", ui->bsaMergeLooseCheckBox->isChecked());
     }
     else
     {
@@ -189,8 +188,6 @@ void MainWindow::saveUIToFile()
         settings.setValue("bBsaPackLooseFiles", false);
         settings.setValue("bBsaDeleteBackup", false);
         settings.setValue("bBsaSplitAssets", false);
-        settings.setValue("bBsaMergeLoose", false);
-
     }
 
     //Textures radio buttons
@@ -275,7 +272,6 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
     ui->packExistingAssetsCheckbox->setChecked(settings.value("bBsaPackLooseFiles").toBool());
     ui->bsaDeleteBackupsCheckbox->setChecked(settings.value("bBsaDeleteBackup").toBool());
     ui->bsaSplitAssetsCheckBox->setChecked(settings.value("bBsaSplitAssets").toBool());
-    ui->bsaMergeLooseCheckBox->setChecked(settings.value("bBsaMergeLoose").toBool());
 
     ui->TexturesNecessaryOptimizationRadioButton->setChecked(settings.value("bTexturesNecessaryOptimization").toBool());
     ui->TexturesFullOptimizationRadioButton->setChecked(settings.value("bTexturesFullOptimization").toBool());
@@ -344,6 +340,7 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         ui->MeshesFullOptimizationRadioButton->setDisabled(!ui->meshesGroupBox->isChecked());
         settings.setValue("bMeshesHeadparts", true);
     }
+
 }
 
 
