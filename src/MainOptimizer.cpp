@@ -74,23 +74,22 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
         if(options.bBsaExtract)
         {
             QLogger::QLog_Info("MainOptimizer", tr("Extracting BSA..."));
+            emit updateLog();
 
             QDirIterator bsaIt(modpathDir);
 
             while(bsaIt.hasNext())
             {
-                if(bsaIt.next().right(4) == ".bsa")
+                if(bsaIt.next().endsWith(".bsa"))
                 {
                     QLogger::QLog_Note("MainOptimizer", tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
-                    bsaOptimizer.bsaExtract(bsaIt.filePath(), !options.bBsaDeleteBackup);
+                    bsaOptimizer.bsaExtract(bsaIt.filePath(), !options.bBsaDeleteBackup, options.bBsaCreate);
                 }
             }
-            emit progressBarIncrease();
+             emit progressBarIncrease();
         }
 
-        QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes..."));
-
-        emit progressBarBusy();
+        FilesystemOperations::deleteEmptyDirectories(options.userPath);
 
         if(options.bDryRun)
             dryOptimizeAssets(modpathDir);
@@ -113,7 +112,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
             while(bsaIt.hasNext())
             {
                 bsaIt.next();
-                if(bsaIt.fileName().right(13) == "bsa.extracted")
+                if(bsaIt.fileName().endsWith("bsa.extracted"))
                 {
                     QLogger::QLog_Trace("MainOptimizer", "bsa folder found: " + bsaIt.fileName());
                     bsaOptimizer.bsaCreate(bsaIt.filePath());
@@ -124,8 +123,6 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
             emit progressBarIncrease();
         }
     }
-
-    //Deleting empty dirs
 
     FilesystemOperations::deleteEmptyDirectories(options.userPath);
 
@@ -138,14 +135,14 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
 void MainOptimizer::fillModsLists()    //Adding all dirs to process to modDirs
 {
-    if(options.mode == 1) //Several mods mode
+    if(options.iMode == 1) //Several mods mode
     {
         QDir dir(options.userPath);
         dir.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
         modDirs = dir.entryList();
     }
 
-    if(options.mode == 0) //One mod mode
+    if(options.iMode == 0) //One mod mode
         modDirs << ""; //if modDirs is empty, the loop won't be run
 }
 
@@ -179,25 +176,29 @@ bool MainOptimizer::checkRequirements()  //Checking if all the requirements are 
 
 void MainOptimizer::optimizeAssets(const QString& folderPath)
 {
+    QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes...") + "\n" + tr("Listing meshes..."));
+    emit progressBarBusy();
+
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
     MeshesOptimizer meshesOptimizer;
+
     meshesOptimizer.list(folderPath);
 
     while(it.hasNext())
     {
         it.next();
 
-        if((options.bMeshesProcess && it.fileName().right(4).toLower() == ".nif"))
+        if(options.iMeshesOptimizationLevel >=1 && it.fileName().endsWith(".nif", Qt::CaseInsensitive))
             meshesOptimizer.optimize(it.filePath());
 
-        if(options.bTexturesFullOptimization && it.fileName().right(4).toLower() == ".dds")
+        if(options.iTexturesOptimizationLevel >=2 && it.fileName().endsWith(".dds", Qt::CaseInsensitive))
             TexturesOptimizer::convertToBc7IfUncompressed(it.filePath());
 
-        if(options.bTexturesNecessaryOptimization && it.fileName().right(4).toLower() == ".tga")
+        if(options.iTexturesOptimizationLevel >=1 && it.fileName().endsWith(".tga", Qt::CaseInsensitive))
             TexturesOptimizer::convertTgaToDds(it.filePath());
 
-        if(options.bAnimationsOptimization && it.fileName().right(4).toLower() == ".hkx")
+        if(options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive))
             AnimationsOptimizer::optimize(it.filePath());
     }
 }
@@ -205,6 +206,9 @@ void MainOptimizer::optimizeAssets(const QString& folderPath)
 
 void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
 {
+    QLogger::QLog_Info("MainOptimizer", tr("Optimizing animations, textures and meshes..."));
+    emit progressBarBusy();
+
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
     MeshesOptimizer meshesOptimizer;
@@ -214,19 +218,18 @@ void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
     {
         it.next();
 
-        if((options.bMeshesProcess && it.fileName().right(4).toLower() == ".nif"))
+        if(options.iMeshesOptimizationLevel >=1 && it.fileName().endsWith(".nif", Qt::CaseInsensitive))
             meshesOptimizer.dryOptimize(it.filePath());
-
-        if(options.bTexturesFullOptimization && it.fileName().right(4).toLower() == ".dds")
+        if(options.iTexturesOptimizationLevel >=2 && it.fileName().endsWith(".dds", Qt::CaseInsensitive))
         {
             if(TexturesOptimizer::isCompressed(it.filePath()))
                 QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be compressed to BC7"));
         }
 
-        if(options.bTexturesNecessaryOptimization && it.fileName().right(4).toLower() == ".tga")
+        if(options.iTexturesOptimizationLevel >=1 && it.fileName().endsWith(".tga", Qt::CaseInsensitive))
             QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be converted to DDS"));
 
-        if(options.bAnimationsOptimization && it.fileName().right(4).toLower() == ".hkx")
+        if(options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive))
             QLogger::QLog_Note("MainOptimizer", it.filePath() + tr(" would be ported to SSE"));
     }
 }
@@ -236,29 +239,33 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
     QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
-    options.mode = settings.value("mode").toInt();
-    options.bDryRun = settings.value("DryRun").toBool();
+    options.iMode = settings.value("iMode").toInt();
+    options.bDryRun = settings.value("bDryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
+    logLevel = QLogger::intToLogLevel(settings.value("iLogLevel").toInt());
 
-    logLevel = QLogger::intToLogLevel(settings.value("logLevel").toInt());
-
+    settings.beginGroup("BSA");
     options.bBsaExtract = settings.value("bBsaExtract").toBool();
     options.bBsaCreate = settings.value("bBsaCreate").toBool();
     options.bBsaPackLooseFiles = settings.value("bBsaPackLooseFiles").toBool();
     options.bBsaDeleteBackup = settings.value("bBsaDeleteBackup").toBool();
     options.bBsaSplitAssets = settings.value("bBsaSplitAssets").toBool();
+    settings.endGroup();
 
-    options.bMeshesProcess = settings.value("meshesGroupBox").toBool();
+    options.iMeshesOptimizationLevel = settings.value("Meshes/iMeshesOptimizationLevel").toInt();
 
-    options.bTexturesNecessaryOptimization = settings.value("bTexturesNecessaryOptimization").toBool();
-    options.bTexturesFullOptimization = settings.value("bTexturesFullOptimization").toBool();
+    options.iTexturesOptimizationLevel = settings.value("Textures/iTexturesOptimizationLevel").toInt();
 
-    options.bAnimationsOptimization = settings.value("bAnimationsOptimization").toBool();
+    options.bAnimationsOptimization = settings.value("Animations/bAnimationsOptimization").toBool();
 }
 
-void MainOptimizer::setLogLevel(const QLogger::LogLevel &value)
+
+void MainOptimizer::resetSettings()
 {
-    logLevel = value;
+    QString blankIni(QCoreApplication::applicationDirPath() + "/resources/defaultIni.ini");
+    QString CathedralIni = QCoreApplication::applicationDirPath() + "/Cathedral Assets Optimizer.ini";
+    QFile::remove(CathedralIni);
+    QFile::copy(blankIni, CathedralIni);
 }
 
 

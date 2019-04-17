@@ -498,5 +498,3 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/qt,git,vim,qtcreator,visualstudio,visualstudiocode
-*.esp
-*.pri

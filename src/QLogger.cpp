@@ -1,6 +1,3 @@
-#include <QDir>
-#include <QDateTime>
-#include <QTextStream>
 #include "QLogger.h"
 
 /****************************************************************************************
@@ -36,7 +33,6 @@ namespace QLogger
             case 5:   return LogLevel::Error;
             case 6:   return LogLevel::Fatal;
             }
-
             return LogLevel();
         }
 
@@ -100,7 +96,7 @@ namespace QLogger
 
        const auto logWriter = manager->getLogWriter(module);
 
-       if (logWriter and logWriter->getLevel() <= level)
+       if (logWriter && logWriter->getLevel() <= level)
                logWriter->write(module,message, level);
 }
 

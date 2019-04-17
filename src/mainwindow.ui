@@ -20,7 +20,7 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>Cathedral Assets Optimizer 4.2.1</string>
+   <string>Cathedral Assets Optimizer 4.2.3</string>
   </property>
   <property name="whatsThis">
    <string>Will write which files would be affected, without actually processing them</string>
@@ -237,10 +237,10 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;Creates a new BSA after processing the previously extracted assets&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;Creates a new BSA after processing the previously extracted assets. &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Recreate BSA</string>
+          <string>Create BSA</string>
          </property>
         </widget>
        </item>
@@ -262,7 +262,7 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder. &lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Extract old BSA</string>
@@ -296,6 +296,12 @@
        </item>
        <item row="1" column="1">
         <widget class="QCheckBox" name="bsaDeleteBackupsCheckbox">
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;By default, a backup of existing bsa is created. Enabling this option will disable those backups.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Delete backups </string>
          </property>
@@ -303,8 +309,11 @@
        </item>
        <item row="1" column="2">
         <widget class="QCheckBox" name="bsaSplitAssetsCheckBox">
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A BSA file cannot contain more than 2gb. This will create as many BSA as necessary. &lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A BSA file cannot contain more than 2gb. This will create as many BSA as necessary. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Split assets</string>
@@ -446,7 +455,7 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perform necessary optimization, and also lightly optimizes typically non-crashing meshes. This may fix some visual issues, but also lowers quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perform necessary optimization, and also lightly optimizes typically non-crashing meshes. This may fix some visual issues, but may also lower quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Medium optimization</string>
@@ -471,7 +480,7 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only apply if standard mesh optimization ignored necessary files.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only apply if standard mesh optimization ignored necessary files. May lower visual quality.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Full optimization</string>
@@ -519,11 +528,20 @@
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to SSE format. If an animation is already compatible, no change will be made and an error is logged.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to SSE format. If an animation is already compatible, no change will be made.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Necessary optimization</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -582,6 +600,9 @@
    </property>
   </action>
   <action name="actionLogVerbosityTrace">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Maximal</string>
    </property>
@@ -596,6 +617,9 @@
    </property>
   </action>
   <action name="actionLogVerbosityNote">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>High</string>
    </property>
@@ -607,6 +631,9 @@
    </property>
   </action>
   <action name="actionLogVerbosityInfo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Normal</string>
    </property>
@@ -615,6 +642,9 @@
    </property>
   </action>
   <action name="actionLogVerbosityWarning">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Minimal</string>
    </property>

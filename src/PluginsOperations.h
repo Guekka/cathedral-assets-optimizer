@@ -1,7 +1,7 @@
 #ifndef PLUGINSOPERATIONS_H
 #define PLUGINSOPERATIONS_H
 
-#include "pch.h"
+#include "pch_core.h"
 #include "QLogger.h"
 
 class PluginsOperations : public QObject
@@ -20,6 +20,11 @@ public:
      * \param folderPath The folder to create plugins into
      */
     static void makeDummyPlugins(const QString& folderPath);
+    /*!
+     * \brief Checks if a bsa already has a plugin to load it
+     * \param bsaPath The path of the bsa to check
+     */
+    static bool checkIfBsaHasPlugin(QString bsaPath);
 };
 
 #endif // PLUGINSOPERATIONS_H

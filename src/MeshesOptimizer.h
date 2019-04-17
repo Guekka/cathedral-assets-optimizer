@@ -1,7 +1,7 @@
 #ifndef MESHESOPTIMIZER_H
 #define MESHESOPTIMIZER_H
 
-#include "pch.h"
+#include "pch_core.h"
 #include "QLogger.h"
 
 class MeshesOptimizer : public QObject
@@ -14,13 +14,20 @@ public:
      */
     MeshesOptimizer();
     /*!
-     * \brief Will list all the meshes that need to be optimized in the directory
+     * \brief List all the meshes that need to be optimized in the directory and split them between several lists according to their type
      * \param folderPath The folder to analyze
      */
     void list(const QString& folderPath);
+    /*!
+     * \brief Optimize the providen mesh according to its type
+     * \param filePath The path of the mesh to optimize
+     */
     void optimize(const QString& filePath);
+    /*!
+     * \brief Report the optimization that would be made on the file
+     * \param filePath The path of the mesh to optimize
+     */
     void dryOptimize(const QString& filePath);
-    //void meshesTexturesCaseFix(const QString& filePath); WIP
 
 private:
     QStringList crashingMeshes;
@@ -29,9 +36,7 @@ private:
     QStringList customHeadparts;
 
     bool bMeshesHeadparts{};
-    bool bMeshesNecessaryOptimization{};
-    bool bMeshesMediumOptimization{};
-    bool bMeshesFullOptimization{};
+    int iMeshesOptimizationLevel{};
 
     void cleanMeshesLists();
     void listHeadparts(const QDir& directory);
