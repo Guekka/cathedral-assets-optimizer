@@ -3,8 +3,8 @@
 
 #include "pch_core.h"
 #include "QLogger.h"
+#include "QLibbsarch.h"
 #include "FilesystemOperations.h"
-#include "libbsarch.h"
 
 /*!
  * \brief The BsaOptimizer class
