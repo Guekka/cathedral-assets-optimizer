@@ -1,6 +1,6 @@
 #include "Mainwindow.h"
 #include "QLogger.h"
-#include "windows.h"
+#include "Windows.h"
 #include "IntegrationTests.h"
 #include <QCommandLineParser>
 
@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
 
     MainWindow w;
 
+#ifndef QT_DEBUG
     if (AttachConsole(ATTACH_PARENT_PROCESS))
     {
         freopen("CONOUT$", "w", stdout);
@@ -116,6 +117,7 @@ int main(int argc, char *argv[])
             return 1;
     }
     else
+#endif
         w.show();
 
 #endif //_WIN32
