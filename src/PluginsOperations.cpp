@@ -55,12 +55,11 @@ QString PluginsOperations::findPlugin(const QString& folderPath)
         espName = bsaName;
 
     if(espName.isEmpty())
-    {
         espName = QDir(folderPath).dirName() + ".esp";
-        QLogger::QLog_Debug("PluginsOperations", "Using: " + espName + " as esp name.");
-    }
 
-    return espName.remove(QRegularExpression("\\.es[plm]$"));
+    QLogger::QLog_Debug("PluginsOperations", "Using: " + espName + " as esp name.");
+    espName.remove(QRegularExpression("\\.[eE][sS][plmPLM]$"));
+    return espName;
 }
 
 
