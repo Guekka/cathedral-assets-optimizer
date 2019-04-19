@@ -3,40 +3,32 @@
 BsaOptimizer::BsaOptimizer() {}
 
 
-void BsaOptimizer::bsaExtract(const QString &bsaPath, const bool &makeBackup, const bool &keepFileInBsaFolder)
+void BsaOptimizer::bsaExtract(QString bsaPath, const bool &makeBackup, const bool &keepFileInBsaFolder)
 {
     QDir directory(QFileInfo(bsaPath).path());
-    QStringList files(directory.entryList());
     QString bsaFolder = directory.filePath(bsaPath + ".extracted");
 
-    directory.mkdir(bsaFolder);
+    bsaPath = backupOldBsa(bsaPath);
 
-    QStringList bsarchArgs;
+    BSArchiveAuto archive;
+    try {
+        archive.open(bsaPath);
+        archive.extractAll(bsaFolder);
+    } catch (std::exception e) {
+        QLogger::QLog_Error("BsaOptimizer", e.what());
+        QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction of: ") + bsaPath + "\n" + tr("Please extract it manually. The BSA was not deleted."));
+        archive.close();
+        return;
+    }
+
+    if(!keepFileInBsaFolder)
+        if(!moveFilesFromBsaFolderToRootFolder(bsaFolder))
+            QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory."));
 
     if(!makeBackup)
-        bsarchArgs << "unpack" << bsaPath << bsaFolder ;
-    else
-        bsarchArgs << "unpack" << backupOldBsa(bsaPath) << bsaFolder ;
+        QFile::remove(bsaPath);
 
-    QProcess bsarch;
-    bsarch.start(QCoreApplication::applicationDirPath() + "/resources/bsarch.exe", bsarchArgs);
-    bsarch.waitForFinished(-1);
-
-    QLogger::QLog_Debug("BsaOptimizer", "BSArch Args :" + bsarchArgs.join(" ") + "\nBSA folder :" + bsaFolder + "\nBSA Name :" + bsaPath);
-
-    if(bsarch.readAllStandardOutput().contains("Done"))
-    {
-        if(!keepFileInBsaFolder)
-            if(!moveFilesFromBsaFolderToRootFolder(bsaFolder))
-                QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory."));
-
-        if(!makeBackup)
-            QFile::remove(bsaPath);
-
-        QLogger::QLog_Info("BsaOptimizer", tr("BSA successfully extracted: ") + bsaPath);
-    }
-    else
-        QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted."));
+    QLogger::QLog_Info("BsaOptimizer", tr("BSA successfully extracted: ") + bsaPath);
 }
 
 
@@ -44,6 +36,15 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
 {
     QDir bsaDir(bsaFolderPath);
     QStringList bsaSubDirs(bsaDir.entryList(QDir::Dirs));
+
+    //Checking if a bsa already exists
+
+    QString bsaName = QString(bsaFolderPath).remove(".extracted");
+    if(QFile(bsaName).exists())
+    {
+        QLogger::QLog_Error("BsaOptimizer", tr("Cannot pack existing loose files: a BSA already exists."));
+        return;
+    }
 
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
 
@@ -54,14 +55,13 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
             doNotCompress=true;
     }
 
-    BSArchive archive;
+    BSArchiveAuto archive;
+    archive.setShareData(true);
 
-    if(!doNotCompress) //Compressing BSA breaks sounds
+    if(!doNotCompress) //Compressing BSA breaks sounds and strings
         archive.setCompressed(true);
 
-
     QStringList files;
-    QStringList relativeFiles;
     QDirIterator it(bsaFolderPath, QDirIterator::Subdirectories);
 
     while (it.hasNext())
@@ -70,37 +70,18 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
 
         if(!file.isDir())
         {
-            files << QDir::toNativeSeparators(file.filePath());
-            relativeFiles << QDir::toNativeSeparators( bsaDir.relativeFilePath(file.filePath()) );
+            try {
+                archive.addFileFromDisk(bsaFolderPath, file.filePath());
+            } catch (std::exception e) {
+                QLogger::QLog_Error("BsaOptimizer", e.what());
+                QLogger::QLog_Error("BsaOptimizer", "Cancelling packing of: " + bsaFolderPath);
+                archive.close();
+                return;
+            }
         }
     }
 
-    BSArchiveEntries entries (relativeFiles);
-
-    //QLogger::QLog_Fatal("BsaOptimizer", entries.list().join("\n"));
-
-    QString bsaName = QString(bsaFolderPath).remove(".extracted"); //Removing ".extracted"
-    archive.create(bsaName, baSSE, entries);
-
-    for (auto file : files)
-    {
-        try {
-            archive.addFileFromDisk(bsaFolderPath, file);
-        } catch (std::exception e) {
-            QLogger::QLog_Error("BsaOptimizer", e.what());
-            QLogger::QLog_Error("BsaOptimizer", "Cancelling packing of: " + bsaFolderPath);
-            archive.close();
-            return;
-        }
-    }
-/*
-    if(QFile(bsaName).exists())
-    {
-        QLogger::QLog_Error("BsaOptimizer", tr("Cannot pack existing loose files: a BSA already exists."));
-        moveFilesFromBsaFolderToRootFolder(bsaFolderPath);
-        return;
-    }
-*/
+    archive.create(bsaName, baSSE);
     archive.save();
     archive.close();
 
@@ -127,21 +108,11 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
 bool BsaOptimizer::moveFilesFromBsaFolderToRootFolder(const QString &bsaFolderPath)
 {
     QString rootFolderPath = QFileInfo(bsaFolderPath).path();
-
-    try
-    {
-        FilesystemOperations::moveFiles(bsaFolderPath, rootFolderPath, false);
-    }
-    catch(const QString& e)
-    {
-        QLogger::QLog_Error("BsaOptimizer", e);
-        return  false;
-    }
-    return true;
+    return FilesystemOperations::moveFiles(bsaFolderPath, rootFolderPath, false);
 }
 
 
-QString BsaOptimizer::backupOldBsa(const QString& bsaPath)
+QString BsaOptimizer::backupOldBsa(const QString& bsaPath) const
 {
     QFile bsaBackupFile(bsaPath + ".bak");
     QFile bsaFile(bsaPath);

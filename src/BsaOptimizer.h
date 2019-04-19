@@ -3,7 +3,7 @@
 
 #include "pch_core.h"
 #include "QLogger.h"
-#include "QLibbsarch.h"
+#include "BSArchiveAuto.h"
 #include "FilesystemOperations.h"
 
 /*!
@@ -25,7 +25,7 @@ public:
      * \param deleteBsaBackup Backup the existing bsa
      * \param keepFileInBsaFolder Whether files will be moved to mod root or not
      */
-    void bsaExtract(const QString& bsaPath, const bool& makeBackup, const bool& keepFileInBsaFolder);
+    void bsaExtract(QString bsaPath, const bool& makeBackup, const bool& keepFileInBsaFolder);
     /*!
      * \brief Will create a BSA
      * \param bsaFolderPath The path of the folder to pack into a BSA
@@ -46,7 +46,7 @@ private:
      * \param bsaPath The BSA to backup
      * \return a QString containing the name of the backup-ed bsa
      */
-    QString backupOldBsa(const QString& bsaPath);
+    QString backupOldBsa(const QString& bsaPath) const;
 };
 
 #endif // BSAOPTIMIZER_H

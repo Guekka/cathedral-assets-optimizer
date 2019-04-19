@@ -32,7 +32,7 @@ public:
      * \param destination The destination directory
      * \param overwriteExisting If enabled, source files will overwrite destination files
      */
-    static void moveFiles(const QString& source, const QString& destination, bool overwriteExisting);
+    static bool moveFiles(const QString& source, const QString& destination, bool overwriteExisting);
     /*!
      * \brief Will find skyrim directory using the registry key.
      * \return A QString containing the path of the Skyrim directory, or an empty QString if the path is not found

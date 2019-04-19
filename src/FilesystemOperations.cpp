@@ -104,7 +104,7 @@ void FilesystemOperations::prepareBsas(const QString& folderPath, const bool& sp
   QLogger::QLog_Trace("FilesystemOperations", "Exiting splitAssets function");
 }
 
-void FilesystemOperations::moveFiles(const QString& source, const QString& destination, bool overwriteExisting)
+bool FilesystemOperations::moveFiles(const QString& source, const QString& destination, bool overwriteExisting)
 {
   QDir sourceDir(source);
   QDir destinationDir(destination);
@@ -132,7 +132,7 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
     if(newFileRelativeFilename.size() >= 255 || oldFiles.at(i).size() >= 255)
     {
       QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
-      return;
+      return false;
     }
 
     //removing the duplicate files from new folder (if overwriteExisting) or from old folder (if !overwriteExisting)
@@ -148,6 +148,7 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
       destinationDir.remove(oldFiles.at(i));
   }
   QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
+  return true;
 }
 
 void FilesystemOperations::moveAssets(const QString& path, const QStringList& bsaList, const QStringList& texturesBsaList)
