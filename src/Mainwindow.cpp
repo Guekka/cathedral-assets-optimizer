@@ -69,10 +69,10 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
-        if(QDir(ui->userPathTextEdit->text()).exists())
+        if(QDir(ui->userPathTextEdit->text()).exists() && ui->userPathTextEdit->text().size() > 5 && !ui->userPathTextEdit->text().isEmpty())
             this->initProcess();
         else
-            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
+            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist or is shorter than 5 characters. Process aborted."), QMessageBox::Ok);
 
     });
 

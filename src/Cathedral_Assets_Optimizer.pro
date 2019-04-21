@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+VERSION = 4.2.5
+
 QT       += widgets
 
 TARGET = Cathedral_Assets_Optimizer
@@ -63,8 +65,3 @@ translations/AssetsOpt_de.ts
 FORMS +=  mainwindow.ui
 
 RESOURCES += styles/qdarkstyle/style.qrc
-
-LIBS += -L$$PWD/../../QLibbsarch/ -llibbsarch
-
-INCLUDEPATH += $$PWD/../../QLibbsarch
-DEPENDPATH += $$PWD/../../QLibbsarch
