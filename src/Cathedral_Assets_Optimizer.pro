@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+VERSION = 4.2.5
+
 QT       += widgets
 
 TARGET = Cathedral_Assets_Optimizer
@@ -23,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17 precompile_header static suppress_vcproj_warnings
 
 SOURCES += \
+    ../../QLibbsarch/QLibbsarch.cpp \
     main.cpp \
     mainwindow.cpp \
     QLogger.cpp \
@@ -37,6 +40,8 @@ SOURCES += \
 
 
 HEADERS += \
+    ../../QLibbsarch/QLibbsarch.h \
+    ../../QLibbsarch/libbsarch.h \
     mainwindow.h \
     QLogger.h \
     TexturesOptimizer.h \
@@ -60,10 +65,3 @@ translations/AssetsOpt_de.ts
 FORMS +=  mainwindow.ui
 
 RESOURCES += styles/qdarkstyle/style.qrc
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/./ -llibbsarch
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/./ -llibbsarch
-else:unix: LIBS += -L$$PWD/./ -llibbsarch
-
-INCLUDEPATH += $$PWD/.
-DEPENDPATH += $$PWD/.

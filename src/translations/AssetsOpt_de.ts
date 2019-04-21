@@ -50,9 +50,9 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FilesystemOperations.cpp" line="138"/>
-        <location filename="../FilesystemOperations.cpp" line="220"/>
-        <location filename="../FilesystemOperations.cpp" line="353"/>
+        <location filename="../FilesystemOperations.cpp" line="136"/>
+        <location filename="../FilesystemOperations.cpp" line="216"/>
+        <location filename="../FilesystemOperations.cpp" line="349"/>
         <source>An error occurred while moving files. Try reducing path size (260 characters is the maximum)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -117,21 +117,21 @@
     </message>
     <message>
         <location filename="../MainOptimizer.cpp" line="179"/>
-        <source>Listing meshes...</source>
+        <source>Listing meshes and fixing incompatible textures...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="226"/>
+        <location filename="../MainOptimizer.cpp" line="227"/>
         <source> would be compressed to BC7</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="230"/>
+        <location filename="../MainOptimizer.cpp" line="231"/>
         <source> would be converted to DDS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="233"/>
+        <location filename="../MainOptimizer.cpp" line="234"/>
         <source> would be ported to SSE</source>
         <translation type="unfinished"></translation>
     </message>
@@ -200,7 +200,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="23"/>
-        <source>Cathedral Assets Optimizer 4.2.3</source>
+        <source>Cathedral Assets Optimizer 4.2.5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -287,6 +287,16 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../mainwindow.ui" line="638"/>
+        <source>Medium</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="649"/>
+        <source>Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../mainwindow.ui" line="461"/>
         <source>Medium optimization</source>
         <translation type="unfinished"></translation>
@@ -319,6 +329,10 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="607"/>
+        <source>Max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../mainwindow.ui" line="610"/>
         <source>Maximal</source>
         <translation type="unfinished"></translation>
@@ -339,18 +353,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="638"/>
-        <source>Normal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="641"/>
         <source>Normal log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="649"/>
-        <source>Minimal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -371,7 +375,7 @@ This process has only been tested on the Mod Organizer mods folder.</source>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="75"/>
-        <source>This path does not exist. Process aborted.</source>
+        <source>This path does not exist or is shorter than 5 characters. Process aborted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

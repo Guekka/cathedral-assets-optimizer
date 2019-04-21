@@ -11,8 +11,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     settings = new QSettings("Cathedral Assets Optimizer.ini", QSettings::IniFormat, this);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
-    if(!settings->contains("logLevel"))
-        settings->setValue("logLevel",  QLogger::logLevelToInt(QLogger::LogLevel::Info));
+    if(!settings->contains("iLogLevel"))
+        settings->setValue("iLogLevel",  QLogger::logLevelToInt(QLogger::LogLevel::Info));
     this->loadUIFromFile();
 
     //Preparing log
@@ -69,10 +69,10 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
-        if(QDir(ui->userPathTextEdit->text()).exists())
+        if(QDir(ui->userPathTextEdit->text()).exists() && ui->userPathTextEdit->text().size() > 5 && !ui->userPathTextEdit->text().isEmpty())
             this->initProcess();
         else
-            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
+            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist or is shorter than 5 characters. Process aborted."), QMessageBox::Ok);
 
     });
 
@@ -85,16 +85,16 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     });
 
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", QLogger::logLevelToInt(QLogger::LogLevel::Info));});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", QLogger::logLevelToInt(QLogger::LogLevel::Info));});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", QLogger::logLevelToInt(QLogger::LogLevel::Note));});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", QLogger::logLevelToInt(QLogger::LogLevel::Note));});
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", QLogger::logLevelToInt(QLogger::LogLevel::Trace));});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", QLogger::logLevelToInt(QLogger::LogLevel::Trace));});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", QLogger::logLevelToInt(QLogger::LogLevel::Warning));});
+    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", QLogger::logLevelToInt(QLogger::LogLevel::Warning));});
     connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 }
 
@@ -391,7 +391,6 @@ void MainWindow::updateLog()
         QTextStream ts(&log);
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
         QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-
         ui->plainTextEdit->appendHtml(ts.readAll());
         log.close();
     }

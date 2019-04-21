@@ -20,7 +20,7 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>Cathedral Assets Optimizer 4.2.3</string>
+   <string>Cathedral Assets Optimizer 4.2.5</string>
   </property>
   <property name="whatsThis">
    <string>Will write which files would be affected, without actually processing them</string>
@@ -604,7 +604,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Maximal</string>
+    <string>Max</string>
    </property>
    <property name="toolTip">
     <string>Maximal</string>
@@ -635,7 +635,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Normal</string>
+    <string>Medium</string>
    </property>
    <property name="statusTip">
     <string>Normal log</string>
@@ -646,7 +646,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Minimal</string>
+    <string>Low</string>
    </property>
    <property name="statusTip">
     <string>Will only show warnings and errors</string>
