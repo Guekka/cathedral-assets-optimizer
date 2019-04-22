@@ -16,7 +16,6 @@ struct optOptions
     bool bBsaCreate{};
     bool bBsaPackLooseFiles{};
     bool bBsaDeleteBackup{};
-    bool bBsaSplitAssets{};
     bool bAnimationsOptimization{};
     bool bDryRun{};
 

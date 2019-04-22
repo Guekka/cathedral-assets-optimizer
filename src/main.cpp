@@ -1,6 +1,6 @@
 #include "Mainwindow.h"
 #include "QLogger.h"
-#include "Windows.h"
+#include "windows.h"
 #include "IntegrationTests.h"
 #include <QCommandLineParser>
 

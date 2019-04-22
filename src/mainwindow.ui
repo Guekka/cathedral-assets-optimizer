@@ -307,19 +307,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
-        <widget class="QCheckBox" name="bsaSplitAssetsCheckBox">
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A BSA file cannot contain more than 2gb. This will create as many BSA as necessary. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Split assets</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>

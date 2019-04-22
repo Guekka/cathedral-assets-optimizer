@@ -1,363 +1,219 @@
 #include "FilesystemOperations.h"
 
-const QStringList texturesAssets{ "png", "dds" };
-const QStringList otherAssets{ "nif", "seq", "pex", "psc", "lod", "fuz", "waw", "xwm", "swf", "hkx", "wav", "tri", "btr", "bto", "btt", "lip", "txt", "lst" };
-const QStringList allAssets = texturesAssets + otherAssets;
-
-FilesystemOperations::FilesystemOperations()
-{
-  //Reading filesToNotPack to add them to the list.
-  //Done in the constructor since the file won't change at runtime.
-
-  QFile filesToNotPackFile(QCoreApplication::applicationDirPath() + "/resources/FilesToNotPack.txt");
-  if(filesToNotPackFile.open(QIODevice::ReadOnly))
-  {
-    QTextStream ts(&filesToNotPackFile);
-    while (!ts.atEnd())
-    {
-      QString readLine = ts.readLine();
-      if(readLine.left(1) != "#" && !readLine.isEmpty())
-        filesToNotPack << readLine;
-    }
-  }
-  else
-    QLogger::QLog_Warning("FilesystemOperations", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
-}
-
-void FilesystemOperations::prepareBsas(const QString& folderPath, const bool& splitAssets) //Split assets between several folders
-{
-  QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
-
-  QDir directory(folderPath);
-
-  QStringList bsaList;
-  QStringList texturesBsaList;
-  QStringList dirs(directory.entryList(QDir::Dirs));
-
-  QLogger::QLog_Trace("FilesystemOperations", "Listing all BSA folders and moving files to modpath root directory");
-
-  for (int i = 0; i < dirs.size(); ++i)
-  {
-    if(dirs.at(i).endsWith("bsa.extracted") && dirs.at(i).contains("- Textures", Qt::CaseInsensitive))
-    {
-      texturesBsaList << directory.filePath(dirs.at(i));
-      moveFiles(directory.filePath(dirs.at(i)), directory.path(), false);
-    }
-    else if(dirs.at(i).endsWith("bsa.extracted"))
-    {
-      bsaList << directory.filePath(dirs.at(i));
-      moveFiles(directory.filePath(dirs.at(i)), directory.path(), false);
-    }
-  }
-
-  QString espName = PluginsOperations::findPlugin(folderPath);
-  QString bsaName;
-
-  if(splitAssets)
-  {
-    QLogger::QLog_Trace("FilesystemOperations", "Creating enough folders to contain all the files");
-
-    QPair<qint64, qint64> size = assetsSize(directory.path());
-    int i = 0;
-
-    while (texturesBsaList.size() < qCeil(size.first / 2547483647.0))
-    {
-      if(i == 0)
-        bsaName = espName + " - Textures.bsa.extracted";
-      else
-        bsaName = espName + QString::number(i) + " - Textures.bsa.extracted";
-
-      texturesBsaList << bsaName;
-      texturesBsaList.removeDuplicates();
-      ++i;
-    }
-
-    i = 0;
-    while (bsaList.size() < qCeil(size.second / 2107483647.0))
-    {
-      if(i == 0)
-        bsaName = espName + ".bsa.extracted";
-      else
-        bsaName = espName + QString::number(i) + ".bsa.extracted";
-
-      bsaList << bsaName;
-      bsaList.removeDuplicates();
-      ++i;
-    }
-  }
-
-  else //If assets splitting is disabled, use only one bsa folder and one textures bsa folder
-  {
-    if(texturesBsaList.isEmpty())
-      texturesBsaList << espName + " - Textures.bsa.extracted";
-    if(bsaList.isEmpty())
-      bsaList << espName + ".bsa.extracted";
-  }
-
-  moveAssets(folderPath, bsaList, texturesBsaList);
-
-  QLogger::QLog_Trace("FilesystemOperations", "Total: " + QString::number(bsaList.size()) + " bsa folders:\n" + bsaList.join("\n") + "\n"
-    + QString::number(texturesBsaList.size()) + " textures bsa folders:\n" + texturesBsaList.join("\n"));
-
-  deleteEmptyDirectories(folderPath);
-
-  QLogger::QLog_Trace("FilesystemOperations", "Exiting splitAssets function");
-}
+FilesystemOperations::FilesystemOperations() {}
 
 bool FilesystemOperations::moveFiles(const QString& source, const QString& destination, bool overwriteExisting)
 {
-  QDir sourceDir(source);
-  QDir destinationDir(destination);
-  QDirIterator it(source, QDirIterator::Subdirectories);
+    QDir sourceDir(source);
+    QDir destinationDir(destination);
+    QDirIterator it(source, QDirIterator::Subdirectories);
 
-  QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
-  QLogger::QLog_Debug("FilesystemOperations", "dest folder: " + destination + "\nsource folder: " + source);
+    QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
+    QLogger::QLog_Debug("FilesystemOperations", "dest folder: " + destination + "\nsource folder: " + source);
 
-  QStringList oldFiles;
+    QStringList oldFiles;
 
-  while (it.hasNext())
-  {
-    it.next();
-    if(!QFileInfo(it.filePath()).isDir()) //Skipping all directories and avoiding to copy from the destination folder
-      oldFiles << it.filePath();
-  }
-
-  oldFiles.removeDuplicates();
-
-  for (int i = 0; i < oldFiles.size(); ++i)
-  {
-    QString relativeFilename = sourceDir.relativeFilePath(oldFiles.at(i));
-    QString newFileRelativeFilename = destinationDir.relativeFilePath(QDir::cleanPath(destination + QDir::separator() + relativeFilename));
-
-    if(newFileRelativeFilename.size() >= 255 || oldFiles.at(i).size() >= 255)
+    while (it.hasNext())
     {
-      QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
-      return false;
+        it.next();
+        if(!QFileInfo(it.filePath()).isDir()) //Skipping all directories and avoiding to copy from the destination folder
+            oldFiles << it.filePath();
     }
 
-    //removing the duplicate files from new folder (if overwriteExisting) or from old folder (if !overwriteExisting)
+    oldFiles.removeDuplicates();
 
-    destinationDir.mkpath(QFileInfo(newFileRelativeFilename).path());
-
-    if(overwriteExisting)
-      destinationDir.remove(newFileRelativeFilename);
-
-    destinationDir.rename(oldFiles.at(i), newFileRelativeFilename);
-
-    if(!overwriteExisting)
-      destinationDir.remove(oldFiles.at(i));
-  }
-  QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
-  return true;
-}
-
-void FilesystemOperations::moveAssets(const QString& path, const QStringList& bsaList, const QStringList& texturesBsaList)
-{
-  QLogger::QLog_Trace("FilesystemOperations", "Splitting files between bsa folders");
-
-  int k = 0;
-  int j = 0;
-
-  deleteEmptyDirectories(path);
-  QDir directory(path);
-  QDirIterator it(directory, QDirIterator::Subdirectories);
-  QStringList oldFiles;
-
-  while (it.hasNext())
-  {
-    it.next();
-
-    //Skipping all directories and avoiding unnecessary files
-    QFileInfo info(it.filePath());
-    bool isDir = info.isDir();
-    bool hasAssets = allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive);
-    bool canBePacked = true;
-
-    for (int i = 0; i < filesToNotPack.size(); ++i)
+    for (int i = 0; i < oldFiles.size(); ++i)
     {
-      if(it.filePath().contains(filesToNotPack.at(i)))
-        canBePacked = false;
+        QString relativeFilename = sourceDir.relativeFilePath(oldFiles.at(i));
+        QString newFileRelativeFilename = destinationDir.relativeFilePath(QDir::cleanPath(destination + QDir::separator() + relativeFilename));
+
+        if(newFileRelativeFilename.size() >= 255 || oldFiles.at(i).size() >= 255)
+        {
+            QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
+            return false;
+        }
+
+        //removing the duplicate files from new folder (if overwriteExisting) or from old folder (if !overwriteExisting)
+
+        destinationDir.mkpath(QFileInfo(newFileRelativeFilename).path());
+
+        if(overwriteExisting)
+            destinationDir.remove(newFileRelativeFilename);
+
+        destinationDir.rename(oldFiles.at(i), newFileRelativeFilename);
+
+        if(!overwriteExisting)
+            destinationDir.remove(oldFiles.at(i));
     }
-
-    if(!isDir && hasAssets && canBePacked)
-      oldFiles << directory.relativeFilePath(it.filePath());
-  }
-
-  oldFiles.removeDuplicates();
-
-  QLogger::QLog_Debug("FilesystemOperations", "oldFiles.size: " + QString::number(oldFiles.size()));
-
-  for (int i = 0; i < oldFiles.size(); ++i)
-  {
-    QString newFile;
-    if(otherAssets.contains(oldFiles.at(i).right(3), Qt::CaseInsensitive))
-    {
-      ++k;
-      if(k >= bsaList.size() || k < 0)
-        k = 0;
-      newFile = directory.relativeFilePath(bsaList.at(k) + "/" + oldFiles.at(i));
-    }
-
-    else if(texturesAssets.contains(oldFiles.at(i).right(3), Qt::CaseInsensitive))
-    {
-      ++j;
-      if(j >= texturesBsaList.size() || j < 0)
-        j = 0;
-      newFile = directory.relativeFilePath(texturesBsaList.at(j) + "/" + oldFiles.at(i));
-    }
-
-    QLogger::QLog_Debug("FilesystemOperations", "\nOld file: " + oldFiles.at(i)
-      + "\nNew file: " + newFile);
-
-    if(newFile.size() >= 255 || oldFiles.at(i).size() >= 255)
-    {
-      QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
-      return;
-    }
-
-    directory.mkpath(QFileInfo(newFile).path());
-    directory.rename(oldFiles.at(i), newFile);
-  }
+    QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
+    return true;
 }
 
 void FilesystemOperations::deleteEmptyDirectories(const QString& folderPath)
 {
-  QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
-  QMap<int, QStringList> dirs;
+    QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
+    QMap<int, QStringList> dirs;
 
-  while (dirIt.hasNext())
-  {
-    QString path = QDir::cleanPath(dirIt.next());
-    int size = path.size();
-    if(!dirs[size].contains(path))
-      dirs[size].append(path);
-  }
-
-  QDir dir(folderPath);
-  QMapIterator<int, QStringList> i(dirs);
-
-  i.toBack();
-  while (i.hasPrevious())
-  {
-    i.previous();
-    for (int j = 0; j < i.value().size(); ++j)
+    while (dirIt.hasNext())
     {
-      dir.rmpath(i.value().at(j));
+        QString path = QDir::cleanPath(dirIt.next());
+        int size = path.size();
+        if(!dirs[size].contains(path))
+            dirs[size].append(path);
     }
-  }
+
+    QDir dir(folderPath);
+    QMapIterator<int, QStringList> i(dirs);
+
+    i.toBack();
+    while (i.hasPrevious())
+    {
+        i.previous();
+        for (int j = 0; j < i.value().size(); ++j)
+        {
+            dir.rmpath(i.value().at(j));
+        }
+    }
 }
 
-QPair <qint64, qint64> FilesystemOperations::assetsSize(const QString& path) // Return textures size and other assets size in a directory
+qint64 FilesystemOperations::assetsSize(const QString& path, int mode)
 {
-  QPair <qint64, qint64> size;
-  //First will be textures, second will be other assets
+    QPair <qint64, qint64> size;
+    //First will be textures, second will be other assets
 
-  QDirIterator it(path, QDirIterator::Subdirectories);
+    QDirIterator it(path, QDirIterator::Subdirectories);
 
-  while (it.hasNext())
-  {
-    QFile currentFile(it.next());
+    while (it.hasNext())
+    {
+        QFile currentFile(it.next());
 
-    if(texturesAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
-      size.first += currentFile.size();
-    else if(otherAssets.contains(currentFile.fileName().right(3), Qt::CaseInsensitive))
-      size.second += currentFile.size();
-  }
-  return size;
+        if(texturesAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
+            size.first += currentFile.size();
+        else if(otherAssets.contains(currentFile.fileName().right(3), Qt::CaseInsensitive))
+            size.second += currentFile.size();
+    }
+    switch (mode)
+    {
+    case 1: return size.first;
+    case 2: return size.second;
+    case 3: return size.first + size.second;
+
+    default: return -1;
+    }
 }
 
 bool FilesystemOperations::compareFolders(const QString& folder1, const QString& folder2, const bool& checkFileSize)
 {
-  QDirIterator it1(folder1, QDirIterator::Subdirectories);
-  QDirIterator it2(folder2, QDirIterator::Subdirectories);
+    QDirIterator it1(folder1, QDirIterator::Subdirectories);
+    QDirIterator it2(folder2, QDirIterator::Subdirectories);
 
-  QStringList files1;
-  QStringList files2;
+    QStringList files1;
+    QStringList files2;
 
-  QDir dir1(folder1);
-  QDir dir2(folder2);
+    QDir dir1(folder1);
+    QDir dir2(folder2);
 
-  QVector<qint64> filesSize1;
-  QVector<qint64> filesSize2;
+    QVector<qint64> filesSize1;
+    QVector<qint64> filesSize2;
 
-  while (it1.hasNext())
-  {
-    QString currentFile = dir1.relativeFilePath(it1.next());
-    files1 << currentFile;
+    while (it1.hasNext())
+    {
+        QString currentFile = dir1.relativeFilePath(it1.next());
+        files1 << currentFile;
 
-    if(checkFileSize)
-      filesSize1 << QFile(currentFile).size();
-  }
+        if(checkFileSize)
+            filesSize1 << QFile(currentFile).size();
+    }
 
-  while (it2.hasNext())
-  {
-    QString currentFile = dir2.relativeFilePath(it2.next());
-    files2 << currentFile;
+    while (it2.hasNext())
+    {
+        QString currentFile = dir2.relativeFilePath(it2.next());
+        files2 << currentFile;
 
-    if(checkFileSize)
-      filesSize2 << QFile(currentFile).size();
-  }
+        if(checkFileSize)
+            filesSize2 << QFile(currentFile).size();
+    }
 
-  if(files1.size() != files2.size())
-    return false;
+    if(files1.size() != files2.size())
+        return false;
 
-  if(files1 != files2)
-    return false;
+    if(files1 != files2)
+        return false;
 
-  if(checkFileSize && filesSize1 != filesSize2)
-    return false;
+    if(checkFileSize && filesSize1 != filesSize2)
+        return false;
 
-  return true;
+    return true;
 }
 
 void FilesystemOperations::copyDir(const QString& source, const QString& destination, bool overwriteExisting)
 {
-  QDir sourceDir(source);
-  QDir destinationDir(destination);
-  QDirIterator it(source, QDirIterator::Subdirectories);
+    QDir sourceDir(source);
+    QDir destinationDir(destination);
+    QDirIterator it(source, QDirIterator::Subdirectories);
 
-  QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
-  QLogger::QLog_Debug("FilesystemOperations", "dest folder: " + destination + "\nsource folder: " + source);
+    QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
+    QLogger::QLog_Debug("FilesystemOperations", "dest folder: " + destination + "\nsource folder: " + source);
 
-  QStringList oldFiles;
+    QStringList oldFiles;
 
-  QDir::setCurrent(destination);
+    QDir::setCurrent(destination);
 
-  while (it.hasNext())
-  {
-    it.next();
-    if(!QFileInfo(it.filePath()).isDir()) //Skipping all directories
-      oldFiles << it.filePath();
-  }
-
-  oldFiles.removeDuplicates();
-
-  for (int i = 0; i < oldFiles.size(); ++i)
-  {
-    QString relativeFilename = sourceDir.relativeFilePath(oldFiles.at(i));
-    QString newFile = QDir::cleanPath(destination + QDir::separator() + relativeFilename);
-
-    if(newFile.size() >= 255)
+    while (it.hasNext())
     {
-      QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
-      return;
+        it.next();
+        if(!QFileInfo(it.filePath()).isDir()) //Skipping all directories
+            oldFiles << it.filePath();
     }
 
-    destinationDir.mkpath(QFileInfo(newFile).path());
+    oldFiles.removeDuplicates();
 
-    if(overwriteExisting)
-      destinationDir.remove(newFile);
+    for (int i = 0; i < oldFiles.size(); ++i)
+    {
+        QString relativeFilename = sourceDir.relativeFilePath(oldFiles.at(i));
+        QString newFile = QDir::cleanPath(destination + QDir::separator() + relativeFilename);
 
-    QFile::copy(oldFiles.at(i), newFile);
-  }
-  QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
+        if(newFile.size() >= 255)
+        {
+            QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
+            return;
+        }
 
-  QDir::setCurrent(QCoreApplication::applicationDirPath());
+        destinationDir.mkpath(QFileInfo(newFile).path());
+
+        if(overwriteExisting)
+            destinationDir.remove(newFile);
+
+        QFile::copy(oldFiles.at(i), newFile);
+    }
+    QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
+
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
 }
 
 QString FilesystemOperations::findSkyrimDirectory() //Find Skyrim directory using the registry key
 {
-  QSettings SkyrimReg(R"(HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Bethesda Softworks\Skyrim Special Edition)", QSettings::NativeFormat);
-  QString SkyrimDir = QDir::cleanPath(SkyrimReg.value("Installed Path").toString());
-  return SkyrimDir;
+    QSettings SkyrimReg(R"(HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Bethesda Softworks\Skyrim Special Edition)", QSettings::NativeFormat);
+    QString SkyrimDir = QDir::cleanPath(SkyrimReg.value("Installed Path").toString());
+    return SkyrimDir;
+}
+
+
+QStringList FilesystemOperations::listFilesInDirectory(const QString &folderPath, bool enableRelativePath)
+{
+    QDir dir(folderPath);
+    QDirIterator it(folderPath, QDirIterator::Subdirectories);
+    QStringList paths;
+
+    while (it.hasNext())
+    {
+        if(!QFileInfo(it.next()).isDir())
+        {
+            if(enableRelativePath)
+                paths << dir.relativeFilePath(it.filePath());
+            else
+                paths << it.filePath();
+        }
+    }
+    return paths;
 }

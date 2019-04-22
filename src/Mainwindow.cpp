@@ -28,7 +28,6 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
     connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
     connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->bsaSplitAssetsCheckBox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
 
     connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
     connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
@@ -171,13 +170,13 @@ void MainWindow::saveUIToFile()
 
     settings->setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
 
-    if(ui->BsaGroupBox->isChecked())
+    //Disabling BSA options if dry run is enabled
+    if(ui->BsaGroupBox->isChecked() && !ui->dryRunCheckBox->isChecked())
     {
         settings->setValue("bBsaExtract", ui->extractBsaCheckbox->isChecked());
         settings->setValue("bBsaCreate", ui->recreatetBsaCheckbox->isChecked());
         settings->setValue("bBsaPackLooseFiles", ui->packExistingAssetsCheckbox->isChecked());
         settings->setValue("bBsaDeleteBackup", ui->bsaDeleteBackupsCheckbox->isChecked());
-        settings->setValue("bBsaSplitAssets", ui->bsaSplitAssetsCheckBox->isChecked());
     }
     else
     {
@@ -185,20 +184,7 @@ void MainWindow::saveUIToFile()
         settings->setValue("bBsaCreate", false);
         settings->setValue("bBsaPackLooseFiles", false);
         settings->setValue("bBsaDeleteBackup", false);
-        settings->setValue("bBsaSplitAssets", false);
     }
-
-    //Disabling BSA options if dry run is enabled
-
-    if(ui->dryRunCheckBox->isChecked())
-    {
-        settings->setValue("bBsaExtract", false);
-        settings->setValue("bBsaCreate", false);
-        settings->setValue("bBsaPackLooseFiles", false);
-        settings->setValue("bBsaDeleteBackup", false);
-        settings->setValue("bBsaSplitAssets", false);
-    }
-
 
     settings->endGroup();
 
@@ -271,7 +257,6 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
     ui->recreatetBsaCheckbox->setChecked(settings->value("bBsaCreate").toBool());
     ui->packExistingAssetsCheckbox->setChecked(settings->value("bBsaPackLooseFiles").toBool());
     ui->bsaDeleteBackupsCheckbox->setChecked(settings->value("bBsaDeleteBackup").toBool());
-    ui->bsaSplitAssetsCheckBox->setChecked(settings->value("bBsaSplitAssets").toBool());
 
     if(settings->value("bBsaCreate").toBool())
         ui->packExistingAssetsCheckbox->setDisabled(false);
