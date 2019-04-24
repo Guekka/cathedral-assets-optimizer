@@ -220,7 +220,6 @@ void MainOptimizer::dryOptimizeAssets(const QString& folderPath)
 
         if(options.iMeshesOptimizationLevel >=1 && it.fileName().endsWith(".nif", Qt::CaseInsensitive))
             meshesOptimizer.dryOptimize(it.filePath());
-
         if(options.iTexturesOptimizationLevel >=2 && it.fileName().endsWith(".dds", Qt::CaseInsensitive))
         {
             if(TexturesOptimizer::isCompressed(it.filePath()))

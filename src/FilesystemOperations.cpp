@@ -96,6 +96,8 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
             bsaList << espName + ".bsa.extracted";
     }
 
+    QLogger::QLog_Debug("FilesystemOperations", "main folders:\n" + directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot).join("\n"));
+
     moveAssets(folderPath, bsaList, texturesBsaList);
 
     QLogger::QLog_Trace("FilesystemOperations", "Total: " + QString::number(bsaList.size()) + " bsa folders:\n" + bsaList.join("\n") + "\n"
@@ -151,6 +153,8 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
     }
     QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
 }
+
+
 
 
 void FilesystemOperations::moveAssets(const QString &path, const QStringList &bsaList, const QStringList &texturesBsaList)

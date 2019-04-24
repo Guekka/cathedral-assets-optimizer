@@ -45,19 +45,17 @@ public:
      * \param texturesBsaList The list of all textures bsa
      */
     void moveAssets(const QString& path, const QStringList& bsaList, const QStringList& texturesBsaList);
-
     /*!
      * \brief Will calculate the size of all assets in the given path
      * \param path The path of the directory to scan
      * \return  A QPair containing two qint64. The first will contain the textures size, the second will contain the other assets size.
      */
     static QPair<qint64, qint64> assetsSize(const QString& path);
-
     /*!
-    * \brief Delete empty directories in the given directory
-    * \param folderPath The path of the folder where empty dirs will be deleted
-    */
-    static void deleteEmptyDirectories(const QString &folderPath);
+         * \brief Delete empty directories in the given directory
+         * \param folderPath The path of the folder where empty dirs will be deleted
+         */
+    static void deleteEmptyDirectories(const QString& folderPath);
     /*!
      * \brief Compares if two folders have the same file structure. Currently only used for testing.
      * \param folder1 The first folder
