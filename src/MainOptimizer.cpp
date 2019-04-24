@@ -82,7 +82,8 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
                 if(bsaIt.next().endsWith(".bsa", Qt::CaseInsensitive))
                 {
                     QLogger::QLog_Note("MainOptimizer", tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
-                    bsaOptimizer.extract(bsaIt.filePath(), !options.bBsaDeleteBackup, options.bBsaCreate);
+                    bsaOptimizer.extract(bsaIt.filePath(), !options.bBsaDeleteBackup);
+
                 }
             }
              emit progressBarIncrease();

@@ -25,7 +25,8 @@ public:
      * \param deleteBsaBackup Backup the existing bsa
      * \param keepFileInBsaFolder Whether files will be moved to mod root or not
      */
-    void extract(QString bsaPath, const bool& makeBackup, const bool& keepFileInBsaFolder);
+    void extract(QString bsaPath, const bool& makeBackup);
+
     /*!
      * \brief Will create a BSA containing all the files given as argument
      * \param bsaPath The path of the bsa to create. It has to be in the folder containing the assets
@@ -47,8 +48,13 @@ private:
      * \return a QString containing the name of the backup-ed bsa
      */
     QString backup(const QString& bsaPath) const;
-
+    /*!
+     * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
+     */
     QStringList filesToNotPack;
+
+    QString findBsaName(const QString &folderPath, const bool& isTextureBsa);
+
 
 };
 

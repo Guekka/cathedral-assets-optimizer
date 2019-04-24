@@ -32,7 +32,7 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 QString PluginsOperations::findPlugin(const QString& folderPath)
 {
     QDirIterator it(folderPath);
-    QString espName;
+    QStringList espName;
     QString bsaName;
 
     while (it.hasNext())
@@ -41,23 +41,42 @@ QString PluginsOperations::findPlugin(const QString& folderPath)
 
         if(it.fileName().contains(QRegularExpression("\\.es[plm]$")))
         {
-            espName=it.fileName();
-            QLogger::QLog_Note("PluginsOperations", tr("Esp found: ") + espName);
+            espName << it.fileName();
+            QLogger::QLog_Note("PluginsOperations", tr("Esp found: ") + espName.last());
         }
 
         if(it.fileName().endsWith(".bsa", Qt::CaseInsensitive))
             bsaName = it.fileName().chopped(4) + ".esp";
     }
     if(!bsaName.isEmpty() && espName.isEmpty())
-        espName = bsaName;
+        espName << bsaName;
 
     if(espName.isEmpty())
     {
-        espName = QDir(folderPath).dirName() + ".esp";
-        QLogger::QLog_Debug("PluginsOperations", "Using: " + espName + " as esp name.");
+        espName << QDir(folderPath).dirName() + ".esp";
+        QLogger::QLog_Debug("PluginsOperations", "Using: " + espName.last() + " as esp name.");
     }
 
-    return espName.remove(QRegularExpression("\\.es[plm]$"));
+    QString returnedEsp;
+    int counter = 0;
+
+    do
+    {
+        for(auto esp : espName)
+        {
+            QFile bsa (esp.chopped(4) + ".bsa");
+            QFile texturesBsa(esp.chopped(4) + " - Textures.bsa");
+
+            if(!bsa.exists() || !texturesBsa.exists())
+                returnedEsp = esp;
+        }
+        if(returnedEsp.isEmpty())
+            returnedEsp = espName.last().chopped(4) + QString::number(counter) + ".esp";
+
+        ++counter;
+    }while(returnedEsp.isEmpty());
+
+    return returnedEsp.remove(QRegularExpression("\\.es[plm]$"));
 }
 
 

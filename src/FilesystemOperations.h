@@ -27,6 +27,15 @@ public:
     FilesystemOperations();
 
     /*!
+<<<<<<< Updated upstream
+=======
+     * \brief Will prepare for bsa creation.
+     * \param folderPath The path of the folder where assets will be processed
+     * \param splitAssets Whether the assets will be splitted or not
+     */
+    QMap<QString, QStringList> prepareBsas(const QString& folderPath);
+    /*!
+>>>>>>> Stashed changes
      * \brief Will move all files from source folder into destination folder.
      * \param source The source directory
      * \param destination The destination directory

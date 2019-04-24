@@ -20,29 +20,22 @@ BsaOptimizer::BsaOptimizer()
         QLogger::QLog_Warning("BsaOptimizer", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
 }
 
-void BsaOptimizer::extract(QString bsaPath, const bool &makeBackup, const bool &keepFileInBsaFolder)
+void BsaOptimizer::extract(QString bsaPath, const bool &makeBackup)
 {
-    QDir directory(QFileInfo(bsaPath).path());
-    QString bsaFolder = directory.filePath(bsaPath + ".extracted");
 
     bsaPath = backup(bsaPath);
 
-    //TODO use extract instead of extract all and check if loose file exist before extracting
-
-    BSArchiveAuto archive(bsaFolder);
+    QString bsaRoot(QFileInfo(bsaPath).path());
+    BSArchiveAuto archive(bsaRoot);
     try {
         archive.open(bsaPath);
-        archive.extractAll(bsaFolder);
+        archive.extractAll(bsaRoot, false);
     } catch (std::exception e) {
         QLogger::QLog_Error("BsaOptimizer", e.what());
         QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction of: ") + bsaPath + "\n" + tr("Please extract it manually. The BSA was not deleted."));
         archive.close();
         return;
     }
-
-    if(!keepFileInBsaFolder)
-        if(!FilesystemOperations::moveFiles(bsaPath, QFileInfo(bsaPath).path(), false))
-            QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory."));
 
     if(!makeBackup)
         QFile::remove(bsaPath);
@@ -164,17 +157,11 @@ void BsaOptimizer::packAll(const QString &folderPath)
             qint64 *pSize = isTexture ? &size.first : &size.second;
             QStringList *pAssets = isTexture ? &textures : &other;
             const double *pMaxSize = isTexture ? &maxTextures : &maxOther;
-            int *pCounter = isTexture ? &textureCounter : &otherCounter;
 
             if(*pSize > *pMaxSize){
                 //Each time the maximum size is reached, a BSA is created
-                do {
-                    //Naming the BSA. Using a while loop in case a BSA with this name already exists
-                    *pBsa = QDir::cleanPath(folderPath + "/" + espName + QString::number(*pCounter) + ".bsa");
-                    if(isTexture) *pBsa = pBsa->chopped(4) + " - Textures.bsa";
-                    ++ *pCounter;
-                }while(QFile(*pBsa).exists());
 
+                *pBsa = findBsaName(folderPath, isTexture);
                 create(*pBsa, *pAssets);
 
                 //Resetting for next loop
@@ -187,10 +174,16 @@ void BsaOptimizer::packAll(const QString &folderPath)
         }
     }
     //Since the maximum size wasn't reached for the last archive, some files are still unpacked
-    if (!textures.isEmpty() && !texturesBsaPath.isEmpty())
+    if (!textures.isEmpty())
+    {
+        texturesBsaPath = findBsaName(folderPath, true);
         create(texturesBsaPath, textures);
-    if (!other.isEmpty() && !bsaPath.isEmpty())
+    }
+    if (!other.isEmpty())
+    {
+        bsaPath = findBsaName(folderPath, false);
         create(bsaPath, other);
+    }
 }
 
 QString BsaOptimizer::backup(const QString& bsaPath) const
@@ -211,4 +204,32 @@ QString BsaOptimizer::backup(const QString& bsaPath) const
     QFile::rename(bsaPath, bsaBackupFile.fileName());
 
     return bsaBackupFile.fileName();
+}
+
+QString BsaOptimizer::findBsaName(const QString& folderPath, const bool &isTextureBsa)
+{
+    QString name;
+    QString espName = PluginsOperations::findPlugin(folderPath);
+    //Naming the BSA. Using a while loop in case a BSA with this name already exists
+
+    int counter = 0;
+
+    if(!isTextureBsa)
+    {
+        name = QDir::cleanPath(folderPath + "/" + espName + ".bsa");
+        while(QFile(name).exists())
+        {
+            name = QDir::cleanPath(folderPath + "/" + espName + QString::number(counter) + ".bsa");
+            ++counter;
+        }
+    }
+    else
+    {
+        name = QDir::cleanPath(folderPath + "/" + espName + " - Textures.bsa");
+        while(QFile(name).exists())
+        {
+            name = QDir::cleanPath(folderPath + "/" + espName + QString::number(counter) + " - Textures.bsa");
+            ++counter;
+        }
+    }
 }
