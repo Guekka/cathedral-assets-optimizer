@@ -27,33 +27,33 @@ bool parseArguments()
                           {"bs", "Enables splitting assets."},
                       });
 
-    if(!parser.parse(QCoreApplication::arguments()))
-    {
-        QTextStream(stderr) << parser.errorText();
-        return false;
-    }
-
-    if(parser.isSet("help"))
-        parser.showHelp();
+    parser.process(QCoreApplication::arguments());
 
     MainOptimizer::resetSettings();
 
     QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
-    if(!QDir(parser.value("folder")).exists())
+    QString path = QDir::cleanPath(parser.positionalArguments().at(0));
+    QString mode = parser.positionalArguments().at(1);
+
+    if(!QDir(path).exists())
     {
         QTextStream(stderr) << "\nError. This path does not exist.";
         return false;
     }
-    settings.setValue("SelectedPath", parser.value("folder"));
+    settings.setValue("SelectedPath", path);
 
-    if(parser.value("mode") != "om" || parser.value("mode") != "sm")
+    if(mode == "om")
+        settings.setValue("iMode", 0);
+    else if(mode == "sm")
+        settings.setValue("iMode", 1);
+    else
     {
         QTextStream(stderr) << "\nError. This mode does not exist.";
         return false;
     }
-    settings.setValue("iMode", parser.value("mode"));
+
 
     settings.setValue("bDryRun", parser.isSet("dr"));
 
@@ -61,17 +61,20 @@ bool parseArguments()
         settings.setValue("iLogLevel", parser.value("l").toInt());
 
     if(parser.isSet("m"))
-        settings.setValue("iMeshesOptimizationLevel", parser.value("m").toInt());
+        settings.setValue("Meshes/iMeshesOptimizationLevel", parser.value("m").toInt());
 
     if(parser.isSet("t"))
-        settings.setValue("iTexturesOptimizationLevel", parser.value("t").toInt());
+        settings.setValue("Textures/iTexturesOptimizationLevel", parser.value("t").toInt());
 
-    settings.setValue("bAnimationsOptimization", parser.isSet("a"));
+    settings.setValue("Animations/bAnimationsOptimization", parser.isSet("a"));
+
+    settings.beginGroup("BSA");
     settings.setValue("bBsaExtract", parser.isSet("be"));
     settings.setValue("bBsaCreate", parser.isSet("bc"));
     settings.setValue("bBsaPackLooseFiles", parser.isSet("bl"));
     settings.setValue("bBsaDeleteBackup", parser.isSet("bd"));
     settings.setValue("bBsaSplitAssets", parser.isSet("bs"));
+    settings.endGroup();
 
     return true;
 }
@@ -97,13 +100,13 @@ int main(int argc, char *argv[])
 
 #else
 
-    //If ran from a console, using this console instead of opening the GUI.
 
 #ifdef _WIN32
 
     MainWindow w;
 
-#ifndef QT_DEBUG
+//#ifndef QT_DEBUG
+    //If ran from a console, using this console instead of opening the GUI.
     if (AttachConsole(ATTACH_PARENT_PROCESS))
     {
         freopen("CONOUT$", "w", stdout);
@@ -111,13 +114,13 @@ int main(int argc, char *argv[])
         if (parseArguments())
         {
             MainOptimizer optimizer;
-            return optimizer.mainProcess();
+            return 1 ; //optimizer.mainProcess();
         }
         else
             return 1;
     }
     else
-#endif
+//#endif
         w.show();
 
 #endif //_WIN32
