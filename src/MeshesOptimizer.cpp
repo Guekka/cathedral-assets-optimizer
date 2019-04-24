@@ -17,7 +17,8 @@ MeshesOptimizer::MeshesOptimizer()
         }
     }
     else
-        QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
+        QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. This could cause issues with headparts detection. Please reinstall the program"
+                                                    " and, if this error still appears, contact the developper."));
 
 
     //Reading settings from file

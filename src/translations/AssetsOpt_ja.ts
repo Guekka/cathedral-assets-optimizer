@@ -50,9 +50,9 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FilesystemOperations.cpp" line="136"/>
-        <location filename="../FilesystemOperations.cpp" line="216"/>
-        <location filename="../FilesystemOperations.cpp" line="349"/>
+        <location filename="../FilesystemOperations.cpp" line="138"/>
+        <location filename="../FilesystemOperations.cpp" line="220"/>
+        <location filename="../FilesystemOperations.cpp" line="353"/>
         <source>An error occurred while moving files. Try reducing path size (260 characters is the maximum)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -121,17 +121,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="227"/>
+        <location filename="../MainOptimizer.cpp" line="226"/>
         <source> would be compressed to BC7</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="231"/>
+        <location filename="../MainOptimizer.cpp" line="230"/>
         <source> would be converted to DDS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="234"/>
+        <location filename="../MainOptimizer.cpp" line="233"/>
         <source> would be ported to SSE</source>
         <translation type="unfinished"></translation>
     </message>
@@ -393,80 +393,80 @@ This process has only been tested on the Mod Organizer mods folder.</source>
     <name>MeshesOptimizer</name>
     <message>
         <location filename="../MeshesOptimizer.cpp" line="20"/>
-        <source>No custom headparts file found. If you haven&apos;t created one, please ignore this message.</source>
+        <source>No custom headparts file found. This could cause issues with headparts detection. Please reinstall the program and, if this error still appears, contact the developper.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="35"/>
+        <location filename="../MeshesOptimizer.cpp" line="36"/>
         <source>Listing meshes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="49"/>
+        <location filename="../MeshesOptimizer.cpp" line="50"/>
         <source>Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="113"/>
+        <location filename="../MeshesOptimizer.cpp" line="114"/>
         <source>ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="139"/>
-        <location filename="../MeshesOptimizer.cpp" line="145"/>
-        <location filename="../MeshesOptimizer.cpp" line="151"/>
-        <location filename="../MeshesOptimizer.cpp" line="157"/>
-        <location filename="../MeshesOptimizer.cpp" line="163"/>
+        <location filename="../MeshesOptimizer.cpp" line="140"/>
+        <location filename="../MeshesOptimizer.cpp" line="146"/>
+        <location filename="../MeshesOptimizer.cpp" line="152"/>
+        <location filename="../MeshesOptimizer.cpp" line="158"/>
+        <location filename="../MeshesOptimizer.cpp" line="164"/>
         <source>Running NifOpt...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="139"/>
-        <location filename="../MeshesOptimizer.cpp" line="145"/>
-        <location filename="../MeshesOptimizer.cpp" line="151"/>
-        <location filename="../MeshesOptimizer.cpp" line="157"/>
-        <location filename="../MeshesOptimizer.cpp" line="163"/>
+        <location filename="../MeshesOptimizer.cpp" line="140"/>
+        <location filename="../MeshesOptimizer.cpp" line="146"/>
+        <location filename="../MeshesOptimizer.cpp" line="152"/>
+        <location filename="../MeshesOptimizer.cpp" line="158"/>
+        <location filename="../MeshesOptimizer.cpp" line="164"/>
         <source>Processing: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="139"/>
+        <location filename="../MeshesOptimizer.cpp" line="140"/>
         <source> as an headpart due to crashing meshes option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="145"/>
+        <location filename="../MeshesOptimizer.cpp" line="146"/>
         <source> due to crashing meshes option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="151"/>
-        <location filename="../MeshesOptimizer.cpp" line="163"/>
+        <location filename="../MeshesOptimizer.cpp" line="152"/>
+        <location filename="../MeshesOptimizer.cpp" line="164"/>
         <source> due to all meshes option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="157"/>
+        <location filename="../MeshesOptimizer.cpp" line="158"/>
         <source> due to other meshes option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="174"/>
+        <location filename="../MeshesOptimizer.cpp" line="175"/>
         <source> would be optimized as an headpart due to necessary optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="177"/>
+        <location filename="../MeshesOptimizer.cpp" line="178"/>
         <source> would be optimized due to necessary optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="180"/>
+        <location filename="../MeshesOptimizer.cpp" line="181"/>
         <source> would be optimized due to medium optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="183"/>
+        <location filename="../MeshesOptimizer.cpp" line="184"/>
         <source> would be optimized due to full optimization</source>
         <translation type="unfinished"></translation>
     </message>
