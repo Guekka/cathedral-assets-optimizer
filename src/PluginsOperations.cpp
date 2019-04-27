@@ -29,7 +29,7 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 }
 
 
-QString PluginsOperations::findPlugin(const QString& folderPath)
+QString PluginsOperations::findPlugin(const QString& folderPath, bsaRequired bsaType)
 {
     QDirIterator it(folderPath);
     QStringList espName;
@@ -67,7 +67,10 @@ QString PluginsOperations::findPlugin(const QString& folderPath)
             QFile bsa (esp.chopped(4) + ".bsa");
             QFile texturesBsa(esp.chopped(4) + " - Textures.bsa");
 
-            if(!bsa.exists() || !texturesBsa.exists())
+            bool isGood = (!texturesBsa.exists() && (bsaType == bsaRequired::texturesBsa || bsaType == bsaRequired::texturesAndStandardBsa))
+                    || (!bsa.exists() && (bsaType == bsaRequired::standardBsa || bsaType == bsaRequired::texturesAndStandardBsa));
+
+            if(isGood)
                 returnedEsp = esp;
         }
         if(returnedEsp.isEmpty())

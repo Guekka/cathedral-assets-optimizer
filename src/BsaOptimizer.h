@@ -53,9 +53,6 @@ private:
      */
     QStringList filesToNotPack;
 
-    QString findBsaName(const QString &folderPath, const bool& isTextureBsa);
-
-
 };
 
 #endif // BSAOPTIMIZER_H

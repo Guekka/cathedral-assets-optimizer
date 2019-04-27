@@ -120,8 +120,7 @@ void BsaOptimizer::packAll(const QString &folderPath)
                         + "Packing all loose files into BSAs");
 
     //Used to name the BSA
-    QString espName = PluginsOperations::findPlugin(folderPath);
-    int otherCounter = 1, textureCounter = 1;
+    QString espName = PluginsOperations::findPlugin(folderPath, bsaRequired::texturesAndStandardBsa);
     QString texturesBsaPath = QDir::cleanPath(folderPath + "/" + espName +  " - Textures.bsa");
     QString bsaPath = QDir::cleanPath(folderPath + "/" + espName +  ".bsa");
 
@@ -161,7 +160,7 @@ void BsaOptimizer::packAll(const QString &folderPath)
             if(*pSize > *pMaxSize){
                 //Each time the maximum size is reached, a BSA is created
 
-                *pBsa = findBsaName(folderPath, isTexture);
+                *pBsa = PluginsOperations::findPlugin(folderPath, isTexture ? texturesBsa : standardBsa);
                 create(*pBsa, *pAssets);
 
                 //Resetting for next loop
@@ -176,12 +175,13 @@ void BsaOptimizer::packAll(const QString &folderPath)
     //Since the maximum size wasn't reached for the last archive, some files are still unpacked
     if (!textures.isEmpty())
     {
-        texturesBsaPath = findBsaName(folderPath, true);
+        texturesBsaPath = PluginsOperations::findPlugin(folderPath, bsaRequired::texturesBsa);
+
         create(texturesBsaPath, textures);
     }
     if (!other.isEmpty())
     {
-        bsaPath = findBsaName(folderPath, false);
+        bsaPath = PluginsOperations::findPlugin(folderPath, bsaRequired::standardBsa);
         create(bsaPath, other);
     }
 }
@@ -204,32 +204,4 @@ QString BsaOptimizer::backup(const QString& bsaPath) const
     QFile::rename(bsaPath, bsaBackupFile.fileName());
 
     return bsaBackupFile.fileName();
-}
-
-QString BsaOptimizer::findBsaName(const QString& folderPath, const bool &isTextureBsa)
-{
-    QString name;
-    QString espName = PluginsOperations::findPlugin(folderPath);
-    //Naming the BSA. Using a while loop in case a BSA with this name already exists
-
-    int counter = 0;
-
-    if(!isTextureBsa)
-    {
-        name = QDir::cleanPath(folderPath + "/" + espName + ".bsa");
-        while(QFile(name).exists())
-        {
-            name = QDir::cleanPath(folderPath + "/" + espName + QString::number(counter) + ".bsa");
-            ++counter;
-        }
-    }
-    else
-    {
-        name = QDir::cleanPath(folderPath + "/" + espName + " - Textures.bsa");
-        while(QFile(name).exists())
-        {
-            name = QDir::cleanPath(folderPath + "/" + espName + QString::number(counter) + " - Textures.bsa");
-            ++counter;
-        }
-    }
 }
