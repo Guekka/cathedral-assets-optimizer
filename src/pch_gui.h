@@ -9,7 +9,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFileDialog>
-#include <QGridLayout>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QProgressBar>

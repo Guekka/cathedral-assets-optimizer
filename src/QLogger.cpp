@@ -21,38 +21,6 @@
 
 namespace QLogger
 {
-        LogLevel intToLogLevel(const int& value)
-        {
-            switch (value)
-            {
-            case 0:   return LogLevel::Trace;
-            case 1:   return LogLevel::Debug;
-            case 2:   return LogLevel::Note;
-            case 3:   return LogLevel::Info;
-            case 4:   return LogLevel::Warning;
-            case 5:   return LogLevel::Error;
-            case 6:   return LogLevel::Fatal;
-            }
-            return LogLevel();
-        }
-
-        int logLevelToInt(const LogLevel &level)
-        {
-            switch (level)
-            {
-            case LogLevel::Trace:   return 0;
-            case LogLevel::Debug:   return 1;
-            case LogLevel::Note:    return 2;
-            case LogLevel::Info:    return 3;
-            case LogLevel::Warning: return 4;
-            case LogLevel::Error:   return 5;
-            case LogLevel::Fatal:   return 6;
-            }
-
-            return int();
-        }
-
-
        void QLog_Trace(const QString &module, const QString &message)
        {
            QLog_(module, LogLevel::Trace, message);

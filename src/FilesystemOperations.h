@@ -23,9 +23,8 @@ public:
     /*!
      * \brief Will prepare for bsa creation.
      * \param folderPath The path of the folder where assets will be processed
-     * \param splitAssets Whether the assets will be splitted or not
      */
-    void prepareBsas(const QString& folderPath, const bool& splitAssets);
+    void prepareBsas(const QString& folderPath);
     /*!
      * \brief Will move all files from source folder into destination folder.
      * \param source The source directory

@@ -17,7 +17,10 @@ MeshesOptimizer::MeshesOptimizer()
         }
     }
     else
+    {
         QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
+        QLogger::QLog_Warning("Errors", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
+    }
 
 
     //Reading settings from file
@@ -46,7 +49,10 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
     nifScan.start(QCoreApplication::applicationDirPath() + "/resources/NifScan.exe", QStringList { folderPath, "-fixdds" });
 
     if(!nifScan.waitForFinished(180000))
+    {
         QLogger::QLog_Error("MeshesOptimizer", tr("Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod."));
+        QLogger::QLog_Error("Errors", tr("Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod."));
+    }
 
     QString currentFile;
 
@@ -110,7 +116,10 @@ void MeshesOptimizer::listHeadparts(const QDir& directory)
     listHeadparts.start(QCoreApplication::applicationDirPath() + "/resources/ListHeadParts.exe", QStringList() << directory.path());
 
     if(!listHeadparts.waitForFinished(180000))
+    {
         QLogger::QLog_Error("MeshesOptimizer", tr("ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod."));
+        QLogger::QLog_Error("Errors", tr("ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod."));
+    }
 
     while(listHeadparts.canReadLine())
     {

@@ -22,11 +22,14 @@ FilesystemOperations::FilesystemOperations()
         }
     }
     else
+    {
         QLogger::QLog_Warning("FilesystemOperations", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
+        QLogger::QLog_Warning("Errors", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
+    }
 }
 
 
-void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &splitAssets) //Split assets between several folders
+void FilesystemOperations::prepareBsas(const QString &folderPath) //Split assets between several folders
 {
     QLogger::QLog_Trace("FilesystemOperations", "Entering " + QString(__FUNCTION__) + " function");
 
@@ -55,8 +58,6 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
     QString espName = PluginsOperations::findPlugin(folderPath);
     QString bsaName;
 
-    if(splitAssets)
-    {
         QLogger::QLog_Trace("FilesystemOperations", "Creating enough folders to contain all the files");
 
         QPair<qint64, qint64> size = assetsSize(directory.path());
@@ -72,7 +73,7 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
             texturesBsaList << bsaName;
             texturesBsaList.removeDuplicates();
             ++i;
-        }
+
 
         i = 0;
         while(bsaList.size() < qCeil(size.second/2107483647.0))
@@ -88,13 +89,6 @@ void FilesystemOperations::prepareBsas(const QString &folderPath, const bool &sp
         }
     }
 
-    else //If assets splitting is disabled, use only one bsa folder and one textures bsa folder
-    {
-        if(texturesBsaList.isEmpty())
-            texturesBsaList << espName + " - Textures.bsa.extracted";
-        if(bsaList.isEmpty())
-            bsaList << espName + ".bsa.extracted";
-    }
 
     QLogger::QLog_Debug("FilesystemOperations", "main folders:\n" + directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot).join("\n"));
 
@@ -136,6 +130,7 @@ void FilesystemOperations::moveFiles(const QString& source, const QString& desti
         if(newFileRelativeFilename.size() >= 255 || oldFiles.at(i).size() >=255)
         {
             QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
+            QLogger::QLog_Error("Errors", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
             return;
         }
 
@@ -218,6 +213,7 @@ void FilesystemOperations::moveAssets(const QString &path, const QStringList &bs
         if(newFile.size() >= 255 || oldFiles.at(i).size() >=255)
         {
             QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
+            QLogger::QLog_Error("Errors", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
             return;
         }
 
@@ -351,6 +347,7 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
         if(newFile.size() >= 255)
         {
             QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
+            QLogger::QLog_Error("Errors", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
             return;
         }
 

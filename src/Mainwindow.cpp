@@ -11,8 +11,8 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     settings = new QSettings("Cathedral Assets Optimizer.ini", QSettings::IniFormat, this);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
-    if(!settings->contains("iLogLevel"))
-        settings->setValue("iLogLevel",  QLogger::logLevelToInt(QLogger::LogLevel::Info));
+    if(!settings->contains("logLevel"))
+        settings->setValue("logLevel",  static_cast<uint>(QLogger::LogLevel::Info));
     this->loadUIFromFile();
 
     //Preparing log
@@ -28,7 +28,6 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
     connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
     connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->bsaSplitAssetsCheckBox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
 
     connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
     connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
@@ -69,33 +68,30 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->processButton, &QPushButton::pressed, this, [=]()
     {
-        if(QDir(ui->userPathTextEdit->text()).exists() && ui->userPathTextEdit->text().size() > 5 && !ui->userPathTextEdit->text().isEmpty())
+        if(QDir(ui->userPathTextEdit->text()).exists())
             this->initProcess();
         else
-            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist or is shorter than 5 characters. Process aborted."), QMessageBox::Ok);
+            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
 
     });
 
     //Connecting menu buttons
 
-    connect(ui->actionSwitch_to_dark_theme, &QAction::triggered, this, [=]()
+    connect(ui->actionChangeTheme, &QAction::triggered, this, [=]()
     {
         bDarkMode = !bDarkMode;
         this->saveUIToFile();
     });
 
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", QLogger::logLevelToInt(QLogger::LogLevel::Info));});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", static_cast<uint>(QLogger::LogLevel::Info));});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", QLogger::logLevelToInt(QLogger::LogLevel::Note));});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", static_cast<uint>(QLogger::LogLevel::Note));});
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", QLogger::logLevelToInt(QLogger::LogLevel::Trace));});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", static_cast<uint>(QLogger::LogLevel::Trace));});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &MainWindow::loadUIFromFile);
-
-    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", QLogger::logLevelToInt(QLogger::LogLevel::Warning));});
-    connect(ui->actionLogVerbosityWarning, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 }
 
 
@@ -171,13 +167,13 @@ void MainWindow::saveUIToFile()
 
     settings->setValue("BsaGroupBox", ui->BsaGroupBox->isChecked());
 
-    if(ui->BsaGroupBox->isChecked())
+    //Disabling BSA options if dry run is enabled
+    if(ui->BsaGroupBox->isChecked() && !ui->dryRunCheckBox->isChecked())
     {
         settings->setValue("bBsaExtract", ui->extractBsaCheckbox->isChecked());
         settings->setValue("bBsaCreate", ui->recreatetBsaCheckbox->isChecked());
         settings->setValue("bBsaPackLooseFiles", ui->packExistingAssetsCheckbox->isChecked());
         settings->setValue("bBsaDeleteBackup", ui->bsaDeleteBackupsCheckbox->isChecked());
-        settings->setValue("bBsaSplitAssets", ui->bsaSplitAssetsCheckBox->isChecked());
     }
     else
     {
@@ -185,20 +181,7 @@ void MainWindow::saveUIToFile()
         settings->setValue("bBsaCreate", false);
         settings->setValue("bBsaPackLooseFiles", false);
         settings->setValue("bBsaDeleteBackup", false);
-        settings->setValue("bBsaSplitAssets", false);
     }
-
-    //Disabling BSA options if dry run is enabled
-
-    if(ui->dryRunCheckBox->isChecked())
-    {
-        settings->setValue("bBsaExtract", false);
-        settings->setValue("bBsaCreate", false);
-        settings->setValue("bBsaPackLooseFiles", false);
-        settings->setValue("bBsaDeleteBackup", false);
-        settings->setValue("bBsaSplitAssets", false);
-    }
-
 
     settings->endGroup();
 
@@ -271,7 +254,6 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
     ui->recreatetBsaCheckbox->setChecked(settings->value("bBsaCreate").toBool());
     ui->packExistingAssetsCheckbox->setChecked(settings->value("bBsaPackLooseFiles").toBool());
     ui->bsaDeleteBackupsCheckbox->setChecked(settings->value("bBsaDeleteBackup").toBool());
-    ui->bsaSplitAssetsCheckBox->setChecked(settings->value("bBsaSplitAssets").toBool());
 
     if(settings->value("bBsaCreate").toBool())
         ui->packExistingAssetsCheckbox->setDisabled(false);
@@ -325,14 +307,12 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
     ui->actionLogVerbosityInfo->setChecked(false);
     ui->actionLogVerbosityNote->setChecked(false);
     ui->actionLogVerbosityTrace->setChecked(false);
-    ui->actionLogVerbosityWarning->setChecked(false);
 
     switch (settings->value("iLogLevel").toInt())
     {
     case 0: ui->actionLogVerbosityTrace->setChecked(true); break;
     case 2: ui->actionLogVerbosityNote->setChecked(true); break;
     case 3: ui->actionLogVerbosityInfo->setChecked(true); break;
-    case 4: ui->actionLogVerbosityWarning->setChecked(true); break;
     }
 
     //Enabling dark mode
@@ -343,12 +323,12 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
         f.open(QFile::ReadOnly | QFile::Text);
         qApp->setStyleSheet(f.readAll());
         f.close();
-        ui->actionSwitch_to_dark_theme->setText(tr("Switch to light theme"));
+        ui->actionChangeTheme->setText(tr("Switch to light theme"));
     }
     else if(!bDarkMode)
     {
         qApp->setStyleSheet("");
-        ui->actionSwitch_to_dark_theme->setText(tr("Switch to dark theme"));
+        ui->actionChangeTheme->setText(tr("Switch to dark theme"));
     }
 
     //Disabling some meshes options when several mods mode is enabled
@@ -392,6 +372,7 @@ void MainWindow::updateLog()
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
         QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
         ui->plainTextEdit->appendHtml(ts.readAll());
+
         log.close();
     }
 }
