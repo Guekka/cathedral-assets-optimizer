@@ -26,7 +26,6 @@ public:
      * \param keepFileInBsaFolder Whether files will be moved to mod root or not
      */
     void extract(QString bsaPath, const bool& makeBackup);
-
     /*!
      * \brief Will create a BSA containing all the files given as argument
      * \param bsaPath The path of the bsa to create. It has to be in the folder containing the assets

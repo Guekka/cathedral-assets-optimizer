@@ -40,22 +40,18 @@ QString PluginsOperations::findPlugin(const QString& folderPath, bsaRequired bsa
         it.next();
 
         if(it.fileName().contains(QRegularExpression("\\.es[plm]$")))
-        {
             espName << it.fileName();
-            QLogger::QLog_Note("PluginsOperations", tr("Esp found: ") + espName.last());
-        }
 
-        if(it.fileName().endsWith(".bsa", Qt::CaseInsensitive))
+
+        if(it.fileName().endsWith(".bsa", Qt::CaseInsensitive) && !it.fileName().endsWith(" - Textures.bsa", Qt::CaseInsensitive))
             bsaName = it.fileName().chopped(4) + ".esp";
     }
     if(!bsaName.isEmpty() && espName.isEmpty())
         espName << bsaName;
 
     if(espName.isEmpty())
-    {
         espName << QDir(folderPath).dirName() + ".esp";
-        QLogger::QLog_Debug("PluginsOperations", "Using: " + espName.last() + " as esp name.");
-    }
+
 
     QString returnedEsp;
     int counter = 0;
@@ -64,22 +60,25 @@ QString PluginsOperations::findPlugin(const QString& folderPath, bsaRequired bsa
     {
         for(auto esp : espName)
         {
-            QFile bsa (esp.chopped(4) + ".bsa");
-            QFile texturesBsa(esp.chopped(4) + " - Textures.bsa");
+            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + " - Textures.bsa").exists() && bsaType == bsaRequired::texturesBsa;
+            bool standardBsaGood = !QFile(folderPath + "/" +esp.chopped(4) + ".bsa").exists() && bsaType == bsaRequired::standardBsa;
+            bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + " - Textures.bsa").exists()
+                    && !QFile(folderPath + "/" +esp.chopped(4) + ".bsa").exists()
+                    && bsaType == bsaRequired::texturesAndStandardBsa;
 
-            bool isGood = (!texturesBsa.exists() && (bsaType == bsaRequired::texturesBsa || bsaType == bsaRequired::texturesAndStandardBsa))
-                    || (!bsa.exists() && (bsaType == bsaRequired::standardBsa || bsaType == bsaRequired::texturesAndStandardBsa));
-
-            if(isGood)
+            if(texturesBsaGood || standardBsaGood || bothBsaGood)
                 returnedEsp = esp;
         }
         if(returnedEsp.isEmpty())
-            returnedEsp = espName.last().chopped(4) + QString::number(counter) + ".esp";
+            espName << espName.last().chopped(4) + QString::number(counter) + ".esp";
 
         ++counter;
     }while(returnedEsp.isEmpty());
 
-    return returnedEsp.remove(QRegularExpression("\\.es[plm]$"));
+    returnedEsp.remove(QRegularExpression("\\.es[plm]$"));
+    QLogger::QLog_Note("PluginsOperations", "Using: " + returnedEsp + " as esp name.");
+
+    return returnedEsp;
 }
 
 
