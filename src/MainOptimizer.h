@@ -1,8 +1,8 @@
 #ifndef MAIN_OPTIMIZER_H
 #define MAIN_OPTIMIZER_H
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 #include "AnimationsOptimizer.h"
 #include "BsaOptimizer.h"
 #include "FilesystemOperations.h"
@@ -10,6 +10,9 @@
 #include "PluginsOperations.h"
 #include "TexturesOptimizer.h"
 
+/*!
+ * \brief Manages the optimization options
+ */
 struct optOptions
 {
     bool bBsaExtract{};
@@ -26,7 +29,9 @@ struct optOptions
     QString userPath;
 };
 
-
+/*!
+ * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
+ */
 class MainOptimizer : public QObject
 {
     Q_OBJECT
@@ -40,10 +45,18 @@ public:
 
     //Settings operations
 
+    /*!
+    * \brief Loads settings from the ini file to variables
+    */
     void loadSettings();
-
+    /*!
+         * \brief Sets the log level to value
+         * \param value The value to set
+         */
     void setLogLevel(const QLogger::LogLevel &value) { logLevel = value; }
-
+    /*!
+     * \brief Resets the settings to default
+     */
     static void resetSettings();
 
 private:

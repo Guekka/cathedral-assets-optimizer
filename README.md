@@ -7,6 +7,10 @@ Cathedral Assets Optimizer is a tool aiming to automate asset conversion and opt
 
 Documentation is incomplete. It is available [here](https://g_ka.gitlab.io/sse-assets-optimiser/).
 
+# Build instructions
+
+You have to use QMake to build this program. GCC should work, but if it doesn't, MSVC will be required.
+
 # Features
 
 General :
@@ -15,8 +19,6 @@ General :
 *    You can convert, optimize, and pack your entire mod install into BSAs with a single click!
 *    Each option is independently configurable
 *    Dry Run mode to detect what files would be processed without performing formatting changes
-
-
 
 BSAs :
 

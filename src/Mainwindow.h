@@ -2,8 +2,8 @@
 #define MAINWINDOW_H
 
 #include "MainOptimizer.h"
-#include "pch_gui.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 
 namespace Ui {
     class MainWindow;

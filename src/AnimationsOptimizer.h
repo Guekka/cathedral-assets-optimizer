@@ -1,8 +1,8 @@
 #ifndef ANIMATIONSOPTIMIZER_H
 #define ANIMATIONSOPTIMIZER_H
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 
 /*!
  * \brief The AnimationsOptimizer class will handle all operations related to animations (hkx files)

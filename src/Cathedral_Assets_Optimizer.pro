@@ -27,7 +27,7 @@ CONFIG += c++17 precompile_header static suppress_vcproj_warnings
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    QLogger.cpp \
+    QLogger/QLogger.cpp \
     TexturesOptimizer.cpp \
     MeshesOptimizer.cpp \
     BsaOptimizer.cpp \
@@ -40,7 +40,7 @@ SOURCES += \
 
 HEADERS += \
     mainwindow.h \
-    QLogger.h \
+    QLogger/QLogger.h \
     TexturesOptimizer.h \
     MeshesOptimizer.h \
     BsaOptimizer.h \
@@ -48,11 +48,11 @@ HEADERS += \
     PluginsOperations.h \
     AnimationsOptimizer.h \
     MainOptimizer.h \
-    IntegrationTests.h
+    IntegrationTests.h \
+    pch.h
 
 
-PRECOMPILED_HEADER += pch_core.h \
-                    pch_gui.h
+PRECOMPILED_HEADER += pch.h
 
 TRANSLATIONS += \
 translations/AssetsOpt_fr.ts \

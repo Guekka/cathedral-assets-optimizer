@@ -1,8 +1,8 @@
 #ifndef MESHESOPTIMIZER_H
 #define MESHESOPTIMIZER_H
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 
 class MeshesOptimizer : public QObject
 {

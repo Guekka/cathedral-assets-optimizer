@@ -1,12 +1,12 @@
 #ifndef FILESYSTEMOPERATIONS_H
 #define FILESYSTEMOPERATIONS_H
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 #include "PluginsOperations.h"
 
 /*!
- * \brief The FilesystemOperations class
+ * \brief Manages filesystem operations : move files, calculate folder size...
  */
 
 class FilesystemOperations : public QObject
@@ -63,7 +63,6 @@ public:
      * \return a bool : true if the folders are identical, false otherwise
      */
     static bool compareFolders(const QString& folder1, const QString& folder2, const bool& checkFileSize);
-
     /*!
      * \brief Will copy all files from source folder into destination folder.Currently only used for testing.
      * \param source The source directory

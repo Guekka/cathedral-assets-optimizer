@@ -1,7 +1,7 @@
 #include "Mainwindow.h"
 #include "ui_mainwindow.h"
 #include "MainOptimizer.h"
-#include "QLogger.h"
+#include "QLogger/QLogger.h"
 
 MainWindow::MainWindow() : ui(new Ui::MainWindow)
 {

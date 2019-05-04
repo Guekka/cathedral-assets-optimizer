@@ -20,7 +20,7 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>Cathedral Assets Optimizer 4.2.5</string>
+   <string>Cathedral Assets Optimizer 4.2.6</string>
   </property>
   <property name="whatsThis">
    <string>Will write which files would be affected, without actually processing them</string>
@@ -565,7 +565,6 @@
      <property name="title">
       <string>Log verbosity</string>
      </property>
-     <addaction name="separator"/>
      <addaction name="actionLogVerbosityTrace"/>
      <addaction name="actionLogVerbosityNote"/>
      <addaction name="actionLogVerbosityInfo"/>

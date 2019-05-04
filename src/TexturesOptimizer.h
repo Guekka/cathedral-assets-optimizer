@@ -1,8 +1,8 @@
 #ifndef TEXTURESOPTIMIZER_H
 #define TEXTURESOPTIMIZER_H
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 
 class TexturesOptimizer : public QObject
 {

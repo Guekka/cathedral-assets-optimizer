@@ -1,12 +1,12 @@
 #ifndef BSAOPTIMIZER_H
 #define BSAOPTIMIZER_H
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 #include "FilesystemOperations.h"
 
 /*!
- * \brief The BsaOptimizer class
+ * \brief Manages BSA : extract and create them
  */
 
 class BsaOptimizer : public QObject

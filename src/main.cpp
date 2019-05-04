@@ -1,5 +1,5 @@
 #include "Mainwindow.h"
-#include "QLogger.h"
+#include "QLogger/QLogger.h"
 #include "Windows.h"
 #include "IntegrationTests.h"
 #include <QCommandLineParser>
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 
     //If tests are enabled, run tests instead of running standard process
 
-    if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way
+    if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way to enable tests
     {
         IntegrationTests tests(QCoreApplication::arguments().at(1));
         tests.runAllTests();

@@ -1,8 +1,8 @@
 #ifndef PLUGINSOPERATIONS_H
 #define PLUGINSOPERATIONS_H
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 
 class PluginsOperations : public QObject
 {
