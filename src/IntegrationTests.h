@@ -13,7 +13,7 @@ public:
     bool runAllTests();
 
 private:
-    QDir dir;
+    QDir m_dir;
 };
 
 #endif // INTEGRATIONTESTS_H

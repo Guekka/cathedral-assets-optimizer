@@ -25,7 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17 precompile_header static suppress_vcproj_warnings
 
 SOURCES += \
-    ../../QLibbsarch/QLibbsarch.cpp \
     main.cpp \
     mainwindow.cpp \
     QLogger.cpp \
@@ -40,8 +39,6 @@ SOURCES += \
 
 
 HEADERS += \
-    ../../QLibbsarch/QLibbsarch.h \
-    ../../QLibbsarch/libbsarch.h \
     mainwindow.h \
     QLogger.h \
     TexturesOptimizer.h \

@@ -129,9 +129,9 @@ void MeshesOptimizer::listHeadparts(const QDir& directory)
 
     //Adding custom headparts to detected headparts
 
-    for(int i = 0; i < customHeadparts.size(); ++i)
+    for(const auto& customHeadpart : customHeadparts)
     {
-        headparts << QDir::cleanPath(directory.filePath(customHeadparts.at(i)));
+        headparts << QDir::cleanPath(directory.filePath(customHeadpart));
     }
 }
 

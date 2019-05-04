@@ -64,7 +64,7 @@ QString PluginsOperations::findPlugin(const QString& folderPath)
 
 
 
-bool PluginsOperations::checkIfBsaHasPlugin(QString bsaPath)
+bool PluginsOperations::checkIfBsaHasPlugin(const QString& bsaPath)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
     bsaName.remove(".bsa");
@@ -78,9 +78,5 @@ bool PluginsOperations::checkIfBsaHasPlugin(QString bsaPath)
     bool hasEsm = QFile(esmName).exists();
     bool hasEsp = QFile(espName).exists();
 
-    if(hasEsl || hasEsm || hasEsp)
-        return true;
-
-    else
-        return false;
+    return hasEsl || hasEsm || hasEsp;
 }

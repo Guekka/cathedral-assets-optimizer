@@ -24,7 +24,7 @@ public:
      * \brief Checks if a bsa already has a plugin to load it
      * \param bsaPath The path of the bsa to check
      */
-    static bool checkIfBsaHasPlugin(QString bsaPath);
+    static bool checkIfBsaHasPlugin(const QString& bsaPath);
 };
 
 #endif // PLUGINSOPERATIONS_H

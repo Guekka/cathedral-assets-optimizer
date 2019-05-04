@@ -1,10 +1,8 @@
 #include "Mainwindow.h"
 #include "QLogger.h"
-#include "windows.h"
+#include "Windows.h"
 #include "IntegrationTests.h"
 #include <QCommandLineParser>
-
-#define ENABLE_TEST 0
 
 bool parseArguments()
 {
@@ -73,7 +71,6 @@ bool parseArguments()
     settings.setValue("bBsaCreate", parser.isSet("bc"));
     settings.setValue("bBsaPackLooseFiles", parser.isSet("bl"));
     settings.setValue("bBsaDeleteBackup", parser.isSet("bd"));
-    settings.setValue("bBsaSplitAssets", parser.isSet("bs"));
     settings.endGroup();
 
     return true;
@@ -86,46 +83,52 @@ int main(int argc, char *argv[])
 
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + QLocale::system().name(), "translations");
-    app.installTranslator(&qtTranslator);
+    QApplication::installTranslator(&qtTranslator);
 
     QTranslator AssetsOptTranslator;
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
-    app.installTranslator(&AssetsOptTranslator);
+    QApplication::installTranslator(&AssetsOptTranslator);
 
     //If tests are enabled, run tests instead of running standard process
 
-#if ENABLE_TEST
-    IntegrationTests tests(QCoreApplication::arguments().at(1));
-    tests.runAllTests();
-
-#else
-
-
-#ifdef _WIN32
-
-    MainWindow w;
-
-#ifndef QT_DEBUG
-    //If ran from a console, using this console instead of opening the GUI.
-    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way
     {
-        freopen("CONOUT$", "w", stdout);
-        freopen("CONOUT$", "w", stderr);
-        if (parseArguments())
+        IntegrationTests tests(QCoreApplication::arguments().at(1));
+        tests.runAllTests();
+    }
+
+    else if constexpr(_WIN32)
+    {
+        MainWindow w;
+        bool consoleAttached;
+
+#ifdef _DEBUG //Attaching the console breaks debug mode
+        AllocConsole();
+        consoleAttached = false;
+#else
+        consoleAttached = AttachConsole(ATTACH_PARENT_PROCESS); //If ran from a console, using this console instead of opening the GUI.
+#endif
+
+        if (consoleAttached)
         {
-            MainOptimizer optimizer;
-            return optimizer.mainProcess();
+            FILE* pCout;
+            freopen_s(&pCout, "conout$", "w", stdout);
+            freopen_s(&pCout, "conout$", "w", stderr);
+            bool argumentsParsed = parseArguments();
+            fclose(pCout); //Console is no longer necessary after parsing the arguments
+            FreeConsole();
+            if (argumentsParsed)
+            {
+                MainOptimizer optimizer;
+                return optimizer.mainProcess();
+            }
+            
+                return 1;
+
         }
         else
-            return 1;
+            w.show();
     }
-    else
-#endif
-        w.show();
-
-#endif //_WIN32
-
-#endif // ELSE ENABLE_TEST
-
-    return app.exec();
+    return QApplication::exec();
 }
+

@@ -15,12 +15,12 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
-    ~MainWindow();
+    ~MainWindow() override;
 
 private:
     QFileDialog *fileDialog{};
     Ui::MainWindow *ui;
-    MainOptimizer *optimizer;
+    MainOptimizer *optimizer{};
 
     bool bDarkMode = true;
     bool bLockVariables = false;
@@ -31,9 +31,9 @@ private:
     void initProcess();
     void endProcess();
 
-    int progressBarValue;
+    int progressBarValue{};
 
-    QThread* workerThread;
+    QThread* workerThread{};
 
     QSettings *settings;
 };

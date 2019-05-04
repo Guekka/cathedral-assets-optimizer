@@ -1,6 +1,6 @@
 #include "MainOptimizer.h"
 
-MainOptimizer::MainOptimizer() : logManager(QLogger::QLoggerManager::getInstance()), logLevel(QLogger::LogLevel::Info) {}
+MainOptimizer::MainOptimizer() : logManager(QLogger::QLoggerManager::getInstance()) {}
 
 
 void MainOptimizer::init() //Some necessary operations before running
@@ -167,13 +167,13 @@ bool MainOptimizer::checkRequirements()  //Checking if all the requirements are 
     if(options.bAnimationsOptimization)
         requirements << "HavokBehaviorPostProcess.exe";
 
-    for (int i = 0; i < requirements.size(); ++i)
+    for (const auto& requirement : requirements)
     {
-        QFile file(QCoreApplication::applicationDirPath() + "/resources/" + requirements.at(i));
+        QFile file(QCoreApplication::applicationDirPath() + "/resources/" + requirement);
         if(!file.exists())
         {
-            QLogger::QLog_Error("MainOptimizer", requirements.at(i) + tr(" not found. Cancelling."));
-            QLogger::QLog_Error("Errors", requirements.at(i) + tr(" not found. Cancelling."));
+            QLogger::QLog_Error("MainOptimizer", requirement + tr(" not found. Cancelling."));
+            QLogger::QLog_Error("Errors", requirement + tr(" not found. Cancelling."));
             return false;
         }
     }

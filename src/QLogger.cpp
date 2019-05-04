@@ -93,16 +93,14 @@ namespace QLogger
     {
         switch (level)
         {
-        case LogLevel::Trace:   return "<font color=BlueViolet>Trace";
-        case LogLevel::Debug:   return "<font color=Blue>Debug";
-        case LogLevel::Note:    return "Note";
-        case LogLevel::Info:    return "<font color=Green>Info";
-        case LogLevel::Warning: return "<font color=Orange>Warning";
-        case LogLevel::Error:   return "<font color=Red>Error";
-        case LogLevel::Fatal:   return "<font color=DarkRed>Fatal";
+        case LogLevel::Trace:   return "<font color=BlueViolet>[Trace]";
+        case LogLevel::Debug:   return "<font color=Blue>[Debug]";
+        case LogLevel::Note:    return "[Note]";
+        case LogLevel::Info:    return "<font color=Green>[Info]";
+        case LogLevel::Warning: return "<font color=Orange>[Warning]";
+        case LogLevel::Error:   return "<font color=Red>[Error]";
+        case LogLevel::Fatal:   return "<font color=DarkRed>[Fatal]";
         }
-
-        return QString();
     }
 
     bool QLoggerManager::addDestination(const QString &fileDest, const QString &module, LogLevel level)
@@ -192,7 +190,7 @@ namespace QLogger
                 out << QString("%1 - Previous log %2\n").arg(dtFormat, newName);
 
             const auto logLevel = QLoggerManager::levelToStartingText(messageLogLevel);
-            const auto text = QString("<pre>[%1] [%2] {%3} %4</font></pre>\n").arg(dtFormat, logLevel, module, message);
+            const auto text = QString("<pre>[%1] %2 {%3} %4</font></pre>\n").arg(dtFormat, logLevel, module, message);
 
             out << text;
             file.close();

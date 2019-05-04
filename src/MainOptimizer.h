@@ -50,7 +50,7 @@ private:
     QStringList modDirs;
 
     QLogger::QLoggerManager *logManager;
-    QLogger::LogLevel logLevel;
+    QLogger::LogLevel logLevel{QLogger::LogLevel::Info};
 
     void init();
     void dryRun();
