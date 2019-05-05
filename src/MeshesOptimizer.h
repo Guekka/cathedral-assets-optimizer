@@ -1,5 +1,8 @@
-#ifndef MESHESOPTIMIZER_H
-#define MESHESOPTIMIZER_H
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+#pragma once
 
 #include "pch.h"
 #include "QLogger/QLogger.h"
@@ -41,5 +44,3 @@ private:
     void cleanMeshesLists();
     void listHeadparts(const QDir& directory);
 };
-
-#endif // MESHESOPTIMIZER_H

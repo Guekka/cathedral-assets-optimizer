@@ -1,5 +1,6 @@
 // Add C includes here
 
+#pragma once
 
 
 #if defined __cplusplus
