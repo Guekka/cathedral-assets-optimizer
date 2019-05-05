@@ -29,7 +29,7 @@ bool IntegrationTests::runAllTests()
             //Replacing ini file with predefined config
 
             QString config = m_dir.filePath(dir + "/config.ini");
-            QString CathedralIni = QCoreApplication::applicationDirPath() + "/Cathedral Assets Optimizer.ini";
+            QString CathedralIni = "Cathedral Assets Optimizer.ini";
             QFile::remove(CathedralIni);
             QFile::copy(config, CathedralIni);
 

@@ -33,8 +33,8 @@ MeshesOptimizer::MeshesOptimizer()
     QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
-    bMeshesHeadparts = settings.value("bMeshesHeadparts").toBool();
-    iMeshesOptimizationLevel = settings.value("iMeshesOptimizationLevel").toInt();
+    bMeshesHeadparts = settings.value("Meshes/bMeshesHeadparts").toBool();
+    iMeshesOptimizationLevel = settings.value("Meshes/iMeshesOptimizationLevel").toInt();
 }
 
 

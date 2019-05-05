@@ -50,7 +50,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
     //Base logging
 
     QLogger::QLog_Info("MainOptimizer", tr("Beginning..."));
-    QFile iniFile(QCoreApplication::applicationDirPath() + "/Cathedral Assets Optimizer.ini");
+    QFile iniFile("Cathedral Assets Optimizer.ini");
     iniFile.open(QIODevice::ReadOnly);
     QLogger::QLog_Debug("MainOptimizer", iniFile.readAll());
     iniFile.close();

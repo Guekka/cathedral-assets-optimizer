@@ -101,6 +101,8 @@ namespace QLogger
         case LogLevel::Error:   return "<font color=Red>[Error]";
         case LogLevel::Fatal:   return "<font color=DarkRed>[Fatal]";
         }
+
+        return QString();
     }
 
     bool QLoggerManager::addDestination(const QString &fileDest, const QString &module, LogLevel level)

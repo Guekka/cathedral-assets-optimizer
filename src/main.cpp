@@ -102,18 +102,15 @@ int main(int argc, char *argv[])
         tests.runAllTests();
     }
 
-    else if constexpr(_WIN32)
-    {
-        MainWindow w;
-        bool consoleAttached;
+    MainWindow w;
 
-#ifdef _DEBUG //Attaching the console breaks debug mode
-        AllocConsole();
-        consoleAttached = false;
-#else
+    if constexpr(_WIN32)
+    {
+        bool consoleAttached = false;
+
+#ifndef _DEBUG //Attaching the console breaks debug mode
         consoleAttached = AttachConsole(ATTACH_PARENT_PROCESS); //If ran from a console, using this console instead of opening the GUI.
 #endif
-
         if (consoleAttached)
         {
             FILE* pCout;
@@ -127,10 +124,8 @@ int main(int argc, char *argv[])
                 MainOptimizer optimizer;
                 return optimizer.mainProcess();
             }
-            
                 return 1;
-
-        }
+        }  
         else
             w.show();
     }
