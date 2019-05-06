@@ -17,7 +17,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
     if(!settings->contains("logLevel"))
-        settings->setValue("logLevel",  static_cast<uint>(QLogger::LogLevel::Info));
+        settings->setValue("logLevel",  static_cast<uint>(QLogger::LogLevel::Note));
     this->loadUIFromFile();
 
     //Preparing log
@@ -89,13 +89,13 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     });
 
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", static_cast<uint>(QLogger::LogLevel::Info));});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", static_cast<uint>(QLogger::LogLevel::Info));});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", static_cast<uint>(QLogger::LogLevel::Note));});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", static_cast<uint>(QLogger::LogLevel::Note));});
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("logLevel", static_cast<uint>(QLogger::LogLevel::Trace));});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", static_cast<uint>(QLogger::LogLevel::Trace));});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &MainWindow::loadUIFromFile);
 }
 

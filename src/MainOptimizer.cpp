@@ -50,7 +50,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
     //Base logging
 
     QLogger::QLog_Info("MainOptimizer", tr("Beginning..."));
-    QFile iniFile("Cathedral Assets Optimizer.ini");
+    QFile iniFile(QDir::currentPath() + "/Cathedral Assets Optimizer.ini");
     iniFile.open(QIODevice::ReadOnly);
     QLogger::QLog_Debug("MainOptimizer", iniFile.readAll());
     iniFile.close();
@@ -274,7 +274,7 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
 void MainOptimizer::resetSettings()
 {
     QString blankIni(QCoreApplication::applicationDirPath() + "/resources/defaultIni.ini");
-    QString CathedralIni = QCoreApplication::applicationDirPath() + "/Cathedral Assets Optimizer.ini";
+    QString CathedralIni = "Cathedral Assets Optimizer.ini";
     QFile::remove(CathedralIni);
     QFile::copy(blankIni, CathedralIni);
 }
