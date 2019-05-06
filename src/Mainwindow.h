@@ -1,9 +1,12 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+#pragma once
 
 #include "MainOptimizer.h"
-#include "pch_gui.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 
 namespace Ui {
     class MainWindow;
@@ -15,12 +18,12 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
-    ~MainWindow();
+    ~MainWindow() override;
 
 private:
     QFileDialog *fileDialog{};
     Ui::MainWindow *ui;
-    MainOptimizer *optimizer;
+    MainOptimizer *optimizer{};
 
     bool bDarkMode = true;
     bool bLockVariables = false;
@@ -31,11 +34,9 @@ private:
     void initProcess();
     void endProcess();
 
-    int progressBarValue;
+    int progressBarValue{};
 
-    QThread* workerThread;
+    QThread* workerThread{};
 
     QSettings *settings;
 };
-
-#endif // MAINWINDOW_H

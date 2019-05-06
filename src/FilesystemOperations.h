@@ -1,12 +1,15 @@
-#ifndef FILESYSTEMOPERATIONS_H
-#define FILESYSTEMOPERATIONS_H
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+#pragma once
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 #include "PluginsOperations.h"
 
 /*!
- * \brief The FilesystemOperations class
+ * \brief Manages filesystem operations : move files, calculate folder size...
  */
 
 class FilesystemOperations : public QObject
@@ -23,9 +26,8 @@ public:
     /*!
      * \brief Will prepare for bsa creation.
      * \param folderPath The path of the folder where assets will be processed
-     * \param splitAssets Whether the assets will be splitted or not
      */
-    void prepareBsas(const QString& folderPath, const bool& splitAssets);
+    void prepareBsas(const QString& folderPath);
     /*!
      * \brief Will move all files from source folder into destination folder.
      * \param source The source directory
@@ -64,7 +66,6 @@ public:
      * \return a bool : true if the folders are identical, false otherwise
      */
     static bool compareFolders(const QString& folder1, const QString& folder2, const bool& checkFileSize);
-
     /*!
      * \brief Will copy all files from source folder into destination folder.Currently only used for testing.
      * \param source The source directory
@@ -75,5 +76,3 @@ public:
 
     QStringList filesToNotPack;
 };
-
-#endif // FILESYSTEMOPERATIONS_H

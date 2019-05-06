@@ -1,8 +1,11 @@
-#ifndef MAIN_OPTIMIZER_H
-#define MAIN_OPTIMIZER_H
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+#pragma once
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 #include "AnimationsOptimizer.h"
 #include "BsaOptimizer.h"
 #include "FilesystemOperations.h"
@@ -10,13 +13,15 @@
 #include "PluginsOperations.h"
 #include "TexturesOptimizer.h"
 
+/*!
+ * \brief Manages the optimization options
+ */
 struct optOptions
 {
     bool bBsaExtract{};
     bool bBsaCreate{};
     bool bBsaPackLooseFiles{};
     bool bBsaDeleteBackup{};
-    bool bBsaSplitAssets{};
     bool bAnimationsOptimization{};
     bool bDryRun{};
 
@@ -27,7 +32,9 @@ struct optOptions
     QString userPath;
 };
 
-
+/*!
+ * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
+ */
 class MainOptimizer : public QObject
 {
     Q_OBJECT
@@ -41,17 +48,25 @@ public:
 
     //Settings operations
 
+    /*!
+    * \brief Loads settings from the ini file to variables
+    */
     void loadSettings();
-
+    /*!
+         * \brief Sets the log level to value
+         * \param value The value to set
+         */
     void setLogLevel(const QLogger::LogLevel &value) { logLevel = value; }
-
+    /*!
+     * \brief Resets the settings to default
+     */
     static void resetSettings();
 
 private:
     QStringList modDirs;
 
     QLogger::QLoggerManager *logManager;
-    QLogger::LogLevel logLevel;
+    QLogger::LogLevel logLevel{QLogger::LogLevel::Info};
 
     void init();
     void dryRun();
@@ -70,6 +85,3 @@ signals:
     void end();
     void updateLog();
 };
-
-
-#endif // OPTIMISER_H

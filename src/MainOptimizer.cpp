@@ -1,6 +1,11 @@
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "MainOptimizer.h"
 
-MainOptimizer::MainOptimizer() : logManager(QLogger::QLoggerManager::getInstance()), logLevel(QLogger::LogLevel::Info) {}
+MainOptimizer::MainOptimizer() : logManager(QLogger::QLoggerManager::getInstance()) {}
 
 
 void MainOptimizer::init() //Some necessary operations before running
@@ -11,12 +16,13 @@ void MainOptimizer::init() //Some necessary operations before running
     logManager->addDestination("log.html", QStringList() << "MainWindow" << "MainOptimizer" << "AnimationsOptimizer"
                                << "BsaOptimizer" << "FilesystemOperations" << "MeshesOptimizer" << "PluginsOperations"
                                << "TexturesOptimizer", logLevel);
+    logManager->addDestination("errors.html", QStringList() << "Errors", logLevel);
 
     logManager->setLogLevelForAllWriters(logLevel);
 
     //Note log level is required for dry run
 
-    if(options.bDryRun && QLogger::logLevelToInt(logLevel) > 2)
+    if(options.bDryRun && static_cast<uint>(logLevel) > 2)
         logManager->setLogLevelForAllWriters(QLogger::LogLevel::Note);
 
     //Disabling BSA process if Skyrim folder is choosed
@@ -24,11 +30,11 @@ void MainOptimizer::init() //Some necessary operations before running
     if(options.userPath == FilesystemOperations::findSkyrimDirectory() + "/data" && (options.bBsaExtract || options.bBsaCreate))
     {
         QLogger::QLog_Error("MainOptimizer", tr("You are currently in the Skyrim directory. BSA won't be processed"));
+        QLogger::QLog_Error("Errors", tr("You are currently in the Skyrim directory. BSA won't be processed"));
         options.bBsaExtract = false;
         options.bBsaCreate = false;
         options.bBsaPackLooseFiles = false;
         options.bBsaDeleteBackup = false;
-        options.bBsaSplitAssets = false;
     }
 
     fillModsLists();
@@ -44,7 +50,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
     //Base logging
 
     QLogger::QLog_Info("MainOptimizer", tr("Beginning..."));
-    QFile iniFile(QCoreApplication::applicationDirPath() + "/Cathedral Assets Optimizer.ini");
+    QFile iniFile(QDir::currentPath() + "/Cathedral Assets Optimizer.ini");
     iniFile.open(QIODevice::ReadOnly);
     QLogger::QLog_Debug("MainOptimizer", iniFile.readAll());
     iniFile.close();
@@ -68,6 +74,8 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
         QLogger::QLog_Debug("MainOptimizer", "ModDirs size: " + QString::number(modDirs.size()) + "\nCurrent index: " + QString::number(i));
         QLogger::QLog_Info("MainOptimizer", tr("Current mod: ") + modpathDir);
+        QLogger::QLog_Info("Errors", tr("Current mod: ") + modpathDir);
+
 
         BsaOptimizer bsaOptimizer;
 
@@ -101,8 +109,8 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
         FilesystemOperations fsOperations;
 
-        if (options.bBsaPackLooseFiles || options.bBsaSplitAssets)
-            fsOperations.prepareBsas(modpathDir, options.bBsaSplitAssets);
+        if (options.bBsaPackLooseFiles)
+            fsOperations.prepareBsas(modpathDir);
 
         if(options.bBsaCreate)
         {
@@ -156,17 +164,21 @@ bool MainOptimizer::checkRequirements()  //Checking if all the requirements are 
         havokFile.copy(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe");
 
     else if(!havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
+    {
         QLogger::QLog_Warning("MainOptimizer", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
+        QLogger::QLog_Warning("Errors", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
+    }
 
     if(options.bAnimationsOptimization)
         requirements << "HavokBehaviorPostProcess.exe";
 
-    for (int i = 0; i < requirements.size(); ++i)
+    for (const auto& requirement : requirements)
     {
-        QFile file(QCoreApplication::applicationDirPath() + "/resources/" + requirements.at(i));
+        QFile file(QCoreApplication::applicationDirPath() + "/resources/" + requirement);
         if(!file.exists())
         {
-            QLogger::QLog_Error("MainOptimizer", requirements.at(i) + tr(" not found. Cancelling."));
+            QLogger::QLog_Error("MainOptimizer", requirement + tr(" not found. Cancelling."));
+            QLogger::QLog_Error("Errors", requirement + tr(" not found. Cancelling."));
             return false;
         }
     }
@@ -242,14 +254,13 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
     options.iMode = settings.value("iMode").toInt();
     options.bDryRun = settings.value("bDryRun").toBool();
     options.userPath = settings.value("SelectedPath").toString();
-    logLevel = QLogger::intToLogLevel(settings.value("iLogLevel").toInt());
+    logLevel = static_cast<QLogger::LogLevel>(settings.value("iLogLevel").toUInt());
 
     settings.beginGroup("BSA");
     options.bBsaExtract = settings.value("bBsaExtract").toBool();
     options.bBsaCreate = settings.value("bBsaCreate").toBool();
     options.bBsaPackLooseFiles = settings.value("bBsaPackLooseFiles").toBool();
     options.bBsaDeleteBackup = settings.value("bBsaDeleteBackup").toBool();
-    options.bBsaSplitAssets = settings.value("bBsaSplitAssets").toBool();
     settings.endGroup();
 
     options.iMeshesOptimizationLevel = settings.value("Meshes/iMeshesOptimizationLevel").toInt();
@@ -263,7 +274,7 @@ void MainOptimizer::loadSettings() //Loads settings from the ini file
 void MainOptimizer::resetSettings()
 {
     QString blankIni(QCoreApplication::applicationDirPath() + "/resources/defaultIni.ini");
-    QString CathedralIni = QCoreApplication::applicationDirPath() + "/Cathedral Assets Optimizer.ini";
+    QString CathedralIni = "Cathedral Assets Optimizer.ini";
     QFile::remove(CathedralIni);
     QFile::copy(blankIni, CathedralIni);
 }

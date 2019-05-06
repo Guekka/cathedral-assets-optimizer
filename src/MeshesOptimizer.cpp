@@ -1,3 +1,8 @@
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "MeshesOptimizer.h"
 
 MeshesOptimizer::MeshesOptimizer()
@@ -17,8 +22,10 @@ MeshesOptimizer::MeshesOptimizer()
         }
     }
     else
-        QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. This could cause issues with headparts detection. Please reinstall the program"
-                                                    " and, if this error still appears, contact the developper."));
+    {
+        QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
+        QLogger::QLog_Warning("Errors", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
+    }
 
 
     //Reading settings from file
@@ -26,8 +33,8 @@ MeshesOptimizer::MeshesOptimizer()
     QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
-    bMeshesHeadparts = settings.value("bMeshesHeadparts").toBool();
-    iMeshesOptimizationLevel = settings.value("iMeshesOptimizationLevel").toInt();
+    bMeshesHeadparts = settings.value("Meshes/bMeshesHeadparts").toBool();
+    iMeshesOptimizationLevel = settings.value("Meshes/iMeshesOptimizationLevel").toInt();
 }
 
 
@@ -47,7 +54,10 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
     nifScan.start(QCoreApplication::applicationDirPath() + "/resources/NifScan.exe", QStringList { folderPath, "-fixdds" });
 
     if(!nifScan.waitForFinished(180000))
+    {
         QLogger::QLog_Error("MeshesOptimizer", tr("Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod."));
+        QLogger::QLog_Error("Errors", tr("Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod."));
+    }
 
     QString currentFile;
 
@@ -111,7 +121,10 @@ void MeshesOptimizer::listHeadparts(const QDir& directory)
     listHeadparts.start(QCoreApplication::applicationDirPath() + "/resources/ListHeadParts.exe", QStringList() << directory.path());
 
     if(!listHeadparts.waitForFinished(180000))
+    {
         QLogger::QLog_Error("MeshesOptimizer", tr("ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod."));
+        QLogger::QLog_Error("Errors", tr("ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod."));
+    }
 
     while(listHeadparts.canReadLine())
     {
@@ -121,9 +134,9 @@ void MeshesOptimizer::listHeadparts(const QDir& directory)
 
     //Adding custom headparts to detected headparts
 
-    for(int i = 0; i < customHeadparts.size(); ++i)
+    for(const auto& customHeadpart : customHeadparts)
     {
-        headparts << QDir::cleanPath(directory.filePath(customHeadparts.at(i)));
+        headparts << QDir::cleanPath(directory.filePath(customHeadpart));
     }
 }
 

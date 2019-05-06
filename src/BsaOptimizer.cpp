@@ -1,6 +1,11 @@
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "BsaOptimizer.h"
 
-BsaOptimizer::BsaOptimizer() {}
+BsaOptimizer::BsaOptimizer() = default;
 
 
 void BsaOptimizer::bsaExtract(const QString &bsaPath, const bool &makeBackup, const bool &keepFileInBsaFolder)
@@ -28,7 +33,10 @@ void BsaOptimizer::bsaExtract(const QString &bsaPath, const bool &makeBackup, co
     {
          if(!keepFileInBsaFolder)
             if(!moveFilesFromBsaFolderToRootFolder(bsaFolder))
+            {
                 QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory."));
+                QLogger::QLog_Error("Errors", tr("An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory."));
+            }
 
         if(!makeBackup)
             QFile::remove(bsaPath);
@@ -36,7 +44,11 @@ void BsaOptimizer::bsaExtract(const QString &bsaPath, const bool &makeBackup, co
         QLogger::QLog_Info("BsaOptimizer", tr("BSA successfully extracted: ") + bsaPath);
     }
     else
+    {
         QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted."));
+        QLogger::QLog_Error("Errors", tr("An error occured during the extraction. Please extract it manually. The BSA was not deleted."));
+
+    }
 }
 
 
@@ -72,6 +84,7 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
     else
     {
         QLogger::QLog_Error("BsaOptimizer", tr("Cannot pack existing loose files: a BSA already exists."));
+        QLogger::QLog_Error("Errors", tr("Cannot pack existing loose files: a BSA already exists."));
         moveFilesFromBsaFolderToRootFolder(bsaFolderPath);
     }
 
@@ -91,6 +104,7 @@ void BsaOptimizer::bsaCreate(const QString &bsaFolderPath) //Once all the optimi
         else
         {
             QLogger::QLog_Error("BsaOptimizer", tr("The BSA was not compressed: it is over 2.15gb: ") + bsaName);
+            QLogger::QLog_Error("Errors", tr("The BSA was not compressed: it is over 2.15gb: ") + bsaName);
             moveFilesFromBsaFolderToRootFolder(bsaFolderPath);
             QFile::remove(bsaName);
             if(QFile(bsaName.chopped(3) + "esp").size() == QFile(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp").size())
@@ -111,6 +125,7 @@ bool BsaOptimizer::moveFilesFromBsaFolderToRootFolder(const QString &bsaFolderPa
     catch(const QString& e)
     {
         QLogger::QLog_Error("BsaOptimizer", e);
+        QLogger::QLog_Error("Errors", e);
         return  false;
     }
     return true;

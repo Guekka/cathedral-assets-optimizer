@@ -1,3 +1,8 @@
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "TexturesOptimizer.h"
 
 
@@ -22,6 +27,7 @@ void TexturesOptimizer::convertToBc7IfUncompressed(const QString &filePath) //Co
             QProcess texconv;
             QStringList texconvArg{ "-nologo", "-y", "-m", "0", "-pow2", "-if", "FANT", "-f", "BC7_UNORM", "-bcmax", filePath};
             texconv.start(QCoreApplication::applicationDirPath() + "/resources/texconv.exe", texconvArg);
+
             texconv.waitForFinished(-1);
         }
     }

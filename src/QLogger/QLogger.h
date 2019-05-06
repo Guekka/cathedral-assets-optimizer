@@ -20,7 +20,7 @@
  ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  ***************************************************************************************/
 
-#include "pch_core.h"
+#include "pch.h"
 
 /**************************************************************************************************/
 /***                                     GENERAL USAGE                                          ***/
@@ -39,11 +39,7 @@ namespace QLogger
     /**
      * @brief The LogLevel enum class defines the level of the log message.
      */
-    enum class LogLevel { Trace = 0, Debug, Note, Info, Warning, Error, Fatal };
-
-    LogLevel intToLogLevel(const int& value);
-    int logLevelToInt(const LogLevel &level);
-
+    enum class LogLevel : unsigned int { Trace = 0, Debug, Note, Info, Warning, Error, Fatal };
     /**
        * @brief Here is done the call to write the message in the module. First of all is confirmed
        * that the log level we want to write is less or equal to the level defined when we create the
