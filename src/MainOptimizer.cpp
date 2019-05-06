@@ -27,7 +27,7 @@ void MainOptimizer::init() //Some necessary operations before running
 
     //Disabling BSA process if Skyrim folder is choosed
 
-    if(options.userPath == FilesystemOperations::findSkyrimDirectory() + "/data" && (options.bBsaExtract || options.bBsaCreate))
+    if(options.userPath.contains(FilesystemOperations::findSkyrimDirectory()) && (options.bBsaExtract || options.bBsaCreate))
     {
         QLogger::QLog_Error("MainOptimizer", tr("You are currently in the Skyrim directory. BSA won't be processed"));
         QLogger::QLog_Error("Errors", tr("You are currently in the Skyrim directory. BSA won't be processed"));
@@ -88,11 +88,11 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
             while(bsaIt.hasNext())
             {
-                if(bsaIt.next().endsWith(".bsa"))
+                if(bsaIt.next().endsWith(".bsa", Qt::CaseInsensitive))
                 {
                     QLogger::QLog_Note("MainOptimizer", tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + bsaIt.fileName());
-                    bsaOptimizer.bsaExtract(bsaIt.filePath(), !options.bBsaDeleteBackup, options.bBsaCreate);
-                }
+                    bsaOptimizer.extract(bsaIt.filePath(), options.bBsaDeleteBackup);
+               }
             }
              emit progressBarIncrease();
         }
@@ -109,24 +109,11 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
 
         FilesystemOperations fsOperations;
 
-        if (options.bBsaPackLooseFiles)
-            fsOperations.prepareBsas(modpathDir);
-
-        if(options.bBsaCreate)
+        if(options.bBsaPackLooseFiles)
         {
             QLogger::QLog_Info("MainOptimizer", tr("Creating BSAs..."));
 
-            QDirIterator bsaIt(modpathDir);
-            while(bsaIt.hasNext())
-            {
-                bsaIt.next();
-                if(bsaIt.fileName().endsWith("bsa.extracted"))
-                {
-                    QLogger::QLog_Trace("MainOptimizer", "bsa folder found: " + bsaIt.fileName());
-                    bsaOptimizer.bsaCreate(bsaIt.filePath());
-                }
-            }
-
+            bsaOptimizer.packAll(modpathDir);
             PluginsOperations::makeDummyPlugins(modpathDir);
             emit progressBarIncrease();
         }
@@ -135,9 +122,7 @@ int MainOptimizer::mainProcess() // Process the userPath according to all user o
     FilesystemOperations::deleteEmptyDirectories(options.userPath);
 
     emit end();
-
     QLogger::QLog_Info("MainOptimizer", tr("Assets optimization completed.") + "\n\nEND OF LOG\n\n");
-
     return 0;
 }
 
@@ -157,7 +142,7 @@ void MainOptimizer::fillModsLists()    //Adding all dirs to process to modDirs
 
 bool MainOptimizer::checkRequirements()  //Checking if all the requirements are in the resources folder
 {
-    QStringList requirements {"bsarch.exe", "NifScan.exe", "nifopt.exe", "texconv.exe", "texdiag.exe", "ListHeadParts.exe"};
+    QStringList requirements {"NifScan.exe", "nifopt.exe", "texconv.exe", "texdiag.exe", "ListHeadParts.exe"};
     QFile havokFile(FilesystemOperations::findSkyrimDirectory() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
 
     if(havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
@@ -194,7 +179,6 @@ void MainOptimizer::optimizeAssets(const QString& folderPath)
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
     MeshesOptimizer meshesOptimizer;
-
     meshesOptimizer.list(folderPath);
 
     while(it.hasNext())

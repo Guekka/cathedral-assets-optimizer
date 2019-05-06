@@ -64,7 +64,7 @@ namespace QLogger
 
        const auto logWriter = manager->getLogWriter(module);
 
-       if (logWriter && logWriter->getLevel() <= level)
+       if(logWriter && logWriter->getLevel() <= level)
                logWriter->write(module,message, level);
 }
 
@@ -77,13 +77,13 @@ namespace QLogger
 
         QDir dir(QDir::currentPath());
 
-        if (!dir.exists("logs"))
+        if(!dir.exists("logs"))
             dir.mkdir("logs");
     }
 
     QLoggerManager * QLoggerManager::getInstance()
     {
-        if (!INSTANCE)
+        if(!INSTANCE)
             INSTANCE = new QLoggerManager();
 
         return INSTANCE;
@@ -107,7 +107,7 @@ namespace QLogger
 
     bool QLoggerManager::addDestination(const QString &fileDest, const QString &module, LogLevel level)
     {
-        if (!moduleDest.contains(module))
+        if(!moduleDest.contains(module))
         {
             const auto log = new QLoggerWriter(fileDest,level);
             moduleDest.insert(module, log);
@@ -124,7 +124,7 @@ namespace QLogger
 
         for (const auto &module : modules)
         {
-            if (!moduleDest.contains(module))
+            if(!moduleDest.contains(module))
             {
                 const auto log = new QLoggerWriter(fileDest,level);
                 moduleDest.insert(module, log);
@@ -166,7 +166,7 @@ namespace QLogger
         QFile file(mFileDestination);
 
         //Renaming file if it's full
-        if (file.size() >= MAX_SIZE)
+        if(file.size() >= MAX_SIZE)
         {
             //Creem un fixer nou
             const auto currentTime = QDateTime::currentDateTime();
@@ -183,12 +183,12 @@ namespace QLogger
 
         const auto newName = renameFileIfFull ();
 
-        if (file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append))
+        if(file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append))
         {
             QTextStream out(&file);
             const auto dtFormat = QDateTime::currentDateTime().toString("dd-MM hh:mm:ss");
 
-            if (!newName.isEmpty())
+            if(!newName.isEmpty())
                 out << QString("%1 - Previous log %2\n").arg(dtFormat, newName);
 
             const auto logLevel = QLoggerManager::levelToStartingText(messageLogLevel);

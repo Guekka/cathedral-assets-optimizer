@@ -27,7 +27,6 @@ bool parseArguments()
                           {"bc", "Enables bsa creation."},
                           {"bl", "Enables bsa packing of loose files."},
                           {"bd", "Enables deletion of bsa backups."},
-                          {"bs", "Enables splitting assets."},
                       });
 
     parser.process(QCoreApplication::arguments());
@@ -131,4 +130,3 @@ int main(int argc, char *argv[])
     }
     return QApplication::exec();
 }
-

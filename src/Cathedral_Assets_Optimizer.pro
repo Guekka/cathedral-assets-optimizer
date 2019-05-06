@@ -25,6 +25,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17 precompile_header static suppress_vcproj_warnings
 
 SOURCES += \
+    ../../QLibbsarch/BSArchive.cpp \
+    ../../QLibbsarch/BSArchiveAuto.cpp \
+    ../../QLibbsarch/BSArchiveEntries.cpp \
+    ../../QLibbsarch/QLibbsarch.cpp \
     main.cpp \
     mainwindow.cpp \
     QLogger/QLogger.cpp \
@@ -39,6 +43,11 @@ SOURCES += \
 
 
 HEADERS += \
+    ../../QLibbsarch/BSArchive.h \
+    ../../QLibbsarch/BSArchiveAuto.h \
+    ../../QLibbsarch/BSArchiveEntries.h \
+    ../../QLibbsarch/QLibbsarch.h \
+    ../../QLibbsarch/libbsarch.h \
     mainwindow.h \
     QLogger/QLogger.h \
     TexturesOptimizer.h \
@@ -62,3 +71,8 @@ translations/AssetsOpt_de.ts
 FORMS +=  mainwindow.ui
 
 RESOURCES += styles/qdarkstyle/style.qrc
+
+LIBS += -L$$PWD/../../QLibbsarch/ -llibbsarch
+
+INCLUDEPATH += $$PWD/../../QLibbsarch
+DEPENDPATH += $$PWD/../../QLibbsarch
