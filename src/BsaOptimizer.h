@@ -22,16 +22,15 @@ public:
     /*!
      * \brief Will extract a BSA
      * \param bsaPath The path of the BSA to extract
-     * \param deleteBsaBackup Backup the existing bsa
-     * \param keepFileInBsaFolder Whether files will be moved to mod root or not
+     * \param deleteBackup Deletes the backup the existing bsa
      */
-    void extract(QString bsaPath, const bool& makeBackup);
+    void extract(QString bsaPath, const bool& deleteBackup);
     /*!
      * \brief Will create a BSA containing all the files given as argument
      * \param bsaPath The path of the bsa to create. It has to be in the folder containing the assets
      * \param files The files to add to the BSA
      */
-    void create(const QString &bsaPath, const QStringList &files);
+    void create(const QString &bsaPath, QStringList &files);
 
     /*!
      * \brief Packs all the loose files in the directory into BSAs

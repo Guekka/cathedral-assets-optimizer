@@ -11,7 +11,7 @@
 
 
 const QStringList texturesAssets{ "png", "dds" };
-const QStringList otherAssets{ "nif", "seq", "pex", "psc", "lod", "fuz", "waw", "xwm", "swf", "hkx", "tri", "btr", "bto", "btt", "lip", "txt", "lst" };
+const QStringList otherAssets{ "nif", "seq", "pex", "psc", "lod", "fuz", "wav", "xwm", "swf", "hkx", "tri", "btr", "bto", "btt", "lip", "txt", "lst" };
 const QStringList allAssets = texturesAssets + otherAssets;
 
 

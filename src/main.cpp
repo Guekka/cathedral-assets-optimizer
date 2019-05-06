@@ -1,6 +1,6 @@
 #include "Mainwindow.h"
 #include "QLogger.h"
-#include "windows.h"
+#include "Windows.h"
 #include "IntegrationTests.h"
 #include <QCommandLineParser>
 
@@ -24,7 +24,6 @@ bool parseArguments()
                           {"bc", "Enables bsa creation."},
                           {"bl", "Enables bsa packing of loose files."},
                           {"bd", "Enables deletion of bsa backups."},
-                          {"bs", "Enables splitting assets."},
                       });
 
     if(!parser.parse(QCoreApplication::arguments()))
@@ -71,7 +70,6 @@ bool parseArguments()
     settings.setValue("bBsaCreate", parser.isSet("bc"));
     settings.setValue("bBsaPackLooseFiles", parser.isSet("bl"));
     settings.setValue("bBsaDeleteBackup", parser.isSet("bd"));
-    settings.setValue("bBsaSplitAssets", parser.isSet("bs"));
 
     return true;
 }
