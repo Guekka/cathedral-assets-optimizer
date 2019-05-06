@@ -1,8 +1,11 @@
-#ifndef PLUGINSOPERATIONS_H
-#define PLUGINSOPERATIONS_H
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+#pragma once
 
-#include "pch_core.h"
-#include "QLogger.h"
+#include "pch.h"
+#include "QLogger/QLogger.h"
 
 class PluginsOperations : public QObject
 {
@@ -24,7 +27,5 @@ public:
      * \brief Checks if a bsa already has a plugin to load it
      * \param bsaPath The path of the bsa to check
      */
-    static bool checkIfBsaHasPlugin(QString bsaPath);
+    static bool checkIfBsaHasPlugin(const QString& bsaPath);
 };
-
-#endif // PLUGINSOPERATIONS_H

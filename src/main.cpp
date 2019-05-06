@@ -1,10 +1,13 @@
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "Mainwindow.h"
-#include "QLogger.h"
-#include "windows.h"
+#include "QLogger/QLogger.h"
+#include "Windows.h"
 #include "IntegrationTests.h"
 #include <QCommandLineParser>
-
-#define ENABLE_TEST 0
 
 bool parseArguments()
 {
@@ -73,7 +76,6 @@ bool parseArguments()
     settings.setValue("bBsaCreate", parser.isSet("bc"));
     settings.setValue("bBsaPackLooseFiles", parser.isSet("bl"));
     settings.setValue("bBsaDeleteBackup", parser.isSet("bd"));
-    settings.setValue("bBsaSplitAssets", parser.isSet("bs"));
     settings.endGroup();
 
     return true;
@@ -86,46 +88,48 @@ int main(int argc, char *argv[])
 
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + QLocale::system().name(), "translations");
-    app.installTranslator(&qtTranslator);
+    QApplication::installTranslator(&qtTranslator);
 
     QTranslator AssetsOptTranslator;
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
-    app.installTranslator(&AssetsOptTranslator);
+    QApplication::installTranslator(&AssetsOptTranslator);
 
     //If tests are enabled, run tests instead of running standard process
 
-#if ENABLE_TEST
-    IntegrationTests tests(QCoreApplication::arguments().at(1));
-    tests.runAllTests();
-
-#else
-
-
-#ifdef _WIN32
+    if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way to enable tests
+    {
+        IntegrationTests tests(QCoreApplication::arguments().at(1));
+        return tests.runAllTests();
+    }
 
     MainWindow w;
 
-#ifndef QT_DEBUG
-    //If ran from a console, using this console instead of opening the GUI.
-    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    if constexpr(_WIN32)
     {
-        freopen("CONOUT$", "w", stdout);
-        freopen("CONOUT$", "w", stderr);
-        if (parseArguments())
-        {
-            MainOptimizer optimizer;
-            return optimizer.mainProcess();
-        }
-        else
-            return 1;
-    }
-    else
+        bool consoleAttached = false;
+
+#ifndef _DEBUG //Attaching the console breaks debug mode
+        consoleAttached = AttachConsole(ATTACH_PARENT_PROCESS); //If ran from a console, using this console instead of opening the GUI.
 #endif
-        w.show();
 
-#endif //_WIN32
-
-#endif // ELSE ENABLE_TEST
-
-    return app.exec();
+        if (consoleAttached)
+        {
+            FILE* pCout;
+            freopen_s(&pCout, "conout$", "w", stdout);
+            freopen_s(&pCout, "conout$", "w", stderr);
+            bool argumentsParsed = parseArguments();
+            fclose(pCout); //Console is no longer necessary after parsing the arguments
+            FreeConsole();
+            if (argumentsParsed)
+            {
+                MainOptimizer optimizer;
+                return optimizer.mainProcess();
+            }
+                return 1;
+        }  
+        else
+            w.show();
+    }
+    return QApplication::exec();
 }
+

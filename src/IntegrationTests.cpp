@@ -1,30 +1,35 @@
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "IntegrationTests.h"
 
-IntegrationTests::IntegrationTests(const QString& path) : dir(QDir(path)) {};
+IntegrationTests::IntegrationTests(const QString& path) : m_dir(QDir(path)) {};
 
 bool IntegrationTests::runAllTests()
 {
-    qDebug() << "tests folder: " << dir.path();
+    qDebug() << "tests folder: " << m_dir.path();
 
-    const QStringList dirs = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    const QStringList dirs = m_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
     const QStringList ignoredTests {"BSASplitAssets"};
 
     QVector<bool> results;
 
-    for(int i = 0 ; i < dirs.size() ; ++i)
+    for(const auto& dir : dirs)
     {
-        if(!ignoredTests.contains(dirs.at(i)))
+        if(!ignoredTests.contains(dir))
         {
             //Assigning folders
 
-            const QString input = dir.filePath(dirs.at(i) + "/INPUT");
-            const QString output = dir.filePath(dirs.at(i) + "/OUTPUT");
-            const QString expected = dir.filePath(dirs.at(i) + "/EXPECTED");
+            const QString input = m_dir.filePath(dir + "/INPUT");
+            const QString output = m_dir.filePath(dir + "/OUTPUT");
+            const QString expected = m_dir.filePath(dir + "/EXPECTED");
 
             //Replacing ini file with predefined config
 
-            QString config = dir.filePath(dirs.at(i) + "/config.ini");
-            QString CathedralIni = QCoreApplication::applicationDirPath() + "/Cathedral Assets Optimizer.ini";
+            QString config = m_dir.filePath(dir + "/config.ini");
+            QString CathedralIni = QDir::currentPath() + "/Cathedral Assets Optimizer.ini";
             QFile::remove(CathedralIni);
             QFile::copy(config, CathedralIni);
 
@@ -42,16 +47,16 @@ bool IntegrationTests::runAllTests()
             //Deleting output if test was passed
 
             QDir reset (output);
-            if(results.at(i))
+            if(results.last())
                 reset.removeRecursively();
         }
     }
 
     qDebug() << results;
 
-    for (int i = 0 ; i < results.size() ; ++i)
+    for (const auto& result : results)
     {
-        if(!results.at(i))
+        if(!result)
             return false;
     }
 

@@ -1,3 +1,8 @@
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "PluginsOperations.h"
 
 void PluginsOperations::makeDummyPlugins(const QString& folderPath)
@@ -64,7 +69,7 @@ QString PluginsOperations::findPlugin(const QString& folderPath)
 
 
 
-bool PluginsOperations::checkIfBsaHasPlugin(QString bsaPath)
+bool PluginsOperations::checkIfBsaHasPlugin(const QString& bsaPath)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
     bsaName.remove(".bsa");
@@ -78,9 +83,5 @@ bool PluginsOperations::checkIfBsaHasPlugin(QString bsaPath)
     bool hasEsm = QFile(esmName).exists();
     bool hasEsp = QFile(espName).exists();
 
-    if(hasEsl || hasEsm || hasEsp)
-        return true;
-
-    else
-        return false;
+    return hasEsl || hasEsm || hasEsp;
 }

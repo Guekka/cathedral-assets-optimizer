@@ -1,7 +1,10 @@
-#ifndef INTEGRATIONTESTS_H
-#define INTEGRATIONTESTS_H
+/* Copyright (C) 2019 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+#pragma once
 
-#include "pch_core.h"
+#include "pch.h"
 #include "FilesystemOperations.h"
 #include "MainOptimizer.h"
 
@@ -13,7 +16,5 @@ public:
     bool runAllTests();
 
 private:
-    QDir dir;
+    QDir m_dir;
 };
-
-#endif // INTEGRATIONTESTS_H
