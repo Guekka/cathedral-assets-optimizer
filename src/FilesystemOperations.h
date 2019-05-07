@@ -5,7 +5,6 @@
 #pragma once
 
 #include "pch.h"
-#include "QLogger/QLogger.h"
 #include "PluginsOperations.h"
 
 /*!

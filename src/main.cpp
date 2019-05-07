@@ -5,7 +5,6 @@
 
 #include "Mainwindow.h"
 #include "QLogger/QLogger.h"
-#include "Windows.h"
 #include "IntegrationTests.h"
 #include <QCommandLineParser>
 

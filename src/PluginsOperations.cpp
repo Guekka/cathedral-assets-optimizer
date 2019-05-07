@@ -37,7 +37,7 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 }
 
 
-QString PluginsOperations::findPlugin(const QString& folderPath, bsaRequired bsaType)
+QString PluginsOperations::findPlugin(const QString& folderPath, bsaType bsaType)
 {
     QDirIterator it(folderPath);
     QStringList espName;
@@ -68,11 +68,11 @@ QString PluginsOperations::findPlugin(const QString& folderPath, bsaRequired bsa
     {
         for(auto esp : espName)
         {
-            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + " - Textures.bsa").exists() && bsaType == bsaRequired::texturesBsa;
-            bool standardBsaGood = !QFile(folderPath + "/" +esp.chopped(4) + ".bsa").exists() && bsaType == bsaRequired::standardBsa;
+            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + " - Textures.bsa").exists() && bsaType == bsaType::texturesBsa;
+            bool standardBsaGood = !QFile(folderPath + "/" +esp.chopped(4) + ".bsa").exists() && bsaType == bsaType::standardBsa;
             bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + " - Textures.bsa").exists()
                     && !QFile(folderPath + "/" +esp.chopped(4) + ".bsa").exists()
-                    && bsaType == bsaRequired::texturesAndStandardBsa;
+                    && bsaType == bsaType::texturesAndStandardBsa;
 
             if(texturesBsaGood || standardBsaGood || bothBsaGood)
                 returnedEsp = esp;
@@ -83,7 +83,7 @@ QString PluginsOperations::findPlugin(const QString& folderPath, bsaRequired bsa
         ++counter;
     }while(returnedEsp.isEmpty());
 
-    return returnedEsp;
+    return returnedEsp.remove(QRegularExpression("\\.es[plm]$"));
 }
 
 bool PluginsOperations::checkIfBsaHasPlugin(const QString& bsaPath)

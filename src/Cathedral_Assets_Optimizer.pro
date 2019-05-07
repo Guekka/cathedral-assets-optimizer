@@ -29,6 +29,7 @@ SOURCES += \
     ../../QLibbsarch/BSArchiveAuto.cpp \
     ../../QLibbsarch/BSArchiveEntries.cpp \
     ../../QLibbsarch/QLibbsarch.cpp \
+    ModGroups.cpp \
     main.cpp \
     mainwindow.cpp \
     QLogger/QLogger.cpp \
@@ -48,6 +49,7 @@ HEADERS += \
     ../../QLibbsarch/BSArchiveEntries.h \
     ../../QLibbsarch/QLibbsarch.h \
     ../../QLibbsarch/libbsarch.h \
+    ModGroups.h \
     mainwindow.h \
     QLogger/QLogger.h \
     TexturesOptimizer.h \

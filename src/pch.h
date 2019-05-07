@@ -6,6 +6,8 @@
 #if defined __cplusplus
 // Add C++ includes here
 
+#include <Windows.h>
+
 /*---CORE---------------*/
 #include <QCoreApplication>
 #include <QCryptographicHash>
@@ -40,6 +42,11 @@
 #include <QPlainTextEdit>
 #include <QWidget>
 /*----------------------*/
+
+/*---CUSTOM CLASSES-----*/
+#include "QLogger/QLogger.h"
+/*----------------------*/
+
 
 
 #endif

@@ -6,7 +6,6 @@
 
 #include "MainOptimizer.h"
 #include "pch.h"
-#include "QLogger/QLogger.h"
 
 namespace Ui {
     class MainWindow;

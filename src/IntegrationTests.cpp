@@ -12,7 +12,7 @@ bool IntegrationTests::runAllTests()
     qDebug() << "tests folder: " << m_dir.path();
 
     const QStringList dirs = m_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    const QStringList ignoredTests {"BSASplitAssets"};
+    const QStringList ignoredTests;
 
     QVector<bool> results;
 

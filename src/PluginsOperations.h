@@ -7,7 +7,7 @@
 #include "pch.h"
 #include "QLogger/QLogger.h"
 
-enum bsaRequired
+enum bsaType
 {
     texturesBsa = 0,
     standardBsa,
@@ -25,7 +25,7 @@ public:
      * \param bsaType The type of BSA to load.
      * \return a QString containing the name of the plugin. If no plugin is found, it will return the name of the directory.
      */
-    static QString findPlugin(const QString& folderPath, bsaRequired bsaType);
+    static QString findPlugin(const QString& folderPath, bsaType bsaType);
     /*!
      * \brief Will create enough plugins to load all BSAs
      * \param folderPath The folder to create plugins into

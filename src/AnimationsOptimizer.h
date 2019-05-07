@@ -5,8 +5,6 @@
 #pragma once
 
 #include "pch.h"
-#include "QLogger/QLogger.h"
-
 /*!
  * \brief The AnimationsOptimizer class will handle all operations related to animations (hkx files)
  */

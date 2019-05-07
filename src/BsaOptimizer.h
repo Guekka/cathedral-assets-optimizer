@@ -9,10 +9,19 @@
 #include "BSArchiveAuto.h"
 #include "FilesystemOperations.h"
 
+struct Bsa
+{
+    QString path;
+    qint64 filesSize = 0;
+    QStringList files;
+    double maxSize = LONG_MAX;
+    bsaType type = bsaType::standardBsa;
+};
+
+
 /*!
  * \brief Manages BSA : extract and create them
  */
-
 class BsaOptimizer : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(BsaOptimizer)
@@ -30,10 +39,9 @@ public:
     void extract(QString bsaPath, const bool& deleteBackup);
     /*!
      * \brief Will create a BSA containing all the files given as argument
-     * \param bsaPath The path of the bsa to create. It has to be in the folder containing the assets
-     * \param files The files to add to the BSA
+     * \param bsa The BSA to create
      */
-    void create(const QString &bsaPath, QStringList &files);
+    void create(Bsa bsa);
 
     /*!
      * \brief Packs all the loose files in the directory into BSAs
@@ -50,8 +58,19 @@ private:
      */
     QString backup(const QString& bsaPath) const;
     /*!
+     * \brief Checks if the file is present in the list filesToNotPack
+     * \param filepath The file to check
+     * \return a bool indicating the state of the file. True if is ignored, false otherwise
+     */
+    bool isIgnoredFile(const QString& filepath);
+    /*!
      * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
      */
     QStringList filesToNotPack;
-
+    /*!
+     * \brief Checks if the selected file can be compressed (i.e. if it isn't a sound file)
+     * \param filename The file to check
+     * \return a bool indicating the state of the file. True if it can be compressed, false otherwise
+     */
+    bool canBeCompressedFile(const QString& filename);
 };
