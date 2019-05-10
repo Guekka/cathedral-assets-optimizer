@@ -1,0 +1,3 @@
+[submodule "src/modules/libbsarch"]
+	path = src/modules/libbsarch
+	url = https://github.com/Guekka/libbsarch

@@ -90,7 +90,7 @@ void BsaOptimizer::create(Bsa bsa)
     }
 
     try {
-        archive.addFileFromDisk(bsa.files) ;
+        archive.addFileFromDiskRoot(bsa.files) ;
     } catch (std::exception& e) {
         QLogger::QLog_Error("BsaOptimizer", e.what());
         QLogger::QLog_Error("BsaOptimizer", "Cancelling packing of: " + bsa.path);

@@ -25,11 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17 precompile_header static suppress_vcproj_warnings
 
 SOURCES += \
-    ../../QLibbsarch/BSArchive.cpp \
-    ../../QLibbsarch/BSArchiveAuto.cpp \
-    ../../QLibbsarch/BSArchiveEntries.cpp \
-    ../../QLibbsarch/QLibbsarch.cpp \
-    ModGroups.cpp \
     main.cpp \
     mainwindow.cpp \
     QLogger/QLogger.cpp \
@@ -40,16 +35,14 @@ SOURCES += \
     PluginsOperations.cpp \
     AnimationsOptimizer.cpp \
     MainOptimizer.cpp \
-    IntegrationTests.cpp
+    IntegrationTests.cpp \
+    modules/libbsarch/BSArchive.cpp \
+    modules/libbsarch/BSArchiveAuto.cpp \
+    modules/libbsarch/BSArchiveEntries.cpp \
+    modules/libbsarch/QLibbsarch.cpp
 
 
 HEADERS += \
-    ../../QLibbsarch/BSArchive.h \
-    ../../QLibbsarch/BSArchiveAuto.h \
-    ../../QLibbsarch/BSArchiveEntries.h \
-    ../../QLibbsarch/QLibbsarch.h \
-    ../../QLibbsarch/libbsarch.h \
-    ModGroups.h \
     mainwindow.h \
     QLogger/QLogger.h \
     TexturesOptimizer.h \
@@ -60,6 +53,11 @@ HEADERS += \
     AnimationsOptimizer.h \
     MainOptimizer.h \
     IntegrationTests.h \
+    modules/libbsarch/BSArchive.h \
+    modules/libbsarch/BSArchiveAuto.h \
+    modules/libbsarch/BSArchiveEntries.h \
+    modules/libbsarch/QLibbsarch.h \
+    modules/libbsarch/libbsarch.h \
     pch.h
 
 
@@ -74,7 +72,7 @@ FORMS +=  mainwindow.ui
 
 RESOURCES += styles/qdarkstyle/style.qrc
 
-LIBS += -L$$PWD/../../QLibbsarch/ -llibbsarch
+LIBS += -L$$PWD/modules/libbsarch/ -llibbsarch
 
-INCLUDEPATH += $$PWD/../../QLibbsarch
-DEPENDPATH += $$PWD/../../QLibbsarch
+INCLUDEPATH += $$PWD/modules/libbsarch
+DEPENDPATH += $$PWD/modules/libbsarch
