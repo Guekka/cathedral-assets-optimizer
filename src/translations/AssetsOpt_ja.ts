@@ -4,7 +4,7 @@
 <context>
     <name>AnimationsOptimizer</name>
     <message>
-        <location filename="../AnimationsOptimizer.cpp" line="16"/>
+        <location filename="../AnimationsOptimizer.cpp" line="20"/>
         <source>Animation successfully ported: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -12,32 +12,37 @@
 <context>
     <name>BsaOptimizer</name>
     <message>
-        <location filename="../BsaOptimizer.cpp" line="31"/>
-        <source>An error occured during the extraction. The BSA was correctly extracted, but the files were left inside a subdirectory.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../BsaOptimizer.cpp" line="36"/>
+        <location filename="../BsaOptimizer.cpp" line="54"/>
         <source>BSA successfully extracted: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../BsaOptimizer.cpp" line="39"/>
-        <source>An error occured during the extraction. Please extract it manually. The BSA was not deleted.</source>
+        <location filename="../BsaOptimizer.cpp" line="29"/>
+        <source>FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../BsaOptimizer.cpp" line="74"/>
+        <location filename="../BsaOptimizer.cpp" line="45"/>
+        <source>An error occured during the extraction of: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../BsaOptimizer.cpp" line="45"/>
+        <source>Please extract it manually. The BSA was not deleted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../BsaOptimizer.cpp" line="66"/>
         <source>Cannot pack existing loose files: a BSA already exists.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../BsaOptimizer.cpp" line="87"/>
+        <location filename="../BsaOptimizer.cpp" line="121"/>
         <source>BSA successfully compressed: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../BsaOptimizer.cpp" line="93"/>
+        <location filename="../BsaOptimizer.cpp" line="127"/>
         <source>The BSA was not compressed: it is over 2.15gb: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -45,14 +50,10 @@
 <context>
     <name>FilesystemOperations</name>
     <message>
-        <location filename="../FilesystemOperations.cpp" line="25"/>
-        <source>FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../FilesystemOperations.cpp" line="136"/>
-        <location filename="../FilesystemOperations.cpp" line="216"/>
-        <location filename="../FilesystemOperations.cpp" line="349"/>
+        <location filename="../FilesystemOperations.cpp" line="37"/>
+        <location filename="../FilesystemOperations.cpp" line="38"/>
+        <location filename="../FilesystemOperations.cpp" line="184"/>
+        <location filename="../FilesystemOperations.cpp" line="185"/>
         <source>An error occurred while moving files. Try reducing path size (260 characters is the maximum)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -60,78 +61,82 @@
 <context>
     <name>MainOptimizer</name>
     <message>
-        <location filename="../MainOptimizer.cpp" line="26"/>
+        <location filename="../MainOptimizer.cpp" line="32"/>
+        <location filename="../MainOptimizer.cpp" line="33"/>
         <source>You are currently in the Skyrim directory. BSA won&apos;t be processed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="46"/>
+        <location filename="../MainOptimizer.cpp" line="52"/>
         <source>Beginning...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="56"/>
+        <location filename="../MainOptimizer.cpp" line="62"/>
         <source>The setup function did not run as expected. Exiting the process.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="70"/>
+        <location filename="../MainOptimizer.cpp" line="76"/>
+        <location filename="../MainOptimizer.cpp" line="77"/>
         <source>Current mod: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="76"/>
+        <location filename="../MainOptimizer.cpp" line="84"/>
         <source>Extracting BSA...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="85"/>
+        <location filename="../MainOptimizer.cpp" line="93"/>
         <source>BSA found ! Extracting...(this may take a long time, do not force close the program): </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="179"/>
-        <location filename="../MainOptimizer.cpp" line="209"/>
+        <location filename="../MainOptimizer.cpp" line="176"/>
+        <location filename="../MainOptimizer.cpp" line="205"/>
         <source>Optimizing animations, textures and meshes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="109"/>
+        <location filename="../MainOptimizer.cpp" line="114"/>
         <source>Creating BSAs...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="131"/>
+        <location filename="../MainOptimizer.cpp" line="125"/>
         <source>Assets optimization completed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="159"/>
+        <location filename="../MainOptimizer.cpp" line="153"/>
+        <location filename="../MainOptimizer.cpp" line="154"/>
         <source>Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="169"/>
+        <location filename="../MainOptimizer.cpp" line="165"/>
+        <location filename="../MainOptimizer.cpp" line="166"/>
         <source> not found. Cancelling.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="179"/>
+        <location filename="../MainOptimizer.cpp" line="176"/>
         <source>Listing meshes and fixing incompatible textures...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="227"/>
+        <location filename="../MainOptimizer.cpp" line="222"/>
         <source> would be compressed to BC7</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="231"/>
+        <location filename="../MainOptimizer.cpp" line="226"/>
         <source> would be converted to DDS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainOptimizer.cpp" line="234"/>
+        <location filename="../MainOptimizer.cpp" line="229"/>
         <source> would be ported to SSE</source>
         <translation type="unfinished"></translation>
     </message>
@@ -199,11 +204,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="23"/>
-        <source>Cathedral Assets Optimizer 4.2.5</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="240"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;Creates a new BSA after processing the previously extracted assets. &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
@@ -224,167 +224,151 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="316"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A BSA file cannot contain more than 2gb. This will create as many BSA as necessary. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="319"/>
-        <source>Split assets</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="335"/>
+        <location filename="../mainwindow.ui" line="322"/>
         <source>Textures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="362"/>
+        <location filename="../mainwindow.ui" line="349"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts any TGA files into DDS, as SSE cannot read these. Attempts to convert and fix any textures that would crash the game, as some older formats are incompatible with SSE.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="365"/>
-        <location filename="../mainwindow.ui" line="436"/>
-        <location filename="../mainwindow.ui" line="538"/>
+        <location filename="../mainwindow.ui" line="352"/>
+        <location filename="../mainwindow.ui" line="423"/>
+        <location filename="../mainwindow.ui" line="525"/>
         <source>Necessary optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="387"/>
+        <location filename="../mainwindow.ui" line="374"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss. Will also convert uncompressed textures to BC7.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="390"/>
-        <location filename="../mainwindow.ui" line="486"/>
+        <location filename="../mainwindow.ui" line="377"/>
+        <location filename="../mainwindow.ui" line="473"/>
         <source>Full optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="406"/>
+        <location filename="../mainwindow.ui" line="393"/>
         <source>Meshes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="433"/>
+        <location filename="../mainwindow.ui" line="420"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to repair meshes which are guaranteed to crash the game. Headparts are included.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="458"/>
+        <location filename="../mainwindow.ui" line="445"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perform necessary optimization, and also lightly optimizes typically non-crashing meshes. This may fix some visual issues, but may also lower quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="483"/>
+        <location filename="../mainwindow.ui" line="470"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only apply if standard mesh optimization ignored necessary files. May lower visual quality.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="535"/>
+        <location filename="../mainwindow.ui" line="522"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to SSE format. If an animation is already compatible, no change will be made.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="638"/>
+        <location filename="../mainwindow.ui" line="579"/>
+        <source>Select theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="604"/>
         <source>Medium</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="649"/>
+        <location filename="../mainwindow.ui" line="618"/>
         <source>Low</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="461"/>
+        <location filename="../mainwindow.ui" line="621"/>
+        <source>Will show nearly no information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="448"/>
         <source>Medium optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="505"/>
+        <location filename="../mainwindow.ui" line="23"/>
+        <source>Cathedral Assets Optimizer 4.2.6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="492"/>
         <source>Animations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="575"/>
+        <location filename="../mainwindow.ui" line="562"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="579"/>
+        <location filename="../mainwindow.ui" line="566"/>
         <source>Log verbosity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="594"/>
-        <location filename="../mainwindow.cpp" line="351"/>
+        <location filename="../mainwindow.cpp" line="336"/>
         <source>Switch to dark theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="599"/>
-        <source>Dev mode (DANGEROUS)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="607"/>
+        <location filename="../mainwindow.ui" line="587"/>
         <source>Max</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="610"/>
+        <location filename="../mainwindow.ui" line="590"/>
         <source>Maximal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="613"/>
+        <location filename="../mainwindow.ui" line="593"/>
         <source>Use it only if you want to report a bug</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="624"/>
-        <source>High</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="627"/>
-        <source>Normal log with a bit more details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="641"/>
+        <location filename="../mainwindow.ui" line="607"/>
         <source>Normal log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="652"/>
-        <source>Will only show warnings and errors</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="119"/>
+        <location filename="../mainwindow.cpp" line="120"/>
         <source>Completed. Please read the log to check if any errors occurred (displayed in red).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="55"/>
+        <location filename="../mainwindow.cpp" line="59"/>
         <source>You have selected the several mods option. This process may take a very long time, especially if you process BSA. 
 This process has only been tested on the Mod Organizer mods folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="75"/>
+        <location filename="../mainwindow.cpp" line="79"/>
         <source>Non existing path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="75"/>
-        <source>This path does not exist or is shorter than 5 characters. Process aborted.</source>
+        <location filename="../mainwindow.cpp" line="79"/>
+        <source>This path does not exist. Process aborted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="346"/>
+        <location filename="../mainwindow.cpp" line="331"/>
         <source>Switch to light theme</source>
         <translation type="unfinished"></translation>
     </message>
@@ -392,112 +376,107 @@ This process has only been tested on the Mod Organizer mods folder.</source>
 <context>
     <name>MeshesOptimizer</name>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="20"/>
+        <location filename="../MeshesOptimizer.cpp" line="26"/>
+        <location filename="../MeshesOptimizer.cpp" line="27"/>
         <source>No custom headparts file found. If you haven&apos;t created one, please ignore this message.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="35"/>
+        <location filename="../MeshesOptimizer.cpp" line="43"/>
         <source>Listing meshes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="49"/>
+        <location filename="../MeshesOptimizer.cpp" line="58"/>
+        <location filename="../MeshesOptimizer.cpp" line="59"/>
         <source>Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="113"/>
+        <location filename="../MeshesOptimizer.cpp" line="125"/>
+        <location filename="../MeshesOptimizer.cpp" line="126"/>
         <source>ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="139"/>
-        <location filename="../MeshesOptimizer.cpp" line="145"/>
-        <location filename="../MeshesOptimizer.cpp" line="151"/>
-        <location filename="../MeshesOptimizer.cpp" line="157"/>
-        <location filename="../MeshesOptimizer.cpp" line="163"/>
+        <location filename="../MeshesOptimizer.cpp" line="153"/>
+        <location filename="../MeshesOptimizer.cpp" line="159"/>
+        <location filename="../MeshesOptimizer.cpp" line="165"/>
+        <location filename="../MeshesOptimizer.cpp" line="171"/>
+        <location filename="../MeshesOptimizer.cpp" line="177"/>
         <source>Running NifOpt...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="139"/>
-        <location filename="../MeshesOptimizer.cpp" line="145"/>
-        <location filename="../MeshesOptimizer.cpp" line="151"/>
-        <location filename="../MeshesOptimizer.cpp" line="157"/>
-        <location filename="../MeshesOptimizer.cpp" line="163"/>
+        <location filename="../MeshesOptimizer.cpp" line="153"/>
+        <location filename="../MeshesOptimizer.cpp" line="159"/>
+        <location filename="../MeshesOptimizer.cpp" line="165"/>
+        <location filename="../MeshesOptimizer.cpp" line="171"/>
+        <location filename="../MeshesOptimizer.cpp" line="177"/>
         <source>Processing: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="139"/>
+        <location filename="../MeshesOptimizer.cpp" line="153"/>
         <source> as an headpart due to crashing meshes option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="145"/>
+        <location filename="../MeshesOptimizer.cpp" line="159"/>
         <source> due to crashing meshes option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="151"/>
-        <location filename="../MeshesOptimizer.cpp" line="163"/>
+        <location filename="../MeshesOptimizer.cpp" line="165"/>
+        <location filename="../MeshesOptimizer.cpp" line="177"/>
         <source> due to all meshes option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="157"/>
+        <location filename="../MeshesOptimizer.cpp" line="171"/>
         <source> due to other meshes option</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="174"/>
+        <location filename="../MeshesOptimizer.cpp" line="188"/>
         <source> would be optimized as an headpart due to necessary optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="177"/>
+        <location filename="../MeshesOptimizer.cpp" line="191"/>
         <source> would be optimized due to necessary optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="180"/>
+        <location filename="../MeshesOptimizer.cpp" line="194"/>
         <source> would be optimized due to medium optimization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MeshesOptimizer.cpp" line="183"/>
+        <location filename="../MeshesOptimizer.cpp" line="197"/>
         <source> would be optimized due to full optimization</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PluginsOperations</name>
-    <message>
-        <location filename="../PluginsOperations.cpp" line="48"/>
-        <source>Esp found: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TexturesOptimizer</name>
     <message>
-        <location filename="../TexturesOptimizer.cpp" line="20"/>
+        <location filename="../TexturesOptimizer.cpp" line="25"/>
         <source>Compressing uncompressed texture: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TexturesOptimizer.cpp" line="33"/>
+        <location filename="../TexturesOptimizer.cpp" line="38"/>
         <source>Converting TGA files...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TexturesOptimizer.cpp" line="34"/>
+        <location filename="../TexturesOptimizer.cpp" line="39"/>
         <source>TGA file found: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TexturesOptimizer.cpp" line="34"/>
+        <location filename="../TexturesOptimizer.cpp" line="39"/>
         <source>Compressing...</source>
         <translation type="unfinished"></translation>
     </message>

@@ -6,7 +6,7 @@
 
 #include "pch.h"
 #include "QLogger/QLogger.h"
-#include "BSArchiveAuto.h"
+#include "libbsarch/BSArchiveAuto.h"
 #include "FilesystemOperations.h"
 
 struct Bsa

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-VERSION = 4.2.5
+VERSION = 4.2.6
 
 QT       += widgets
 
@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17 precompile_header static suppress_vcproj_warnings
 
 SOURCES += \
+    $$files(libbsarch/*.cpp)
     main.cpp \
     mainwindow.cpp \
     QLogger/QLogger.cpp \
@@ -36,13 +37,10 @@ SOURCES += \
     AnimationsOptimizer.cpp \
     MainOptimizer.cpp \
     IntegrationTests.cpp \
-    modules/libbsarch/BSArchive.cpp \
-    modules/libbsarch/BSArchiveAuto.cpp \
-    modules/libbsarch/BSArchiveEntries.cpp \
-    modules/libbsarch/QLibbsarch.cpp
 
 
 HEADERS += \
+    $$files(libbsarch/*.h)
     mainwindow.h \
     QLogger/QLogger.h \
     TexturesOptimizer.h \
@@ -53,11 +51,6 @@ HEADERS += \
     AnimationsOptimizer.h \
     MainOptimizer.h \
     IntegrationTests.h \
-    modules/libbsarch/BSArchive.h \
-    modules/libbsarch/BSArchiveAuto.h \
-    modules/libbsarch/BSArchiveEntries.h \
-    modules/libbsarch/QLibbsarch.h \
-    modules/libbsarch/libbsarch.h \
     pch.h
 
 
@@ -72,7 +65,7 @@ FORMS +=  mainwindow.ui
 
 RESOURCES += styles/qdarkstyle/style.qrc
 
-LIBS += -L$$PWD/modules/libbsarch/ -llibbsarch
+LIBS += -L$$PWD/libbsarch/ -llibbsarch
 
-INCLUDEPATH += $$PWD/modules/libbsarch
-DEPENDPATH += $$PWD/modules/libbsarch
+INCLUDEPATH += $$PWD/libbsarch
+DEPENDPATH += $$PWD/libbsarch
