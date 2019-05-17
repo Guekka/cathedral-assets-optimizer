@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
     //If tests are enabled, run tests instead of running standard process
 
-    if constexpr(/* DISABLES CODE */ (true)) //TODO find a better way to enable tests
+    if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way to enable tests
     {
         IntegrationTests tests(QCoreApplication::arguments().at(1));
         return tests.runAllTests();
