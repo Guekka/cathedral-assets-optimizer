@@ -27,7 +27,6 @@ MeshesOptimizer::MeshesOptimizer()
         QLogger::QLog_Warning("Errors", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
     }
 
-
     //Reading settings from file
 
     QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
