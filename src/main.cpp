@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way to enable tests
     {
         IntegrationTests tests(QCoreApplication::arguments().at(1));
-        tests.runAllTests();
+        return tests.runAllTests();
     }
 
     MainWindow w;
@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
 #ifndef _DEBUG //Attaching the console breaks debug mode
         consoleAttached = AttachConsole(ATTACH_PARENT_PROCESS); //If ran from a console, using this console instead of opening the GUI.
 #endif
+
         if (consoleAttached)
         {
             FILE* pCout;

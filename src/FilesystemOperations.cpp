@@ -64,7 +64,11 @@ void FilesystemOperations::deleteEmptyDirectories(const QString& folderPath)
     {
         QString path = QDir::cleanPath(dirIt.next());
         int size = path.size();
-        if(!dirs[size].contains(path))
+
+        bool alreadyExist = dirs[size].contains(path);
+        bool isSeparator = path.contains("separator", Qt::CaseInsensitive);
+
+        if(!alreadyExist && !isSeparator)
             dirs[size].append(path);
     }
 

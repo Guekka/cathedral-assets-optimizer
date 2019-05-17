@@ -24,6 +24,10 @@
 *.user.6d0bbc2
 *.autosave
 
+#Translations. Now located at Transifex.
+
+*.ts
+
 Cathedral Assets Optimizer.ini
 
 # Created by https://www.gitignore.io/api/qt,git,vim,qtcreator,visualstudio,visualstudiocode

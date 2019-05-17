@@ -25,7 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17 precompile_header static suppress_vcproj_warnings
 
 SOURCES += \
-    $$files(libbsarch/*.cpp)
+    $$files(libbsarch/*.cpp) \
     main.cpp \
     mainwindow.cpp \
     QLogger/QLogger.cpp \
@@ -40,7 +40,7 @@ SOURCES += \
 
 
 HEADERS += \
-    $$files(libbsarch/*.h)
+    $$files(libbsarch/*.h) \
     mainwindow.h \
     QLogger/QLogger.h \
     TexturesOptimizer.h \
@@ -57,6 +57,7 @@ HEADERS += \
 PRECOMPILED_HEADER += pch.h
 
 TRANSLATIONS += \
+translations/AssetsOpt_en.ts \
 translations/AssetsOpt_fr.ts \
 translations/AssetsOpt_ja.ts \
 translations/AssetsOpt_de.ts

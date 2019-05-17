@@ -27,6 +27,7 @@ void TexturesOptimizer::convertToBc7IfUncompressed(const QString &filePath) //Co
             QProcess texconv;
             QStringList texconvArg{ "-nologo", "-y", "-m", "0", "-pow2", "-if", "FANT", "-f", "BC7_UNORM", "-bcmax", filePath};
             texconv.start(QCoreApplication::applicationDirPath() + "/resources/texconv.exe", texconvArg);
+
             texconv.waitForFinished(-1);
         }
     }
