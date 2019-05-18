@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-VERSION = 4.2.6
+VERSION = 5.0
 
 QT       += widgets
 
@@ -65,6 +65,7 @@ translations/AssetsOpt_de.ts
 FORMS +=  mainwindow.ui
 
 RESOURCES += styles/qdarkstyle/style.qrc
+RC_FILE = Cathedral_Assets_Optimizer.rc
 
 LIBS += -L$$PWD/libbsarch/ -llibbsarch
 
