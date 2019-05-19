@@ -27,18 +27,7 @@
 #include <utility>
 /*----------------------*/
 
-/*---GUI----------------*/
-#include <QApplication>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QFileDialog>
-#include <QMainWindow>
-#include <QMessageBox>
-#include <QProgressBar>
-#include <QPushButton>
-#include <QPlainTextEdit>
-#include <QWidget>
-/*----------------------*/
+
 
 /*---CUSTOM CLASSES-----*/
 #include "QLogger/QLogger.h"

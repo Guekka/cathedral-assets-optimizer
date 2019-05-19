@@ -4,25 +4,23 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "MainOptimizer.h"
 #include "pch.h"
 
 namespace Ui {
     class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class SkyrimSE : public QMainWindow
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
-    MainWindow();
-    ~MainWindow() override;
+    SkyrimSE();
+    ~SkyrimSE() override;
 
 private:
     QFileDialog *fileDialog{};
     Ui::MainWindow *ui;
-    MainOptimizer *optimizer{};
 
     bool bDarkMode = true;
     bool bLockVariables = false;
@@ -34,8 +32,6 @@ private:
     void endProcess();
 
     int progressBarValue{};
-
-    QThread* workerThread{};
 
     QSettings *settings;
 };

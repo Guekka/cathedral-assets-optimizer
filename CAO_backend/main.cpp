@@ -3,13 +3,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "Mainwindow.h"
 #include "QLogger/QLogger.h"
 #include "IntegrationTests.h"
 #include <QCommandLineParser>
 
 bool parseArguments()
 {
+    if(QCoreApplication::arguments().count() < 2)
+        return false;
+
     QCommandLineParser parser;
 
     parser.addHelpOption();
@@ -29,7 +31,6 @@ bool parseArguments()
                       });
 
     parser.process(QCoreApplication::arguments());
-
     MainOptimizer::resetSettings();
 
     QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
@@ -54,7 +55,6 @@ bool parseArguments()
         QTextStream(stderr) << "\nError. This mode does not exist.";
         return false;
     }
-
 
     settings.setValue("bDryRun", parser.isSet("dr"));
 
@@ -82,15 +82,7 @@ bool parseArguments()
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-
-    QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(), "translations");
-    QApplication::installTranslator(&qtTranslator);
-
-    QTranslator AssetsOptTranslator;
-    AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
-    QApplication::installTranslator(&AssetsOptTranslator);
+    QCoreApplication app(argc, argv);
 
     //If tests are enabled, run tests instead of running standard process
 
@@ -100,33 +92,8 @@ int main(int argc, char *argv[])
         return tests.runAllTests();
     }
 
-    MainWindow w;
+    parseArguments();
+    MainOptimizer optimizer;
+    return optimizer.mainProcess();
 
-    if constexpr(_WIN32)
-    {
-        bool consoleAttached = false;
-
-#ifndef _DEBUG //Attaching the console breaks debug mode
-        consoleAttached = AttachConsole(ATTACH_PARENT_PROCESS); //If ran from a console, using this console instead of opening the GUI.
-#endif
-
-        if (consoleAttached)
-        {
-            FILE* pCout;
-            freopen_s(&pCout, "conout$", "w", stdout);
-            freopen_s(&pCout, "conout$", "w", stderr);
-            bool argumentsParsed = parseArguments();
-            fclose(pCout); //Console is no longer necessary after parsing the arguments
-            FreeConsole();
-            if (argumentsParsed)
-            {
-                MainOptimizer optimizer;
-                return optimizer.mainProcess();
-            }
-                return 1;
-        }  
-        else
-            w.show();
-    }
-    return QApplication::exec();
 }

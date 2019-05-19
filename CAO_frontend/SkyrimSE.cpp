@@ -3,12 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "Mainwindow.h"
-#include "ui_mainwindow.h"
-#include "MainOptimizer.h"
-#include "QLogger/QLogger.h"
+#include "SkyrimSE.h"
+#include "ui_SkyrimSE.h"
 
-MainWindow::MainWindow() : ui(new Ui::MainWindow)
+SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -17,7 +15,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
 
     if(!settings->contains("iLogLevel"))
-        settings->setValue("iLogLevel",  static_cast<uint>(QLogger::LogLevel::Note));
+        settings->setValue("iLogLevel", 3);
     this->loadUIFromFile();
 
     //Preparing log
@@ -28,28 +26,28 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     //Connecting checkboxes to file
 
-    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
 
-    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
 
-    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->MeshesMediumOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->MeshesMediumOptimizationRadioButton, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
 
-    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
+    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
 
     //Connecting the other widgets
 
-    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &MainWindow::saveUIToFile);
-    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &MainWindow::saveUIToFile);
+    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &SkyrimSE::saveUIToFile);
 
     connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [=]
     {
@@ -89,28 +87,21 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     });
 
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", static_cast<uint>(QLogger::LogLevel::Info));});
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &MainWindow::loadUIFromFile);
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", 4);});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &SkyrimSE::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", static_cast<uint>(QLogger::LogLevel::Note));});
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &MainWindow::loadUIFromFile);
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", 3);});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &SkyrimSE::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", static_cast<uint>(QLogger::LogLevel::Trace));});
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &MainWindow::loadUIFromFile);
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", 0);});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &SkyrimSE::loadUIFromFile);
 }
 
 
-void MainWindow::initProcess()
+void SkyrimSE::initProcess()
 {
-    optimizer = new MainOptimizer();
-
-    //Preparing thread
-
-    workerThread = new QThread(this);
-    thread()->setObjectName("WorkerThread");
-
-    connect(workerThread, &QThread::started, optimizer, &MainOptimizer::mainProcess);
-    connect(optimizer, &MainOptimizer::end, workerThread, &QThread::quit);
+  QProcess
+  /*
     connect(workerThread, &QThread::finished, this, [=]()
     {
         this->endProcess();
@@ -142,26 +133,20 @@ void MainWindow::initProcess()
     });
 
     connect(optimizer, &MainOptimizer::updateLog, this, &MainWindow::updateLog);
-
-    optimizer->moveToThread(workerThread);
-    workerThread->start();
-    workerThread->setPriority(QThread::HighestPriority);
+*/
     ui->processButton->setDisabled(true);
     bLockVariables = true;
-
 }
 
 
-void MainWindow::endProcess()
+void SkyrimSE::endProcess()
 {
     bLockVariables = false;
     updateLog();
-    delete optimizer;
-    delete workerThread;
 }
 
 
-void MainWindow::saveUIToFile()
+void SkyrimSE::saveUIToFile()
 {
     if(bLockVariables)
         return;
@@ -247,7 +232,7 @@ void MainWindow::saveUIToFile()
     this->loadUIFromFile();
 }
 
-void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
+void SkyrimSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
 
@@ -366,7 +351,7 @@ void MainWindow::loadUIFromFile()//Apply the Optimiser settings to the checkboxe
 
 
 
-void MainWindow::updateLog()
+void SkyrimSE::updateLog()
 {
     ui->plainTextEdit->clear();
 
@@ -381,7 +366,7 @@ void MainWindow::updateLog()
     }
 }
 
-MainWindow::~MainWindow()
+SkyrimSE::~SkyrimSE()
 {
     delete ui;
 }
