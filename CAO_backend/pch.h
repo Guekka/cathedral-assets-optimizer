@@ -7,7 +7,7 @@
 
 /*---CORE---------------*/
 #include <QCoreApplication>
-#include <QCryptographicHash>
+#include <QCommandLineParser>
 #include <QDateTime>
 #include <QDebug>
 #include <QDirIterator>
@@ -16,7 +16,7 @@
 #include <QMutex>
 #include <QProcess>
 #include <QRegularExpression>
-#include <QSettings>
+#include <QSettings> //Used to read registry
 #include <QString>
 #include <QStringList>
 #include <QTextCodec>

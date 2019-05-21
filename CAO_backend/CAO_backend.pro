@@ -12,9 +12,9 @@ TEMPLATE = app
 CONFIG += console
 
 SOURCES += \
-    $$files(libbsarch/*.cpp) \
     main.cpp \
-    QLogger/QLogger.cpp \
+    $$files(libs/libbsarch/*.cpp) \
+    $$files(libs/QLogger/*.cpp) \
     TexturesOptimizer.cpp \
     MeshesOptimizer.cpp \
     BsaOptimizer.cpp \
@@ -26,8 +26,8 @@ SOURCES += \
 
 
 HEADERS += \
-    $$files(libbsarch/*.h) \
-    mainwindow.h \
+    $$files(libs/libbsarch/*.h) \
+    $$files(libs/QLogger/*.h) \
     QLogger/QLogger.h \
     TexturesOptimizer.h \
     MeshesOptimizer.h \
@@ -42,11 +42,6 @@ HEADERS += \
 
 PRECOMPILED_HEADER += pch.h
 
-LIBS += -L$$PWD/libbsarch/ -llibbsarch
-
-INCLUDEPATH += $$PWD/libbsarch
-DEPENDPATH += $$PWD/libbsarch
-
 CONFIG += c++17 precompile_header static suppress_vcproj_warnings
 
 TRANSLATIONS += \
@@ -54,3 +49,8 @@ translations/AssetsOpt_en.ts \
 translations/AssetsOpt_fr.ts \
 translations/AssetsOpt_ja.ts \
 translations/AssetsOpt_de.ts
+
+LIBS += -L$$PWD/libs/libbsarch/ -llibbsarch
+
+INCLUDEPATH += $$PWD/libs/libbsarch
+DEPENDPATH += $$PWD/libs/libbsarch

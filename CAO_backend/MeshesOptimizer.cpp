@@ -5,7 +5,9 @@
 
 #include "MeshesOptimizer.h"
 
-MeshesOptimizer::MeshesOptimizer()
+MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel) :
+    bMeshesHeadparts (processHeadparts),
+    iMeshesOptimizationLevel (optimizationLevel)
 {
     //Reading custom headparts file to add them to the list.
     //Done in the constructor since the file won't change at runtime.
@@ -26,15 +28,6 @@ MeshesOptimizer::MeshesOptimizer()
         QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
         QLogger::QLog_Warning("Errors", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
     }
-
-
-    //Reading settings from file
-
-    QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
-
-    bMeshesHeadparts = settings.value("Meshes/bMeshesHeadparts").toBool();
-    iMeshesOptimizationLevel = settings.value("Meshes/iMeshesOptimizationLevel").toInt();
 }
 
 

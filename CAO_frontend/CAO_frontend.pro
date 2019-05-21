@@ -6,7 +6,7 @@
 
 QT       += widgets
 
-TARGET = Cathedral_Assets_Optimizer_manager
+TARGET = Cathedral_Assets_Optimizer_front
 TEMPLATE = app
 
 SOURCES += \

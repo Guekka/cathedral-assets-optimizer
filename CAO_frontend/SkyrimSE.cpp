@@ -28,8 +28,7 @@ SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
 
     connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &SkyrimSE::saveUIToFile);
     connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
-    connect(ui->recreatetBsaCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
-    connect(ui->packExistingAssetsCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
+    connect(ui->createtBsaCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
     connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
 
     connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &SkyrimSE::saveUIToFile);
@@ -100,42 +99,17 @@ SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
 
 void SkyrimSE::initProcess()
 {
-  QProcess
-  /*
-    connect(workerThread, &QThread::finished, this, [=]()
-    {
-        this->endProcess();
-        ui->processButton->setDisabled(false);
-        ui->progressBar->setValue(ui->progressBar->maximum());
-        QMessageBox warning(this);
-        warning.setText(tr("Completed. Please read the log to check if any errors occurred (displayed in red)."));
-        warning.addButton(QMessageBox::Ok);
-        warning.exec();
-    });
+  QProcess manager(this);
+  manager.start("bin/Cathedral_Assets_Optimizer_manager.exe");
 
-    //Connecting Optimiser to progress bar
+  QObject::connect(&manager, &QProcess::readyReadStandardOutput, this, [&]()
+  {
+       QString readLine = QString::fromLocal8Bit(manager.readLine());
+       ui->progressBar->setValue(readLine.toInt());
+  });
 
-    connect(optimizer, &MainOptimizer::progressBarReset, this, [=](){ui->progressBar->reset();});
-    connect(optimizer, &MainOptimizer::progressBarMaximumChanged, this, [=](int maximum){ui->progressBar->setMaximum(maximum);});
-
-    connect(optimizer, &MainOptimizer::progressBarBusy, this, [=](){
-        progressBarValue = ui->progressBar->value();
-        ui->progressBar->setMaximum(0);
-        ui->progressBar->setValue(0);
-        updateLog();
-    });
-
-    connect(optimizer, &MainOptimizer::progressBarIncrease, this, [=]
-    {
-        ui->progressBar->setValue(progressBarValue + 1);
-        progressBarValue = ui->progressBar->value();
-        updateLog();
-    });
-
-    connect(optimizer, &MainOptimizer::updateLog, this, &MainWindow::updateLog);
-*/
-    ui->processButton->setDisabled(true);
-    bLockVariables = true;
+  ui->processButton->setDisabled(true);
+  bLockVariables = true;
 }
 
 
@@ -161,8 +135,7 @@ void SkyrimSE::saveUIToFile()
     if(ui->BsaGroupBox->isChecked() && !ui->dryRunCheckBox->isChecked())
     {
         settings->setValue("bBsaExtract", ui->extractBsaCheckbox->isChecked());
-        settings->setValue("bBsaCreate", ui->recreatetBsaCheckbox->isChecked());
-        settings->setValue("bBsaPackLooseFiles", ui->packExistingAssetsCheckbox->isChecked());
+        settings->setValue("bBsaCreate", ui->createtBsaCheckbox->isChecked());
         settings->setValue("bBsaDeleteBackup", ui->bsaDeleteBackupsCheckbox->isChecked());
     }
     else
@@ -241,19 +214,8 @@ void SkyrimSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     settings->beginGroup("BSA");
     ui->BsaGroupBox->setChecked(settings->value("BsaGroupBox").toBool());
     ui->extractBsaCheckbox->setChecked(settings->value("bBsaExtract").toBool());
-    ui->recreatetBsaCheckbox->setChecked(settings->value("bBsaCreate").toBool());
-    ui->packExistingAssetsCheckbox->setChecked(settings->value("bBsaPackLooseFiles").toBool());
+    ui->createtBsaCheckbox->setChecked(settings->value("bBsaCreate").toBool());
     ui->bsaDeleteBackupsCheckbox->setChecked(settings->value("bBsaDeleteBackup").toBool());
-
-    if(settings->value("bBsaCreate").toBool())
-        ui->packExistingAssetsCheckbox->setDisabled(false);
-    else
-    {
-        ui->packExistingAssetsCheckbox->setChecked(false);
-        settings->setValue("bBsaPackLooseFiles", false);
-        ui->packExistingAssetsCheckbox->setDisabled(true);
-    }
-
     settings->endGroup();
 
     //Textures

@@ -1,5 +1,4 @@
-#ifndef QLOGGER_H
-#define QLOGGER_H
+#pragma once
 
 /****************************************************************************************
  ** QLogger is a library to register and print logs into a file.
@@ -194,8 +193,6 @@ namespace QLogger
              */
             QMutex mutex;
 
-            void setLogLevelForAllWriters(LogLevel level);
-
         private:
             /**
              * @brief Instance of the class.
@@ -211,5 +208,3 @@ namespace QLogger
             QLoggerManager();
     };
 }
-
-#endif // QLOGGER_H

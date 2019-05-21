@@ -13,75 +13,57 @@
 #include "PluginsOperations.h"
 #include "TexturesOptimizer.h"
 
-/*!
- * \brief Manages the optimization options
- */
+enum GameMode { SSE };
+
+enum FileType { BSA, DDS, NIF, HKX, TGA };
+
 struct optOptions
 {
-    bool bBsaExtract{};
-    bool bBsaCreate{};
-    bool bBsaPackLooseFiles{};
-    bool bBsaDeleteBackup{};
-    bool bAnimationsOptimization{};
-    bool bDryRun{};
+    bool bBsaExtract = false;
+    bool bBsaCreate = false;
+    bool bBsaDeleteBackup = false;
+    bool bBsaOptimizeAssets = false;
+    bool bAnimationsOptimization = false;
+    bool bMeshesHeadparts = false;
+    bool bDryRun = false;
 
-    int iMeshesOptimizationLevel{};
-    int iTexturesOptimizationLevel{};
-    int iMode{};
+    int iMeshesOptimizationLevel = 0;
+    int iTexturesOptimizationLevel = 0;
+    int iLogLevel{};
 
-    QString userPath;
+    GameMode game{};
+    FileType fileType;
+
+    QString path{};
 };
+
 
 /*!
  * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
  */
 class MainOptimizer : public QObject
 {
-    Q_OBJECT
-
 public:
     MainOptimizer();
 
-    optOptions options;
-
     int mainProcess();
-
-    //Settings operations
-
     /*!
-    * \brief Loads settings from the ini file to variables
+    * \brief Sets the log level to value
+    * \param value The value to set
     */
-    void loadSettings();
-    /*!
-         * \brief Sets the log level to value
-         * \param value The value to set
-         */
     void setLogLevel(const QLogger::LogLevel &value) { logLevel = value; }
-    /*!
-     * \brief Resets the settings to default
-     */
-    static void resetSettings();
 
 private:
-    QStringList modDirs;
-
-    QLogger::QLoggerManager *logManager;
     QLogger::LogLevel logLevel{QLogger::LogLevel::Info};
 
-    void init();
-    void dryRun();
     bool checkRequirements();
-    void fillModsLists();
-    void optimizeAssets(const QString& folderPath);
-    void dryOptimizeAssets(const QString& folderPath);
+    bool parseArguments();
 
+    void processBsa();
+    void processNif();
+    void processDds();
+    void processHkx();
+    void processTga();
 
-
-signals:
-    void progressBarMaximumChanged(int maximum);
-    void progressBarIncrease();
-    void progressBarReset();
-    void progressBarBusy();
-    void end();
-    void updateLog();
+    optOptions options;
 };

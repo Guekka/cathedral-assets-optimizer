@@ -14,7 +14,7 @@ public:
     /*!
      * \brief Constructor that will read CustomHeadparts.txt and read settings from file
      */
-    MeshesOptimizer();
+    MeshesOptimizer(bool processHeadparts, int optimizationLevel);
     /*!
      * \brief List all the meshes that need to be optimized in the directory and split them between several lists according to their type
      * \param folderPath The folder to analyze
