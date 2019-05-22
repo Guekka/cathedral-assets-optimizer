@@ -4,53 +4,35 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <QStringList>
-#include <QSettings>
-#include <QDirIterator>
-#include <QTextStream>
-#include <QCommandLineParser>
+#include "pch.h"
+#include "MainOptimizer.h"
 
 enum OptimizationMode { singleMod = 0, severalMods = 1};
 
-struct optOptions
-{
-    bool bBsaExtract{};
-    bool bBsaCreate{};
-    bool bBsaDeleteBackup{};
-    bool bAnimationsOptimization{};
-    bool bDryRun{};
 
-    int iMeshesOptimizationLevel{};
-    int iTexturesOptimizationLevel{};
-
-    OptimizationMode mode;
-
-    int iLogLevel{};
-
-    QString userPath{};
-    QStringList modsToProcess{};
-};
-
-class MainManager : QObject
+class Manager : QObject
 {
 public:
-    MainManager();
     /*!
-     * \brief Check the options and the provided file
-     * \param filePath The file to check
-     * \return A QString containing the argument to give to Cathedral Assets Optimizer backend in order to process the selected file
+     * \brief Constructor that will perform a number of functions
      */
-    QString getArguments(const QString& filePath);
+    Manager();
+    ~Manager();
+    /*!
+     * \brief The main process
+     */
+    int runOptimization();
 
 private:
-    /*!
-     * \brief Reads the ini file and import its content into the options struct
-     */
-    void  readIni();
+
     /*!
      * \brief Parse the command line arguments and store them to the ini file, then read the ini file.
      */
     void parseArguments();
+    /*!
+     * \brief Reads the ini file and import its content into the options struct
+     */
+    void readIni();
     /*!
      * \brief Checks if the selected settings are allowed
      * \return
@@ -62,10 +44,6 @@ private:
      * \param userPath The path choosen by the user
      */
     void listDirectories();
-    /*!
-     * \brief The optimization options
-     */
-    optOptions options;
     /*!
      * \brief The files to process
      */
@@ -90,6 +68,21 @@ private:
      * \brief Reset the ini
      */
     void resetIni();
+    /*!
+     * \brief Check if all the requirements are present
+     * \return A bool indicating the success
+     */
+    bool checkRequirements();
+
+    MainOptimizer *getOptimizer();
+
+    QVector<MainOptimizer*> processes;
+
+    OptOptions options;
+
+    OptimizationMode mode;
+    QString userPath{};
+    QStringList modsToProcess{};
 
 };
 

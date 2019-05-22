@@ -7,16 +7,14 @@
 #include "pch.h"
 #include "PluginsOperations.h"
 
-/*!
- * \brief Manages filesystem operations : move files, calculate folder size...
- */
-
 
 const QStringList texturesAssets{ "png", "dds" };
 const QStringList otherAssets{ "nif", "seq", "pex", "psc", "lod", "fuz", "wav", "xwm", "swf", "hkx", "tri", "btr", "bto", "btt", "lip", "txt", "lst" };
 const QStringList allAssets = texturesAssets + otherAssets;
 
-
+/*!
+ * \brief Manages filesystem operations : moving files, deleting empty dirs...
+ */
 class FilesystemOperations : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(FilesystemOperations)
@@ -40,14 +38,6 @@ public:
      */
     static QString findSkyrimDirectory();
     /*!
-     * \brief Will calculate the size of all assets in the given path
-     * \param path The path of the directory to scan
-     * \param mode There are three modes. Mode 1 will return the size of textures, mode 2 will return the size of other assets, mode 3 will return both additionned.
-     * \return  A QPair containing two qint64. The first will contain the textures size, the second will contain the other assets size.
-     */
-    static qint64 assetsSize(const QString& path, int mode);
-
-    /*!
     * \brief Delete empty directories in the given directory
     * \param folderPath The path of the folder where empty dirs will be deleted
     */
@@ -67,13 +57,5 @@ public:
      * \param overwriteExisting If enabled, source files will overwrite destination files
      */
     static void copyDir(const QString& source, const QString& destination, bool overwriteExisting);
-    /*!
-     * \brief Lists all the files in a directory
-     * \param folderPath The folder to process
-     * \param enableRelativePath Whether the paths will be absolute (false) or relative (true)
-     * \return A QStringList containing the files paths
-     */
-    static QStringList listFilesInDirectory(const QString &folderPath, bool enableRelativePath);
-
 
 };

@@ -18,6 +18,8 @@ bool FilesystemOperations::moveFiles(const QString& source, const QString& desti
 
     QStringList oldFiles;
 
+    //Listing all files
+
     while (it.hasNext())
     {
         it.next();
@@ -26,6 +28,8 @@ bool FilesystemOperations::moveFiles(const QString& source, const QString& desti
     }
 
     oldFiles.removeDuplicates();
+
+    //Actually moving files
 
     for (const auto& oldFile : oldFiles)
     {
@@ -83,32 +87,6 @@ void FilesystemOperations::deleteEmptyDirectories(const QString& folderPath)
         {
             dir.rmpath(i.value().at(j));
         }
-    }
-}
-
-qint64 FilesystemOperations::assetsSize(const QString& path, int mode)
-{
-    QPair <qint64, qint64> size;
-    //First will be textures, second will be other assets
-
-    QDirIterator it(path, QDirIterator::Subdirectories);
-
-    while (it.hasNext())
-    {
-        QFile currentFile(it.next());
-
-        if(texturesAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
-            size.first += currentFile.size();
-        else if(otherAssets.contains(currentFile.fileName().right(3), Qt::CaseInsensitive))
-            size.second += currentFile.size();
-    }
-    switch (mode)
-    {
-    case 1: return size.first;
-    case 2: return size.second;
-    case 3: return size.first + size.second;
-
-    default: return -1;
     }
 }
 
@@ -207,24 +185,4 @@ QString FilesystemOperations::findSkyrimDirectory() //Find Skyrim directory usin
     QSettings SkyrimReg(R"(HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Bethesda Softworks\Skyrim Special Edition)", QSettings::NativeFormat);
     QString SkyrimDir = QDir::cleanPath(SkyrimReg.value("Installed Path").toString());
     return SkyrimDir;
-}
-
-
-QStringList FilesystemOperations::listFilesInDirectory(const QString &folderPath, bool enableRelativePath)
-{
-    QDir dir(folderPath);
-    QDirIterator it(folderPath, QDirIterator::Subdirectories);
-    QStringList paths;
-
-    while (it.hasNext())
-    {
-        if(!QFileInfo(it.next()).isDir())
-        {
-            if(enableRelativePath)
-                paths << dir.relativeFilePath(it.filePath());
-            else
-                paths << it.filePath();
-        }
-    }
-    return paths;
 }

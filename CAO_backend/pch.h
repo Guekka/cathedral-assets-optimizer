@@ -30,7 +30,7 @@
 
 
 /*---CUSTOM CLASSES-----*/
-#include "QLogger/QLogger.h"
+#include "libs/QLogger/QLogger.h"
 /*----------------------*/
 
 

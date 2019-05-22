@@ -5,8 +5,7 @@
 #pragma once
 
 #include "pch.h"
-#include "QLogger/QLogger.h"
-#include "libbsarch/BSArchiveAuto.h"
+#include "libs/libbsarch/BSArchiveAuto.h"
 #include "FilesystemOperations.h"
 
 struct Bsa
@@ -17,7 +16,6 @@ struct Bsa
     double maxSize = LONG_MAX;
     bsaType type = bsaType::standardBsa;
 };
-
 
 /*!
  * \brief Manages BSA : extract and create them

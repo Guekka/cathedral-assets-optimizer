@@ -5,7 +5,6 @@
 #pragma once
 
 #include "pch.h"
-#include "QLogger/QLogger.h"
 #include "AnimationsOptimizer.h"
 #include "BsaOptimizer.h"
 #include "FilesystemOperations.h"
@@ -15,9 +14,7 @@
 
 enum GameMode { SSE };
 
-enum FileType { BSA, DDS, NIF, HKX, TGA };
-
-struct optOptions
+struct OptOptions
 {
     bool bBsaExtract = false;
     bool bBsaCreate = false;
@@ -31,39 +28,28 @@ struct optOptions
     int iTexturesOptimizationLevel = 0;
     int iLogLevel{};
 
-    GameMode game{};
-    FileType fileType;
-
-    QString path{};
+    GameMode game;
 };
 
 
 /*!
  * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
  */
-class MainOptimizer : public QObject
+class MainOptimizer : public QThread
 {
 public:
-    MainOptimizer();
+    MainOptimizer(OptOptions optOptions);
 
-    int mainProcess();
-    /*!
-    * \brief Sets the log level to value
-    * \param value The value to set
-    */
-    void setLogLevel(const QLogger::LogLevel &value) { logLevel = value; }
+    void run(QString file);
 
 private:
-    QLogger::LogLevel logLevel{QLogger::LogLevel::Info};
 
-    bool checkRequirements();
-    bool parseArguments();
+    void processBsa(const QString& file);
+    void processNif(const QString& file);
+    void processDds(const QString& file);
+    void processHkx(const QString& file);
+    void processTga(const QString& file);
 
-    void processBsa();
-    void processNif();
-    void processDds();
-    void processHkx();
-    void processTga();
+    OptOptions optOptions;
 
-    optOptions options;
 };

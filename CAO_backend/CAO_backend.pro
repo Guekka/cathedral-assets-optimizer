@@ -12,6 +12,7 @@ TEMPLATE = app
 CONFIG += console
 
 SOURCES += \
+    Manager.cpp \
     main.cpp \
     $$files(libs/libbsarch/*.cpp) \
     $$files(libs/QLogger/*.cpp) \
@@ -28,7 +29,7 @@ SOURCES += \
 HEADERS += \
     $$files(libs/libbsarch/*.h) \
     $$files(libs/QLogger/*.h) \
-    QLogger/QLogger.h \
+    Manager.h \
     TexturesOptimizer.h \
     MeshesOptimizer.h \
     BsaOptimizer.h \

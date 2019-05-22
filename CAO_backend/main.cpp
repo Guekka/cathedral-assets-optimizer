@@ -3,11 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "QLogger/QLogger.h"
+#include "Manager.h"
 #include "IntegrationTests.h"
 
 int main(int argc, char *argv[])
-{
+{   
     QCoreApplication app(argc, argv);
 
     //If tests are enabled, run tests instead of running standard process
@@ -18,7 +18,26 @@ int main(int argc, char *argv[])
         return tests.runAllTests();
     }
 
-    MainOptimizer optimizer;
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(), "translations");
+    QCoreApplication::installTranslator(&qtTranslator);
+
+    QTranslator AssetsOptTranslator;
+    AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
+    QCoreApplication::installTranslator(&AssetsOptTranslator);
+
+    try
+    {
+        Manager manager;
+    }
+    catch(std::exception e)
+    {
+        QTextStream(stderr) << e.what();
+        return 1;
+    }
+
+    MainOptimizer optimizer;    
+
     return optimizer.mainProcess();
 
 }
