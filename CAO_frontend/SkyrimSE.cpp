@@ -6,13 +6,14 @@
 #include "SkyrimSE.h"
 #include "ui_SkyrimSE.h"
 
+#include "QDebug"
+
 SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     //Loading remembered settings
-    settings = new QSettings("Cathedral Assets Optimizer.ini", QSettings::IniFormat, this);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
+    settings = new QSettings("settings/SkyrimSE.ini", QSettings::IniFormat, this);
 
     if(!settings->contains("iLogLevel"))
         settings->setValue("iLogLevel", 3);
@@ -48,7 +49,7 @@ SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
     connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &SkyrimSE::saveUIToFile);
     connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &SkyrimSE::saveUIToFile);
 
-    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [=]
+    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&]
     {
         if(ui->modeChooserComboBox->currentIndex() == 1)
         {
@@ -61,14 +62,14 @@ SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
     });
 
 
-    connect(ui->userPathButton, &QPushButton::pressed, this, [=](){
+    connect(ui->userPathButton, &QPushButton::pressed, this, [&](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
                                                         settings->value("SelectedPath").toString(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         ui->userPathTextEdit->setText(dir);
         this->saveUIToFile();
     });
 
-    connect(ui->processButton, &QPushButton::pressed, this, [=]()
+    connect(ui->processButton, &QPushButton::pressed, this, [&]()
     {
         if(QDir(ui->userPathTextEdit->text()).exists())
             this->initProcess();
@@ -79,46 +80,49 @@ SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
 
     //Connecting menu buttons
 
-    connect(ui->actionChangeTheme, &QAction::triggered, this, [=]()
+    connect(ui->actionChangeTheme, &QAction::triggered, this, [&]()
     {
         bDarkMode = !bDarkMode;
         this->saveUIToFile();
     });
 
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", 4);});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &SkyrimSE::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", 3);});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &SkyrimSE::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [=](){this->settings->setValue("iLogLevel", 0);});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 0);});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &SkyrimSE::loadUIFromFile);
+
+    //Setting caoProcess
+
+    caoProcess = new QProcess(this);
+    caoProcess->setProgram("bin/Cathedral_Assets_Optimizer_back.exe");
+
+    QObject::connect(caoProcess, &QProcess::readyReadStandardOutput, this, [&]()
+    {
+         QString readLine = QString::fromLocal8Bit(caoProcess->readLine());
+         ui->progressBar->setValue(readLine.toInt());
+    });
+
+    QObject::connect(caoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [&]()
+    {
+        ui->processButton->setDisabled(false);
+        bLockVariables = false;
+        updateLog();
+    });
 }
 
 
 void SkyrimSE::initProcess()
 {
-  QProcess manager(this);
-  manager.start("bin/Cathedral_Assets_Optimizer_manager.exe");
-
-  QObject::connect(&manager, &QProcess::readyReadStandardOutput, this, [&]()
-  {
-       QString readLine = QString::fromLocal8Bit(manager.readLine());
-       ui->progressBar->setValue(readLine.toInt());
-  });
+  caoProcess->start();
 
   ui->processButton->setDisabled(true);
   bLockVariables = true;
 }
-
-
-void SkyrimSE::endProcess()
-{
-    bLockVariables = false;
-    updateLog();
-}
-
 
 void SkyrimSE::saveUIToFile()
 {

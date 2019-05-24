@@ -12,7 +12,7 @@ void AnimationsOptimizer::optimize(const QString &filePath)
 
     havokArgs.clear();
     havokArgs << "--platformamd64" << filePath << filePath;
-    havokProcess.start(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe", havokArgs);
+    havokProcess.start("resources/HavokBehaviorPostProcess.exe", havokArgs);
 
     havokProcess.waitForFinished(-1);
 

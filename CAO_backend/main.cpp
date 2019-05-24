@@ -29,15 +29,15 @@ int main(int argc, char *argv[])
     try
     {
         Manager manager;
+        manager.runOptimization();
     }
-    catch(std::exception e)
+    catch(std::runtime_error e)
     {
+        QLogger::QLog_Fatal("MainOptimizer", e.what());
+        QLogger::QLog_Fatal("Errors", e.what());
         QTextStream(stderr) << e.what();
         return 1;
     }
 
-    MainOptimizer optimizer;    
-
-    return optimizer.mainProcess();
-
+    return app.exec();
 }

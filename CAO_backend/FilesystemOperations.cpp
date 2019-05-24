@@ -145,6 +145,7 @@ void FilesystemOperations::copyDir(const QString& source, const QString& destina
 
     QStringList oldFiles;
 
+    QString currentDir = QDir::currentPath();
     QDir::setCurrent(destination);
 
     while (it.hasNext())
@@ -177,7 +178,7 @@ void FilesystemOperations::copyDir(const QString& source, const QString& destina
     }
     QLogger::QLog_Trace("FilesystemOperations", "Exiting moveFiles function");
 
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QDir::setCurrent(currentDir);
 }
 
 QString FilesystemOperations::findSkyrimDirectory() //Find Skyrim directory using the registry key

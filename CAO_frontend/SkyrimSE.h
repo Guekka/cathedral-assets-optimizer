@@ -29,9 +29,10 @@ private:
     void loadUIFromFile();
     void updateLog();
     void initProcess();
-    void endProcess();
 
     int progressBarValue{};
 
     QSettings *settings;
+
+    QProcess *caoProcess;
 };

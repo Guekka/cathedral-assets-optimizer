@@ -35,12 +35,12 @@ struct OptOptions
 /*!
  * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
  */
-class MainOptimizer : public QThread
+class MainOptimizer : public QObject
 {
 public:
-    MainOptimizer(OptOptions optOptions);
+    MainOptimizer(const OptOptions& optOptions);
 
-    void run(QString file);
+    void run(const QString& file);
 
 private:
 

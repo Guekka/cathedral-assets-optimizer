@@ -7,6 +7,8 @@
 
 IntegrationTests::IntegrationTests(const QString& path) : m_dir(QDir(path)) {};
 
+//TODO fix this class (broken with refactoring and ini changes)
+
 bool IntegrationTests::runAllTests()
 {
     qDebug() << "tests folder: " << m_dir.path();
@@ -39,8 +41,8 @@ bool IntegrationTests::runAllTests()
 
             //Running the optimization
 
-            MainOptimizer optimizer;
-            optimizer.mainProcess();
+            Manager manager;
+            manager.runOptimization();
 
             results << FilesystemOperations::compareFolders(output, expected, true);
 

@@ -5,8 +5,7 @@
 #pragma once
 
 #include "pch.h"
-#include "FilesystemOperations.h"
-#include "MainOptimizer.h"
+#include "Manager.h"
 
 class IntegrationTests
 {

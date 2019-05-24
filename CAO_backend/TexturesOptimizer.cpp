@@ -9,7 +9,7 @@
 void TexturesOptimizer::convertToBc7IfUncompressed(const QString &filePath) //Compress uncompressed textures to BC7
 {
     QProcess texDiag;
-    texDiag.start(QCoreApplication::applicationDirPath() + "/resources/texdiag.exe", QStringList {"info", filePath});
+    texDiag.start("resources/texdiag.exe", QStringList {"info", filePath});
     texDiag.waitForFinished(-1);
 
     QString texDiagOutput = texDiag.readAllStandardOutput();
@@ -26,7 +26,7 @@ void TexturesOptimizer::convertToBc7IfUncompressed(const QString &filePath) //Co
 
             QProcess texconv;
             QStringList texconvArg{ "-nologo", "-y", "-m", "0", "-pow2", "-if", "FANT", "-f", "BC7_UNORM", "-bcmax", filePath};
-            texconv.start(QCoreApplication::applicationDirPath() + "/resources/texconv.exe", texconvArg);
+            texconv.start("resources/texconv.exe", texconvArg);
 
             texconv.waitForFinished(-1);
         }
@@ -42,7 +42,7 @@ void TexturesOptimizer::convertTgaToDds(const QString &filePath) //Convert TGA t
     QStringList texconvArg {"-nologo", "-m", "0", "-pow2", "-if", "FANT", "-f", "R8G8B8A8_UNORM", filePath};
 
     QProcess texconv;
-    texconv.start(QCoreApplication::applicationDirPath() + "/resources/texconv.exe", texconvArg);
+    texconv.start("resources/texconv.exe", texconvArg);
     texconv.waitForFinished(-1);
 
     QFile tga(filePath);
@@ -53,7 +53,7 @@ void TexturesOptimizer::convertTgaToDds(const QString &filePath) //Convert TGA t
 bool TexturesOptimizer::isCompressed(const QString &filePath)
 {
     QProcess texDiag;
-    texDiag.start(QCoreApplication::applicationDirPath() + "/resources/texdiag.exe", QStringList {"info", filePath});
+    texDiag.start("resources/texdiag.exe", QStringList {"info", filePath});
     texDiag.waitForFinished(-1);
 
     return texDiag.readAllStandardOutput().contains("compressed = no");

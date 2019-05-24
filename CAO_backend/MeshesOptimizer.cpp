@@ -12,7 +12,7 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel) :
     //Reading custom headparts file to add them to the list.
     //Done in the constructor since the file won't change at runtime.
 
-    QFile customHeadpartsFile(QCoreApplication::applicationDirPath() + "/resources/customHeadparts.txt");
+    QFile customHeadpartsFile("resources/customHeadparts.txt");
     if(customHeadpartsFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&customHeadpartsFile);
@@ -44,7 +44,7 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
     //Running Nifscan and ListHeadparts to fill lists
 
     QProcess nifScan;
-    nifScan.start(QCoreApplication::applicationDirPath() + "/resources/NifScan.exe", QStringList { folderPath, "-fixdds" });
+    nifScan.start("resources/NifScan.exe", QStringList { folderPath, "-fixdds" });
 
     if(!nifScan.waitForFinished(180000))
     {
@@ -111,7 +111,7 @@ void MeshesOptimizer::cleanMeshesLists()
 void MeshesOptimizer::listHeadparts(const QDir& directory)
 {
     QProcess listHeadparts;
-    listHeadparts.start(QCoreApplication::applicationDirPath() + "/resources/ListHeadParts.exe", QStringList() << directory.path());
+    listHeadparts.start("resources/ListHeadParts.exe", QStringList() << directory.path());
 
     if(!listHeadparts.waitForFinished(180000))
     {
@@ -170,7 +170,7 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
         QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to all meshes option"));
     }
 
-    nifOpt.start(QCoreApplication::applicationDirPath() + "/resources/nifopt.exe", nifOptArgs);
+    nifOpt.start("resources/nifopt.exe", nifOptArgs);
     nifOpt.waitForFinished(-1);
 }
 

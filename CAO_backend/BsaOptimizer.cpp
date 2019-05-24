@@ -10,11 +10,11 @@ BsaOptimizer::BsaOptimizer()
     //Reading filesToNotPack to add them to the list.
     //Done in the constructor since the file won't change at runtime.
 
-    QFile filesToNotPackFile(QCoreApplication::applicationDirPath() + "/resources/FilesToNotPack.txt");
+    QFile filesToNotPackFile("resources/FilesToNotPack.txt");
     if(filesToNotPackFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&filesToNotPackFile);
-        QFile filesToNotPackFile(QCoreApplication::applicationDirPath() + "/resources/FilesToNotPack.txt");
+        QFile filesToNotPackFile("resources/FilesToNotPack.txt");
         if(filesToNotPackFile.open(QIODevice::ReadOnly))
         {
             QTextStream ts(&filesToNotPackFile);
@@ -28,6 +28,8 @@ BsaOptimizer::BsaOptimizer()
         else
             QLogger::QLog_Warning("BsaOptimizer", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
     }
+
+
 }
 
 void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)

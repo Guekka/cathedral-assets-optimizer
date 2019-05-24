@@ -21,7 +21,7 @@
 #include <QStringList>
 #include <QTextCodec>
 #include <QTextStream>
-#include <QThread>
+#include <QtConcurrent/QtConcurrent>
 #include <QtMath>
 #include <QTranslator>
 #include <utility>

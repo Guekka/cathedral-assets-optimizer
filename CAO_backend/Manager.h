@@ -17,11 +17,10 @@ public:
      * \brief Constructor that will perform a number of functions
      */
     Manager();
-    ~Manager();
     /*!
      * \brief The main process
      */
-    int runOptimization();
+    void runOptimization();
 
 private:
 
@@ -74,15 +73,13 @@ private:
      */
     bool checkRequirements();
 
-    MainOptimizer *getOptimizer();
-
-    QVector<MainOptimizer*> processes;
-
     OptOptions options;
 
     OptimizationMode mode;
     QString userPath{};
     QStringList modsToProcess{};
+
+    QSettings *settings;
 
 };
 

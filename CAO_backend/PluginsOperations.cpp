@@ -30,7 +30,7 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
                 espName = it.fileName().remove(".bsa", Qt::CaseInsensitive) + ".esp";
                 QLogger::QLog_Trace("PluginsOperations", "Created standard bsa plugin:" + espName);
             }
-            QFile::copy(QCoreApplication::applicationDirPath() + "/resources/BlankSSEPlugin.esp", folderPath + "/" + espName);
+            QFile::copy("resources/BlankSSEPlugin.esp", folderPath + "/" + espName);
         }
     }
     QLogger::QLog_Trace("PluginsOperations", "Exiting makeDummyPlugins function");

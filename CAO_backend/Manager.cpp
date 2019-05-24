@@ -6,26 +6,6 @@
 
 Manager::Manager()
 {
-    if(QCoreApplication::arguments().count() >= 2)
-        parseArguments();
-
-    readIni();
-
-    if(!checkRequirements())
-    {
-        QLogger::QLog_Fatal("MainOptimizer", tr("The requirements were not found. Exiting the process."));
-        throw std::runtime_error("Error while checking the requirements");
-    }
-
-    if(!checkSettings())
-    {
-        QLogger::QLog_Fatal("MainOptimizer", tr("The settings were not read correctly. Exiting the process."));
-        throw std::runtime_error("Error while reading settings");
-    }
-
-    listDirectories();
-    listFiles();
-
     //Preparing logging
     QLogger::QLoggerManager *logManager = QLogger::QLoggerManager::getInstance();
     logManager->addDestination("log.html", QStringList() << "MainWindow" << "MainOptimizer" << "AnimationsOptimizer"
@@ -33,16 +13,40 @@ Manager::Manager()
                                << "TexturesOptimizer", static_cast<QLogger::LogLevel>(options.iLogLevel));
     logManager->addDestination("errors.html", QStringList() << "Errors", static_cast<QLogger::LogLevel>(options.iLogLevel));
 
-    //Creating processes
+    //INI
 
-    for(int i = 0; i<4; ++i)
-        processes << new MainOptimizer(options);
-}
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath() + "/settings/SkyrimSE.ini");
+    settings = new QSettings(QDir::currentPath() + "/settings/SkyrimSE.ini", QSettings::IniFormat, this);
 
-Manager::~Manager()
-{
-    for(auto process : processes)
-        delete process;
+    //Reading arguments
+
+    if(QCoreApplication::arguments().count() >= 2)
+        parseArguments();
+
+    QLogger::QLog_Trace("MainOptimizer", "Reading INI...");
+
+    readIni();
+
+    QLogger::QLog_Trace("MainOptimizer", "Checking requirements...");
+
+    if(!checkRequirements())
+    {
+        QLogger::QLog_Fatal("MainOptimizer", tr("The requirements were not found. Exiting the process."));
+        throw std::runtime_error("Error while checking the requirements");
+    }
+
+    QLogger::QLog_Trace("MainOptimizer", "Checking settings...");
+
+    if(!checkSettings())
+    {
+        QLogger::QLog_Fatal("MainOptimizer", tr("The settings were not read correctly. Exiting the process."));
+        throw std::runtime_error("Error while reading settings");
+    }
+
+    QLogger::QLog_Trace("MainOptimizer", "Listing files and directories...");
+
+    listDirectories();
+    listFiles();
 }
 
 void Manager::listDirectories()
@@ -109,6 +113,7 @@ void Manager::parseArguments()
 
     parser.addHelpOption();
     parser.addPositionalArgument("folder", "The file or the folder to process, surrounded with quotes.");
+    parser.addPositionalArgument("mode", "Either om (one mod) or sm (several mods)");
     parser.addPositionalArgument("game", "Currently, only 'sse' is supported");
 
     parser.addOptions({
@@ -133,40 +138,37 @@ void Manager::parseArguments()
 
     Manager::resetIni();
 
-    QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
-
     QString path = QDir::cleanPath(parser.positionalArguments().at(0));
     QString mode = parser.positionalArguments().at(1);
     QString game = parser.positionalArguments().at(2);
 
-    settings.setValue("SelectedPath", path);
+    settings->setValue("SelectedPath", path);
 
     if(mode == "om")
-        settings.setValue("iMode", 0);
+        settings->setValue("iMode", 0);
     else if(mode == "sm")
-        settings.setValue("iMode", 1);
+        settings->setValue("iMode", 1);
 
-    settings.setValue("Game", game);
+    settings->setValue("Game", game);
 
-    settings.setValue("bDryRun", parser.isSet("dr"));
+    settings->setValue("bDryRun", parser.isSet("dr"));
 
     if(parser.isSet("l"))
-        settings.setValue("iLogLevel", parser.value("l").toInt());
+        settings->setValue("iLogLevel", parser.value("l").toInt());
 
     if(parser.isSet("m"))
-        settings.setValue("Meshes/iMeshesOptimizationLevel", parser.value("m").toInt());
+        settings->setValue("Meshes/iMeshesOptimizationLevel", parser.value("m").toInt());
 
     if(parser.isSet("t"))
-        settings.setValue("Textures/iTexturesOptimizationLevel", parser.value("t").toInt());
+        settings->setValue("Textures/iTexturesOptimizationLevel", parser.value("t").toInt());
 
-    settings.setValue("Animations/bAnimationsOptimization", parser.isSet("a"));
+    settings->setValue("Animations/bAnimationsOptimization", parser.isSet("a"));
 
-    settings.beginGroup("BSA");
-    settings.setValue("bBsaExtract", parser.isSet("be"));
-    settings.setValue("bBsaCreate", parser.isSet("bc"));
-    settings.setValue("bBsaDeleteBackup", parser.isSet("bd"));
-    settings.endGroup();
+    settings->beginGroup("BSA");
+    settings->setValue("bBsaExtract", parser.isSet("be"));
+    settings->setValue("bBsaCreate", parser.isSet("bc"));
+    settings->setValue("bBsaDeleteBackup", parser.isSet("bd"));
+    settings->endGroup();
 }
 
 bool Manager::checkSettings()
@@ -177,7 +179,7 @@ bool Manager::checkSettings()
         return false;
     }
 
-    if (mode != 1 && mode != 0)
+    if (mode != singleMod && mode != severalMods)
     {
         QTextStream(stderr) << "\nError. This mode does not exist.";
         return false;
@@ -187,7 +189,7 @@ bool Manager::checkSettings()
     {
         QTextStream(stderr) << "\nError. This game is not supported.";
         return false;
-        //NOTE Will have to change this test once more games will be added.
+        //NOTE Will have to change this test once more games are added.
     }
 
     if(options.iLogLevel < 0 || options.iLogLevel > 6)
@@ -213,51 +215,47 @@ bool Manager::checkSettings()
 
 void Manager::resetIni()
 {
-    QString blankIni(QCoreApplication::applicationDirPath() + "/resources/defaultIni.ini");
-    QString CathedralIni = "Cathedral Assets Optimizer.ini";
+    //FIXME
+    QString blankIni("/resources/defaultIni.ini");
+    QDir dir(QCoreApplication::applicationDirPath()); dir.cdUp();
+    QString CathedralIni = dir.filePath("settings/SkyrimSE.ini");
     QFile::remove(CathedralIni);
     QFile::copy(blankIni, CathedralIni);
 }
 
 void Manager::readIni()
 {
-    QSettings settings("Cathedral Assets Optimizer.ini", QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, "Cathedral Assets Optimizer.ini");
+    userPath = settings->value("SelectedPath").toString();
 
-    userPath = settings.value("SelectedPath").toString();
-    QString game = settings.value("Game").toString();
+    QString game = settings->value("Game").toString();
 
     if(game == "sse")
         options.game = SSE;
-    else
-        return ; //TODO add error message
 
-    QString iniMode = settings.value("iMode").toString();
+    int iniMode = settings->value("iMode").toInt();
 
-    if(mode == 0)
+    if(iniMode == 0)
         mode = singleMod;
-    else if(mode == 1)
+    else if(iniMode == 1)
         mode = severalMods;
-    else
-        return ; //TODO add error
 
-    options.bDryRun = settings.value("bDryRun").toBool();
+    options.bDryRun = settings->value("bDryRun").toBool();
 
-    options.iLogLevel = settings.value("iLogLevel").toInt();
+    options.iLogLevel = settings->value("iLogLevel").toInt();
 
-    settings.beginGroup("BSA");
-    options.bBsaExtract = settings.value("bBsaExtract").toBool();
-    options.bBsaCreate = settings.value("bBsaCreate").toBool();
-    options.bBsaDeleteBackup = settings.value("bBsaDeleteBackup").toBool();
-    options.bBsaOptimizeAssets = settings.value("bBsaOptimizeAssets").toBool();
-    settings.endGroup();
+    settings->beginGroup("BSA");
+    options.bBsaExtract = settings->value("bBsaExtract").toBool();
+    options.bBsaCreate = settings->value("bBsaCreate").toBool();
+    options.bBsaDeleteBackup = settings->value("bBsaDeleteBackup").toBool();
+    options.bBsaOptimizeAssets = settings->value("bBsaOptimizeAssets").toBool();
+    settings->endGroup();
 
-    options.iMeshesOptimizationLevel = settings.value("Meshes/iMeshesOptimizationLevel").toInt();
-    options.bMeshesHeadparts = settings.value("Meshes/bMeshesHeadparts").toBool();
+    options.iMeshesOptimizationLevel = settings->value("Meshes/iMeshesOptimizationLevel").toInt();
+    options.bMeshesHeadparts = settings->value("Meshes/bMeshesHeadparts").toBool();
 
-    options.iTexturesOptimizationLevel = settings.value("Textures/iTexturesOptimizationLevel").toInt();
+    options.iTexturesOptimizationLevel = settings->value("Textures/iTexturesOptimizationLevel").toInt();
 
-    options.bAnimationsOptimization = settings.value("Animations/bAnimationsOptimization").toBool();
+    options.bAnimationsOptimization = settings->value("Animations/bAnimationsOptimization").toBool();
 }
 
 bool Manager::checkRequirements()
@@ -265,10 +263,10 @@ bool Manager::checkRequirements()
     QStringList requirements {"NifScan.exe", "nifopt.exe", "texconv.exe", "texdiag.exe", "ListHeadParts.exe"};
     QFile havokFile(FilesystemOperations::findSkyrimDirectory() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
 
-    if(havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
-        havokFile.copy(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe");
+    if(havokFile.exists() && !QFile("/resources/HavokBehaviorPostProcess.exe").exists())
+        havokFile.copy("/resources/HavokBehaviorPostProcess.exe");
 
-    else if(!havokFile.exists() && !QFile(QCoreApplication::applicationDirPath() + "/resources/HavokBehaviorPostProcess.exe").exists())
+    else if(!havokFile.exists() && !QFile("/resources/HavokBehaviorPostProcess.exe").exists())
     {
         QLogger::QLog_Warning("MainOptimizer", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
         QLogger::QLog_Warning("Errors", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
@@ -279,7 +277,8 @@ bool Manager::checkRequirements()
 
     for (const auto& requirement : requirements)
     {
-        QFile file(QCoreApplication::applicationDirPath() + "/resources/" + requirement);
+        QFile file("resources/" + requirement);
+
         if(!file.exists())
         {
             QLogger::QLog_Error("MainOptimizer", requirement + tr(" not found. Cancelling."));
@@ -290,26 +289,28 @@ bool Manager::checkRequirements()
     return true;
 }
 
-int Manager::runOptimization()
+void Manager::runOptimization()
 {
+    QLogger::QLog_Info("MainOptimizer", "Beginning...");
+
+    MainOptimizer optimizer(options);
+    QVector<QFuture<void>> array;
+
     for(const auto& file : files)
     {
         completedFilesWeight += file.size();
-        getOptimizer()->run(file.path());
+        /*FIXME
+         * When using optimizer.run(file.absoluteFilePath()) , everything works
+         * But with concurrency, there is an issue when accessing member values
+         * The optimizer will use default optOptions values when ran from QtConcurrent
+         */
+        array << QtConcurrent::run(&optimizer, &MainOptimizer::run, file.absoluteFilePath());
     }
 
-    return true;
+    for(QFuture<void>& future : array)
+        future.waitForFinished();
+
+
+    QLogger::QLog_Info("MainOptimizer", "\n\n\nProcess completed");
 }
 
-MainOptimizer* Manager::getOptimizer()
-{
-    //TODO fix and optimize this ugly code
-    while(true)
-    {
-        for(auto process : processes)
-        {
-            if(process->isFinished())
-                return process;
-        }
-    }
-}
