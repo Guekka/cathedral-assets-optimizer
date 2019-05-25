@@ -12,6 +12,8 @@ enum OptimizationMode { singleMod = 0, severalMods = 1};
 
 class Manager : QObject
 {
+    Q_DECLARE_TR_FUNCTIONS(Manager)
+
 public:
     /*!
      * \brief Constructor that will perform a number of functions

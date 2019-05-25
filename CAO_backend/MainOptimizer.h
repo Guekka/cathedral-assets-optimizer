@@ -37,6 +37,8 @@ struct OptOptions
  */
 class MainOptimizer : public QObject
 {
+    Q_DECLARE_TR_FUNCTIONS(MainOptimizer)
+
 public:
     MainOptimizer(const OptOptions& optOptions);
 
