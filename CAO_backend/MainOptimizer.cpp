@@ -5,9 +5,10 @@
 
 #include "MainOptimizer.h"
 
-MainOptimizer::MainOptimizer(const OptOptions &options) : optOptions (options) {}
+MainOptimizer::MainOptimizer(const OptOptions &options) : optOptions (options),
+    meshesOpt(MeshesOptimizer(optOptions.bMeshesHeadparts, options.iMeshesOptimizationLevel)) {}
 
-void MainOptimizer::run(const QString &file)
+void MainOptimizer::process(const QString &file)
 {
     if(file.endsWith(".dds", Qt::CaseInsensitive))
         processDds(file);
@@ -26,26 +27,30 @@ void MainOptimizer::run(const QString &file)
     }
 }
 
+void MainOptimizer::packBsa(const QString &folder)
+{
+    processBsa(folder);
+}
+
 void MainOptimizer::processBsa(const QString& file)
 {
     if(optOptions.bDryRun)
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
-    BsaOptimizer bsaOpt;
 
-    if(optOptions.bBsaExtract)
+    if(optOptions.bBsaExtract && QFileInfo(file).isFile())
     {
         QLogger::QLog_Note("MainOptimizer", QObject::tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + file);
         bsaOpt.extract(file, optOptions.bBsaDeleteBackup);
     }
 
-    /*TODO if(options.bBsaCreate)
+    if(optOptions.bBsaCreate && QDir(file).exists())
     {
         QLogger::QLog_Info("MainOptimizer", tr("Creating BSA..."));
 
-        bsaOptimizer.packAll(modpathDir);
-        PluginsOperations::makeDummyPlugins(modpathDir);
-    }*/
+        bsaOpt.packAll(file);
+        PluginsOperations::makeDummyPlugins(file);
+    }
 
     //TODO if(options.bBsaOptimizeAssets)
 }
@@ -71,13 +76,12 @@ void MainOptimizer::processHkx(const QString& file)
 
 void MainOptimizer::processNif(const QString& file)
 {
-    MeshesOptimizer opt(optOptions.bMeshesHeadparts, optOptions.iMeshesOptimizationLevel);
     //TODO Scan meshes opt.scan(options.path);
 
     if(optOptions.iMeshesOptimizationLevel >=1 && optOptions.bDryRun)
-        opt.dryOptimize(file);
+        meshesOpt.dryOptimize(file);
     else if(optOptions.iMeshesOptimizationLevel >=1 && !optOptions.bDryRun)
-        opt.optimize(file);
+        meshesOpt.optimize(file);
 }
 
 void MainOptimizer::processTga(const QString &file)

@@ -40,7 +40,9 @@ class MainOptimizer : public QObject
 public:
     MainOptimizer(const OptOptions& optOptions);
 
-    void run(const QString& file);
+    void process(const QString& file);
+
+    void packBsa(const QString& folder);
 
 private:
 
@@ -52,4 +54,6 @@ private:
 
     OptOptions optOptions;
 
+    BsaOptimizer bsaOpt;
+    MeshesOptimizer meshesOpt;
 };

@@ -215,10 +215,8 @@ bool Manager::checkSettings()
 
 void Manager::resetIni()
 {
-    //FIXME
-    QString blankIni("/resources/defaultIni.ini");
-    QDir dir(QCoreApplication::applicationDirPath()); dir.cdUp();
-    QString CathedralIni = dir.filePath("settings/SkyrimSE.ini");
+    QString blankIni("resources/defaultIni.ini");
+    QString CathedralIni = "settings/SkyrimSE.ini";
     QFile::remove(CathedralIni);
     QFile::copy(blankIni, CathedralIni);
 }
@@ -294,23 +292,39 @@ void Manager::runOptimization()
     QLogger::QLog_Info("MainOptimizer", "Beginning...");
 
     MainOptimizer optimizer(options);
+
+    //NOTE might want to use a blockingMap instead
     QVector<QFuture<void>> array;
 
     for(const auto& file : files)
     {
-        completedFilesWeight += file.size();
-        /*FIXME
-         * When using optimizer.run(file.absoluteFilePath()) , everything works
-         * But with concurrency, there is an issue when accessing member values
-         * The optimizer will use default optOptions values when ran from QtConcurrent
-         */
-        array << QtConcurrent::run(&optimizer, &MainOptimizer::run, file.absoluteFilePath());
+        array << QtConcurrent::run([&]()
+        {
+            optimizer.process(file.absoluteFilePath());
+            completedFilesWeight += file.size();
+        });
     }
+
+    //Packing BSAs
+
+    if(options.bBsaCreate)
+    {
+        for(const QString& folder : modsToProcess)
+        {
+            array << QtConcurrent::run([&]()
+            {
+                optimizer.packBsa(folder);
+            });
+        }
+    }
+
+    //Waiting for all tasks to be completed
 
     for(QFuture<void>& future : array)
         future.waitForFinished();
 
-
     QLogger::QLog_Info("MainOptimizer", "\n\n\nProcess completed");
+
+    return;
 }
 

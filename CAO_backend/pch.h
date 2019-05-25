@@ -28,7 +28,6 @@
 /*----------------------*/
 
 
-
 /*---CUSTOM CLASSES-----*/
 #include "libs/QLogger/QLogger.h"
 /*----------------------*/
