@@ -31,8 +31,7 @@
 /*---CUSTOM CLASSES-----*/
 #include "libs/QLogger/QLogger.h"
 #include "libs/hkxcmd/hkfutils.h"
-#include "libs/hkxcmd/hkxcore.h"
-#include "libs/hkxcmd/hkxutils.h"
+#include "libs/NIF/NifFile.h"
 /*----------------------*/
 
 

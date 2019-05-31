@@ -75,7 +75,7 @@ private:
      */
     bool checkRequirements();
 
-    OptOptions options;
+    OptOptionsCAO options;
 
     OptimizationMode mode;
     QString userPath{};

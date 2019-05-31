@@ -14,7 +14,7 @@
 
 enum GameMode { SSE };
 
-struct OptOptions
+struct OptOptionsCAO
 {
     bool bBsaExtract = false;
     bool bBsaCreate = false;
@@ -40,10 +40,9 @@ class MainOptimizer : public QObject
     Q_DECLARE_TR_FUNCTIONS(MainOptimizer)
 
 public:
-    MainOptimizer(const OptOptions& optOptions);
+    MainOptimizer(const OptOptionsCAO& optOptions);
 
     void process(const QString& file);
-
     void packBsa(const QString& folder);
 
 private:
@@ -54,7 +53,7 @@ private:
     void processHkx(const QString& file);
     void processTga(const QString& file);
 
-    OptOptions optOptions;
+    OptOptionsCAO optOptions;
 
     BsaOptimizer bsaOpt;
     MeshesOptimizer meshesOpt;
