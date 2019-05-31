@@ -28,8 +28,6 @@ BsaOptimizer::BsaOptimizer()
         else
             QLogger::QLog_Warning("BsaOptimizer", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
     }
-
-
 }
 
 void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)

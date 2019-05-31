@@ -58,4 +58,5 @@ private:
 
     BsaOptimizer bsaOpt;
     MeshesOptimizer meshesOpt;
+    AnimationsOptimizer animOpt;
 };

@@ -6,7 +6,7 @@
 #include "SkyrimSE.h"
 #include "ui_SkyrimSE.h"
 
-#include "QDebug"
+#include <QDebug>
 
 SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
 {
@@ -119,7 +119,6 @@ SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
 void SkyrimSE::initProcess()
 {
   caoProcess->start();
-
   ui->processButton->setDisabled(true);
   bLockVariables = true;
 }
@@ -212,6 +211,7 @@ void SkyrimSE::saveUIToFile()
 void SkyrimSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
+    settings->setValue("game", "sse");
 
     //BSA
 

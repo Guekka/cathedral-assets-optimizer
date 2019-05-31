@@ -175,38 +175,38 @@ bool Manager::checkSettings()
 {
     if(!QDir(userPath).exists() || userPath.size() < 5)
     {
-        QTextStream(stderr) << "\nError. This path does not exist or is shorter than 5 characters.";
+        QLogger::QLog_Error("MainOptimizer", "\nError. This path does not exist or is shorter than 5 characters.");
         return false;
     }
 
     if (mode != singleMod && mode != severalMods)
     {
-        QTextStream(stderr) << "\nError. This mode does not exist.";
+        QLogger::QLog_Error("MainOptimizer", "\nError. This mode does not exist.");
         return false;
     }
 
     if(options.game != SSE)
     {
-        QTextStream(stderr) << "\nError. This game is not supported.";
+        QLogger::QLog_Error("MainOptimizer", "\nError. This game is not supported.");
         return false;
         //NOTE Will have to change this test once more games are added.
     }
 
     if(options.iLogLevel < 0 || options.iLogLevel > 6)
     {
-        QTextStream(stderr) << "\nError. This log level does not exist.";
+        QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist.");
         return false;
     }
 
     if(options.iMeshesOptimizationLevel < 0 || options.iMeshesOptimizationLevel > 3)
     {
-        QTextStream(stderr) << "\nError. This log level does not exist.";
+        QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist.");
         return false;
     }
 
     if(options.iTexturesOptimizationLevel < 0 || options.iTexturesOptimizationLevel > 2)
     {
-        QTextStream(stderr) << "\nError. This log level does not exist.";
+        QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist.");
         return false;
     }
 
@@ -259,19 +259,6 @@ void Manager::readIni()
 bool Manager::checkRequirements()
 {
     QStringList requirements {"NifScan.exe", "nifopt.exe", "texconv.exe", "texdiag.exe", "ListHeadParts.exe"};
-    QFile havokFile(FilesystemOperations::findSkyrimDirectory() + "/Tools/HavokBehaviorPostProcess/HavokBehaviorPostProcess.exe");
-
-    if(havokFile.exists() && !QFile("/resources/HavokBehaviorPostProcess.exe").exists())
-        havokFile.copy("/resources/HavokBehaviorPostProcess.exe");
-
-    else if(!havokFile.exists() && !QFile("/resources/HavokBehaviorPostProcess.exe").exists())
-    {
-        QLogger::QLog_Warning("MainOptimizer", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
-        QLogger::QLog_Warning("Errors", tr("Havok Tool not found. Are you sure the Creation Kit is installed ? You can also put HavokBehaviorPostProcess.exe in the resources folder"));
-    }
-
-    if(options.bAnimationsOptimization)
-        requirements << "HavokBehaviorPostProcess.exe";
 
     for (const auto& requirement : requirements)
     {
@@ -298,11 +285,22 @@ void Manager::runOptimization()
 
     for(const auto& file : files)
     {
-        array << QtConcurrent::run([&]()
+
+        //HKX files cannot be processed in a multithreaded way
+
+        if(file.fileName().endsWith("hkx", Qt::CaseInsensitive))
         {
             optimizer.process(file.absoluteFilePath());
             completedFilesWeight += file.size();
-        });
+        }
+        else
+        {
+            array << QtConcurrent::run([&]()
+            {
+                optimizer.process(file.absoluteFilePath());
+                completedFilesWeight += file.size();
+            });
+        }
     }
 
     //Packing BSAs

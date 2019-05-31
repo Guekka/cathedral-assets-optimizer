@@ -20,11 +20,6 @@ class FilesystemOperations : public QObject
     Q_DECLARE_TR_FUNCTIONS(FilesystemOperations)
 
 public:
-
-    /*!
-     * \brief Constructor that will read FilesToNotPack.txt and add them to filesToNotPack QStringList
-     */
-    FilesystemOperations();
     /*!
      * \brief Will move all files from source folder into destination folder.
      * \param source The source directory
