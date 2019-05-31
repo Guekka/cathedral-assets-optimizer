@@ -56,7 +56,7 @@ set(ICON_RC_PATH "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc")
 set(QRC_PATH "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc")
 
 
-add_executable(Cathedral_Assets_Optimizer_front ${SRCS} ${HEADERS} ${ICON_RC_PATH} ${QRC_PATH})
+add_executable(Cathedral_Assets_Optimizer_front WIN32 ${SRCS} ${HEADERS} ${ICON_RC_PATH} ${QRC_PATH})
 target_link_libraries(Cathedral_Assets_Optimizer_front Qt5::Core)
 target_link_libraries(Cathedral_Assets_Optimizer_front Qt5::Widgets)
 

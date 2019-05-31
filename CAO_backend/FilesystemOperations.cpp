@@ -5,8 +5,6 @@
 
 #include "FilesystemOperations.h"
 
-FilesystemOperations::FilesystemOperations() {}
-
 bool FilesystemOperations::moveFiles(const QString& source, const QString& destination, bool overwriteExisting)
 {
     QDir sourceDir(source);
