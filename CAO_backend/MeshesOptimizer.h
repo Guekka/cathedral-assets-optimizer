@@ -31,15 +31,11 @@ public:
      */
     void dryOptimize(const QString& filePath);
 
+    void listHeadparts(const QDir& directory);
 private:
-    QStringList crashingMeshes;
-    QStringList otherMeshes;
     QStringList headparts;
-    QStringList customHeadparts;
 
     bool bMeshesHeadparts{};
     int iMeshesOptimizationLevel{};
 
-    void cleanMeshesLists();
-    void listHeadparts(const QDir& directory);
 };

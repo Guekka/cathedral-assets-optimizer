@@ -32,6 +32,7 @@
 #include "libs/QLogger/QLogger.h"
 #include "libs/hkxcmd/hkfutils.h"
 #include "libs/NIF/NifFile.h"
+#include "libs/libbsarch/BSArchiveAuto.h"
 /*----------------------*/
 
 

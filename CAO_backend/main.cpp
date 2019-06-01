@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 {   
     QCoreApplication app(argc, argv);
 
+
     //If tests are enabled, run tests instead of running standard process
 
     if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way to enable tests
@@ -25,7 +26,6 @@ int main(int argc, char *argv[])
     QTranslator AssetsOptTranslator;
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     QCoreApplication::installTranslator(&AssetsOptTranslator);
-
     try
     {
         Manager manager;
@@ -38,6 +38,5 @@ int main(int argc, char *argv[])
         QTextStream(stderr) << e.what();
         return 1;
     }
-
     return 0;
 }

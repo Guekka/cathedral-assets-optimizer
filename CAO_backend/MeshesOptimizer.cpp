@@ -20,7 +20,7 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel) :
         {
             QString readLine = ts.readLine();
             if(readLine.left(1) != "#" && !readLine.isEmpty())
-                customHeadparts << readLine;
+                headparts << readLine;
         }
     }
     else
@@ -35,8 +35,6 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
 {
     QLogger::QLog_Note("MeshesOptimizer", tr("Listing meshes..."));
 
-    crashingMeshes.clear();
-    otherMeshes.clear();
     headparts.clear();
 
     QDir directory(folderPath);
@@ -54,10 +52,10 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
 
     QString currentFile;
 
+    /*
     while(nifScan.canReadLine())
     {
         QString readLine = QString::fromLocal8Bit(nifScan.readLine());
-
         if(readLine.contains("meshes\\", Qt::CaseInsensitive) && !readLine.contains("Error", Qt::CaseInsensitive))
         {
             currentFile = QDir::cleanPath(readLine.simplified());
@@ -71,41 +69,14 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
             otherMeshes.removeAll(directory.filePath(currentFile));
         }
     }
-
+*/
     listHeadparts(directory);
-    cleanMeshesLists();
 
-    QLogger::QLog_Debug("MeshesOptimizer", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n"
-     + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));
+    /*QLogger::QLog_Debug("MeshesOptimizer", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n"
+     + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));*/
 }
 
 
-void MeshesOptimizer::cleanMeshesLists()
-{
-    //Removing hard crashing meshes from other meshes list
-
-    QStringListIterator it(crashingMeshes);
-
-    while (it.hasNext())
-    {
-        otherMeshes.removeAll(it.next());
-    }
-
-    QStringListIterator it2(headparts);
-
-    while(it2.hasNext())
-    {
-        QString temp = it2.next();
-        otherMeshes.removeAll(temp);
-        crashingMeshes.removeAll(temp);
-    }
-
-    //Removing duplicates
-
-    headparts.removeDuplicates();
-    otherMeshes.removeDuplicates();
-    crashingMeshes.removeDuplicates();
-}
 
 
 void MeshesOptimizer::listHeadparts(const QDir& directory)
@@ -122,61 +93,51 @@ void MeshesOptimizer::listHeadparts(const QDir& directory)
     while(listHeadparts.canReadLine())
     {
         QString readLine = QString::fromLocal8Bit(listHeadparts.readLine()).simplified();
-        headparts << directory.filePath(readLine);
-    }
-
-    //Adding custom headparts to detected headparts
-
-    for(const auto& customHeadpart : customHeadparts)
-    {
-        headparts << QDir::cleanPath(directory.filePath(customHeadpart));
+        headparts << QDir::cleanPath(readLine);
     }
 }
 
 
 void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected mesh
 {
-    QProcess nifOpt;
-    QStringList nifOptArgs;
-
+    NifFile file(filePath.toStdString());
+    optOptions options;
+/*
     if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(filePath, Qt::CaseInsensitive))
     {
         crashingMeshes.removeAll(filePath);
-        nifOptArgs << filePath << "-head" << "1" << "-bsTriShape" << "1";
+        options.bsTriShape = true;
+        options.headParts = true;
         QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to crashing meshes option"));
     }
 
     else if(iMeshesOptimizationLevel >= 1 && crashingMeshes.contains(filePath, Qt::CaseInsensitive))
     {
-        nifOptArgs << filePath << "-head" << "0" << "-bsTriShape" << "1";
+        options.bsTriShape = true;
         QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to crashing meshes option"));
     }
 
     else if(iMeshesOptimizationLevel >= 3 && otherMeshes.contains(filePath, Qt::CaseInsensitive))
     {
-        nifOptArgs << filePath << "-head" << "0" << "-bsTriShape" << "1";
+        options.bsTriShape = true;
         QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...") + tr("Processing: ") + filePath + tr(" due to all meshes option"));
     }
 
     else if(iMeshesOptimizationLevel >= 2 && otherMeshes.contains(filePath, Qt::CaseInsensitive))
-    {
-        nifOptArgs << filePath << "-head" << "0" << "-bsTriShape" << "0";
         QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to other meshes option"));
-    }
 
     else if(iMeshesOptimizationLevel >= 3)
     {
-        nifOptArgs << filePath << "-head" << "0" << "-bsTriShape" << "1";
+        options.bsTriShape = true;
         QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to all meshes option"));
     }
-
-    nifOpt.start("resources/nifopt.exe", nifOptArgs);
-    nifOpt.waitForFinished(-1);
+*/
+    file.OptimizeFor(options);
 }
 
 
 void MeshesOptimizer::dryOptimize(const QString &filePath)
-{
+{/*
     if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(filePath, Qt::CaseInsensitive))
         QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized as an headpart due to necessary optimization"));
 
@@ -187,8 +148,9 @@ void MeshesOptimizer::dryOptimize(const QString &filePath)
         QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to medium optimization"));
 
     else if(iMeshesOptimizationLevel >= 3)
-        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to full optimization"));
+        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to full optimization"));*/
 }
+
 
 
 

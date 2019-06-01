@@ -283,12 +283,13 @@ void Manager::runOptimization()
     //NOTE might want to use a blockingMap instead
     QVector<QFuture<void>> array;
 
+    //Reading headparts. Used for meshes optimization
+    optimizer.addHeadparts(userPath, true);
+
     for(const auto& file : files)
     {
-
         //HKX files cannot be processed in a multithreaded way
-
-        if(file.fileName().endsWith("hkx", Qt::CaseInsensitive))
+        if(file.fileName().endsWith(".hkx", Qt::CaseInsensitive))
         {
             optimizer.process(file.absoluteFilePath());
             completedFilesWeight += file.size();

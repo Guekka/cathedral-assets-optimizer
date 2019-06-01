@@ -33,6 +33,23 @@ void MainOptimizer::packBsa(const QString &folder)
     processBsa(folder);
 }
 
+void MainOptimizer::addHeadparts(const QString& folder, bool processSubDirs)
+{
+    QProcess listHeadparts(this);
+    listHeadparts.setProgram("resources/ListHeadParts.exe");
+    QStringList headparts;
+
+    if(!processSubDirs)
+        meshesOpt.listHeadparts(folder);
+    else
+    {
+        QDir dir(folder);
+        for(const auto& directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
+            meshesOpt.listHeadparts(dir.filePath(directory));
+    }
+}
+
+
 void MainOptimizer::processBsa(const QString& file)
 {
     if(optOptions.bDryRun)

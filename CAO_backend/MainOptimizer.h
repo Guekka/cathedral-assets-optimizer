@@ -44,6 +44,7 @@ public:
 
     void process(const QString& file);
     void packBsa(const QString& folder);
+    void addHeadparts(const QString& folder, bool processSubDirs);
 
 private:
 
