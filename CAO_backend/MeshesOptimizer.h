@@ -18,11 +18,6 @@ public:
      */
     MeshesOptimizer(bool processHeadparts, int optimizationLevel);
     /*!
-     * \brief List all the meshes that need to be optimized in the directory and split them between several lists according to their type
-     * \param folderPath The folder to analyze
-     */
-    void list(const QString& folderPath);
-    /*!
      * \brief Scans the selected meshes for issues
      * \param filePath The path of the mesh to scan
      * \return An enum with the scan results
@@ -39,7 +34,7 @@ public:
      */
     void dryOptimize(const QString& filePath);
 
-    void listHeadparts(const QDir& directory);
+    void listHeadparts(const QString &directory);
 private:
     QStringList headparts;
 

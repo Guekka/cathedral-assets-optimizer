@@ -284,7 +284,7 @@ void Manager::runOptimization()
     QVector<QFuture<void>> array;
 
     //Reading headparts. Used for meshes optimization
-    optimizer.addHeadparts(userPath, true);
+    optimizer.addHeadparts(userPath, mode == severalMods);
 
     for(const auto& file : files)
     {

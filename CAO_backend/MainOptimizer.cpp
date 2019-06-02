@@ -35,13 +35,8 @@ void MainOptimizer::packBsa(const QString &folder)
 
 void MainOptimizer::addHeadparts(const QString& folder, bool processSubDirs)
 {
-    QProcess listHeadparts(this);
-    listHeadparts.setProgram("resources/ListHeadParts.exe");
-    QStringList headparts;
-
-    if(!processSubDirs)
-        meshesOpt.listHeadparts(folder);
-    else
+    meshesOpt.listHeadparts(folder);
+    if(processSubDirs)
     {
         QDir dir(folder);
         for(const auto& directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))

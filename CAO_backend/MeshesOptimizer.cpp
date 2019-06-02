@@ -30,52 +30,6 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel) :
     }
 }
 
-
-void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. Detected meshes will be stored to a list, accorded to their types.
-{
-    QLogger::QLog_Note("MeshesOptimizer", tr("Listing meshes..."));
-
-    headparts.clear();
-
-    QDir directory(folderPath);
-
-    //Running Nifscan and ListHeadparts to fill lists
-
-    QProcess nifScan;
-    nifScan.start("resources/NifScan.exe", QStringList { folderPath, "-fixdds" });
-
-    if(!nifScan.waitForFinished(180000))
-    {
-        QLogger::QLog_Error("MeshesOptimizer", tr("Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod."));
-        QLogger::QLog_Error("Errors", tr("Nifscan has not finished within 3 minutes. Skipping mesh optimization for this mod."));
-    }
-
-    QString currentFile;
-
-    /*
-    while(nifScan.canReadLine())
-    {
-        QString readLine = QString::fromLocal8Bit(nifScan.readLine());
-        if(readLine.contains("meshes\\", Qt::CaseInsensitive) && !readLine.contains("Error", Qt::CaseInsensitive))
-        {
-            currentFile = QDir::cleanPath(readLine.simplified());
-            if(!currentFile.contains("facegendata"))
-                otherMeshes << directory.filePath(currentFile);
-        }
-
-        else if(readLine.contains("unsupported", Qt::CaseInsensitive) || readLine.contains("not supported", Qt::CaseInsensitive))
-        {
-            crashingMeshes << directory.filePath(currentFile);
-            otherMeshes.removeAll(directory.filePath(currentFile));
-        }
-    }
-*/
-    listHeadparts(directory);
-
-    /*QLogger::QLog_Debug("MeshesOptimizer", "Headparts list:\n\n" + headparts.join("\n") + "\n\nCrashing meshes list:\n\n"
-     + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));*/
-}
-
 ScanResult MeshesOptimizer::scan(const QString &filePath)
 {
     NifFile nif (filePath.toStdString());
@@ -110,10 +64,10 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
     return  result;
 }
 
-void MeshesOptimizer::listHeadparts(const QDir& directory)
+void MeshesOptimizer::listHeadparts(const QString& directory)
 {
     QProcess listHeadparts;
-    listHeadparts.start("resources/ListHeadParts.exe", QStringList() << directory.path());
+    listHeadparts.start("resources/ListHeadParts.exe", QStringList() << directory);
 
     if(!listHeadparts.waitForFinished(180000))
     {
@@ -126,6 +80,8 @@ void MeshesOptimizer::listHeadparts(const QDir& directory)
         QString readLine = QString::fromLocal8Bit(listHeadparts.readLine()).simplified();
         headparts << QDir::cleanPath(readLine);
     }
+
+    headparts.removeDuplicates();
 }
 
 
@@ -138,8 +94,7 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
 
     ScanResult scanResult = scan(filePath);
 
-    QString relativeFilePath = filePath.right(filePath.indexOf("meshes", Qt::CaseInsensitive));
-
+    QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
 
     //Headparts have to get a special optimization
     if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
@@ -180,7 +135,7 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     }
 
     nif.OptimizeFor(options);
-    nif.Save(filePath.toStdString());
+    nif.Save(filePath.toStdString()+ "opt");
 
 }
 
