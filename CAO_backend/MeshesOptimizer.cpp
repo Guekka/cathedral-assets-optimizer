@@ -96,7 +96,6 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     options.targetVersion.SetUser(12);
 
     ScanResult scanResult = scan(filePath);
-
     QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
 
     //Headparts have to get a special optimization
@@ -121,9 +120,10 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
                 nif.OptimizeFor(options);
             }
             else if(iMeshesOptimizationLevel >= 2)
+            {
                 QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to medium optimization"));
-            else
-                return;
+                nif.OptimizeFor(options);
+            }
             break;
         case criticalIssue:
             options.bsTriShape = true;
