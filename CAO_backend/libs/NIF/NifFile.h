@@ -8,7 +8,7 @@ See the included LICENSE file
 
 #include "Factory.h"
 
-struct optOptions {
+struct OptOptions {
 	NiVersion targetVersion;
 	bool headParts = false;
 	bool removeParallax = true;
@@ -81,7 +81,7 @@ public:
 	int Save(std::fstream& file, const NifSaveOptions& options = NifSaveOptions());
 
 	void Optimize();
-	OptResult OptimizeFor(optOptions& options);
+    OptResult OptimizeFor(OptOptions& options);
 
 	void PrepareData();
 	void FinalizeData();

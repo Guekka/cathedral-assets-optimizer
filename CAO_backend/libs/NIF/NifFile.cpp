@@ -864,7 +864,7 @@ void NifFile::Optimize() {
     DeleteUnreferencedBlocks();
 }
 
-OptResult NifFile::OptimizeFor(optOptions& options) {
+OptResult NifFile::OptimizeFor(OptOptions& options) {
     OptResult result;
 
     if (options.targetVersion.IsSSE() && hdr.GetVersion().IsSK()) {

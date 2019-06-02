@@ -88,9 +88,10 @@ void MeshesOptimizer::listHeadparts(const QString& directory)
 void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected mesh
 {
     NifFile nif(filePath.toStdString());
-    optOptions options;
+    OptOptions options;
     options.targetVersion.SetFile(NiFileVersion::V20_2_0_7);
     options.targetVersion.SetStream(100);
+    options.targetVersion.SetUser(12);
 
     ScanResult scanResult = scan(filePath);
 
@@ -101,6 +102,8 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     {
         options.bsTriShape = true;
         options.headParts = true;
+        options.calcBounds = true;
+        options.removeParallax = true;
         QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to necessary optimization"));
     }
     else
@@ -135,7 +138,7 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     }
 
     nif.OptimizeFor(options);
-    nif.Save(filePath.toStdString()+ "opt");
+    nif.Save(filePath.toStdString());
 
 }
 
