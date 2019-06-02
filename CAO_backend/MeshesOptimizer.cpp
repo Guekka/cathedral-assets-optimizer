@@ -76,8 +76,37 @@ void MeshesOptimizer::list(const QString& folderPath) //Run NifScan on modPath. 
      + crashingMeshes.join("\n") + "\n\nOther meshes list:\n\n" + otherMeshes.join("\n"));*/
 }
 
+ScanResult MeshesOptimizer::scan(const QString &filePath)
+{
+    NifFile nif (filePath.toStdString());
+    ScanResult result;
 
+    for(const auto& shape : nif.GetShapes())
+    {
+        if (shape->HasType<NiTriStrips>())
+        {
+            qDebug() << "NiTriStrip is not supported by SSE";
+            if(result < criticalIssue) result = criticalIssue;
+        }
 
+        if(shape->HasType<bhkMultiSphereShape>())
+        {
+            qDebug() << "bhkMultiSphereShape is not supported by SSE";
+            if(result < criticalIssue) result = criticalIssue;
+        }
+        if(shape->HasType<NiParticles>())
+        {
+            qDebug() << "Is particle";
+            return doNotProcess;
+        }
+        if(shape->HasType<BSXFlags>() && shape->GetName() != "BSX")
+        {
+            qDebug() << "BSXFlags node must have 'BSX' name";
+            if(result < lightIssue) result = lightIssue;
+        }
+    }
+    return  result;
+}
 
 void MeshesOptimizer::listHeadparts(const QDir& directory)
 {
@@ -102,53 +131,78 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
 {
     NifFile file(filePath.toStdString());
     optOptions options;
-/*
-    if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(filePath, Qt::CaseInsensitive))
+
+    ScanResult scanResult = scan(filePath);
+
+    QString relativeFilePath = filePath.right(filePath.indexOf("meshes", Qt::CaseInsensitive));
+
+    //Headparts have to get a special optimization
+    if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
     {
-        crashingMeshes.removeAll(filePath);
         options.bsTriShape = true;
         options.headParts = true;
-        QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to crashing meshes option"));
+        QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to necessary optimization"));
     }
-
-    else if(iMeshesOptimizationLevel >= 1 && crashingMeshes.contains(filePath, Qt::CaseInsensitive))
+    else
     {
-        options.bsTriShape = true;
-        QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to crashing meshes option"));
+        switch (scanResult)
+        {
+        case doNotProcess: break;
+        case good:
+            if(iMeshesOptimizationLevel >= 3)
+            {
+                options.bsTriShape = true;
+                QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to full optimization"));
+            }
+            break;
+
+        case lightIssue:
+            if(iMeshesOptimizationLevel >= 3)
+            {
+                options.bsTriShape = true;
+                QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to full optimization"));
+            }
+            else if(iMeshesOptimizationLevel >= 2)
+                QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to medium optimization"));
+            break;
+        case criticalIssue:
+            options.bsTriShape = true;
+            QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to necessary optimization"));
+        }
     }
 
-    else if(iMeshesOptimizationLevel >= 3 && otherMeshes.contains(filePath, Qt::CaseInsensitive))
-    {
-        options.bsTriShape = true;
-        QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...") + tr("Processing: ") + filePath + tr(" due to all meshes option"));
-    }
-
-    else if(iMeshesOptimizationLevel >= 2 && otherMeshes.contains(filePath, Qt::CaseInsensitive))
-        QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to other meshes option"));
-
-    else if(iMeshesOptimizationLevel >= 3)
-    {
-        options.bsTriShape = true;
-        QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to all meshes option"));
-    }
-*/
     file.OptimizeFor(options);
 }
 
 
 void MeshesOptimizer::dryOptimize(const QString &filePath)
-{/*
-    if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(filePath, Qt::CaseInsensitive))
+{
+    ScanResult scanResult = scan(filePath);
+    QString relativeFilePath = filePath.right(filePath.indexOf("meshes", Qt::CaseInsensitive));
+
+    //Headparts have to get a special optimization
+    if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
         QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized as an headpart due to necessary optimization"));
+    else
+    {
+        switch (scanResult)
+        {
+        case doNotProcess: break;
+        case good:
+            if(iMeshesOptimizationLevel >= 3)
+                QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to full optimization"));
+            break;
 
-    else if(iMeshesOptimizationLevel >= 1 && crashingMeshes.contains(filePath, Qt::CaseInsensitive))
-        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to necessary optimization"));
-
-    else if(iMeshesOptimizationLevel >= 2 && otherMeshes.contains(filePath, Qt::CaseInsensitive))
-        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to medium optimization"));
-
-    else if(iMeshesOptimizationLevel >= 3)
-        QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to full optimization"));*/
+        case lightIssue:
+            if(iMeshesOptimizationLevel >= 3)
+                QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to full optimization"));
+            else if(iMeshesOptimizationLevel >= 2)
+                QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to medium optimization"));
+            break;
+        case criticalIssue:
+            QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to necessary optimization"));
+        }
+    }
 }
 
 
