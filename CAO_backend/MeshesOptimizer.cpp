@@ -37,6 +37,7 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
 
     result = good;
 
+
     for(const auto& shape : nif.GetShapes())
     {
         if (shape->HasType<NiTriStrips>())
@@ -50,7 +51,8 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
             qDebug() << "bhkMultiSphereShape is not supported by SSE";
             if(result < criticalIssue) result = criticalIssue;
         }
-        if(shape->HasType<NiParticles>())
+        if(shape->HasType<NiParticles>() || shape->HasType<NiParticleSystem>()
+                || shape->HasType<NiParticlesData>())
         {
             qDebug() << "Is particle";
             return doNotProcess;
@@ -102,9 +104,8 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     {
         options.bsTriShape = true;
         options.headParts = true;
-        options.calcBounds = true;
-        options.removeParallax = true;
         QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to necessary optimization"));
+        nif.OptimizeFor(options);
     }
     else
     {
@@ -112,34 +113,26 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
         {
         case doNotProcess: return;
         case good:
-            if(iMeshesOptimizationLevel >= 3)
-            {
-                options.bsTriShape = true;
-                QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to full optimization"));
-            }
-            else
-                return;
-
         case lightIssue:
             if(iMeshesOptimizationLevel >= 3)
             {
                 options.bsTriShape = true;
                 QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to full optimization"));
+                nif.OptimizeFor(options);
             }
             else if(iMeshesOptimizationLevel >= 2)
                 QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to medium optimization"));
             else
                 return;
+            break;
         case criticalIssue:
             options.bsTriShape = true;
             QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to necessary optimization"));
+            nif.OptimizeFor(options);
             break;
         }
     }
-
-    nif.OptimizeFor(options);
     nif.Save(filePath.toStdString());
-
 }
 
 
