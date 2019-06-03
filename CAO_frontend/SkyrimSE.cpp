@@ -65,7 +65,7 @@ SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
     connect(ui->userPathButton, &QPushButton::pressed, this, [&](){
         QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
                                                         settings->value("SelectedPath").toString(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        ui->userPathTextEdit->setText(dir);
+        if(!dir.isEmpty()) ui->userPathTextEdit->setText(dir);
         this->saveUIToFile();
     });
 
