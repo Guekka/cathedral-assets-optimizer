@@ -5,6 +5,7 @@
 #pragma once
 
 #include "pch.h"
+#include "Games.h"
 
 class TexturesOptimizer : public QObject
 {
