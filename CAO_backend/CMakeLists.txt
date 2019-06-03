@@ -37,6 +37,7 @@ set(SOURCES
     AnimationsOptimizer.cpp
     MainOptimizer.cpp
     IntegrationTests.cpp
+    Games.cpp
     )
 
 
@@ -53,6 +54,7 @@ set(HEADERS
     MainOptimizer.h
     IntegrationTests.h
     pch.h
+    Games.h
     )
 
 #QLogger

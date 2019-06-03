@@ -11,8 +11,7 @@
 #include "MeshesOptimizer.h"
 #include "PluginsOperations.h"
 #include "TexturesOptimizer.h"
-
-enum GameMode { SSE };
+#include "Games.h"
 
 struct OptOptionsCAO
 {
@@ -27,8 +26,6 @@ struct OptOptionsCAO
     int iMeshesOptimizationLevel = 0;
     int iTexturesOptimizationLevel = 0;
     int iLogLevel{};
-
-    GameMode game;
 };
 
 

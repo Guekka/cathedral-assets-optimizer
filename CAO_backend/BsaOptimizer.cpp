@@ -101,7 +101,7 @@ void BsaOptimizer::create(Bsa bsa)
     //Creating the archive
 
     try {
-        archive.create(bsa.path, baSSE);
+        archive.create(bsa.path, Games::GetBsaFormat());
         archive.save();
         archive.close();
     } catch (std::exception e) {
@@ -116,7 +116,7 @@ void BsaOptimizer::create(Bsa bsa)
 
     //Checking if the archive is below 2.15gb, since a BSA cannot be greater
 
-    if(QFile(bsa.path).size() < LONG_MAX)
+    if(QFile(bsa.path).size() < bsa.maxSize)
     {
         QLogger::QLog_Note("BsaOptimizer", tr("BSA successfully compressed: ") + bsa.path);
         for (const auto& file : bsa.files)
@@ -136,12 +136,12 @@ void BsaOptimizer::packAll(const QString &folderPath)
 
     Bsa texturesBsa, standardBsa;
     //Naming BSAs
-    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures.bsa";
-    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + ".bsa";;
+    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures" + Games::getBsaExtension();
+    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + Games::getBsaExtension();
 
     //Setting maxsize
-    texturesBsa.maxSize = 2547483647.0;
-    standardBsa.maxSize = 2107483647.0;
+    texturesBsa.maxSize = Games::getBsaTexturesMaxSize();
+    standardBsa.maxSize = Games::getBsaMaxSize();
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
@@ -160,8 +160,8 @@ void BsaOptimizer::packAll(const QString &folderPath)
             {
                 //Each time the maximum size is reached, a BSA is created
 
-                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, isTexture ? bsaType::texturesBsa : bsaType::standardBsa) + ".bsa";
-                if(isTexture) pBsa.path = pBsa.path.chopped(4) + " - Textures.bsa";
+                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, isTexture ? bsaType::texturesBsa : bsaType::standardBsa) + Games::getBsaExtension();
+                if(isTexture) pBsa.path = pBsa.path.chopped(4) + " - Textures" + Games::getBsaExtension();
                 create(pBsa);
 
                 //Resetting for next loop
@@ -177,12 +177,12 @@ void BsaOptimizer::packAll(const QString &folderPath)
     //Since the maximum size wasn't reached for the last archive, some files are still unpacked
     if (!texturesBsa.files.isEmpty())
     {
-        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures.bsa";;
+        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures" + Games::getBsaExtension();
         create(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
-        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + ".bsa";;
+        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + Games::getBsaExtension();
         create(standardBsa);
     }
 }

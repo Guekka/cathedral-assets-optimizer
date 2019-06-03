@@ -17,7 +17,7 @@ void MainOptimizer::process(const QString &file)
         processNif(file);
     else if(file.endsWith(".tga", Qt::CaseInsensitive))
         processTga(file);
-    else if(file.endsWith(".bsa", Qt::CaseInsensitive))
+    else if(file.endsWith(Games::getBsaExtension(), Qt::CaseInsensitive))
         processBsa(file);
     else if(file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
@@ -84,7 +84,7 @@ void MainOptimizer::processHkx(const QString& file)
     if(optOptions.bAnimationsOptimization && optOptions.bDryRun)
         QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" would be ported to SSE"));
     else if(optOptions.bAnimationsOptimization)
-        animOpt.convert(file, HKPF_AMD64);
+        animOpt.convert(file, Games::getAnimationsFormat());
 }
 
 void MainOptimizer::processNif(const QString& file)

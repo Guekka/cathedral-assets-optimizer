@@ -90,7 +90,7 @@ void Manager::listFiles()
             bool textureTGA = options.iTexturesOptimizationLevel >=1 && it.fileName().endsWith(".tga", Qt::CaseInsensitive);
             bool animation = options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            bool bsa = options.bBsaExtract && it.fileName().endsWith(".bsa", Qt::CaseInsensitive);
+            bool bsa = options.bBsaExtract && it.fileName().endsWith(Games::getBsaExtension(), Qt::CaseInsensitive);
 
             if(mesh || textureDDS || textureTGA || animation)
             {
@@ -185,13 +185,6 @@ bool Manager::checkSettings()
         return false;
     }
 
-    if(options.game != SSE)
-    {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This game is not supported.");
-        return false;
-        //NOTE Will have to change this test once more games are added.
-    }
-
     if(options.iLogLevel < 0 || options.iLogLevel > 6)
     {
         QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist.");
@@ -228,7 +221,7 @@ void Manager::readIni()
     QString game = settings->value("Game").toString();
 
     if(game == "sse")
-        options.game = SSE;
+        Games::setGame(SSE);
 
     int iniMode = settings->value("iMode").toInt();
 

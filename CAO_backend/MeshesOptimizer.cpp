@@ -91,9 +91,9 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
 {
     NifFile nif(filePath.toStdString());
     OptOptions options;
-    options.targetVersion.SetFile(NiFileVersion::V20_2_0_7);
-    options.targetVersion.SetStream(100);
-    options.targetVersion.SetUser(12);
+    options.targetVersion.SetFile(Games::getMeshesFileVersion());
+    options.targetVersion.SetStream(Games::getMeshesStream());
+    options.targetVersion.SetUser(Games::getMeshesUser());
 
     ScanResult scanResult = scan(filePath);
     QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
@@ -140,6 +140,8 @@ void MeshesOptimizer::dryOptimize(const QString &filePath)
 {
     ScanResult scanResult = scan(filePath);
     QString relativeFilePath = filePath.right(filePath.indexOf("meshes", Qt::CaseInsensitive));
+
+    //TODO update meshes dryOptimize
 
     //Headparts have to get a special optimization
     if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
