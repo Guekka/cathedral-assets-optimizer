@@ -5,7 +5,6 @@
 #pragma once
 
 #include "pch.h"
-#include "libs/libbsarch/BSArchiveAuto.h"
 #include "FilesystemOperations.h"
 
 struct Bsa

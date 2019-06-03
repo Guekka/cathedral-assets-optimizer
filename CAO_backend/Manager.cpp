@@ -258,7 +258,7 @@ void Manager::readIni()
 
 bool Manager::checkRequirements()
 {
-    QStringList requirements {"NifScan.exe", "nifopt.exe", "texconv.exe", "texdiag.exe", "ListHeadParts.exe"};
+    QStringList requirements {"texconv.exe", "texdiag.exe", "ListHeadParts.exe"};
 
     for (const auto& requirement : requirements)
     {
@@ -283,12 +283,13 @@ void Manager::runOptimization()
     //NOTE might want to use a blockingMap instead
     QVector<QFuture<void>> array;
 
+    //Reading headparts. Used for meshes optimization
+    optimizer.addHeadparts(userPath, mode == severalMods);
+
     for(const auto& file : files)
     {
-
         //HKX files cannot be processed in a multithreaded way
-
-        if(file.fileName().endsWith("hkx", Qt::CaseInsensitive))
+        if(file.fileName().endsWith(".hkx", Qt::CaseInsensitive))
         {
             optimizer.process(file.absoluteFilePath());
             completedFilesWeight += file.size();

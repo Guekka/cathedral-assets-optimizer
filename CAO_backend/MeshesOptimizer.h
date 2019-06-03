@@ -6,6 +6,8 @@
 
 #include "pch.h"
 
+enum ScanResult { doNotProcess = -1, good = 0, lightIssue = 1, criticalIssue = 2 };
+
 class MeshesOptimizer : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(MeshesOptimizer)
@@ -16,10 +18,11 @@ public:
      */
     MeshesOptimizer(bool processHeadparts, int optimizationLevel);
     /*!
-     * \brief List all the meshes that need to be optimized in the directory and split them between several lists according to their type
-     * \param folderPath The folder to analyze
+     * \brief Scans the selected meshes for issues
+     * \param filePath The path of the mesh to scan
+     * \return An enum with the scan results
      */
-    void list(const QString& folderPath);
+    ScanResult scan(const QString& filePath);
     /*!
      * \brief Optimize the providen mesh according to its type
      * \param filePath The path of the mesh to optimize
@@ -31,15 +34,11 @@ public:
      */
     void dryOptimize(const QString& filePath);
 
+    void listHeadparts(const QString &directory);
 private:
-    QStringList crashingMeshes;
-    QStringList otherMeshes;
     QStringList headparts;
-    QStringList customHeadparts;
 
     bool bMeshesHeadparts{};
     int iMeshesOptimizationLevel{};
 
-    void cleanMeshesLists();
-    void listHeadparts(const QDir& directory);
 };

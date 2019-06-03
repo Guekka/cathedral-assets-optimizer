@@ -5,7 +5,7 @@
 
 #include "MainOptimizer.h"
 
-MainOptimizer::MainOptimizer(const OptOptions &options) : optOptions (options),
+MainOptimizer::MainOptimizer(const OptOptionsCAO &options) : optOptions (options),
     meshesOpt(MeshesOptimizer(optOptions.bMeshesHeadparts, options.iMeshesOptimizationLevel)) {}
 
 void MainOptimizer::process(const QString &file)
@@ -32,6 +32,18 @@ void MainOptimizer::packBsa(const QString &folder)
 {
     processBsa(folder);
 }
+
+void MainOptimizer::addHeadparts(const QString& folder, bool processSubDirs)
+{
+    meshesOpt.listHeadparts(folder);
+    if(processSubDirs)
+    {
+        QDir dir(folder);
+        for(const auto& directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
+            meshesOpt.listHeadparts(dir.filePath(directory));
+    }
+}
+
 
 void MainOptimizer::processBsa(const QString& file)
 {
