@@ -222,6 +222,8 @@ void Manager::readIni()
 
     if(game == "sse")
         Games::setGame(SSE);
+    if(game == "tes5")
+        Games::setGame(TES5);
 
     int iniMode = settings->value("iMode").toInt();
 

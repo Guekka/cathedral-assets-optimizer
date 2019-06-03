@@ -3,6 +3,8 @@
 #include "Skyrim.h"
 #include "selectiondialog.h"
 
+#include "QDebug"
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -15,7 +17,7 @@ int main(int argc, char *argv[])
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     QApplication::installTranslator(&AssetsOptTranslator);
 
-    SelectionDialog dialog(QObject::tr(""), nullptr);
+    SelectionDialog dialog(QObject::tr("Game mode"), nullptr);
     dialog.disableCancel();
     dialog.addChoice("Skyrim SE", QObject::tr("Skyrim SE"), QVariant());
     dialog.addChoice("Skyrim", QObject::tr("Skyrim"), QVariant());

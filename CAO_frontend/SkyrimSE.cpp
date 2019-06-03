@@ -107,6 +107,7 @@ SkyrimSE::SkyrimSE() : ui(new Ui::MainWindow)
          ui->progressBar->setValue(readLine.toInt());
     });
 
+
     QObject::connect(caoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [&]()
     {
         ui->processButton->setDisabled(false);
@@ -211,6 +212,7 @@ void SkyrimSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
     settings->setValue("game", "sse");
+
 
     //BSA
 

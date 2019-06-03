@@ -12,8 +12,8 @@ Skyrim::Skyrim() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    //Loading remembered settings
-    settings = new QSettings("settings/Skyrim/config.ini", QSettings::IniFormat, this);
+    //Loading remembered settings TODO change ini path
+    settings = new QSettings("settings/SkyrimSE.ini", QSettings::IniFormat, this);
 
     if(!settings->contains("iLogLevel"))
         settings->setValue("iLogLevel", 3);
@@ -33,12 +33,10 @@ Skyrim::Skyrim() : ui(new Ui::MainWindow)
     connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
 
     connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
     connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
 
     connect(ui->meshesGroupBox, &QGroupBox::clicked, this, &Skyrim::saveUIToFile);
     connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->MeshesMediumOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
     connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
 
     connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &Skyrim::saveUIToFile);
@@ -103,8 +101,8 @@ Skyrim::Skyrim() : ui(new Ui::MainWindow)
 
     QObject::connect(caoProcess, &QProcess::readyReadStandardOutput, this, [&]()
     {
-         QString readLine = QString::fromLocal8Bit(caoProcess->readLine());
-         ui->progressBar->setValue(readLine.toInt());
+        QString readLine = QString::fromLocal8Bit(caoProcess->readLine());
+        ui->progressBar->setValue(readLine.toInt());
     });
 
     QObject::connect(caoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [&]()
@@ -118,9 +116,9 @@ Skyrim::Skyrim() : ui(new Ui::MainWindow)
 
 void Skyrim::initProcess()
 {
-  caoProcess->start();
-  ui->processButton->setDisabled(true);
-  bLockVariables = true;
+    caoProcess->start();
+    ui->processButton->setDisabled(true);
+    bLockVariables = true;
 }
 
 void Skyrim::saveUIToFile()
@@ -156,8 +154,7 @@ void Skyrim::saveUIToFile()
 
     if(ui->texturesGroupBox->isChecked())
         settings->setValue("iTexturesOptimizationLevel", 1);
-    if(ui->TexturesFullOptimizationRadioButton->isChecked())
-        settings->setValue("iTexturesOptimizationLevel", 2);
+    settings->setValue("iTexturesOptimizationLevel", 2);
     if(!ui->texturesGroupBox->isChecked())
         settings->setValue("iTexturesOptimizationLevel", 0);
 
@@ -169,8 +166,6 @@ void Skyrim::saveUIToFile()
 
     if(ui->meshesGroupBox->isChecked())
         settings->setValue("iMeshesOptimizationLevel", 1);
-    if(ui->MeshesMediumOptimizationRadioButton->isChecked())
-        settings->setValue("iMeshesOptimizationLevel", 2);
     if(ui->MeshesFullOptimizationRadioButton->isChecked())
         settings->setValue("iMeshesOptimizationLevel", 3);
     if(!ui->meshesGroupBox->isChecked())
@@ -210,7 +205,7 @@ void Skyrim::saveUIToFile()
 void Skyrim::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
-    settings->setValue("game", "oldrim");
+    settings->setValue("game", "tes5");
 
     //BSA
 
@@ -227,8 +222,9 @@ void Skyrim::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     switch (settings->value("iTexturesOptimizationLevel").toInt())
     {
     case 0: ui->texturesGroupBox->setChecked(false); break;
-    case 1: ui->texturesGroupBox->setChecked(true);     ui->TexturesNecessaryOptimizationRadioButton->setChecked(true);  break;
-    case 2: ui->texturesGroupBox->setChecked(true);     ui->TexturesFullOptimizationRadioButton->setChecked(true); break;
+    case 1:
+    case 2:
+        ui->texturesGroupBox->setChecked(true);     ui->TexturesNecessaryOptimizationRadioButton->setChecked(true);  break;
     }
     settings->endGroup();
 
@@ -239,7 +235,6 @@ void Skyrim::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     {
     case 0: ui->meshesGroupBox->setChecked(false); break;
     case 1: ui->meshesGroupBox->setChecked(true);     ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);  break;
-    case 2: ui->meshesGroupBox->setChecked(true);     ui->MeshesMediumOptimizationRadioButton->setChecked(true); break;
     case 3: ui->meshesGroupBox->setChecked(true);     ui->MeshesFullOptimizationRadioButton->setChecked(true); break;
     }
     settings->endGroup();
@@ -290,15 +285,11 @@ void Skyrim::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 
     if(settings->value("iMode").toInt() == 1)
     {
-        ui->MeshesMediumOptimizationRadioButton->setDisabled(true);
         ui->MeshesFullOptimizationRadioButton->setDisabled(true);
         ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);
     }
     else if(ui->meshesGroupBox->isChecked())
-    {
-        ui->MeshesMediumOptimizationRadioButton->setDisabled(false);
         ui->MeshesFullOptimizationRadioButton->setDisabled(false);
-    }
 
     //Disabling BSA options if dry run is enabled
 
@@ -309,7 +300,6 @@ void Skyrim::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     }
     else
         ui->BsaGroupBox->setEnabled(true);
-
 
     // TODO add headparts checkbox to UI
 }

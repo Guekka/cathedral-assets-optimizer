@@ -152,8 +152,7 @@ void BsaOptimizer::packAll(const QString &folderPath)
         bool doNotPack = isIgnoredFile(it.fileName()) || currentFile.isDir();
         if(allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !doNotPack)
         {
-
-            bool isTexture = texturesAssets.contains(it.fileName().right(3)); //If false, it means that it's a "standard" asset
+            bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Games::hasBsaTextures(); ; //If false, it means that it's a "standard" asset
             Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
 
             if(pBsa.filesSize > pBsa.maxSize)

@@ -89,8 +89,6 @@ void MainOptimizer::processHkx(const QString& file)
 
 void MainOptimizer::processNif(const QString& file)
 {
-    //TODO Scan meshes opt.scan(file);
-
     if(optOptions.iMeshesOptimizationLevel >=1 && optOptions.bDryRun)
         meshesOpt.dryOptimize(file);
     else if(optOptions.iMeshesOptimizationLevel >=1 && !optOptions.bDryRun)
