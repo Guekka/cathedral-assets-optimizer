@@ -16,7 +16,7 @@ class SkyrimSE : public QMainWindow
 
 public:
     SkyrimSE();
-    ~SkyrimSE() override;
+    ~SkyrimSE();
 
 private:
     QFileDialog *fileDialog{};

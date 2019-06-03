@@ -354,6 +354,12 @@
            <height>0</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
@@ -362,6 +368,9 @@
          </property>
          <property name="text">
           <string>Full optimization</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -400,6 +409,12 @@
            <height>0</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
@@ -408,6 +423,9 @@
          </property>
          <property name="text">
           <string>Necessary optimization</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -498,6 +516,12 @@
            <width>200</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>

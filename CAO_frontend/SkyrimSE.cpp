@@ -145,7 +145,6 @@ void SkyrimSE::saveUIToFile()
     {
         settings->setValue("bBsaExtract", false);
         settings->setValue("bBsaCreate", false);
-        settings->setValue("bBsaPackLooseFiles", false);
         settings->setValue("bBsaDeleteBackup", false);
     }
 
