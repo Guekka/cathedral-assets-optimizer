@@ -3,12 +3,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "Skyrim.h"
-#include "ui_Skyrim.h"
+#include "TES5.h"
+#include "ui_TES5.h"
 
 #include <QDebug>
 
-Skyrim::Skyrim() : ui(new Ui::MainWindow)
+TES5::TES5() : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -27,25 +27,25 @@ Skyrim::Skyrim() : ui(new Ui::MainWindow)
 
     //Connecting checkboxes to file
 
-    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->createtBsaCheckbox, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
+    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->createtBsaCheckbox, &QCheckBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &TES5::saveUIToFile);
 
-    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
+    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
 
-    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
+    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
 
-    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
+    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
 
     //Connecting the other widgets
 
-    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &Skyrim::saveUIToFile);
-    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &Skyrim::saveUIToFile);
+    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &TES5::saveUIToFile);
 
     connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&]
     {
@@ -86,13 +86,13 @@ Skyrim::Skyrim() : ui(new Ui::MainWindow)
 
 
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &Skyrim::loadUIFromFile);
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &TES5::loadUIFromFile);
 
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &Skyrim::loadUIFromFile);
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &TES5::loadUIFromFile);
 
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 0);});
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &Skyrim::loadUIFromFile);
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &TES5::loadUIFromFile);
 
     //Setting caoProcess
 
@@ -114,14 +114,14 @@ Skyrim::Skyrim() : ui(new Ui::MainWindow)
 }
 
 
-void Skyrim::initProcess()
+void TES5::initProcess()
 {
     caoProcess->start();
     ui->processButton->setDisabled(true);
     bLockVariables = true;
 }
 
-void Skyrim::saveUIToFile()
+void TES5::saveUIToFile()
 {
     if(bLockVariables)
         return;
@@ -202,7 +202,7 @@ void Skyrim::saveUIToFile()
     this->loadUIFromFile();
 }
 
-void Skyrim::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
+void TES5::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
     settings->setValue("game", "tes5");
@@ -306,7 +306,7 @@ void Skyrim::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 
 
 
-void Skyrim::updateLog()
+void TES5::updateLog()
 {
     ui->plainTextEdit->clear();
 
@@ -321,7 +321,7 @@ void Skyrim::updateLog()
     }
 }
 
-Skyrim::~Skyrim()
+TES5::~TES5()
 {
     delete ui;
 }

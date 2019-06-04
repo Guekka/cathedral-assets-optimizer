@@ -10,13 +10,13 @@ namespace Ui {
     class MainWindow;
 }
 
-class Skyrim : public QMainWindow
+class SSE : public QMainWindow
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
-    Skyrim();
-    ~Skyrim();
+    SSE();
+    ~SSE();
 
 private:
     QFileDialog *fileDialog{};

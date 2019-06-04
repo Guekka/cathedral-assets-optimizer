@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "SkyrimSE.h"
-#include "Skyrim.h"
+#include "SSE.h"
+#include "TES5.h"
 #include "selectiondialog.h"
 
 #include "QDebug"
@@ -27,9 +27,9 @@ int main(int argc, char *argv[])
 
     QMainWindow *window;
     if(choice == "Skyrim SE")
-        window = new SkyrimSE();
+        window = new SSE();
     else if(choice == "Skyrim")
-        window = new Skyrim();
+        window = new TES5();
     else
         return 1;
 

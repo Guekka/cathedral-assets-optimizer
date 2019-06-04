@@ -20,8 +20,8 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 set(SRCS
     main.cpp
     selectiondialog.cpp
-    Skyrim.cpp
-    SkyrimSE.cpp
+    TES5.cpp
+    SSE.cpp
     )
 
 
@@ -30,8 +30,8 @@ set(SRCS
 set(HEADERS
     pch.h
     selectiondialog.h
-    Skyrim.h
-    SkyrimSE.h
+    TES5.h
+    SSE.h
     )
 
 #Translations
@@ -63,8 +63,8 @@ set(QRC_PATH "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc")
 
 set(UI
     selectiondialog.ui
-    Skyrim.ui
-    SkyrimSE.ui
+    TES5.ui
+    SSE.ui
     )
 
 add_executable(Cathedral_Assets_Optimizer WIN32 ${SRCS} ${HEADERS} ${UI} ${ICON_RC_PATH} ${QRC_PATH})
