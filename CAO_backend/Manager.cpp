@@ -90,8 +90,7 @@ void Manager::listFiles()
             bool textureTGA = options.iTexturesOptimizationLevel >=1 && it.fileName().endsWith(".tga", Qt::CaseInsensitive);
             bool animation = options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            bool bsa = options.bBsaExtract && it.fileName().endsWith(Games::getBsaExtension(), Qt::CaseInsensitive);
-
+            bool bsa = options.bBsaExtract && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive);
             if(mesh || textureDDS || textureTGA || animation)
             {
                 filesWeight += it.fileInfo().size();
@@ -221,9 +220,9 @@ void Manager::readIni()
     QString game = settings->value("Game").toString();
 
     if(game == "sse")
-        Games::setGame(SSE);
-    if(game == "tes5")
-        Games::setGame(TES5);
+        CAO_SET_CURRENT_GAME(SSE)
+    else if(game == "tes5")
+        CAO_SET_CURRENT_GAME(TES5)
 
     int iniMode = settings->value("iMode").toInt();
 

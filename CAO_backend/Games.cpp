@@ -4,70 +4,102 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "Games.h"
 
+Games::Games() {};
 
+Games *Games::INSTANCE = nullptr;
 
 void Games::setGame(const GameMode &newGame)
 {
     switch (newGame)
     {
     case SSE:
-        game = GameModeStructs::SSE();
+        bsaFormat = baSSE;
+        maxBsaSize = 2 * static_cast<double>(GigaByte);
+        hasBsaTextures = true;
+        //Using 2.37GB for max textures size since this bsa will always be compressed.
+        //After some experiments, it is the maximum size to ensure the bsa will always
+        //stay under the maximum size : ~2.1gb
+        //TODO let the user choose the max size in the INI
+        maxBsaTexturesSize = 2.37 * static_cast<double>(GigaByte);
+        bsaExtension = ".bsa";
+        meshesFileVersion = V20_2_0_7;
+        meshesStream = 100;
+        meshesUser = 12;
+        animationFormat = HKPF_AMD64;
+        texturesFormat = "BC7_UNORM";
         break;
     case TES5:
-        game = GameModeStructs::TES5();
+        bsaFormat = baFO3;
+        maxBsaSize = 2 * static_cast<double>(GigaByte);
+        hasBsaTextures = false;
+        maxBsaTexturesSize = 0;
+        bsaExtension = ".bsa";
+        meshesFileVersion = V20_2_0_7;
+        meshesStream = 83;
+        meshesUser = 12;
+        animationFormat = HKPF_WIN32;
+        texturesFormat = "BC3_UNORM";
         break;
     }
 }
 
+Games* Games::getInstance()
+{
+    if(!Games::INSTANCE)
+        Games::INSTANCE = new Games();
+
+    return Games::INSTANCE;
+}
+
 bsa_archive_type_e Games::GetBsaFormat()
 {
-    return game.bsaFormat;
+    return bsaFormat;
 }
 
 double Games::getBsaMaxSize()
 {
-    return game.maxBsaSize;
+    return maxBsaSize;
 }
 
 double Games::getBsaTexturesMaxSize()
 {
-    return game.maxBsaTexturesSize;
+    return maxBsaTexturesSize;
 }
 
 QString Games::getBsaExtension()
 {
-    return game.bsaExtension;
+    return bsaExtension;
+    QLogger::QLog_Note("MainOptimizer", "ext " + bsaExtension);
 }
 
-bool Games::hasBsaTextures()
+bool Games::getHasBsaTextures()
 {
-    return game.hasBsaTextures;
+    return hasBsaTextures;
 }
 
 uint Games::getMeshesUser()
 {
-    return game.meshesUser;
+    return meshesUser;
 }
 
 uint Games::getMeshesStream()
 {
-    return game.meshesStream;
+    return meshesStream;
 }
 
 NiFileVersion Games::getMeshesFileVersion()
 {
-    return game.meshesFileVersion;
+    return meshesFileVersion;
 }
 
 QString Games::getTexturesFormat()
 {
-    return game.texturesFormat;
+    return texturesFormat;
 }
 
 hkPackFormat Games::getAnimationsFormat()
 {
-    return game.animationFormat;
+    return animationFormat;
 }
-
 
 

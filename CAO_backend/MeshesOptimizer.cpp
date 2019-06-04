@@ -91,9 +91,9 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
 {
     NifFile nif(filePath.toStdString());
     OptOptions options;
-    options.targetVersion.SetFile(Games::getMeshesFileVersion());
-    options.targetVersion.SetStream(Games::getMeshesStream());
-    options.targetVersion.SetUser(Games::getMeshesUser());
+    options.targetVersion.SetFile(CAO_MESHES_FILE_VERSION);
+    options.targetVersion.SetStream(CAO_MESHES_STREAM);
+    options.targetVersion.SetUser(CAO_MESHES_USER);
 
     ScanResult scanResult = scan(filePath);
     QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);

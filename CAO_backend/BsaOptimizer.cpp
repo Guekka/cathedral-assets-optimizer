@@ -101,7 +101,7 @@ void BsaOptimizer::create(Bsa bsa)
     //Creating the archive
 
     try {
-        archive.create(bsa.path, Games::GetBsaFormat());
+        archive.create(bsa.path, CAO_BSA_FORMAT);
         archive.save();
         archive.close();
     } catch (std::exception e) {
@@ -136,12 +136,12 @@ void BsaOptimizer::packAll(const QString &folderPath)
 
     Bsa texturesBsa, standardBsa;
     //Naming BSAs
-    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures" + Games::getBsaExtension();
-    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + Games::getBsaExtension();
+    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures" + CAO_BSA_EXTENSION;
+    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + CAO_BSA_EXTENSION;
 
     //Setting maxsize
-    texturesBsa.maxSize = Games::getBsaTexturesMaxSize();
-    standardBsa.maxSize = Games::getBsaMaxSize();
+    texturesBsa.maxSize = CAO_BSA_TEXTURES_MAX_SIZE ;
+    standardBsa.maxSize = CAO_BSA_MAX_SIZE;
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
@@ -152,15 +152,15 @@ void BsaOptimizer::packAll(const QString &folderPath)
         bool doNotPack = isIgnoredFile(it.fileName()) || currentFile.isDir();
         if(allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !doNotPack)
         {
-            bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Games::hasBsaTextures(); ; //If false, it means that it's a "standard" asset
+            bool isTexture = texturesAssets.contains(it.fileName().right(3)) && CAO_HAS_BSA_TEXTURES; ; //If false, it means that it's a "standard" asset
             Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
 
             if(pBsa.filesSize > pBsa.maxSize)
             {
                 //Each time the maximum size is reached, a BSA is created
 
-                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, isTexture ? bsaType::texturesBsa : bsaType::standardBsa) + Games::getBsaExtension();
-                if(isTexture) pBsa.path = pBsa.path.chopped(4) + " - Textures" + Games::getBsaExtension();
+                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, isTexture ? bsaType::texturesBsa : bsaType::standardBsa) + CAO_BSA_EXTENSION;
+                if(isTexture) pBsa.path = pBsa.path.chopped(4) + " - Textures" + CAO_BSA_EXTENSION;
                 create(pBsa);
 
                 //Resetting for next loop
@@ -176,12 +176,12 @@ void BsaOptimizer::packAll(const QString &folderPath)
     //Since the maximum size wasn't reached for the last archive, some files are still unpacked
     if (!texturesBsa.files.isEmpty())
     {
-        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures" + Games::getBsaExtension();
+        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures" + CAO_BSA_EXTENSION;
         create(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
-        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + Games::getBsaExtension();
+        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + CAO_BSA_EXTENSION;
         create(standardBsa);
     }
 }
