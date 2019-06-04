@@ -50,7 +50,6 @@ void MainOptimizer::processBsa(const QString& file)
     if(optOptions.bDryRun)
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
-
     if(optOptions.bBsaExtract && QFileInfo(file).isFile())
     {
         QLogger::QLog_Note("MainOptimizer", QObject::tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + file);
@@ -70,17 +69,38 @@ void MainOptimizer::processBsa(const QString& file)
 
 void MainOptimizer::processDds(const QString& file)
 {
-    if(optOptions.iTexturesOptimizationLevel >=2 && optOptions.bDryRun)
+    if(optOptions.iTexturesOptimizationLevel == 0)
+        return;
+
+    if(optOptions.bDryRun)
     {
-        if(TexturesOptimizer::isCompressed(file))
-            QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" would be compressed to BC7"));
+        switch (optOptions.iTexturesOptimizationLevel)
+        {
+        case 2:
+            if(!TexturesOptimizer::isCompressed(file))
+                QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" would be compressed to BC7"));
+        case 1:
+            if(TexturesOptimizer::isIncompatible(file))
+                QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" is incompatible and would be converted to a compatible format"));
+        }
     }
-    else if(optOptions.iTexturesOptimizationLevel >=2 && !optOptions.bDryRun)
-        TexturesOptimizer::convertToBc7IfUncompressed(file);
+    else
+    {
+        switch (optOptions.iTexturesOptimizationLevel)
+        {
+        case 2:
+            TexturesOptimizer::compress(file);
+        case 1:
+            TexturesOptimizer::convertIncompatibleTextures(file);
+        }
+    }
 }
 
 void MainOptimizer::processHkx(const QString& file)
 {
+    if(!optOptions.bAnimationsOptimization)
+        return;
+
     if(optOptions.bAnimationsOptimization && optOptions.bDryRun)
         QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" would be ported to SSE"));
     else if(optOptions.bAnimationsOptimization)
@@ -89,6 +109,9 @@ void MainOptimizer::processHkx(const QString& file)
 
 void MainOptimizer::processNif(const QString& file)
 {
+    if(optOptions.iMeshesOptimizationLevel == 0)
+        return;
+
     if(optOptions.iMeshesOptimizationLevel >=1 && optOptions.bDryRun)
         meshesOpt.dryOptimize(file);
     else if(optOptions.iMeshesOptimizationLevel >=1 && !optOptions.bDryRun)
@@ -97,10 +120,13 @@ void MainOptimizer::processNif(const QString& file)
 
 void MainOptimizer::processTga(const QString &file)
 {
-    if(optOptions.iTexturesOptimizationLevel >=1 && optOptions.bDryRun)
+    if(optOptions.iTexturesOptimizationLevel == 0)
+        return;
+
+    if(optOptions.iTexturesOptimizationLevel >=1 && optOptions.bDryRun && TexturesOptimizer::isIncompatible(file))
         QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" would be converted to DDS"));
     else if(optOptions.iTexturesOptimizationLevel >=1)
-        TexturesOptimizer::convertTgaToDds(file);
+        TexturesOptimizer::convertIncompatibleTextures(file);
 }
 
 

@@ -10,7 +10,9 @@ Games *Games::INSTANCE = nullptr;
 
 void Games::setGame(const GameMode &newGame)
 {
-    switch (newGame)
+    game = newGame;
+
+    switch (game)
     {
     case SSE:
         bsaFormat = baSSE;
@@ -27,6 +29,8 @@ void Games::setGame(const GameMode &newGame)
         meshesUser = 12;
         animationFormat = HKPF_AMD64;
         texturesFormat = "BC7_UNORM";
+        texturesIncompatibleExtensions << ".tga";
+        texturesIncompatibleFormats << "A1R5G5B5_UNORM" << "B5G6R5_UNORM";
         break;
     case TES5:
         bsaFormat = baFO3;
@@ -39,8 +43,15 @@ void Games::setGame(const GameMode &newGame)
         meshesUser = 12;
         animationFormat = HKPF_WIN32;
         texturesFormat = "BC3_UNORM";
+        texturesIncompatibleExtensions; //None
+        texturesIncompatibleFormats << "BC7_UNORM";
         break;
     }
+}
+
+GameMode Games::getGame()
+{
+    return game;
 }
 
 Games* Games::getInstance()
@@ -102,4 +113,12 @@ hkPackFormat Games::getAnimationsFormat()
     return animationFormat;
 }
 
+QStringList Games::getTexturesIncompatibleExtensions()
+{
+    return texturesIncompatibleExtensions;
+}
 
+QStringList Games::getTexturesIncompatibleFormats()
+{
+    return texturesIncompatibleFormats;
+}

@@ -19,6 +19,9 @@
 #define CAO_MESHES_USER Games::getInstance()->getMeshesUser()
 #define CAO_ANIMATIONS_FORMAT Games::getInstance()->getAnimationsFormat()
 #define CAO_TEXTURES_FORMAT Games::getInstance()->getTexturesFormat()
+#define CAO_TEXTURES_INCOMPATIBLE_EXTENSIONS Games::getInstance()->getTexturesIncompatibleExtensions()
+#define CAO_TEXTURES_INCOMPATIBLE_FORMATS Games::getInstance()->getTexturesIncompatibleFormats()
+
 
 enum GameMode { TES5, SSE } ;
 
@@ -35,12 +38,14 @@ private:
     NiFileVersion meshesFileVersion;
     uint meshesStream;
     uint meshesUser;
-    QVector<NiObject> meshesIncompatibleSSE;
     hkPackFormat animationFormat;
     QString texturesFormat;
+    QStringList texturesIncompatibleExtensions;
+    QStringList texturesIncompatibleFormats;
     QString iniPath;
 
     static Games* INSTANCE;
+    GameMode game;
 
     Games();
 
@@ -57,6 +62,8 @@ public:
     uint getMeshesUser();
     hkPackFormat getAnimationsFormat();
     QString getTexturesFormat();
+    QStringList getTexturesIncompatibleExtensions();
+    QStringList getTexturesIncompatibleFormats();
 
     void setGame(const GameMode& newGame);
     GameMode getGame();

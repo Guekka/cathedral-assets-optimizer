@@ -14,6 +14,8 @@ TES5::TES5() : ui(new Ui::TES5)
 
     if(!settings->contains("iLogLevel"))
         settings->setValue("iLogLevel", 3);
+    settings->setValue("game", "tes5");
+
     this->loadUIFromFile();
 
     //Preparing log
