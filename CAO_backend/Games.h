@@ -7,6 +7,7 @@
 #include "pch.h"
 
 #define CAO_SET_CURRENT_GAME(game) Games::getInstance()->setGame(game);
+#define CAO_GET_CURRENT_GAME Games::getInstance()->getGame()
 
 #define CAO_BSA_FORMAT Games::getInstance()->GetBsaFormat()
 #define CAO_BSA_EXTENSION Games::getInstance()->getBsaExtension()
@@ -34,6 +35,7 @@ private:
     NiFileVersion meshesFileVersion;
     uint meshesStream;
     uint meshesUser;
+    QVector<NiObject> meshesIncompatibleSSE;
     hkPackFormat animationFormat;
     QString texturesFormat;
     QString iniPath;
@@ -57,5 +59,6 @@ public:
     QString getTexturesFormat();
 
     void setGame(const GameMode& newGame);
+    GameMode getGame();
 };
 

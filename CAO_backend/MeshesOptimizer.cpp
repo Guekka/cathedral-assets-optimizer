@@ -37,32 +37,25 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
 
     result = good;
 
-
-    for(const auto& shape : nif.GetShapes())
+    if(CAO_GET_CURRENT_GAME == SSE)
     {
-        if (shape->HasType<NiTriStrips>())
+        for(const auto& shape : nif.GetShapes())
         {
-            qDebug() << filePath << "NiTriStrip is not supported by SSE";
-            if(result < criticalIssue) result = criticalIssue;
-        }
+            if (shape->HasType<NiTriStrips>() || shape->HasType<bhkMultiSphereShape>())
+                if(result < criticalIssue) result = criticalIssue;
 
-        if(shape->HasType<bhkMultiSphereShape>())
-        {
-            qDebug() << "bhkMultiSphereShape is not supported by SSE";
-            if(result < criticalIssue) result = criticalIssue;
-        }
-        if(shape->HasType<NiParticles>() || shape->HasType<NiParticleSystem>()
-                || shape->HasType<NiParticlesData>())
-        {
-            qDebug() << "Is particle";
-            return doNotProcess;
-        }
-        if(shape->HasType<BSXFlags>() && shape->GetName() != "BSX")
-        {
-            qDebug() << "BSXFlags node must have 'BSX' name";
-            if(result < lightIssue) result = lightIssue;
+            if(shape->HasType<NiParticles>() || shape->HasType<NiParticleSystem>()
+                    || shape->HasType<NiParticlesData>())
+            {
+                return doNotProcess;
+            }
         }
     }
+    else if(CAO_GET_CURRENT_GAME == TES5)
+        result = criticalIssue;
+    else
+        result = doNotProcess;
+
     return  result;
 }
 
