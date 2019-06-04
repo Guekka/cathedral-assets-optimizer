@@ -30,7 +30,9 @@ void Games::setGame(const GameMode &newGame)
         animationFormat = HKPF_AMD64;
         texturesFormat = "BC7_UNORM";
         texturesIncompatibleExtensions << ".tga";
-        texturesIncompatibleFormats << "A1R5G5B5_UNORM" << "B5G6R5_UNORM";
+        texturesIncompatibleFormats << "B5G5R5A1_UNORM" << "B5G6R5_UNORM";
+        iniPath = "settings/SkyrimSE/config.ini";
+        logPath = "SkyrimSE_log.html";
         break;
     case TES5:
         bsaFormat = baFO3;
@@ -43,13 +45,15 @@ void Games::setGame(const GameMode &newGame)
         meshesUser = 12;
         animationFormat = HKPF_WIN32;
         texturesFormat = "BC3_UNORM";
-        texturesIncompatibleExtensions; //None
+        //texturesIncompatibleExtensions; //None
         texturesIncompatibleFormats << "BC7_UNORM";
+        iniPath = "settings/TES5/config.ini";
+        logPath = "TES5_log.html";
         break;
     }
 }
 
-GameMode Games::getGame()
+GameMode Games::getGame() const
 {
     return game;
 }
@@ -62,63 +66,72 @@ Games* Games::getInstance()
     return Games::INSTANCE;
 }
 
-bsa_archive_type_e Games::GetBsaFormat()
+bsa_archive_type_e Games::GetBsaFormat() const
 {
     return bsaFormat;
 }
 
-double Games::getBsaMaxSize()
+double Games::getBsaMaxSize() const
 {
     return maxBsaSize;
 }
 
-double Games::getBsaTexturesMaxSize()
+double Games::getBsaTexturesMaxSize() const
 {
     return maxBsaTexturesSize;
 }
 
-QString Games::getBsaExtension()
+QString Games::getBsaExtension() const
 {
     return bsaExtension;
-    QLogger::QLog_Note("MainOptimizer", "ext " + bsaExtension);
 }
 
-bool Games::getHasBsaTextures()
+bool Games::getHasBsaTextures() const
 {
     return hasBsaTextures;
 }
 
-uint Games::getMeshesUser()
+uint Games::getMeshesUser() const
 {
     return meshesUser;
 }
 
-uint Games::getMeshesStream()
+uint Games::getMeshesStream() const
 {
     return meshesStream;
 }
 
-NiFileVersion Games::getMeshesFileVersion()
+NiFileVersion Games::getMeshesFileVersion() const
 {
     return meshesFileVersion;
 }
 
-QString Games::getTexturesFormat()
+QString Games::getTexturesFormat() const
 {
     return texturesFormat;
 }
 
-hkPackFormat Games::getAnimationsFormat()
+hkPackFormat Games::getAnimationsFormat() const
 {
     return animationFormat;
 }
 
-QStringList Games::getTexturesIncompatibleExtensions()
+QStringList Games::getTexturesIncompatibleExtensions() const
 {
     return texturesIncompatibleExtensions;
 }
 
-QStringList Games::getTexturesIncompatibleFormats()
+QStringList Games::getTexturesIncompatibleFormats() const
 {
     return texturesIncompatibleFormats;
+}
+
+QString Games::getIniPath() const
+{
+    return iniPath;
+}
+
+QString Games::getLogPath() const
+{
+    return logPath;
 }

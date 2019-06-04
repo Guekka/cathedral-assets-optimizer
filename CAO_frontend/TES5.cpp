@@ -9,12 +9,15 @@ TES5::TES5() : ui(new Ui::TES5)
 {
     ui->setupUi(this);
 
-    //Loading remembered settings TODO change ini path
-    settings = new QSettings("settings/SkyrimSE.ini", QSettings::IniFormat, this);
+    //Setting game mode
+    QSettings commonSettings("settings/common/config.ini", QSettings::IniFormat, this);
+    commonSettings.setValue("Game", "SSE");
+
+    //Loading remembered settings
+    settings = new QSettings("settings/TES5/config.ini", QSettings::IniFormat, this);
 
     if(!settings->contains("iLogLevel"))
         settings->setValue("iLogLevel", 3);
-    settings->setValue("game", "tes5");
 
     this->loadUIFromFile();
 
@@ -37,9 +40,6 @@ TES5::TES5() : ui(new Ui::TES5)
     connect(ui->meshesGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
     connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
     connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
-
-    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
-    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
 
     //Connecting the other widgets
 
@@ -82,7 +82,6 @@ TES5::TES5() : ui(new Ui::TES5)
         bDarkMode = !bDarkMode;
         this->saveUIToFile();
     });
-
 
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &TES5::loadUIFromFile);
@@ -172,12 +171,6 @@ void TES5::saveUIToFile()
 
     settings->endGroup();
 
-    //Animations
-
-    settings->beginGroup("Animations");
-    settings->setValue("bAnimationsOptimization", ui->animationsGroupBox->isChecked());
-    settings->endGroup();
-
     //Dry run and mode
 
     settings->setValue("bDryRun", ui->dryRunCheckBox->isChecked());
@@ -236,12 +229,6 @@ void TES5::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     case 1: ui->meshesGroupBox->setChecked(true);     ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);  break;
     case 3: ui->meshesGroupBox->setChecked(true);     ui->MeshesFullOptimizationRadioButton->setChecked(true); break;
     }
-    settings->endGroup();
-
-    //Animations
-
-    settings->beginGroup("Animations");
-    ui->animationsGroupBox->setChecked(settings->value("bAnimationsOptimization").toBool());
     settings->endGroup();
 
     //General and GUI
@@ -309,7 +296,7 @@ void TES5::updateLog()
 {
     ui->plainTextEdit->clear();
 
-    QFile log("logs/log.html");
+    QFile log("logs/TES5/log.html");
     if(log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);

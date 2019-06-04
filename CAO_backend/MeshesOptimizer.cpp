@@ -83,6 +83,9 @@ void MeshesOptimizer::listHeadparts(const QString& directory)
 void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected mesh
 {
     NifFile nif(filePath.toStdString());
+
+    //TODO ignore files already converted
+
     OptOptions options;
     options.targetVersion.SetFile(CAO_MESHES_FILE_VERSION);
     options.targetVersion.SetStream(CAO_MESHES_STREAM);

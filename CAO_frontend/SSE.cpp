@@ -9,8 +9,12 @@ SSE::SSE() : ui(new Ui::SSE)
 {
     ui->setupUi(this);
 
-    //Loading remembered settings
-    settings = new QSettings("settings/SkyrimSE.ini", QSettings::IniFormat, this);
+    //Setting game mode
+    QSettings commonSettings("settings/common/config.ini", QSettings::IniFormat, this);
+    commonSettings.setValue("Game", "SSE");
+
+    //Loading remembered settings    
+    settings = new QSettings("settings/SkyrimSE/config.ini", QSettings::IniFormat, this);
 
     if(!settings->contains("iLogLevel"))
         settings->setValue("iLogLevel", 3);
@@ -208,8 +212,6 @@ void SSE::saveUIToFile()
 void SSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
-    settings->setValue("game", "sse");
-
 
     //BSA
 
@@ -296,7 +298,7 @@ void SSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     else if(ui->meshesGroupBox->isChecked())
     {
         ui->MeshesMediumOptimizationRadioButton->setDisabled(false);
-        /*ui->MeshesFullOptimizationRadioButton->setDisabled(false);*/
+        ui->MeshesFullOptimizationRadioButton->setDisabled(false);
     }
 
     //Disabling BSA options if dry run is enabled
@@ -319,7 +321,7 @@ void SSE::updateLog()
 {
     ui->plainTextEdit->clear();
 
-    QFile log("logs/log.html");
+    QFile log("logs/SkyrimSE/log.html");
     if(log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);

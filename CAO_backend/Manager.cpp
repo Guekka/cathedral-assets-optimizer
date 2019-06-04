@@ -6,17 +6,19 @@
 
 Manager::Manager()
 {
+    //Setting game
+    setGame();
+
     //Preparing logging
     QLogger::QLoggerManager *logManager = QLogger::QLoggerManager::getInstance();
-    logManager->addDestination("log.html", QStringList() << "MainWindow" << "MainOptimizer" << "AnimationsOptimizer"
+    logManager->addDestination(CAO_LOG_PATH, QStringList() << "MainWindow" << "MainOptimizer" << "AnimationsOptimizer"
                                << "BsaOptimizer" << "FilesystemOperations" << "MeshesOptimizer" << "PluginsOperations"
                                << "TexturesOptimizer", static_cast<QLogger::LogLevel>(options.iLogLevel));
     logManager->addDestination("errors.html", QStringList() << "Errors", static_cast<QLogger::LogLevel>(options.iLogLevel));
 
     //INI
-
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath() + "/settings/SkyrimSE.ini");
-    settings = new QSettings(QDir::currentPath() + "/settings/SkyrimSE.ini", QSettings::IniFormat, this);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, CAO_INI_PATH);
+    settings = new QSettings(CAO_INI_PATH, QSettings::IniFormat, this);
 
     //Reading arguments
 
@@ -69,6 +71,7 @@ void Manager::listDirectories()
 
 void Manager::printProgress()
 {
+    //TODO regularly print progress
     int progress = (completedFilesWeight / filesWeight) * 100;
     QTextStream(stdout) << progress;
 }
@@ -111,9 +114,9 @@ void Manager::parseArguments()
     QCommandLineParser parser;
 
     parser.addHelpOption();
-    parser.addPositionalArgument("folder", "The file or the folder to process, surrounded with quotes.");
+    parser.addPositionalArgument("folder", "The folder to process, surrounded with quotes.");
     parser.addPositionalArgument("mode", "Either om (one mod) or sm (several mods)");
-    parser.addPositionalArgument("game", "Currently, only 'sse' is supported");
+    parser.addPositionalArgument("game", "Currently, only 'SSE' and 'TES5' are supported");
 
     parser.addOptions({
                           {"dr", "Enables dry run"},
@@ -217,13 +220,6 @@ void Manager::readIni()
 {
     userPath = settings->value("SelectedPath").toString();
 
-    QString game = settings->value("Game").toString();
-
-    if(game == "sse")
-        CAO_SET_CURRENT_GAME(SSE)
-    else if(game == "tes5")
-        CAO_SET_CURRENT_GAME(TES5)
-
     int iniMode = settings->value("iMode").toInt();
 
     if(iniMode == 0)
@@ -268,8 +264,22 @@ bool Manager::checkRequirements()
     return true;
 }
 
+void Manager::setGame()
+{
+    QSettings commonSettings("settings/common/config.ini", QSettings::IniFormat, this);
+    QString game = commonSettings.value("Game").toString();
+
+    if(game == "SSE")
+        CAO_SET_CURRENT_GAME(SSE)
+    else if(game == "TES5")
+        CAO_SET_CURRENT_GAME(TES5)
+    else
+        throw std::runtime_error("Cannot set game. Game:\"" + game.toStdString() + "\" does not exist");
+}
+
 void Manager::runOptimization()
 {
+    //TODO bsa have to be extracted before listing files
     QLogger::QLog_Info("MainOptimizer", "Beginning...");
 
     MainOptimizer optimizer(options);
