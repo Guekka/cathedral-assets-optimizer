@@ -4,11 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "SSE.h"
-#include "ui_SSE.h"
 
-#include <QDebug>
-
-SSE::SSE() : ui(new Ui::MainWindow)
+SSE::SSE() : ui(new Ui::SSE)
 {
     ui->setupUi(this);
 
@@ -299,7 +296,7 @@ void SSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     else if(ui->meshesGroupBox->isChecked())
     {
         ui->MeshesMediumOptimizationRadioButton->setDisabled(false);
-        ui->MeshesFullOptimizationRadioButton->setDisabled(false);
+        /*ui->MeshesFullOptimizationRadioButton->setDisabled(false);*/
     }
 
     //Disabling BSA options if dry run is enabled

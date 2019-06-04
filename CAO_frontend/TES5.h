@@ -5,9 +5,10 @@
 #pragma once
 
 #include "pch.h"
+#include "ui_TES5.h"
 
 namespace Ui {
-    class MainWindow;
+    class TES5;
 }
 
 class TES5 : public QMainWindow
@@ -20,7 +21,7 @@ public:
 
 private:
     QFileDialog *fileDialog{};
-    Ui::MainWindow *ui;
+    Ui::TES5 *ui;
 
     bool bDarkMode = true;
     bool bLockVariables = false;

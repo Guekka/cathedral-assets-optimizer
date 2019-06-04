@@ -4,11 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "TES5.h"
-#include "ui_TES5.h"
 
-#include <QDebug>
-
-TES5::TES5() : ui(new Ui::MainWindow)
+TES5::TES5() : ui(new Ui::TES5)
 {
     ui->setupUi(this);
 

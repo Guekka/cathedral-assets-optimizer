@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>TES5</class>
+ <widget class="QMainWindow" name="TES5">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -20,7 +20,7 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>Cathedral Assets Optimizer : Skyrim SE</string>
+   <string>Cathedral Assets Optimizer : TES5</string>
   </property>
   <property name="whatsThis">
    <string>Will write which files would be affected, without actually processing them</string>

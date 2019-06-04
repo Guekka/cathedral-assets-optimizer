@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "SSE.h"
 #include "TES5.h"
+#include "SSE.h"
 #include "selectiondialog.h"
 
 #include "QDebug"

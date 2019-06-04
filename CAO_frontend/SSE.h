@@ -5,9 +5,10 @@
 #pragma once
 
 #include "pch.h"
+#include "ui_SSE.h"
 
 namespace Ui {
-    class MainWindow;
+    class SSE;
 }
 
 class SSE : public QMainWindow
@@ -20,7 +21,7 @@ public:
 
 private:
     QFileDialog *fileDialog{};
-    Ui::MainWindow *ui;
+    Ui::SSE *ui;
 
     bool bDarkMode = true;
     bool bLockVariables = false;
