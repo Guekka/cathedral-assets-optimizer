@@ -10,10 +10,8 @@
 enum OptimizationMode { singleMod = 0, severalMods = 1};
 
 
-class Manager : QObject
+class Manager : public QObject
 {
-    Q_DECLARE_TR_FUNCTIONS(Manager)
-
 public:
     /*!
      * \brief Constructor that will perform a number of functions
@@ -82,8 +80,11 @@ private:
     OptimizationMode mode;
     QString userPath{};
     QStringList modsToProcess{};
+    QFileInfoList BSAs;
 
     QSettings *settings;
+
+    QTimer *timer;
 
 };
 

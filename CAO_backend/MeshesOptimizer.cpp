@@ -71,8 +71,6 @@ void MeshesOptimizer::listHeadparts(const QString& directory)
     }
 
     headparts.removeDuplicates();
-
-    qDebug() << headparts << endl;
 }
 
 

@@ -19,9 +19,10 @@
 #include <QSettings> //Used to read registry
 #include <QString>
 #include <QStringList>
+#include <QtConcurrent/QtConcurrent>
 #include <QTextCodec>
 #include <QTextStream>
-#include <QtConcurrent/QtConcurrent>
+#include <QTimer>
 #include <QtMath>
 #include <QTranslator>
 #include <utility>

@@ -45,7 +45,12 @@ Manager::Manager()
         throw std::runtime_error("Error while reading settings");
     }
 
-    QLogger::QLog_Trace("MainOptimizer", "Listing files and directories...");
+    //Preparing timer (used for printing progress)
+    timer = new QTimer(this);
+    QObject::connect(timer, &QTimer::timeout, this, &Manager::printProgress);
+    timer->start(1);
+
+    QLogger::QLog_Info("MainOptimizer", "Listing files and directories...");
 
     listDirectories();
     listFiles();
@@ -73,7 +78,7 @@ void Manager::printProgress()
 {
     //TODO regularly print progress
     int progress = (completedFilesWeight / filesWeight) * 100;
-    QTextStream(stdout) << progress;
+    QTextStream(stdout) << progress << endl;
 }
 
 void Manager::listFiles()
@@ -102,8 +107,8 @@ void Manager::listFiles()
 
             else if(bsa)
             {
-                filesWeight += it.fileInfo().size();
-                files.insert(0, it.fileInfo());
+                filesWeight += it.fileInfo().size() * 2;
+                BSAs << it.fileInfo();
             }
         }
     }
@@ -279,7 +284,6 @@ void Manager::setGame()
 
 void Manager::runOptimization()
 {
-    //TODO bsa have to be extracted before listing files
     QLogger::QLog_Info("MainOptimizer", "Beginning...");
 
     MainOptimizer optimizer(options);
@@ -289,6 +293,21 @@ void Manager::runOptimization()
 
     //Reading headparts. Used for meshes optimization
     optimizer.addHeadparts(userPath, mode == severalMods);
+
+    //Extracting BSAs
+    for (const QFileInfo& bsa : BSAs)
+    {
+        array << QtConcurrent::run([&]()
+        {
+            optimizer.process(bsa.absoluteFilePath());
+            completedFilesWeight += bsa.size();
+        });
+    }
+
+    for(QFuture<void>& future : array)
+        future.waitForFinished();
+
+    listFiles();
 
     for(const auto& file : files)
     {
@@ -307,6 +326,9 @@ void Manager::runOptimization()
             });
         }
     }
+
+    for(QFuture<void>& future : array)
+        future.waitForFinished();
 
     //Packing BSAs
 
