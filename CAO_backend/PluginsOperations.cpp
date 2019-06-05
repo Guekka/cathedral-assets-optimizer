@@ -102,3 +102,80 @@ bool PluginsOperations::checkIfBsaHasPlugin(const QString& bsaPath)
 
     return hasEsl || hasEsm || hasEsp;
 }
+
+QStringList PluginsOperations::listHeadparts(const QString &filepath)
+{
+    std::fstream file;
+    file.open(filepath.toStdString(), std::ios::binary | std::ios::in);
+
+    if(!file.is_open())
+        return QStringList();
+
+    PluginRecordHeader header;
+    PluginFieldHeader pluginFieldHeader;
+
+    QStringList headparts;
+
+    auto readHeaders = [&]()
+    {
+        file.read(reinterpret_cast<char*>(&header), sizeof header);
+    };
+
+    auto readFieldPluginHeader = [&]()
+    {
+        file.read(reinterpret_cast<char*>(&pluginFieldHeader), sizeof pluginFieldHeader);
+    };
+
+    readHeaders();
+    if(strncmp(header.plugin.type, GROUP_TES4, sizeof GROUP_TES4) != 0)
+        return QStringList(); //Not a plugin file
+
+    //Skip TES4 record
+    file.seekg(header.record.dataSize, std::ios::cur);
+
+    //Reading all groups
+    do
+    {
+        readHeaders();
+
+        // skip non headpart groups
+        if(strncmp(header.plugin.label, GROUP_HDPT, sizeof GROUP_HDPT) != 0)
+        {
+            file.seekg(header.plugin.groupSize - sizeof header, std::ios::cur);
+            continue;
+        }
+
+        //Reading all headpart records
+        int64_t groupEndPos = header.plugin.groupSize - sizeof header + file.tellg();
+        while(file.tellg() < groupEndPos)
+        {
+            readHeaders();
+
+            // reading all record fields
+            int64_t recEndPos =  header.record.dataSize + file.tellg() ;
+            while(file.tellg() < recEndPos)
+            {
+                readFieldPluginHeader();
+                // skip everything but MODL
+                if(strncmp(pluginFieldHeader.type, GROUP_MODL, sizeof GROUP_MODL) != 0)
+                {
+                    file.seekg(pluginFieldHeader.dataSize, std::ios::cur);
+                    continue;
+                }
+
+                char buffer[1024];
+                file.read(buffer, pluginFieldHeader.dataSize);
+
+                QString headpart = buffer;
+                // make sure that nif path starts with meshes
+                if(!headpart.startsWith("meshes", Qt::CaseInsensitive))
+                    headpart = "meshes/" + headpart;
+
+                //Adding headparts to the list
+                headparts << QDir::cleanPath(headpart);
+            }
+        }
+    }while (strncmp(header.plugin.type, GROUP_GRUP, sizeof GROUP_GRUP) == 0 && file.good());
+
+    return headparts;
+}

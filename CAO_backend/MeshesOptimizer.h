@@ -6,6 +6,7 @@
 
 #include "pch.h"
 #include "Games.h"
+#include "PluginsOperations.h"
 
 enum ScanResult { doNotProcess = -1, good = 0, lightIssue = 1, criticalIssue = 2 };
 

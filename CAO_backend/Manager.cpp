@@ -248,7 +248,7 @@ void Manager::readIni()
 
 bool Manager::checkRequirements()
 {
-    QStringList requirements {"texconv.exe", "texdiag.exe", "ListHeadParts.exe"};
+    QStringList requirements {"texconv.exe", "texdiag.exe"};
 
     for (const auto& requirement : requirements)
     {

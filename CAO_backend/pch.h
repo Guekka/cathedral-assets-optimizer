@@ -27,6 +27,10 @@
 #include <utility>
 /*----------------------*/
 
+/*--STD-----------------*/
+#include <fstream>
+/*----------------------*/
+
 
 /*---CUSTOM CLASSES-----*/
 #include "libs/QLogger/QLogger.h"

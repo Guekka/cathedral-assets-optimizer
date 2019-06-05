@@ -61,22 +61,18 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
 
 void MeshesOptimizer::listHeadparts(const QString& directory)
 {
-    QProcess listHeadparts;
-    listHeadparts.start("resources/ListHeadParts.exe", QStringList() << directory);
+    QDirIterator it(directory, QDirIterator::Subdirectories);
 
-    if(!listHeadparts.waitForFinished(180000))
+    while(it.hasNext())
     {
-        QLogger::QLog_Error("MeshesOptimizer", tr("ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod."));
-        QLogger::QLog_Error("Errors", tr("ListHeadparts has not finished within 3 minutes. Skipping headparts optimization for this mod."));
-    }
-
-    while(listHeadparts.canReadLine())
-    {
-        QString readLine = QString::fromLocal8Bit(listHeadparts.readLine()).simplified();
-        headparts << QDir::cleanPath(readLine);
+        it.next();
+        if(it.fileName().contains(QRegularExpression("\\.es[plm]$")))
+            headparts += PluginsOperations::listHeadparts(it.filePath());
     }
 
     headparts.removeDuplicates();
+
+    qDebug() << headparts << endl;
 }
 
 

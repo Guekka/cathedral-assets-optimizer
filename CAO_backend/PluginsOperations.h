@@ -14,6 +14,55 @@ enum bsaType
     texturesAndStandardBsa
 };
 
+PACKED(
+        struct PluginHeader
+{
+            char type[4];
+            uint32_t groupSize;
+            char label[4];
+            int32_t groupType;
+            unsigned short stamp;
+            char VC1;
+            char VC2;
+            uint32_t unknown;
+        };
+)
+
+PACKED(
+        struct RecordHeader
+{
+            char type[4];
+            uint32_t dataSize;
+            uint32_t flags;
+            uint32_t id;
+            unsigned short stamp;
+            char VC1;
+            char VC2;
+            uint16_t version;
+            uint16_t unknown;
+        };
+)
+
+PACKED(
+        union PluginRecordHeader
+{
+            RecordHeader record;
+            PluginHeader plugin;
+        };
+        )
+
+PACKED(
+        struct PluginFieldHeader
+{
+            char type[4];
+            uint16_t dataSize;
+        };)
+
+const char GROUP_TES4[4] = { 'T', 'E', 'S', '4'};
+const char GROUP_GRUP[4] = { 'G', 'R', 'U', 'P'};
+const char GROUP_HDPT[4] = { 'H', 'D', 'P', 'T'};
+const char GROUP_MODL[4] = { 'M', 'O', 'D', 'L'};
+
 class PluginsOperations : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(PluginsOperations)
@@ -36,4 +85,10 @@ public:
      * \param bsaPath The path of the bsa to check
      */
     static bool checkIfBsaHasPlugin(const QString& bsaPath);
+    /*!
+     * \brief listHeadparts List all the headparts in a plugin file
+     * \param filepath The path of the file to scan
+     * \return The list of headparts
+     */
+    static QStringList listHeadparts(const QString& filepath);
 };
