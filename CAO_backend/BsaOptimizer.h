@@ -6,6 +6,7 @@
 
 #include "pch.h"
 #include "FilesystemOperations.h"
+#include "Games.h"
 
 struct Bsa
 {

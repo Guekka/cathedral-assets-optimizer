@@ -5,22 +5,23 @@
 #pragma once
 
 #include "pch.h"
+#include "ui_SSE.h"
 
 namespace Ui {
-    class MainWindow;
+    class SSE;
 }
 
-class SkyrimSE : public QMainWindow
+class SSE : public QMainWindow
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
-    SkyrimSE();
-    ~SkyrimSE();
+    SSE();
+    ~SSE();
 
 private:
     QFileDialog *fileDialog{};
-    Ui::MainWindow *ui;
+    Ui::SSE *ui;
 
     bool bDarkMode = true;
     bool bLockVariables = false;

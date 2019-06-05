@@ -37,32 +37,25 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
 
     result = good;
 
-
-    for(const auto& shape : nif.GetShapes())
+    if(CAO_GET_CURRENT_GAME == SSE)
     {
-        if (shape->HasType<NiTriStrips>())
+        for(const auto& shape : nif.GetShapes())
         {
-            qDebug() << filePath << "NiTriStrip is not supported by SSE";
-            if(result < criticalIssue) result = criticalIssue;
-        }
+            if (shape->HasType<NiTriStrips>() || shape->HasType<bhkMultiSphereShape>())
+                if(result < criticalIssue) result = criticalIssue;
 
-        if(shape->HasType<bhkMultiSphereShape>())
-        {
-            qDebug() << "bhkMultiSphereShape is not supported by SSE";
-            if(result < criticalIssue) result = criticalIssue;
-        }
-        if(shape->HasType<NiParticles>() || shape->HasType<NiParticleSystem>()
-                || shape->HasType<NiParticlesData>())
-        {
-            qDebug() << "Is particle";
-            return doNotProcess;
-        }
-        if(shape->HasType<BSXFlags>() && shape->GetName() != "BSX")
-        {
-            qDebug() << "BSXFlags node must have 'BSX' name";
-            if(result < lightIssue) result = lightIssue;
+            if(shape->HasType<NiParticles>() || shape->HasType<NiParticleSystem>()
+                    || shape->HasType<NiParticlesData>())
+            {
+                return doNotProcess;
+            }
         }
     }
+    else if(CAO_GET_CURRENT_GAME == TES5)
+        result = criticalIssue;
+    else
+        result = doNotProcess;
+
     return  result;
 }
 
@@ -90,10 +83,13 @@ void MeshesOptimizer::listHeadparts(const QString& directory)
 void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected mesh
 {
     NifFile nif(filePath.toStdString());
+
+    //TODO ignore files already converted
+
     OptOptions options;
-    options.targetVersion.SetFile(NiFileVersion::V20_2_0_7);
-    options.targetVersion.SetStream(100);
-    options.targetVersion.SetUser(12);
+    options.targetVersion.SetFile(CAO_MESHES_FILE_VERSION);
+    options.targetVersion.SetStream(CAO_MESHES_STREAM);
+    options.targetVersion.SetUser(CAO_MESHES_USER);
 
     ScanResult scanResult = scan(filePath);
     QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
@@ -140,6 +136,8 @@ void MeshesOptimizer::dryOptimize(const QString &filePath)
 {
     ScanResult scanResult = scan(filePath);
     QString relativeFilePath = filePath.right(filePath.indexOf("meshes", Qt::CaseInsensitive));
+
+    //TODO update meshes dryOptimize
 
     //Headparts have to get a special optimization
     if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))

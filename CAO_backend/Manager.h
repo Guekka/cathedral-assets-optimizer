@@ -75,6 +75,8 @@ private:
      */
     bool checkRequirements();
 
+    void setGame();
+
     OptOptionsCAO options;
 
     OptimizationMode mode;

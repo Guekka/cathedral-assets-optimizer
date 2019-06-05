@@ -5,6 +5,7 @@
 #pragma once
 
 #include "pch.h"
+#include "Games.h"
 
 enum bsaType
 {
@@ -24,7 +25,7 @@ public:
      * \param bsaType The type of BSA to load.
      * \return a QString containing the name of the plugin. If no plugin is found, it will return the name of the directory.
      */
-    static QString findPlugin(const QString& folderPath, bsaType bsaType);
+    static QString findPlugin(const QString& folderPath, const bsaType &bsaType);
     /*!
      * \brief Create enough plugins to load all BSAs
      * \param folderPath The folder to create plugins into

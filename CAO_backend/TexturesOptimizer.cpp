@@ -6,7 +6,7 @@
 #include "TexturesOptimizer.h"
 
 
-void TexturesOptimizer::convertToBc7IfUncompressed(const QString &filePath) //Compress uncompressed textures to BC7
+void TexturesOptimizer::compress(const QString &filePath) //Compress uncompressed textures to BC7
 {
     QProcess texDiag;
     texDiag.start("resources/texdiag.exe", QStringList {"info", filePath});
@@ -22,31 +22,25 @@ void TexturesOptimizer::convertToBc7IfUncompressed(const QString &filePath) //Co
 
         if(textureSize > 16)
         {
-            QLogger::QLog_Note("TexturesOptimizer", tr("Compressing uncompressed texture: ") + QFileInfo(filePath).fileName());
-
-            QProcess texconv;
-            QStringList texconvArg{ "-nologo", "-y", "-m", "0", "-pow2", "-if", "FANT", "-f", "BC7_UNORM", "-bcmax", filePath};
-            texconv.start("resources/texconv.exe", texconvArg);
-
-            texconv.waitForFinished(-1);
+            QLogger::QLog_Note("TexturesOptimizer", tr("Compressing uncompressed texture: ") + filePath);
+            convertTexture(filePath, CAO_TEXTURES_FORMAT);
         }
     }
 }
 
-
-void TexturesOptimizer::convertTgaToDds(const QString &filePath) //Convert TGA textures to DDS
+bool TexturesOptimizer::convertIncompatibleTextures(const QString &filePath) //Convert TGA textures to DDS
 {
-    QLogger::QLog_Note("TexturesOptimizer", tr("Converting TGA files...") + "\n"
-    + tr("TGA file found: ") + filePath.mid(filePath.lastIndexOf("/")) + "\n" + tr("Compressing..."));
+    if(isIncompatible(filePath))
+    {
+        QLogger::QLog_Note("TexturesOptimizer", tr("Incompatible texture found: ")
+                           + filePath.mid(filePath.lastIndexOf("/")) + "\n" + tr("Compressing..."));
 
-    QStringList texconvArg {"-nologo", "-m", "0", "-pow2", "-if", "FANT", "-f", "R8G8B8A8_UNORM", filePath};
+        convertTexture(filePath, CAO_TEXTURES_FORMAT);
 
-    QProcess texconv;
-    texconv.start("resources/texconv.exe", texconvArg);
-    texconv.waitForFinished(-1);
-
-    QFile tga(filePath);
-    tga.remove();
+        return true;
+    }
+    else
+        return false;
 }
 
 
@@ -57,4 +51,49 @@ bool TexturesOptimizer::isCompressed(const QString &filePath)
     texDiag.waitForFinished(-1);
 
     return texDiag.readAllStandardOutput().contains("compressed = no");
+}
+
+QString TexturesOptimizer::getFormat(const QString &filePath)
+{
+    QProcess texDiag;
+    texDiag.start("resources/texdiag.exe", QStringList {"info", filePath});
+    texDiag.waitForFinished(-1);
+
+    QString output = texDiag.readAllStandardOutput();
+
+    QString format = output.section('\r', 10, 10).remove("format = ").trimmed();
+    qDebug() << "format:" << format;
+    return format;
+}
+
+void TexturesOptimizer::convertTexture(const QString &filePath, const QString &format)
+{
+    QStringList texconvArg {"-nologo", "-m", "0", "-pow2", "-if", "FANT", "-f", format, "-bcmax", "-y", filePath};
+
+    QProcess texconv;
+    texconv.start("resources/texconv.exe", texconvArg);
+    texconv.waitForFinished(-1);
+}
+
+bool TexturesOptimizer::isIncompatible(const QString &filePath)
+{
+    bool isIncompatible = false;
+    //Checking incompatibility with extension
+    for(const auto& extension : CAO_TEXTURES_INCOMPATIBLE_EXTENSIONS)
+        if(filePath.endsWith(extension, Qt::CaseInsensitive))
+        {
+            isIncompatible = true;
+            break;
+        }
+
+    //Checking incompatibility with file format
+    QString fileFormat = getFormat(filePath);
+    for(const auto& format : CAO_TEXTURES_INCOMPATIBLE_FORMATS)
+        if(fileFormat.compare(format) == 0)
+        {
+            isIncompatible = true;
+            break;
+        }
+
+    return isIncompatible;
 }

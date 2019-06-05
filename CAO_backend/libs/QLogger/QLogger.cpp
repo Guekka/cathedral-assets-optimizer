@@ -172,7 +172,6 @@ namespace QLogger
     void QLoggerWriter::write(const QString &module, const QString &message, const LogLevel& messageLogLevel)
     {
         QFile file(mFileDestination);
-
         const auto newName = renameFileIfFull ();
 
         if(file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append))

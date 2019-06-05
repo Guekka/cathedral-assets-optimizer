@@ -17,17 +17,17 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 
         it.next();
 
-        if(!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(".bsa", Qt::CaseInsensitive))
+        if(!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
         {
             if(it.fileName().contains("- Textures", Qt::CaseInsensitive))
             {
-                espName = it.fileName().remove(" - Textures.bsa", Qt::CaseInsensitive) + ".esp";
+                espName = it.fileName().remove(" - Textures" + CAO_BSA_EXTENSION, Qt::CaseInsensitive) + ".esp";
                 QLogger::QLog_Trace("PluginsOperations", "Created textures bsa plugin:" + espName);
             }
 
             else
             {
-                espName = it.fileName().remove(".bsa", Qt::CaseInsensitive) + ".esp";
+                espName = it.fileName().remove(CAO_BSA_EXTENSION, Qt::CaseInsensitive) + ".esp";
                 QLogger::QLog_Trace("PluginsOperations", "Created standard bsa plugin:" + espName);
             }
             QFile::copy("resources/BlankSSEPlugin.esp", folderPath + "/" + espName);
@@ -37,7 +37,7 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 }
 
 
-QString PluginsOperations::findPlugin(const QString& folderPath, bsaType bsaType)
+QString PluginsOperations::findPlugin(const QString& folderPath, const bsaType& bsaType)
 {
     QDirIterator it(folderPath);
     QStringList espName;
@@ -51,7 +51,7 @@ QString PluginsOperations::findPlugin(const QString& folderPath, bsaType bsaType
             espName << it.fileName();
 
 
-        if(it.fileName().endsWith(".bsa", Qt::CaseInsensitive) && !it.fileName().endsWith(" - Textures.bsa", Qt::CaseInsensitive))
+        if(it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive) && !it.fileName().endsWith(" - Textures" + CAO_BSA_EXTENSION, Qt::CaseInsensitive))
             bsaName = it.fileName().chopped(4) + ".esp";
     }
     if(!bsaName.isEmpty() && espName.isEmpty())
@@ -68,10 +68,10 @@ QString PluginsOperations::findPlugin(const QString& folderPath, bsaType bsaType
     {
         for(auto esp : espName)
         {
-            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + " - Textures.bsa").exists() && bsaType == bsaType::texturesBsa;
-            bool standardBsaGood = !QFile(folderPath + "/" +esp.chopped(4) + ".bsa").exists() && bsaType == bsaType::standardBsa;
-            bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + " - Textures.bsa").exists()
-                    && !QFile(folderPath + "/" +esp.chopped(4) + ".bsa").exists()
+            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + " - Textures" + CAO_BSA_EXTENSION).exists() && bsaType == bsaType::texturesBsa;
+            bool standardBsaGood = !QFile(folderPath + "/" +esp.chopped(4) + CAO_BSA_EXTENSION).exists() && bsaType == bsaType::standardBsa;
+            bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + " - Textures" + CAO_BSA_EXTENSION).exists()
+                    && !QFile(folderPath + "/" +esp.chopped(4) + CAO_BSA_EXTENSION).exists()
                     && bsaType == bsaType::texturesAndStandardBsa;
 
             if(texturesBsaGood || standardBsaGood || bothBsaGood)
@@ -89,8 +89,8 @@ QString PluginsOperations::findPlugin(const QString& folderPath, bsaType bsaType
 bool PluginsOperations::checkIfBsaHasPlugin(const QString& bsaPath)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
-    bsaName.remove(".bsa");
-    bsaName.remove(" - Textures.bsa"); // x.esp will also load x - Textures.bsa
+    bsaName.remove(CAO_BSA_EXTENSION);
+    bsaName.remove(" - Textures" + CAO_BSA_EXTENSION); // x.esp will also load x - Textures.bsa
 
     QString eslName = bsaName + ".esl";
     QString esmName = bsaName + ".esm";
