@@ -23,5 +23,5 @@ public:
     void convert(const QString& filePath, const hkPackFormat& pkFormat);
 
     private:
-    hkMemoryRouter* memoryRouter;
+    hkMemoryRouter* memoryRouter;   
 };

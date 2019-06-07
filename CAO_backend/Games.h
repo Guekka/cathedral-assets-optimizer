@@ -27,6 +27,8 @@
 
 #define CAO_INI_PATH Games::getInstance()->getIniPath()
 #define CAO_LOG_PATH Games::getInstance()->getLogPath()
+#define CAO_RESOURCES_PATH Games::getInstance()->getResourcePath()
+
 
 enum GameMode { TES5, SSE } ;
 
@@ -53,6 +55,7 @@ private:
 
     QString iniPath;
     QString logPath;
+    QString resourcePath;
 
     static Games* INSTANCE;
     GameMode game;
@@ -80,8 +83,10 @@ public:
 
     QString getIniPath() const;
     QString getLogPath() const;
+    QString getResourcePath() const;
 
     void setGame(const GameMode& newGame);
     GameMode getGame() const;
+
 };
 

@@ -27,7 +27,6 @@ AnimationsOptimizer::~AnimationsOptimizer()
 
 void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat& pkFormat)
 {
-    const char* filename = qPrintable(filePath);
     try
     {
         bool flagsSpecified = false;
@@ -44,7 +43,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat& p
         hkResult res;
 
         {
-            hkIstream istream(filename);
+            hkIstream istream(qPrintable(filePath));
             if(!istream.isOk())
                 throw std::runtime_error("An error occured while loading this file.");
 
@@ -61,8 +60,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat& p
             hkBool32 failed = true;
             if (root.m_object != nullptr)
             {
-                const char* outputFile = qPrintable(filePath.chopped(3) + "out.hkx");
-                hkOstream ostream(outputFile);
+                hkOstream ostream(qPrintable(filePath.chopped(3) + "out.hkx"));
 
                 if(!ostream.isOk())
                     throw std::runtime_error("An error occured while saving this file.");

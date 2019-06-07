@@ -321,7 +321,7 @@ void SSE::updateLog()
 {
     ui->plainTextEdit->clear();
 
-    QFile log("logs/SkyrimSE/log.html");
+    QFile log("logs/SkyrimSE_log.html");
     if(log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);

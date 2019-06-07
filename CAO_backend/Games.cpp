@@ -33,6 +33,7 @@ void Games::setGame(const GameMode &newGame)
         texturesIncompatibleFormats << "B5G5R5A1_UNORM" << "B5G6R5_UNORM";
         iniPath = "settings/SkyrimSE/config.ini";
         logPath = "SkyrimSE_log.html";
+        resourcePath = "resources/SkyrimSE/";
         break;
     case TES5:
         bsaFormat = baFO3;
@@ -49,6 +50,7 @@ void Games::setGame(const GameMode &newGame)
         texturesIncompatibleFormats << "BC7_UNORM";
         iniPath = "settings/TES5/config.ini";
         logPath = "TES5_log.html";
+        resourcePath = "resources/TES5/";
         break;
     }
 }
@@ -134,4 +136,9 @@ QString Games::getIniPath() const
 QString Games::getLogPath() const
 {
     return logPath;
+}
+
+QString Games::getResourcePath() const
+{
+    return resourcePath;
 }

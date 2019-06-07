@@ -85,10 +85,12 @@ void Manager::listFiles()
 {
     filesWeight = 0;
     files.clear();
+    animations.clear();
+    BSAs.clear();
 
-    for(auto subDir : modsToProcess)
+    for(const QFileInfo& subDir : modsToProcess)
     {
-        QDirIterator it(subDir, QDirIterator::Subdirectories);
+        QDirIterator it(subDir.filePath(), QDirIterator::Subdirectories);
         while(it.hasNext())
         {
             it.next();
@@ -99,17 +101,19 @@ void Manager::listFiles()
             bool animation = options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
             bool bsa = options.bBsaExtract && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive);
-            if(mesh || textureDDS || textureTGA || animation)
+
+            auto addToList = [&](QFileInfoList& list)
             {
                 filesWeight += it.fileInfo().size();
-                files << it.fileInfo();
-            }
+                list << it.fileInfo();
+            };
 
+            if(mesh || textureDDS || textureTGA)
+                addToList(files);
+            else if(animation)
+                addToList(animations);
             else if(bsa)
-            {
-                filesWeight += it.fileInfo().size() * 2;
-                BSAs << it.fileInfo();
-            }
+                addToList(BSAs);
         }
     }
 }
@@ -182,7 +186,7 @@ bool Manager::checkSettings()
 {
     if(!QDir(userPath).exists() || userPath.size() < 5)
     {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This path does not exist or is shorter than 5 characters.");
+        QLogger::QLog_Error("MainOptimizer", "\nError. This path does not exist or is shorter than 5 characters. Path:'" + userPath + "'");
         return false;
     }
 
@@ -194,19 +198,19 @@ bool Manager::checkSettings()
 
     if(options.iLogLevel < 0 || options.iLogLevel > 6)
     {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist.");
+        QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist. Log level: " + QString::number(options.iLogLevel));
         return false;
     }
 
     if(options.iMeshesOptimizationLevel < 0 || options.iMeshesOptimizationLevel > 3)
     {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist.");
+        QLogger::QLog_Error("MainOptimizer", "\nError. This meshes optimization level does not exist. Level: " + QString::number(options.iMeshesOptimizationLevel));
         return false;
     }
 
     if(options.iTexturesOptimizationLevel < 0 || options.iTexturesOptimizationLevel > 2)
     {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist.");
+        QLogger::QLog_Error("MainOptimizer", "\nError. This textures optimization level does not exist. Level: " + QString::number(options.iTexturesOptimizationLevel));
         return false;
     }
 
@@ -216,13 +220,17 @@ bool Manager::checkSettings()
 void Manager::resetIni()
 {
     QString blankIni("resources/defaultIni.ini");
-    QString CathedralIni = "settings/SkyrimSE.ini";
-    QFile::remove(CathedralIni);
-    QFile::copy(blankIni, CathedralIni);
+    QFile::remove(CAO_INI_PATH);
+    QFile::copy(blankIni, CAO_INI_PATH);
 }
 
 void Manager::readIni()
 {
+    QFile ini(CAO_INI_PATH);
+    ini.open(QFile::ReadOnly);
+    QLogger::QLog_Debug("MainOptimizer", "Ini content:\n" + ini.readAll() );
+    ini.close();
+
     userPath = settings->value("SelectedPath").toString();
 
     int iniMode = settings->value("iMode").toInt();
@@ -274,6 +282,8 @@ void Manager::setGame()
     QSettings commonSettings("settings/common/config.ini", QSettings::IniFormat, this);
     QString game = commonSettings.value("Game").toString();
 
+    QLogger::QLog_Debug("MainOptimizer", "Game: " + game);
+
     if(game == "SSE")
         CAO_SET_CURRENT_GAME(SSE)
     else if(game == "TES5")
@@ -288,65 +298,47 @@ void Manager::runOptimization()
 
     MainOptimizer optimizer(options);
 
-    //NOTE might want to use a blockingMap instead
-    QVector<QFuture<void>> array;
-
     //Reading headparts. Used for meshes optimization
     optimizer.addHeadparts(userPath, mode == severalMods);
 
-    //Extracting BSAs
-    for (const QFileInfo& bsa : BSAs)
+    //Lambda used to process files
+    auto ProcessFilesMultithreaded = [&](QFileInfoList& container, auto function)
     {
-        array << QtConcurrent::run([&]()
-        {
-            optimizer.process(bsa.absoluteFilePath());
-            completedFilesWeight += bsa.size();
-        });
-    }
-
-    for(QFuture<void>& future : array)
-        future.waitForFinished();
-
-    listFiles();
-
-    for(const auto& file : files)
-    {
-        //HKX files cannot be processed in a multithreaded way
-        if(file.fileName().endsWith(".hkx", Qt::CaseInsensitive))
-        {
-            optimizer.process(file.absoluteFilePath());
-            completedFilesWeight += file.size();
-        }
-        else
-        {
-            array << QtConcurrent::run([&]()
+        //Processing files in several threads
+        QVector<QFuture <void>> futures;
+        for(const auto& file : container)
+            futures << QtConcurrent::run([&]()
             {
-                optimizer.process(file.absoluteFilePath());
+                (optimizer.*function)(file.absoluteFilePath());
                 completedFilesWeight += file.size();
             });
-        }
+
+        //Waiting for the processes to be completed
+        for(auto& future : futures)
+            future.waitForFinished();
+    };
+
+    //Extracting BSAs
+    ProcessFilesMultithreaded(BSAs, &MainOptimizer::process);
+
+    //Listing new files
+    listFiles();
+
+    //Processing animations separately since they cannot be processed in a multithreading way
+    for(const QFileInfo& info : animations)
+    {
+        optimizer.process(info.absoluteFilePath());
+        completedFilesWeight += info.size();
     }
 
-    for(QFuture<void>& future : array)
-        future.waitForFinished();
+    //Processing other files
+    ProcessFilesMultithreaded(files, &MainOptimizer::process);
 
     //Packing BSAs
-
     if(options.bBsaCreate)
-    {
-        for(const QString& folder : modsToProcess)
-        {
-            array << QtConcurrent::run([&]()
-            {
-                optimizer.packBsa(folder);
-            });
-        }
-    }
+        ProcessFilesMultithreaded(modsToProcess, &MainOptimizer::packBsa);
 
-    //Waiting for all tasks to be completed
-
-    for(QFuture<void>& future : array)
-        future.waitForFinished();
+    FilesystemOperations::deleteEmptyDirectories(userPath);
 
     QLogger::QLog_Info("MainOptimizer", "\n\n\nProcess completed");
 

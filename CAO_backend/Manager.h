@@ -48,6 +48,10 @@ private:
      */
     QFileInfoList files;
     /*!
+     * \brief The animations to process. Separated, since they don't support multithreading
+     */
+    QFileInfoList animations;
+    /*!
      * \brief List all the files in the modsToProcess list and store them. Also add their weights to filesWeight
      */
     void listFiles();
@@ -79,7 +83,7 @@ private:
 
     OptimizationMode mode;
     QString userPath{};
-    QStringList modsToProcess{};
+    QFileInfoList modsToProcess{};
     QFileInfoList BSAs;
 
     QSettings *settings;

@@ -11,7 +11,7 @@ TES5::TES5() : ui(new Ui::TES5)
 
     //Setting game mode
     QSettings commonSettings("settings/common/config.ini", QSettings::IniFormat, this);
-    commonSettings.setValue("Game", "SSE");
+    commonSettings.setValue("Game", "TES5");
 
     //Loading remembered settings
     settings = new QSettings("settings/TES5/config.ini", QSettings::IniFormat, this);
@@ -197,7 +197,6 @@ void TES5::saveUIToFile()
 void TES5::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
-    settings->setValue("game", "tes5");
 
     //BSA
 
@@ -296,7 +295,7 @@ void TES5::updateLog()
 {
     ui->plainTextEdit->clear();
 
-    QFile log("logs/TES5/log.html");
+    QFile log("logs/TES5_log.html");
     if(log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);
