@@ -1,5 +1,4 @@
-#ifndef BSARCHIVEENTRIES_H
-#define BSARCHIVEENTRIES_H
+#pragma once
 
 #include "QLibbsarch.h"
 
@@ -22,4 +21,3 @@ public:
 private:
     bsa_entry_list_t m_entries;
 };
-#endif // BSARCHIVEENTRIES_H

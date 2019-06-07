@@ -5,9 +5,7 @@ BSArchiveEntries::BSArchiveEntries() : m_entries (bsa_entry_list_create()) {}
 BSArchiveEntries::BSArchiveEntries(const QStringList& QSLEntries) : m_entries (bsa_entry_list_create())
 {
     for(auto entry : QSLEntries)
-    {
         add (entry);
-    }
 }
 
 BSArchiveEntries::BSArchiveEntries(const bsa_entry_list_t& entries) : m_entries(entries) {}
@@ -31,8 +29,9 @@ void BSArchiveEntries::reset()
 void BSArchiveEntries::add(const QString &filepath)
 {
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(filepath) );
-
     auto result = bsa_entry_list_add(m_entries, path);
+    delete path;
+
     if(result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
 }

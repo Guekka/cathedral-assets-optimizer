@@ -1,5 +1,4 @@
-#ifndef BSARCHIVE_H
-#define BSARCHIVE_H
+#pragma once
 
 #include "QLibbsarch.h"
 #include "BSArchiveEntries.h"
@@ -35,5 +34,3 @@ private:
     bsa_archive_t m_archive;
 
 };
-
-#endif // BSARCHIVE_H

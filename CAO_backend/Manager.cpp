@@ -286,10 +286,10 @@ void Manager::setGame()
 
     if(game == "SSE")
         CAO_SET_CURRENT_GAME(SSE)
-    else if(game == "TES5")
-        CAO_SET_CURRENT_GAME(TES5)
-    else
-        throw std::runtime_error("Cannot set game. Game:\"" + game.toStdString() + "\" does not exist");
+                else if(game == "TES5")
+                CAO_SET_CURRENT_GAME(TES5)
+                else
+                throw std::runtime_error("Cannot set game. Game:\"" + game.toStdString() + "\" does not exist");
 }
 
 void Manager::runOptimization()
@@ -301,7 +301,14 @@ void Manager::runOptimization()
     //Reading headparts. Used for meshes optimization
     optimizer.addHeadparts(userPath, mode == severalMods);
 
-    //Lambda used to process files
+    //Lambdas used to process files
+    auto ProcessFile = [&](const QFileInfo& file, auto function)
+    {
+            (optimizer.*function)(file.absoluteFilePath());
+            completedFilesWeight += file.size();
+    };
+
+
     auto ProcessFilesMultithreaded = [&](QFileInfoList& container, auto function)
     {
         //Processing files in several threads
@@ -309,8 +316,7 @@ void Manager::runOptimization()
         for(const auto& file : container)
             futures << QtConcurrent::run([&]()
             {
-                (optimizer.*function)(file.absoluteFilePath());
-                completedFilesWeight += file.size();
+                ProcessFile(file, function);
             });
 
         //Waiting for the processes to be completed
@@ -319,17 +325,15 @@ void Manager::runOptimization()
     };
 
     //Extracting BSAs
-    ProcessFilesMultithreaded(BSAs, &MainOptimizer::process);
+    for(const auto& info : BSAs)
+        ProcessFile(info, &MainOptimizer::process);
 
-    //Listing new files
+    //Listing new extracted files
     listFiles();
 
-    //Processing animations separately since they cannot be processed in a multithreading way
+    //Processing animations separately since they cannot be processed in a multithreaded way
     for(const QFileInfo& info : animations)
-    {
-        optimizer.process(info.absoluteFilePath());
-        completedFilesWeight += info.size();
-    }
+        ProcessFile(info, &MainOptimizer::process);
 
     //Processing other files
     ProcessFilesMultithreaded(files, &MainOptimizer::process);

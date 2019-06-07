@@ -20,8 +20,10 @@ void BSArchive::open(const QString &archivePath)
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(archivePath) );
     auto result = bsa_load_from_file(m_archive, path);
 
+    delete path;
     if(result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
+
 }
 
 void BSArchive::close()
@@ -33,6 +35,7 @@ void BSArchive::create(const QString &archiveName, const bsa_archive_type_e& typ
 {
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(archiveName) );
     bsa_create_archive(m_archive, path, type, entries.getEntries());
+    delete path;
 }
 
 
@@ -50,6 +53,9 @@ void BSArchive::addFileFromDiskRoot(const QString &rootDir, const QString &filen
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(filename) );
     auto result = bsa_add_file_from_disk_root(m_archive, rootPath, path);
 
+    delete rootPath;
+    delete path;
+
     if(result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
 }
@@ -66,20 +72,25 @@ void BSArchive::addFileFromDisk(const QString &pathInArchive, const QString &fil
     const wchar_t *archivePath = QStringToWchar( QDir::toNativeSeparators(pathInArchive));
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(filePath) );
     auto result = bsa_add_file_from_disk_root(m_archive, archivePath, path);
+    delete archivePath;
+    delete path;
 
     if(result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
+
 }
 
-void BSArchive::addFileFromMemory(const QString &filename, const QByteArray &data) //UNTESTED
+void BSArchive::addFileFromMemory(const QString &filename, const QByteArray &data) //NOTE UNTESTED
 {
     uint32_t size = static_cast<uint32_t>(data.size());
     bsa_buffer_t buffer = const_cast<char*>(data.data());
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(filename) );
     auto result = bsa_add_file_from_memory(m_archive, path, size, buffer);
+    delete path;
 
     if(result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
+
 }
 
 void BSArchive::setCompressed(bool value)
@@ -95,7 +106,9 @@ void BSArchive::setShareData(bool value)
 bsa_file_record_t BSArchive::findFileRecord(const QString &filename)
 {
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(filename) );
-    return bsa_find_file_record(m_archive, path);
+    auto result = bsa_find_file_record(m_archive, path);
+    delete path;
+    return result;
 }
 
 QByteArray BSArchive::extractFileDataByRecord(bsa_file_record_t record)
@@ -108,6 +121,7 @@ QByteArray BSArchive::extractFileDataByRecord(bsa_file_record_t record)
     char* buffer = static_cast<char*>(result.buffer.data);
 
     QByteArray byte_array(buffer, static_cast<int>(result.buffer.size));
+    delete buffer;
     return byte_array;
 }
 
@@ -116,6 +130,7 @@ QByteArray BSArchive::extractFileDataByFilename(const QString &filename)
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(filename) );
     auto result = bsa_extract_file_data_by_filename(m_archive, path);
 
+    delete path;
     if(result.message.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.message.text));
 
@@ -131,6 +146,9 @@ void BSArchive::extract(const QString &filename, const QString &saveAs)
     const wchar_t *extractedPath = QStringToWchar( QDir::toNativeSeparators(saveAs) );
 
     auto result = bsa_extract_file(m_archive, path, extractedPath);
+
+    delete path;
+    delete extractedPath;
 
     if(result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));

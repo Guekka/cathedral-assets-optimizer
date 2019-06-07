@@ -1,5 +1,4 @@
-#ifndef BSARCHIVEAUTO_H
-#define BSARCHIVEAUTO_H
+#pragma once
 
 #include "BSArchive.h"
 #include "BSArchiveEntries.h"
@@ -68,5 +67,3 @@ private:
     QDir rootDirectory;
 
 };
-
-#endif // BSARCHIVEAUTO_H
