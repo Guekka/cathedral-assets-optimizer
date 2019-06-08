@@ -22,10 +22,7 @@ void MainOptimizer::process(const QString &file)
     else if(file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
     else
-    {
         QLogger::QLog_Error("MainOptimizer", "Cannot process: " + file);
-        QLogger::QLog_Error("Errors", "Cannot process: " + file);
-    }
 }
 
 void MainOptimizer::packBsa(const QString &folder)

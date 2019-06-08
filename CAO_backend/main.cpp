@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
     catch(std::runtime_error e)
     {
         QLogger::QLog_Fatal("MainOptimizer", e.what());
-        QLogger::QLog_Fatal("Errors", e.what());
         QTextStream(stderr) << e.what();
         return 1;
     }

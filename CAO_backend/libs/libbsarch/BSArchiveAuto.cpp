@@ -9,17 +9,14 @@ void BSArchiveAuto::create(const QString &archiveName, const bsa_archive_type_e 
     const wchar_t *path = QStringToWchar( QDir::toNativeSeparators(archiveName) );
     bsa_create_archive(getArchive(), path, type, getEntries());
 
-    QMap<QString, QByteArray>::iterator memoryIt;
-    QMap<QString, QString>::iterator diskIt;
+    for(auto it = filesfromMemory.constBegin(); it != filesfromMemory.constEnd(); ++it)
+        BSArchive::addFileFromMemory(it.key(), it.value());
 
-    for(auto ptr = memoryIt->begin(); ptr != memoryIt->end(); ++ptr)
-        BSArchive::addFileFromMemory(memoryIt.key(), memoryIt.value());
-
-    for (auto file : filesFromDiskRoot)
+    for (const auto& file : filesFromDiskRoot)
         BSArchive::addFileFromDiskRoot(rootDirectory.path(), file);
 
-    for(auto ptr = diskIt->begin(); ptr != diskIt->end(); ++diskIt)
-        BSArchive::addFileFromDisk(diskIt.key(), diskIt.value());
+    for(auto it = filesFromDisk.constBegin(); it != filesFromDisk.constEnd(); ++it)
+        BSArchive::addFileFromDisk(it.key(), it.value());
 
     delete path;
 }

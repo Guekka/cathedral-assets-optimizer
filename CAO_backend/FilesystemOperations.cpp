@@ -37,7 +37,6 @@ bool FilesystemOperations::moveFiles(const QString& source, const QString& desti
         if(newFileRelativeFilename.size() >= 255 || oldFile.size() >=255)
         {
             QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
-            QLogger::QLog_Error("Errors", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
             return false;
         }
 
@@ -163,7 +162,6 @@ void FilesystemOperations::copyDir(const QString& source, const QString& destina
         if(newFile.size() >= 255)
         {
             QLogger::QLog_Error("FilesystemOperations", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
-            QLogger::QLog_Error("Errors", tr("An error occurred while moving files. Try reducing path size (260 characters is the maximum)"));
             return;
         }
 

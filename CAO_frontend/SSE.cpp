@@ -106,6 +106,7 @@ SSE::SSE() : ui(new Ui::SSE)
     {
          QString readLine = QString::fromLocal8Bit(caoProcess->readLine());
          ui->progressBar->setValue(readLine.toInt());
+         this->updateLog();
     });
 
 

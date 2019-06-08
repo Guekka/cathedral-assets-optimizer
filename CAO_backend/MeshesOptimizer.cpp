@@ -24,16 +24,15 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel) :
         }
     }
     else
-    {
         QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
-        QLogger::QLog_Warning("Errors", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
-    }
 }
 
 ScanResult MeshesOptimizer::scan(const QString &filePath)
 {
     NifFile nif (filePath.toStdString());
     ScanResult result;
+
+    QLogger::QLog_Trace("MeshesOptimizer", "Scanning mesh: " + filePath);
 
     result = good;
 
@@ -77,6 +76,7 @@ void MeshesOptimizer::listHeadparts(const QString& directory)
 void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected mesh
 {
     NifFile nif(filePath.toStdString());
+    QLogger::QLog_Trace("MeshesOptimizer", "Optimizing mesh: " + filePath);
 
     //TODO ignore files already converted
 
@@ -122,6 +122,7 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
             break;
         }
     }
+    QLogger::QLog_Trace("MeshesOptimizer", "Resaving mesh: " + filePath);
     nif.Save(filePath.toStdString());
 }
 

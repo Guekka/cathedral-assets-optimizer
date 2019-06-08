@@ -9,9 +9,15 @@
 
 enum OptimizationMode { singleMod = 0, severalMods = 1};
 
+struct FilePathSize
+{
+    QString filepath;
+    uint size;
+};
 
 class Manager : public QObject
 {
+    Q_OBJECT
 public:
     /*!
      * \brief Constructor that will perform a number of functions
@@ -21,6 +27,10 @@ public:
      * \brief The main process
      */
     void runOptimization();
+    /*!
+     * \brief Print the progress to stdout
+     */
+    void printProgress();
 
 private:
 
@@ -46,27 +56,27 @@ private:
     /*!
      * \brief The files to process
      */
-    QFileInfoList files;
+    QVector<FilePathSize> files;
     /*!
      * \brief The animations to process. Separated, since they don't support multithreading
      */
-    QFileInfoList animations;
+    QVector<FilePathSize> animations;
+    /*!
+     * \brief The BSAs to extract
+     */
+    QVector<FilePathSize> BSAs;
     /*!
      * \brief List all the files in the modsToProcess list and store them. Also add their weights to filesWeight
      */
-    void listFiles();
-    /*!
-     * \brief Print the progress to stdout
-     */
-    void printProgress();
+    void listFiles(const bool &calculateFileWeight);
     /*!
      * \brief The weight of all files. Used to determine progress
      */
-    int filesWeight;
+    int filesWeight = 0;
     /*!
      * \brief The weight of completed files. Used to determine progress
      */
-    int completedFilesWeight;
+    int completedFilesWeight = 0;
     /*!
      * \brief Reset the ini
      */
@@ -76,19 +86,29 @@ private:
      * \return A bool indicating the success
      */
     bool checkRequirements();
-
+    /*!
+     * \brief Read the common ini and set the game
+     */
     void setGame();
-
+    /*!
+     * \brief The optimization options, that will be given to the MainOptimizer
+     */
     OptOptionsCAO options;
-
+    /*!
+     * \brief The optimization mode
+     */
     OptimizationMode mode;
+    /*!
+      * \brief The path given by the user
+      */
     QString userPath{};
-    QFileInfoList modsToProcess{};
-    QFileInfoList BSAs;
-
+    /*!
+      * \brief The list of directories to process
+      */
+    QVector<FilePathSize> modsToProcess{};
+    /*!
+     * \brief Used to read the INI
+     */
     QSettings *settings;
-
-    QTimer *timer;
-
 };
 
