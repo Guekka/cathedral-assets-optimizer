@@ -114,6 +114,7 @@ SSE::SSE() : ui(new Ui::SSE)
     {
         ui->processButton->setDisabled(false);
         bLockVariables = false;
+        ui->progressBar->setValue(100);
         updateLog();
     });
 }

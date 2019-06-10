@@ -106,6 +106,7 @@ TES5::TES5() : ui(new Ui::TES5)
     QObject::connect(caoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [&]()
     {
         ui->processButton->setDisabled(false);
+        ui->progressBar->setValue(100);
         bLockVariables = false;
         updateLog();
     });
