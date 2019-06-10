@@ -500,11 +500,14 @@
        <bool>true</bool>
       </property>
       <property name="checkable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QRadioButton" name="animationOptimizationRadioButton">
+        <widget class="QCheckBox" name="animationOptimizationCheckBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -532,6 +535,9 @@
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to SSE format. If an animation is already compatible, no change will be made.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
+         <property name="locale">
+          <locale language="English" country="UnitedKingdom"/>
+         </property>
          <property name="text">
           <string>Necessary optimization</string>
          </property>
@@ -540,6 +546,9 @@
          </property>
          <property name="checked">
           <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
          </property>
         </widget>
        </item>

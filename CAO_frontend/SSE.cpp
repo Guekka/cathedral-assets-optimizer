@@ -42,8 +42,7 @@ SSE::SSE() : ui(new Ui::SSE)
     connect(ui->MeshesMediumOptimizationRadioButton, &QCheckBox::clicked, this, &SSE::saveUIToFile);
     connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &SSE::saveUIToFile);
 
-    connect(ui->animationsGroupBox, &QGroupBox::clicked, this, &SSE::saveUIToFile);
-    connect(ui->animationOptimizationRadioButton, &QCheckBox::clicked, this, &SSE::saveUIToFile);
+    connect(ui->animationOptimizationCheckBox, &QCheckBox::clicked, this, &SSE::saveUIToFile);
 
     //Connecting the other widgets
 
@@ -185,7 +184,7 @@ void SSE::saveUIToFile()
     //Animations
 
     settings->beginGroup("Animations");
-    settings->setValue("bAnimationsOptimization", ui->animationsGroupBox->isChecked());
+    settings->setValue("bAnimationsOptimization", ui->animationOptimizationCheckBox->isChecked());
     settings->endGroup();
 
     //Dry run and mode
@@ -250,7 +249,7 @@ void SSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     //Animations
 
     settings->beginGroup("Animations");
-    ui->animationsGroupBox->setChecked(settings->value("bAnimationsOptimization").toBool());
+    ui->animationOptimizationCheckBox->setChecked(settings->value("bAnimationsOptimization").toBool());
     settings->endGroup();
 
     //General and GUI
