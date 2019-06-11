@@ -211,7 +211,7 @@ bool BsaOptimizer::isIgnoredFile(const QString &filepath)
 {
     for(const auto& fileToNotPack : filesToNotPack)
     {
-        if(filepath.contains(fileToNotPack))
+        if(filepath.contains(fileToNotPack, Qt::CaseInsensitive))
             return true;
     }
     return  false;
