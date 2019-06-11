@@ -6,6 +6,7 @@
 
 #include "pch.h"
 #include "ui_TES5.h"
+#include "GameSelector.h"
 
 namespace Ui {
     class TES5;

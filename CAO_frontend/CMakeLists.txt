@@ -19,6 +19,7 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 set(SRCS
     main.cpp
+    GameSelector.cpp
     selectiondialog.cpp
     TES5.cpp
     SSE.cpp
@@ -30,6 +31,7 @@ set(SRCS
 set(HEADERS
     pch.h
     selectiondialog.h
+    GameSelector.h
     TES5.h
     SSE.h
     )

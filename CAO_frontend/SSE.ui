@@ -591,6 +591,7 @@
     </widget>
     <addaction name="menuLog_verbosity"/>
     <addaction name="actionChangeTheme"/>
+    <addaction name="actionSelect_game"/>
    </widget>
    <addaction name="menuTools"/>
   </widget>
@@ -639,6 +640,11 @@
    </property>
    <property name="statusTip">
     <string>Will show nearly no information</string>
+   </property>
+  </action>
+  <action name="actionSelect_game">
+   <property name="text">
+    <string>Select game</string>
    </property>
   </action>
  </widget>

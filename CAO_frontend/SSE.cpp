@@ -9,10 +9,6 @@ SSE::SSE() : ui(new Ui::SSE)
 {
     ui->setupUi(this);
 
-    //Setting game mode
-    QSettings commonSettings("settings/common/config.ini", QSettings::IniFormat, this);
-    commonSettings.setValue("Game", "SSE");
-
     //Loading remembered settings    
     settings = new QSettings("settings/SkyrimSE/config.ini", QSettings::IniFormat, this);
 
@@ -95,6 +91,9 @@ SSE::SSE() : ui(new Ui::SSE)
 
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 0);});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &SSE::loadUIFromFile);
+
+    connect(ui->actionSelect_game, &QAction::triggered, GameSelector::getInstance(), [&]() {
+        GameSelector::getInstance()->mainProcess(true); } );
 
     //Setting caoProcess
 

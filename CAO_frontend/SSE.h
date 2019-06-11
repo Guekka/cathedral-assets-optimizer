@@ -6,6 +6,7 @@
 
 #include "pch.h"
 #include "ui_SSE.h"
+#include "GameSelector.h"
 
 namespace Ui {
     class SSE;

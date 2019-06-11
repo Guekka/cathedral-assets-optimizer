@@ -9,10 +9,6 @@ TES5::TES5() : ui(new Ui::TES5)
 {
     ui->setupUi(this);
 
-    //Setting game mode
-    QSettings commonSettings("settings/common/config.ini", QSettings::IniFormat, this);
-    commonSettings.setValue("Game", "TES5");
-
     //Loading remembered settings
     settings = new QSettings("settings/TES5/config.ini", QSettings::IniFormat, this);
 
@@ -91,6 +87,9 @@ TES5::TES5() : ui(new Ui::TES5)
 
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 0);});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &TES5::loadUIFromFile);
+
+    connect(ui->actionSelect_game, &QAction::triggered, GameSelector::getInstance(), [&]() {
+        GameSelector::getInstance()->mainProcess(true); } );
 
     //Setting caoProcess
 
