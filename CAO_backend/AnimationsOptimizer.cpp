@@ -42,18 +42,16 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat& p
         hkResource *resource;
         hkResult res;
 
-        {
-            hkIstream istream(qPrintable(filePath));
-            if(!istream.isOk())
-                throw std::runtime_error("An error occured while loading this file.");
+        hkIstream istream(qPrintable(filePath));
+        if(!istream.isOk())
+            throw std::runtime_error("An error occured while loading this file.");
 
-            hkStreamReader *reader = istream.getStreamReader();
-            res = hkSerializeLoad(reader, root, resource);
+        hkStreamReader *reader = istream.getStreamReader();
 
-        }
+        res = hkSerializeLoad(reader, root, resource);
 
-        if (res != HK_SUCCESS) //TODO only write error if the file isn't already AMD64
-            QLogger::QLog_Warning("AnimationsOptimizer", "File is not loadable: " + filePath);
+        if (res != HK_SUCCESS)
+            QLogger::QLog_Warning("AnimationsOptimizer", tr("File is not loadable: ") + filePath + '\n' + tr("It is probably already converted."));
 
         else
         {

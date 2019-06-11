@@ -29,10 +29,13 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel) :
 
 ScanResult MeshesOptimizer::scan(const QString &filePath)
 {
-    NifFile nif (filePath.toStdString());
+    NifFile nif;
+    if(nif.Load(filePath.toStdString()) != 0)
+    {
+        QLogger::QLog_Error("MeshesOptimizer", tr("Cannot load mesh: ") + filePath);
+        return doNotProcess;
+    }
     ScanResult result;
-
-    QLogger::QLog_Trace("MeshesOptimizer", "Scanning mesh: " + filePath);
 
     result = good;
 
@@ -75,10 +78,12 @@ void MeshesOptimizer::listHeadparts(const QString& directory)
 
 void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected mesh
 {
-    NifFile nif(filePath.toStdString());
-    QLogger::QLog_Trace("MeshesOptimizer", "Optimizing mesh: " + filePath);
-
-    //TODO ignore files already converted
+    NifFile nif;
+    if(nif.Load(filePath.toStdString()) != 0)
+    {
+        QLogger::QLog_Error("MeshesOptimizer", tr("Cannot load mesh: ") + filePath);
+        return;
+    }
 
     OptOptions options;
     options.targetVersion.SetFile(CAO_MESHES_FILE_VERSION);
