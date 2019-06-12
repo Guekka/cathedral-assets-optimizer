@@ -13,7 +13,6 @@ See the included LICENSE file
 #include <string>
 #include <algorithm>
 #include <memory>
-#include <iostream>
 
 enum NiFileVersion : uint {
 	V2_3 = 0x02030000,
