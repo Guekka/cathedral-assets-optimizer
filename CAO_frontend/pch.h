@@ -11,6 +11,7 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <QTranslator>
+#include <QTimer>
 /*----------------------*/
 
 

@@ -96,18 +96,31 @@ TES5::TES5() : ui(new Ui::TES5)
     caoProcess = new QProcess(this);
     caoProcess->setProgram("bin/Cathedral_Assets_Optimizer_back.exe");
 
-    QObject::connect(caoProcess, &QProcess::readyReadStandardOutput, this, [&]()
-    {
-        QString readLine = QString::fromLocal8Bit(caoProcess->readLine());
-        ui->progressBar->setValue(readLine.toInt());
-    });
-
     QObject::connect(caoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [&]()
     {
         ui->processButton->setDisabled(false);
         ui->progressBar->setValue(100);
         bLockVariables = false;
         updateLog();
+    });
+
+    //Setting timer to read progress from caoProcess
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [&]()
+    {
+        QString readLine;
+        while(caoProcess->canReadLine())
+            readLine = QString::fromLocal8Bit(caoProcess->readLine());
+        QStringList line = readLine.simplified().split('|');
+        if(readLine.startsWith("PROGRESS:"))
+        {
+            ui->progressBar->setFormat(line.at(1));
+            int completed = line.at(2).toInt();
+            int total = line.at(3).toInt();
+            ui->progressBar->setMaximum(total);
+            ui->progressBar->setValue(completed);
+            this->updateLog();
+        }
     });
 }
 

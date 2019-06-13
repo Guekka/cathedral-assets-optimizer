@@ -49,7 +49,7 @@ Manager::Manager()
     QLogger::QLog_Info("MainOptimizer", "Listing files and directories...");
 
     listDirectories();
-    listFiles(true);
+    listFiles();
 }
 
 void Manager::listDirectories()
@@ -57,45 +57,33 @@ void Manager::listDirectories()
     modsToProcess.clear();
 
     if(mode == OptimizationMode::singleMod)
-    {
-        FilePathSize folder;
-        folder.filepath = userPath;
-        modsToProcess << folder;
-    }
+        modsToProcess << userPath;
 
     else if(mode == OptimizationMode::severalMods)
     {
         QDir dir(userPath);
         for(auto subDir : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-        {
-            FilePathSize folder;
-            folder.filepath = dir.filePath(subDir);
             if(!subDir.contains("separator") && !ignoredMods.contains(subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
-                modsToProcess << folder;
-        }
+                modsToProcess << dir.filePath(subDir);
     }
 }
 
-void Manager::printProgress()
+void Manager::printProgress(const int& total, const QString& text = "Processing files")
 {
-    if(filesWeight == 0)
-        return;
-    double progress = static_cast<double> (completedFilesWeight * 100.0) / static_cast<double> (filesWeight * 100.0);
-    std::cout << progress << std::endl;
+    //'|' is used a separator by the frontend
+    std::cout << "PROGRESS:|" << text.toStdString() << " - %v/%m - %p%|"  << numberCompletedFiles << '|' << total << std::endl;
 }
 
-void Manager::listFiles(const bool& calculateFileWeight)
+void Manager::listFiles()
 {
-    if(calculateFileWeight)
-        filesWeight = 0;
+    numberFiles = 0;
     files.clear();
     animations.clear();
     BSAs.clear();
 
     for(auto& subDir : modsToProcess)
     {
-        QDirIterator it(subDir.filepath, QDirIterator::Subdirectories);
-        subDir.size = 0;
+        QDirIterator it(subDir, QDirIterator::Subdirectories);
         while(it.hasNext())
         {
             it.next();
@@ -107,15 +95,9 @@ void Manager::listFiles(const bool& calculateFileWeight)
 
             bool bsa = options.bBsaExtract && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive);
 
-            auto addToList = [&](QVector<FilePathSize>& list)
-            {
-                FilePathSize file;
-                file.filepath = it.filePath();
-                file.size = static_cast<uint>(it.fileInfo().size());
-                if(calculateFileWeight)
-                    filesWeight += it.fileInfo().size();
-                subDir.size += file.size;
-                list << file;
+            auto addToList = [&](QStringList& list){
+                ++numberFiles;
+                list << it.filePath();
             };
 
             if(mesh || textureDDS || textureTGA)
@@ -125,8 +107,6 @@ void Manager::listFiles(const bool& calculateFileWeight)
             else if(bsa)
                 addToList(BSAs);
         }
-        if(options.bBsaCreate && calculateFileWeight)
-            filesWeight += subDir.size;
     }
 }
 
@@ -329,54 +309,59 @@ void Manager::runOptimization()
     //Reading headparts. Used for meshes optimization
     optimizer.addHeadparts(userPath, mode == severalMods);
 
-    //Lambdas used to process files
-    auto ProcessFile = [&](const FilePathSize& file, auto function, bool printProgress)
+    //Extracting BSAs
+    for(const auto& file : BSAs)
     {
-        QLogger::QLog_Debug("MainOptimizer", "currentFile: " + file.filepath);
-        (optimizer.*function)(file.filepath);
-        completedFilesWeight += file.size;
-        if(printProgress)
-            this->printProgress();
-    };
+        optimizer.process(file);
+        ++numberCompletedFiles;
+        printProgress(BSAs.size(), "Extracting BSAs");
+    }
+
+    //Listing new extracted files
+    listFiles();
+
+    //Processing animations separately since they cannot be processed in a multithreaded way
+    printProgress(numberFiles, "Processing animations");
+    for(const auto& file : animations)
+    {
+        optimizer.process(file);
+        ++numberCompletedFiles;
+        if(numberCompletedFiles % 10 == 0)
+            printProgress(numberFiles);
+    }
 
 
-    auto ProcessFilesMultithreaded = [&](QVector<FilePathSize>& container, auto function)
+    //Processing other files
+    for(const auto& file : files)
     {
         //Processing files in several threads
         QVector<QFuture <void>> futures;
-        for(const auto& file : container)
             futures << QtConcurrent::run([&]()
             {
-                ProcessFile(file, function, false);
+                optimizer.process(file);
             });
 
         //Waiting for the processes to be completed
         for(auto& future : futures)
+        {
             future.waitForFinished();
-    };
+            ++numberCompletedFiles;
+            if(numberCompletedFiles % 10 == 0)
+                printProgress(numberFiles);
+        }
+    }
 
-    //Extracting BSAs
-    for(const auto& file : BSAs)
-        ProcessFile(file, &MainOptimizer::process, true);
-
-    //Listing new extracted files
-    listFiles(false);
-
-    //Processing animations separately since they cannot be processed in a multithreaded way
-    for(const auto& file : animations)
-        ProcessFile(file, &MainOptimizer::process, false);
-
-    printProgress();
-
-    //Processing other files
-    ProcessFilesMultithreaded(files, &MainOptimizer::process);
-
-    printProgress();
+    numberCompletedFiles = 0;
+    printProgress(modsToProcess.size(), "Packing BSAs");
 
     //Packing BSAs
     if(options.bBsaCreate)
-        for(const auto& info : modsToProcess)
-            ProcessFile(info, &MainOptimizer::packBsa, true);
+        for(const auto& folder : modsToProcess)
+        {
+            optimizer.packBsa(folder);
+            ++numberCompletedFiles;
+            printProgress(modsToProcess.size(), "Packing BSAs");
+        }
 
     FilesystemOperations::deleteEmptyDirectories(userPath);
 

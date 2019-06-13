@@ -9,12 +9,6 @@
 
 enum OptimizationMode { singleMod = 0, severalMods = 1};
 
-struct FilePathSize
-{
-    QString filepath;
-    uint size;
-};
-
 class Manager : public QObject
 {
     Q_OBJECT
@@ -29,8 +23,10 @@ public:
     void runOptimization();
     /*!
      * \brief Print the progress to stdout
+     * \param The text to display
+     * \param The total number of files to process
      */
-    void printProgress();
+    void printProgress(const int &total, const QString& text);
 
 private:
 
@@ -56,27 +52,27 @@ private:
     /*!
      * \brief The files to process
      */
-    QVector<FilePathSize> files;
+    QStringList files;
     /*!
      * \brief The animations to process. Separated, since they don't support multithreading
      */
-    QVector<FilePathSize> animations;
+    QStringList animations;
     /*!
      * \brief The BSAs to extract
      */
-    QVector<FilePathSize> BSAs;
+    QStringList BSAs;
     /*!
      * \brief List all the files in the modsToProcess list and store them. Also add their weights to filesWeight
      */
-    void listFiles(const bool &calculateFileWeight);
+    void listFiles();
     /*!
-     * \brief The weight of all files. Used to determine progress
+     * \brief The number of all files. Used to determine progress
      */
-    int filesWeight = 0;
+    int numberFiles = 0;
     /*!
-     * \brief The weight of completed files. Used to determine progress
+     * \brief The number of completed files. Used to determine progress
      */
-    int completedFilesWeight = 0;
+    int numberCompletedFiles = 0;
     /*!
      * \brief Reset the ini
      */
@@ -109,7 +105,7 @@ private:
     /*!
       * \brief The list of directories to process
       */
-    QVector<FilePathSize> modsToProcess{};
+    QStringList modsToProcess{};
     /*!
      * \brief Mods on this list won't be processed
      */

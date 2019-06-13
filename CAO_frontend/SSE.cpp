@@ -9,7 +9,7 @@ SSE::SSE() : ui(new Ui::SSE)
 {
     ui->setupUi(this);
 
-    //Loading remembered settings    
+    //Loading remembered settings
     settings = new QSettings("settings/SkyrimSE/config.ini", QSettings::IniFormat, this);
 
     if(!settings->contains("iLogLevel"))
@@ -100,29 +100,43 @@ SSE::SSE() : ui(new Ui::SSE)
     caoProcess = new QProcess(this);
     caoProcess->setProgram("bin/Cathedral_Assets_Optimizer_back.exe");
 
-    QObject::connect(caoProcess, &QProcess::readyReadStandardOutput, this, [&]()
-    {
-         QString readLine = QString::fromLocal8Bit(caoProcess->readLine());
-         ui->progressBar->setValue(readLine.toInt());
-         this->updateLog();
-    });
-
-
     QObject::connect(caoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [&]()
     {
         ui->processButton->setDisabled(false);
         bLockVariables = false;
+        ui->progressBar->setMaximum(100);
         ui->progressBar->setValue(100);
         updateLog();
+        timer->stop();
+    });
+
+    //Setting timer to read progress from caoProcess
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [&]()
+    {
+        QString readLine;
+        while(caoProcess->canReadLine())
+            readLine = QString::fromLocal8Bit(caoProcess->readLine());
+        QStringList line = readLine.simplified().split('|');
+        if(readLine.startsWith("PROGRESS:"))
+        {
+            ui->progressBar->setFormat(line.at(1));
+            int completed = line.at(2).toInt();
+            int total = line.at(3).toInt();
+            ui->progressBar->setMaximum(total);
+            ui->progressBar->setValue(completed);
+            this->updateLog();
+        }
     });
 }
 
 
 void SSE::initProcess()
 {
-  caoProcess->start();
-  ui->processButton->setDisabled(true);
-  bLockVariables = true;
+    timer->start(10000);
+    caoProcess->start();
+    ui->processButton->setDisabled(true);
+    bLockVariables = true;
 }
 
 void SSE::saveUIToFile()
@@ -315,7 +329,11 @@ void SSE::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     // TODO add headparts checkbox to UI
 }
 
-
+void SSE::closeEvent(QCloseEvent* event)
+{
+    caoProcess->kill();
+    event->accept();
+}
 
 void SSE::updateLog()
 {

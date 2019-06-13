@@ -34,6 +34,8 @@ private:
 
     int progressBarValue{};
 
+    QTimer *timer;
+
     QSettings *settings;
 
     QProcess *caoProcess;

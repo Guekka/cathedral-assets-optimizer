@@ -32,6 +32,9 @@ private:
     void updateLog();
     void initProcess();
 
+    void closeEvent(QCloseEvent* event);
+    QTimer *timer;
+
     int progressBarValue{};
 
     QSettings *settings;
