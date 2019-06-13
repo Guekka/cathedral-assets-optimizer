@@ -44,6 +44,8 @@ Manager::Manager()
         throw std::runtime_error("Error while reading settings");
     }
 
+    readIgnoredMods();
+
     QLogger::QLog_Info("MainOptimizer", "Listing files and directories...");
 
     listDirectories();
@@ -68,7 +70,7 @@ void Manager::listDirectories()
         {
             FilePathSize folder;
             folder.filepath = dir.filePath(subDir);
-            if(!subDir.contains("separator")) //Separators are empty directories used by MO2
+            if(!subDir.contains("separator") && !ignoredMods.contains(subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
                 modsToProcess << folder;
         }
     }
@@ -295,10 +297,27 @@ void Manager::setGame()
 
     if(game == "SSE")
         CAO_SET_CURRENT_GAME(SSE)
-    else if(game == "TES5")
-        CAO_SET_CURRENT_GAME(TES5)
+                else if(game == "TES5")
+                CAO_SET_CURRENT_GAME(TES5)
+                else
+                throw std::runtime_error("Cannot set game. Game:\"" + game.toStdString() + "\" does not exist");
+}
+
+void Manager::readIgnoredMods()
+{
+    QFile ignoredModsFile(CAO_RESOURCES_PATH + "ignoredMods.txt");
+    if(ignoredModsFile.open(QIODevice::ReadOnly))
+    {
+        QTextStream ts(&ignoredModsFile);
+        while (!ts.atEnd())
+        {
+            QString readLine = ts.readLine();
+            if(readLine.left(1) != "#" && !readLine.isEmpty())
+                ignoredMods << readLine;
+        }
+    }
     else
-        throw std::runtime_error("Cannot set game. Game:\"" + game.toStdString() + "\" does not exist");
+        QLogger::QLog_Warning("MainOptimizer", tr("ignoredMods.txt not found. All mods will be processed, including tools such as Nemesis or Bodyslide studio."));
 }
 
 void Manager::runOptimization()

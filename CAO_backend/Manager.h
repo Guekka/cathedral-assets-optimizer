@@ -91,6 +91,10 @@ private:
      */
     void setGame();
     /*!
+     * \brief Read ignoredMods.txt and store it to a list
+     */
+    void readIgnoredMods();
+    /*!
      * \brief The optimization options, that will be given to the MainOptimizer
      */
     OptOptionsCAO options;
@@ -106,6 +110,10 @@ private:
       * \brief The list of directories to process
       */
     QVector<FilePathSize> modsToProcess{};
+    /*!
+     * \brief Mods on this list won't be processed
+     */
+    QStringList ignoredMods;
     /*!
      * \brief Used to read the INI
      */

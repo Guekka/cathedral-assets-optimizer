@@ -14,20 +14,15 @@ BsaOptimizer::BsaOptimizer()
     if(filesToNotPackFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&filesToNotPackFile);
-        QFile filesToNotPackFile("resources/FilesToNotPack.txt");
-        if(filesToNotPackFile.open(QIODevice::ReadOnly))
+        while (!ts.atEnd())
         {
-            QTextStream ts(&filesToNotPackFile);
-            while (!ts.atEnd())
-            {
-                QString readLine = ts.readLine();
-                if(readLine.left(1) != "#" && !readLine.isEmpty())
-                    filesToNotPack << readLine;
-            }
+            QString readLine = ts.readLine();
+            if(readLine.left(1) != "#" && !readLine.isEmpty())
+                filesToNotPack << readLine;
         }
-        else
-            QLogger::QLog_Warning("BsaOptimizer", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
     }
+    else
+        QLogger::QLog_Warning("BsaOptimizer", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
 }
 
 void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)
