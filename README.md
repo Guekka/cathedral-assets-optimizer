@@ -8,7 +8,7 @@ Documentation is incomplete. It is available [here](https://g_ka.gitlab.io/sse-a
 
 # Build instructions
 
-See [here](https://gitlab.com/G_ka/cao_test/blob/dev/docs/Build_Instructions.md).
+See [the wiki](https://gitlab.com/G_ka/sse-assets-optimiser/wikis/Build-instructions).
 
 # Features and use instructions
 
