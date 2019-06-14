@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "Games.h"
 
+
 Games::Games() {};
 
 Games *Games::INSTANCE = nullptr;
@@ -16,6 +17,7 @@ void Games::setGame(const GameMode &newGame)
     {
     case SSE:
         bsaFormat = baSSE;
+        bsaTexturesFormat = baSSE;
         maxBsaSize = 2 * static_cast<double>(GigaByte);
         hasBsaTextures = true;
         //Using 2.37GB for max textures size since this bsa will always be compressed.
@@ -24,6 +26,8 @@ void Games::setGame(const GameMode &newGame)
         //TODO let the user choose the max size in the INI
         maxBsaTexturesSize = 2.37 * static_cast<double>(GigaByte);
         bsaExtension = ".bsa";
+        bsaSuffix = "";
+        bsaTexturesSuffix = " - Textures";
         meshesFileVersion = V20_2_0_7;
         meshesStream = 100;
         meshesUser = 12;
@@ -37,10 +41,13 @@ void Games::setGame(const GameMode &newGame)
         break;
     case TES5:
         bsaFormat = baFO3;
+        bsaTexturesFormat = baNone;
         maxBsaSize = 2 * static_cast<double>(GigaByte);
         hasBsaTextures = false;
         maxBsaTexturesSize = 0;
         bsaExtension = ".bsa";
+        bsaSuffix = "";
+        bsaTexturesSuffix = "";
         meshesFileVersion = V20_2_0_7;
         meshesStream = 83;
         meshesUser = 12;
@@ -51,6 +58,26 @@ void Games::setGame(const GameMode &newGame)
         iniPath = "settings/TES5/config.ini";
         logPath = "TES5_log.html";
         resourcePath = "resources/TES5/";
+        break;
+    case FO4:
+        bsaFormat = baFO4;
+        bsaTexturesFormat = baFO4dds;
+        maxBsaSize = 2 * static_cast<double>(GigaByte);
+        hasBsaTextures = false; //TODO change it to true (currently bugged)
+        maxBsaTexturesSize = 2.5 * static_cast<double>(GigaByte);
+        bsaExtension = ".ba2";
+        bsaSuffix = " - Main";
+        bsaTexturesSuffix = " - Textures";
+        meshesFileVersion = V20_2_0_7;
+        meshesStream = 130;
+        meshesUser = 12;
+        animationFormat = HKPF_AMD64;
+        texturesFormat = "BC7_UNORM";
+        texturesIncompatibleExtensions << ".tga";
+        texturesIncompatibleFormats << "B5G5R5A1_UNORM" << "B5G6R5_UNORM";
+        iniPath = "settings/FO4/config.ini";
+        logPath = "FO4_log.html";
+        resourcePath = "resources/FO4/";
         break;
     }
 }
@@ -73,6 +100,11 @@ bsa_archive_type_e Games::GetBsaFormat() const
     return bsaFormat;
 }
 
+bsa_archive_type_t Games::getBsaTexturesFormat() const
+{
+    return bsaTexturesFormat;
+}
+
 double Games::getBsaMaxSize() const
 {
     return maxBsaSize;
@@ -92,6 +124,17 @@ bool Games::getHasBsaTextures() const
 {
     return hasBsaTextures;
 }
+
+QString Games::getBsaSuffix() const
+{
+    return bsaSuffix;
+}
+
+QString Games::getBsaTexturesSuffix() const
+{
+    return bsaTexturesSuffix;
+}
+
 
 uint Games::getMeshesUser() const
 {

@@ -5,24 +5,24 @@
 #pragma once
 
 #include "pch.h"
-#include "ui_TES5.h"
+#include "ui_FO4.h"
 #include "GameSelector.h"
 
 namespace Ui {
-    class TES5;
+    class FO4;
 }
 
-class TES5 : public QMainWindow
+class FO4 : public QMainWindow
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
-    TES5();
-    ~TES5();
+    FO4();
+    ~FO4();
 
 private:
     QFileDialog *fileDialog{};
-    Ui::TES5 *ui;
+    Ui::FO4 *ui;
 
     bool bDarkMode = true;
     bool bLockVariables = false;

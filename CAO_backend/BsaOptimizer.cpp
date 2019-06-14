@@ -84,9 +84,13 @@ void BsaOptimizer::create(Bsa bsa)
             bsa.files.removeAll(file);
     }
 
+
+    QLogger::QLog_Debug("BsaOptimizer", "\nBSA folder :" + bsa.path + "\nBsaName : " + bsa.path + "\nBSAFilesSize: "
+                        + QString::number(bsa.filesSize));
+
     try {
-        archive.addFileFromDiskRoot(bsa.files) ;
-    } catch (std::exception& e) {
+        archive.addFileFromDiskRoot(bsa.files);
+    } catch (const std::exception& e) {
         QLogger::QLog_Error("BsaOptimizer", e.what());
         QLogger::QLog_Error("BsaOptimizer", "Cancelling packing of: " + bsa.path);
         archive.close();
@@ -96,21 +100,19 @@ void BsaOptimizer::create(Bsa bsa)
     //Creating the archive
 
     try {
-        archive.create(bsa.path, CAO_BSA_FORMAT);
+        archive.create(bsa.path, bsa.format);
         archive.save();
         archive.close();
-    } catch (std::exception e) {
+    } catch (const std::exception& e) {
         QLogger::QLog_Error("BsaOptimizer", e.what());
         QLogger::QLog_Error("BsaOptimizer", "Cancelling packing of: " + bsa.path);
         archive.close();
         return;
     }
 
-    QLogger::QLog_Debug("BsaOptimizer", "\nBSA folder :" + bsa.path + "\nBsaName : " + bsa.path + "\nBSAsize: "
-                        + QString::number(QFile(bsa.path).size()));
-
     //Checking if the archive is below 2.15gb, since a BSA cannot be greater
 
+    //TODO different max size before and after compression
     if(QFile(bsa.path).size() < bsa.maxSize)
     {
         QLogger::QLog_Note("BsaOptimizer", tr("BSA successfully compressed: ") + bsa.path);
@@ -130,13 +132,25 @@ void BsaOptimizer::packAll(const QString &folderPath)
                         + "Packing all loose files into BSAs");
 
     Bsa texturesBsa, standardBsa;
+    //Setting type
+    texturesBsa.type = bsaType::texturesBsa;
+    standardBsa.type = bsaType::standardBsa;
+
     //Naming BSAs
-    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures" + CAO_BSA_EXTENSION;
-    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + CAO_BSA_EXTENSION;
+    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type) + CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION;
+    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION;
+
+    QLogger::QLog_Debug("BsaOptimizer", standardBsa.path);
+    QLogger::QLog_Debug("BsaOptimizer", folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION);
+
 
     //Setting maxsize
     texturesBsa.maxSize = CAO_BSA_TEXTURES_MAX_SIZE ;
     standardBsa.maxSize = CAO_BSA_MAX_SIZE;
+
+    //Setting format
+    texturesBsa.format = CAO_BSA_TEXTURES_FORMAT;
+    standardBsa.format = CAO_BSA_FORMAT;
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
@@ -154,8 +168,11 @@ void BsaOptimizer::packAll(const QString &folderPath)
             {
                 //Each time the maximum size is reached, a BSA is created
 
-                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, isTexture ? bsaType::texturesBsa : bsaType::standardBsa) + CAO_BSA_EXTENSION;
-                if(isTexture) pBsa.path = pBsa.path.chopped(4) + " - Textures" + CAO_BSA_EXTENSION;
+                if(isTexture)
+                    pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type) + CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION;
+                else
+                    pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION;
+
                 create(pBsa);
 
                 //Resetting for next loop
@@ -163,7 +180,7 @@ void BsaOptimizer::packAll(const QString &folderPath)
                 pBsa.files.clear();
             }
             //adding files and sizes to list
-            pBsa.files << it.filePath();
+            pBsa.files << currentFile.absoluteFilePath();
             pBsa.filesSize += currentFile.size();
         }
     }
@@ -171,12 +188,12 @@ void BsaOptimizer::packAll(const QString &folderPath)
     //Since the maximum size wasn't reached for the last archive, some files are still unpacked
     if (!texturesBsa.files.isEmpty())
     {
-        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + " - Textures" + CAO_BSA_EXTENSION;
+        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION;
         create(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
-        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + CAO_BSA_EXTENSION;
+        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION;
         create(standardBsa);
     }
 }
@@ -202,7 +219,7 @@ QString BsaOptimizer::backup(const QString& bsaPath) const
     return bsaBackupFile.fileName();
 }
 
-bool BsaOptimizer::isIgnoredFile(const QString &filepath)
+bool BsaOptimizer::isIgnoredFile(const QString &filepath) const
 {
     for(const auto& fileToNotPack : filesToNotPack)
     {
@@ -212,7 +229,7 @@ bool BsaOptimizer::isIgnoredFile(const QString &filepath)
     return  false;
 }
 
-bool BsaOptimizer::canBeCompressedFile(const QString &filename)
+bool BsaOptimizer::canBeCompressedFile(const QString &filename) const
 {
     if(filename.endsWith(".wav", Qt::CaseInsensitive) || filename.endsWith(".xwm", Qt::CaseInsensitive)
             || filename.contains(QRegularExpression("^.+\\.[^.]*strings$")))

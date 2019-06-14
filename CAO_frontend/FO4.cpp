@@ -3,14 +3,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "TES5.h"
+#include "FO4.h"
 
-TES5::TES5() : ui(new Ui::TES5)
+FO4::FO4() : ui(new Ui::FO4)
 {
     ui->setupUi(this);
 
     //Loading remembered settings
-    settings = new QSettings("settings/TES5/config.ini", QSettings::IniFormat, this);
+    settings = new QSettings("settings/FO4/config.ini", QSettings::IniFormat, this);
 
     if(!settings->contains("iLogLevel"))
         settings->setValue("iLogLevel", 3);
@@ -25,22 +25,20 @@ TES5::TES5() : ui(new Ui::TES5)
 
     //Connecting checkboxes to file
 
-    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
-    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, &TES5::saveUIToFile);
-    connect(ui->createtBsaCheckbox, &QCheckBox::clicked, this, &TES5::saveUIToFile);
-    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &FO4::saveUIToFile);
+    connect(ui->extractBsaCheckbox, &QCheckBox::clicked, this, &FO4::saveUIToFile);
+    connect(ui->createtBsaCheckbox, &QCheckBox::clicked, this, &FO4::saveUIToFile);
+    connect(ui->bsaDeleteBackupsCheckbox, &QCheckBox::clicked, this, &FO4::saveUIToFile);
 
-    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
-    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
+    connect(ui->texturesGroupBox, &QGroupBox::clicked, this, &FO4::saveUIToFile);
+    connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &FO4::saveUIToFile);
+    connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, &FO4::saveUIToFile);
 
-    connect(ui->meshesGroupBox, &QGroupBox::clicked, this, &TES5::saveUIToFile);
-    connect(ui->MeshesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
-    connect(ui->MeshesFullOptimizationRadioButton, &QCheckBox::clicked, this, &TES5::saveUIToFile);
 
     //Connecting the other widgets
 
-    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &TES5::saveUIToFile);
-    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &TES5::saveUIToFile);
+    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &FO4::saveUIToFile);
+    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &FO4::saveUIToFile);
 
     connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&]
     {
@@ -80,13 +78,13 @@ TES5::TES5() : ui(new Ui::TES5)
     });
 
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &TES5::loadUIFromFile);
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &FO4::loadUIFromFile);
 
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &TES5::loadUIFromFile);
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &FO4::loadUIFromFile);
 
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 0);});
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &TES5::loadUIFromFile);
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &FO4::loadUIFromFile);
 
     connect(ui->actionSelect_game, &QAction::triggered, GameSelector::getInstance(), [&]() {
         GameSelector::getInstance()->mainProcess(true); } );
@@ -127,14 +125,14 @@ TES5::TES5() : ui(new Ui::TES5)
 }
 
 
-void TES5::initProcess()
+void FO4::initProcess()
 {
     caoProcess->start();
     ui->processButton->setDisabled(true);
     bLockVariables = true;
 }
 
-void TES5::saveUIToFile()
+void FO4::saveUIToFile()
 {
     if(bLockVariables)
         return;
@@ -167,22 +165,10 @@ void TES5::saveUIToFile()
 
     if(ui->texturesGroupBox->isChecked())
         settings->setValue("iTexturesOptimizationLevel", 1);
-    settings->setValue("iTexturesOptimizationLevel", 2);
+    if(ui->TexturesFullOptimizationRadioButton->isChecked())
+        settings->setValue("iTexturesOptimizationLevel", 2);
     if(!ui->texturesGroupBox->isChecked())
         settings->setValue("iTexturesOptimizationLevel", 0);
-
-    settings->endGroup();
-
-    //Meshes
-
-    settings->beginGroup("Meshes");
-
-    if(ui->meshesGroupBox->isChecked())
-        settings->setValue("iMeshesOptimizationLevel", 1);
-    if(ui->MeshesFullOptimizationRadioButton->isChecked())
-        settings->setValue("iMeshesOptimizationLevel", 3);
-    if(!ui->meshesGroupBox->isChecked())
-        settings->setValue("iMeshesOptimizationLevel", 0);
 
     settings->endGroup();
 
@@ -209,7 +195,7 @@ void TES5::saveUIToFile()
     this->loadUIFromFile();
 }
 
-void TES5::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
+void FO4::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
 {
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
 
@@ -228,20 +214,8 @@ void TES5::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     switch (settings->value("iTexturesOptimizationLevel").toInt())
     {
     case 0: ui->texturesGroupBox->setChecked(false); break;
-    case 1:
-    case 2:
-        ui->texturesGroupBox->setChecked(true);     ui->TexturesNecessaryOptimizationRadioButton->setChecked(true);  break;
-    }
-    settings->endGroup();
-
-    //Meshes
-
-    settings->beginGroup("Meshes");
-    switch(settings->value("iMeshesOptimizationLevel").toInt())
-    {
-    case 0: ui->meshesGroupBox->setChecked(false); break;
-    case 1: ui->meshesGroupBox->setChecked(true);     ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);  break;
-    case 3: ui->meshesGroupBox->setChecked(true);     ui->MeshesFullOptimizationRadioButton->setChecked(true); break;
+    case 1: ui->texturesGroupBox->setChecked(true);     ui->TexturesNecessaryOptimizationRadioButton->setChecked(true);  break;
+    case 2: ui->texturesGroupBox->setChecked(true);     ui->TexturesFullOptimizationRadioButton->setChecked(true); break;
     }
     settings->endGroup();
 
@@ -250,7 +224,6 @@ void TES5::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     ui->modeChooserComboBox->setCurrentIndex(settings->value("iMode").toInt());
     ui->dryRunCheckBox->setChecked(settings->value("bDryRun").toBool());
     bDarkMode = settings->value("bDarkMode").toBool();
-
 
     //Log level
 
@@ -281,16 +254,6 @@ void TES5::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
         ui->actionChangeTheme->setText(tr("Switch to dark theme"));
     }
 
-    //Disabling some meshes options when several mods mode is enabled
-
-    if(settings->value("iMode").toInt() == 1)
-    {
-        ui->MeshesFullOptimizationRadioButton->setDisabled(true);
-        ui->MeshesNecessaryOptimizationRadioButton->setChecked(true);
-    }
-    else if(ui->meshesGroupBox->isChecked())
-        ui->MeshesFullOptimizationRadioButton->setDisabled(false);
-
     //Disabling BSA options if dry run is enabled
 
     if(ui->dryRunCheckBox->isChecked())
@@ -300,21 +263,19 @@ void TES5::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
     }
     else
         ui->BsaGroupBox->setEnabled(true);
-
-    // TODO add headparts checkbox to UI
 }
 
-void TES5::closeEvent(QCloseEvent* event)
+void FO4::closeEvent(QCloseEvent* event)
 {
     caoProcess->kill();
     event->accept();
 }
 
-void TES5::updateLog()
+void FO4::updateLog()
 {
     ui->plainTextEdit->clear();
 
-    QFile log("logs/TES5_log.html");
+    QFile log("logs/FO4_log.html");
     if(log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);
@@ -325,7 +286,7 @@ void TES5::updateLog()
     }
 }
 
-TES5::~TES5()
+FO4::~FO4()
 {
     delete ui;
 }

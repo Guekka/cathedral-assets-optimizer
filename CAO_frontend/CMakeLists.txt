@@ -23,6 +23,7 @@ set(SRCS
     selectiondialog.cpp
     TES5.cpp
     SSE.cpp
+    FO4.cpp
     )
 
 
@@ -34,6 +35,16 @@ set(HEADERS
     GameSelector.h
     TES5.h
     SSE.h
+    FO4.h
+    )
+
+#Ui files
+
+set(UI
+    selectiondialog.ui
+    TES5.ui
+    SSE.ui
+    FO4.ui
     )
 
 #Translations
@@ -60,14 +71,6 @@ SET(QON_TS_FILES
 
 set(ICON_RC_PATH "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc")
 set(QRC_PATH "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc")
-
-#Ui files
-
-set(UI
-    selectiondialog.ui
-    TES5.ui
-    SSE.ui
-    )
 
 add_executable(Cathedral_Assets_Optimizer WIN32 ${SRCS} ${HEADERS} ${UI} ${ICON_RC_PATH} ${QRC_PATH})
 target_link_libraries(Cathedral_Assets_Optimizer Qt5::Core)

@@ -7,6 +7,7 @@
 #include "pch.h"
 #include "TES5.h"
 #include "SSE.h"
+#include "FO4.h"
 #include "selectiondialog.h"
 
 class GameSelector : public QObject

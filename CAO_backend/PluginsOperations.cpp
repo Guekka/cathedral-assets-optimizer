@@ -19,15 +19,15 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 
         if(!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
         {
-            if(it.fileName().contains("- Textures", Qt::CaseInsensitive))
+            if(it.fileName().contains(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive))
             {
-                espName = it.fileName().remove(" - Textures" + CAO_BSA_EXTENSION, Qt::CaseInsensitive) + ".esp";
+                espName = it.fileName().remove(CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION, Qt::CaseInsensitive) + ".esp";
                 QLogger::QLog_Trace("PluginsOperations", "Created textures bsa plugin:" + espName);
             }
 
             else
             {
-                espName = it.fileName().remove(CAO_BSA_EXTENSION, Qt::CaseInsensitive) + ".esp";
+                espName = it.fileName().remove(CAO_BSA_SUFFIX + CAO_BSA_EXTENSION, Qt::CaseInsensitive) + ".esp";
                 QLogger::QLog_Trace("PluginsOperations", "Created standard bsa plugin:" + espName);
             }
             QFile::copy(CAO_RESOURCES_PATH + "DummyPlugin.esp", folderPath + "/" + espName);
@@ -51,8 +51,11 @@ QString PluginsOperations::findPlugin(const QString& folderPath, const bsaType& 
             espName << it.fileName();
 
 
-        if(it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive) && !it.fileName().endsWith(" - Textures" + CAO_BSA_EXTENSION, Qt::CaseInsensitive))
+        if(it.fileName().endsWith(CAO_BSA_SUFFIX + CAO_BSA_EXTENSION, Qt::CaseInsensitive) &&
+                !it.fileName().endsWith(CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION, Qt::CaseInsensitive))
+        {
             bsaName = it.fileName().chopped(4) + ".esp";
+        }
     }
     if(!bsaName.isEmpty() && espName.isEmpty())
         espName << bsaName;
@@ -68,10 +71,16 @@ QString PluginsOperations::findPlugin(const QString& folderPath, const bsaType& 
     {
         for(auto esp : espName)
         {
-            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + " - Textures" + CAO_BSA_EXTENSION).exists() && bsaType == bsaType::texturesBsa;
-            bool standardBsaGood = !QFile(folderPath + "/" +esp.chopped(4) + CAO_BSA_EXTENSION).exists() && bsaType == bsaType::standardBsa;
-            bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + " - Textures" + CAO_BSA_EXTENSION).exists()
-                    && !QFile(folderPath + "/" +esp.chopped(4) + CAO_BSA_EXTENSION).exists()
+            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4)
+                                          + CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION).exists()
+                    && bsaType == bsaType::texturesBsa;
+
+            bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4)
+                                          + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION).exists()
+                    && bsaType == bsaType::standardBsa;
+
+            bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION).exists()
+                    && !QFile(folderPath + "/" +esp.chopped(4) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION).exists()
                     && bsaType == bsaType::texturesAndStandardBsa;
 
             if(texturesBsaGood || standardBsaGood || bothBsaGood)

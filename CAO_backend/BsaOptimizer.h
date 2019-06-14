@@ -15,6 +15,7 @@ struct Bsa
     QStringList files;
     double maxSize = LONG_MAX;
     bsaType type = bsaType::standardBsa;
+    bsa_archive_type_t format;
 };
 
 /*!
@@ -60,7 +61,7 @@ private:
      * \param filepath The file to check
      * \return a bool indicating the state of the file. True if is ignored, false otherwise
      */
-    bool isIgnoredFile(const QString& filepath);
+    bool isIgnoredFile(const QString& filepath) const;
     /*!
      * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
      */
@@ -70,5 +71,5 @@ private:
      * \param filename The file to check
      * \return a bool indicating the state of the file. True if it can be compressed, false otherwise
      */
-    bool canBeCompressedFile(const QString& filename);
+    bool canBeCompressedFile(const QString& filename) const;
 };

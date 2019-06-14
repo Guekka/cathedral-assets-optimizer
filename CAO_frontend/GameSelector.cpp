@@ -56,6 +56,7 @@ QString GameSelector::getChoiceFromSelectorWindow()
     dialog.disableCancel();
     dialog.addChoice("SSE", QObject::tr("Skyrim SE"), QVariant());
     dialog.addChoice("TES5", QObject::tr("Skyrim"), QVariant());
+    dialog.addChoice("FO4", QObject::tr("Fallout 4"), QVariant());
     dialog.exec();
 
     return dialog.getChoiceString();
@@ -67,6 +68,8 @@ int GameSelector::showGameWindow(const QString &choice)
         window = new SSE();
     else if(choice == "TES5")
         window = new TES5();
+    else if(choice == "FO4")
+        window = new FO4();
     else
         return 1;
 
