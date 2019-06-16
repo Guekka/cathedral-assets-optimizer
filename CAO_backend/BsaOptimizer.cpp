@@ -137,11 +137,11 @@ void BsaOptimizer::packAll(const QString &folderPath)
     standardBsa.type = bsaType::standardBsa;
 
     //Naming BSAs
-    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type) + CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION;
-    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION;
+    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type) + CAO_BSA_TEXTURES_SUFFIX;
+    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX;
 
     QLogger::QLog_Debug("BsaOptimizer", standardBsa.path);
-    QLogger::QLog_Debug("BsaOptimizer", folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION);
+    QLogger::QLog_Debug("BsaOptimizer", folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX);
 
 
     //Setting maxsize
@@ -169,9 +169,9 @@ void BsaOptimizer::packAll(const QString &folderPath)
                 //Each time the maximum size is reached, a BSA is created
 
                 if(isTexture)
-                    pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type) + CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION;
+                    pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type) + CAO_BSA_TEXTURES_SUFFIX;
                 else
-                    pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION;
+                    pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX;
 
                 create(pBsa);
 
@@ -188,12 +188,12 @@ void BsaOptimizer::packAll(const QString &folderPath)
     //Since the maximum size wasn't reached for the last archive, some files are still unpacked
     if (!texturesBsa.files.isEmpty())
     {
-        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + CAO_BSA_TEXTURES_SUFFIX + CAO_BSA_EXTENSION;
+        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + CAO_BSA_TEXTURES_SUFFIX;
         create(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
-        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + CAO_BSA_SUFFIX + CAO_BSA_EXTENSION;
+        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + CAO_BSA_SUFFIX;
         create(standardBsa);
     }
 }

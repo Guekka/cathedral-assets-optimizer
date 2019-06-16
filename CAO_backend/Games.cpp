@@ -26,8 +26,8 @@ void Games::setGame(const GameMode &newGame)
         //TODO let the user choose the max size in the INI
         maxBsaTexturesSize = 2.37 * static_cast<double>(GigaByte);
         bsaExtension = ".bsa";
-        bsaSuffix = "";
-        bsaTexturesSuffix = " - Textures";
+        bsaSuffix = ".bsa";
+        bsaTexturesSuffix = " - Textures.bsa";
         meshesFileVersion = V20_2_0_7;
         meshesStream = 100;
         meshesUser = 12;
@@ -39,6 +39,7 @@ void Games::setGame(const GameMode &newGame)
         logPath = "SkyrimSE_log.html";
         resourcePath = "resources/SkyrimSE/";
         break;
+
     case TES5:
         bsaFormat = baFO3;
         bsaTexturesFormat = baNone;
@@ -46,8 +47,8 @@ void Games::setGame(const GameMode &newGame)
         hasBsaTextures = false;
         maxBsaTexturesSize = 0;
         bsaExtension = ".bsa";
-        bsaSuffix = "";
-        bsaTexturesSuffix = "";
+        bsaSuffix = ".bsa";
+        bsaTexturesSuffix = ".bsa";
         meshesFileVersion = V20_2_0_7;
         meshesStream = 83;
         meshesUser = 12;
@@ -59,6 +60,7 @@ void Games::setGame(const GameMode &newGame)
         logPath = "TES5_log.html";
         resourcePath = "resources/TES5/";
         break;
+
     case FO4:
         bsaFormat = baFO4;
         bsaTexturesFormat = baFO4dds;
@@ -66,8 +68,8 @@ void Games::setGame(const GameMode &newGame)
         hasBsaTextures = false; //TODO change it to true (currently bugged)
         maxBsaTexturesSize = 2.5 * static_cast<double>(GigaByte);
         bsaExtension = ".ba2";
-        bsaSuffix = " - Main";
-        bsaTexturesSuffix = " - Textures";
+        bsaSuffix = " - Main.ba2";
+        bsaTexturesSuffix = " - Textures.ba2";
         meshesFileVersion = V20_2_0_7;
         meshesStream = 130;
         meshesUser = 12;
@@ -79,6 +81,7 @@ void Games::setGame(const GameMode &newGame)
         logPath = "FO4_log.html";
         resourcePath = "resources/FO4/";
         break;
+
     case Custom:
         if(!QFile("settings/Custom/config.ini").exists())
             throw std::runtime_error("Custom config.ini not found");

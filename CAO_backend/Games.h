@@ -12,7 +12,7 @@
 #define CAO_BSA_FORMAT Games::getInstance()->GetBsaFormat()
 #define CAO_BSA_TEXTURES_FORMAT Games::getInstance()->getBsaTexturesFormat()
 #define CAO_BSA_EXTENSION Games::getInstance()->getBsaExtension()
-#define CAO_BSA_MAX_SIZE Games::getInstance()->getBsaMaxSize()
+#define CAO_BSA_MAX_SIZE Games::getInstance()->getBsaUncompressedMaxSize()
 #define CAO_BSA_TEXTURES_MAX_SIZE Games::getInstance()->getBsaTexturesMaxSize()
 #define CAO_HAS_BSA_TEXTURES Games::getInstance()->getHasBsaTextures()
 #define CAO_BSA_SUFFIX Games::getInstance()->getBsaSuffix()
