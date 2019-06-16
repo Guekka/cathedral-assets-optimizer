@@ -18,7 +18,7 @@ void Games::setGame(const GameMode &newGame)
     case SSE:
         bsaFormat = baSSE;
         bsaTexturesFormat = baSSE;
-        maxBsaSize = 2 * static_cast<double>(GigaByte);
+        maxBsaUncompressedSize = 2 * static_cast<double>(GigaByte);
         hasBsaTextures = true;
         //Using 2.37GB for max textures size since this bsa will always be compressed.
         //After some experiments, it is the maximum size to ensure the bsa will always
@@ -42,7 +42,7 @@ void Games::setGame(const GameMode &newGame)
     case TES5:
         bsaFormat = baFO3;
         bsaTexturesFormat = baNone;
-        maxBsaSize = 2 * static_cast<double>(GigaByte);
+        maxBsaUncompressedSize = 2 * static_cast<double>(GigaByte);
         hasBsaTextures = false;
         maxBsaTexturesSize = 0;
         bsaExtension = ".bsa";
@@ -62,7 +62,7 @@ void Games::setGame(const GameMode &newGame)
     case FO4:
         bsaFormat = baFO4;
         bsaTexturesFormat = baFO4dds;
-        maxBsaSize = 2 * static_cast<double>(GigaByte);
+        maxBsaUncompressedSize = 2 * static_cast<double>(GigaByte);
         hasBsaTextures = false; //TODO change it to true (currently bugged)
         maxBsaTexturesSize = 2.5 * static_cast<double>(GigaByte);
         bsaExtension = ".ba2";
@@ -78,6 +78,29 @@ void Games::setGame(const GameMode &newGame)
         iniPath = "settings/FO4/config.ini";
         logPath = "FO4_log.html";
         resourcePath = "resources/FO4/";
+        break;
+    case Custom:
+        if(!QFile("settings/Custom/config.ini").exists())
+            throw std::runtime_error("Custom config.ini not found");
+        QSettings settings("settings/Custom/config.ini", QSettings::IniFormat);
+        bsaFormat = static_cast<bsa_archive_type_t>(settings.value("bsaFormat").toInt());
+        bsaTexturesFormat =  static_cast<bsa_archive_type_t>(settings.value("bsaTexturesFormat").toInt());
+        maxBsaUncompressedSize = settings.value("maxBsaUncompressedSize").toDouble();
+        hasBsaTextures = settings.value("hasBsaTextures").toBool();
+        maxBsaTexturesSize = settings.value("maxBsaTexturesSize").toDouble();
+        bsaExtension = settings.value("bsaExtension").toString();
+        bsaSuffix = settings.value("bsaSuffix").toString();
+        bsaTexturesSuffix = settings.value("bsaTexturesSuffix").toString();
+        meshesFileVersion = static_cast<NiFileVersion>(settings.value("meshesFileVersion").toInt());
+        meshesStream = settings.value("meshesStream").toUInt();
+        meshesUser = settings.value("meshesUser").toUInt();
+        animationFormat = static_cast<hkPackFormat>(settings.value("animationFormat").toInt());
+        texturesFormat = settings.value("texturesFormat").toString();
+        texturesIncompatibleExtensions += settings.value("texturesIncompatibleExtensions").toStringList();
+        texturesIncompatibleFormats << settings.value("texturesIncompatibleFormats").toStringList();
+        iniPath = "settings/Custom/config.ini";
+        logPath = "Custom_log.html";
+        resourcePath = "resources/Custom/";
         break;
     }
 }
@@ -105,9 +128,9 @@ bsa_archive_type_t Games::getBsaTexturesFormat() const
     return bsaTexturesFormat;
 }
 
-double Games::getBsaMaxSize() const
+double Games::getBsaUncompressedMaxSize() const
 {
-    return maxBsaSize;
+    return maxBsaUncompressedSize;
 }
 
 double Games::getBsaTexturesMaxSize() const

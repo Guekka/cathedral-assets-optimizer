@@ -34,16 +34,16 @@
 #define CAO_RESOURCES_PATH Games::getInstance()->getResourcePath()
 
 
-enum GameMode { TES5, SSE, FO4 } ;
+enum GameMode { TES5, SSE, FO4, Custom } ;
 
 const int GigaByte = 1024 * 1024 * 1024;
 
 class Games
 {
 private:   
-    bsa_archive_type_e bsaFormat;
+    bsa_archive_type_t bsaFormat;
     bsa_archive_type_t bsaTexturesFormat;
-    double maxBsaSize;
+    double maxBsaUncompressedSize;
     bool hasBsaTextures;
     double maxBsaTexturesSize;
     QString bsaExtension;
@@ -74,7 +74,7 @@ public:
 
     bsa_archive_type_e GetBsaFormat() const;
     bsa_archive_type_t getBsaTexturesFormat() const;
-    double getBsaMaxSize() const;
+    double getBsaUncompressedMaxSize() const;
     double getBsaTexturesMaxSize() const;
     QString getBsaExtension() const;
     bool getHasBsaTextures() const;

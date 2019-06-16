@@ -117,7 +117,7 @@ void Manager::parseArguments()
     parser.addHelpOption();
     parser.addPositionalArgument("folder", "The folder to process, surrounded with quotes.");
     parser.addPositionalArgument("mode", "Either om (one mod) or sm (several mods)");
-    parser.addPositionalArgument("game", "Currently, only 'SSE' and 'TES5' and 'FO4' are supported");
+    parser.addPositionalArgument("game", "Currently, only 'SSE', 'TES5', 'FO4' and 'Custom' are supported");
 
     parser.addOptions({
                           {"dr", "Enables dry run"},
@@ -281,6 +281,8 @@ void Manager::setGame()
         CAO_SET_CURRENT_GAME(TES5)
     else if(game == "FO4")
         CAO_SET_CURRENT_GAME(FO4)
+    else if(game == "Custom")
+        CAO_SET_CURRENT_GAME(Custom)
     else
         throw std::runtime_error("Cannot set game. Game:\"" + game.toStdString() + "\" does not exist");
 }
