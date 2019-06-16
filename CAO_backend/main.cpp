@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
 {   
     QCoreApplication app(argc, argv);
 
-
     //If tests are enabled, run tests instead of running standard process
 
     if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way to enable tests
@@ -31,10 +30,9 @@ int main(int argc, char *argv[])
         Manager manager;
         manager.runOptimization();
     }
-    catch(std::runtime_error e)
+    catch(const std::runtime_error& e)
     {
-        QLogger::QLog_Fatal("MainOptimizer", e.what());
-        QTextStream(stderr) << e.what();
+        PLOG_FATAL << e.what();
         return 1;
     }
     return 0;

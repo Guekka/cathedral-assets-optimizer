@@ -35,9 +35,9 @@ void Games::setGame(const GameMode &newGame)
         texturesFormat = "BC7_UNORM";
         texturesIncompatibleExtensions << ".tga";
         texturesIncompatibleFormats << "B5G5R5A1_UNORM" << "B5G6R5_UNORM";
-        iniPath = "settings/SkyrimSE/config.ini";
-        logPath = "SkyrimSE_log.html";
-        resourcePath = "resources/SkyrimSE/";
+        iniPath = QDir::currentPath() + "/settings/SkyrimSE/config.ini";
+        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/SkyrimSE.html");
+        resourcePath = QDir::currentPath() + "/resources/SkyrimSE/";
         break;
 
     case TES5:
@@ -56,9 +56,9 @@ void Games::setGame(const GameMode &newGame)
         texturesFormat = "BC3_UNORM";
         //texturesIncompatibleExtensions; //None
         texturesIncompatibleFormats << "BC7_UNORM";
-        iniPath = "settings/TES5/config.ini";
-        logPath = "TES5_log.html";
-        resourcePath = "resources/TES5/";
+        iniPath = QDir::currentPath() + "/settings/TES5/config.ini";
+        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/TES5.html");
+        resourcePath = QDir::currentPath() + "/resources/TES5/";
         break;
 
     case FO4:
@@ -77,14 +77,15 @@ void Games::setGame(const GameMode &newGame)
         texturesFormat = "BC7_UNORM";
         texturesIncompatibleExtensions << ".tga";
         texturesIncompatibleFormats << "B5G5R5A1_UNORM" << "B5G6R5_UNORM";
-        iniPath = "settings/FO4/config.ini";
-        logPath = "FO4_log.html";
-        resourcePath = "resources/FO4/";
+        iniPath = QDir::currentPath() + "/settings/FO4/config.ini";
+        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/FO4.txt");
+        resourcePath = QDir::currentPath() + "/resources/FO4/";
         break;
 
     case Custom:
         if(!QFile("settings/Custom/config.ini").exists())
             throw std::runtime_error("Custom config.ini not found");
+
         QSettings settings("settings/Custom/config.ini", QSettings::IniFormat);
         bsaFormat = static_cast<bsa_archive_type_t>(settings.value("bsaFormat").toInt());
         bsaTexturesFormat =  static_cast<bsa_archive_type_t>(settings.value("bsaTexturesFormat").toInt());
@@ -101,9 +102,9 @@ void Games::setGame(const GameMode &newGame)
         texturesFormat = settings.value("texturesFormat").toString();
         texturesIncompatibleExtensions += settings.value("texturesIncompatibleExtensions").toStringList();
         texturesIncompatibleFormats << settings.value("texturesIncompatibleFormats").toStringList();
-        iniPath = "settings/Custom/config.ini";
-        logPath = "Custom_log.html";
-        resourcePath = "resources/Custom/";
+        iniPath = QDir::currentPath() + "/settings/Custom/config.ini";
+        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/Custom.html");
+        resourcePath = QDir::currentPath() + "/resources/Custom/";
         break;
     }
 }

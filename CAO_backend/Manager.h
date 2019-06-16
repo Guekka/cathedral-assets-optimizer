@@ -40,9 +40,8 @@ private:
     void readIni();
     /*!
      * \brief Checks if the selected settings are allowed
-     * \return
      */
-    bool checkSettings();
+    void checkSettings();
     /*!
      * \brief List all the directories to process
      * \param mode
@@ -79,9 +78,8 @@ private:
     void resetIni();
     /*!
      * \brief Check if all the requirements are present
-     * \return A bool indicating the success
      */
-    bool checkRequirements();
+    void checkRequirements();
     /*!
      * \brief Read the common ini and set the game
      */
@@ -90,6 +88,10 @@ private:
      * \brief Read ignoredMods.txt and store it to a list
      */
     void readIgnoredMods();
+    /*!
+     * \brief Setup the logger
+     */
+    void configureLogger();
     /*!
      * \brief The optimization options, that will be given to the MainOptimizer
      */

@@ -22,7 +22,7 @@ void MainOptimizer::process(const QString &file)
     else if(file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
     else
-        QLogger::QLog_Error("MainOptimizer", "Cannot process: " + file);
+        PLOG_ERROR << "Cannot process: " + file;
 }
 
 void MainOptimizer::packBsa(const QString &folder)
@@ -49,14 +49,13 @@ void MainOptimizer::processBsa(const QString& file)
 
     if(optOptions.bBsaExtract && QFileInfo(file).isFile())
     {
-        QLogger::QLog_Note("MainOptimizer", QObject::tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + file);
+        PLOG_INFO << tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ") + file;
         bsaOpt.extract(file, optOptions.bBsaDeleteBackup);
     }
 
     if(optOptions.bBsaCreate && QDir(file).exists())
     {
-        QLogger::QLog_Info("MainOptimizer", tr("Creating BSA..."));
-
+        PLOG_INFO <<  tr("Creating BSA...");
         bsaOpt.packAll(file);
         PluginsOperations::makeDummyPlugins(file);
     }
@@ -75,10 +74,14 @@ void MainOptimizer::processDds(const QString& file)
         {
         case 2:
             if(!TexturesOptimizer::isCompressed(file))
-                QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" would be compressed to BC7"));
+            {
+                PLOG_INFO << file + QObject::tr(" would be compressed to BC7");
+            }
         case 1:
             if(TexturesOptimizer::isIncompatible(file))
-                QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" is incompatible and would be converted to a compatible format"));
+            {
+                PLOG_INFO << file + QObject::tr(" is incompatible and would be converted to a compatible format");
+            }
         }
     }
     else
@@ -99,7 +102,7 @@ void MainOptimizer::processHkx(const QString& file)
         return;
 
     if(optOptions.bAnimationsOptimization && optOptions.bDryRun)
-        QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" would be ported to SSE"));
+        PLOG_INFO << file + QObject::tr(" would be ported to SSE");
     else if(optOptions.bAnimationsOptimization)
         animOpt.convert(file, CAO_ANIMATIONS_FORMAT);
 }
@@ -121,7 +124,7 @@ void MainOptimizer::processTga(const QString &file)
         return;
 
     if(optOptions.iTexturesOptimizationLevel >=1 && optOptions.bDryRun && TexturesOptimizer::isIncompatible(file))
-        QLogger::QLog_Note("MainOptimizer", file + QObject::tr(" would be converted to DDS"));
+        PLOG_INFO << file + QObject::tr(" would be converted to DDS");
     else if(optOptions.iTexturesOptimizationLevel >=1)
         TexturesOptimizer::convertIncompatibleTextures(file);
 }

@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SELECTIONDIALOG_H
-#define SELECTIONDIALOG_H
+#ifndef SELECTIONDIAPLOG_H
+#define SELECTIONDIAPLOG_H
 
 #include <QDialog>
 #include <QAbstractButton>
@@ -70,4 +70,4 @@ private:
 
 };
 
-#endif // SELECTIONDIALOG_H
+#endif // SELECTIONDIAPLOG_H

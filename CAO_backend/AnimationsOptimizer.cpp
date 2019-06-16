@@ -14,7 +14,7 @@ AnimationsOptimizer::AnimationsOptimizer()
 
     } catch (const std::exception& e)
     {
-        QLogger::QLog_Error("AnimationsOptimizer", tr("An error occured while creating the animations optimizer. Animations won't be optimized.") + "\n" + QString(e.what()));
+        PLOG_ERROR << tr("An error occured while creating the animations optimizer. Animations won't be optimized.") + "\n" + QString(e.what());
     }
 }
 
@@ -51,7 +51,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat& p
         res = hkSerializeLoad(reader, root, resource);
 
         if (res != HK_SUCCESS)
-            QLogger::QLog_Warning("AnimationsOptimizer", tr("File is not loadable: ") + filePath + '\n' + tr("It is probably already converted."));
+            PLOG_WARNING << tr("File is not loadable: ") + filePath + '\n' + tr("It is probably already converted.");
 
         else
         {
@@ -67,10 +67,12 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat& p
 
                 failed = (res != HK_SUCCESS);
                 if (failed)
-                    QLogger::QLog_Error("AnimationsOptimizer", "Failed to save file: " + filePath);
+                {
+                    PLOG_ERROR << "Failed to save file: " + filePath;
+                }
             }
             else
-                QLogger::QLog_Error("AnimationsOptimizer", "Failed to load file: " + filePath);
+                PLOG_ERROR << "Failed to load file: " + filePath;
 
         }
         if (resource != nullptr)
@@ -78,7 +80,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat& p
     }
     catch (const std::exception& e)
     {
-        QLogger::QLog_Error("AnimationsOptimizer", "Unexpected exception occurred: " + QString(e.what()) + "\nwhile processing: " + filePath);
+        PLOG_ERROR << "Unexpected exception occurred: " + QString(e.what()) + "\nwhile processing: " + filePath;
     }
 
     if(QFile::exists(filePath.chopped(3) + "out.hkx"))

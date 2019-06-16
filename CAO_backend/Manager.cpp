@@ -10,10 +10,7 @@ Manager::Manager()
     setGame();
 
     //Preparing logging
-    QLogger::QLoggerManager *logManager = QLogger::QLoggerManager::getInstance();
-    logManager->addDestination(CAO_LOG_PATH, QStringList() << "MainWindow" << "MainOptimizer" << "AnimationsOptimizer"
-                               << "BsaOptimizer" << "FilesystemOperations" << "MeshesOptimizer" << "PluginsOperations"
-                               << "TexturesOptimizer", static_cast<QLogger::LogLevel>(options.iLogLevel));
+    configureLogger();
 
     //INI
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, CAO_INI_PATH);
@@ -24,29 +21,18 @@ Manager::Manager()
     if(QCoreApplication::arguments().count() >= 2)
         parseArguments();
 
-    QLogger::QLog_Trace("MainOptimizer", "Reading INI...");
-
+    PLOG_VERBOSE << "Reading INI...";
     readIni();
 
-    QLogger::QLog_Trace("MainOptimizer", "Checking requirements...");
+    PLOG_VERBOSE << "Checking requirements...";
+    checkRequirements();
 
-    if(!checkRequirements())
-    {
-        QLogger::QLog_Fatal("MainOptimizer", tr("The requirements were not found. Exiting the process."));
-        throw std::runtime_error("Error while checking the requirements");
-    }
-
-    QLogger::QLog_Trace("MainOptimizer", "Checking settings...");
-
-    if(!checkSettings())
-    {
-        QLogger::QLog_Fatal("MainOptimizer", tr("The settings were not read correctly. Exiting the process."));
-        throw std::runtime_error("Error while reading settings");
-    }
+    PLOG_VERBOSE << "Checking settings...";
+    checkSettings();
 
     readIgnoredMods();
 
-    QLogger::QLog_Info("MainOptimizer", "Listing files and directories...");
+    PLOG_INFO << tr("Listing files and directories...");
 
     listDirectories();
     listFiles();
@@ -174,39 +160,22 @@ void Manager::parseArguments()
     settings->endGroup();
 }
 
-bool Manager::checkSettings()
+void Manager::checkSettings()
 {
     if(!QDir(userPath).exists() || userPath.size() < 5)
-    {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This path does not exist or is shorter than 5 characters. Path:'" + userPath + "'");
-        return false;
-    }
+        throw std::runtime_error("This path does not exist or is shorter than 5 characters. Path:'" + userPath.toStdString() + "'");
 
     if (mode != singleMod && mode != severalMods)
-    {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This mode does not exist.");
-        return false;
-    }
+        throw std::runtime_error("This mode does not exist.");
 
     if(options.iLogLevel < 0 || options.iLogLevel > 6)
-    {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This log level does not exist. Log level: " + QString::number(options.iLogLevel));
-        return false;
-    }
+        throw std::runtime_error("This log level does not exist. Log level: " + std::to_string(options.iLogLevel));
 
     if(options.iMeshesOptimizationLevel < 0 || options.iMeshesOptimizationLevel > 3)
-    {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This meshes optimization level does not exist. Level: " + QString::number(options.iMeshesOptimizationLevel));
-        return false;
-    }
+        throw std::runtime_error("This meshes optimization level does not exist. Level: " + std::to_string(options.iMeshesOptimizationLevel));
 
     if(options.iTexturesOptimizationLevel < 0 || options.iTexturesOptimizationLevel > 2)
-    {
-        QLogger::QLog_Error("MainOptimizer", "\nError. This textures optimization level does not exist. Level: " + QString::number(options.iTexturesOptimizationLevel));
-        return false;
-    }
-
-    return true;
+        throw std::runtime_error("This textures optimization level does not exist. Level: " + std::to_string(options.iTexturesOptimizationLevel));
 }
 
 void Manager::resetIni()
@@ -220,7 +189,7 @@ void Manager::readIni()
 {
     QFile ini(CAO_INI_PATH);
     ini.open(QFile::ReadOnly);
-    QLogger::QLog_Debug("MainOptimizer", "Ini content:\n" + ini.readAll() );
+    PLOG_DEBUG << "Ini content:" << ini.readAll();
     ini.close();
 
     userPath = settings->value("SelectedPath").toString();
@@ -251,29 +220,22 @@ void Manager::readIni()
     options.bAnimationsOptimization = settings->value("Animations/bAnimationsOptimization").toBool();
 }
 
-bool Manager::checkRequirements()
+void Manager::checkRequirements()
 {
-    QStringList requirements {"texconv.exe", "texdiag.exe"};
+     QStringList requirements {"texconv.exe", "texdiag.exe"};
 
     for (const auto& requirement : requirements)
     {
         QFile file("resources/" + requirement);
-
         if(!file.exists())
-        {
-            QLogger::QLog_Error("MainOptimizer", requirement + tr(" not found. Cancelling."));
-            return false;
-        }
+            throw std::runtime_error(requirement.toStdString() + " not found. Cancelling.");
     }
-    return true;
 }
 
 void Manager::setGame()
 {
     QSettings commonSettings("settings/common/config.ini", QSettings::IniFormat, this);
     QString game = commonSettings.value("Game").toString();
-
-    QLogger::QLog_Debug("MainOptimizer", "Game: " + game);
 
     if(game == "SSE")
         CAO_SET_CURRENT_GAME(SSE)
@@ -301,12 +263,29 @@ void Manager::readIgnoredMods()
         }
     }
     else
-        QLogger::QLog_Warning("MainOptimizer", tr("ignoredMods.txt not found. All mods will be processed, including tools such as Nemesis or Bodyslide studio."));
+        PLOG_WARNING << tr("ignoredMods.txt not found. All mods will be processed, including tools such as Nemesis or Bodyslide studio.");
+}
+
+void Manager::configureLogger()
+{
+    //Creating log folder
+    QDir dir;
+    dir.mkpath(QFileInfo(CAO_PLOG_PATH).path());
+
+    //Creating log file
+    QFile file(CAO_PLOG_PATH);
+
+    if(!file.open(QFile::ReadWrite))
+        throw std::runtime_error("Cannot open log file");
+
+    plog::Severity sev = static_cast<plog::Severity>(options.iLogLevel);
+    plog::init<plog::CustomFormatter>(plog::debug, qPrintable(CAO_PLOG_PATH));
 }
 
 void Manager::runOptimization()
 {
-    QLogger::QLog_Info("MainOptimizer", "Beginning...");
+    PLOG_DEBUG << "Game:" << CAO_GET_CURRENT_GAME;
+    PLOG_INFO <<  "Beginning...";
 
     MainOptimizer optimizer(options);
 
@@ -369,7 +348,7 @@ void Manager::runOptimization()
 
     FilesystemOperations::deleteEmptyDirectories(userPath);
 
-    QLogger::QLog_Info("MainOptimizer", "\n\n\nProcess completed");
+    PLOG_INFO <<  "\n\n\nProcess completed";
 
     return;
 }

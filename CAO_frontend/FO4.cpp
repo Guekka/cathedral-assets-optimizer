@@ -77,13 +77,13 @@ FO4::FO4() : ui(new Ui::FO4)
         this->saveUIToFile();
     });
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &FO4::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &FO4::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 0);});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 6);});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &FO4::loadUIFromFile);
 
     connect(ui->actionSelect_game, &QAction::triggered, GameSelector::getInstance(), [&]() {

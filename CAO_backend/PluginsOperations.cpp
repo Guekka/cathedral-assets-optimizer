@@ -7,7 +7,7 @@
 
 void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 {
-    QLogger::QLog_Trace("PluginsOperations", "Entering makeDummyPluginsfunction: creating enough dummy plugins to load BSAs");
+    PLOG_VERBOSE << "Entering makeDummyPluginsfunction: creating enough dummy plugins to load BSAs";
 
     QDirIterator it(folderPath);
 
@@ -22,18 +22,18 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
             if(it.fileName().contains(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive))
             {
                 espName = it.fileName().remove(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive) + ".esp";
-                QLogger::QLog_Trace("PluginsOperations", "Created textures bsa plugin:" + espName);
+                PLOG_VERBOSE << "Created textures bsa plugin:" + espName;
             }
 
             else
             {
                 espName = it.fileName().remove(CAO_BSA_SUFFIX, Qt::CaseInsensitive) + ".esp";
-                QLogger::QLog_Trace("PluginsOperations", "Created standard bsa plugin:" + espName);
+                PLOG_VERBOSE << "Created standard bsa plugin:" + espName;
             }
             QFile::copy(CAO_RESOURCES_PATH + "DummyPlugin.esp", folderPath + "/" + espName);
         }
     }
-    QLogger::QLog_Trace("PluginsOperations", "Exiting makeDummyPlugins function");
+    PLOG_VERBOSE << "Exiting makeDummyPlugins function";
 }
 
 

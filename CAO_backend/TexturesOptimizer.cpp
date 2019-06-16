@@ -22,7 +22,7 @@ void TexturesOptimizer::compress(const QString &filePath) //Compress uncompresse
 
         if(textureSize > 16)
         {
-            QLogger::QLog_Note("TexturesOptimizer", tr("Compressing uncompressed texture: ") + filePath);
+            PLOG_INFO << tr("Compressing uncompressed texture: ") + filePath;
             convertTexture(filePath, CAO_TEXTURES_FORMAT);
         }
     }
@@ -32,8 +32,8 @@ bool TexturesOptimizer::convertIncompatibleTextures(const QString &filePath) //C
 {
     if(isIncompatible(filePath))
     {
-        QLogger::QLog_Note("TexturesOptimizer", tr("Incompatible texture found: ")
-                           + filePath.mid(filePath.lastIndexOf("/")) + "\n" + tr("Compressing..."));
+        PLOG_INFO << tr("Incompatible texture found: ")
+                           + filePath.mid(filePath.lastIndexOf("/")) + "\n" + tr("Compressing...");
 
         convertTexture(filePath, CAO_TEXTURES_FORMAT);
 

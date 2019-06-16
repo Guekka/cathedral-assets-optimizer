@@ -22,7 +22,7 @@ BsaOptimizer::BsaOptimizer()
         }
     }
     else
-        QLogger::QLog_Warning("BsaOptimizer", tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis."));
+        PLOG_ERROR << tr("FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected by FNIS and Nemesis.");
 }
 
 void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)
@@ -36,8 +36,8 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)
         archive.open(bsaPath);
         archive.extractAll(bsaRoot, false);
     } catch (std::exception& e) {
-        QLogger::QLog_Error("BsaOptimizer", e.what());
-        QLogger::QLog_Error("BsaOptimizer", tr("An error occured during the extraction of: ") + bsaPath + "\n" + tr("Please extract it manually. The BSA was not deleted."));
+        PLOG_ERROR << e.what();
+        PLOG_ERROR << tr("An error occured during the extraction of: ") + bsaPath + "\n" + tr("Please extract it manually. The BSA was not deleted.");
         archive.close();
         return;
     }
@@ -46,7 +46,7 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)
     if(deleteBackup)
         QFile::remove(bsaPath);
 
-    QLogger::QLog_Info("BsaOptimizer", tr("BSA successfully extracted: ") + bsaPath);
+    PLOG_INFO <<  tr("BSA successfully extracted: ") + bsaPath;
 }
 
 
@@ -58,7 +58,7 @@ void BsaOptimizer::create(Bsa bsa)
 
     if(QFile(bsa.path).exists())
     {
-        QLogger::QLog_Error("BsaOptimizer", tr("Cannot pack existing loose files: a BSA already exists."));
+        PLOG_ERROR << tr("Cannot pack existing loose files: a BSA already exists.");
         return;
     }
 
@@ -85,14 +85,14 @@ void BsaOptimizer::create(Bsa bsa)
     }
 
 
-    QLogger::QLog_Debug("BsaOptimizer", "\nBSA folder :" + bsa.path + "\nBsaName : " + bsa.path + "\nBSAFilesSize: "
-                        + QString::number(bsa.filesSize));
+    PLOG_DEBUG << "\nBSA folder :" + bsa.path + "\nBsaName : " + bsa.path + "\nBSAFilesSize: "
+                        + QString::number(bsa.filesSize);
 
     try {
         archive.addFileFromDiskRoot(bsa.files);
     } catch (const std::exception& e) {
-        QLogger::QLog_Error("BsaOptimizer", e.what());
-        QLogger::QLog_Error("BsaOptimizer", "Cancelling packing of: " + bsa.path);
+        PLOG_ERROR << e.what();
+        PLOG_ERROR << "Cancelling packing of: " + bsa.path;
         archive.close();
         return;
     }
@@ -104,8 +104,8 @@ void BsaOptimizer::create(Bsa bsa)
         archive.save();
         archive.close();
     } catch (const std::exception& e) {
-        QLogger::QLog_Error("BsaOptimizer", e.what());
-        QLogger::QLog_Error("BsaOptimizer", "Cancelling packing of: " + bsa.path);
+        PLOG_ERROR << e.what();
+        PLOG_ERROR << "Cancelling packing of: " + bsa.path;
         archive.close();
         return;
     }
@@ -115,21 +115,21 @@ void BsaOptimizer::create(Bsa bsa)
     //TODO different max size before and after compression
     if(QFile(bsa.path).size() < bsa.maxSize)
     {
-        QLogger::QLog_Note("BsaOptimizer", tr("BSA successfully compressed: ") + bsa.path);
+        PLOG_INFO << tr("BSA successfully compressed: ") + bsa.path;
         for (const auto& file : bsa.files)
             QFile::remove(file);
     }
     else
     {
-        QLogger::QLog_Error("BsaOptimizer", tr("The BSA was not compressed: it is over 2.15gb: ") + bsa.path);
+        PLOG_ERROR << tr("The BSA was not compressed: it is over 2.15gb: ") + bsa.path;
         QFile::remove(bsa.path);
     }
 }
 
 void BsaOptimizer::packAll(const QString &folderPath)
 {
-    QLogger::QLog_Trace("BsaOptimizer", "Entering " + QString(__FUNCTION__) + " function"
-                        + "Packing all loose files into BSAs");
+    PLOG_VERBOSE << "Entering " + QString(__FUNCTION__) + " function"
+                        + "Packing all loose files into BSAs";
 
     Bsa texturesBsa, standardBsa;
     //Setting type
@@ -139,10 +139,6 @@ void BsaOptimizer::packAll(const QString &folderPath)
     //Naming BSAs
     texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type) + CAO_BSA_TEXTURES_SUFFIX;
     standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX;
-
-    QLogger::QLog_Debug("BsaOptimizer", standardBsa.path);
-    QLogger::QLog_Debug("BsaOptimizer", folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX);
-
 
     //Setting maxsize
     texturesBsa.maxSize = CAO_BSA_TEXTURES_MAX_SIZE ;

@@ -55,13 +55,13 @@ set(HEADERS
     IntegrationTests.h
     pch.h
     Games.h
+    Logger.h
     )
 
-#QLogger
+#plog
 
-include_directories(${PROJECT_SOURCE_DIR}/libs/QLogger)
-file(GLOB_RECURSE SOURCES_QLOGGER ${PROJECT_SOURCE_DIR}/libs/QLogger/*.cpp)
-file(GLOB_RECURSE HEADERS_QLOGGER ${PROJECT_SOURCE_DIR}/libs/QLogger/*.h)
+include_directories(${PROJECT_SOURCE_DIR}/libs/plog/include)
+file(GLOB_RECURSE HEADERS_PLOG ${PROJECT_SOURCE_DIR}/libs/plog/include/*.h)
 
 #LibBsarch
 
@@ -177,14 +177,13 @@ file(GLOB_RECURSE NIFLIB_SRC
 
 #Merge all
 
-list (APPEND SOURCES ${SOURCES_QLOGGER})
 list (APPEND SOURCES ${SOURCES_LIBBSARCH})
 list (APPEND SOURCES ${SOURCES_HAVOK})
 list (APPEND SOURCES ${SOURCES_CK-CMD})
 list (APPEND SOURCES ${HAVOK_COMPAT_SRC})
 list (APPEND SOURCES ${NIFLIB_SRC})
 
-list (APPEND HEADERS ${HEADERS_QLOGGER})
+list (APPEND HEADERS ${HEADERS_PLOG})
 list (APPEND HEADERS ${HEADERS_LIBBSARCH})
 list (APPEND HEADERS ${HEADERS_HAVOK})
 list (APPEND HEADERS ${HEADERS_CK-CMD})

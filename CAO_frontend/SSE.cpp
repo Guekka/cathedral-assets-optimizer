@@ -83,13 +83,13 @@ SSE::SSE() : ui(new Ui::SSE)
     });
 
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &SSE::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &SSE::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 0);});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 6);});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &SSE::loadUIFromFile);
 
     connect(ui->actionSelect_game, &QAction::triggered, GameSelector::getInstance(), [&]() {

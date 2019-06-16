@@ -16,7 +16,7 @@
 #include <QMutex>
 #include <QProcess>
 #include <QRegularExpression>
-#include <QSettings> //Used to read registry
+#include <QSettings>
 #include <QString>
 #include <QStringList>
 #include <QtConcurrent/QtConcurrent>
@@ -34,7 +34,7 @@
 
 
 /*---CUSTOM CLASSES-----*/
-#include "libs/QLogger/QLogger.h"
+#include "Logger.h"
 #include "libs/hkxcmd/hkfutils.h"
 #include "libs/NIF/NifFile.h"
 #include "libs/libbsarch/BSArchiveAuto.h"

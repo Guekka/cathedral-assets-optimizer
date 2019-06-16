@@ -79,13 +79,13 @@ TES5::TES5() : ui(new Ui::TES5)
         this->saveUIToFile();
     });
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &TES5::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &TES5::loadUIFromFile);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 0);});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 6);});
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &TES5::loadUIFromFile);
 
     connect(ui->actionSelect_game, &QAction::triggered, GameSelector::getInstance(), [&]() {

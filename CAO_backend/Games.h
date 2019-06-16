@@ -30,7 +30,7 @@
 #define CAO_TEXTURES_INCOMPATIBLE_FORMATS Games::getInstance()->getTexturesIncompatibleFormats()
 
 #define CAO_INI_PATH Games::getInstance()->getIniPath()
-#define CAO_LOG_PATH Games::getInstance()->getLogPath()
+#define CAO_PLOG_PATH Games::getInstance()->getLogPath()
 #define CAO_RESOURCES_PATH Games::getInstance()->getResourcePath()
 
 

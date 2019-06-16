@@ -24,7 +24,7 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel) :
         }
     }
     else
-        QLogger::QLog_Warning("MeshesOptimizer", tr("No custom headparts file found. If you haven't created one, please ignore this message."));
+        PLOG_ERROR << tr("No custom headparts file found. Vanilla headparts won't be detected.");
 }
 
 ScanResult MeshesOptimizer::scan(const QString &filePath)
@@ -32,7 +32,7 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
     NifFile nif;
     if(nif.Load(filePath.toStdString()) != 0)
     {
-        QLogger::QLog_Error("MeshesOptimizer", tr("Cannot load mesh: ") + filePath);
+        PLOG_ERROR << tr("Cannot load mesh: ") + filePath;
         return doNotProcess;
     }
     ScanResult result;
@@ -81,7 +81,7 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     NifFile nif;
     if(nif.Load(filePath.toStdString()) != 0)
     {
-        QLogger::QLog_Error("MeshesOptimizer", tr("Cannot load mesh: ") + filePath);
+        PLOG_ERROR << tr("Cannot load mesh: ") + filePath;
         return;
     }
 
@@ -98,7 +98,7 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     {
         options.bsTriShape = true;
         options.headParts = true;
-        QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to necessary optimization"));
+        PLOG_INFO << tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to necessary optimization");
         nif.OptimizeFor(options);
     }
     else
@@ -111,23 +111,23 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
             if(iMeshesOptimizationLevel >= 3)
             {
                 options.bsTriShape = true;
-                QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to full optimization"));
+                PLOG_INFO << tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to full optimization");
                 nif.OptimizeFor(options);
             }
             else if(iMeshesOptimizationLevel >= 2)
             {
-                QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to medium optimization"));
+                PLOG_INFO << tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to medium optimization");
                 nif.OptimizeFor(options);
             }
             break;
         case criticalIssue:
             options.bsTriShape = true;
-            QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to necessary optimization"));
+            PLOG_INFO << tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" due to necessary optimization");
             nif.OptimizeFor(options);
             break;
         }
     }
-    QLogger::QLog_Trace("MeshesOptimizer", "Resaving mesh: " + filePath);
+    PLOG_VERBOSE << "Resaving mesh: " + filePath;
     nif.Save(filePath.toStdString());
 }
 
@@ -139,7 +139,7 @@ void MeshesOptimizer::dryOptimize(const QString &filePath)
 
     //Headparts have to get a special optimization
     if(iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
-        QLogger::QLog_Note("MeshesOptimizer", tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to necessary optimization"));
+        PLOG_INFO << tr("Running NifOpt...")  + tr("Processing: ") + filePath + tr(" as an headpart due to necessary optimization");
     else
     {
         switch (scanResult)
@@ -148,13 +148,13 @@ void MeshesOptimizer::dryOptimize(const QString &filePath)
         case good:
         case lightIssue:
             if(iMeshesOptimizationLevel >= 3)
-                QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to full optimization"));
+                PLOG_INFO << filePath + tr(" would be optimized due to full optimization");
 
             else if(iMeshesOptimizationLevel >= 2)
-                QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to medium optimization"));
+                PLOG_INFO << filePath + tr(" would be optimized due to medium optimization");
             break;
         case criticalIssue:
-            QLogger::QLog_Note("MeshesOptimizer", filePath + tr(" would be optimized due to necessary optimization"));
+            PLOG_INFO << filePath + tr(" would be optimized due to necessary optimization");
             break;
         }
     }

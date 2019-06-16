@@ -449,7 +449,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <widget class="QMenu" name="menuLog_verbosity">
+    <widget class="QMenu" name="menuPLOG_verbosity">
      <property name="title">
       <string>Log verbosity</string>
      </property>
@@ -457,7 +457,7 @@
      <addaction name="actionLogVerbosityNote"/>
      <addaction name="actionLogVerbosityInfo"/>
     </widget>
-    <addaction name="menuLog_verbosity"/>
+    <addaction name="menuPLOG_verbosity"/>
     <addaction name="actionChangeTheme"/>
     <addaction name="actionSelect_game"/>
    </widget>
