@@ -14,7 +14,7 @@ namespace Ui {
 
 class SSE : public QMainWindow
 {
-    Q_DECLARE_TR_FUNCTIONS(MainWindow)
+    Q_DECLARE_TR_FUNCTIONS(SSE)
 
 public:
     SSE();

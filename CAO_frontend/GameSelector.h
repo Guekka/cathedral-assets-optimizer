@@ -5,10 +5,8 @@
 #pragma once
 
 #include "pch.h"
-#include "TES5.h"
-#include "SSE.h"
-#include "FO4.h"
 #include "selectiondialog.h"
+#include "UiBase.h"
 
 class GameSelector : public QObject
 {

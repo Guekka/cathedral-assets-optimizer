@@ -5,40 +5,44 @@
 #pragma once
 
 #include "pch.h"
-#include "ui_TES5.h"
+#include "ui_UiBase.h"
 #include "GameSelector.h"
 
 namespace Ui {
-    class TES5;
+class UiBase;
 }
 
-class TES5 : public QMainWindow
+class UiBase : public QMainWindow
 {
-    Q_DECLARE_TR_FUNCTIONS(TES5)
+    Q_DECLARE_TR_FUNCTIONS(UiBase)
 
 public:
-    TES5();
-    ~TES5();
+    UiBase(const QString& logPath, const QString& iniPath);
+    ~UiBase();
 
-private:
+    void initProcess();
+    void setupSettings();
+    void updateLog();
+    void closeEvent(QCloseEvent* event);
+    void readProgress();
+
+    virtual void loadUIFromFile() = 0;
+    virtual void saveUIToFile() = 0;
+
+protected:
     QFileDialog *fileDialog{};
-    Ui::TES5 *ui;
 
     bool bDarkMode = true;
     bool bLockVariables = false;
 
-    void saveUIToFile();
-    void loadUIFromFile();
-    void updateLog();
-    void initProcess();
-
-    int progressBarValue{};
-
-    void closeEvent(QCloseEvent* event);
-
     QTimer *timer;
-
     QSettings *settings;
-
     QProcess *caoProcess;
+
+    QString m_logPath;
+    QString m_iniPath;
+
+private:
+    Ui::UiBase *ui;
 };
+

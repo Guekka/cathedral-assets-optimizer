@@ -14,7 +14,6 @@
 #include <QTimer>
 /*----------------------*/
 
-
 /*---GUI----------------*/
 #include <QApplication>
 #include <QCheckBox>

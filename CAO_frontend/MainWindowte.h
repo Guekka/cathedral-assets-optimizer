@@ -4,27 +4,21 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "UiBase.h"
-#include "pch.h"
-#include "ui_FO4.h"
+#include <QMainWindow>
 
 namespace Ui {
-    class FO4;
+class MainWindowte;
 }
 
-class FO4 : public UiBase
+class MainWindowte : public QMainWindow
 {
-    Q_DECLARE_TR_FUNCTIONS(FO4)
+    Q_OBJECT
 
 public:
-    FO4();
-    ~FO4();
+    explicit MainWindowte(QWidget *parent = nullptr);
+    ~MainWindowte();
 
 private:
-    Ui::FO4 *ui;
-
-    virtual void saveUIToFile();
-    virtual void loadUIFromFile();
-
-    void initProcess();
+    Ui::MainWindowte *ui;
 };
+

@@ -5,24 +5,18 @@
 
 #include "FO4.h"
 
-FO4::FO4() : ui(new Ui::FO4)
+FO4::FO4() : UiBase ("logs/FO4_log.html", "settings/FO4/config.ini"),
+    ui(new Ui::FO4)
 {
     ui->setupUi(this);
-
-    //Loading remembered settings
-    settings = new QSettings("settings/FO4/config.ini", QSettings::IniFormat, this);
-
-    if(!settings->contains("iLogLevel"))
-        settings->setValue("iLogLevel", 3);
-
-    this->loadUIFromFile();
+/*
+    setupSettings();
+    loadUIFromFile();
 
     //Preparing log
 
-    ui->plainTextEdit->setReadOnly(true);
-    ui->plainTextEdit->setMaximumBlockCount(25);
     updateLog();
-
+*/
     //Connecting checkboxes to file
 
     connect(ui->BsaGroupBox, &QGroupBox::clicked, this, &FO4::saveUIToFile);
@@ -34,107 +28,11 @@ FO4::FO4() : ui(new Ui::FO4)
     connect(ui->TexturesNecessaryOptimizationRadioButton, &QCheckBox::clicked, this, &FO4::saveUIToFile);
     connect(ui->TexturesFullOptimizationRadioButton, &QCheckBox::clicked, this, &FO4::saveUIToFile);
 
-
-    //Connecting the other widgets
-
-    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, &FO4::saveUIToFile);
-    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &FO4::saveUIToFile);
-
-    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&]
-    {
-        if(ui->modeChooserComboBox->currentIndex() == 1)
-        {
-            QMessageBox warning(this);
-            warning.setText(tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. "
-                               "\nThis process has only been tested on the Mod Organizer mods folder."));
-            warning.exec();
-        }
-        this->saveUIToFile();
-    });
-
-
-    connect(ui->userPathButton, &QPushButton::pressed, this, [&](){
-        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
-                                                        settings->value("SelectedPath").toString(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        if(!dir.isEmpty()) ui->userPathTextEdit->setText(dir);
-        this->saveUIToFile();
-    });
-
-    connect(ui->processButton, &QPushButton::pressed, this, [&]()
-    {
-        if(QDir(ui->userPathTextEdit->text()).exists())
-            this->initProcess();
-        else
-            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
-
-    });
-
-    //Connecting menu buttons
-
-    connect(ui->actionChangeTheme, &QAction::triggered, this, [&]()
-    {
-        bDarkMode = !bDarkMode;
-        this->saveUIToFile();
-    });
-
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &FO4::loadUIFromFile);
-
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &FO4::loadUIFromFile);
-
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 6);});
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &FO4::loadUIFromFile);
-
-    connect(ui->actionSelect_game, &QAction::triggered, GameSelector::getInstance(), [&]() {
-        GameSelector::getInstance()->mainProcess(true); } );
-
-    //Setting caoProcess
-
-    caoProcess = new QProcess(this);
-    caoProcess->setProgram("bin/Cathedral_Assets_Optimizer_back.exe");
-
-    QObject::connect(caoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [&]()
-    {
-        ui->processButton->setDisabled(false);
-        bLockVariables = false;
-        ui->progressBar->setMaximum(100);
-        ui->progressBar->setValue(100);
-        updateLog();
-        timer->stop();
-    });
-
-    //Setting timer to read progress from caoProcess
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [&]()
-    {
-        QString readLine;
-        while(caoProcess->canReadLine())
-            readLine = QString::fromLocal8Bit(caoProcess->readLine());
-        QStringList line = readLine.simplified().split('|');
-        if(readLine.startsWith("PROGRESS:"))
-        {
-            ui->progressBar->setFormat(line.at(1));
-            int completed = line.at(2).toInt();
-            int total = line.at(3).toInt();
-            ui->progressBar->setMaximum(total);
-            ui->progressBar->setValue(completed);
-            this->updateLog();
-        }
-    });
-}
-
-
-void FO4::initProcess()
-{
-    caoProcess->start();
-    ui->processButton->setDisabled(true);
-    bLockVariables = true;
 }
 
 void FO4::saveUIToFile()
 {
-    if(bLockVariables)
+ /*   if(bLockVariables)
         return;
 
     //BSA
@@ -192,11 +90,11 @@ void FO4::saveUIToFile()
 
     settings->setValue("bDarkMode", bDarkMode);
 
-    this->loadUIFromFile();
+    this->loadUIFromFile();*/
 }
 
 void FO4::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
-{
+{/*
     ui->userPathTextEdit->setText(settings->value("SelectedPath").toString());
 
     //BSA
@@ -262,28 +160,7 @@ void FO4::loadUIFromFile()//Apply the Optimiser settings to the checkboxes
         ui->BsaGroupBox->setEnabled(false);
     }
     else
-        ui->BsaGroupBox->setEnabled(true);
-}
-
-void FO4::closeEvent(QCloseEvent* event)
-{
-    caoProcess->kill();
-    event->accept();
-}
-
-void FO4::updateLog()
-{
-    ui->plainTextEdit->clear();
-
-    QFile log("logs/FO4_log.html");
-    if(log.open(QFile::Text | QFile::ReadOnly))
-    {
-        QTextStream ts(&log);
-        ts.setCodec(QTextCodec::codecForName("UTF-8"));
-        QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-        ui->plainTextEdit->appendHtml(ts.readAll());
-        log.close();
-    }
+        ui->BsaGroupBox->setEnabled(true);*/
 }
 
 FO4::~FO4()

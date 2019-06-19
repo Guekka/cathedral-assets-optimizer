@@ -18,33 +18,39 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 #SOURCES
 
 set(SRCS
+    UiBase.cpp
     main.cpp
     GameSelector.cpp
     selectiondialog.cpp
     TES5.cpp
     SSE.cpp
     FO4.cpp
+    Custom.cpp
     )
 
 
 #HEADERS
 
 set(HEADERS
+    UiBase.h
     pch.h
     selectiondialog.h
     GameSelector.h
     TES5.h
     SSE.h
     FO4.h
+    Custom.h
     )
 
 #Ui files
 
 set(UI
+    UiBase.ui
     selectiondialog.ui
     TES5.ui
     SSE.ui
     FO4.ui
+    Custom.ui
     )
 
 #Translations

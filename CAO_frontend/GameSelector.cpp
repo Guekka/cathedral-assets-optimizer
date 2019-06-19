@@ -3,6 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "GameSelector.h"
+#include "TES5.h"
+#include "SSE.h"
+#include "FO4.h"
+#include "Custom.h"
 
 GameSelector* GameSelector::INSTANCE = nullptr;
 
@@ -57,6 +61,7 @@ QString GameSelector::getChoiceFromSelectorWindow()
     dialog.addChoice("SSE", QObject::tr("Skyrim SE"), QVariant());
     dialog.addChoice("TES5", QObject::tr("Skyrim"), QVariant());
     dialog.addChoice("FO4", QObject::tr("Fallout 4"), QVariant());
+    dialog.addChoice("Custom", QObject::tr("Advanced settings"), QVariant());
     dialog.exec();
 
     return dialog.getChoiceString();
@@ -70,6 +75,8 @@ int GameSelector::showGameWindow(const QString &choice)
         window = new TES5();
     else if(choice == "FO4")
         window = new FO4();
+    else if(choice == "Custom")
+        window = new Custom();
     else
         return 1;
 
