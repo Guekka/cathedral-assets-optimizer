@@ -39,7 +39,7 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
 
     result = good;
 
-    if(CAO_GET_CURRENT_GAME == SSE)
+    if(CAO_GET_CURRENT_GAME == Games::SSE)
     {
         for(const auto& shape : nif.GetShapes())
         {
@@ -53,7 +53,7 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
             }
         }
     }
-    else if(CAO_GET_CURRENT_GAME == TES5)
+    else if(CAO_GET_CURRENT_GAME == Games::TES5)
         result = criticalIssue;
     else
         result = doNotProcess;
@@ -151,7 +151,9 @@ void MeshesOptimizer::dryOptimize(const QString &filePath)
                 PLOG_INFO << filePath + tr(" would be optimized due to full optimization");
 
             else if(iMeshesOptimizationLevel >= 2)
+            {
                 PLOG_INFO << filePath + tr(" would be optimized due to medium optimization");
+            }
             break;
         case criticalIssue:
             PLOG_INFO << filePath + tr(" would be optimized due to necessary optimization");

@@ -11,7 +11,7 @@ See the included LICENSE file
 struct OptOptions {
 	NiVersion targetVersion;
 	bool headParts = false;
-	bool removeParallax = true;
+    bool removeParallax = false;
 	bool calcBounds = true;
     bool bsTriShape = false;
 };
