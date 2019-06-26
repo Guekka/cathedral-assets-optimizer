@@ -78,6 +78,7 @@ void BsaOptimizer::create(Bsa bsa)
                 isCompressed = false;
             }
 
+        //Removing files at the root directory, those cannot be packed
         QString filename = QFileInfo(file).fileName();
 
         if(bsaDir.filePath(filename) == file)
@@ -91,8 +92,7 @@ void BsaOptimizer::create(Bsa bsa)
     try {
         archive.addFileFromDiskRoot(bsa.files);
     } catch (const std::exception& e) {
-        PLOG_ERROR << e.what();
-        PLOG_ERROR << "Cancelling packing of: " + bsa.path;
+        PLOG_ERROR << e.what() << "Cancelling packing of: " + bsa.path;
         archive.close();
         return;
     }
@@ -112,8 +112,7 @@ void BsaOptimizer::create(Bsa bsa)
 
     //Checking if the archive is below 2.15gb, since a BSA cannot be greater
 
-    //TODO different max size before and after compression
-    if(QFile(bsa.path).size() < bsa.maxSize)
+    if(QFile(bsa.path).size() < LONG_MAX)
     {
         PLOG_INFO << tr("BSA successfully compressed: ") + bsa.path;
         for (const auto& file : bsa.files)
@@ -128,8 +127,8 @@ void BsaOptimizer::create(Bsa bsa)
 
 void BsaOptimizer::packAll(const QString &folderPath)
 {
-    PLOG_VERBOSE << "Entering " + QString(__FUNCTION__) + " function"
-                        + "Packing all loose files into BSAs";
+    PLOG_VERBOSE << "Entering" __FUNCTION__ "function."
+                         "Packing all loose files into BSAs";
 
     Bsa texturesBsa, standardBsa;
     //Setting type
@@ -153,8 +152,7 @@ void BsaOptimizer::packAll(const QString &folderPath)
     while (it.hasNext())
     {
         it.next();
-        QFileInfo currentFile (it.filePath());
-        bool doNotPack = isIgnoredFile(it.fileName()) || currentFile.isDir();
+        bool doNotPack = isIgnoredFile(it.fileName()) || it.fileInfo().isDir();
         if(allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !doNotPack)
         {
             bool isTexture = texturesAssets.contains(it.fileName().right(3)) && CAO_HAS_BSA_TEXTURES; ; //If false, it means that it's a "standard" asset
@@ -176,20 +174,20 @@ void BsaOptimizer::packAll(const QString &folderPath)
                 pBsa.files.clear();
             }
             //adding files and sizes to list
-            pBsa.files << currentFile.absoluteFilePath();
-            pBsa.filesSize += currentFile.size();
+            pBsa.files << it.filePath();
+            pBsa.filesSize += it.fileInfo().size();
         }
     }
 
     //Since the maximum size wasn't reached for the last archive, some files are still unpacked
     if (!texturesBsa.files.isEmpty())
     {
-        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::texturesBsa) + CAO_BSA_TEXTURES_SUFFIX;
+        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type) + CAO_BSA_TEXTURES_SUFFIX;
         create(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
-        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, bsaType::standardBsa) + CAO_BSA_SUFFIX;
+        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX;
         create(standardBsa);
     }
 }
