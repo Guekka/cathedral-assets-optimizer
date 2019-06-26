@@ -5,7 +5,7 @@
 
 #include "MainOptimizer.h"
 
-MainOptimizer::MainOptimizer(const OptOptionsCAO &options) : optOptions (options),
+MainOptimizer::MainOptimizer(const OptionsCAO &options) : optOptions (options),
     meshesOpt(MeshesOptimizer(optOptions.bMeshesHeadparts, options.iMeshesOptimizationLevel)) {}
 
 void MainOptimizer::process(const QString &file)

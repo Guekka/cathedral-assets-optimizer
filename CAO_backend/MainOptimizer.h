@@ -12,22 +12,7 @@
 #include "PluginsOperations.h"
 #include "TexturesOptimizer.h"
 #include "Games.h"
-
-struct OptOptionsCAO
-{
-    bool bBsaExtract = false;
-    bool bBsaCreate = false;
-    bool bBsaDeleteBackup = false;
-    bool bBsaOptimizeAssets = false;
-    bool bAnimationsOptimization = false;
-    bool bMeshesHeadparts = false;
-    bool bDryRun = false;
-
-    int iMeshesOptimizationLevel = 0;
-    int iTexturesOptimizationLevel = 0;
-    int iLogLevel{};
-};
-
+#include "OptionsCAO.h"
 
 /*!
  * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
@@ -37,7 +22,7 @@ class MainOptimizer : public QObject
     Q_DECLARE_TR_FUNCTIONS(MainOptimizer)
 
 public:
-    MainOptimizer(const OptOptionsCAO& optOptions);
+    MainOptimizer(const OptionsCAO& optOptions);
 
     void process(const QString& file);
     void packBsa(const QString& folder);
@@ -51,7 +36,7 @@ private:
     void processHkx(const QString& file);
     void processTga(const QString& file);
 
-    OptOptionsCAO optOptions;
+    OptionsCAO optOptions;
 
     BsaOptimizer bsaOpt;
     MeshesOptimizer meshesOpt;

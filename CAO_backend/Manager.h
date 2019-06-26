@@ -7,8 +7,6 @@
 #include "pch.h"
 #include "MainOptimizer.h"
 
-enum OptimizationMode { singleMod = 0, severalMods = 1};
-
 class Manager : public QObject
 {
     Q_OBJECT
@@ -29,19 +27,6 @@ public:
     void printProgress(const int &total, const QString& text);
 
 private:
-
-    /*!
-     * \brief Parse the command line arguments and store them to the ini file, then read the ini file.
-     */
-    void parseArguments();
-    /*!
-     * \brief Reads the ini file and import its content into the options struct
-     */
-    void readIni();
-    /*!
-     * \brief Checks if the selected settings are allowed
-     */
-    void checkSettings();
     /*!
      * \brief List all the directories to process
      * \param mode
@@ -49,29 +34,9 @@ private:
      */
     void listDirectories();
     /*!
-     * \brief The files to process
-     */
-    QStringList files;
-    /*!
-     * \brief The animations to process. Separated, since they don't support multithreading
-     */
-    QStringList animations;
-    /*!
-     * \brief The BSAs to extract
-     */
-    QStringList BSAs;
-    /*!
      * \brief List all the files in the modsToProcess list and store them. Also add their weights to filesWeight
      */
     void listFiles();
-    /*!
-     * \brief The number of all files. Used to determine progress
-     */
-    int numberFiles = 0;
-    /*!
-     * \brief The number of completed files. Used to determine progress
-     */
-    int numberCompletedFiles = 0;
     /*!
      * \brief Reset the ini
      */
@@ -89,25 +54,21 @@ private:
      */
     void readIgnoredMods();
     /*!
-     * \brief Setup the logger
+     * \brief The number of all files. Used to determine progress
      */
-    void configureLogger();
+    int numberFiles = 0;
+    /*!
+     * \brief The number of completed files. Used to determine progress
+     */
+    int numberCompletedFiles = 0;
     /*!
      * \brief The optimization options, that will be given to the MainOptimizer
      */
-    OptOptionsCAO options;
-    /*!
-     * \brief The optimization mode
-     */
-    OptimizationMode mode;
-    /*!
-      * \brief The path given by the user
-      */
-    QString userPath{};
+    OptionsCAO options;
     /*!
       * \brief The list of directories to process
       */
-    QStringList modsToProcess{};
+    QStringList modsToProcess;
     /*!
      * \brief Mods on this list won't be processed
      */
@@ -116,5 +77,17 @@ private:
      * \brief Used to read the INI
      */
     QSettings *settings;
+    /*!
+     * \brief The files to process
+     */
+    QStringList files;
+    /*!
+     * \brief The animations to process. Separated, since they don't support multithreading
+     */
+    QStringList animations;
+    /*!
+     * \brief The BSAs to extract
+     */
+    QStringList BSAs;
 };
 
