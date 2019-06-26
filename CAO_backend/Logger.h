@@ -69,3 +69,19 @@ public:
     }
 };
 }
+
+inline void initCustomLogger(const QString& logPath, int logLevel)
+{
+    //Creating log folder
+    QDir dir;
+    dir.mkpath(QFileInfo(logPath).path());
+
+    //Creating log file
+    QFile file(logPath);
+
+    if(!file.open(QFile::ReadWrite))
+        throw std::runtime_error("Cannot open log file");
+
+    plog::Severity sev = static_cast<plog::Severity>(logLevel);
+    plog::init<plog::CustomFormatter>(sev, qPrintable(logPath));
+}
