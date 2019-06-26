@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "GameSelector.h"
+#include "Custom.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     QApplication::installTranslator(&AssetsOptTranslator);
 
-    GameSelector::getInstance()->mainProcess(false);
-
+    Custom win;
+    win.show();
     return app.exec();
 }

@@ -15,41 +15,30 @@ set(CMAKE_AUTORCC ON)
 set(Qt5_DIR "E:/Qt/5.12.3/msvc2017/lib/cmake/Qt5")
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
+#parent dir
+get_filename_component(PARENT_DIR ${PROJECT_SOURCE_DIR} DIRECTORY)
+include_directories(${PARENT_DIR}/CAO_shared)
+
 #SOURCES
 
 set(SRCS
-    UiBase.cpp
     main.cpp
-    GameSelector.cpp
-    selectiondialog.cpp
-    TES5.cpp
-    SSE.cpp
-    FO4.cpp
     Custom.cpp
+    #${PARENT_DIR}/CAO_shared/Ini.cpp
     )
 
 
 #HEADERS
 
 set(HEADERS
-    UiBase.h
     pch.h
-    selectiondialog.h
-    GameSelector.h
-    TES5.h
-    SSE.h
-    FO4.h
     Custom.h
+    #${PARENT_DIR}/CAO_shared/Ini.h
     )
 
 #Ui files
 
 set(UI
-    UiBase.ui
-    selectiondialog.ui
-    TES5.ui
-    SSE.ui
-    FO4.ui
     Custom.ui
     )
 
