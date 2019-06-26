@@ -5,6 +5,7 @@
 #pragma once
 
 #include "pch.h"
+#include "../CAO_frontend/Custom.h"
 
 #define CAO_SET_CURRENT_GAME(game) Games::getInstance()->setGame(game);
 #define CAO_GET_CURRENT_GAME Games::getInstance()->getGame()
@@ -30,16 +31,57 @@
 #define CAO_TEXTURES_INCOMPATIBLE_FORMATS Games::getInstance()->getTexturesIncompatibleFormats()
 
 #define CAO_INI_PATH Games::getInstance()->getIniPath()
-#define CAO_PLOG_PATH Games::getInstance()->getLogPath()
+#define CAO_LOG_PATH Games::getInstance()->getLogPath()
 #define CAO_RESOURCES_PATH Games::getInstance()->getResourcePath()
-
-
-enum GameMode { TES5, SSE, FO4, Custom } ;
 
 const int GigaByte = 1024 * 1024 * 1024;
 
-class Games
+class Games : public QObject
 {
+public:
+    enum GameMode { TES5, SSE, FO4, Custom, Invalid = -1 };
+    Q_ENUM(GameMode)
+
+    static Games* getInstance();
+
+    bsa_archive_type_e GetBsaFormat() const;
+    bsa_archive_type_t getBsaTexturesFormat() const;
+    double getBsaUncompressedMaxSize() const;
+    double getBsaTexturesMaxSize() const;
+    QString getBsaExtension() const;
+    bool getHasBsaTextures() const;
+    QString getBsaSuffix() const;
+    QString getBsaTexturesSuffix() const;
+
+    NiFileVersion getMeshesFileVersion() const;
+    uint getMeshesStream() const;
+    uint getMeshesUser() const;
+
+    hkPackFormat getAnimationsFormat() const;
+
+    QString getTexturesFormat() const;
+    QStringList getTexturesIncompatibleExtensions() const;
+    QStringList getTexturesIncompatibleFormats() const;
+
+    QString getIniPath() const;
+    QString getLogPath() const;
+    QString getResourcePath() const;
+
+    void setGame(const GameMode& newGame);
+    void setGame(const QString& gameString);
+    void setGame(Ui::Custom* ui);
+    GameMode getGame() const;
+
+    static GameMode stringToGame(const QString& string);
+    static GameMode uiToGame(Ui::Custom* ui);
+
+    void saveToIni(QSettings *settings);
+    void readFromIni(QSettings *settings);
+
+    void saveToUi(Ui::Custom* ui);
+    void readFromUi(Ui::Custom* ui);
+
+
 private:   
     bsa_archive_type_t bsaFormat;
     bsa_archive_type_t bsaTexturesFormat;
@@ -68,36 +110,5 @@ private:
     GameMode game;
 
     Games();
-
-public:
-    static Games* getInstance();
-
-    bsa_archive_type_e GetBsaFormat() const;
-    bsa_archive_type_t getBsaTexturesFormat() const;
-    double getBsaUncompressedMaxSize() const;
-    double getBsaTexturesMaxSize() const;
-    QString getBsaExtension() const;
-    bool getHasBsaTextures() const;
-    QString getBsaSuffix() const;
-    QString getBsaTexturesSuffix() const;
-
-    NiFileVersion getMeshesFileVersion() const;
-    uint getMeshesStream() const;
-    uint getMeshesUser() const;
-
-    hkPackFormat getAnimationsFormat() const;
-
-    QString getTexturesFormat() const;
-    QStringList getTexturesIncompatibleExtensions() const;
-    QStringList getTexturesIncompatibleFormats() const;
-
-    QString getIniPath() const;
-    QString getLogPath() const;
-    QString getResourcePath() const;
-
-    void setGame(const GameMode& newGame);
-    GameMode getGame() const;
-
-
 };
 

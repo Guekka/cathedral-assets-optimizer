@@ -15,6 +15,9 @@ void Games::setGame(const GameMode &newGame)
 
     switch (game)
     {
+    case Invalid:
+        throw std::runtime_error("Invalid game");
+
     case SSE:
         bsaFormat = baSSE;
         bsaTexturesFormat = baSSE;
@@ -23,7 +26,6 @@ void Games::setGame(const GameMode &newGame)
         //Using 2.37GB for max textures size since this bsa will always be compressed.
         //After some experiments, it is the maximum size to ensure the bsa will always
         //stay under the maximum size : ~2.1gb
-        //TODO let the user choose the max size in the INI
         maxBsaTexturesSize = 2.37 * static_cast<double>(GigaByte);
         bsaExtension = ".bsa";
         bsaSuffix = ".bsa";
@@ -65,7 +67,9 @@ void Games::setGame(const GameMode &newGame)
         bsaFormat = baFO4;
         bsaTexturesFormat = baFO4dds;
         maxBsaUncompressedSize = 2 * static_cast<double>(GigaByte);
-        hasBsaTextures = false; //TODO change it to true (currently bugged)
+        hasBsaTextures = false;
+        //TODO enable bsa textures
+        //DirectXTex will have to be used as a callback for libbsarch
         maxBsaTexturesSize = 2.5 * static_cast<double>(GigaByte);
         bsaExtension = ".ba2";
         bsaSuffix = " - Main.ba2";
@@ -109,7 +113,47 @@ void Games::setGame(const GameMode &newGame)
     }
 }
 
-GameMode Games::getGame() const
+void Games::setGame(const QString& gameString)
+{
+    setGame(stringToGame(gameString));
+}
+
+void Games::setGame(Ui::Custom* ui)
+{
+    setGame(uiToGame(ui));
+}
+
+Games::GameMode Games::stringToGame(const QString &string)
+{
+    GameMode gamemode;
+    if(string == "SSE")
+        gamemode = SSE;
+    else if(string == "TES5")
+        gamemode = TES5;
+    else if(string == "FO4")
+        gamemode = FO4;
+    else if(string == "Custom")
+        gamemode = Custom;
+    else
+        gamemode = Invalid;
+
+    return gamemode;
+}
+
+Games::GameMode Games::uiToGame(Ui::Custom *ui)
+{
+    if(ui->advancedSettingsCheckbox->isChecked())
+        return Custom;
+    else
+    {
+        if(ui->presets->currentData().canConvert<GameMode>())
+            return ui->presets->currentData().value<GameMode>();
+        else
+            return Invalid;
+    }
+}
+
+Games::GameMode Games::getGame() const
 {
     return game;
 }
