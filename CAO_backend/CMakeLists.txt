@@ -38,6 +38,7 @@ set(SOURCES
     MainOptimizer.cpp
     IntegrationTests.cpp
     Games.cpp
+    OptionsCAO.cpp
     )
 
 
@@ -56,6 +57,7 @@ set(HEADERS
     pch.h
     Games.h
     Logger.h
+    OptionsCAO.h
     )
 
 #plog

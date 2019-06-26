@@ -24,7 +24,6 @@ include_directories(${PARENT_DIR}/CAO_shared)
 set(SRCS
     main.cpp
     Custom.cpp
-    #${PARENT_DIR}/CAO_shared/Ini.cpp
     )
 
 
@@ -33,7 +32,6 @@ set(SRCS
 set(HEADERS
     pch.h
     Custom.h
-    #${PARENT_DIR}/CAO_shared/Ini.h
     )
 
 #Ui files
