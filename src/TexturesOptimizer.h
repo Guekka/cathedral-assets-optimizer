@@ -35,4 +35,15 @@ public:
     static void convertTexture(const QString& filePath, const QString& format);
 
     static bool isIncompatible(const QString &filePath);
+
+    enum TextureType {dds, tga};
+
+    HRESULT open(const void* pSource, size_t size, TextureType type);
+    HRESULT open(QString& filePath, TextureType type);
+
+private:
+    std::unique_ptr<DirectX::ScratchImage> image;
+    DirectX::TexMetadata info;
+
+
 };

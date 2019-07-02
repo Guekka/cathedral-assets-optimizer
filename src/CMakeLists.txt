@@ -45,7 +45,6 @@ set(SOURCES
     IntegrationTests.cpp
     Games.cpp
     OptionsCAO.cpp
-    TexturesScanner.cpp
 
     #Ui
     MainWindow.cpp
@@ -68,7 +67,6 @@ set(HEADERS
     Games.h
     Logger.h
     OptionsCAO.h
-    TexturesScanner.h
 
     #Ui
     MainWindow.h

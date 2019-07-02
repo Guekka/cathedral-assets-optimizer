@@ -6,6 +6,69 @@
 #include "TexturesOptimizer.h"
 
 
+HRESULT TexturesOptimizer::open(QString &filePath, TextureType type)
+{
+    wchar_t fileName[1024];
+    filePath.toWCharArray(fileName);
+
+    image.reset(new (std::nothrow) DirectX::ScratchImage);
+    if (!image)
+        return E_OUTOFMEMORY;
+
+    switch (type)
+    {
+    case tga:
+        return LoadFromTGAFile(fileName, &info, *image);
+    case dds:
+        DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
+        HRESULT hr = LoadFromDDSFile(fileName, ddsFlags, &info, *image);
+        if (FAILED(hr))
+            return false;
+
+        if (DirectX::IsTypeless(info.format))
+        {
+            info.format = DirectX::MakeTypelessUNORM(info.format);
+
+            if (DirectX::IsTypeless(info.format))
+                return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+
+            image->OverrideFormat(info.format);
+        }
+
+        return S_OK;
+    }
+}
+
+HRESULT TexturesOptimizer::open(const void* pSource, size_t size, TextureType type)
+{
+    image.reset(new (std::nothrow) DirectX::ScratchImage);
+    if (!image)
+        return E_OUTOFMEMORY;
+
+    switch (type)
+    {
+    case tga:
+        //return LoadFromTGAMemory(pSource, size, &info, *image);
+    case dds:
+        DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
+        HRESULT hr = LoadFromDDSMemory(pSource, size, ddsFlags, &info, *image);
+        if (FAILED(hr))
+            return false;
+
+        if (DirectX::IsTypeless(info.format))
+        {
+            info.format = DirectX::MakeTypelessUNORM(info.format);
+
+            if (DirectX::IsTypeless(info.format))
+                return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+
+            image->OverrideFormat(info.format);
+        }
+        return S_OK;
+    }
+    return S_FALSE;
+}
+
 void TexturesOptimizer::compress(const QString &filePath) //Compress uncompressed textures to BC7
 {
     QProcess texDiag;
@@ -33,7 +96,7 @@ bool TexturesOptimizer::convertIncompatibleTextures(const QString &filePath) //C
     if(isIncompatible(filePath))
     {
         PLOG_INFO << tr("Incompatible texture found: ")
-                           + filePath.mid(filePath.lastIndexOf("/")) + "\n" + tr("Compressing...");
+                     + filePath.mid(filePath.lastIndexOf("/")) + "\n" + tr("Compressing...");
 
         convertTexture(filePath, CAO_TEXTURES_FORMAT);
 
