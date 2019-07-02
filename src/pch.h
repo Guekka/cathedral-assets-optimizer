@@ -49,6 +49,7 @@
 #include "libs/hkxcmd/hkfutils.h"
 #include "libs/NIF/NifFile.h"
 #include "libs/libbsarch/BSArchiveAuto.h"
+#include "libs/DirectXTex/DirectXTex.h"
 /*----------------------*/
 
 #endif
