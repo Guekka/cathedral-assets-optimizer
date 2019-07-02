@@ -15,10 +15,6 @@ set(CMAKE_AUTORCC ON)
 set(Qt5_DIR "E:/Qt/5.12.3/msvc2017/lib/cmake/Qt5")
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
-#parent dir
-get_filename_component(PARENT_DIR ${PROJECT_SOURCE_DIR} DIRECTORY)
-include_directories(${PARENT_DIR}/CAO_shared)
-
 #SOURCES
 
 set(SRCS
@@ -32,12 +28,6 @@ set(SRCS
 set(HEADERS
     pch.h
     Custom.h
-    )
-
-#Ui files
-
-set(UI
-    Custom.ui
     )
 
 #Translations
@@ -60,8 +50,12 @@ SET(QON_TS_FILES
 
 ##qt5_add_translation(QON_QM_FILES ${QON_TS_FILES})
 
-#Icon and qrc
+#Ui
+set(UI
+    Custom.ui
+    )
 
+#Icon and qrc
 set(ICON_RC_PATH "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc")
 set(QRC_PATH "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc")
 

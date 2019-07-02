@@ -13,7 +13,17 @@ int main(int argc, char *argv[])
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     QApplication::installTranslator(&AssetsOptTranslator);
 
-    Custom win;
-    win.show();
+    try{
+        Custom win;
+        win.show();
+    }
+    catch(const std::exception& e)
+    {
+        QMessageBox box;
+        box.setIcon(QMessageBox::Critical);
+        box.setText("An exception has been encountered and the app was forced to stop: " + QString(e.what()));
+        box.exec();
+    }
+
     return app.exec();
 }
