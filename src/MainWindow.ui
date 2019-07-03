@@ -242,7 +242,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -974,6 +974,20 @@
            <string>Advanced</string>
           </property>
           <layout class="QFormLayout" name="formLayout_4">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>TGA</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="texturesTgaConversionCheckBox">
+             <property name="text">
+              <string>Enable TGA conversion</string>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_12">
              <property name="text">
@@ -1004,26 +1018,6 @@
               </property>
              </item>
             </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_13">
-             <property name="text">
-              <string>Incompatible formats</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QPlainTextEdit" name="texturesIncompatibleFormats"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_14">
-             <property name="text">
-              <string>Incompatible extensions</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QPlainTextEdit" name="texturesIncompatibleExtensions"/>
            </item>
           </layout>
          </widget>

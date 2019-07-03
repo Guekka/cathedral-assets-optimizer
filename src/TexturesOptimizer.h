@@ -17,33 +17,32 @@ public:
      * \param filePath The file to convert
      * \return whether true if the file has been converted or false if it hasn't been converted
      */
-    static bool convertIncompatibleTextures(const QString& filePath);
+    bool convertIncompatibleTextures();
     /*!
      * \brief Will compress a DDS file using the appropriate compression format, only if the texture is uncompressed and if it has more than 16 pixels
      * \param filePath The file to convert
      */
-    static void compress(const QString& filePath);
+    void compress();
     /*!
      * \brief Will check if a texture is compressed
      * \param filePath The file to check
      * \return A bool : true if the file is compressed, false otherwise.
      */
-    static bool isCompressed(const QString &filePath);
+    bool isCompressed();
 
-    static QString getFormat(const QString &filePath);
+    DirectX::TexMetadata getInfo();
 
-    static void convertTexture(const QString& filePath, const QString& format);
+    void convert(const DXGI_FORMAT& format);
 
-    static bool isIncompatible(const QString &filePath);
+    bool isIncompatible();
 
     enum TextureType {dds, tga};
 
-    HRESULT open(const void* pSource, size_t size, TextureType type);
-    HRESULT open(QString& filePath, TextureType type);
+    HRESULT open(const void* pSource, const size_t& size, const TextureType& type, const QString& fileName);
+    HRESULT open(const QString& filePath, const TextureType& type);
 
 private:
     std::unique_ptr<DirectX::ScratchImage> image;
     DirectX::TexMetadata info;
-
-
+    QString name;
 };

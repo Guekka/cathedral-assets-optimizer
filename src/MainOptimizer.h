@@ -7,6 +7,7 @@
 #include "AnimationsOptimizer.h"
 #include "BsaOptimizer.h"
 #include "MeshesOptimizer.h"
+#include "TexturesOptimizer.h"
 #include "OptionsCAO.h"
 
 /*!
@@ -35,4 +36,5 @@ private:
     BsaOptimizer bsaOpt;
     MeshesOptimizer meshesOpt;
     AnimationsOptimizer animOpt;
+    TexturesOptimizer texturesOpt;
 };

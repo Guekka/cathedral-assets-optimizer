@@ -72,17 +72,20 @@ void MainOptimizer::processDds(const QString& file)
     if(optOptions.iTexturesOptimizationLevel == 0)
         return;
 
+    TexturesOptimizer::TextureType type = TexturesOptimizer::dds;
+    texturesOpt.open(file, type);
+
     if(optOptions.bDryRun)
     {
         switch (optOptions.iTexturesOptimizationLevel)
         {
         case 2:
-            if(!TexturesOptimizer::isCompressed(file))
+            if(!texturesOpt.isCompressed())
             {
                 PLOG_INFO << file + QObject::tr(" would be compressed to BC7");
             }
         case 1:
-            if(TexturesOptimizer::isIncompatible(file))
+            if(texturesOpt.isIncompatible())
             {
                 PLOG_INFO << file + QObject::tr(" is incompatible and would be converted to a compatible format");
             }
@@ -93,9 +96,9 @@ void MainOptimizer::processDds(const QString& file)
         switch (optOptions.iTexturesOptimizationLevel)
         {
         case 2:
-            TexturesOptimizer::compress(file);
+            texturesOpt.compress();
         case 1:
-            TexturesOptimizer::convertIncompatibleTextures(file);
+            texturesOpt.convertIncompatibleTextures();
         }
     }
 }
@@ -127,11 +130,11 @@ void MainOptimizer::processTga(const QString &file)
     if(optOptions.iTexturesOptimizationLevel == 0)
         return;
 
-    if(optOptions.iTexturesOptimizationLevel >=1 && optOptions.bDryRun && TexturesOptimizer::isIncompatible(file))
+    TexturesOptimizer::TextureType type = TexturesOptimizer::tga;
+    texturesOpt.open(file, type);
+
+    if(optOptions.iTexturesOptimizationLevel >=1 && optOptions.bDryRun && texturesOpt.isIncompatible())
         PLOG_INFO << file + QObject::tr(" would be converted to DDS");
-    else if(optOptions.iTexturesOptimizationLevel >=1)
-        TexturesOptimizer::convertIncompatibleTextures(file);
+    else if(optOptions.iTexturesOptimizationLevel >=1  && texturesOpt.isIncompatible())
+        texturesOpt.convertIncompatibleTextures();
 }
-
-
-

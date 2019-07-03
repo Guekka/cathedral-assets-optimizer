@@ -29,7 +29,7 @@
 #define CAO_ANIMATIONS_FORMAT Games::getInstance()->getAnimationsFormat()
 
 #define CAO_TEXTURES_FORMAT Games::getInstance()->getTexturesFormat()
-#define CAO_TEXTURES_INCOMPATIBLE_EXTENSIONS Games::getInstance()->getTexturesIncompatibleExtensions()
+#define CAO_TEXTURES_CONVERT_TGA Games::getInstance()->getTexturesIncompatibleExtensions()
 #define CAO_TEXTURES_INCOMPATIBLE_FORMATS Games::getInstance()->getTexturesIncompatibleFormats()
 
 #define CAO_INI_PATH Games::getInstance()->getIniPath()
@@ -46,6 +46,7 @@ public:
     //Declaring enums to Qt system
     Q_ENUM(bsa_archive_type_e)
     Q_ENUM(NiFileVersion)
+    Q_ENUM(DXGI_FORMAT)
 
     static Games* getInstance();
 
@@ -64,9 +65,9 @@ public:
 
     hkPackFormat getAnimationsFormat() const;
 
-    QString getTexturesFormat() const;
-    QStringList getTexturesIncompatibleExtensions() const;
-    QStringList getTexturesIncompatibleFormats() const;
+    DXGI_FORMAT getTexturesFormat() const;
+    bool getTexturesConvertTga() const;
+    QList<DXGI_FORMAT> getTexturesIncompatibleFormats() const;
 
     QString getIniPath() const;
     QString getLogPath() const;
@@ -104,9 +105,9 @@ private:
 
     hkPackFormat animationFormat;
 
-    QString texturesFormat;
-    QStringList texturesIncompatibleExtensions;
-    QStringList texturesIncompatibleFormats;
+    DXGI_FORMAT texturesFormat;
+    bool texturesConvertTga;
+    QList<QVariant> texturesIncompatibleFormats;
 
     QString iniPath;
     QString logPath;
