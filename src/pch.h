@@ -44,6 +44,10 @@
 #include <fstream>
 /*----------------------*/
 
+/*--WINDOWS-------------*/
+#include <wrl\client.h>
+/*----------------------*/
+
 /*---CUSTOM CLASSES-----*/
 #include "Logger.h"
 #include "libs/hkxcmd/hkfutils.h"

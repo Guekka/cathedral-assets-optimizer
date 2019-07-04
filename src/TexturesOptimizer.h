@@ -12,6 +12,7 @@ class TexturesOptimizer : public QObject
     Q_DECLARE_TR_FUNCTIONS(TexturesOptimizer)
 
 public:
+    TexturesOptimizer();
     /*!
      * \brief Will convert incompatibles textures to DDS. If a DDS with the same name already exist, the incompatible texture is removed.
      * \param filePath The file to convert
@@ -19,10 +20,10 @@ public:
      */
     bool convertIncompatibleTextures();
     /*!
-     * \brief Will compress a DDS file using the appropriate compression format, only if the texture is uncompressed and if it has more than 16 pixels
+     * \brief Will compress a DDS file using the appropriate compression format, only if the texture is uncompressed
      * \param filePath The file to convert
      */
-    void compress();
+    void compress(const DXGI_FORMAT& format);
     /*!
      * \brief Will check if a texture is compressed
      * \param filePath The file to check
@@ -30,9 +31,17 @@ public:
      */
     bool isCompressed();
 
+    int decompress();
+
+    int resize(size_t targetWidth, size_t targetHeight);
+
+    void fitPowerOfTwo(uint& resultX, uint& resultY);
+
+    int generateMipMaps();
+
     DirectX::TexMetadata getInfo();
 
-    void convert(const DXGI_FORMAT& format);
+    int convert(const DXGI_FORMAT& format);
 
     bool isIncompatible();
 
@@ -41,8 +50,16 @@ public:
     HRESULT open(const void* pSource, const size_t& size, const TextureType& type, const QString& fileName);
     HRESULT open(const QString& filePath, const TextureType& type);
 
+    HRESULT saveToFile(const QString& filePath);
+
 private:
     std::unique_ptr<DirectX::ScratchImage> image;
     DirectX::TexMetadata info;
     QString name;
+
+    Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
+
+    bool createDevice(int adapter, ID3D11Device** pDevice);
+    bool GetDXGIFactory(IDXGIFactory1** pFactory);
 };
+
