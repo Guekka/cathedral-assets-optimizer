@@ -23,13 +23,15 @@ public:
      * \brief Will compress a DDS file using the appropriate compression format, only if the texture is uncompressed
      * \param filePath The file to convert
      */
-    void compress(const DXGI_FORMAT& format);
+    int compress(const DXGI_FORMAT& format);
     /*!
      * \brief Will check if a texture is compressed
      * \param filePath The file to check
      * \return A bool : true if the file is compressed, false otherwise.
      */
     bool isCompressed();
+
+    void optimize(const int& optLevel, std::optional<int> width, std::optional<int> height);
 
     int decompress();
 
@@ -50,7 +52,7 @@ public:
     HRESULT open(const void* pSource, const size_t& size, const TextureType& type, const QString& fileName);
     HRESULT open(const QString& filePath, const TextureType& type);
 
-    HRESULT saveToFile(const QString& filePath);
+    bool saveToFile(const QString& filePath);
 
 private:
     std::unique_ptr<DirectX::ScratchImage> image;

@@ -42,6 +42,7 @@
 
 /*--STD-----------------*/
 #include <fstream>
+#include <optional>
 /*----------------------*/
 
 /*--WINDOWS-------------*/

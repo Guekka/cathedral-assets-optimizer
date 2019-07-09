@@ -89,7 +89,7 @@ public:
     void readFromUi(Ui::MainWindow* ui);
 #endif
 
-private:   
+private:
     bsa_archive_type_t bsaFormat;
     bsa_archive_type_t bsaTexturesFormat;
     double maxBsaUncompressedSize;

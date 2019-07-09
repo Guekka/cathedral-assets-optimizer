@@ -8,8 +8,8 @@
 TexturesOptimizer::TexturesOptimizer()
 {
     PLOG_WARNING_IF(!createDevice(0, pDevice.GetAddressOf()))
-            << "DirectCompute is not available, using BC6H / BC7 CPU codec."
-               " Textures compression will be slower";
+        << "DirectCompute is not available, using BC6H / BC7 CPU codec."
+           " Textures compression will be slower";
 }
 
 bool TexturesOptimizer::GetDXGIFactory(IDXGIFactory1** pFactory)
@@ -58,12 +58,12 @@ bool TexturesOptimizer::createDevice(int adapter, ID3D11Device** pDevice)
             return false;
     }
 
-    D3D_FEATURE_LEVEL featureLevels[] =
-    {
-        D3D_FEATURE_LEVEL_11_0,
-        D3D_FEATURE_LEVEL_10_1,
-        D3D_FEATURE_LEVEL_10_0,
-    };
+        D3D_FEATURE_LEVEL featureLevels[] =
+            {
+                D3D_FEATURE_LEVEL_11_0,
+                D3D_FEATURE_LEVEL_10_1,
+                D3D_FEATURE_LEVEL_10_0,
+                };
 
     UINT createDeviceFlags = 0;
 
@@ -131,6 +131,25 @@ bool TexturesOptimizer::createDevice(int adapter, ID3D11Device** pDevice)
         return false;
 }
 
+void TexturesOptimizer::optimize(const int& optLevel, std::optional<int> width, std::optional<int> height)
+{
+    if(optLevel < 1)
+        return;
+
+    if(isCompressed())
+        decompress();
+
+    convertIncompatibleTextures();
+
+    if(width.has_value() || height.has_value())
+        resize(static_cast<size_t>(*width), static_cast<size_t>(*height));
+
+    if(optLevel >= 3)
+        generateMipMaps();
+
+    if(optLevel >= 2)
+        compress(CAO_TEXTURES_FORMAT);
+}
 
 HRESULT TexturesOptimizer::open(const QString& filePath, const TextureType& type)
 {
@@ -208,16 +227,16 @@ HRESULT TexturesOptimizer::open(const void* pSource, const size_t &size, const T
     return S_FALSE;
 }
 
-void TexturesOptimizer::compress(const DXGI_FORMAT &format)
+int TexturesOptimizer::compress(const DXGI_FORMAT &format)
 {
     if(isCompressed())
-        return; //TODO uncompress
+        return 1;
 
     if (image->GetMetadata().format == format)
-        return;
+        return 2;
 
     if (!DirectX::IsCompressed(format))
-        return;
+        return 3;
 
     PLOG_INFO << tr("Compressing uncompressed texture: ") + name;
 
@@ -229,14 +248,13 @@ void TexturesOptimizer::compress(const DXGI_FORMAT &format)
     if (!timage)
     {
         PLOG_ERROR << "Memory allocation failed: " + name;
-        return;
+        return 4;
     }
 
     bool bc6hbc7 = false;
     if(format == DXGI_FORMAT_BC6H_TYPELESS || format == DXGI_FORMAT_BC6H_UF16
-            || format == DXGI_FORMAT_BC6H_SF16 || format == DXGI_FORMAT_BC7_TYPELESS
-            || format == DXGI_FORMAT_BC7_TYPELESS || format == DXGI_FORMAT_BC7_UNORM
-            || format == DXGI_FORMAT_BC7_UNORM_SRGB)
+        || format == DXGI_FORMAT_BC6H_SF16 || format == DXGI_FORMAT_BC7_TYPELESS
+        || format == DXGI_FORMAT_BC7_UNORM || format == DXGI_FORMAT_BC7_UNORM_SRGB)
     {
         bc6hbc7 = true;
     }
@@ -256,8 +274,6 @@ void TexturesOptimizer::compress(const DXGI_FORMAT &format)
 
     info.format = tinfo.format;
     image.swap(timage);
-
-    //convert(CAO_TEXTURES_FORMAT);
 }
 
 int TexturesOptimizer::decompress()
@@ -292,41 +308,47 @@ int TexturesOptimizer::decompress()
 
 int TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
 {
+    if (info.width == targetWidth && info.height == targetHeight)
+        return 1;
 
-    if (info.width != targetWidth || info.height != targetHeight)
+    fitPowerOfTwo(targetWidth, targetHeight);
+
+    std::unique_ptr<DirectX::ScratchImage> timage(new (std::nothrow) DirectX::ScratchImage);
+    if (!timage)
     {
-        fitPowerOfTwo(targetWidth, targetHeight);
-
-        std::unique_ptr<DirectX::ScratchImage> timage(new (std::nothrow) DirectX::ScratchImage);
-        if (!timage)
-        {
-            PLOG_ERROR << "Memory allocation failed";
-            return 1;
-        }
-
-        HRESULT hr = Resize(image->GetImages(), image->GetImageCount(), image->GetMetadata(), targetWidth, targetHeight, DirectX::TEX_FILTER_DEFAULT, *timage);
-        if (FAILED(hr))
-        {
-            PLOG_ERROR << "Failed to resize: " + name;
-            return 1;
-        }
-
-        auto& tinfo = timage->GetMetadata();
-
-        assert(tinfo.width == twidth && tinfo.height == theight && tinfo.mipLevels == 1);
-        info.width = tinfo.width;
-        info.height = tinfo.height;
-        info.mipLevels = 1;
-
-        image.swap(timage);
+        PLOG_ERROR << "Memory allocation failed";
+        return 1;
     }
+
+    HRESULT hr = Resize(image->GetImages(), image->GetImageCount(), image->GetMetadata(), targetWidth, targetHeight, DirectX::TEX_FILTER_DEFAULT, *timage);
+    if (FAILED(hr))
+    {
+        PLOG_ERROR << "Failed to resize: " + name;
+        return 1;
+    }
+
+    auto& tinfo = timage->GetMetadata();
+
+    assert(tinfo.width == targetWidth && tinfo.height == targetHeight && tinfo.mipLevels == 1);
+    info.width = tinfo.width;
+    info.height = tinfo.height;
+    info.mipLevels = 1;
+
+    image.swap(timage);
 }
 
 int TexturesOptimizer::generateMipMaps()
 {
-    DWORD dwFilter3D = DirectX::TEX_FILTER_DEFAULT;
-    size_t tMips;
-    if ((!tMips || info.mipLevels != tMips) && (info.mipLevels != 1))
+    auto testHR = [&](const HRESULT& hr, const std::string& message)
+    {
+        if (FAILED(hr))
+        {
+            PLOG_ERROR << message + " when processing: " << name;
+            return 1;
+        }
+    };
+
+    if ((info.mipLevels != 1))
     {
         // Mips generation only works on a single base image, so strip off existing mip levels
         // Also required for preserve alpha coverage so that existing mips are regenerated
@@ -341,62 +363,30 @@ int TexturesOptimizer::generateMipMaps()
         DirectX::TexMetadata mdata = info;
         mdata.mipLevels = 1;
         HRESULT hr = timage->Initialize(mdata);
-        if (FAILED(hr))
-        {
-            PLOG_ERROR << "Failed to copy texture data to single level (when generating mipmaps):" + name;
-            return 1;
-        }
+        testHR(hr, "Failed to copy texture data to single level (when generating mipmaps)");
 
-        if (info.dimension == DirectX::TEX_DIMENSION_TEXTURE3D)
+        for (size_t i = 0; i < info.arraySize; ++i)
         {
-            for (size_t d = 0; d < info.depth; ++d)
-            {
-                hr = CopyRectangle(*image->GetImage(0, 0, d), DirectX::Rect(0, 0, info.width, info.height),
-                                   *timage->GetImage(0, 0, d), DirectX::TEX_FILTER_DEFAULT, 0, 0);
-                if (FAILED(hr))
-                {
-                    PLOG_ERROR << "Failed to copy texture data to single level (when generating mipmaps):" + name;
-                    return 1;
-                }
-            }
-        }
-        else
-        {
-            for (size_t i = 0; i < info.arraySize; ++i)
-            {
-                hr = CopyRectangle(*image->GetImage(0, i, 0), DirectX::Rect(0, 0, info.width, info.height),
-                                   *timage->GetImage(0, i, 0), DirectX::TEX_FILTER_DEFAULT, 0, 0);
-                if (FAILED(hr))
-                {
-                    PLOG_ERROR << "Failed to copy texture data to single level (when generating mipmaps):" + name;
-                    return 1;
-                }
-            }
+            hr = CopyRectangle(*image->GetImage(0, i, 0), DirectX::Rect(0, 0, info.width, info.height),
+                               *timage->GetImage(0, i, 0), DirectX::TEX_FILTER_DEFAULT, 0, 0);
+            testHR(hr, "Failed to copy texture data to single level (when generating mipmaps)");
         }
 
         image.swap(timage);
         info.mipLevels = image->GetMetadata().mipLevels;
     }
 
-    if ((!tMips || info.mipLevels != tMips) && (info.width > 1 || info.height > 1 || info.depth > 1))
+    if ((info.width > 1 || info.height > 1 || info.depth > 1))
     {
         std::unique_ptr<DirectX::ScratchImage> timage(new (std::nothrow) DirectX::ScratchImage);
-        if (!timage)
-        {
-            PLOG_ERROR << "Memory allocation failed";
+        PLOG_ERROR_IF(!timage) << "Memory allocation failed";
+        if(!timage)
             return 1;
-        }
+
 
         HRESULT hr;
-        if (info.dimension == DirectX::TEX_DIMENSION_TEXTURE3D)
-            hr = GenerateMipMaps3D(image->GetImages(), image->GetImageCount(), image->GetMetadata(), dwFilter3D, tMips, *timage);
-        else
-            hr = GenerateMipMaps(image->GetImages(), image->GetImageCount(), image->GetMetadata(), DirectX::TEX_FILTER_DEFAULT, tMips, *timage);
-        if (FAILED(hr))
-        {
-            PLOG_ERROR << "Failed to generate mipmaps";
-            return 1;
-        }
+        hr = GenerateMipMaps(image->GetImages(), image->GetImageCount(), image->GetMetadata(), DirectX::TEX_FILTER_DEFAULT, info.mipLevels, *timage);
+        testHR(hr, "Failed to generate mipmaps");
 
         auto& tinfo = timage->GetMetadata();
         info.mipLevels = tinfo.mipLevels;
@@ -405,19 +395,16 @@ int TexturesOptimizer::generateMipMaps()
     }
 }
 
-bool TexturesOptimizer::convertIncompatibleTextures() //Convert TGA textures to DDS
-{/*
-    if(isIncompatible(filePath))
+bool TexturesOptimizer::convertIncompatibleTextures()
+{
+    if(isIncompatible())
     {
-        PLOG_INFO << tr("Incompatible texture found: ")
-                     + filePath.mid(filePath.lastIndexOf("/")) + "\n" + tr("Compressing...");
-
+        PLOG_INFO << tr("Incompatible texture found: ") + name + '\n' + tr("Compressing...");
         convert(CAO_TEXTURES_FORMAT);
-
         return true;
     }
     else
-    */    return false;
+        return false;
 }
 
 
@@ -458,14 +445,14 @@ int TexturesOptimizer::convert(const DXGI_FORMAT& format)
 
         auto& tinfo = timage->GetMetadata();
 
-        assert(tinfo.format == tformat);
+        assert(tinfo.format == format);
         info.format = tinfo.format;
 
         image.swap(timage);
     }
 }
 
-HRESULT TexturesOptimizer::saveToFile(const QString &filePath)
+bool TexturesOptimizer::saveToFile(const QString &filePath)
 {
     auto img = image->GetImage(0, 0, 0);
     assert(img);
@@ -477,7 +464,7 @@ HRESULT TexturesOptimizer::saveToFile(const QString &filePath)
     HRESULT hr = SaveToDDSFile(img, nimg, info, DirectX::DDS_FLAGS_NONE, wFilePath);
 
     if (FAILED(hr))
-        wprintf(L" FAILED (%x)\n", hr);
+        return false;
 }
 
 bool TexturesOptimizer::isIncompatible()
@@ -503,31 +490,14 @@ void TexturesOptimizer::fitPowerOfTwo(uint& resultX, uint& resultY)
 {
     //Finding nearest power of two
     resultX = info.width;
-    if(resultX & 1)
-    {
-        resultX--;
-        resultX |= resultX >> 1;
-        resultX |= resultX >> 2;
-        resultX |= resultX >> 4;
-        resultX |= resultX >> 8;
-        resultX |= resultX >> 16;
-        resultX++;
-    }
+    uint x = 1;
+    while(x < resultX)
+        x*=2;
+    resultX = x;
 
     resultY = info.height;
-    if(resultY & 1)
-    {
-        resultY--;
-        resultY |= resultY >> 1;
-        resultY |= resultY >> 2;
-        resultY |= resultY >> 4;
-        resultY |= resultY >> 8;
-        resultY |= resultY >> 16;
-        resultY++;
-    }
-
-    if(resultX > resultY)
-        resultX = resultY;
-    else if(resultY > resultX)
-        resultY = resultX;
+    uint y = 1;
+    while(y < resultY)
+        y*=2;
+    resultY = y;
 }

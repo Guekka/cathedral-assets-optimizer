@@ -79,10 +79,12 @@ void MainOptimizer::processDds(const QString& file)
     {
         switch (optOptions.iTexturesOptimizationLevel)
         {
+        case 3:
+            PLOG_INFO << file + QObject::tr(" would have generated mipmaps");
         case 2:
             if(!texturesOpt.isCompressed())
             {
-                PLOG_INFO << file + QObject::tr(" would be compressed to BC7");
+                PLOG_INFO << file + QObject::tr(" would be compressed to an appropriate format");
             }
         case 1:
             if(texturesOpt.isIncompatible())
@@ -92,15 +94,9 @@ void MainOptimizer::processDds(const QString& file)
         }
     }
     else
-    {
-        switch (optOptions.iTexturesOptimizationLevel)
-        {
-        case 2:
-            texturesOpt.compress();
-        case 1:
-            texturesOpt.convertIncompatibleTextures();
-        }
-    }
+        texturesOpt.optimize(optOptions.iTexturesOptimizationLevel);
+
+    texturesOpt.saveToFile(file);
 }
 
 void MainOptimizer::processHkx(const QString& file)
@@ -127,6 +123,8 @@ void MainOptimizer::processNif(const QString& file)
 
 void MainOptimizer::processTga(const QString &file)
 {
+    //TODO update this (maybe merge with ProcessDDS ?)
+
     if(optOptions.iTexturesOptimizationLevel == 0)
         return;
 
