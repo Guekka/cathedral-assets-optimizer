@@ -22,6 +22,13 @@ OptionsCAO::OptionsCAO(const OptionsCAO& other)
     bMeshesResave = other.bMeshesResave;
 
     iTexturesOptimizationLevel = other.iTexturesOptimizationLevel;
+    bTexturesResizeSize = other.bTexturesResizeSize;
+    iTexturesTargetWidth = other.iTexturesTargetWidth;
+    iTexturesTargetHeight = other.iTexturesTargetHeight;
+
+    bTexturesResizeRatio = other.bTexturesResizeRatio;
+    iTexturesTargetWidthRatio = other.iTexturesTargetWidthRatio;
+    iTexturesTargetHeightRatio = other.iTexturesTargetHeightRatio;
 
     iLogLevel = other.iLogLevel;
     mode = other.mode;
@@ -45,7 +52,16 @@ void OptionsCAO::saveToIni(QSettings *settings)
     settings->endGroup();
 
     //Textures
-    settings->setValue("Textures/iTexturesOptimizationLevel", iTexturesOptimizationLevel);
+    settings->beginGroup("Textures");
+    settings->setValue("iTexturesOptimizationLevel", iTexturesOptimizationLevel);
+    settings->setValue("bTexturesResizeSize", bTexturesResizeSize);
+    settings->setValue("iTexturesTargetWidth", iTexturesTargetWidth);
+    settings->setValue("iTexturesTargetHeight", iTexturesTargetHeight);
+
+    settings->setValue("bTexturesResizeRatio", bTexturesResizeRatio);
+    settings->setValue("iTexturesTargetHeightRatio", iTexturesTargetHeightRatio);
+    settings->setValue("iTexturesTargetWidthRatio", iTexturesTargetWidthRatio);
+    settings->endGroup();
 
     //Meshes
     settings->setValue("Meshes/iMeshesOptimizationLevel", iMeshesOptimizationLevel);
@@ -82,6 +98,13 @@ void OptionsCAO::readFromIni(QSettings *settings)
 
     //Textures
     iTexturesOptimizationLevel = settings->value("Textures/iTexturesOptimizationLevel").toInt();
+    bTexturesResizeSize = settings->value("bTexturesResizeSize").toBool();
+    iTexturesTargetWidth = settings->value("iTexturesTargetWidth").toUInt();
+    iTexturesTargetHeight = settings->value("iTexturesTargetHeight").toUInt();
+
+    bTexturesResizeRatio = settings->value("bTexturesResizeRatio").toBool();
+    iTexturesTargetWidthRatio = settings->value("iTexturesTargetWidthRatio").toUInt();
+    iTexturesTargetHeightRatio = settings->value("iTexturesTargetHeightRatio").toUInt();
 
     //Meshes
     iMeshesOptimizationLevel = settings->value("Meshes/iMeshesOptimizationLevel").toInt();
@@ -94,6 +117,7 @@ void OptionsCAO::readFromIni(QSettings *settings)
     bAnimationsOptimization = settings->value("Animations/bAnimationsOptimization").toBool();
 }
 
+#ifdef GUI
 void OptionsCAO::saveToUi(Ui::MainWindow *ui)
 {
     //BSA
@@ -110,6 +134,16 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
     case 1: ui->texturesGroupBox->setChecked(true);     ui->texturesNecessaryOptimizationRadioButton->setChecked(true);  break;
     case 2: ui->texturesGroupBox->setChecked(true);     ui->texturesFullOptimizationRadioButton->setChecked(true); break;
     }
+
+    ui->texturesResizingGroupBox->setChecked(bTexturesResizeSize || bTexturesResizeRatio);
+
+    ui->texturesResizingBySizeRadioButton->setChecked(bTexturesResizeSize);
+    ui->texturesResizingBySizeWidth->setValue(static_cast<int>(iTexturesTargetWidth));
+    ui->texturesResizingBySizeHeight->setValue(static_cast<int>(iTexturesTargetHeight));
+
+    ui->texturesResizingByRatioRadioButton->setChecked(bTexturesResizeRatio);
+    ui->texturesResizingByRatioWidth->setValue(static_cast<int>(iTexturesTargetWidthRatio));
+    ui->texturesResizingByRatioHeight->setValue(static_cast<int>(iTexturesTargetHeightRatio));
 
     //Meshes
 
@@ -161,6 +195,14 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     if(!ui->texturesGroupBox->isChecked())
         iTexturesOptimizationLevel = 0;
 
+    bTexturesResizeSize = ui->texturesResizingBySizeRadioButton->isChecked();
+    iTexturesTargetWidth = static_cast<size_t>(ui->texturesResizingBySizeWidth->value());
+    iTexturesTargetHeight = static_cast<size_t>(ui->texturesResizingBySizeHeight->value());
+
+    bTexturesResizeRatio = ui->texturesResizingByRatioRadioButton->isChecked();
+    iTexturesTargetWidthRatio = static_cast<size_t>(ui->texturesResizingByRatioWidth->value());
+    iTexturesTargetHeightRatio = static_cast<size_t>(ui->texturesResizingByRatioHeight->value());
+
     //Meshes base
     if(ui->meshesNecessaryOptimizationRadioButton->isChecked())
         iMeshesOptimizationLevel = 1;
@@ -190,6 +232,7 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     else if(ui->actionLogVerbosityTrace->isChecked())
         iLogLevel = 6;
 }
+#endif
 
 void OptionsCAO::parseArguments(const QStringList &args)
 {

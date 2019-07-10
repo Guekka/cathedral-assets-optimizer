@@ -28,9 +28,10 @@ public:
 
     void saveToIni(QSettings *settings);
     void readFromIni(QSettings *settings);
-
+#ifdef GUI
     void saveToUi(Ui::MainWindow* ui);
     void readFromUi(Ui::MainWindow* ui);
+#endif
 
     /*!
      * \brief Checks if the current settings are allowed
@@ -51,7 +52,15 @@ public:
     bool bMeshesResave = true;
 
     int iMeshesOptimizationLevel = 0;
+
     int iTexturesOptimizationLevel = 0;
+
+    bool bTexturesResizeSize = false;
+    size_t iTexturesTargetHeight = 2048;
+    size_t iTexturesTargetWidth = 2048;
+    bool bTexturesResizeRatio = false;
+    uint iTexturesTargetWidthRatio = 1;
+    uint iTexturesTargetHeightRatio = 1;
 
     int iLogLevel = 4;
     /*!

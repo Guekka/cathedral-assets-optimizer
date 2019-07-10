@@ -111,27 +111,14 @@ bool TexturesOptimizer::createDevice(int adapter, ID3D11Device** pDevice)
     {
         Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
         hr = (*pDevice)->QueryInterface(IID_PPV_ARGS(dxgiDevice.GetAddressOf()));
-        if (SUCCEEDED(hr))
-        {
-            hr = dxgiDevice->GetAdapter(pAdapter.ReleaseAndGetAddressOf());
-            if (SUCCEEDED(hr))
-            {
-                DXGI_ADAPTER_DESC desc;
-                hr = pAdapter->GetDesc(&desc);
-                if (SUCCEEDED(hr))
-                {
-                    wprintf(L"\n[Using DirectCompute on \"%ls\"]\n", desc.Description);
-                }
-            }
-        }
 
-        return true;
+        return SUCCEEDED(hr);
     }
     else
         return false;
 }
 
-void TexturesOptimizer::optimize(const int& optLevel, std::optional<int> width, std::optional<int> height)
+void TexturesOptimizer::optimize(const int& optLevel)
 {
     if(optLevel < 1)
         return;
@@ -140,9 +127,6 @@ void TexturesOptimizer::optimize(const int& optLevel, std::optional<int> width, 
         decompress();
 
     convertIncompatibleTextures();
-
-    if(width.has_value() || height.has_value())
-        resize(static_cast<size_t>(*width), static_cast<size_t>(*height));
 
     if(optLevel >= 3)
         generateMipMaps();

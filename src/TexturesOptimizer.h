@@ -31,7 +31,7 @@ public:
      */
     bool isCompressed();
 
-    void optimize(const int& optLevel, std::optional<int> width, std::optional<int> height);
+    void optimize(const int& optLevel);
 
     int decompress();
 

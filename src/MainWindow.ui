@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
-    <height>700</height>
+    <width>676</width>
+    <height>698</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -57,36 +57,49 @@
       <property name="flat">
        <bool>false</bool>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item row="0" column="1" alignment="Qt::AlignHCenter">
-        <widget class="QPushButton" name="processButton">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="userPathButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>220</width>
+           <width>0</width>
            <height>40</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Open Directory</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="processButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -95,23 +108,23 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2" alignment="Qt::AlignHCenter">
+       <item row="0" column="2">
         <widget class="QComboBox" name="modeChooserComboBox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>220</width>
+           <width>0</width>
            <height>38</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -125,31 +138,6 @@
            <string>Several mods (MO)</string>
           </property>
          </item>
-        </widget>
-       </item>
-       <item row="0" column="0" alignment="Qt::AlignHCenter">
-        <widget class="QPushButton" name="userPathButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>220</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>230</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Open Directory</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="0">
@@ -242,7 +230,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -850,7 +838,7 @@
         <item>
          <widget class="QGroupBox" name="texturesResizingGroupBox">
           <property name="title">
-           <string>Resizing (DOES NOT WORK YET)</string>
+           <string>Resizing</string>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -946,7 +934,7 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QDoubleSpinBox" name="texturesResizingByRatioHeight">
+            <widget class="QSpinBox" name="texturesResizingByRatioHeight">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -956,7 +944,7 @@
             </widget>
            </item>
            <item row="0" column="5" colspan="2">
-            <widget class="QDoubleSpinBox" name="texturesResizingByRatioWidth">
+            <widget class="QSpinBox" name="texturesResizingByRatioWidth">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1147,7 +1135,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>684</width>
+     <width>676</width>
      <height>20</height>
     </rect>
    </property>

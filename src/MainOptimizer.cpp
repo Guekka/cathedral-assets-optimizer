@@ -16,11 +16,11 @@ void MainOptimizer::process(const QString &file)
 {
 
     if(file.endsWith(".dds", Qt::CaseInsensitive))
-        processDds(file);
+        processTexture(file, TexturesOptimizer::dds);
     else if(file.endsWith(".nif", Qt::CaseInsensitive))
         processNif(file);
     else if(file.endsWith(".tga", Qt::CaseInsensitive))
-        processTga(file);
+        processTexture(file, TexturesOptimizer::tga);
     else if(file.endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
         processBsa(file);
     else if(file.endsWith(".hkx", Qt::CaseInsensitive))
@@ -67,12 +67,11 @@ void MainOptimizer::processBsa(const QString& file)
     //TODO if(options.bBsaOptimizeAssets)
 }
 
-void MainOptimizer::processDds(const QString& file)
+void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer::TextureType &type)
 {
-    if(optOptions.iTexturesOptimizationLevel == 0)
+    if(!optOptions.iTexturesOptimizationLevel)
         return;
 
-    TexturesOptimizer::TextureType type = TexturesOptimizer::dds;
     texturesOpt.open(file, type);
 
     if(optOptions.bDryRun)
@@ -91,12 +90,30 @@ void MainOptimizer::processDds(const QString& file)
             {
                 PLOG_INFO << file + QObject::tr(" is incompatible and would be converted to a compatible format");
             }
+            if(type == TexturesOptimizer::tga)
+            {
+                PLOG_INFO << file + QObject::tr(" would be converted to DDS");
+            }
         }
     }
     else
+    {
         texturesOpt.optimize(optOptions.iTexturesOptimizationLevel);
 
-    texturesOpt.saveToFile(file);
+        //Resizing
+        if(optOptions.bTexturesResizeRatio)
+        {
+            size_t width = texturesOpt.getInfo().width;
+            size_t height = texturesOpt.getInfo().height;
+            width /= optOptions.iTexturesTargetWidthRatio;
+            height /= optOptions.iTexturesTargetHeightRatio;
+            texturesOpt.resize(width, height);
+        }
+        else if(optOptions.bTexturesResizeSize)
+            texturesOpt.resize(optOptions.iTexturesTargetWidth, optOptions.iTexturesTargetHeight);
+
+        texturesOpt.saveToFile(file);
+    }
 }
 
 void MainOptimizer::processHkx(const QString& file)
@@ -119,20 +136,4 @@ void MainOptimizer::processNif(const QString& file)
         meshesOpt.dryOptimize(file);
     else if(optOptions.iMeshesOptimizationLevel >=1 && !optOptions.bDryRun)
         meshesOpt.optimize(file);
-}
-
-void MainOptimizer::processTga(const QString &file)
-{
-    //TODO update this (maybe merge with ProcessDDS ?)
-
-    if(optOptions.iTexturesOptimizationLevel == 0)
-        return;
-
-    TexturesOptimizer::TextureType type = TexturesOptimizer::tga;
-    texturesOpt.open(file, type);
-
-    if(optOptions.iTexturesOptimizationLevel >=1 && optOptions.bDryRun && texturesOpt.isIncompatible())
-        PLOG_INFO << file + QObject::tr(" would be converted to DDS");
-    else if(optOptions.iTexturesOptimizationLevel >=1  && texturesOpt.isIncompatible())
-        texturesOpt.convertIncompatibleTextures();
 }
