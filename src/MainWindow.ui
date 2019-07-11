@@ -798,6 +798,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QRadioButton" name="texturesMediumOptimizationRadioButton">
+             <property name="text">
+              <string>Medium optimization</string>
+             </property>
+            </widget>
+           </item>
            <item alignment="Qt::AlignRight">
             <widget class="QRadioButton" name="texturesFullOptimizationRadioButton">
              <property name="sizePolicy">

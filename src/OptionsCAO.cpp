@@ -128,11 +128,13 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
 
     //Textures
 
+    ui->texturesGroupBox->setChecked(true);
     switch (iTexturesOptimizationLevel)
     {
     case 0: ui->texturesGroupBox->setChecked(false); break;
-    case 1: ui->texturesGroupBox->setChecked(true);     ui->texturesNecessaryOptimizationRadioButton->setChecked(true);  break;
-    case 2: ui->texturesGroupBox->setChecked(true);     ui->texturesFullOptimizationRadioButton->setChecked(true); break;
+    case 1: ui->texturesNecessaryOptimizationRadioButton->setChecked(true);  break;
+    case 2: ui->texturesMediumOptimizationRadioButton->setChecked(true); break;
+    case 3: ui->texturesFullOptimizationRadioButton->setChecked(true); break;
     }
 
     ui->texturesResizingGroupBox->setChecked(bTexturesResizeSize || bTexturesResizeRatio);
@@ -147,12 +149,13 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
 
     //Meshes
 
+    ui->meshesGroupBox->setChecked(true);
     switch(iMeshesOptimizationLevel)
     {
     case 0: ui->meshesGroupBox->setChecked(false); break;
-    case 1: ui->meshesGroupBox->setChecked(true);     ui->meshesNecessaryOptimizationRadioButton->setChecked(true);  break;
-    case 2: ui->meshesGroupBox->setChecked(true);     ui->meshesMediumOptimizationRadioButton->setChecked(true); break;
-    case 3: ui->meshesGroupBox->setChecked(true);     ui->meshesFullOptimizationRadioButton->setChecked(true); break;
+    case 1: ui->meshesNecessaryOptimizationRadioButton->setChecked(true);  break;
+    case 2: ui->meshesMediumOptimizationRadioButton->setChecked(true); break;
+    case 3: ui->meshesFullOptimizationRadioButton->setChecked(true); break;
     }
 
     ui->meshesResaveCheckBox->setChecked(bMeshesResave);
@@ -190,8 +193,10 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     //Textures
     if(ui->texturesNecessaryOptimizationRadioButton->isChecked())
         iTexturesOptimizationLevel = 1;
-    else if(ui->texturesFullOptimizationRadioButton->isChecked())
+    else if(ui->texturesMediumOptimizationRadioButton)
         iTexturesOptimizationLevel = 2;
+    else if(ui->texturesFullOptimizationRadioButton->isChecked())
+        iTexturesOptimizationLevel = 3;
     if(!ui->texturesGroupBox->isChecked())
         iTexturesOptimizationLevel = 0;
 
