@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>676</width>
-    <height>698</height>
+    <height>688</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -230,7 +230,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -1007,6 +1007,20 @@
              </item>
             </widget>
            </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Interface</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="texturesCompressInterfaceCheckBox">
+             <property name="text">
+              <string>Compress interface textures</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -1207,11 +1221,6 @@
    </property>
    <property name="statusTip">
     <string>Will show nearly no information</string>
-   </property>
-  </action>
-  <action name="actionSelect_game">
-   <property name="text">
-    <string>Select game</string>
    </property>
   </action>
  </widget>

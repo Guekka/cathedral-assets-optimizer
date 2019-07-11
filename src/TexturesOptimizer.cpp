@@ -123,6 +123,9 @@ void TexturesOptimizer::optimize(const int& optLevel)
     if(optLevel < 1)
         return;
 
+    if(info.format == CAO_TEXTURES_FORMAT)
+        return;
+
     if(isCompressed())
         decompress();
 
@@ -131,8 +134,16 @@ void TexturesOptimizer::optimize(const int& optLevel)
     if(optLevel >= 3)
         generateMipMaps();
 
-    if(optLevel >= 2)
+    if(optLevel >= 2 && canBeCompressed())
         compress(CAO_TEXTURES_FORMAT);
+}
+
+bool TexturesOptimizer::canBeCompressed()
+{
+    if(name.contains("interface", Qt::CaseInsensitive) && !CAO_TEXTURES_COMPRESS_INTERFACE)
+        return false;
+
+    return true;
 }
 
 HRESULT TexturesOptimizer::open(const QString& filePath, const TextureType& type)
@@ -453,21 +464,13 @@ bool TexturesOptimizer::saveToFile(const QString &filePath)
 
 bool TexturesOptimizer::isIncompatible()
 {
-    bool isIncompatible = false;
-
-    //TODO replace the cao extensions list with a tga checkbox
-    //TODO interface textures cannot be compressed for some games
-
     //Checking incompatibility with file format
     DXGI_FORMAT fileFormat = info.format;
     for(const auto& format : CAO_TEXTURES_INCOMPATIBLE_FORMATS)
         if(fileFormat == format)
-        {
-            isIncompatible = true;
-            break;
-        }
+            return true;
 
-    return isIncompatible;
+    return false;
 }
 
 void TexturesOptimizer::fitPowerOfTwo(uint& resultX, uint& resultY)

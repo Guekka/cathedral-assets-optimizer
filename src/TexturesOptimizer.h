@@ -31,6 +31,8 @@ public:
      */
     bool isCompressed();
 
+    bool canBeCompressed();
+
     void optimize(const int& optLevel);
 
     int decompress();
