@@ -18,9 +18,6 @@ Manager::Manager(OptionsCAO& opt) : options (opt)
     //Preparing logging
     initCustomLogger(CAO_LOG_PATH, options.iLogLevel);
 
-    PLOG_VERBOSE << tr("Checking requirements...");
-    checkRequirements();
-
     PLOG_VERBOSE << tr("Checking settings...");
     QString error = options.isValid();
     if(!error.isEmpty())
@@ -55,8 +52,11 @@ void Manager::listDirectories()
 void Manager::printProgress(const int& total, const QString& text = "Processing files")
 {
     //'|' is used a separator by the frontend
+#ifndef GUI
     std::cout << "PROGRESS:|" << text.toStdString() << " - %v/%m - %p%|"  << numberCompletedFiles << '|' << total << std::endl;
+#else
     emit progressBarTextChanged(text, total, numberCompletedFiles);
+#endif
 }
 
 void Manager::listFiles()
@@ -100,18 +100,6 @@ void Manager::resetIni()
     QString blankIni("resources/defaultIni.ini");
     QFile::remove(CAO_INI_PATH);
     QFile::copy(blankIni, CAO_INI_PATH);
-}
-
-void Manager::checkRequirements()
-{
-     QStringList requirements {"texconv.exe", "texdiag.exe"};
-
-    for (const auto& requirement : requirements)
-    {
-        QFile file(CAO_RESOURCES_PATH + requirement);
-        if(!file.exists())
-            throw std::runtime_error(requirement.toStdString() + " not found. Cancelling.");
-    }
 }
 
 void Manager::readIgnoredMods()

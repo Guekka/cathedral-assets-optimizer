@@ -42,10 +42,6 @@ private:
      */
     void resetIni();
     /*!
-     * \brief Check if all the requirements are present
-     */
-    void checkRequirements();
-    /*!
      * \brief Read ignoredMods.txt and store it to a list
      */
     void readIgnoredMods();
