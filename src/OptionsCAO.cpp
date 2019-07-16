@@ -193,7 +193,7 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     //Textures
     if(ui->texturesNecessaryOptimizationRadioButton->isChecked())
         iTexturesOptimizationLevel = 1;
-    else if(ui->texturesMediumOptimizationRadioButton)
+    else if(ui->texturesMediumOptimizationRadioButton->isChecked())
         iTexturesOptimizationLevel = 2;
     else if(ui->texturesFullOptimizationRadioButton->isChecked())
         iTexturesOptimizationLevel = 3;
@@ -312,7 +312,7 @@ QString OptionsCAO::isValid()
     if(iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
         return("This meshes optimization level does not exist. Level: " + QString::number(iMeshesOptimizationLevel));
 
-    if(iTexturesOptimizationLevel < 0 || iTexturesOptimizationLevel > 2)
+    if(iTexturesOptimizationLevel < 0 || iTexturesOptimizationLevel > 3)
         return("This textures optimization level does not exist. Level: " + QString::number(iTexturesOptimizationLevel));
 
     return QString();

@@ -27,7 +27,7 @@ set(Qt5_DIR "E:/Qt/5.12.3/msvc2017/lib/cmake/Qt5")
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 #Setting GUI
-#Comment out the next line to create a CLI version instead
+#Comment out the next line to create a CLI version instead (untested)
 add_compile_definitions(GUI)
 
 #SOURCES

@@ -72,7 +72,12 @@ void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer:
     if(!optOptions.iTexturesOptimizationLevel)
         return;
 
-    texturesOpt.open(file, type);
+    HRESULT hr = texturesOpt.open(file, type);
+    if(FAILED(hr))
+    {
+        PLOG_ERROR << tr("Failed to open: ") << file;
+        return;
+    }
 
     if(optOptions.bDryRun)
     {
@@ -98,7 +103,11 @@ void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer:
     }
     else
     {
-        texturesOpt.optimize(optOptions.iTexturesOptimizationLevel);
+        if(!texturesOpt.optimize(optOptions.iTexturesOptimizationLevel))
+        {
+            PLOG_ERROR << "Failed to optimize: " + file;
+            return;
+        }
 
         //Resizing
         if(optOptions.bTexturesResizeRatio)

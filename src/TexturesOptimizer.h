@@ -14,47 +14,54 @@ class TexturesOptimizer : public QObject
 public:
     TexturesOptimizer();
     /*!
-     * \brief Will convert incompatibles textures to DDS. If a DDS with the same name already exist, the incompatible texture is removed.
-     * \param filePath The file to convert
-     * \return whether true if the file has been converted or false if it hasn't been converted
+     * \brief Convert the file if the texture is uncompressed or if the current format is incompatible
+     * \return True if the file has not been converted or if the conversion was successful
      */
-    bool convertIncompatibleTextures();
+    bool convertToCompatibleFormat();
     /*!
-     * \brief Will compress a DDS file using the appropriate compression format, only if the texture is uncompressed
-     * \param filePath The file to convert
+     * \brief Compress the file using the provided compression format,
+     * \param format The format to use
      */
-    int compress(const DXGI_FORMAT& format);
+    bool compress(const DXGI_FORMAT& format);
     /*!
-     * \brief Will check if a texture is compressed
-     * \param filePath The file to check
-     * \return A bool : true if the file is compressed, false otherwise.
+     * \brief Check if a texture is compressed
+     * \return True if the file is compressed
      */
     bool isCompressed();
 
     bool canBeCompressed();
+    /*!
+     * \brief Perform various optimizations on the current texture
+     * \param optLevel The optimization level
+     * \return False if an error happens
+     */
+    bool optimize(const int& optLevel);
+    /*!
+     * \brief Decompress the current texture. It is required to use several functions.
+     * \return False if an error happens
+     */
+    bool decompress();
 
-    void optimize(const int& optLevel);
-
-    int decompress();
-
-    int resize(size_t targetWidth, size_t targetHeight);
+    bool resize(size_t targetWidth, size_t targetHeight);
 
     void fitPowerOfTwo(uint& resultX, uint& resultY);
 
-    int generateMipMaps();
+    bool generateMipMaps();
 
     DirectX::TexMetadata getInfo();
 
-    int convert(const DXGI_FORMAT& format);
+    bool convert(const DXGI_FORMAT& format);
 
     bool isIncompatible();
 
     enum TextureType {dds, tga};
 
-    HRESULT open(const void* pSource, const size_t& size, const TextureType& type, const QString& fileName);
-    HRESULT open(const QString& filePath, const TextureType& type);
+    bool open(const void* pSource, const size_t& size, const TextureType& type, const QString& fileName);
+    bool open(const QString& filePath, const TextureType& type);
 
     bool saveToFile(const QString& filePath);
+
+    static bool compareInfo(const DirectX::TexMetadata& info1, const DirectX::TexMetadata& info2);
 
 private:
     std::unique_ptr<DirectX::ScratchImage> image;

@@ -47,7 +47,7 @@ private:
     QSettings *settings;
     OptionsCAO options;
 
-    Manager *caoProcess = nullptr;
+    std::unique_ptr<Manager> caoProcess;
 
     QTimer* timer;
 };

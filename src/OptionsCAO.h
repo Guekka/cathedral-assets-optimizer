@@ -20,6 +20,7 @@ namespace plog
 
 class OptionsCAO : public QObject
 {
+    //TODO separate mipmaps generation and texture compression
 public:
     OptionsCAO();
     OptionsCAO(const OptionsCAO& other);
