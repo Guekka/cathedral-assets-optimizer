@@ -29,7 +29,7 @@
 #define CAO_ANIMATIONS_FORMAT Games::getInstance()->getAnimationsFormat()
 
 #define CAO_TEXTURES_FORMAT Games::getInstance()->getTexturesFormat()
-#define CAO_TEXTURES_CONVERT_TGA Games::getInstance()->getTexturesIncompatibleExtensions()
+#define CAO_TEXTURES_CONVERT_TGA Games::getInstance()->getTexturesConvertTga()
 #define CAO_TEXTURES_INCOMPATIBLE_FORMATS Games::getInstance()->getTexturesIncompatibleFormats()
 #define CAO_TEXTURES_COMPRESS_INTERFACE Games::getInstance()->getTexturesCompressInterface()
 

@@ -18,7 +18,7 @@ void MainOptimizer::process(const QString &file)
         processTexture(file, TexturesOptimizer::dds);
     else if(file.endsWith(".nif", Qt::CaseInsensitive))
         processNif(file);
-    else if(file.endsWith(".tga", Qt::CaseInsensitive))
+    else if(file.endsWith(".tga", Qt::CaseInsensitive) && CAO_TEXTURES_CONVERT_TGA)
         processTexture(file, TexturesOptimizer::tga);
     else if(file.endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
         processBsa(file);
@@ -108,7 +108,6 @@ void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer:
         if(optOptions.bTexturesResizeRatio)
         {
             width = texturesOpt.getInfo().width / optOptions.iTexturesTargetWidthRatio;
-            qDebug() << file << endl << texturesOpt.getInfo().width << optOptions.iTexturesTargetWidthRatio << width.value();
             height = texturesOpt.getInfo().height / optOptions.iTexturesTargetHeightRatio;
         }
         else if(optOptions.bTexturesResizeSize)
@@ -122,7 +121,15 @@ void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer:
             PLOG_ERROR << "Failed to optimize: " + file;
             return;
         }
-        texturesOpt.saveToFile(file);
+        QString newName = file;
+        if(type == TexturesOptimizer::tga)
+            newName = newName.chopped(4) + ".dds";
+        if(!texturesOpt.saveToFile(newName))
+        {
+            PLOG_ERROR << "Failed to optimize: " + file;
+        }
+        else if(type == TexturesOptimizer::tga)
+            QFile(file).remove();
     }
 }
 

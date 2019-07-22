@@ -178,18 +178,8 @@ bool TexturesOptimizer::open(const QString& filePath, const TextureType& type)
     switch (type)
     {
     case tga:
-        /*hr = LoadFromTGAFile(fileName, &info, *image);
-        if(SUCCEEDED(hr))
-        {
-            auto blob = std::make_unique<DirectX::Blob>();
-            blob->Initialize(image->GetPixelsSize());
-            auto img = image->GetImage(0,0,0);
-            if(!img) return false;
-            DirectX::SaveToDDSMemory(*img, 0, *blob);
-            return open(blob->GetBufferPointer(), blob->GetBufferSize(), dds, filePath);
-        }*/
-        //FIXME tga loading
-        return false;
+        hr = LoadFromTGAFile(fileName, &info, *image);
+        return SUCCEEDED(hr);
     case dds:
         DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
         hr = LoadFromDDSFile(fileName, ddsFlags, &info, *image);
@@ -510,7 +500,8 @@ bool TexturesOptimizer::convert(const DXGI_FORMAT& format)
 bool TexturesOptimizer::saveToFile(const QString &filePath)
 {
     auto img = image->GetImage(0, 0, 0);
-    assert(img);
+    if(!img)
+        return false;
     size_t nimg = image->GetImageCount();
 
     // Write texture
