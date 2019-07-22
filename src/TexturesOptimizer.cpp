@@ -118,9 +118,13 @@ bool TexturesOptimizer::createDevice(int adapter, ID3D11Device** pDevice)
         return false;
 }
 
-bool TexturesOptimizer::optimize(const int& optLevel)
+bool TexturesOptimizer::optimize(const int& optLevel, const std::optional<size_t>& twidth, const std::optional<size_t>& theight)
 {
-    if(optLevel < 1)
+    size_t newWidth = twidth.has_value() ? twidth.value() : info.width;
+    size_t newHeight = theight.has_value() ? theight.value() : info.height;
+    fitPowerOfTwo(newWidth, newHeight);
+
+    if(optLevel < 1 && twidth.value() == info.width && theight.value() == info.height)
         return true;
 
     if(isCompressed())
@@ -132,15 +136,13 @@ bool TexturesOptimizer::optimize(const int& optLevel)
     if(!convertToCompatibleFormat())
         return false;
 
-    //Fitting to a power of two
-    if(!resize(info.width, info.height))
+    //Fitting to a power of two or resizing
+    if(!resize(newWidth, newHeight))
         return false;
 
     if(optLevel >= 3)
-    {
         if(!generateMipMaps())
             return false;
-    }
 
     if(optLevel >= 2 && canBeCompressed())
     {
@@ -176,8 +178,18 @@ bool TexturesOptimizer::open(const QString& filePath, const TextureType& type)
     switch (type)
     {
     case tga:
-        hr = LoadFromTGAFile(fileName, &info, *image);
-        return SUCCEEDED(hr);
+        /*hr = LoadFromTGAFile(fileName, &info, *image);
+        if(SUCCEEDED(hr))
+        {
+            auto blob = std::make_unique<DirectX::Blob>();
+            blob->Initialize(image->GetPixelsSize());
+            auto img = image->GetImage(0,0,0);
+            if(!img) return false;
+            DirectX::SaveToDDSMemory(*img, 0, *blob);
+            return open(blob->GetBufferPointer(), blob->GetBufferSize(), dds, filePath);
+        }*/
+        //FIXME tga loading
+        return false;
     case dds:
         DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
         hr = LoadFromDDSFile(fileName, ddsFlags, &info, *image);
@@ -193,6 +205,7 @@ bool TexturesOptimizer::open(const QString& filePath, const TextureType& type)
 
             image->OverrideFormat(info.format);
         }
+        qDebug() << info.width << image->GetMetadata().width;
         return true;
     }
     return false;
@@ -316,7 +329,7 @@ bool TexturesOptimizer::decompress()
 
 bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
 {
-    if (info.width == targetWidth && info.height == targetHeight)
+    if (info.width <= targetWidth && info.height <= targetHeight)
         return true;
 
     fitPowerOfTwo(targetWidth, targetHeight);
@@ -328,7 +341,11 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
         return false;
     }
 
-    HRESULT hr = Resize(image->GetImages(), image->GetImageCount(), image->GetMetadata(), targetWidth, targetHeight, DirectX::TEX_FILTER_DEFAULT, *timage);
+    auto imgs = image->GetImages();
+    if(!imgs)
+        return false;
+
+    HRESULT hr = Resize(image->GetImages(), image->GetImageCount(), info, targetWidth, targetHeight, DirectX::TEX_FILTER_FORCE_NON_WIC, *timage);
     if (FAILED(hr))
     {
         PLOG_ERROR << "Failed to resize: " + name;
@@ -348,7 +365,6 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
     image.swap(timage);
     return true;
 }
-
 
 bool TexturesOptimizer::generateMipMaps()
 {
@@ -520,13 +536,11 @@ bool TexturesOptimizer::isIncompatible()
 void TexturesOptimizer::fitPowerOfTwo(uint& resultX, uint& resultY)
 {
     //Finding nearest power of two
-    resultX = info.width;
     uint x = 1;
     while(x < resultX)
         x *= 2;
     resultX = x;
 
-    resultY = info.height;
     uint y = 1;
     while(y < resultY)
         y *= 2;

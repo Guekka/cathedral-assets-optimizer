@@ -35,7 +35,7 @@ public:
      * \param optLevel The optimization level
      * \return False if an error happens
      */
-    bool optimize(const int& optLevel);
+    bool optimize(const int& optLevel, const std::optional<size_t> &twidth, const std::optional<size_t> &theight);
     /*!
      * \brief Decompress the current texture. It is required to use several functions.
      * \return False if an error happens

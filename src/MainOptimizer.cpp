@@ -14,7 +14,6 @@ MainOptimizer::MainOptimizer(const OptionsCAO &options) : optOptions (options),
 
 void MainOptimizer::process(const QString &file)
 {
-
     if(file.endsWith(".dds", Qt::CaseInsensitive))
         processTexture(file, TexturesOptimizer::dds);
     else if(file.endsWith(".nif", Qt::CaseInsensitive))
@@ -69,11 +68,10 @@ void MainOptimizer::processBsa(const QString& file)
 
 void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer::TextureType &type)
 {
-    if(!optOptions.iTexturesOptimizationLevel)
+    if(!optOptions.iTexturesOptimizationLevel && !optOptions.bTexturesResizeSize && !optOptions.bTexturesResizeRatio)
         return;
 
-    HRESULT hr = texturesOpt.open(file, type);
-    if(FAILED(hr))
+    if(!texturesOpt.open(file, type))
     {
         PLOG_ERROR << tr("Failed to open: ") << file;
         return;
@@ -103,24 +101,27 @@ void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer:
     }
     else
     {
-        if(!texturesOpt.optimize(optOptions.iTexturesOptimizationLevel))
+        //Resizing
+        std::optional<size_t> width;
+        std::optional<size_t> height;
+
+        if(optOptions.bTexturesResizeRatio)
+        {
+            width = texturesOpt.getInfo().width / optOptions.iTexturesTargetWidthRatio;
+            qDebug() << file << endl << texturesOpt.getInfo().width << optOptions.iTexturesTargetWidthRatio << width.value();
+            height = texturesOpt.getInfo().height / optOptions.iTexturesTargetHeightRatio;
+        }
+        else if(optOptions.bTexturesResizeSize)
+        {
+            width = optOptions.iTexturesTargetWidth;
+            height = optOptions.iTexturesTargetHeight;
+        }
+
+        if(!texturesOpt.optimize(optOptions.iTexturesOptimizationLevel, width, height))
         {
             PLOG_ERROR << "Failed to optimize: " + file;
             return;
         }
-
-        //Resizing
-        if(optOptions.bTexturesResizeRatio)
-        {
-            size_t width = texturesOpt.getInfo().width;
-            size_t height = texturesOpt.getInfo().height;
-            width /= optOptions.iTexturesTargetWidthRatio;
-            height /= optOptions.iTexturesTargetHeightRatio;
-            texturesOpt.resize(width, height);
-        }
-        else if(optOptions.bTexturesResizeSize)
-            texturesOpt.resize(optOptions.iTexturesTargetWidth, optOptions.iTexturesTargetHeight);
-
         texturesOpt.saveToFile(file);
     }
 }

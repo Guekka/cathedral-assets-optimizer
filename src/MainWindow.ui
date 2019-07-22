@@ -888,6 +888,12 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimum">
+              <number>4</number>
+             </property>
+             <property name="maximum">
+              <number>4096</number>
+             </property>
             </widget>
            </item>
            <item row="1" column="5">
@@ -897,6 +903,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimum">
+              <number>4</number>
+             </property>
+             <property name="maximum">
+              <number>4096</number>
              </property>
             </widget>
            </item>
@@ -927,14 +939,14 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QRadioButton" name="texturesResizingBySizeRadioButton">
+            <widget class="QRadioButton" name="texturesResizingByRatioRadioButton">
              <property name="text">
               <string>By ratio</string>
              </property>
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QRadioButton" name="texturesResizingByRatioRadioButton">
+            <widget class="QRadioButton" name="texturesResizingBySizeRadioButton">
              <property name="text">
               <string>By fixed size</string>
              </property>
@@ -948,6 +960,12 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimum">
+              <number>2</number>
+             </property>
+             <property name="maximum">
+              <number>10</number>
+             </property>
             </widget>
            </item>
            <item row="0" column="5" colspan="2">
@@ -957,6 +975,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimum">
+              <number>2</number>
+             </property>
+             <property name="maximum">
+              <number>10</number>
              </property>
             </widget>
            </item>

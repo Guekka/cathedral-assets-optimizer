@@ -74,8 +74,8 @@ void Manager::listFiles()
             it.next();
 
             bool mesh = options.iMeshesOptimizationLevel >=1 && it.fileName().endsWith(".nif", Qt::CaseInsensitive);
-            bool textureDDS = options.iTexturesOptimizationLevel >=2 && it.fileName().endsWith(".dds", Qt::CaseInsensitive);
-            bool textureTGA = options.iTexturesOptimizationLevel >=1 && it.fileName().endsWith(".tga", Qt::CaseInsensitive);
+            bool textureDDS = it.fileName().endsWith(".dds", Qt::CaseInsensitive);
+            bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
             bool animation = options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
             bool bsa = options.bBsaExtract && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive);

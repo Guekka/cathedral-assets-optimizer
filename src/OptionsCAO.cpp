@@ -97,7 +97,8 @@ void OptionsCAO::readFromIni(QSettings *settings)
     settings->endGroup();
 
     //Textures
-    iTexturesOptimizationLevel = settings->value("Textures/iTexturesOptimizationLevel").toInt();
+    settings->beginGroup("Textures");
+    iTexturesOptimizationLevel = settings->value("iTexturesOptimizationLevel").toInt();
     bTexturesResizeSize = settings->value("bTexturesResizeSize").toBool();
     iTexturesTargetWidth = settings->value("iTexturesTargetWidth").toUInt();
     iTexturesTargetHeight = settings->value("iTexturesTargetHeight").toUInt();
@@ -105,6 +106,7 @@ void OptionsCAO::readFromIni(QSettings *settings)
     bTexturesResizeRatio = settings->value("bTexturesResizeRatio").toBool();
     iTexturesTargetWidthRatio = settings->value("iTexturesTargetWidthRatio").toUInt();
     iTexturesTargetHeightRatio = settings->value("iTexturesTargetHeightRatio").toUInt();
+    settings->endGroup();
 
     //Meshes
     iMeshesOptimizationLevel = settings->value("Meshes/iMeshesOptimizationLevel").toInt();
@@ -230,12 +232,12 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     userPath = QDir::cleanPath(ui->userPathTextEdit->text());
     mode = ui->modeChooserComboBox->currentData().value<OptimizationMode>();
 
-    if(ui->actionLogVerbosityInfo->isChecked())
-        iLogLevel = 3;
-    else if(ui->actionLogVerbosityNote->isChecked())
+    if(ui->actionLogVerbosityNote->isChecked())
         iLogLevel = 4;
     else if(ui->actionLogVerbosityTrace->isChecked())
         iLogLevel = 6;
+    else
+        iLogLevel = 3;
 }
 #endif
 
@@ -250,7 +252,7 @@ void OptionsCAO::parseArguments(const QStringList &args)
 
     parser.addOptions({
                           {"dr", "Enables dry run"},
-                          {"l", "Log level: from 0 (maximum) to 6", "value", "0"},
+                          {"l", "Log level: from 1 (maximum) to 6", "value", "1"},
                           {"m", "Mesh processing level: 0 (default) to disable optimization, 1 for necessary optimization, "
                            "2 for medium optimization, 3 for full optimization.", "value", "0"},
 
