@@ -10,6 +10,12 @@ TexturesOptimizer::TexturesOptimizer()
     PLOG_WARNING_IF(!createDevice(0, pDevice.GetAddressOf()))
             << "DirectCompute is not available, using BC6H / BC7 CPU codec."
                " Textures compression will be slower";
+
+    // Initialize COM (needed for WIC)
+    const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
+    PLOG_ERROR_IF(FAILED(hr)) << "Failed to initialize COM. Textures processing ";
+
 }
 
 bool TexturesOptimizer::GetDXGIFactory(IDXGIFactory1** pFactory)
@@ -335,7 +341,7 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
     if(!imgs)
         return false;
 
-    HRESULT hr = Resize(image->GetImages(), image->GetImageCount(), info, targetWidth, targetHeight, DirectX::TEX_FILTER_FORCE_NON_WIC, *timage);
+    HRESULT hr = Resize(image->GetImages(), image->GetImageCount(), info, targetWidth, targetHeight, DirectX::TEX_FILTER_FANT, *timage);
     if (FAILED(hr))
     {
         PLOG_ERROR << "Failed to resize: " + name;
@@ -396,7 +402,7 @@ bool TexturesOptimizer::generateMipMaps()
         for (size_t i = 0; i < info.arraySize; ++i)
         {
             hr = CopyRectangle(*image->GetImage(0, i, 0), DirectX::Rect(0, 0, info.width, info.height),
-                               *timage->GetImage(0, i, 0), DirectX::TEX_FILTER_DEFAULT, 0, 0);
+                               *timage->GetImage(0, i, 0), DirectX::TEX_FILTER_FANT, 0, 0);
             if (FAILED(hr))
             {
                 PLOG_ERROR << "Failed to copy texture data to single level (when generating mipmaps) when processing: " << name;
@@ -420,7 +426,7 @@ bool TexturesOptimizer::generateMipMaps()
         //Forcing non wic since WIC won't work on my computer, and thus probably on other computers
         const HRESULT hr =
                 GenerateMipMaps(image->GetImages(),image->GetImageCount(),image->GetMetadata(),
-                                DirectX::TEX_FILTER_FORCE_NON_WIC, info.mipLevels, *timage);
+                                DirectX::TEX_FILTER_FANT, tMips, *timage);
         if(FAILED(hr))
         {
             PLOG_ERROR << "Failed to generate mipmaps when processing: " << name;
