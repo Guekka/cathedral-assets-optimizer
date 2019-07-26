@@ -52,10 +52,14 @@ PACKED(
             uint16_t dataSize;
         };)
 
-const char GROUP_TES4[4] = { 'T', 'E', 'S', '4'};
-const char GROUP_GRUP[4] = { 'G', 'R', 'U', 'P'};
-const char GROUP_HDPT[4] = { 'H', 'D', 'P', 'T'};
-const char GROUP_MODL[4] = { 'M', 'O', 'D', 'L'};
+constexpr char GROUP_TES4[4] = { 'T', 'E', 'S', '4'};
+constexpr char GROUP_GRUP[4] = { 'G', 'R', 'U', 'P'};
+constexpr char GROUP_HDPT[4] = { 'H', 'D', 'P', 'T'};
+constexpr char GROUP_MODL[4] = { 'M', 'O', 'D', 'L'};
+constexpr char GROUP_LTEX[4] = { 'L', 'T', 'E', 'X'};
+constexpr char GROUP_TNAM[4] = { 'T', 'N', 'A', 'M'};
+constexpr char GROUP_TXST[4] = { 'T', 'X', 'S', 'T'};
+constexpr char GROUP_TX00[4] = { 'T', 'X', '0', '0'};
 
 class PluginsOperations : public QObject
 {
@@ -85,4 +89,6 @@ public:
      * \return The list of headparts
      */
     static QStringList listHeadparts(const QString& filepath);
+
+    static QStringList listLandscapeTextures(const QString& filepath);
 };
