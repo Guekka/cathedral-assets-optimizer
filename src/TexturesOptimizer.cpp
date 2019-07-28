@@ -14,8 +14,8 @@ TexturesOptimizer::TexturesOptimizer()
     // Initialize COM (needed for WIC)
     const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
-    PLOG_ERROR_IF(FAILED(hr)) << "Failed to initialize COM. Textures processing ";
-
+    if(FAILED(hr))
+        throw std::runtime_error("Failed to initialize COM. Textures processing won't work.");
 }
 
 bool TexturesOptimizer::GetDXGIFactory(IDXGIFactory1** pFactory)
@@ -201,7 +201,6 @@ bool TexturesOptimizer::open(const QString& filePath, const TextureType& type)
 
             image->OverrideFormat(info.format);
         }
-        qDebug() << info.width << image->GetMetadata().width;
         return true;
     }
     return false;
