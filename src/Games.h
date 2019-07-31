@@ -30,7 +30,7 @@
 
 #define CAO_TEXTURES_FORMAT Games::getInstance()->getTexturesFormat()
 #define CAO_TEXTURES_CONVERT_TGA Games::getInstance()->getTexturesConvertTga()
-#define CAO_TEXTURES_INCOMPATIBLE_FORMATS Games::getInstance()->getTexturesIncompatibleFormats()
+#define CAO_TEXTURES_UNWANTED_FORMATS Games::getInstance()->getTexturesUnwantedFormats()
 #define CAO_TEXTURES_COMPRESS_INTERFACE Games::getInstance()->getTexturesCompressInterface()
 
 
@@ -69,7 +69,7 @@ public:
 
     DXGI_FORMAT getTexturesFormat() const;
     bool getTexturesConvertTga() const;
-    QList<DXGI_FORMAT> getTexturesIncompatibleFormats() const;
+    QList<DXGI_FORMAT> getTexturesUnwantedFormats() const;
 
     QString getIniPath() const;
     QString getLogPath() const;
@@ -111,7 +111,7 @@ private:
 
     DXGI_FORMAT texturesFormat;
     bool texturesConvertTga;
-    QList<QVariant> texturesIncompatibleFormats;
+    QList<QVariant> texturesUnwantedFormats;
     bool texturesCompressInterface;
 
     QString iniPath;

@@ -15,7 +15,7 @@ void Games::setGame(const GameMode &newGame)
     QSettings s("settings/common/config.ini", QSettings::IniFormat);
     s.setValue("game", game);
 
-    texturesIncompatibleFormats.clear();
+    texturesUnwantedFormats.clear();
 
     switch (game)
     {
@@ -41,7 +41,7 @@ void Games::setGame(const GameMode &newGame)
         animationFormat = HKPF_AMD64;
         texturesFormat = DXGI_FORMAT_BC7_UNORM;
         texturesConvertTga = true;
-        texturesIncompatibleFormats << DXGI_FORMAT_B5G5R5A1_UNORM << DXGI_FORMAT_B5G6R5_UNORM;
+        texturesUnwantedFormats << DXGI_FORMAT_B5G5R5A1_UNORM << DXGI_FORMAT_B5G6R5_UNORM;
         texturesCompressInterface = true;
         iniPath = QDir::currentPath() + "/settings/SkyrimSE/config.ini";
         logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/SkyrimSE.html");
@@ -63,7 +63,7 @@ void Games::setGame(const GameMode &newGame)
         animationFormat = HKPF_WIN32;
         texturesFormat = DXGI_FORMAT_BC3_UNORM;
         texturesConvertTga = false;
-        texturesIncompatibleFormats << DXGI_FORMAT_BC7_UNORM;
+        texturesUnwantedFormats << DXGI_FORMAT_BC7_UNORM;
         texturesCompressInterface = true;
         iniPath = QDir::currentPath() + "/settings/TES5/config.ini";
         logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/TES5.html");
@@ -87,7 +87,7 @@ void Games::setGame(const GameMode &newGame)
         animationFormat = HKPF_AMD64;
         texturesFormat = DXGI_FORMAT_BC7_UNORM;
         texturesConvertTga = true;
-        texturesIncompatibleFormats << DXGI_FORMAT_B5G5R5A1_UNORM << DXGI_FORMAT_B5G6R5_UNORM;
+        texturesUnwantedFormats << DXGI_FORMAT_B5G5R5A1_UNORM << DXGI_FORMAT_B5G6R5_UNORM;
         texturesCompressInterface = true;
         iniPath = QDir::currentPath() + "/settings/FO4/config.ini";
         logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/FO4.txt");
@@ -140,7 +140,7 @@ void Games::saveToIni(QSettings *settings)
     settings->setValue("animationFormat", animationFormat);
     settings->setValue("texturesFormat", texturesFormat);
     settings->setValue("texturesConvertTga", texturesConvertTga);
-    settings->setValue("texturesIncompatibleFormats", texturesIncompatibleFormats);
+    settings->setValue("texturesUnwantedFormats", texturesUnwantedFormats);
     settings->setValue("texturesCompressInterface", texturesCompressInterface);
 }
 
@@ -160,7 +160,7 @@ void Games::readFromIni(QSettings *settings)
     animationFormat = static_cast<hkPackFormat>(settings->value("animationFormat").toInt());
     texturesFormat = settings->value("texturesFormat").value<DXGI_FORMAT>();
     texturesConvertTga = settings->value("texturesConvertTga").toBool();
-    texturesIncompatibleFormats = settings->value("texturesIncompatibleFormats").toList();
+    texturesUnwantedFormats = settings->value("texturesUnwantedFormats").toList();
     texturesCompressInterface = settings->value("texturesCompressInterface").toBool();
     iniPath = QDir::currentPath() + "/settings/Custom/config.ini";
     logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/Custom.html");
@@ -213,11 +213,20 @@ void Games::saveToUi(Ui::MainWindow *ui)
     iterateComboBox(ui->meshesStream, meshesStream);
     iterateComboBox(ui->meshesVersion, meshesFileVersion);
 
-    //Animation format is not working currently, thus not added to UI
+    //Animation format is not working when converting from amd64, thus not added to UI
 
     iterateComboBox(ui->texturesOutputFormat, texturesFormat);
     ui->texturesTgaConversionCheckBox->setChecked(texturesConvertTga);
     ui->texturesCompressInterfaceCheckBox->setChecked(texturesCompressInterface);
+
+    QStringList unwantedFormats;
+    for(const QVariant& variant : texturesUnwantedFormats)
+    {
+        DXGI_FORMAT format = variant.value<DXGI_FORMAT>();
+        unwantedFormats << QString::fromStdString(dxgiFormatToString(format));
+    }
+    unwantedFormats.removeDuplicates();
+    ui->texturesUnwantedFormats->setPlainText(unwantedFormats.join('\n'));
 }
 
 void Games::readFromUi(Ui::MainWindow *ui)
@@ -240,6 +249,13 @@ void Games::readFromUi(Ui::MainWindow *ui)
     texturesFormat = ui->texturesOutputFormat->currentData().value<DXGI_FORMAT>();
     texturesConvertTga = ui->texturesTgaConversionCheckBox->isChecked();
     texturesCompressInterface = ui->texturesCompressInterfaceCheckBox->isChecked();
+
+    for(const auto& line : ui->texturesUnwantedFormats->toPlainText().split('\n'))
+    {
+        DXGI_FORMAT format = stringToDxgiFormat(line.toStdString());
+        if(!texturesUnwantedFormats.contains(format) && format != DXGI_FORMAT_UNKNOWN)
+            texturesUnwantedFormats += format;
+    }
 }
 #endif
 
@@ -332,10 +348,10 @@ bool Games::getTexturesConvertTga() const
     return texturesConvertTga;
 }
 
-QList<DXGI_FORMAT> Games::getTexturesIncompatibleFormats() const
+QList<DXGI_FORMAT> Games::getTexturesUnwantedFormats() const
 {
     QList<DXGI_FORMAT> list;
-    for(auto& format : texturesIncompatibleFormats)
+    for(auto& format : texturesUnwantedFormats)
         list << QVariant::fromValue(format).value<DXGI_FORMAT>();
     return list;
 }

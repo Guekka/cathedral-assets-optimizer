@@ -34,7 +34,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     ui->bsaTexturesFormat->setItemData(4, baFO4dds);
     //Advanced meshes
     ui->meshesUser->setItemData(0, 11);
-    ui->meshesUser->setItemData(0, 12);
+    ui->meshesUser->setItemData(1, 12);
 
     ui->meshesVersion->setItemData(0, V20_0_0_5);
     ui->meshesVersion->setItemData(1, V20_2_0_7);
@@ -223,6 +223,9 @@ void MainWindow::loadUi()
 
     options.readFromIni(settings);
     options.saveToUi(ui);
+
+    if(ui->advancedSettingsCheckbox->isChecked())
+        Games::getInstance()->saveToUi(ui);
 }
 
 void MainWindow::resetUi()

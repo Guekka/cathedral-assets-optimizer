@@ -8,10 +8,10 @@
 
 //Used to convert enum to string and vice versa
 
-#define DEFFMT(fmt) { #fmt, DXGI_FORMAT_ ## fmt }
 
-namespace //Anonymous namespace, these structs won't be used in other files
+namespace detail
 {
+#define DEFFMT(fmt) { #fmt, DXGI_FORMAT_ ## fmt }
 struct SValue
 {
     std::string name;
@@ -103,12 +103,13 @@ const SValue DxgiFormats[] =
     // No support for legacy paletted video formats (AI44, IA44, P8, A8P8)
     DEFFMT(B4G4R4A4_UNORM),
 };
+#undef DEFMTT //cleanup
 }
 
 
-DXGI_FORMAT stringToDxgiFormat(const std::string& string)
+inline DXGI_FORMAT stringToDxgiFormat(const std::string& string)
 {
-    for(const auto& format : DxgiFormats)
+    for(const auto& format : detail::DxgiFormats)
     {
         if(format.name == string)
             return format.format;
@@ -116,9 +117,9 @@ DXGI_FORMAT stringToDxgiFormat(const std::string& string)
     return DXGI_FORMAT_UNKNOWN;
 }
 
-std::string dxgiFormatToString(const DXGI_FORMAT& format)
+inline std::string dxgiFormatToString(const DXGI_FORMAT& format)
 {
-    for(const auto& dxFormat : DxgiFormats)
+    for(const auto& dxFormat : detail::DxgiFormats)
     {
         if(dxFormat.format == format)
             return dxFormat.name;
@@ -126,4 +127,3 @@ std::string dxgiFormatToString(const DXGI_FORMAT& format)
     return "DXGI_FORMAT_UNKNOWN";
 }
 
-#undef DEFMTT //cleanup

@@ -522,7 +522,7 @@ bool TexturesOptimizer::isIncompatible()
 {
     //Checking incompatibility with file format
     const DXGI_FORMAT fileFormat = info.format;
-    for(const auto& format : CAO_TEXTURES_INCOMPATIBLE_FORMATS)
+    for(const auto& format : CAO_TEXTURES_UNWANTED_FORMATS)
         if(fileFormat == format)
             return true;
 
