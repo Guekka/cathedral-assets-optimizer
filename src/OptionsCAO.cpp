@@ -21,7 +21,10 @@ OptionsCAO::OptionsCAO(const OptionsCAO& other)
     iMeshesOptimizationLevel = other.iMeshesOptimizationLevel;
     bMeshesResave = other.bMeshesResave;
 
-    iTexturesOptimizationLevel = other.iTexturesOptimizationLevel;
+    bTexturesMipmaps = other.bTexturesMipmaps;
+    bTexturesCompress = other.bTexturesCompress;
+    bTexturesNecessary = other.bTexturesNecessary;
+
     bTexturesResizeSize = other.bTexturesResizeSize;
     iTexturesTargetWidth = other.iTexturesTargetWidth;
     iTexturesTargetHeight = other.iTexturesTargetHeight;
@@ -53,7 +56,10 @@ void OptionsCAO::saveToIni(QSettings *settings)
 
     //Textures
     settings->beginGroup("Textures");
-    settings->setValue("iTexturesOptimizationLevel", iTexturesOptimizationLevel);
+    settings->setValue("bTexturesNecessary", bTexturesNecessary);
+    settings->setValue("bTexturesCompress", bTexturesCompress);
+    settings->setValue("bTexturesMipmaps", bTexturesMipmaps);
+
     settings->setValue("bTexturesResizeSize", bTexturesResizeSize);
     settings->setValue("iTexturesTargetWidth", iTexturesTargetWidth);
     settings->setValue("iTexturesTargetHeight", iTexturesTargetHeight);
@@ -98,7 +104,10 @@ void OptionsCAO::readFromIni(QSettings *settings)
 
     //Textures
     settings->beginGroup("Textures");
-    iTexturesOptimizationLevel = settings->value("iTexturesOptimizationLevel").toInt();
+    bTexturesNecessary = settings->value("bTexturesNecessary").toBool();
+    bTexturesCompress = settings->value("bTexturesCompress").toBool();
+    bTexturesMipmaps = settings->value("bTexturesMipmaps").toBool();
+
     bTexturesResizeSize = settings->value("bTexturesResizeSize").toBool();
     iTexturesTargetWidth = settings->value("iTexturesTargetWidth").toUInt();
     iTexturesTargetHeight = settings->value("iTexturesTargetHeight").toUInt();
@@ -129,16 +138,18 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
     ui->bsaProcessContentCheckBox->setChecked(bBsaProcessContent);
 
     //Textures
-
-    ui->texturesGroupBox->setChecked(true);
-    switch (iTexturesOptimizationLevel)
+    const bool texturesOpt = bTexturesMipmaps || bTexturesCompress || bTexturesNecessary;
+    if(!texturesOpt)
+        ui->texturesGroupBox->setChecked(false);
+    else
     {
-    case 0: ui->texturesGroupBox->setChecked(false); break;
-    case 1: ui->texturesNecessaryOptimizationRadioButton->setChecked(true);  break;
-    case 2: ui->texturesMediumOptimizationRadioButton->setChecked(true); break;
-    case 3: ui->texturesFullOptimizationRadioButton->setChecked(true); break;
+        ui->texturesGroupBox->setChecked(true);
+        ui->texturesNecessaryOptimizationCheckBox->setChecked(bTexturesNecessary);
+        ui->texturesCompressCheckBox->setChecked(bTexturesCompress);
+        ui->texturesMipmapCheckBox->setChecked(bTexturesMipmaps);
     }
 
+    //Textures resizing
     ui->texturesResizingGroupBox->setChecked(bTexturesResizeSize || bTexturesResizeRatio);
 
     ui->texturesResizingBySizeRadioButton->setChecked(bTexturesResizeSize);
@@ -193,20 +204,17 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     bBsaProcessContent = ui->bsaProcessContentCheckBox->isChecked();
 
     //Textures
-    if(ui->texturesNecessaryOptimizationRadioButton->isChecked())
-        iTexturesOptimizationLevel = 1;
-    else if(ui->texturesMediumOptimizationRadioButton->isChecked())
-        iTexturesOptimizationLevel = 2;
-    else if(ui->texturesFullOptimizationRadioButton->isChecked())
-        iTexturesOptimizationLevel = 3;
-    if(!ui->texturesGroupBox->isChecked())
-        iTexturesOptimizationLevel = 0;
+    bTexturesNecessary = ui->texturesNecessaryOptimizationCheckBox->isChecked();
+    bTexturesMipmaps = ui->texturesMipmapCheckBox->isChecked();
+    bTexturesCompress = ui->texturesCompressCheckBox->isChecked();
 
-    bTexturesResizeSize = ui->texturesResizingBySizeRadioButton->isChecked();
+    //Textures resizing
+    const bool texturesResizing = ui->texturesResizingGroupBox->isChecked();
+    bTexturesResizeSize = ui->texturesResizingBySizeRadioButton->isChecked() && texturesResizing;
     iTexturesTargetWidth = static_cast<size_t>(ui->texturesResizingBySizeWidth->value());
     iTexturesTargetHeight = static_cast<size_t>(ui->texturesResizingBySizeHeight->value());
 
-    bTexturesResizeRatio = ui->texturesResizingByRatioRadioButton->isChecked();
+    bTexturesResizeRatio = ui->texturesResizingByRatioRadioButton->isChecked() && texturesResizing;
     iTexturesTargetWidthRatio = static_cast<size_t>(ui->texturesResizingByRatioWidth->value());
     iTexturesTargetHeightRatio = static_cast<size_t>(ui->texturesResizingByRatioHeight->value());
 
@@ -243,6 +251,7 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
 
 void OptionsCAO::parseArguments(const QStringList &args)
 {
+    //TODO update before release
     QCommandLineParser parser;
 
     parser.addHelpOption();
@@ -256,8 +265,9 @@ void OptionsCAO::parseArguments(const QStringList &args)
                           {"m", "Mesh processing level: 0 (default) to disable optimization, 1 for necessary optimization, "
                            "2 for medium optimization, 3 for full optimization.", "value", "0"},
 
-                          {"t", "Texture processing level: 0 (default) to disable optimization, "
-                           "1 for necessary optimization, 2 for full optimization.", "value", "0"},
+                          {"t0", "Enables textures necessary optimization"},
+                          {"t1", "Enables textures compression"},
+                          {"t2", "Enables textures mipmaps generation"},
 
                           {"a", "Enables animations processing"},
                           {"mh", "Enables headparts detection and processing"},
@@ -283,14 +293,16 @@ void OptionsCAO::parseArguments(const QStringList &args)
     QString readGame = parser.positionalArguments().at(2);
     CAO_SET_CURRENT_GAME(readGame)
 
-    bDryRun = parser.isSet("dr");
+            bDryRun = parser.isSet("dr");
     iLogLevel = parser.value("l").toInt();
 
     iMeshesOptimizationLevel = parser.value("m").toInt();
     bMeshesHeadparts = parser.isSet("mh");
     bMeshesResave = parser.isSet("mr");
 
-    iTexturesOptimizationLevel = parser.value("t").toInt();
+    bTexturesNecessary = parser.isSet("t0");
+    bTexturesCompress = parser.isSet("t1");
+    bTexturesMipmaps = parser.isSet("t2");
 
     bAnimationsOptimization = parser.isSet("a");
 
@@ -313,9 +325,6 @@ QString OptionsCAO::isValid()
 
     if(iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
         return("This meshes optimization level does not exist. Level: " + QString::number(iMeshesOptimizationLevel));
-
-    if(iTexturesOptimizationLevel < 0 || iTexturesOptimizationLevel > 3)
-        return("This textures optimization level does not exist. Level: " + QString::number(iTexturesOptimizationLevel));
 
     return QString();
 }

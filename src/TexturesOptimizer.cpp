@@ -124,13 +124,16 @@ bool TexturesOptimizer::createDevice(int adapter, ID3D11Device** pDevice)
         return false;
 }
 
-bool TexturesOptimizer::optimize(const int& optLevel, const std::optional<size_t>& twidth, const std::optional<size_t>& theight)
+bool TexturesOptimizer::optimize(const bool& bNecessary, const bool& bCompress, const bool& bMipmaps,
+                                 const std::optional<size_t>& twidth, const std::optional<size_t>& theight)
 {
     size_t newWidth = twidth.has_value() ? twidth.value() : info.width;
     size_t newHeight = theight.has_value() ? theight.value() : info.height;
     fitPowerOfTwo(newWidth, newHeight);
 
-    if(optLevel < 1 && twidth.value() == info.width && theight.value() == info.height)
+    const bool processTextures = bNecessary || bCompress || bMipmaps
+            || twidth.value() != info.width || theight.value() != info.height;
+    if(!processTextures)
         return true;
 
     if(isCompressed())
@@ -146,11 +149,11 @@ bool TexturesOptimizer::optimize(const int& optLevel, const std::optional<size_t
     if(!resize(newWidth, newHeight))
         return false;
 
-    if(optLevel >= 3)
+    if(bMipmaps)
         if(!generateMipMaps())
             return false;
 
-    if(optLevel >= 2 && canBeCompressed())
+    if(bCompress && canBeCompressed())
     {
         if(!compress(CAO_TEXTURES_FORMAT))
             return false;

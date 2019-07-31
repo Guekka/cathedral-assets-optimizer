@@ -54,7 +54,9 @@ public:
 
     int iMeshesOptimizationLevel = 0;
 
-    int iTexturesOptimizationLevel = 0;
+    bool bTexturesNecessary = true;
+    bool bTexturesCompress = false;
+    bool bTexturesMipmaps = false;
 
     bool bTexturesResizeSize = false;
     size_t iTexturesTargetHeight = 2048;

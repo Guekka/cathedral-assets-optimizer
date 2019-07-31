@@ -773,8 +773,8 @@
            <bool>true</bool>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item alignment="Qt::AlignLeft">
-            <widget class="QRadioButton" name="texturesNecessaryOptimizationRadioButton">
+           <item>
+            <widget class="QCheckBox" name="texturesNecessaryOptimizationCheckBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -799,14 +799,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="texturesMediumOptimizationRadioButton">
+            <widget class="QCheckBox" name="texturesCompressCheckBox">
              <property name="text">
-              <string>Medium optimization</string>
+              <string>Compress textures</string>
              </property>
             </widget>
            </item>
-           <item alignment="Qt::AlignRight">
-            <widget class="QRadioButton" name="texturesFullOptimizationRadioButton">
+           <item>
+            <widget class="QCheckBox" name="texturesMipmapCheckBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -832,7 +832,7 @@
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss. Will also convert uncompressed textures to BC7.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Full optimization</string>
+              <string>Generate mipmaps</string>
              </property>
              <property name="checked">
               <bool>true</bool>

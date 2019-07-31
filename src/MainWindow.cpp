@@ -236,9 +236,8 @@ void MainWindow::resetUi()
     ui->tabWidget->setTabEnabled(animTabIndex, true);
     ui->tabWidget->setTabEnabled(meshesTabIndex, true);
 
-    ui->texturesFullOptimizationRadioButton->show();
+    ui->meshesFullOptimizationRadioButton->show();
     ui->meshesMediumOptimizationRadioButton->show();
-
 }
 
 void MainWindow::readProgress(const QString& text, const int& max, const int& value)
@@ -308,9 +307,6 @@ void MainWindow::setGameMode(const Games::GameMode& mode)
         case Games::Custom: break;
 
         case Games::TES5:
-            ui->texturesFullOptimizationRadioButton->setChecked(false);
-            ui->texturesFullOptimizationRadioButton->hide();
-
             ui->meshesMediumOptimizationRadioButton->setChecked(false);
             ui->meshesMediumOptimizationRadioButton->hide();
 

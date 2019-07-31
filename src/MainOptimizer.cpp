@@ -68,7 +68,10 @@ void MainOptimizer::processBsa(const QString& file)
 
 void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer::TextureType &type)
 {
-    if(!optOptions.iTexturesOptimizationLevel && !optOptions.bTexturesResizeSize && !optOptions.bTexturesResizeRatio)
+    const bool processTextures = optOptions.bTexturesMipmaps || optOptions.bTexturesCompress
+            || optOptions.bTexturesNecessary || optOptions.bTexturesResizeSize
+            || optOptions.bTexturesResizeRatio;
+    if(!processTextures)
         return;
 
     if(!texturesOpt.open(file, type))
@@ -79,24 +82,22 @@ void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer:
 
     if(optOptions.bDryRun)
     {
-        switch (optOptions.iTexturesOptimizationLevel)
+        if(optOptions.bTexturesMipmaps)
         {
-        case 3:
             PLOG_INFO << file + QObject::tr(" would have generated mipmaps");
-        case 2:
-            if(!texturesOpt.isCompressed())
-            {
-                PLOG_INFO << file + QObject::tr(" would be compressed to an appropriate format");
-            }
-        case 1:
+        }
+        if(optOptions.bTexturesCompress && !texturesOpt.isCompressed())
+        {
+            PLOG_INFO << file + QObject::tr(" would be compressed to an appropriate format");
+        }
+        if(optOptions.bTexturesNecessary)
             if(texturesOpt.isIncompatible())
             {
                 PLOG_INFO << file + QObject::tr(" is incompatible and would be converted to a compatible format");
             }
-            if(type == TexturesOptimizer::tga)
-            {
-                PLOG_INFO << file + QObject::tr(" would be converted to DDS");
-            }
+        if(type == TexturesOptimizer::tga)
+        {
+            PLOG_INFO << file + QObject::tr(" would be converted to DDS");
         }
     }
     else
@@ -116,7 +117,8 @@ void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer:
             height = optOptions.iTexturesTargetHeight;
         }
 
-        if(!texturesOpt.optimize(optOptions.iTexturesOptimizationLevel, width, height))
+        if(!texturesOpt.optimize(optOptions.bTexturesNecessary, optOptions.bTexturesCompress,
+                                 optOptions.bTexturesMipmaps, width, height))
         {
             PLOG_ERROR << "Failed to optimize: " + file;
             return;
