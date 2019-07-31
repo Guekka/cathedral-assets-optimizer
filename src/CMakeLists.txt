@@ -67,7 +67,7 @@ set(HEADERS
     Games.h
     Logger.h
     OptionsCAO.h
-
+    TexturesFormats.h
     #Ui
     MainWindow.h
     )
