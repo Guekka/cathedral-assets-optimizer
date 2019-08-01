@@ -27,7 +27,7 @@ set(Qt5_DIR "E:/Qt/5.12.3/msvc2017/lib/cmake/Qt5")
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 #Setting GUI
-#Comment out the next line to create a CLI version instead
+#Comment out the next line to create a CLI version instead (untested)
 add_compile_definitions(GUI)
 
 #SOURCES
@@ -67,7 +67,7 @@ set(HEADERS
     Games.h
     Logger.h
     OptionsCAO.h
-
+    TexturesFormats.h
     #Ui
     MainWindow.h
     )
@@ -206,6 +206,24 @@ file(GLOB_RECURSE NIFLIB_SRC
     "${NIFLIB_INCLUDES_PATH}/*.cpp"
     )
 
+#DirectXTex library
+
+
+set(DIRECTX_INCLUDES_PATH
+    "${PROJECT_SOURCE_DIR}/libs/DirectXTex"
+    )
+
+include_directories(${DIRECTX_INCLUDES_PATH})
+
+file(GLOB_RECURSE DIRECTX_HEADERS
+    "${DIRECTX_INCLUDES_PATH}/*.h"
+    )
+
+file(GLOB_RECURSE DIRECTX_SRC
+    "${DIRECTX_INCLUDES_PATH}/*.cpp"
+    )
+
+
 #Merge all
 
 list (APPEND SOURCES ${SOURCES_LIBBSARCH})
@@ -213,6 +231,7 @@ list (APPEND SOURCES ${SOURCES_HAVOK})
 list (APPEND SOURCES ${SOURCES_CK-CMD})
 list (APPEND SOURCES ${HAVOK_COMPAT_SRC})
 list (APPEND SOURCES ${NIFLIB_SRC})
+list (APPEND SOURCES ${DIRECTX_SRC})
 
 list (APPEND HEADERS ${HEADERS_PLOG})
 list (APPEND HEADERS ${HEADERS_LIBBSARCH})
@@ -220,6 +239,7 @@ list (APPEND HEADERS ${HEADERS_HAVOK})
 list (APPEND HEADERS ${HEADERS_CK-CMD})
 list (APPEND HEADERS ${HAVOK_COMPAT_HEADERS})
 list (APPEND HEADERS ${NIFLIB_HEADERS})
+list (APPEND HEADERS ${DIRECTX_HEADERS})
 
 list (APPEND LIBS Qt5::Core Qt5::Widgets)
 list (APPEND LIBS ${PROJECT_SOURCE_DIR}/libs/libbsarch/libbsarch.lib)

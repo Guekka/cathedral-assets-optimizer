@@ -42,13 +42,20 @@
 
 /*--STD-----------------*/
 #include <fstream>
+#include <optional>
 /*----------------------*/
 
-/*---CUSTOM CLASSES-----*/
+/*--WINDOWS-------------*/
+#include <wrl\client.h>
+/*----------------------*/
+
+/*---CUSTOM FILES-----*/
 #include "Logger.h"
 #include "libs/hkxcmd/hkfutils.h"
 #include "libs/NIF/NifFile.h"
 #include "libs/libbsarch/BSArchiveAuto.h"
+#include "libs/DirectXTex/DirectXTex.h"
+#include "TexturesFormats.h"
 /*----------------------*/
 
 #endif

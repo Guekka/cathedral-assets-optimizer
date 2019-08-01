@@ -34,7 +34,7 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     ui->bsaTexturesFormat->setItemData(4, baFO4dds);
     //Advanced meshes
     ui->meshesUser->setItemData(0, 11);
-    ui->meshesUser->setItemData(0, 12);
+    ui->meshesUser->setItemData(1, 12);
 
     ui->meshesVersion->setItemData(0, V20_0_0_5);
     ui->meshesVersion->setItemData(1, V20_2_0_7);
@@ -44,10 +44,10 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     ui->meshesStream->setItemData(2, 100);
     ui->meshesStream->setItemData(3, 130);
 
-    ui->texturesOutputFormat->setItemData(0, "BC7_UNORM");
-    ui->texturesOutputFormat->setItemData(1, "BC3_UNORM");
-    ui->texturesOutputFormat->setItemData(2, "BC1_UNORM");
-    ui->texturesOutputFormat->setItemData(3, "R8G8B8A8_UNORM");
+    ui->texturesOutputFormat->setItemData(0, DXGI_FORMAT_BC7_UNORM);
+    ui->texturesOutputFormat->setItemData(1, DXGI_FORMAT_BC3_UNORM);
+    ui->texturesOutputFormat->setItemData(2, DXGI_FORMAT_BC1_UNORM);
+    ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_R8G8B8A8_UNORM);
 
     //Connecting widgets
     connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [&]
@@ -223,6 +223,9 @@ void MainWindow::loadUi()
 
     options.readFromIni(settings);
     options.saveToUi(ui);
+
+    if(ui->advancedSettingsCheckbox->isChecked())
+        Games::getInstance()->saveToUi(ui);
 }
 
 void MainWindow::resetUi()
@@ -233,9 +236,8 @@ void MainWindow::resetUi()
     ui->tabWidget->setTabEnabled(animTabIndex, true);
     ui->tabWidget->setTabEnabled(meshesTabIndex, true);
 
-    ui->texturesFullOptimizationRadioButton->show();
+    ui->meshesFullOptimizationRadioButton->show();
     ui->meshesMediumOptimizationRadioButton->show();
-
 }
 
 void MainWindow::readProgress(const QString& text, const int& max, const int& value)
@@ -251,20 +253,17 @@ void MainWindow::initProcess()
     ui->processButton->setDisabled(true);
     bLockVariables = true;
 
-    if(caoProcess)
-        delete caoProcess;
-
     try {
-        caoProcess = new Manager(options);
-        connect(caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
-        QtConcurrent::run(caoProcess, &Manager::runOptimization);
+        caoProcess.reset();
+        caoProcess = std::make_unique<Manager>(options);
+        connect(&*caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+        QtConcurrent::run(&*caoProcess, &Manager::runOptimization);
     } catch (const std::exception& e) {
-        QMessageBox box;
-        box.setIcon(QMessageBox::Critical);
-        box.setText("An exception has been encountered and the process was forced to stop: " + QString(e.what()));
+        QMessageBox box(QMessageBox::Critical, "Error",
+                        "An exception has been encountered and the process was forced to stop: " + QString(e.what()));
         box.exec();
-        endProcess();
     }
+    endProcess();
 }
 
 void MainWindow::endProcess()
@@ -273,6 +272,7 @@ void MainWindow::endProcess()
     bLockVariables = false;
     ui->progressBar->setMaximum(100);
     ui->progressBar->setValue(100);
+    ui->progressBar->setFormat("Done");
     updateLog();
 }
 
@@ -307,9 +307,6 @@ void MainWindow::setGameMode(const Games::GameMode& mode)
         case Games::Custom: break;
 
         case Games::TES5:
-            ui->texturesFullOptimizationRadioButton->setChecked(false);
-            ui->texturesFullOptimizationRadioButton->hide();
-
             ui->meshesMediumOptimizationRadioButton->setChecked(false);
             ui->meshesMediumOptimizationRadioButton->hide();
 

@@ -72,6 +72,10 @@ public:
 
 inline void initCustomLogger(const QString& logPath, int logLevel)
 {
+    //Cancelling if logger is already ready
+    if(plog::get())
+        return;
+
     //Creating log folder
     QDir dir;
     dir.mkpath(QFileInfo(logPath).path());
@@ -79,8 +83,8 @@ inline void initCustomLogger(const QString& logPath, int logLevel)
     //Creating log file
     QFile file(logPath);
 
-    if(!file.open(QFile::ReadWrite))
-        throw std::runtime_error("Cannot open log file");
+    if(!file.open(QFile::ReadWrite | QFile::Append))
+        throw std::runtime_error("Cannot open log file: " + logPath.toStdString());
 
     plog::Severity sev = static_cast<plog::Severity>(logLevel);
     plog::init<plog::CustomFormatter>(sev, qPrintable(logPath));

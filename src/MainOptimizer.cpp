@@ -14,13 +14,12 @@ MainOptimizer::MainOptimizer(const OptionsCAO &options) : optOptions (options),
 
 void MainOptimizer::process(const QString &file)
 {
-
     if(file.endsWith(".dds", Qt::CaseInsensitive))
-        processDds(file);
+        processTexture(file, TexturesOptimizer::dds);
     else if(file.endsWith(".nif", Qt::CaseInsensitive))
         processNif(file);
-    else if(file.endsWith(".tga", Qt::CaseInsensitive))
-        processTga(file);
+    else if(file.endsWith(".tga", Qt::CaseInsensitive) && CAO_TEXTURES_CONVERT_TGA)
+        processTexture(file, TexturesOptimizer::tga);
     else if(file.endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
         processBsa(file);
     else if(file.endsWith(".hkx", Qt::CaseInsensitive))
@@ -67,36 +66,72 @@ void MainOptimizer::processBsa(const QString& file)
     //TODO if(options.bBsaOptimizeAssets)
 }
 
-void MainOptimizer::processDds(const QString& file)
+void MainOptimizer::processTexture(const QString& file, const TexturesOptimizer::TextureType &type)
 {
-    if(optOptions.iTexturesOptimizationLevel == 0)
+    const bool processTextures = optOptions.bTexturesMipmaps || optOptions.bTexturesCompress
+            || optOptions.bTexturesNecessary || optOptions.bTexturesResizeSize
+            || optOptions.bTexturesResizeRatio;
+    if(!processTextures)
         return;
+
+    if(!texturesOpt.open(file, type))
+    {
+        PLOG_ERROR << tr("Failed to open: ") << file;
+        return;
+    }
 
     if(optOptions.bDryRun)
     {
-        switch (optOptions.iTexturesOptimizationLevel)
+        if(optOptions.bTexturesMipmaps)
         {
-        case 2:
-            if(!TexturesOptimizer::isCompressed(file))
-            {
-                PLOG_INFO << file + QObject::tr(" would be compressed to BC7");
-            }
-        case 1:
-            if(TexturesOptimizer::isIncompatible(file))
+            PLOG_INFO << file + QObject::tr(" would have generated mipmaps");
+        }
+        if(optOptions.bTexturesCompress && !texturesOpt.isCompressed())
+        {
+            PLOG_INFO << file + QObject::tr(" would be compressed to an appropriate format");
+        }
+        if(optOptions.bTexturesNecessary)
+            if(texturesOpt.isIncompatible())
             {
                 PLOG_INFO << file + QObject::tr(" is incompatible and would be converted to a compatible format");
             }
+        if(type == TexturesOptimizer::tga)
+        {
+            PLOG_INFO << file + QObject::tr(" would be converted to DDS");
         }
     }
     else
     {
-        switch (optOptions.iTexturesOptimizationLevel)
+        //Resizing
+        std::optional<size_t> width;
+        std::optional<size_t> height;
+
+        if(optOptions.bTexturesResizeRatio)
         {
-        case 2:
-            TexturesOptimizer::compress(file);
-        case 1:
-            TexturesOptimizer::convertIncompatibleTextures(file);
+            width = texturesOpt.getInfo().width / optOptions.iTexturesTargetWidthRatio;
+            height = texturesOpt.getInfo().height / optOptions.iTexturesTargetHeightRatio;
         }
+        else if(optOptions.bTexturesResizeSize)
+        {
+            width = optOptions.iTexturesTargetWidth;
+            height = optOptions.iTexturesTargetHeight;
+        }
+
+        if(!texturesOpt.optimize(optOptions.bTexturesNecessary, optOptions.bTexturesCompress,
+                                 optOptions.bTexturesMipmaps, width, height))
+        {
+            PLOG_ERROR << "Failed to optimize: " + file;
+            return;
+        }
+        QString newName = file;
+        if(type == TexturesOptimizer::tga)
+            newName = newName.chopped(4) + ".dds";
+        if(!texturesOpt.saveToFile(newName))
+        {
+            PLOG_ERROR << "Failed to optimize: " + file;
+        }
+        else if(type == TexturesOptimizer::tga)
+            QFile(file).remove();
     }
 }
 
@@ -121,17 +156,3 @@ void MainOptimizer::processNif(const QString& file)
     else if(optOptions.iMeshesOptimizationLevel >=1 && !optOptions.bDryRun)
         meshesOpt.optimize(file);
 }
-
-void MainOptimizer::processTga(const QString &file)
-{
-    if(optOptions.iTexturesOptimizationLevel == 0)
-        return;
-
-    if(optOptions.iTexturesOptimizationLevel >=1 && optOptions.bDryRun && TexturesOptimizer::isIncompatible(file))
-        PLOG_INFO << file + QObject::tr(" would be converted to DDS");
-    else if(optOptions.iTexturesOptimizationLevel >=1)
-        TexturesOptimizer::convertIncompatibleTextures(file);
-}
-
-
-

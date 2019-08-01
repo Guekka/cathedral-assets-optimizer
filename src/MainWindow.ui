@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
-    <height>700</height>
+    <width>676</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -57,36 +57,49 @@
       <property name="flat">
        <bool>false</bool>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item row="0" column="1" alignment="Qt::AlignHCenter">
-        <widget class="QPushButton" name="processButton">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="userPathButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>220</width>
+           <width>0</width>
            <height>40</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Open Directory</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="processButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -95,23 +108,23 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2" alignment="Qt::AlignHCenter">
+       <item row="0" column="2">
         <widget class="QComboBox" name="modeChooserComboBox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>220</width>
+           <width>0</width>
            <height>38</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -125,31 +138,6 @@
            <string>Several mods (MO)</string>
           </property>
          </item>
-        </widget>
-       </item>
-       <item row="0" column="0" alignment="Qt::AlignHCenter">
-        <widget class="QPushButton" name="userPathButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>220</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>230</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Open Directory</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="0">
@@ -242,7 +230,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -785,8 +773,8 @@
            <bool>true</bool>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item alignment="Qt::AlignLeft">
-            <widget class="QRadioButton" name="texturesNecessaryOptimizationRadioButton">
+           <item>
+            <widget class="QCheckBox" name="texturesNecessaryOptimizationCheckBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -810,8 +798,15 @@
              </property>
             </widget>
            </item>
-           <item alignment="Qt::AlignRight">
-            <widget class="QRadioButton" name="texturesFullOptimizationRadioButton">
+           <item>
+            <widget class="QCheckBox" name="texturesCompressCheckBox">
+             <property name="text">
+              <string>Compress textures</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="texturesMipmapCheckBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -837,7 +832,7 @@
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss. Will also convert uncompressed textures to BC7.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Full optimization</string>
+              <string>Generate mipmaps</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -850,7 +845,7 @@
         <item>
          <widget class="QGroupBox" name="texturesResizingGroupBox">
           <property name="title">
-           <string>Resizing (DOES NOT WORK YET)</string>
+           <string>Resizing</string>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -893,6 +888,12 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimum">
+              <number>4</number>
+             </property>
+             <property name="maximum">
+              <number>4096</number>
+             </property>
             </widget>
            </item>
            <item row="1" column="5">
@@ -902,6 +903,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimum">
+              <number>4</number>
+             </property>
+             <property name="maximum">
+              <number>4096</number>
              </property>
             </widget>
            </item>
@@ -932,36 +939,48 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QRadioButton" name="texturesResizingBySizeRadioButton">
+            <widget class="QRadioButton" name="texturesResizingByRatioRadioButton">
              <property name="text">
               <string>By ratio</string>
              </property>
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QRadioButton" name="texturesResizingByRatioRadioButton">
+            <widget class="QRadioButton" name="texturesResizingBySizeRadioButton">
              <property name="text">
               <string>By fixed size</string>
              </property>
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QDoubleSpinBox" name="texturesResizingByRatioHeight">
+            <widget class="QSpinBox" name="texturesResizingByRatioHeight">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimum">
+              <number>2</number>
+             </property>
+             <property name="maximum">
+              <number>10</number>
+             </property>
             </widget>
            </item>
            <item row="0" column="5" colspan="2">
-            <widget class="QDoubleSpinBox" name="texturesResizingByRatioWidth">
+            <widget class="QSpinBox" name="texturesResizingByRatioWidth">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimum">
+              <number>2</number>
+             </property>
+             <property name="maximum">
+              <number>10</number>
              </property>
             </widget>
            </item>
@@ -974,6 +993,20 @@
            <string>Advanced</string>
           </property>
           <layout class="QFormLayout" name="formLayout_4">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>TGA</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="texturesTgaConversionCheckBox">
+             <property name="text">
+              <string>Enable TGA conversion</string>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_12">
              <property name="text">
@@ -1008,22 +1041,26 @@
            <item row="2" column="0">
             <widget class="QLabel" name="label_13">
              <property name="text">
-              <string>Incompatible formats</string>
+              <string>Interface</string>
              </property>
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QPlainTextEdit" name="texturesIncompatibleFormats"/>
+            <widget class="QCheckBox" name="texturesCompressInterfaceCheckBox">
+             <property name="text">
+              <string>Compress interface textures</string>
+             </property>
+            </widget>
            </item>
            <item row="3" column="0">
-            <widget class="QLabel" name="label_14">
+            <widget class="QLabel" name="label_19">
              <property name="text">
-              <string>Incompatible extensions</string>
+              <string>Unwanted formats</string>
              </property>
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QPlainTextEdit" name="texturesIncompatibleExtensions"/>
+            <widget class="QPlainTextEdit" name="texturesUnwantedFormats"/>
            </item>
           </layout>
          </widget>
@@ -1153,7 +1190,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>684</width>
+     <width>676</width>
      <height>20</height>
     </rect>
    </property>
@@ -1225,11 +1262,6 @@
    </property>
    <property name="statusTip">
     <string>Will show nearly no information</string>
-   </property>
-  </action>
-  <action name="actionSelect_game">
-   <property name="text">
-    <string>Select game</string>
    </property>
   </action>
  </widget>
