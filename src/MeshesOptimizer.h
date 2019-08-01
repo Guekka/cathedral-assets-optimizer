@@ -4,11 +4,17 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.h"
 #include "Games.h"
 #include "PluginsOperations.h"
+#include "pch.h"
 
-enum ScanResult { doNotProcess = -1, good = 0, lightIssue = 1, criticalIssue = 2 };
+enum ScanResult
+{
+    doNotProcess = -1,
+    good = 0,
+    lightIssue = 1,
+    criticalIssue = 2
+};
 
 class MeshesOptimizer : public QObject
 {
@@ -24,25 +30,24 @@ public:
      * \param filePath The path of the mesh to scan
      * \return An enum with the scan results
      */
-    ScanResult scan(const QString& filePath);
+    ScanResult scan(const QString &filePath);
     /*!
      * \brief Optimize the providen mesh according to its type
      * \param filePath The path of the mesh to optimize
      */
-    void optimize(const QString& filePath);
+    void optimize(const QString &filePath);
     /*!
      * \brief Report the optimization that would be made on the file
      * \param filePath The path of the mesh to optimize
      */
-    void dryOptimize(const QString& filePath);
+    void dryOptimize(const QString &filePath);
 
     void listHeadparts(const QString &directory);
+
 private:
     QStringList headparts;
 
     bool bMeshesHeadparts;
     bool bMeshesResave;
     int iMeshesOptimizationLevel;
-
-
 };

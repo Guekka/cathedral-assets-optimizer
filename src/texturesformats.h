@@ -8,18 +8,19 @@
 
 //Used to convert enum to string and vice versa
 
-
 namespace detail
 {
-#define DEFFMT(fmt) { #fmt, DXGI_FORMAT_ ## fmt }
+#define DEFFMT(fmt) \
+    { \
+#fmt, DXGI_FORMAT_##fmt \
+    }
 struct SValue
 {
     std::string name;
     DXGI_FORMAT format;
 };
 
-const SValue DxgiFormats[] =
-{
+const SValue DxgiFormats[] = {
 
     // List does not include _TYPELESS or depth/stencil formats
     DEFFMT(R32G32B32A32_FLOAT),
@@ -104,26 +105,24 @@ const SValue DxgiFormats[] =
     DEFFMT(B4G4R4A4_UNORM),
 };
 #undef DEFMTT //cleanup
-}
+} // namespace detail
 
-
-inline DXGI_FORMAT stringToDxgiFormat(const std::string& string)
+inline DXGI_FORMAT stringToDxgiFormat(const std::string &string)
 {
-    for(const auto& format : detail::DxgiFormats)
+    for (const auto &format : detail::DxgiFormats)
     {
-        if(format.name == string)
+        if (format.name == string)
             return format.format;
     }
     return DXGI_FORMAT_UNKNOWN;
 }
 
-inline std::string dxgiFormatToString(const DXGI_FORMAT& format)
+inline std::string dxgiFormatToString(const DXGI_FORMAT &format)
 {
-    for(const auto& dxFormat : detail::DxgiFormats)
+    for (const auto &dxFormat : detail::DxgiFormats)
     {
-        if(dxFormat.format == format)
+        if (dxFormat.format == format)
             return dxFormat.name;
     }
     return "DXGI_FORMAT_UNKNOWN";
 }
-

@@ -4,11 +4,12 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Manager.h"
 #include "pch.h"
 #include "ui_mainWindow.h"
-#include "Manager.h"
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
@@ -49,5 +50,5 @@ private:
 
     std::unique_ptr<Manager> caoProcess;
 
-    QTimer* timer;
+    QTimer *timer;
 };

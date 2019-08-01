@@ -21,7 +21,6 @@
 #define CAO_BSA_SUFFIX Games::getInstance()->getBsaSuffix()
 #define CAO_BSA_TEXTURES_SUFFIX Games::getInstance()->getBsaTexturesSuffix()
 
-
 #define CAO_MESHES_FILE_VERSION Games::getInstance()->getMeshesFileVersion()
 #define CAO_MESHES_STREAM Games::getInstance()->getMeshesStream()
 #define CAO_MESHES_USER Games::getInstance()->getMeshesUser()
@@ -33,7 +32,6 @@
 #define CAO_TEXTURES_UNWANTED_FORMATS Games::getInstance()->getTexturesUnwantedFormats()
 #define CAO_TEXTURES_COMPRESS_INTERFACE Games::getInstance()->getTexturesCompressInterface()
 
-
 #define CAO_INI_PATH Games::getInstance()->getIniPath()
 #define CAO_LOG_PATH Games::getInstance()->getLogPath()
 #define CAO_RESOURCES_PATH Games::getInstance()->getResourcePath()
@@ -43,14 +41,21 @@ const double GigaByte = 1024 * 1024 * 1024;
 class Games : public QObject
 {
 public:
-    enum GameMode { Invalid = 0, TES5, SSE, FO4, Custom  };
+    enum GameMode
+    {
+        Invalid = 0,
+        TES5,
+        SSE,
+        FO4,
+        Custom
+    };
     Q_ENUM(GameMode)
     //Declaring enums to Qt system
     Q_ENUM(bsa_archive_type_e)
     Q_ENUM(NiFileVersion)
     Q_ENUM(DXGI_FORMAT)
 
-    static Games* getInstance();
+    static Games *getInstance();
 
     bsa_archive_type_e GetBsaFormat() const;
     bsa_archive_type_t getBsaTexturesFormat() const;
@@ -75,20 +80,20 @@ public:
     QString getLogPath() const;
     QString getResourcePath() const;
 
-    void setGame(const GameMode& newGame);
-    void setGame(const QString& gameString);
+    void setGame(const GameMode &newGame);
+    void setGame(const QString &gameString);
     GameMode getGame() const;
 
-    static GameMode stringToGame(const QString& string);
+    static GameMode stringToGame(const QString &string);
 
     void saveToIni(QSettings *settings);
     void readFromIni(QSettings *settings);
 
 #ifdef GUI
-    void setGame(Ui::MainWindow* ui);
-    static GameMode uiToGame(Ui::MainWindow* ui);
-    void saveToUi(Ui::MainWindow* ui);
-    void readFromUi(Ui::MainWindow* ui);
+    void setGame(Ui::MainWindow *ui);
+    static GameMode uiToGame(Ui::MainWindow *ui);
+    void saveToUi(Ui::MainWindow *ui);
+    void readFromUi(Ui::MainWindow *ui);
 #endif
 
     bool getTexturesCompressInterface() const;
@@ -118,9 +123,8 @@ private:
     QString logPath;
     QString resourcePath;
 
-    static Games* INSTANCE;
+    static Games *INSTANCE;
     GameMode game;
 
     Games();
 };
-

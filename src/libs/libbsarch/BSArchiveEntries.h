@@ -6,8 +6,8 @@ class BSArchiveEntries
 {
 public:
     BSArchiveEntries();
-    BSArchiveEntries(const QStringList& QSLEntries);
-    BSArchiveEntries(const bsa_entry_list_t& entries);
+    explicit BSArchiveEntries(const QStringList& QSLEntries);
+    explicit BSArchiveEntries(const bsa_entry_list_t& entries);
     ~BSArchiveEntries();
 
     void add(const QString& filepath);

@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.h"
 #include "Games.h"
+#include "pch.h"
 #include "ui_mainWindow.h"
 
 /*
@@ -17,21 +17,20 @@ namespace plog
     }
 }*/
 
-
 class OptionsCAO : public QObject
 {
     //TODO separate mipmaps generation and texture compression
 public:
     OptionsCAO();
-    OptionsCAO(const OptionsCAO& other);
+    OptionsCAO(const OptionsCAO &other);
 
-    void parseArguments(const QStringList& args);
+    void parseArguments(const QStringList &args);
 
     void saveToIni(QSettings *settings);
     void readFromIni(QSettings *settings);
 #ifdef GUI
-    void saveToUi(Ui::MainWindow* ui);
-    void readFromUi(Ui::MainWindow* ui);
+    void saveToUi(Ui::MainWindow *ui);
+    void readFromUi(Ui::MainWindow *ui);
 #endif
 
     /*!
@@ -49,10 +48,10 @@ public:
 
     bool bDryRun = false;
 
+    int iMeshesOptimizationLevel = 0;
+
     bool bMeshesHeadparts = false;
     bool bMeshesResave = true;
-
-    int iMeshesOptimizationLevel = 0;
 
     bool bTexturesNecessary = true;
     bool bTexturesCompress = false;
@@ -69,7 +68,11 @@ public:
     /*!
      * \brief The optimization mode
      */
-    enum OptimizationMode { singleMod = 0, severalMods = 1} mode;
+    enum OptimizationMode
+    {
+        singleMod = 0,
+        severalMods = 1
+    } mode;
     Q_ENUM(OptimizationMode)
 
     /*!
@@ -78,4 +81,3 @@ public:
     QString userPath;
     /*-----------END OF VARS---------------*/
 };
-

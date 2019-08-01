@@ -20,8 +20,8 @@ public:
      * \brief Port an Oldrim animation to Skyrim Special Edition using Bethesda Havok Post Processing Tool
      * \param filePath The path of the file to optimize
      */
-    void convert(const QString& filePath, const hkPackFormat& pkFormat);
+    void convert(const QString &filePath, const hkPackFormat &pkFormat);
 
-    private:
-    hkMemoryRouter* memoryRouter;   
+private:
+    hkMemoryRouter *memoryRouter;
 };

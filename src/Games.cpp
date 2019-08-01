@@ -5,7 +5,7 @@
 #include "Games.h"
 #include "Manager.h"
 
-Games::Games() {};
+Games::Games(){};
 
 Games *Games::INSTANCE = nullptr;
 
@@ -19,9 +19,7 @@ void Games::setGame(const GameMode &newGame)
 
     switch (game)
     {
-    case Invalid:
-        throw std::runtime_error("Invalid game");
-        break;
+    case Invalid: throw std::runtime_error("Invalid game"); break;
 
     case SSE:
         bsaFormat = baSSE;
@@ -97,7 +95,7 @@ void Games::setGame(const GameMode &newGame)
     case Custom:
         QSettings settings("settings/Custom/config.ini", QSettings::IniFormat);
 
-        if(!QFile("settings/Custom/config.ini").exists())
+        if (!QFile("settings/Custom/config.ini").exists())
             saveToIni(&settings);
 
         readFromIni(&settings);
@@ -105,20 +103,20 @@ void Games::setGame(const GameMode &newGame)
     }
 }
 
-void Games::setGame(const QString& gameString)
+void Games::setGame(const QString &gameString)
 {
     setGame(stringToGame(gameString));
 }
 
 Games::GameMode Games::stringToGame(const QString &string)
 {
-    if(string == "SSE")
+    if (string == "SSE")
         return SSE;
-    else if(string == "TES5")
+    else if (string == "TES5")
         return TES5;
-    else if(string == "FO4")
+    else if (string == "FO4")
         return FO4;
-    else if(string == "Custom")
+    else if (string == "Custom")
         return Custom;
     else
         return Invalid;
@@ -147,7 +145,7 @@ void Games::saveToIni(QSettings *settings)
 void Games::readFromIni(QSettings *settings)
 {
     bsaFormat = static_cast<bsa_archive_type_t>(settings->value("bsaFormat").toInt());
-    bsaTexturesFormat =  static_cast<bsa_archive_type_t>(settings->value("bsaTexturesFormat").toInt());
+    bsaTexturesFormat = static_cast<bsa_archive_type_t>(settings->value("bsaTexturesFormat").toInt());
     maxBsaUncompressedSize = settings->value("maxBsaUncompressedSize").toDouble();
     hasBsaTextures = settings->value("hasBsaTextures").toBool();
     maxBsaTexturesSize = settings->value("maxBsaTexturesSize").toDouble();
@@ -167,12 +165,12 @@ void Games::readFromIni(QSettings *settings)
     resourcePath = QDir::currentPath() + "/resources/Custom/";
 }
 #ifdef GUI
-void Games::setGame(Ui::MainWindow* ui)
+void Games::setGame(Ui::MainWindow *ui)
 {
     game = uiToGame(ui);
     saveToUi(ui);
 
-    if(ui->advancedSettingsCheckbox->isChecked())
+    if (ui->advancedSettingsCheckbox->isChecked())
         game = Custom;
     else
         setGame(game);
@@ -180,7 +178,7 @@ void Games::setGame(Ui::MainWindow* ui)
 
 Games::GameMode Games::uiToGame(Ui::MainWindow *ui)
 {
-    if(ui->presets->currentData().canConvert<GameMode>())
+    if (ui->presets->currentData().canConvert<GameMode>())
         return ui->presets->currentData().value<GameMode>();
     else
         return Invalid;
@@ -188,11 +186,10 @@ Games::GameMode Games::uiToGame(Ui::MainWindow *ui)
 
 void Games::saveToUi(Ui::MainWindow *ui)
 {
-    auto iterateComboBox = [](QComboBox* box, QVariant data)
-    {
-        for(int i = 0; i < box->count(); ++i)
+    auto iterateComboBox = [](QComboBox *box, QVariant data) {
+        for (int i = 0; i < box->count(); ++i)
         {
-            if(box->itemData(i) == data)
+            if (box->itemData(i) == data)
             {
                 box->setCurrentIndex(i);
                 break;
@@ -220,7 +217,7 @@ void Games::saveToUi(Ui::MainWindow *ui)
     ui->texturesCompressInterfaceCheckBox->setChecked(texturesCompressInterface);
 
     QStringList unwantedFormats;
-    for(const QVariant& variant : texturesUnwantedFormats)
+    for (const QVariant &variant : texturesUnwantedFormats)
     {
         DXGI_FORMAT format = variant.value<DXGI_FORMAT>();
         unwantedFormats << QString::fromStdString(dxgiFormatToString(format));
@@ -250,10 +247,10 @@ void Games::readFromUi(Ui::MainWindow *ui)
     texturesConvertTga = ui->texturesTgaConversionCheckBox->isChecked();
     texturesCompressInterface = ui->texturesCompressInterfaceCheckBox->isChecked();
 
-    for(const auto& line : ui->texturesUnwantedFormats->toPlainText().split('\n'))
+    for (const auto &line : ui->texturesUnwantedFormats->toPlainText().split('\n'))
     {
         DXGI_FORMAT format = stringToDxgiFormat(line.toStdString());
-        if(!texturesUnwantedFormats.contains(format) && format != DXGI_FORMAT_UNKNOWN)
+        if (!texturesUnwantedFormats.contains(format) && format != DXGI_FORMAT_UNKNOWN)
             texturesUnwantedFormats += format;
     }
 }
@@ -269,9 +266,9 @@ Games::GameMode Games::getGame() const
     return game;
 }
 
-Games* Games::getInstance()
+Games *Games::getInstance()
 {
-    if(!Games::INSTANCE)
+    if (!Games::INSTANCE)
         Games::INSTANCE = new Games();
 
     return Games::INSTANCE;
@@ -317,7 +314,6 @@ QString Games::getBsaTexturesSuffix() const
     return bsaTexturesSuffix;
 }
 
-
 uint Games::getMeshesUser() const
 {
     return meshesUser;
@@ -351,7 +347,7 @@ bool Games::getTexturesConvertTga() const
 QList<DXGI_FORMAT> Games::getTexturesUnwantedFormats() const
 {
     QList<DXGI_FORMAT> list;
-    for(auto& format : texturesUnwantedFormats)
+    for (auto &format : texturesUnwantedFormats)
         list << QVariant::fromValue(format).value<DXGI_FORMAT>();
     return list;
 }

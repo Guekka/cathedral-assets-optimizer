@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.h"
 #include "Games.h"
+#include "pch.h"
 
 class TexturesOptimizer : public QObject
 {
@@ -13,11 +13,15 @@ class TexturesOptimizer : public QObject
 
 public:
     TexturesOptimizer();
-    enum TextureType {dds, tga};
-    bool open(const void* pSource, const size_t& size, const TextureType& type, const QString& fileName);
-    bool open(const QString& filePath, const TextureType& type);
+    enum TextureType
+    {
+        dds,
+        tga
+    };
+    bool open(const void *pSource, const size_t &size, const TextureType &type, const QString &fileName);
+    bool open(const QString &filePath, const TextureType &type);
 
-    bool saveToFile(const QString& filePath);
+    bool saveToFile(const QString &filePath);
     /*!
      * \brief Decompress the current texture. It is required to use several functions.
      * \return False if an error happens
@@ -27,7 +31,7 @@ public:
      * \brief Compress the file using the provided compression format,
      * \param format The format to use
      */
-    bool compress(const DXGI_FORMAT& format);
+    bool compress(const DXGI_FORMAT &format);
     /*!
      * \brief Check if a texture is compressed
      * \return True if the file is compressed
@@ -44,23 +48,26 @@ public:
      * \param optLevel The optimization level
      * \return False if an error happens
      */
-    bool optimize(const bool& bNecessary, const bool& bCompress, const bool& bMipmaps,
-                  const std::optional<size_t>& twidth, const std::optional<size_t>& theight);
+    bool optimize(const bool &bNecessary,
+                  const bool &bCompress,
+                  const bool &bMipmaps,
+                  const std::optional<size_t> &twidth,
+                  const std::optional<size_t> &theight);
 
     bool resize(size_t targetWidth, size_t targetHeight);
 
-    void fitPowerOfTwo(uint& resultX, uint& resultY);
+    void fitPowerOfTwo(uint &resultX, uint &resultY);
 
     bool generateMipMaps();
     bool canHaveMipMaps();
 
     DirectX::TexMetadata getInfo();
 
-    bool convert(const DXGI_FORMAT& format);
+    bool convert(const DXGI_FORMAT &format);
 
     bool isIncompatible();
 
-    static bool compareInfo(const DirectX::TexMetadata& info1, const DirectX::TexMetadata& info2);
+    static bool compareInfo(const DirectX::TexMetadata &info1, const DirectX::TexMetadata &info2);
 
 private:
     std::unique_ptr<DirectX::ScratchImage> image;
@@ -69,7 +76,6 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 
-    bool createDevice(int adapter, ID3D11Device** pDevice);
-    bool GetDXGIFactory(IDXGIFactory1** pFactory);
+    bool createDevice(int adapter, ID3D11Device **pDevice);
+    bool GetDXGIFactory(IDXGIFactory1 **pFactory);
 };
-

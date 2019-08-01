@@ -5,7 +5,7 @@
 
 #include "PluginsOperations.h"
 
-void PluginsOperations::makeDummyPlugins(const QString& folderPath)
+void PluginsOperations::makeDummyPlugins(const QString &folderPath)
 {
     PLOG_VERBOSE << "Entering makeDummyPluginsfunction: creating enough dummy plugins to load BSAs";
 
@@ -17,9 +17,9 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
 
         it.next();
 
-        if(!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
+        if (!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
         {
-            if(it.fileName().contains(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive))
+            if (it.fileName().contains(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive))
             {
                 espName = it.fileName().remove(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive) + ".esp";
                 PLOG_VERBOSE << "Created textures bsa plugin:" + espName;
@@ -36,8 +36,7 @@ void PluginsOperations::makeDummyPlugins(const QString& folderPath)
     PLOG_VERBOSE << "Exiting makeDummyPlugins function";
 }
 
-
-QString PluginsOperations::findPlugin(const QString& folderPath, const bsaType& bsaType)
+QString PluginsOperations::findPlugin(const QString &folderPath, const bsaType &bsaType)
 {
     QDirIterator it(folderPath);
     QStringList espName;
@@ -47,55 +46,51 @@ QString PluginsOperations::findPlugin(const QString& folderPath, const bsaType& 
     {
         it.next();
 
-        if(it.fileName().contains(QRegularExpression("\\.es[plm]$")))
+        if (it.fileName().contains(QRegularExpression("\\.es[plm]$")))
             espName << it.fileName();
 
-
-        if(it.fileName().endsWith(CAO_BSA_SUFFIX, Qt::CaseInsensitive) &&
-                !it.fileName().endsWith(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive))
+        if (it.fileName().endsWith(CAO_BSA_SUFFIX, Qt::CaseInsensitive)
+            && !it.fileName().endsWith(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive))
         {
             bsaName = it.fileName().chopped(4) + ".esp";
         }
     }
-    if(!bsaName.isEmpty() && espName.isEmpty())
+    if (!bsaName.isEmpty() && espName.isEmpty())
         espName << bsaName;
 
-    if(espName.isEmpty())
+    if (espName.isEmpty())
         espName << QDir(folderPath).dirName() + ".esp";
-
 
     QString returnedEsp;
     int counter = 0;
 
     do
     {
-        for(auto esp : espName)
+        for (auto esp : espName)
         {
-            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4)
-                                          + CAO_BSA_TEXTURES_SUFFIX).exists()
-                    && bsaType == bsaType::texturesBsa;
+            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_TEXTURES_SUFFIX).exists()
+                                   && bsaType == bsaType::texturesBsa;
 
-            bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4)
-                                          + CAO_BSA_SUFFIX).exists()
-                    && bsaType == bsaType::standardBsa;
+            bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_SUFFIX).exists()
+                                   && bsaType == bsaType::standardBsa;
 
             bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_TEXTURES_SUFFIX).exists()
-                    && !QFile(folderPath + "/" +esp.chopped(4) + CAO_BSA_SUFFIX).exists()
-                    && bsaType == bsaType::texturesAndStandardBsa;
+                               && !QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_SUFFIX).exists()
+                               && bsaType == bsaType::texturesAndStandardBsa;
 
-            if(texturesBsaGood || standardBsaGood || bothBsaGood)
+            if (texturesBsaGood || standardBsaGood || bothBsaGood)
                 returnedEsp = esp;
         }
-        if(returnedEsp.isEmpty())
+        if (returnedEsp.isEmpty())
             espName << espName.last().chopped(4) + QString::number(counter) + ".esp";
 
         ++counter;
-    }while(returnedEsp.isEmpty());
+    } while (returnedEsp.isEmpty());
 
     return returnedEsp.remove(QRegularExpression("\\.es[plm]$"));
 }
 
-bool PluginsOperations::checkIfBsaHasPlugin(const QString& bsaPath)
+bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
     bsaName.remove(CAO_BSA_EXTENSION);
@@ -117,7 +112,7 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
     std::fstream file;
     file.open(filepath.toStdString(), std::ios::binary | std::ios::in);
 
-    if(!file.is_open())
+    if (!file.is_open())
         return QStringList();
 
     PluginRecordHeader header;
@@ -125,18 +120,14 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
 
     QStringList headparts;
 
-    auto readHeaders = [&]()
-    {
-        file.read(reinterpret_cast<char*>(&header), sizeof header);
-    };
+    auto readHeaders = [&]() { file.read(reinterpret_cast<char *>(&header), sizeof header); };
 
-    auto readFieldPluginHeader = [&]()
-    {
-        file.read(reinterpret_cast<char*>(&pluginFieldHeader), sizeof pluginFieldHeader);
+    auto readFieldPluginHeader = [&]() {
+        file.read(reinterpret_cast<char *>(&pluginFieldHeader), sizeof pluginFieldHeader);
     };
 
     readHeaders();
-    if(strncmp(header.plugin.type, GROUP_TES4, sizeof GROUP_TES4) != 0)
+    if (strncmp(header.plugin.type, GROUP_TES4, sizeof GROUP_TES4) != 0)
         return QStringList(); //Not a plugin file
 
     //Skip TES4 record
@@ -148,7 +139,7 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
         readHeaders();
 
         // skip non headpart groups
-        if(strncmp(header.plugin.label, GROUP_HDPT, sizeof GROUP_HDPT) != 0)
+        if (strncmp(header.plugin.label, GROUP_HDPT, sizeof GROUP_HDPT) != 0)
         {
             file.seekg(header.plugin.groupSize - sizeof header, std::ios::cur);
             continue;
@@ -156,17 +147,17 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
 
         //Reading all headpart records
         int64_t groupEndPos = header.plugin.groupSize - sizeof header + file.tellg();
-        while(file.tellg() < groupEndPos)
+        while (file.tellg() < groupEndPos)
         {
             readHeaders();
 
             // reading all record fields
-            int64_t recEndPos =  header.record.dataSize + file.tellg() ;
-            while(file.tellg() < recEndPos)
+            int64_t recEndPos = header.record.dataSize + file.tellg();
+            while (file.tellg() < recEndPos)
             {
                 readFieldPluginHeader();
                 // skip everything but MODL
-                if(strncmp(pluginFieldHeader.type, GROUP_MODL, sizeof GROUP_MODL) != 0)
+                if (strncmp(pluginFieldHeader.type, GROUP_MODL, sizeof GROUP_MODL) != 0)
                 {
                     file.seekg(pluginFieldHeader.dataSize, std::ios::cur);
                     continue;
@@ -177,14 +168,14 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
 
                 QString headpart = buffer;
                 // make sure that nif path starts with meshes
-                if(!headpart.startsWith("meshes", Qt::CaseInsensitive))
+                if (!headpart.startsWith("meshes", Qt::CaseInsensitive))
                     headpart = "meshes/" + headpart;
 
                 //Adding headparts to the list
                 headparts << QDir::cleanPath(headpart);
             }
         }
-    }while (strncmp(header.plugin.type, GROUP_GRUP, sizeof GROUP_GRUP) == 0 && file.good());
+    } while (strncmp(header.plugin.type, GROUP_GRUP, sizeof GROUP_GRUP) == 0 && file.good());
 
     return headparts;
 }
@@ -194,25 +185,23 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
     std::fstream file;
     file.open(filepath.toStdString(), std::ios::binary | std::ios::in);
 
-    if(!file.is_open())
+    if (!file.is_open())
         return QStringList();
 
     PluginRecordHeader header;
     PluginFieldHeader pluginFieldHeader;
 
-    auto readHeaders = [&]()
-    {
-        file.read(reinterpret_cast<char*>(&header), sizeof header);
+    auto readHeaders = [&]() {
+        file.read(reinterpret_cast<char *>(&header), sizeof header);
         return strncmp(header.plugin.type, GROUP_GRUP, sizeof GROUP_GRUP) == 0;
     };
 
-    auto readFieldPluginHeader = [&]()
-    {
-        file.read(reinterpret_cast<char*>(&pluginFieldHeader), sizeof pluginFieldHeader);
+    auto readFieldPluginHeader = [&]() {
+        file.read(reinterpret_cast<char *>(&pluginFieldHeader), sizeof pluginFieldHeader);
     };
 
     readHeaders();
-    if(strncmp(header.plugin.type, GROUP_TES4, sizeof GROUP_TES4) != 0)
+    if (strncmp(header.plugin.type, GROUP_TES4, sizeof GROUP_TES4) != 0)
         return QStringList(); //Not a plugin file
 
     //Skip TES4 record
@@ -226,8 +215,8 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
     while (readHeaders() && file.good())
     {
         // skip other groups
-        if(strncmp(header.plugin.label, GROUP_LTEX, sizeof GROUP_LTEX) != 0
-                && strncmp(header.plugin.label, GROUP_TXST, sizeof GROUP_TXST) != 0)
+        if (strncmp(header.plugin.label, GROUP_LTEX, sizeof GROUP_LTEX) != 0
+            && strncmp(header.plugin.label, GROUP_TXST, sizeof GROUP_TXST) != 0)
         {
             file.seekg(header.plugin.groupSize - sizeof header, std::ios::cur);
             continue;
@@ -238,31 +227,31 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
 
         //Reading all records
         int64_t groupEndPos = header.plugin.groupSize - sizeof header + file.tellg();
-        while(file.tellg() < groupEndPos)
+        while (file.tellg() < groupEndPos)
         {
             readHeaders();
 
             // reading all record fields
-            int64_t recEndPos =  header.record.dataSize + file.tellg() ;
-            while(file.tellg() < recEndPos)
+            int64_t recEndPos = header.record.dataSize + file.tellg();
+            while (file.tellg() < recEndPos)
             {
                 readFieldPluginHeader();
                 // read FormID of landscape TXST record
-                if(strncmp(signatureGroup, GROUP_LTEX, sizeof GROUP_LTEX) == 0
-                        && strncmp(pluginFieldHeader.type, GROUP_TNAM, sizeof GROUP_TNAM) == 0)
+                if (strncmp(signatureGroup, GROUP_LTEX, sizeof GROUP_LTEX) == 0
+                    && strncmp(pluginFieldHeader.type, GROUP_TNAM, sizeof GROUP_TNAM) == 0)
                 {
                     uint32_t formId = 0;
-                    file.read(reinterpret_cast<char*>(&formId), pluginFieldHeader.dataSize);
+                    file.read(reinterpret_cast<char *>(&formId), pluginFieldHeader.dataSize);
                     firstSet.push_back(formId);
                 }
                 // read diffuse texture name from TXST record
-                else if(strncmp(signatureGroup, GROUP_TXST, sizeof GROUP_TXST) == 0
-                        && strncmp(pluginFieldHeader.type, GROUP_TX00, sizeof GROUP_TX00) == 0)
+                else if (strncmp(signatureGroup, GROUP_TXST, sizeof GROUP_TXST) == 0
+                         && strncmp(pluginFieldHeader.type, GROUP_TX00, sizeof GROUP_TX00) == 0)
                 {
                     char buffer[1024];
                     file.read(buffer, pluginFieldHeader.dataSize);
                     QString string = QDir::cleanPath(buffer);
-                    if(!string.startsWith("textures/"))
+                    if (!string.startsWith("textures/"))
                         string.insert(0, "textures/");
 
                     slTextures.insert(header.record.id, string);
@@ -276,10 +265,10 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
     }
 
     // go over landscape texture set FormIDs and find matching diffuse textures
-    for(const auto& id : firstSet)
+    for (const auto &id : firstSet)
     {
-        const auto& idx = slTextures.value(id);
-        if(!idx.isEmpty())
+        const auto &idx = slTextures.value(id);
+        if (!idx.isEmpty())
             finalTextures << idx;
     }
 

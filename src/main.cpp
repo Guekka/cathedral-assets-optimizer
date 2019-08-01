@@ -16,15 +16,6 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 #endif
 
-    //If tests are enabled, run tests instead of running standard process
-
-    if constexpr(/* DISABLES CODE */ (false)) //TODO find a better way to enable tests
-    {
-        IntegrationTests tests(QCoreApplication::arguments().at(1));
-        return tests.runAllTests();
-    }
-
-
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + QLocale::system().name(), "translations");
     QCoreApplication::installTranslator(&qtTranslator);
@@ -34,9 +25,9 @@ int main(int argc, char *argv[])
     QCoreApplication::installTranslator(&AssetsOptTranslator);
 
 #ifdef GUI
-    MainWindow* window;
+    MainWindow *window;
 #elif ifndef GUI
-    Manager* manger;
+    Manager *manger;
 #endif
 
     try
@@ -49,7 +40,7 @@ int main(int argc, char *argv[])
         manager.runOptimization();
 #endif
     }
-    catch(const std::runtime_error& e)
+    catch (const std::exception &e)
     {
         std::cerr << e.what() << std::endl;
         PLOG_FATAL << e.what();

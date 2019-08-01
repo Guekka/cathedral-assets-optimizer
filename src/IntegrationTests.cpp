@@ -5,7 +5,8 @@
 
 #include "IntegrationTests.h"
 
-IntegrationTests::IntegrationTests(const QString& path) : m_dir(QDir(path)) {};
+IntegrationTests::IntegrationTests(const QString &path)
+    : m_dir(QDir(path)){};
 
 //TODO fix this class (broken with refactoring and ini changes)
 
@@ -18,9 +19,9 @@ bool IntegrationTests::runAllTests()
 
     QVector<bool> results;
 
-    for(const auto& dir : dirs)
+    for (const auto &dir : dirs)
     {
-        if(!ignoredTests.contains(dir))
+        if (!ignoredTests.contains(dir))
         {
             //Assigning folders
 
@@ -40,7 +41,7 @@ bool IntegrationTests::runAllTests()
             FilesystemOperations::copyDir(input, output, true);
 
             //Running the optimization
-/*
+            /*
             Manager manager;
             manager.runOptimization();
 */
@@ -48,22 +49,19 @@ bool IntegrationTests::runAllTests()
 
             //Deleting output if test was passed
 
-            QDir reset (output);
-            if(results.last())
+            QDir reset(output);
+            if (results.last())
                 reset.removeRecursively();
         }
     }
 
     qDebug() << results;
 
-    for (const auto& result : results)
+    for (const auto &result : results)
     {
-        if(!result)
+        if (!result)
             return false;
     }
 
     return true;
 }
-
-
-

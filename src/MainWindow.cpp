@@ -4,13 +4,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "MainWindow.h"
 
-MainWindow::MainWindow() : ui(new Ui::MainWindow)
+MainWindow::MainWindow()
+    : ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     //Setting data for widgets
     //Games combo box
-    for(int i = 0; i < ui->presets->count(); ++i)
+    for (int i = 0; i < ui->presets->count(); ++i)
     {
         QString text = ui->presets->itemText(i);
         Games::GameMode game = Games::stringToGame(text);
@@ -50,10 +51,9 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
     ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_R8G8B8A8_UNORM);
 
     //Connecting widgets
-    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [&]
-    {
+    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [&] {
         //Disabling BSA options if dry run is enabled
-        if(ui->dryRunCheckBox->isChecked())
+        if (ui->dryRunCheckBox->isChecked())
         {
             ui->bsaBaseGroupBox->setChecked(false);
             ui->bsaBaseGroupBox->setEnabled(false);
@@ -66,25 +66,23 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &MainWindow::refreshUI);
 
-    connect(ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&]()
-    {
+    connect(ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&]() {
         this->hideAdvancedSettings();
         this->refreshUI();
     });
 
-    connect(ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&]
-    {
+    connect(ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
         CAO_SET_CURRENT_GAME(Games::uiToGame(ui))
-                Games::getInstance()->saveToUi(ui);
+        Games::getInstance()->saveToUi(ui);
         this->refreshUI();
     });
 
-    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&]
-    {
-        if(ui->modeChooserComboBox->currentIndex() == 1)
+    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&] {
+        if (ui->modeChooserComboBox->currentIndex() == 1)
         {
             QMessageBox warning(this);
-            warning.setText(tr("You have selected the several mods option. This process may take a very long time, especially if you process BSA. "
+            warning.setText(tr("You have selected the several mods option. This process may take a very long time, "
+                               "especially if you process BSA. "
                                "\nThis process has only been tested on the Mod Organizer mods folder."));
             warning.exec();
         }
@@ -92,31 +90,36 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
         this->refreshUI();
     });
 
-    connect(ui->userPathButton, &QPushButton::pressed, this, [&]{
-        QString dir = QFileDialog::getExistingDirectory(this, "Open Directory",
-                                                        settings->value("SelectedPath").toString(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        if(!dir.isEmpty()) ui->userPathTextEdit->setText(dir);
+    connect(ui->userPathButton, &QPushButton::pressed, this, [&] {
+        QString dir = QFileDialog::getExistingDirectory(this,
+                                                        "Open Directory",
+                                                        settings->value("SelectedPath").toString(),
+                                                        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        if (!dir.isEmpty())
+            ui->userPathTextEdit->setText(dir);
         this->refreshUI();
     });
 
-    connect(ui->processButton, &QPushButton::pressed, this, [&]
-    {
-        if(QDir(ui->userPathTextEdit->text()).exists())
+    connect(ui->processButton, &QPushButton::pressed, this, [&] {
+        if (QDir(ui->userPathTextEdit->text()).exists())
             this->initProcess();
         else
-            QMessageBox::critical(this, tr("Non existing path"), tr("This path does not exist. Process aborted."), QMessageBox::Ok);
+            QMessageBox::critical(this,
+                                  tr("Non existing path"),
+                                  tr("This path does not exist. Process aborted."),
+                                  QMessageBox::Ok);
     });
 
     //Connecting menu buttons
     connect(ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::refreshUI);
 
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 3);});
+    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&]() { this->settings->setValue("iLogLevel", 3); });
     connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &MainWindow::refreshUI);
 
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 4);});
+    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&]() { this->settings->setValue("iLogLevel", 4); });
     connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &MainWindow::refreshUI);
 
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&](){this->settings->setValue("iLogLevel", 6);});
+    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&]() { this->settings->setValue("iLogLevel", 6); });
     connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &MainWindow::refreshUI);
 
     //Setting timer to refresh UI
@@ -131,12 +134,12 @@ MainWindow::MainWindow() : ui(new Ui::MainWindow)
 
     uiSettings = new QSettings("settings/common/config.ini", QSettings::IniFormat, this);
     Games::GameMode mode = uiSettings->value("game").value<Games::GameMode>();
-    if(mode == Games::Invalid)
+    if (mode == Games::Invalid)
     {
         uiSettings->setValue("game", Games::Custom);
         mode = Games::Custom;
     }
-    else if(mode == Games::Custom)
+    else if (mode == Games::Custom)
     {
         QSettings gamesSettings("settings/Custom/config.ini", QSettings::IniFormat);
         Games::getInstance()->readFromIni(&gamesSettings);
@@ -167,7 +170,7 @@ void MainWindow::refreshUI()
     ui->bsaDeleteBackupsCheckbox->setDisabled(dryRunEnabled);
 
     //Enabling dark mode
-    if(ui->actionEnableDarkTheme->isChecked())
+    if (ui->actionEnableDarkTheme->isChecked())
     {
         QFile f(":qdarkstyle/style.qss");
         f.open(QFile::ReadOnly | QFile::Text);
@@ -178,7 +181,7 @@ void MainWindow::refreshUI()
         qApp->setStyleSheet("");
 
     //Enabling advanced options
-    if(ui->advancedSettingsCheckbox->isChecked())
+    if (ui->advancedSettingsCheckbox->isChecked())
     {
         this->showAdvancedSettings();
         this->setGameMode(Games::Custom);
@@ -186,7 +189,7 @@ void MainWindow::refreshUI()
     else
         setGameMode(Games::uiToGame(ui));
 
-    if(!bLockVariables)
+    if (!bLockVariables)
         saveUi();
 
     loadUi();
@@ -200,7 +203,7 @@ void MainWindow::saveUi()
     options.readFromUi(ui);
     options.saveToIni(settings);
 
-    if(ui->advancedSettingsCheckbox->isChecked())
+    if (ui->advancedSettingsCheckbox->isChecked())
     {
         QSettings sets("settings/Custom/config.ini", QSettings::IniFormat, this);
         Games::getInstance()->readFromUi(ui);
@@ -212,9 +215,9 @@ void MainWindow::loadUi()
 {
     ui->actionEnableDarkTheme->setChecked(uiSettings->value("bDarkMode").toBool());
     ui->advancedSettingsCheckbox->setChecked(uiSettings->value("bShowAdvancedSettings").toBool());
-    for(int i = 0; i < ui->presets->count(); ++i)
+    for (int i = 0; i < ui->presets->count(); ++i)
     {
-        if(ui->presets->itemData(i) == CAO_GET_CURRENT_GAME)
+        if (ui->presets->itemData(i) == CAO_GET_CURRENT_GAME)
         {
             ui->presets->setCurrentIndex(i);
             break;
@@ -224,14 +227,14 @@ void MainWindow::loadUi()
     options.readFromIni(settings);
     options.saveToUi(ui);
 
-    if(ui->advancedSettingsCheckbox->isChecked())
+    if (ui->advancedSettingsCheckbox->isChecked())
         Games::getInstance()->saveToUi(ui);
 }
 
 void MainWindow::resetUi()
 {
     //Resetting the window
-    const int animTabIndex =  ui->tabWidget->indexOf(ui->AnimationsTab);
+    const int animTabIndex = ui->tabWidget->indexOf(ui->AnimationsTab);
     const int meshesTabIndex = ui->tabWidget->indexOf(ui->meshesTab);
     ui->tabWidget->setTabEnabled(animTabIndex, true);
     ui->tabWidget->setTabEnabled(meshesTabIndex, true);
@@ -240,7 +243,7 @@ void MainWindow::resetUi()
     ui->meshesMediumOptimizationRadioButton->show();
 }
 
-void MainWindow::readProgress(const QString& text, const int& max, const int& value)
+void MainWindow::readProgress(const QString &text, const int &max, const int &value)
 {
     ui->progressBar->setFormat(text);
     ui->progressBar->setMaximum(max);
@@ -253,13 +256,17 @@ void MainWindow::initProcess()
     ui->processButton->setDisabled(true);
     bLockVariables = true;
 
-    try {
+    try
+    {
         caoProcess.reset();
         caoProcess = std::make_unique<Manager>(options);
         connect(&*caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
         QtConcurrent::run(&*caoProcess, &Manager::runOptimization);
-    } catch (const std::exception& e) {
-        QMessageBox box(QMessageBox::Critical, "Error",
+    }
+    catch (const std::exception &e)
+    {
+        QMessageBox box(QMessageBox::Critical,
+                        "Error",
                         "An exception has been encountered and the process was forced to stop: " + QString(e.what()));
         box.exec();
     }
@@ -281,7 +288,7 @@ void MainWindow::updateLog()
     ui->logTextEdit->clear();
 
     QFile log(CAO_LOG_PATH);
-    if(log.open(QFile::Text | QFile::ReadOnly))
+    if (log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
@@ -290,40 +297,39 @@ void MainWindow::updateLog()
     }
 }
 
-void MainWindow::setGameMode(const Games::GameMode& mode)
+void MainWindow::setGameMode(const Games::GameMode &mode)
 {
     //Resetting the window
-    const int animTabIndex =  ui->tabWidget->indexOf(ui->AnimationsTab);
+    const int animTabIndex = ui->tabWidget->indexOf(ui->AnimationsTab);
     const int meshesTabIndex = ui->tabWidget->indexOf(ui->meshesTab);
     resetUi();
 
     //Actually setting the window mode
     CAO_SET_CURRENT_GAME(mode)
 
-            switch (mode)
+    switch (mode)
     {
-        //Doing nothing for SSE : it is the default mode
-        case Games::SSE: break;
-        case Games::Custom: break;
+    //Doing nothing for SSE : it is the default mode
+    case Games::SSE: break;
+    case Games::Custom: break;
 
-        case Games::TES5:
-            ui->meshesMediumOptimizationRadioButton->setChecked(false);
-            ui->meshesMediumOptimizationRadioButton->hide();
+    case Games::TES5:
+        ui->meshesMediumOptimizationRadioButton->setChecked(false);
+        ui->meshesMediumOptimizationRadioButton->hide();
 
-            ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
-            ui->tabWidget->setTabEnabled(animTabIndex, false);
-            break;
+        ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
+        ui->tabWidget->setTabEnabled(animTabIndex, false);
+        break;
 
-        case Games::FO4:
-            ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
-            ui->tabWidget->setTabEnabled(animTabIndex, false);
+    case Games::FO4:
+        ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
+        ui->tabWidget->setTabEnabled(animTabIndex, false);
 
-            ui->meshesGroupBox->setChecked(false);
-            ui->tabWidget->setTabEnabled(meshesTabIndex, false);
-            break;
+        ui->meshesGroupBox->setChecked(false);
+        ui->tabWidget->setTabEnabled(meshesTabIndex, false);
+        break;
 
-        case Games::Invalid:
-            throw std::runtime_error("Invalid game: " + ui->presets->currentText().toStdString());
+    case Games::Invalid: throw std::runtime_error("Invalid game: " + ui->presets->currentText().toStdString());
     }
 }
 

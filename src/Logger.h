@@ -20,7 +20,7 @@ public:
         //For spacing
         return util::nstring(L"<style>html{line-height:1.5rem}pre{line-height:1rem}</style>");
     }
-    static util::nstring format(const Record& record)
+    static util::nstring format(const Record &record)
     {
         util::nostringstream ss;
 
@@ -28,7 +28,8 @@ public:
 
         switch (record.getSeverity())
         {
-        case none: break;
+        case none:
+            break;
         case fatal:
             color = L"<font color=DarkRed>";
             break;
@@ -52,28 +53,29 @@ public:
         tm t;
         util::localtime_s(&t, &record.getTime().time);
 
-        ss << PLOG_NSTR("<br>") << color
-              //Time
-           << t.tm_year + 1900 << "-" << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mon + 1
-           << PLOG_NSTR("-") << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mday << PLOG_NSTR(" ")
+        ss << PLOG_NSTR("<br>")
+           << color
+           //Time
+           << t.tm_year + 1900 << "-" << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mon + 1 << PLOG_NSTR("-")
+           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mday << PLOG_NSTR(" ")
            << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_hour << PLOG_NSTR(":")
-           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_min << PLOG_NSTR(":")
-           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_sec << PLOG_NSTR(".")
-           << std::setfill(PLOG_NSTR('0')) << std::setw(3) << record.getTime().millitm
-           << PLOG_NSTR(" ") << std::setfill(PLOG_NSTR(' ')) << std::setw(5) << std::left
-             //Actual message
-           << severityToString(record.getSeverity()) << PLOG_NSTR('{') << record.getFunc() << PLOG_NSTR('@') << record.getLine()
-           << PLOG_NSTR("} ") << record.getMessage()  << PLOG_NSTR("</font>");
+           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_min << PLOG_NSTR(":") << std::setfill(PLOG_NSTR('0'))
+           << std::setw(2) << t.tm_sec << PLOG_NSTR(".") << std::setfill(PLOG_NSTR('0')) << std::setw(3)
+           << record.getTime().millitm << PLOG_NSTR(" ") << std::setfill(PLOG_NSTR(' ')) << std::setw(5)
+           << std::left
+           //Actual message
+           << severityToString(record.getSeverity()) << PLOG_NSTR('{') << record.getFunc() << PLOG_NSTR('@')
+           << record.getLine() << PLOG_NSTR("} ") << record.getMessage() << PLOG_NSTR("</font>");
 
         return ss.str();
     }
 };
-}
+} // namespace plog
 
-inline void initCustomLogger(const QString& logPath, int logLevel)
+inline void initCustomLogger(const QString &logPath, int logLevel)
 {
     //Cancelling if logger is already ready
-    if(plog::get())
+    if (plog::get())
         return;
 
     //Creating log folder
@@ -83,7 +85,7 @@ inline void initCustomLogger(const QString& logPath, int logLevel)
     //Creating log file
     QFile file(logPath);
 
-    if(!file.open(QFile::ReadWrite | QFile::Append))
+    if (!file.open(QFile::ReadWrite | QFile::Append))
         throw std::runtime_error("Cannot open log file: " + logPath.toStdString());
 
     plog::Severity sev = static_cast<plog::Severity>(logLevel);

@@ -4,9 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.h"
 #include "FilesystemOperations.h"
 #include "Games.h"
+#include "pch.h"
 
 enum bsaType
 {
@@ -14,7 +14,6 @@ enum bsaType
     standardBsa,
     texturesAndStandardBsa
 };
-
 
 struct Bsa
 {
@@ -43,7 +42,7 @@ public:
      * \param bsaPath The path of the BSA to extract
      * \param deleteBackup Deletes the backup the existing bsa
      */
-    void extract(QString bsaPath, const bool& deleteBackup);
+    void extract(QString bsaPath, const bool &deleteBackup);
     /*!
      * \brief Will create a BSA containing all the files given as argument
      * \param bsa The BSA to create
@@ -63,13 +62,13 @@ private:
      * \param bsaPath The BSA to backup
      * \return a QString containing the name of the backup-ed bsa
      */
-    QString backup(const QString& bsaPath) const;
+    QString backup(const QString &bsaPath) const;
     /*!
      * \brief Checks if the file is present in the list filesToNotPack
      * \param filepath The file to check
      * \return a bool indicating the state of the file. True if is ignored, false otherwise
      */
-    bool isIgnoredFile(const QString& filepath) const;
+    bool isIgnoredFile(const QString &filepath) const;
     /*!
      * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
      */
@@ -79,5 +78,5 @@ private:
      * \param filename The file to check
      * \return a bool indicating the state of the file. True if it can be compressed, false otherwise
      */
-    bool canBeCompressedFile(const QString& filename) const;
+    bool canBeCompressedFile(const QString &filename) const;
 };

@@ -4,13 +4,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.h"
 #include "Manager.h"
+#include "pch.h"
 
 class IntegrationTests
 {
 public:
-    IntegrationTests(const QString& path);
+    explicit IntegrationTests(const QString &path);
 
     bool runAllTests();
 

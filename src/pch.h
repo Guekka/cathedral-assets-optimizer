@@ -6,8 +6,9 @@
 #include <Windows.h>
 
 /*---CORE---------------*/
-#include <QCoreApplication>
+#include <utility>
 #include <QCommandLineParser>
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QDirIterator>
 #include <QFile>
@@ -18,13 +19,12 @@
 #include <QSettings>
 #include <QString>
 #include <QStringList>
-#include <QtConcurrent/QtConcurrent>
 #include <QTextCodec>
 #include <QTextStream>
 #include <QTimer>
-#include <QtMath>
 #include <QTranslator>
-#include <utility>
+#include <QtConcurrent/QtConcurrent>
+#include <QtMath>
 /*----------------------*/
 
 /*---GUI----------------*/
@@ -34,9 +34,9 @@
 #include <QFileDialog>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QPlainTextEdit>
 #include <QProgressBar>
 #include <QPushButton>
-#include <QPlainTextEdit>
 #include <QWidget>
 /*----------------------*/
 
@@ -51,11 +51,11 @@
 
 /*---CUSTOM FILES-----*/
 #include "Logger.h"
-#include "libs/hkxcmd/hkfutils.h"
-#include "libs/NIF/NifFile.h"
-#include "libs/libbsarch/BSArchiveAuto.h"
-#include "libs/DirectXTex/DirectXTex.h"
 #include "TexturesFormats.h"
+#include "libs/DirectXTex/DirectXTex.h"
+#include "libs/NIF/NifFile.h"
+#include "libs/hkxcmd/hkfutils.h"
+#include "libs/libbsarch/BSArchiveAuto.h"
 /*----------------------*/
 
 #endif

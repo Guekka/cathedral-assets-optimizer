@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.h"
 #include "MainOptimizer.h"
+#include "pch.h"
 
 class Manager : public QObject
 {
@@ -14,7 +14,7 @@ public:
     /*!
      * \brief Constructor that will perform a number of functions
      */
-    Manager(OptionsCAO& opt);
+    explicit Manager(OptionsCAO &opt);
     /*!
      * \brief The main process
      */
@@ -24,7 +24,7 @@ public:
      * \param The text to display
      * \param The total number of files to process
      */
-    void printProgress(const int &total, const QString& text);
+    void printProgress(const int &total, const QString &text);
 
 private:
     /*!
@@ -37,10 +37,6 @@ private:
      * \brief List all the files in the modsToProcess list and store them. Also add their weights to filesWeight
      */
     void listFiles();
-    /*!
-     * \brief Reset the ini
-     */
-    void resetIni();
     /*!
      * \brief Read ignoredMods.txt and store it to a list
      */
@@ -56,7 +52,7 @@ private:
     /*!
      * \brief The optimization options, that will be given to the MainOptimizer
      */
-    OptionsCAO& options;
+    OptionsCAO &options;
     /*!
       * \brief The list of directories to process
       */
@@ -84,4 +80,3 @@ private:
 signals:
     void progressBarTextChanged(QString, int, int);
 };
-

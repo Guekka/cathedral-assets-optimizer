@@ -4,38 +4,48 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "OptionsCAO.h"
 
-OptionsCAO::OptionsCAO() {}
-
-OptionsCAO::OptionsCAO(const OptionsCAO& other)
+OptionsCAO::OptionsCAO()
+    : mode(singleMod)
 {
-    bBsaExtract = other.bBsaExtract;
-    bBsaCreate = other.bBsaCreate;
-    bBsaDeleteBackup = other.bBsaDeleteBackup;
-    bBsaProcessContent = other.bBsaProcessContent;
+}
 
-    bAnimationsOptimization = other.bAnimationsOptimization;
+OptionsCAO::OptionsCAO(const OptionsCAO &other)
+    : bBsaExtract(other.bBsaExtract)
+    , bBsaCreate(other.bBsaCreate)
+    , bBsaDeleteBackup(other.bBsaDeleteBackup)
+    , bBsaProcessContent(other.bBsaProcessContent)
+    ,
 
-    bDryRun = other.bDryRun;
+    bAnimationsOptimization(other.bAnimationsOptimization)
+    ,
 
-    bMeshesHeadparts = other.bMeshesHeadparts;
-    iMeshesOptimizationLevel = other.iMeshesOptimizationLevel;
-    bMeshesResave = other.bMeshesResave;
+    bDryRun(other.bDryRun)
+    ,
 
-    bTexturesMipmaps = other.bTexturesMipmaps;
-    bTexturesCompress = other.bTexturesCompress;
-    bTexturesNecessary = other.bTexturesNecessary;
+    iMeshesOptimizationLevel(other.iMeshesOptimizationLevel)
+    , bMeshesHeadparts(other.bMeshesHeadparts)
+    , bMeshesResave(other.bMeshesResave)
+    ,
 
-    bTexturesResizeSize = other.bTexturesResizeSize;
-    iTexturesTargetWidth = other.iTexturesTargetWidth;
-    iTexturesTargetHeight = other.iTexturesTargetHeight;
+    bTexturesNecessary(other.bTexturesNecessary)
+    , bTexturesCompress(other.bTexturesCompress)
+    , bTexturesMipmaps(other.bTexturesMipmaps)
+    ,
 
-    bTexturesResizeRatio = other.bTexturesResizeRatio;
-    iTexturesTargetWidthRatio = other.iTexturesTargetWidthRatio;
-    iTexturesTargetHeightRatio = other.iTexturesTargetHeightRatio;
+    bTexturesResizeSize(other.bTexturesResizeSize)
+    , iTexturesTargetHeight(other.iTexturesTargetHeight)
+    , iTexturesTargetWidth(other.iTexturesTargetWidth)
+    ,
 
-    iLogLevel = other.iLogLevel;
-    mode = other.mode;
-    userPath = other.userPath;
+    bTexturesResizeRatio(other.bTexturesResizeRatio)
+    , iTexturesTargetWidthRatio(other.iTexturesTargetWidthRatio)
+    , iTexturesTargetHeightRatio(other.iTexturesTargetHeightRatio)
+    ,
+
+    iLogLevel(other.iLogLevel)
+    , mode(other.mode)
+    , userPath(other.userPath)
+{
 }
 
 void OptionsCAO::saveToIni(QSettings *settings)
@@ -80,7 +90,7 @@ void OptionsCAO::saveToIni(QSettings *settings)
     settings->setValue("Animations/bAnimationsOptimization", bAnimationsOptimization);
 
     //General
-    settings->setValue("bDryRun",bDryRun);
+    settings->setValue("bDryRun", bDryRun);
     settings->setValue("iLogLevel", iLogLevel);
     settings->setValue("mode", mode);
     settings->setValue("userPath", userPath);
@@ -139,7 +149,7 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
 
     //Textures
     const bool texturesOpt = bTexturesMipmaps || bTexturesCompress || bTexturesNecessary;
-    if(!texturesOpt)
+    if (!texturesOpt)
         ui->texturesGroupBox->setChecked(false);
     else
     {
@@ -163,10 +173,10 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
     //Meshes
 
     ui->meshesGroupBox->setChecked(true);
-    switch(iMeshesOptimizationLevel)
+    switch (iMeshesOptimizationLevel)
     {
     case 0: ui->meshesGroupBox->setChecked(false); break;
-    case 1: ui->meshesNecessaryOptimizationRadioButton->setChecked(true);  break;
+    case 1: ui->meshesNecessaryOptimizationRadioButton->setChecked(true); break;
     case 2: ui->meshesMediumOptimizationRadioButton->setChecked(true); break;
     case 3: ui->meshesFullOptimizationRadioButton->setChecked(true); break;
     }
@@ -200,7 +210,7 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     //BSA
     bBsaExtract = ui->bsaExtractCheckBox->isChecked();
     bBsaCreate = ui->bsaCreateCheckbox->isChecked();
-    bBsaDeleteBackup =ui->bsaDeleteBackupsCheckbox->isChecked();
+    bBsaDeleteBackup = ui->bsaDeleteBackupsCheckbox->isChecked();
     bBsaProcessContent = ui->bsaProcessContentCheckBox->isChecked();
 
     //Textures
@@ -219,13 +229,13 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     iTexturesTargetHeightRatio = static_cast<size_t>(ui->texturesResizingByRatioHeight->value());
 
     //Meshes base
-    if(ui->meshesNecessaryOptimizationRadioButton->isChecked())
+    if (ui->meshesNecessaryOptimizationRadioButton->isChecked())
         iMeshesOptimizationLevel = 1;
-    else if(ui->meshesMediumOptimizationRadioButton->isChecked())
+    else if (ui->meshesMediumOptimizationRadioButton->isChecked())
         iMeshesOptimizationLevel = 2;
-    else if(ui->meshesFullOptimizationRadioButton->isChecked())
+    else if (ui->meshesFullOptimizationRadioButton->isChecked())
         iMeshesOptimizationLevel = 3;
-    if(!ui->meshesGroupBox->isChecked())
+    if (!ui->meshesGroupBox->isChecked())
         iMeshesOptimizationLevel = 0;
 
     //Meshes advanced
@@ -240,9 +250,9 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     userPath = QDir::cleanPath(ui->userPathTextEdit->text());
     mode = ui->modeChooserComboBox->currentData().value<OptimizationMode>();
 
-    if(ui->actionLogVerbosityNote->isChecked())
+    if (ui->actionLogVerbosityNote->isChecked())
         iLogLevel = 4;
-    else if(ui->actionLogVerbosityTrace->isChecked())
+    else if (ui->actionLogVerbosityTrace->isChecked())
         iLogLevel = 6;
     else
         iLogLevel = 3;
@@ -260,24 +270,28 @@ void OptionsCAO::parseArguments(const QStringList &args)
     parser.addPositionalArgument("game", "Currently, only 'SSE', 'TES5', 'FO4' and 'Custom' are supported");
 
     parser.addOptions({
-                          {"dr", "Enables dry run"},
-                          {"l", "Log level: from 1 (maximum) to 6", "value", "1"},
-                          {"m", "Mesh processing level: 0 (default) to disable optimization, 1 for necessary optimization, "
-                           "2 for medium optimization, 3 for full optimization.", "value", "0"},
+        {"dr", "Enables dry run"},
+        {"l", "Log level: from 1 (maximum) to 6", "value", "1"},
+        {"m",
+         "Mesh processing level: 0 (default) to disable optimization, 1 for necessary optimization, "
+         "2 for medium optimization, 3 for full optimization.",
+         "value",
+         "0"},
 
-                          {"t0", "Enables textures necessary optimization"},
-                          {"t1", "Enables textures compression"},
-                          {"t2", "Enables textures mipmaps generation"},
+        {"t0", "Enables textures necessary optimization"},
+        {"t1", "Enables textures compression"},
+        {"t2", "Enables textures mipmaps generation"},
 
-                          {"a", "Enables animations processing"},
-                          {"mh", "Enables headparts detection and processing"},
-                          {"mr", "Enables meshes resaving"},
-                          {"be", "Enables BSA extraction."},
-                          {"bc", "Enables BSA creation."},
-                          {"bd", "Enables deletion of BSA backups."},
-                          {"bo", "NOT WORKING. Enables BSA optimization. The files inside the "
-                           "BSA will be extracted to memory and processed according to the provided settings "},
-                      });
+        {"a", "Enables animations processing"},
+        {"mh", "Enables headparts detection and processing"},
+        {"mr", "Enables meshes resaving"},
+        {"be", "Enables BSA extraction."},
+        {"bc", "Enables BSA creation."},
+        {"bd", "Enables deletion of BSA backups."},
+        {"bo",
+         "NOT WORKING. Enables BSA optimization. The files inside the "
+         "BSA will be extracted to memory and processed according to the provided settings "},
+    });
 
     parser.process(args);
 
@@ -285,15 +299,15 @@ void OptionsCAO::parseArguments(const QStringList &args)
     userPath = path;
 
     QString readMode = parser.positionalArguments().at(1);
-    if(readMode == "om")
+    if (readMode == "om")
         mode = singleMod;
-    else if(readMode == "sm")
+    else if (readMode == "sm")
         mode = severalMods;
 
     QString readGame = parser.positionalArguments().at(2);
     CAO_SET_CURRENT_GAME(readGame)
 
-            bDryRun = parser.isSet("dr");
+    bDryRun = parser.isSet("dr");
     iLogLevel = parser.value("l").toInt();
 
     iMeshesOptimizationLevel = parser.value("m").toInt();
@@ -314,17 +328,17 @@ void OptionsCAO::parseArguments(const QStringList &args)
 
 QString OptionsCAO::isValid()
 {
-    if(!QDir(userPath).exists() || userPath.size() < 5)
-        return("This path does not exist or is shorter than 5 characters. Path:'" + userPath + "'");
+    if (!QDir(userPath).exists() || userPath.size() < 5)
+        return ("This path does not exist or is shorter than 5 characters. Path:'" + userPath + "'");
 
     if (mode != OptionsCAO::singleMod && mode != OptionsCAO::severalMods)
-        return("This mode does not exist.");
+        return ("This mode does not exist.");
 
-    if(iLogLevel <= 0 || iLogLevel > 6)
-        return("This log level does not exist. Log level: " + QString::number(iLogLevel));
+    if (iLogLevel <= 0 || iLogLevel > 6)
+        return ("This log level does not exist. Log level: " + QString::number(iLogLevel));
 
-    if(iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
-        return("This meshes optimization level does not exist. Level: " + QString::number(iMeshesOptimizationLevel));
+    if (iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
+        return ("This meshes optimization level does not exist. Level: " + QString::number(iMeshesOptimizationLevel));
 
     return QString();
 }
