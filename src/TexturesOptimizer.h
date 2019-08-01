@@ -13,11 +13,16 @@ class TexturesOptimizer : public QObject
 
 public:
     TexturesOptimizer();
+    enum TextureType {dds, tga};
+    bool open(const void* pSource, const size_t& size, const TextureType& type, const QString& fileName);
+    bool open(const QString& filePath, const TextureType& type);
+
+    bool saveToFile(const QString& filePath);
     /*!
-     * \brief Convert the file if the texture is uncompressed or if the current format is incompatible
-     * \return True if the file has not been converted or if the conversion was successful
+     * \brief Decompress the current texture. It is required to use several functions.
+     * \return False if an error happens
      */
-    bool convertToCompatibleFormat();
+    bool decompress();
     /*!
      * \brief Compress the file using the provided compression format,
      * \param format The format to use
@@ -28,8 +33,12 @@ public:
      * \return True if the file is compressed
      */
     bool isCompressed();
-
     bool canBeCompressed();
+    /*!
+     * \brief Convert the file if the texture is uncompressed or if the current format is incompatible
+     * \return True if the file has not been converted or if the conversion was successful
+     */
+    bool convertToCompatibleFormat();
     /*!
      * \brief Perform various optimizations on the current texture
      * \param optLevel The optimization level
@@ -37,30 +46,19 @@ public:
      */
     bool optimize(const bool& bNecessary, const bool& bCompress, const bool& bMipmaps,
                   const std::optional<size_t>& twidth, const std::optional<size_t>& theight);
-    /*!
-     * \brief Decompress the current texture. It is required to use several functions.
-     * \return False if an error happens
-     */
-    bool decompress();
 
     bool resize(size_t targetWidth, size_t targetHeight);
 
     void fitPowerOfTwo(uint& resultX, uint& resultY);
 
     bool generateMipMaps();
+    bool canHaveMipMaps();
 
     DirectX::TexMetadata getInfo();
 
     bool convert(const DXGI_FORMAT& format);
 
     bool isIncompatible();
-
-    enum TextureType {dds, tga};
-
-    bool open(const void* pSource, const size_t& size, const TextureType& type, const QString& fileName);
-    bool open(const QString& filePath, const TextureType& type);
-
-    bool saveToFile(const QString& filePath);
 
     static bool compareInfo(const DirectX::TexMetadata& info1, const DirectX::TexMetadata& info2);
 

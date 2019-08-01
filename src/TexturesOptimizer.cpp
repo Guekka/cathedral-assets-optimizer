@@ -142,22 +142,24 @@ bool TexturesOptimizer::optimize(const bool& bNecessary, const bool& bCompress, 
             return false;
     }
 
-    if(!convertToCompatibleFormat())
-        return false;
-
     //Fitting to a power of two or resizing
     if(!resize(newWidth, newHeight))
         return false;
 
-    if(bMipmaps)
+    if(bMipmaps && canHaveMipMaps())
         if(!generateMipMaps())
             return false;
 
-    if(bCompress && canBeCompressed())
+    //Converting or compressing to the new format
+    if(DirectX::IsCompressed(CAO_TEXTURES_FORMAT) && bCompress
+            && canBeCompressed())
     {
-        if(!compress(CAO_TEXTURES_FORMAT))
-            return false;
+            if(!compress(CAO_TEXTURES_FORMAT))
+                return false;
     }
+    else if(!convertToCompatibleFormat())
+        return false;
+
     return true;
 }
 
@@ -343,7 +345,8 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
     if(!imgs)
         return false;
 
-    HRESULT hr = Resize(image->GetImages(), image->GetImageCount(), info, targetWidth, targetHeight, DirectX::TEX_FILTER_FANT, *timage);
+    const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
+    HRESULT hr = Resize(image->GetImages(), image->GetImageCount(), info, targetWidth, targetHeight, filter, *timage);
     if (FAILED(hr))
     {
         PLOG_ERROR << "Failed to resize: " + name;
@@ -362,6 +365,11 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
 
     image.swap(timage);
     return true;
+}
+
+bool TexturesOptimizer::canHaveMipMaps()
+{
+    return CAO_TEXTURES_COMPRESS_INTERFACE;
 }
 
 bool TexturesOptimizer::generateMipMaps()
@@ -403,8 +411,9 @@ bool TexturesOptimizer::generateMipMaps()
 
         for (size_t i = 0; i < info.arraySize; ++i)
         {
+            const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
             hr = CopyRectangle(*image->GetImage(0, i, 0), DirectX::Rect(0, 0, info.width, info.height),
-                               *timage->GetImage(0, i, 0), DirectX::TEX_FILTER_FANT, 0, 0);
+                               *timage->GetImage(0, i, 0), filter, 0, 0);
             if (FAILED(hr))
             {
                 PLOG_ERROR << "Failed to copy texture data to single level (when generating mipmaps) when processing: " << name;
@@ -426,9 +435,10 @@ bool TexturesOptimizer::generateMipMaps()
         }
 
         //Forcing non wic since WIC won't work on my computer, and thus probably on other computers
+        const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
         const HRESULT hr =
                 GenerateMipMaps(image->GetImages(),image->GetImageCount(),image->GetMetadata(),
-                                DirectX::TEX_FILTER_FANT, tMips, *timage);
+                                filter, tMips, *timage);
         if(FAILED(hr))
         {
             PLOG_ERROR << "Failed to generate mipmaps when processing: " << name;
@@ -455,7 +465,6 @@ bool TexturesOptimizer::convertToCompatibleFormat()
     }
     return true;
 }
-
 
 bool TexturesOptimizer::isCompressed()
 {
