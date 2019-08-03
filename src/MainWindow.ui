@@ -1198,16 +1198,8 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <widget class="QMenu" name="menuPLOG_verbosity">
-     <property name="title">
-      <string>Log verbosity</string>
-     </property>
-     <addaction name="actionLogVerbosityTrace"/>
-     <addaction name="actionLogVerbosityNote"/>
-     <addaction name="actionLogVerbosityInfo"/>
-    </widget>
-    <addaction name="menuPLOG_verbosity"/>
     <addaction name="actionEnableDarkTheme"/>
+    <addaction name="actionEnable_debug_log"/>
    </widget>
    <addaction name="menuTools"/>
   </widget>
@@ -1222,46 +1214,15 @@
     <string>Enable dark theme</string>
    </property>
   </action>
-  <action name="actionLogVerbosityTrace">
+  <action name="actionEnable_debug_log">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Max</string>
+    <string>Enable debug log</string>
    </property>
    <property name="toolTip">
-    <string>Maximal</string>
-   </property>
-   <property name="statusTip">
-    <string>Use it only if you want to report a bug</string>
-   </property>
-   <property name="whatsThis">
-    <string/>
-   </property>
-  </action>
-  <action name="actionLogVerbosityNote">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Medium</string>
-   </property>
-   <property name="statusTip">
-    <string>Normal log</string>
-   </property>
-   <property name="whatsThis">
-    <string/>
-   </property>
-  </action>
-  <action name="actionLogVerbosityInfo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Low</string>
-   </property>
-   <property name="statusTip">
-    <string>Will show nearly no information</string>
+    <string>Used when reporting bugs</string>
    </property>
   </action>
  </widget>

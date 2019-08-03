@@ -181,7 +181,7 @@ bool TexturesOptimizer::canBeCompressed()
 
 bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
 {
-    PLOG_VERBOSE << "Opening " << filePath << "with textures type " << type;
+    PLOG_VERBOSE << tr("Opening ") << filePath << tr("with textures type ") << type;
 
     wchar_t fileName[1024];
     QDir::toNativeSeparators(filePath).toWCharArray(fileName);

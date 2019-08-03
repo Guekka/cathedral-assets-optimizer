@@ -112,15 +112,7 @@ MainWindow::MainWindow()
 
     //Connecting menu buttons
     connect(ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::refreshUI);
-
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, [&]() { this->settings->setValue("iLogLevel", 3); });
-    connect(ui->actionLogVerbosityInfo, &QAction::triggered, this, &MainWindow::refreshUI);
-
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, [&]() { this->settings->setValue("iLogLevel", 4); });
-    connect(ui->actionLogVerbosityNote, &QAction::triggered, this, &MainWindow::refreshUI);
-
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, [&]() { this->settings->setValue("iLogLevel", 6); });
-    connect(ui->actionLogVerbosityTrace, &QAction::triggered, this, &MainWindow::refreshUI);
+    connect(ui->actionEnable_debug_log, &QAction::triggered, this, &MainWindow::refreshUI);
 
     //Setting timer to refresh UI
     timer = new QTimer(this);

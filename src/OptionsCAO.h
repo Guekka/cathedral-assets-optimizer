@@ -64,7 +64,7 @@ public:
     uint iTexturesTargetWidthRatio = 1;
     uint iTexturesTargetHeightRatio = 1;
 
-    int iLogLevel = 4;
+    bool bDebugLog = false;
     /*!
      * \brief The optimization mode
      */

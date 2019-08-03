@@ -40,9 +40,7 @@ OptionsCAO::OptionsCAO(const OptionsCAO &other)
     bTexturesResizeRatio(other.bTexturesResizeRatio)
     , iTexturesTargetWidthRatio(other.iTexturesTargetWidthRatio)
     , iTexturesTargetHeightRatio(other.iTexturesTargetHeightRatio)
-    ,
-
-    iLogLevel(other.iLogLevel)
+    , bDebugLog(other.bDebugLog)
     , mode(other.mode)
     , userPath(other.userPath)
 {
@@ -52,7 +50,7 @@ void OptionsCAO::saveToIni(QSettings *settings)
 {
     //General
     settings->setValue("bDryRun", bDryRun);
-    settings->setValue("iLogLevel", iLogLevel);
+    settings->setValue("bDebugLog", bDebugLog);
     settings->setValue("mode", mode);
     settings->setValue("userPath", userPath);
 
@@ -88,19 +86,13 @@ void OptionsCAO::saveToIni(QSettings *settings)
 
     //Animations
     settings->setValue("Animations/bAnimationsOptimization", bAnimationsOptimization);
-
-    //General
-    settings->setValue("bDryRun", bDryRun);
-    settings->setValue("iLogLevel", iLogLevel);
-    settings->setValue("mode", mode);
-    settings->setValue("userPath", userPath);
 }
 
 void OptionsCAO::readFromIni(QSettings *settings)
 {
     //General
     bDryRun = settings->value("bDryRun").toBool();
-    iLogLevel = settings->value("iLogLevel").toInt();
+    bDebugLog = settings->value("bDebugLog").toBool();
     mode = settings->value("mode").value<OptimizationMode>();
     userPath = settings->value("userPath").toString();
 
@@ -193,16 +185,7 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
     ui->userPathTextEdit->setText(userPath);
 
     //Log level
-    ui->actionLogVerbosityInfo->setChecked(false);
-    ui->actionLogVerbosityNote->setChecked(false);
-    ui->actionLogVerbosityTrace->setChecked(false);
-
-    switch (iLogLevel)
-    {
-    case 6: ui->actionLogVerbosityTrace->setChecked(true); break;
-    case 4: ui->actionLogVerbosityNote->setChecked(true); break;
-    case 3: ui->actionLogVerbosityInfo->setChecked(true); break;
-    }
+    ui->actionEnable_debug_log->setChecked(bDebugLog);
 }
 
 void OptionsCAO::readFromUi(Ui::MainWindow *ui)
@@ -250,12 +233,7 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     userPath = QDir::cleanPath(ui->userPathTextEdit->text());
     mode = ui->modeChooserComboBox->currentData().value<OptimizationMode>();
 
-    if (ui->actionLogVerbosityNote->isChecked())
-        iLogLevel = 4;
-    else if (ui->actionLogVerbosityTrace->isChecked())
-        iLogLevel = 6;
-    else
-        iLogLevel = 3;
+    bDebugLog = ui->actionEnable_debug_log->isChecked();
 }
 #endif
 
@@ -271,7 +249,7 @@ void OptionsCAO::parseArguments(const QStringList &args)
 
     parser.addOptions({
         {"dr", "Enables dry run"},
-        {"l", "Log level: from 1 (maximum) to 6", "value", "1"},
+        {"l", "Enables debug log"},
         {"m",
          "Mesh processing level: 0 (default) to disable optimization, 1 for necessary optimization, "
          "2 for medium optimization, 3 for full optimization.",
@@ -308,7 +286,7 @@ void OptionsCAO::parseArguments(const QStringList &args)
     CAO_SET_CURRENT_GAME(readGame)
 
     bDryRun = parser.isSet("dr");
-    iLogLevel = parser.value("l").toInt();
+    bDebugLog = parser.isSet("l");
 
     iMeshesOptimizationLevel = parser.value("m").toInt();
     bMeshesHeadparts = parser.isSet("mh");
@@ -329,16 +307,14 @@ void OptionsCAO::parseArguments(const QStringList &args)
 QString OptionsCAO::isValid()
 {
     if (!QDir(userPath).exists() || userPath.size() < 5)
-        return ("This path does not exist or is shorter than 5 characters. Path:'" + userPath + "'");
+        return (tr("This path does not exist or is shorter than 5 characters. Path:") + " '" + userPath + "'");
 
     if (mode != OptionsCAO::singleMod && mode != OptionsCAO::severalMods)
-        return ("This mode does not exist.");
-
-    if (iLogLevel <= 0 || iLogLevel > 6)
-        return ("This log level does not exist. Log level: " + QString::number(iLogLevel));
+        return tr("This mode does not exist.");
 
     if (iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
-        return ("This meshes optimization level does not exist. Level: " + QString::number(iMeshesOptimizationLevel));
+        return (tr("This meshes optimization level does not exist. Level: ")
+                + QString::number(iMeshesOptimizationLevel));
 
     return QString();
 }

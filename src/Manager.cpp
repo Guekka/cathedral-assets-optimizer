@@ -17,7 +17,7 @@ Manager::Manager(OptionsCAO &opt)
         options.parseArguments(QCoreApplication::arguments());
 #endif
     //Preparing logging
-    initCustomLogger(CAO_LOG_PATH, options.iLogLevel);
+    initCustomLogger(CAO_LOG_PATH, options.bDebugLog);
 
     PLOG_VERBOSE << tr("Checking settings...");
     QString error = options.isValid();

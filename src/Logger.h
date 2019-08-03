@@ -12,7 +12,7 @@
 
 namespace plog
 {
-class CustomFormatter
+class CustomDebugFormatter
 {
 public:
     static util::nstring header()
@@ -28,26 +28,13 @@ public:
 
         switch (record.getSeverity())
         {
-        case none:
-            break;
-        case fatal:
-            color = L"<font color=DarkRed>";
-            break;
-        case error:
-            color = L"<font color=Red>";
-            break;
-        case warning:
-            color = L"<font color=Orange>";
-            break;
-        case info:
-            color = L"<font color=Green>";
-            break;
-        case debug:
-            color = L"<font color=Blue>";
-            break;
-        case verbose:
-            color = L"<font color=Purple>";
-            break;
+        case none: break;
+        case fatal: color = L"<font color=DarkRed>"; break;
+        case error: color = L"<font color=Red>"; break;
+        case warning: color = L"<font color=Orange>"; break;
+        case info: color = L"<font color=Green>"; break;
+        case debug: color = L"<font color=Blue>"; break;
+        case verbose: color = L"<font color=Purple>"; break;
         }
 
         tm t;
@@ -70,9 +57,54 @@ public:
         return ss.str();
     }
 };
+
+class CustomInfoFormatter
+{
+public:
+    static util::nstring header()
+    {
+        //For spacing
+        return util::nstring(L"<style>html{line-height:1.5rem}pre{line-height:1rem}</style>");
+    }
+    static util::nstring format(const Record &record)
+    {
+        util::nostringstream ss;
+
+        util::nstring color;
+
+        switch (record.getSeverity())
+        {
+        case none: break;
+        case fatal: color = L"<font color=DarkRed>"; break;
+        case error: color = L"<font color=Red>"; break;
+        case warning: color = L"<font color=Orange>"; break;
+        case info: color = L"<font color=Green>"; break;
+        case debug: color = L"<font color=Blue>"; break;
+        case verbose: color = L"<font color=Purple>"; break;
+        }
+
+        tm t;
+        util::localtime_s(&t, &record.getTime().time);
+
+        ss << PLOG_NSTR("<br>")
+           << color
+           //Time
+           << t.tm_year + 1900 << "-" << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mon + 1 << PLOG_NSTR("-")
+           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mday << PLOG_NSTR(" ")
+           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_hour << PLOG_NSTR(":")
+           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_min << PLOG_NSTR(":") << std::setfill(PLOG_NSTR('0'))
+           << std::setw(2) << t.tm_sec
+           << std::left
+           //Actual message
+           << PLOG_NSTR(" [") << severityToString(record.getSeverity()) << PLOG_NSTR("] ") << record.getMessage()
+           << PLOG_NSTR("</font>");
+
+        return ss.str();
+    }
+};
 } // namespace plog
 
-inline void initCustomLogger(const QString &logPath, int logLevel)
+inline void initCustomLogger(const QString &logPath, const bool &debugLog)
 {
     //Cancelling if logger is already ready
     if (plog::get())
@@ -88,6 +120,8 @@ inline void initCustomLogger(const QString &logPath, int logLevel)
     if (!file.open(QFile::ReadWrite | QFile::Append))
         throw std::runtime_error("Cannot open log file: " + logPath.toStdString());
 
-    plog::Severity sev = static_cast<plog::Severity>(logLevel);
-    plog::init<plog::CustomFormatter>(sev, qPrintable(logPath));
+    if (debugLog)
+        plog::init<plog::CustomDebugFormatter>(plog::Severity::verbose, qPrintable(logPath));
+    else
+        plog::init<plog::CustomInfoFormatter>(plog::Severity::info, qPrintable(logPath));
 }

@@ -94,6 +94,9 @@ void Games::setGame(const GameMode &newGame)
 
     case Custom:
         QSettings settings("settings/Custom/config.ini", QSettings::IniFormat);
+        resourcePath = QDir::currentPath() + "/resources/Custom/";
+        iniPath = QDir::currentPath() + "/settings/Custom/config.ini";
+        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/Custom.html");
 
         if (!QFile("settings/Custom/config.ini").exists())
             saveToIni(&settings);
@@ -160,9 +163,6 @@ void Games::readFromIni(QSettings *settings)
     texturesConvertTga = settings->value("texturesConvertTga").toBool();
     texturesUnwantedFormats = settings->value("texturesUnwantedFormats").toList();
     texturesCompressInterface = settings->value("texturesCompressInterface").toBool();
-    iniPath = QDir::currentPath() + "/settings/Custom/config.ini";
-    logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/Custom.html");
-    resourcePath = QDir::currentPath() + "/resources/Custom/";
 }
 #ifdef GUI
 void Games::setGame(Ui::MainWindow *ui)

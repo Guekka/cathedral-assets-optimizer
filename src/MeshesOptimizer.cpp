@@ -82,6 +82,7 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
         PLOG_ERROR << tr("Cannot load mesh: ") + filePath;
         return;
     }
+    PLOG_VERBOSE << tr("Loading mesh: ") << filePath;
 
     OptOptions options;
     options.targetVersion.SetFile(CAO_MESHES_FILE_VERSION);
