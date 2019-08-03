@@ -28,21 +28,23 @@ public:
      */
     bool decompress();
     /*!
+     * \brief Convenience function, that will use appropriately convertWithCompression or convertWithoutCompression
+     * \param format The format to use
+     * \return False in case of error
+     */
+    bool convert(const DXGI_FORMAT &format);
+    /*!
      * \brief Compress the file using the provided compression format,
      * \param format The format to use
      */
-    bool compress(const DXGI_FORMAT &format);
+    bool convertWithCompression(const DXGI_FORMAT &format);
+    bool convertWithoutCompression(const DXGI_FORMAT &format);
     /*!
      * \brief Check if a texture is compressed
      * \return True if the file is compressed
      */
     bool isCompressed();
     bool canBeCompressed();
-    /*!
-     * \brief Convert the file if the texture is uncompressed or if the current format is incompatible
-     * \return True if the file has not been converted or if the conversion was successful
-     */
-    bool convertToCompatibleFormat();
     /*!
      * \brief Perform various optimizations on the current texture
      * \param optLevel The optimization level
@@ -54,16 +56,22 @@ public:
                   const std::optional<size_t> &twidth,
                   const std::optional<size_t> &theight);
 
+    void dryOptimize(const bool &bNecessary,
+                     const bool &bCompress,
+                     const bool &bMipmaps,
+                     const std::optional<size_t> &twidth,
+                     const std::optional<size_t> &theight);
+
     bool resize(size_t targetWidth, size_t targetHeight);
 
     void fitPowerOfTwo(uint &resultX, uint &resultY);
+    bool isPowerOfTwo();
 
     bool generateMipMaps();
     bool canHaveMipMaps();
+    size_t calculateOptimalMipMapsNumber();
 
     DirectX::TexMetadata getInfo();
-
-    bool convert(const DXGI_FORMAT &format);
 
     bool isIncompatible();
 
@@ -73,6 +81,7 @@ private:
     std::unique_ptr<DirectX::ScratchImage> image;
     DirectX::TexMetadata info;
     QString name;
+    TextureType _type;
 
     Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 

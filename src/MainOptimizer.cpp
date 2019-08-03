@@ -83,43 +83,29 @@ void MainOptimizer::processTexture(const QString &file, const TexturesOptimizer:
         return;
     }
 
-    if (optOptions.bDryRun)
+    //Resizing
+    std::optional<size_t> width;
+    std::optional<size_t> height;
+
+    if (optOptions.bTexturesResizeRatio)
     {
-        if (optOptions.bTexturesMipmaps)
-        {
-            PLOG_INFO << file + QObject::tr(" would have generated mipmaps");
-        }
-        if (optOptions.bTexturesCompress && !texturesOpt.isCompressed())
-        {
-            PLOG_INFO << file + QObject::tr(" would be compressed to an appropriate format");
-        }
-        if (optOptions.bTexturesNecessary)
-            if (texturesOpt.isIncompatible())
-            {
-                PLOG_INFO << file + QObject::tr(" is incompatible and would be converted to a compatible format");
-            }
-        if (type == TexturesOptimizer::tga)
-        {
-            PLOG_INFO << file + QObject::tr(" would be converted to DDS");
-        }
+        width = texturesOpt.getInfo().width / optOptions.iTexturesTargetWidthRatio;
+        height = texturesOpt.getInfo().height / optOptions.iTexturesTargetHeightRatio;
     }
+    else if (optOptions.bTexturesResizeSize)
+    {
+        width = optOptions.iTexturesTargetWidth;
+        height = optOptions.iTexturesTargetHeight;
+    }
+
+    if (optOptions.bDryRun)
+        texturesOpt.dryOptimize(optOptions.bTexturesNecessary,
+                                optOptions.bTexturesCompress,
+                                optOptions.bTexturesMipmaps,
+                                width,
+                                height);
     else
     {
-        //Resizing
-        std::optional<size_t> width;
-        std::optional<size_t> height;
-
-        if (optOptions.bTexturesResizeRatio)
-        {
-            width = texturesOpt.getInfo().width / optOptions.iTexturesTargetWidthRatio;
-            height = texturesOpt.getInfo().height / optOptions.iTexturesTargetHeightRatio;
-        }
-        else if (optOptions.bTexturesResizeSize)
-        {
-            width = optOptions.iTexturesTargetWidth;
-            height = optOptions.iTexturesTargetHeight;
-        }
-
         if (!texturesOpt.optimize(optOptions.bTexturesNecessary,
                                   optOptions.bTexturesCompress,
                                   optOptions.bTexturesMipmaps,

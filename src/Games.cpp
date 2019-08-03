@@ -247,9 +247,10 @@ void Games::readFromUi(Ui::MainWindow *ui)
     texturesConvertTga = ui->texturesTgaConversionCheckBox->isChecked();
     texturesCompressInterface = ui->texturesCompressInterfaceCheckBox->isChecked();
 
+    texturesUnwantedFormats.clear();
     for (const auto &line : ui->texturesUnwantedFormats->toPlainText().split('\n'))
     {
-        DXGI_FORMAT format = stringToDxgiFormat(line.toStdString());
+        const DXGI_FORMAT format = stringToDxgiFormat(line.toStdString());
         if (!texturesUnwantedFormats.contains(format) && format != DXGI_FORMAT_UNKNOWN)
             texturesUnwantedFormats += format;
     }
