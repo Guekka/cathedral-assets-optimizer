@@ -258,8 +258,8 @@ void MainWindow::initProcess()
     catch (const std::exception &e)
     {
         QMessageBox box(QMessageBox::Critical,
-                        "Error",
-                        "An exception has been encountered and the process was forced to stop: " + QString(e.what()));
+                        tr("Error"),
+                        tr("An exception has been encountered and the process was forced to stop: ") + QString(e.what()));
         box.exec();
     }
     endProcess();
@@ -269,9 +269,13 @@ void MainWindow::endProcess()
 {
     ui->processButton->setDisabled(false);
     bLockVariables = false;
+
+    if(caoProcess)
+        disconnect(&*caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+
     ui->progressBar->setMaximum(100);
     ui->progressBar->setValue(100);
-    ui->progressBar->setFormat("Done");
+    ui->progressBar->setFormat(tr("Done"));
     updateLog();
 }
 
