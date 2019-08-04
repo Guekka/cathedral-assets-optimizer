@@ -1,6 +1,5 @@
 /*
 BodySlide and Outfit Studio
-Copyright (C) 2018  Caliente & ousnius
 See the included LICENSE file
 */
 
@@ -11,7 +10,7 @@ See the included LICENSE file
 struct OptOptions {
 	NiVersion targetVersion;
 	bool headParts = false;
-    bool removeParallax = false;
+	bool removeParallax = true;
 	bool calcBounds = true;
     bool bsTriShape = false;
 };
@@ -81,7 +80,7 @@ public:
 	int Save(std::fstream& file, const NifSaveOptions& options = NifSaveOptions());
 
 	void Optimize();
-    OptResult OptimizeFor(OptOptions& options);
+	OptResult OptimizeFor(OptOptions& options);
 
 	void PrepareData();
 	void FinalizeData();
@@ -120,6 +119,7 @@ public:
 
 	NiShader* GetShader(NiShape* shape);
 	NiMaterialProperty* GetMaterialProperty(NiShape* shape);
+	NiStencilProperty* GetStencilProperty(NiShape* shape);
 
 	int GetTextureSlot(NiShader* shader, std::string& outTexFile, int texIndex = 0);
 	void SetTextureSlot(NiShader* shader, std::string& inTexFile, int texIndex = 0);

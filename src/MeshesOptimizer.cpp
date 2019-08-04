@@ -125,13 +125,17 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
             }
             break;
         case criticalIssue:
-            options.bsTriShape = true;
-            PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath + tr(" due to necessary optimization");
-            nif.OptimizeFor(options);
+            if (iMeshesOptimizationLevel >= 1)
+            {
+                options.bsTriShape = true;
+                PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath
+                                 + tr(" due to necessary optimization");
+                nif.OptimizeFor(options);
+            }
             break;
         }
     }
-    if (bMeshesResave)
+    if (bMeshesResave || (iMeshesOptimizationLevel >= 1 && scanResult >= lightIssue))
     {
         PLOG_VERBOSE << "Resaving mesh: " + filePath;
         nif.Save(filePath.toStdString());
