@@ -197,9 +197,10 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     bBsaProcessContent = ui->bsaProcessContentCheckBox->isChecked();
 
     //Textures
-    bTexturesNecessary = ui->texturesNecessaryOptimizationCheckBox->isChecked();
-    bTexturesMipmaps = ui->texturesMipmapCheckBox->isChecked();
-    bTexturesCompress = ui->texturesCompressCheckBox->isChecked();
+    const bool texturesEnabled = ui->texturesGroupBox->isChecked();
+    bTexturesNecessary = texturesEnabled && ui->texturesNecessaryOptimizationCheckBox->isChecked();
+    bTexturesMipmaps = texturesEnabled && ui->texturesMipmapCheckBox->isChecked();
+    bTexturesCompress = texturesEnabled && ui->texturesCompressCheckBox->isChecked();
 
     //Textures resizing
     const bool texturesResizing = ui->texturesResizingGroupBox->isChecked();
