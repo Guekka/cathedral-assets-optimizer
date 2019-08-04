@@ -38,7 +38,12 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
     }
     ScanResult result = good;
 
-    if (CAO_GET_CURRENT_GAME == Games::SSE)
+    NiVersion version;
+    version.SetFile(CAO_MESHES_FILE_VERSION);
+    version.SetStream(CAO_MESHES_STREAM);
+    version.SetUser(CAO_MESHES_USER);
+
+    if (version.IsSSE())
     {
         for (const auto &shape : nif.GetShapes())
         {
@@ -47,12 +52,10 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
                     result = criticalIssue;
 
             if (shape->HasType<NiParticles>() || shape->HasType<NiParticleSystem>() || shape->HasType<NiParticlesData>())
-            {
                 return doNotProcess;
-            }
         }
     }
-    else if (CAO_GET_CURRENT_GAME == Games::TES5)
+    else if (version.IsSK())
         result = criticalIssue;
     else
         result = doNotProcess;
