@@ -21,9 +21,9 @@ void MainOptimizer::process(const QString &file)
         processTexture(file, TexturesOptimizer::dds);
     else if (file.endsWith(".nif", Qt::CaseInsensitive))
         processNif(file);
-    else if (file.endsWith(".tga", Qt::CaseInsensitive) && CAO_TEXTURES_CONVERT_TGA)
+    else if (file.endsWith(".tga", Qt::CaseInsensitive) && Games::texturesConvertTga())
         processTexture(file, TexturesOptimizer::tga);
-    else if (file.endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
+    else if (file.endsWith(Games::bsaExtension(), Qt::CaseInsensitive))
         processBsa(file);
     else if (file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
@@ -135,7 +135,7 @@ void MainOptimizer::processHkx(const QString &file)
     if (optOptions.bAnimationsOptimization && optOptions.bDryRun)
         PLOG_INFO << file + QObject::tr(" would be ported to SSE");
     else if (optOptions.bAnimationsOptimization)
-        animOpt.convert(file, CAO_ANIMATIONS_FORMAT);
+        animOpt.convert(file, Games::animationFormat());
 }
 
 void MainOptimizer::processNif(const QString &file)

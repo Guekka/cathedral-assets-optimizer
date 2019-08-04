@@ -9,34 +9,8 @@
 #include "ui_mainWindow.h"
 #endif
 
+constexpr double GigaByte = 1024 * 1024 * 1024;
 #define CAO_SET_CURRENT_GAME(game) Games::getInstance()->setGame(game);
-#define CAO_GET_CURRENT_GAME Games::getInstance()->getGame()
-
-#define CAO_BSA_FORMAT Games::getInstance()->GetBsaFormat()
-#define CAO_BSA_TEXTURES_FORMAT Games::getInstance()->getBsaTexturesFormat()
-#define CAO_BSA_EXTENSION Games::getInstance()->getBsaExtension()
-#define CAO_BSA_MAX_SIZE Games::getInstance()->getBsaUncompressedMaxSize()
-#define CAO_BSA_TEXTURES_MAX_SIZE Games::getInstance()->getBsaTexturesMaxSize()
-#define CAO_HAS_BSA_TEXTURES Games::getInstance()->getHasBsaTextures()
-#define CAO_BSA_SUFFIX Games::getInstance()->getBsaSuffix()
-#define CAO_BSA_TEXTURES_SUFFIX Games::getInstance()->getBsaTexturesSuffix()
-
-#define CAO_MESHES_FILE_VERSION Games::getInstance()->getMeshesFileVersion()
-#define CAO_MESHES_STREAM Games::getInstance()->getMeshesStream()
-#define CAO_MESHES_USER Games::getInstance()->getMeshesUser()
-
-#define CAO_ANIMATIONS_FORMAT Games::getInstance()->getAnimationsFormat()
-
-#define CAO_TEXTURES_FORMAT Games::getInstance()->getTexturesFormat()
-#define CAO_TEXTURES_CONVERT_TGA Games::getInstance()->getTexturesConvertTga()
-#define CAO_TEXTURES_UNWANTED_FORMATS Games::getInstance()->getTexturesUnwantedFormats()
-#define CAO_TEXTURES_COMPRESS_INTERFACE Games::getInstance()->getTexturesCompressInterface()
-
-#define CAO_INI_PATH Games::getInstance()->getIniPath()
-#define CAO_LOG_PATH Games::getInstance()->getLogPath()
-#define CAO_RESOURCES_PATH Games::getInstance()->getResourcePath()
-
-const double GigaByte = 1024 * 1024 * 1024;
 
 class Games : public QObject
 {
@@ -55,8 +29,35 @@ public:
     Q_ENUM(NiFileVersion)
     Q_ENUM(DXGI_FORMAT)
 
-    static Games *getInstance();
+    //static getters
+    static inline bsa_archive_type_t bsaFormat(){ return Games::getInstance()->GetBsaFormat(); }
+    static inline bsa_archive_type_t bsaTexturesFormat(){ return Games::getInstance()->getBsaTexturesFormat(); }
+    static inline double maxBsaUncompressedSize(){ return Games::getInstance()->getBsaUncompressedMaxSize(); }
+    static inline bool hasBsaTextures(){ return Games::getInstance()->getHasBsaTextures(); }
+    static inline double maxBsaTexturesSize(){ return Games::getInstance()->getBsaTexturesMaxSize(); }
+    static inline QString bsaExtension() { return Games::getInstance()->getBsaExtension(); }
+    static inline QString bsaSuffix(){ return Games::getInstance()->getBsaSuffix(); }
+    static inline QString bsaTexturesSuffix(){ return Games::getInstance()->getBsaTexturesSuffix(); }
 
+    static inline NiFileVersion meshesFileVersion() { return Games::getInstance()->getMeshesFileVersion(); }
+    static inline uint meshesStream(){ return Games::getInstance()->getMeshesStream(); }
+    static inline uint meshesUser(){ return Games::getInstance()->getMeshesUser(); }
+
+    static inline hkPackFormat animationFormat(){ return Games::getInstance()->getAnimationsFormat(); }
+
+    static inline DXGI_FORMAT texturesFormat(){ return Games::getInstance()->getTexturesFormat(); }
+    static inline bool texturesConvertTga(){ return Games::getInstance()->getTexturesConvertTga(); }
+    static inline QList<DXGI_FORMAT> texturesUnwantedFormats(){ return Games::getInstance()->getTexturesUnwantedFormats(); }
+    static inline bool texturesCompressInterface(){ return Games::getInstance()->getTexturesCompressInterface(); }
+
+    static inline QString iniPath(){ return Games::getInstance()->getIniPath(); }
+    static inline QString logPath(){ return Games::getInstance()->getLogPath(); }
+    static inline QString resourcePath(){ return Games::getInstance()->getResourcePath(); }
+
+    static Games *getInstance();
+    static inline Games::GameMode game(){ return Games::getInstance()->getGame(); }
+
+    //instance getters
     bsa_archive_type_e GetBsaFormat() const;
     bsa_archive_type_t getBsaTexturesFormat() const;
     double getBsaUncompressedMaxSize() const;
@@ -75,6 +76,7 @@ public:
     DXGI_FORMAT getTexturesFormat() const;
     bool getTexturesConvertTga() const;
     QList<DXGI_FORMAT> getTexturesUnwantedFormats() const;
+    bool getTexturesCompressInterface() const;
 
     QString getIniPath() const;
     QString getLogPath() const;
@@ -96,35 +98,35 @@ public:
     void readFromUi(Ui::MainWindow *ui);
 #endif
 
-    bool getTexturesCompressInterface() const;
-
 private:
-    bsa_archive_type_t bsaFormat;
-    bsa_archive_type_t bsaTexturesFormat;
-    double maxBsaUncompressedSize;
-    bool hasBsaTextures;
-    double maxBsaTexturesSize;
-    QString bsaExtension;
-    QString bsaSuffix;
-    QString bsaTexturesSuffix;
+    bsa_archive_type_t _bsaFormat;
+    bsa_archive_type_t _bsaTexturesFormat;
+    double _maxBsaUncompressedSize;
+    bool _hasBsaTextures;
+    double _maxBsaTexturesSize;
+    QString _bsaExtension;
+    QString _bsaSuffix;
+    QString _bsaTexturesSuffix;
 
-    NiFileVersion meshesFileVersion;
-    uint meshesStream;
-    uint meshesUser;
+    NiFileVersion _meshesFileVersion;
+    uint _meshesStream;
+    uint _meshesUser;
 
-    hkPackFormat animationFormat;
+    hkPackFormat _animationFormat;
 
-    DXGI_FORMAT texturesFormat;
-    bool texturesConvertTga;
-    QList<QVariant> texturesUnwantedFormats;
-    bool texturesCompressInterface;
+    DXGI_FORMAT _texturesFormat;
+    bool _texturesConvertTga;
+    QList<QVariant> _texturesUnwantedFormats;
+    bool _texturesCompressInterface;
 
-    QString iniPath;
-    QString logPath;
-    QString resourcePath;
+    QString _iniPath;
+    QString _logPath;
+    QString _resourcePath;
 
-    static Games *INSTANCE;
-    GameMode game;
+    static Games *_INSTANCE;
+    GameMode _game;
 
     Games();
 };
+
+

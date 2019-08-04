@@ -139,7 +139,7 @@ MainWindow::MainWindow()
     }
 
     CAO_SET_CURRENT_GAME(mode)
-    settings = new QSettings(CAO_INI_PATH, QSettings::IniFormat, this);
+    settings = new QSettings(Games::iniPath(), QSettings::IniFormat, this);
 
     loadUi();
     refreshUI();
@@ -209,7 +209,7 @@ void MainWindow::loadUi()
     ui->advancedSettingsCheckbox->setChecked(uiSettings->value("bShowAdvancedSettings").toBool());
     for (int i = 0; i < ui->presets->count(); ++i)
     {
-        if (ui->presets->itemData(i) == CAO_GET_CURRENT_GAME)
+        if (ui->presets->itemData(i) == Games::game())
         {
             ui->presets->setCurrentIndex(i);
             break;
@@ -279,7 +279,7 @@ void MainWindow::updateLog()
 {
     ui->logTextEdit->clear();
 
-    QFile log(CAO_LOG_PATH);
+    QFile log(Games::logPath());
     if (log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);

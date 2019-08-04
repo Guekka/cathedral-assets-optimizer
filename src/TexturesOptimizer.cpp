@@ -142,7 +142,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
     const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != info.height || newWidth != info.width);
 
     const bool needsConversion = (bNecessary && (isIncompatible() || _type == tga))
-                                 || (bCompress && canBeCompressed() && info.format != CAO_TEXTURES_FORMAT);
+                                 || (bCompress && canBeCompressed() && info.format != Games::texturesFormat());
 
     const bool needsMipMaps = bMipmaps && info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
@@ -178,8 +178,8 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
     //Converting or compressing to the new format
     if (needsConversion)
     {
-        PLOG_VERBOSE << tr("Converting this texture to format: ") << dxgiFormatToString(CAO_TEXTURES_FORMAT);
-        if (!convert(CAO_TEXTURES_FORMAT))
+        PLOG_VERBOSE << tr("Converting this texture to format: ") << dxgiFormatToString(Games::texturesFormat());
+        if (!convert(Games::texturesFormat()))
             return false;
     }
 
@@ -199,7 +199,7 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
     const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != info.height || newWidth != info.width);
 
     const bool needsConversion = (bNecessary && (isIncompatible() || _type == tga))
-                                 || (bCompress && canBeCompressed() && info.format != CAO_TEXTURES_FORMAT);
+                                 || (bCompress && canBeCompressed() && info.format != Games::texturesFormat());
 
     const bool needsMipMaps = bMipmaps && info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
@@ -224,13 +224,13 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
     //Converting or compressing to the new format
     if (needsConversion)
     {
-        PLOG_VERBOSE << tr("This texture would be converted to format: ") << dxgiFormatToString(CAO_TEXTURES_FORMAT);
+        PLOG_VERBOSE << tr("This texture would be converted to format: ") << dxgiFormatToString(Games::texturesFormat());
     }
 }
 
 bool TexturesOptimizer::canBeCompressed()
 {
-    if ((name.contains("interface", Qt::CaseInsensitive) && !CAO_TEXTURES_COMPRESS_INTERFACE)
+    if ((name.contains("interface", Qt::CaseInsensitive) && !Games::texturesCompressInterface())
         || DirectX::IsCompressed(info.format))
         return false;
 
@@ -385,7 +385,7 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
 
 bool TexturesOptimizer::canHaveMipMaps()
 {
-    return CAO_TEXTURES_COMPRESS_INTERFACE;
+    return Games::texturesCompressInterface();
 }
 
 bool TexturesOptimizer::generateMipMaps()
@@ -612,7 +612,7 @@ bool TexturesOptimizer::isIncompatible()
 {
     //Checking incompatibility with file format
     const DXGI_FORMAT fileFormat = info.format;
-    for (const auto &f : CAO_TEXTURES_UNWANTED_FORMATS)
+    for (const auto &f : Games::texturesUnwantedFormats())
         if (f == fileFormat)
             return true;
     return false;

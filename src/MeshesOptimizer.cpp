@@ -39,9 +39,9 @@ ScanResult MeshesOptimizer::scan(const QString &filePath)
     ScanResult result = good;
 
     NiVersion version;
-    version.SetFile(CAO_MESHES_FILE_VERSION);
-    version.SetStream(CAO_MESHES_STREAM);
-    version.SetUser(CAO_MESHES_USER);
+    version.SetFile(Games::meshesFileVersion());
+    version.SetStream(Games::meshesStream());
+    version.SetUser(Games::meshesUser());
 
     if (version.IsSSE())
     {
@@ -88,9 +88,9 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     PLOG_VERBOSE << tr("Loading mesh: ") << filePath;
 
     OptOptions options;
-    options.targetVersion.SetFile(CAO_MESHES_FILE_VERSION);
-    options.targetVersion.SetStream(CAO_MESHES_STREAM);
-    options.targetVersion.SetUser(CAO_MESHES_USER);
+    options.targetVersion.SetFile(Games::meshesFileVersion());
+    options.targetVersion.SetStream(Games::meshesStream());
+    options.targetVersion.SetUser(Games::meshesUser());
 
     ScanResult scanResult = scan(filePath);
     QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);

@@ -17,20 +17,20 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
 
         it.next();
 
-        if (!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive))
+        if (!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(Games::bsaExtension(), Qt::CaseInsensitive))
         {
-            if (it.fileName().contains(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive))
+            if (it.fileName().contains(Games::bsaTexturesSuffix(), Qt::CaseInsensitive))
             {
-                espName = it.fileName().remove(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive) + ".esp";
+                espName = it.fileName().remove(Games::bsaTexturesSuffix(), Qt::CaseInsensitive) + ".esp";
                 PLOG_VERBOSE << "Created textures bsa plugin:" + espName;
             }
 
             else
             {
-                espName = it.fileName().remove(CAO_BSA_SUFFIX, Qt::CaseInsensitive) + ".esp";
+                espName = it.fileName().remove(Games::bsaSuffix(), Qt::CaseInsensitive) + ".esp";
                 PLOG_VERBOSE << "Created standard bsa plugin:" + espName;
             }
-            QFile::copy(CAO_RESOURCES_PATH + "DummyPlugin.esp", folderPath + "/" + espName);
+            QFile::copy(Games::resourcePath() + "DummyPlugin.esp", folderPath + "/" + espName);
         }
     }
     PLOG_VERBOSE << "Exiting makeDummyPlugins function";
@@ -49,8 +49,8 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const bsaType &
         if (it.fileName().contains(QRegularExpression("\\.es[plm]$")))
             espName << it.fileName();
 
-        if (it.fileName().endsWith(CAO_BSA_SUFFIX, Qt::CaseInsensitive)
-            && !it.fileName().endsWith(CAO_BSA_TEXTURES_SUFFIX, Qt::CaseInsensitive))
+        if (it.fileName().endsWith(Games::bsaSuffix(), Qt::CaseInsensitive)
+            && !it.fileName().endsWith(Games::bsaTexturesSuffix(), Qt::CaseInsensitive))
         {
             bsaName = it.fileName().chopped(4) + ".esp";
         }
@@ -68,14 +68,14 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const bsaType &
     {
         for (auto esp : espName)
         {
-            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_TEXTURES_SUFFIX).exists()
+            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
                                    && bsaType == bsaType::texturesBsa;
 
-            bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_SUFFIX).exists()
+            bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
                                    && bsaType == bsaType::standardBsa;
 
-            bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_TEXTURES_SUFFIX).exists()
-                               && !QFile(folderPath + "/" + esp.chopped(4) + CAO_BSA_SUFFIX).exists()
+            bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
+                               && !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
                                && bsaType == bsaType::texturesAndStandardBsa;
 
             if (texturesBsaGood || standardBsaGood || bothBsaGood)
@@ -93,8 +93,8 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const bsaType &
 bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
-    bsaName.remove(CAO_BSA_EXTENSION);
-    bsaName.remove(" - Textures" + CAO_BSA_EXTENSION); // x.esp will also load x - Textures.bsa
+    bsaName.remove(Games::bsaExtension());
+    bsaName.remove(" - Textures" + Games::bsaExtension()); // x.esp will also load x - Textures.bsa
 
     QString eslName = bsaName + ".esl";
     QString esmName = bsaName + ".esm";

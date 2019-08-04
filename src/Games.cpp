@@ -7,96 +7,96 @@
 
 Games::Games(){};
 
-Games *Games::INSTANCE = nullptr;
+Games *Games::_INSTANCE = nullptr;
 
 void Games::setGame(const GameMode &newGame)
 {
-    game = newGame;
+    _game = newGame;
     QSettings s("settings/common/config.ini", QSettings::IniFormat);
-    s.setValue("game", game);
+    s.setValue("game", _game);
 
-    texturesUnwantedFormats.clear();
+    _texturesUnwantedFormats.clear();
 
-    switch (game)
+    switch (_game)
     {
     case Invalid: throw std::runtime_error("Invalid game"); break;
 
     case SSE:
-        bsaFormat = baSSE;
-        bsaTexturesFormat = baSSE;
-        maxBsaUncompressedSize = 2 * GigaByte;
-        hasBsaTextures = true;
+        _bsaFormat = baSSE;
+        _bsaTexturesFormat = baSSE;
+        _maxBsaUncompressedSize = 2 * GigaByte;
+        _hasBsaTextures = true;
         //Using 2.37GB for max textures size since this bsa will always be compressed.
         //After some experiments, it is the maximum size to ensure the bsa will always
         //stay under the maximum size : ~2.1gb
-        maxBsaTexturesSize = 2.37 * GigaByte;
-        bsaExtension = ".bsa";
-        bsaSuffix = ".bsa";
-        bsaTexturesSuffix = " - Textures.bsa";
-        meshesFileVersion = V20_2_0_7;
-        meshesStream = 100;
-        meshesUser = 12;
-        animationFormat = HKPF_AMD64;
-        texturesFormat = DXGI_FORMAT_BC7_UNORM;
-        texturesConvertTga = true;
-        texturesUnwantedFormats << DXGI_FORMAT_B5G5R5A1_UNORM << DXGI_FORMAT_B5G6R5_UNORM;
-        texturesCompressInterface = true;
-        iniPath = QDir::currentPath() + "/settings/SkyrimSE/config.ini";
-        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/SkyrimSE.html");
-        resourcePath = QDir::currentPath() + "/resources/SkyrimSE/";
+        _maxBsaTexturesSize = 2.37 * GigaByte;
+        _bsaExtension = ".bsa";
+        _bsaSuffix = ".bsa";
+        _bsaTexturesSuffix = " - Textures.bsa";
+        _meshesFileVersion = V20_2_0_7;
+        _meshesStream = 100;
+        _meshesUser = 12;
+        _animationFormat = HKPF_AMD64;
+        _texturesFormat = DXGI_FORMAT_BC7_UNORM;
+        _texturesConvertTga = true;
+        _texturesUnwantedFormats << DXGI_FORMAT_B5G5R5A1_UNORM << DXGI_FORMAT_B5G6R5_UNORM;
+        _texturesCompressInterface = true;
+        _iniPath = QDir::currentPath() + "/settings/SkyrimSE/config.ini";
+        _logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/SkyrimSE.html");
+        _resourcePath = QDir::currentPath() + "/resources/SkyrimSE/";
         break;
 
     case TES5:
-        bsaFormat = baFO3;
-        bsaTexturesFormat = baNone;
-        maxBsaUncompressedSize = 2 * GigaByte;
-        hasBsaTextures = false;
-        maxBsaTexturesSize = 0;
-        bsaExtension = ".bsa";
-        bsaSuffix = ".bsa";
-        bsaTexturesSuffix = ".bsa";
-        meshesFileVersion = V20_2_0_7;
-        meshesStream = 83;
-        meshesUser = 12;
-        animationFormat = HKPF_WIN32;
-        texturesFormat = DXGI_FORMAT_BC3_UNORM;
-        texturesConvertTga = false;
-        texturesUnwantedFormats << DXGI_FORMAT_BC7_UNORM;
-        texturesCompressInterface = true;
-        iniPath = QDir::currentPath() + "/settings/TES5/config.ini";
-        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/TES5.html");
-        resourcePath = QDir::currentPath() + "/resources/TES5/";
+        _bsaFormat = baFO3;
+        _bsaTexturesFormat = baNone;
+        _maxBsaUncompressedSize = 2 * GigaByte;
+        _hasBsaTextures = false;
+        _maxBsaTexturesSize = 0;
+        _bsaExtension = ".bsa";
+        _bsaSuffix = ".bsa";
+        _bsaTexturesSuffix = ".bsa";
+        _meshesFileVersion = V20_2_0_7;
+        _meshesStream = 83;
+        _meshesUser = 12;
+        _animationFormat = HKPF_WIN32;
+        _texturesFormat = DXGI_FORMAT_BC3_UNORM;
+        _texturesConvertTga = false;
+        _texturesUnwantedFormats << DXGI_FORMAT_BC7_UNORM;
+        _texturesCompressInterface = true;
+        _iniPath = QDir::currentPath() + "/settings/TES5/config.ini";
+        _logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/TES5.html");
+        _resourcePath = QDir::currentPath() + "/resources/TES5/";
         break;
 
     case FO4:
-        bsaFormat = baFO4;
-        bsaTexturesFormat = baFO4dds;
-        maxBsaUncompressedSize = 3.9 * GigaByte;
-        hasBsaTextures = false;
+        _bsaFormat = baFO4;
+        _bsaTexturesFormat = baFO4dds;
+        _maxBsaUncompressedSize = 3.9 * GigaByte;
+        _hasBsaTextures = false;
         //TODO enable bsa textures
         //DirectXTex will have to be used as a callback for libbsarch
-        maxBsaTexturesSize = 4.5 * GigaByte;
-        bsaExtension = ".ba2";
-        bsaSuffix = " - Main.ba2";
-        bsaTexturesSuffix = " - Textures.ba2";
-        meshesFileVersion = V20_2_0_7;
-        meshesStream = 130;
-        meshesUser = 12;
-        animationFormat = HKPF_AMD64;
-        texturesFormat = DXGI_FORMAT_BC7_UNORM;
-        texturesConvertTga = true;
-        texturesUnwantedFormats << DXGI_FORMAT_B5G5R5A1_UNORM << DXGI_FORMAT_B5G6R5_UNORM;
-        texturesCompressInterface = true;
-        iniPath = QDir::currentPath() + "/settings/FO4/config.ini";
-        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/FO4.txt");
-        resourcePath = QDir::currentPath() + "/resources/FO4/";
+        _maxBsaTexturesSize = 4.5 * GigaByte;
+        _bsaExtension = ".ba2";
+        _bsaSuffix = " - Main.ba2";
+        _bsaTexturesSuffix = " - Textures.ba2";
+        _meshesFileVersion = V20_2_0_7;
+        _meshesStream = 130;
+        _meshesUser = 12;
+        _animationFormat = HKPF_AMD64;
+        _texturesFormat = DXGI_FORMAT_BC7_UNORM;
+        _texturesConvertTga = true;
+        _texturesUnwantedFormats << DXGI_FORMAT_B5G5R5A1_UNORM << DXGI_FORMAT_B5G6R5_UNORM;
+        _texturesCompressInterface = true;
+        _iniPath = QDir::currentPath() + "/settings/FO4/config.ini";
+        _logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/FO4.txt");
+        _resourcePath = QDir::currentPath() + "/resources/FO4/";
         break;
 
     case Custom:
         QSettings settings("settings/Custom/config.ini", QSettings::IniFormat);
-        resourcePath = QDir::currentPath() + "/resources/Custom/";
-        iniPath = QDir::currentPath() + "/settings/Custom/config.ini";
-        logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/Custom.html");
+        _resourcePath = QDir::currentPath() + "/resources/Custom/";
+        _iniPath = QDir::currentPath() + "/settings/Custom/config.ini";
+        _logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/Custom.html");
 
         if (!QFile("settings/Custom/config.ini").exists())
             saveToIni(&settings);
@@ -127,53 +127,53 @@ Games::GameMode Games::stringToGame(const QString &string)
 
 void Games::saveToIni(QSettings *settings)
 {
-    settings->setValue("bsaFormat", bsaFormat);
-    settings->setValue("bsaTexturesFormat", bsaTexturesFormat);
-    settings->setValue("maxBsaUncompressedSize", maxBsaUncompressedSize);
-    settings->setValue("hasBsaTextures", hasBsaTextures);
-    settings->setValue("maxBsaTexturesSize", maxBsaTexturesSize);
-    settings->setValue("bsaExtension", bsaExtension);
-    settings->setValue("bsaSuffix", bsaSuffix);
-    settings->setValue("bsaTexturesSuffix", bsaTexturesSuffix);
-    settings->setValue("meshesFileVersion", meshesFileVersion);
-    settings->setValue("meshesStream", meshesStream);
-    settings->setValue("meshesUser", meshesUser);
-    settings->setValue("animationFormat", animationFormat);
-    settings->setValue("texturesFormat", texturesFormat);
-    settings->setValue("texturesConvertTga", texturesConvertTga);
-    settings->setValue("texturesUnwantedFormats", texturesUnwantedFormats);
-    settings->setValue("texturesCompressInterface", texturesCompressInterface);
+    settings->setValue("bsaFormat", _bsaFormat);
+    settings->setValue("bsaTexturesFormat", _bsaTexturesFormat);
+    settings->setValue("maxBsaUncompressedSize", _maxBsaUncompressedSize);
+    settings->setValue("hasBsaTextures", _hasBsaTextures);
+    settings->setValue("maxBsaTexturesSize", _maxBsaTexturesSize);
+    settings->setValue("bsaExtension", _bsaExtension);
+    settings->setValue("bsaSuffix", _bsaSuffix);
+    settings->setValue("bsaTexturesSuffix", _bsaTexturesSuffix);
+    settings->setValue("meshesFileVersion", _meshesFileVersion);
+    settings->setValue("meshesStream", _meshesStream);
+    settings->setValue("meshesUser", _meshesUser);
+    settings->setValue("animationFormat", _animationFormat);
+    settings->setValue("texturesFormat", _texturesFormat);
+    settings->setValue("texturesConvertTga", _texturesConvertTga);
+    settings->setValue("texturesUnwantedFormats", _texturesUnwantedFormats);
+    settings->setValue("texturesCompressInterface", _texturesCompressInterface);
 }
 
 void Games::readFromIni(QSettings *settings)
 {
-    bsaFormat = static_cast<bsa_archive_type_t>(settings->value("bsaFormat").toInt());
-    bsaTexturesFormat = static_cast<bsa_archive_type_t>(settings->value("bsaTexturesFormat").toInt());
-    maxBsaUncompressedSize = settings->value("maxBsaUncompressedSize").toDouble();
-    hasBsaTextures = settings->value("hasBsaTextures").toBool();
-    maxBsaTexturesSize = settings->value("maxBsaTexturesSize").toDouble();
-    bsaExtension = settings->value("bsaExtension").toString();
-    bsaSuffix = settings->value("bsaSuffix").toString();
-    bsaTexturesSuffix = settings->value("bsaTexturesSuffix").toString();
-    meshesFileVersion = static_cast<NiFileVersion>(settings->value("meshesFileVersion").toInt());
-    meshesStream = settings->value("meshesStream").toUInt();
-    meshesUser = settings->value("meshesUser").toUInt();
-    animationFormat = static_cast<hkPackFormat>(settings->value("animationFormat").toInt());
-    texturesFormat = settings->value("texturesFormat").value<DXGI_FORMAT>();
-    texturesConvertTga = settings->value("texturesConvertTga").toBool();
-    texturesUnwantedFormats = settings->value("texturesUnwantedFormats").toList();
-    texturesCompressInterface = settings->value("texturesCompressInterface").toBool();
+    _bsaFormat = static_cast<bsa_archive_type_t>(settings->value("bsaFormat").toInt());
+    _bsaTexturesFormat = static_cast<bsa_archive_type_t>(settings->value("bsaTexturesFormat").toInt());
+    _maxBsaUncompressedSize = settings->value("maxBsaUncompressedSize").toDouble();
+    _hasBsaTextures = settings->value("hasBsaTextures").toBool();
+    _maxBsaTexturesSize = settings->value("maxBsaTexturesSize").toDouble();
+    _bsaExtension = settings->value("bsaExtension").toString();
+    _bsaSuffix = settings->value("bsaSuffix").toString();
+    _bsaTexturesSuffix = settings->value("bsaTexturesSuffix").toString();
+    _meshesFileVersion = static_cast<NiFileVersion>(settings->value("meshesFileVersion").toInt());
+    _meshesStream = settings->value("meshesStream").toUInt();
+    _meshesUser = settings->value("meshesUser").toUInt();
+    _animationFormat = static_cast<hkPackFormat>(settings->value("animationFormat").toInt());
+    _texturesFormat = settings->value("texturesFormat").value<DXGI_FORMAT>();
+    _texturesConvertTga = settings->value("texturesConvertTga").toBool();
+    _texturesUnwantedFormats = settings->value("texturesUnwantedFormats").toList();
+    _texturesCompressInterface = settings->value("texturesCompressInterface").toBool();
 }
 #ifdef GUI
 void Games::setGame(Ui::MainWindow *ui)
 {
-    game = uiToGame(ui);
+    _game = uiToGame(ui);
     saveToUi(ui);
 
     if (ui->advancedSettingsCheckbox->isChecked())
-        game = Custom;
+        _game = Custom;
     else
-        setGame(game);
+        setGame(_game);
 }
 
 Games::GameMode Games::uiToGame(Ui::MainWindow *ui)
@@ -197,27 +197,27 @@ void Games::saveToUi(Ui::MainWindow *ui)
         }
     };
 
-    iterateComboBox(ui->bsaFormat, bsaFormat);
-    iterateComboBox(ui->bsaTexturesFormat, bsaTexturesFormat);
-    ui->bsaMaximumSize->setValue(maxBsaUncompressedSize / GigaByte);
-    ui->bsaTexturesAdvancedGroupBox->setChecked(hasBsaTextures);
-    ui->bsaTexturesMaximumSize->setValue(maxBsaTexturesSize / GigaByte);
-    ui->bsaExtension->setText(bsaExtension);
-    ui->bsaSuffix->setText(bsaSuffix);
-    ui->bsaTexturesSuffix->setText(bsaTexturesSuffix);
+    iterateComboBox(ui->bsaFormat, _bsaFormat);
+    iterateComboBox(ui->bsaTexturesFormat, _bsaTexturesFormat);
+    ui->bsaMaximumSize->setValue(_maxBsaUncompressedSize / GigaByte);
+    ui->bsaTexturesAdvancedGroupBox->setChecked(_hasBsaTextures);
+    ui->bsaTexturesMaximumSize->setValue(_maxBsaTexturesSize / GigaByte);
+    ui->bsaExtension->setText(_bsaExtension);
+    ui->bsaSuffix->setText(_bsaSuffix);
+    ui->bsaTexturesSuffix->setText(_bsaTexturesSuffix);
 
-    iterateComboBox(ui->meshesUser, meshesUser);
-    iterateComboBox(ui->meshesStream, meshesStream);
-    iterateComboBox(ui->meshesVersion, meshesFileVersion);
+    iterateComboBox(ui->meshesUser, _meshesUser);
+    iterateComboBox(ui->meshesStream, _meshesStream);
+    iterateComboBox(ui->meshesVersion, _meshesFileVersion);
 
     //Animation format is not working when converting from amd64, thus not added to UI
 
-    iterateComboBox(ui->texturesOutputFormat, texturesFormat);
-    ui->texturesTgaConversionCheckBox->setChecked(texturesConvertTga);
-    ui->texturesCompressInterfaceCheckBox->setChecked(texturesCompressInterface);
+    iterateComboBox(ui->texturesOutputFormat, _texturesFormat);
+    ui->texturesTgaConversionCheckBox->setChecked(_texturesConvertTga);
+    ui->texturesCompressInterfaceCheckBox->setChecked(_texturesCompressInterface);
 
     QStringList unwantedFormats;
-    for (const QVariant &variant : texturesUnwantedFormats)
+    for (const QVariant &variant : _texturesUnwantedFormats)
     {
         DXGI_FORMAT format = variant.value<DXGI_FORMAT>();
         unwantedFormats << QString::fromStdString(dxgiFormatToString(format));
@@ -228,142 +228,142 @@ void Games::saveToUi(Ui::MainWindow *ui)
 
 void Games::readFromUi(Ui::MainWindow *ui)
 {
-    bsaFormat = ui->bsaFormat->currentData().value<bsa_archive_type_e>();
-    bsaTexturesFormat = ui->bsaTexturesFormat->currentData().value<bsa_archive_type_e>();
+    _bsaFormat = ui->bsaFormat->currentData().value<bsa_archive_type_e>();
+    _bsaTexturesFormat = ui->bsaTexturesFormat->currentData().value<bsa_archive_type_e>();
 
-    maxBsaUncompressedSize = ui->bsaMaximumSize->value() * GigaByte;
-    hasBsaTextures = ui->bsaTexturesAdvancedGroupBox->isChecked();
-    maxBsaTexturesSize = ui->bsaTexturesMaximumSize->value() * GigaByte;
-    bsaExtension = ui->bsaExtension->text();
-    bsaSuffix = ui->bsaSuffix->text();
-    bsaTexturesSuffix = ui->bsaTexturesSuffix->text();
+    _maxBsaUncompressedSize = ui->bsaMaximumSize->value() * GigaByte;
+    _hasBsaTextures = ui->bsaTexturesAdvancedGroupBox->isChecked();
+    _maxBsaTexturesSize = ui->bsaTexturesMaximumSize->value() * GigaByte;
+    _bsaExtension = ui->bsaExtension->text();
+    _bsaSuffix = ui->bsaSuffix->text();
+    _bsaTexturesSuffix = ui->bsaTexturesSuffix->text();
 
-    meshesUser = ui->meshesUser->currentData().toUInt();
-    meshesStream = ui->meshesStream->currentData().toUInt();
-    meshesFileVersion = ui->meshesVersion->currentData().value<NiFileVersion>();
+    _meshesUser = ui->meshesUser->currentData().toUInt();
+    _meshesStream = ui->meshesStream->currentData().toUInt();
+    _meshesFileVersion = ui->meshesVersion->currentData().value<NiFileVersion>();
     //Animation format is not working currently, thus not added to UI
 
-    texturesFormat = ui->texturesOutputFormat->currentData().value<DXGI_FORMAT>();
-    texturesConvertTga = ui->texturesTgaConversionCheckBox->isChecked();
-    texturesCompressInterface = ui->texturesCompressInterfaceCheckBox->isChecked();
+    _texturesFormat = ui->texturesOutputFormat->currentData().value<DXGI_FORMAT>();
+    _texturesConvertTga = ui->texturesTgaConversionCheckBox->isChecked();
+    _texturesCompressInterface = ui->texturesCompressInterfaceCheckBox->isChecked();
 
-    texturesUnwantedFormats.clear();
+    _texturesUnwantedFormats.clear();
     for (const auto &line : ui->texturesUnwantedFormats->toPlainText().split('\n'))
     {
         const DXGI_FORMAT format = stringToDxgiFormat(line.toStdString());
-        if (!texturesUnwantedFormats.contains(format) && format != DXGI_FORMAT_UNKNOWN)
-            texturesUnwantedFormats += format;
+        if (!_texturesUnwantedFormats.contains(format) && format != DXGI_FORMAT_UNKNOWN)
+            _texturesUnwantedFormats += format;
     }
 }
 #endif
 
 bool Games::getTexturesCompressInterface() const
 {
-    return texturesCompressInterface;
+    return _texturesCompressInterface;
 }
 
 Games::GameMode Games::getGame() const
 {
-    return game;
+    return _game;
 }
 
 Games *Games::getInstance()
 {
-    if (!Games::INSTANCE)
-        Games::INSTANCE = new Games();
+    if (!Games::_INSTANCE)
+        Games::_INSTANCE = new Games();
 
-    return Games::INSTANCE;
+    return Games::_INSTANCE;
 }
 
 bsa_archive_type_e Games::GetBsaFormat() const
 {
-    return bsaFormat;
+    return _bsaFormat;
 }
 
 bsa_archive_type_t Games::getBsaTexturesFormat() const
 {
-    return bsaTexturesFormat;
+    return _bsaTexturesFormat;
 }
 
 double Games::getBsaUncompressedMaxSize() const
 {
-    return maxBsaUncompressedSize;
+    return _maxBsaUncompressedSize;
 }
 
 double Games::getBsaTexturesMaxSize() const
 {
-    return maxBsaTexturesSize;
+    return _maxBsaTexturesSize;
 }
 
 QString Games::getBsaExtension() const
 {
-    return bsaExtension;
+    return _bsaExtension;
 }
 
 bool Games::getHasBsaTextures() const
 {
-    return hasBsaTextures;
+    return _hasBsaTextures;
 }
 
 QString Games::getBsaSuffix() const
 {
-    return bsaSuffix;
+    return _bsaSuffix;
 }
 
 QString Games::getBsaTexturesSuffix() const
 {
-    return bsaTexturesSuffix;
+    return _bsaTexturesSuffix;
 }
 
 uint Games::getMeshesUser() const
 {
-    return meshesUser;
+    return _meshesUser;
 }
 
 uint Games::getMeshesStream() const
 {
-    return meshesStream;
+    return _meshesStream;
 }
 
 NiFileVersion Games::getMeshesFileVersion() const
 {
-    return meshesFileVersion;
+    return _meshesFileVersion;
 }
 
 DXGI_FORMAT Games::getTexturesFormat() const
 {
-    return texturesFormat;
+    return _texturesFormat;
 }
 
 hkPackFormat Games::getAnimationsFormat() const
 {
-    return animationFormat;
+    return _animationFormat;
 }
 
 bool Games::getTexturesConvertTga() const
 {
-    return texturesConvertTga;
+    return _texturesConvertTga;
 }
 
 QList<DXGI_FORMAT> Games::getTexturesUnwantedFormats() const
 {
     QList<DXGI_FORMAT> list;
-    for (auto &format : texturesUnwantedFormats)
+    for (auto &format : _texturesUnwantedFormats)
         list << QVariant::fromValue(format).value<DXGI_FORMAT>();
     return list;
 }
 
 QString Games::getIniPath() const
 {
-    return iniPath;
+    return _iniPath;
 }
 
 QString Games::getLogPath() const
 {
-    return logPath;
+    return _logPath;
 }
 
 QString Games::getResourcePath() const
 {
-    return resourcePath;
+    return _resourcePath;
 }

@@ -17,7 +17,7 @@ Manager::Manager(OptionsCAO &opt)
         options.parseArguments(QCoreApplication::arguments());
 #endif
     //Preparing logging
-    initCustomLogger(CAO_LOG_PATH, options.bDebugLog);
+    initCustomLogger(Games::logPath(), options.bDebugLog);
 
     PLOG_VERBOSE << tr("Checking settings...");
     QString error = options.isValid();
@@ -81,7 +81,7 @@ void Manager::listFiles()
             bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
             bool animation = options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            bool bsa = options.bBsaExtract && it.fileName().endsWith(CAO_BSA_EXTENSION, Qt::CaseInsensitive);
+            bool bsa = options.bBsaExtract && it.fileName().endsWith(Games::bsaExtension(), Qt::CaseInsensitive);
 
             auto addToList = [&](QStringList &list) {
                 ++numberFiles;
@@ -100,7 +100,7 @@ void Manager::listFiles()
 
 void Manager::readIgnoredMods()
 {
-    QFile ignoredModsFile(CAO_RESOURCES_PATH + "ignoredMods.txt");
+    QFile ignoredModsFile(Games::resourcePath() + "ignoredMods.txt");
     if (ignoredModsFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&ignoredModsFile);
@@ -118,7 +118,7 @@ void Manager::readIgnoredMods()
 
 void Manager::runOptimization()
 {
-    PLOG_DEBUG << "Game:" << CAO_GET_CURRENT_GAME;
+    PLOG_DEBUG << "Game:" << Games::game();
     PLOG_INFO << "Beginning...";
 
     MainOptimizer optimizer(options);

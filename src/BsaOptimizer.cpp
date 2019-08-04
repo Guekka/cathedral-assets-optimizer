@@ -147,16 +147,16 @@ void BsaOptimizer::packAll(const QString &folderPath)
 
     //Naming BSAs
     texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                       + CAO_BSA_TEXTURES_SUFFIX;
-    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + CAO_BSA_SUFFIX;
+                       + Games::bsaTexturesSuffix();
+    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + Games::bsaSuffix();
 
     //Setting maxsize
-    texturesBsa.maxSize = CAO_BSA_TEXTURES_MAX_SIZE;
-    standardBsa.maxSize = CAO_BSA_MAX_SIZE;
+    texturesBsa.maxSize = Games::maxBsaTexturesSize();
+    standardBsa.maxSize = Games::maxBsaUncompressedSize();
 
     //Setting format
-    texturesBsa.format = CAO_BSA_TEXTURES_FORMAT;
-    standardBsa.format = CAO_BSA_FORMAT;
+    texturesBsa.format = Games::bsaTexturesFormat();
+    standardBsa.format = Games::bsaFormat();
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
@@ -166,7 +166,7 @@ void BsaOptimizer::packAll(const QString &folderPath)
         bool doNotPack = isIgnoredFile(it.fileName()) || it.fileInfo().isDir();
         if (allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !doNotPack)
         {
-            bool isTexture = texturesAssets.contains(it.fileName().right(3)) && CAO_HAS_BSA_TEXTURES;
+            bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Games::hasBsaTextures();
             ;                                                  //If false, it means that it's a "standard" asset
             Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
 
@@ -176,10 +176,10 @@ void BsaOptimizer::packAll(const QString &folderPath)
 
                 if (isTexture)
                     pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                                + CAO_BSA_TEXTURES_SUFFIX;
+                                + Games::bsaTexturesSuffix();
                 else
                     pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                                + CAO_BSA_SUFFIX;
+                                + Games::bsaSuffix();
 
                 create(pBsa);
 
@@ -197,13 +197,13 @@ void BsaOptimizer::packAll(const QString &folderPath)
     if (!texturesBsa.files.isEmpty())
     {
         texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                           + CAO_BSA_TEXTURES_SUFFIX;
+                           + Games::bsaTexturesSuffix();
         create(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
         standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                           + CAO_BSA_SUFFIX;
+                           + Games::bsaSuffix();
         create(standardBsa);
     }
 }
