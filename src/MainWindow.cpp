@@ -5,80 +5,80 @@
 #include "MainWindow.h"
 
 MainWindow::MainWindow()
-    : ui(new Ui::MainWindow)
+    : _ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    _ui->setupUi(this);
 
     //Setting data for widgets
     //Games combo box
-    for (int i = 0; i < ui->presets->count(); ++i)
+    for (int i = 0; i < _ui->presets->count(); ++i)
     {
-        QString text = ui->presets->itemText(i);
+        QString text = _ui->presets->itemText(i);
         Games::GameMode game = Games::stringToGame(text);
-        ui->presets->setItemData(i, game);
+        _ui->presets->setItemData(i, game);
     }
 
     //Mode chooser combo box
-    ui->modeChooserComboBox->setItemData(0, OptionsCAO::singleMod);
-    ui->modeChooserComboBox->setItemData(1, OptionsCAO::severalMods);
+    _ui->modeChooserComboBox->setItemData(0, OptionsCAO::SingleMod);
+    _ui->modeChooserComboBox->setItemData(1, OptionsCAO::SeveralMods);
 
     //Advanced BSA
-    ui->bsaFormat->setItemData(0, baTES3);
-    ui->bsaTexturesFormat->setItemData(0, baTES3);
-    ui->bsaFormat->setItemData(1, baTES4);
-    ui->bsaTexturesFormat->setItemData(1, baTES4);
-    ui->bsaFormat->setItemData(2, baFO3);
-    ui->bsaTexturesFormat->setItemData(2, baFO3);
-    ui->bsaFormat->setItemData(3, baSSE);
-    ui->bsaTexturesFormat->setItemData(3, baSSE);
-    ui->bsaFormat->setItemData(4, baFO4);
-    ui->bsaTexturesFormat->setItemData(4, baFO4dds);
+    _ui->bsaFormat->setItemData(0, baTES3);
+    _ui->bsaTexturesFormat->setItemData(0, baTES3);
+    _ui->bsaFormat->setItemData(1, baTES4);
+    _ui->bsaTexturesFormat->setItemData(1, baTES4);
+    _ui->bsaFormat->setItemData(2, baFO3);
+    _ui->bsaTexturesFormat->setItemData(2, baFO3);
+    _ui->bsaFormat->setItemData(3, baSSE);
+    _ui->bsaTexturesFormat->setItemData(3, baSSE);
+    _ui->bsaFormat->setItemData(4, baFO4);
+    _ui->bsaTexturesFormat->setItemData(4, baFO4dds);
     //Advanced meshes
-    ui->meshesUser->setItemData(0, 11);
-    ui->meshesUser->setItemData(1, 12);
+    _ui->meshesUser->setItemData(0, 11);
+    _ui->meshesUser->setItemData(1, 12);
 
-    ui->meshesVersion->setItemData(0, V20_0_0_5);
-    ui->meshesVersion->setItemData(1, V20_2_0_7);
+    _ui->meshesVersion->setItemData(0, V20_0_0_5);
+    _ui->meshesVersion->setItemData(1, V20_2_0_7);
 
-    ui->meshesStream->setItemData(0, 82);
-    ui->meshesStream->setItemData(1, 83);
-    ui->meshesStream->setItemData(2, 100);
-    ui->meshesStream->setItemData(3, 130);
+    _ui->meshesStream->setItemData(0, 82);
+    _ui->meshesStream->setItemData(1, 83);
+    _ui->meshesStream->setItemData(2, 100);
+    _ui->meshesStream->setItemData(3, 130);
 
-    ui->texturesOutputFormat->setItemData(0, DXGI_FORMAT_BC7_UNORM);
-    ui->texturesOutputFormat->setItemData(1, DXGI_FORMAT_BC3_UNORM);
-    ui->texturesOutputFormat->setItemData(2, DXGI_FORMAT_BC1_UNORM);
-    ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_R8G8B8A8_UNORM);
+    _ui->texturesOutputFormat->setItemData(0, DXGI_FORMAT_BC7_UNORM);
+    _ui->texturesOutputFormat->setItemData(1, DXGI_FORMAT_BC3_UNORM);
+    _ui->texturesOutputFormat->setItemData(2, DXGI_FORMAT_BC1_UNORM);
+    _ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_R8G8B8A8_UNORM);
 
     //Connecting widgets
-    connect(ui->dryRunCheckBox, &QCheckBox::clicked, this, [&] {
+    connect(_ui->dryRunCheckBox, &QCheckBox::clicked, this, [&] {
         //Disabling BSA options if dry run is enabled
-        if (ui->dryRunCheckBox->isChecked())
+        if (_ui->dryRunCheckBox->isChecked())
         {
-            ui->bsaBaseGroupBox->setChecked(false);
-            ui->bsaBaseGroupBox->setEnabled(false);
+            _ui->bsaBaseGroupBox->setChecked(false);
+            _ui->bsaBaseGroupBox->setEnabled(false);
         }
         else
-            ui->bsaBaseGroupBox->setEnabled(true);
+            _ui->bsaBaseGroupBox->setEnabled(true);
 
-        this->refreshUI();
+        this->refreshUi();
     });
 
-    connect(ui->userPathTextEdit, &QLineEdit::textChanged, this, &MainWindow::refreshUI);
+    connect(_ui->userPathTextEdit, &QLineEdit::textChanged, this, &MainWindow::refreshUi);
 
-    connect(ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&]() {
+    connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&]() {
         this->hideAdvancedSettings();
-        this->refreshUI();
+        this->refreshUi();
     });
 
-    connect(ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        CAO_SET_CURRENT_GAME(Games::uiToGame(ui))
-        Games::getInstance()->saveToUi(ui);
-        this->refreshUI();
+    connect(_ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
+        CAO_SET_CURRENT_GAME(Games::uiToGame(_ui))
+        Games::getInstance()->saveToUi(_ui);
+        this->refreshUi();
     });
 
-    connect(ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        if (ui->modeChooserComboBox->currentIndex() == 1)
+    connect(_ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&] {
+        if (_ui->modeChooserComboBox->currentIndex() == 1)
         {
             QMessageBox warning(this);
             warning.setText(tr("You have selected the several mods option. This process may take a very long time, "
@@ -87,21 +87,21 @@ MainWindow::MainWindow()
             warning.exec();
         }
 
-        this->refreshUI();
+        this->refreshUi();
     });
 
-    connect(ui->userPathButton, &QPushButton::pressed, this, [&] {
+    connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
         QString dir = QFileDialog::getExistingDirectory(this,
                                                         "Open Directory",
-                                                        settings->value("SelectedPath").toString(),
+                                                        _settings->value("SelectedPath").toString(),
                                                         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
-            ui->userPathTextEdit->setText(dir);
-        this->refreshUI();
+            _ui->userPathTextEdit->setText(dir);
+        this->refreshUi();
     });
 
-    connect(ui->processButton, &QPushButton::pressed, this, [&] {
-        if (QDir(ui->userPathTextEdit->text()).exists())
+    connect(_ui->processButton, &QPushButton::pressed, this, [&] {
+        if (QDir(_ui->userPathTextEdit->text()).exists())
             this->initProcess();
         else
             QMessageBox::critical(this,
@@ -111,58 +111,58 @@ MainWindow::MainWindow()
     });
 
     //Connecting menu buttons
-    connect(ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::refreshUI);
-    connect(ui->actionEnable_debug_log, &QAction::triggered, this, &MainWindow::refreshUI);
+    connect(_ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::refreshUi);
+    connect(_ui->actionEnable_debug_log, &QAction::triggered, this, &MainWindow::refreshUi);
 
     //Setting timer to refresh UI
-    timer = new QTimer(this);
-    timer->start(10000);
-    connect(timer, &QTimer::timeout, this, &MainWindow::updateLog);
-    connect(timer, &QTimer::timeout, this, &MainWindow::refreshUI);
+    _timer = new QTimer(this);
+    _timer->start(10000);
+    connect(_timer, &QTimer::timeout, this, &MainWindow::updateLog);
+    connect(_timer, &QTimer::timeout, this, &MainWindow::refreshUi);
 
     //Loading remembered settings
     hideAdvancedSettings();
     resetUi();
 
-    uiSettings = new QSettings("settings/common/config.ini", QSettings::IniFormat, this);
-    Games::GameMode mode = uiSettings->value("game").value<Games::GameMode>();
+    _uiSettings = new QSettings("settings/common/config.ini", QSettings::IniFormat, this);
+    Games::GameMode mode = _uiSettings->value("game").value<Games::GameMode>();
     if (mode == Games::Invalid)
     {
-        uiSettings->setValue("game", Games::Custom);
+        _uiSettings->setValue("game", Games::Custom);
         mode = Games::Custom;
     }
     else if (mode == Games::Custom)
     {
         QSettings gamesSettings("settings/Custom/config.ini", QSettings::IniFormat);
         Games::getInstance()->readFromIni(&gamesSettings);
-        Games::getInstance()->saveToUi(ui);
+        Games::getInstance()->saveToUi(_ui);
     }
 
     CAO_SET_CURRENT_GAME(mode)
-    settings = new QSettings(Games::iniPath(), QSettings::IniFormat, this);
+    _settings = new QSettings(Games::iniPath(), QSettings::IniFormat, this);
 
     loadUi();
-    refreshUI();
+    refreshUi();
 
     setGameMode(mode);
 }
 
-void MainWindow::refreshUI()
+void MainWindow::refreshUi()
 {
     //Disabling some meshes options when several mods mode is enabled
-    const bool severalModsEnabled = (ui->modeChooserComboBox->currentIndex() == 1);
-    ui->meshesMediumOptimizationRadioButton->setDisabled(severalModsEnabled);
-    ui->meshesFullOptimizationRadioButton->setDisabled(severalModsEnabled);
-    ui->meshesNecessaryOptimizationRadioButton->setChecked(severalModsEnabled);
+    const bool severalModsEnabled = (_ui->modeChooserComboBox->currentIndex() == 1);
+    _ui->meshesMediumOptimizationRadioButton->setDisabled(severalModsEnabled);
+    _ui->meshesFullOptimizationRadioButton->setDisabled(severalModsEnabled);
+    _ui->meshesNecessaryOptimizationRadioButton->setChecked(severalModsEnabled);
 
     //Disabling BSA options if dry run is enabled
-    const bool dryRunEnabled = ui->dryRunCheckBox->isChecked();
-    ui->bsaExtractCheckBox->setDisabled(dryRunEnabled);
-    ui->bsaCreateCheckbox->setDisabled(dryRunEnabled);
-    ui->bsaDeleteBackupsCheckbox->setDisabled(dryRunEnabled);
+    const bool dryRunEnabled = _ui->dryRunCheckBox->isChecked();
+    _ui->bsaExtractCheckBox->setDisabled(dryRunEnabled);
+    _ui->bsaCreateCheckbox->setDisabled(dryRunEnabled);
+    _ui->bsaDeleteBackupsCheckbox->setDisabled(dryRunEnabled);
 
     //Enabling dark mode
-    if (ui->actionEnableDarkTheme->isChecked())
+    if (_ui->actionEnableDarkTheme->isChecked())
     {
         QFile f(":qdarkstyle/style.qss");
         f.open(QFile::ReadOnly | QFile::Text);
@@ -173,15 +173,15 @@ void MainWindow::refreshUI()
         qApp->setStyleSheet("");
 
     //Enabling advanced options
-    if (ui->advancedSettingsCheckbox->isChecked())
+    if (_ui->advancedSettingsCheckbox->isChecked())
     {
         this->showAdvancedSettings();
         this->setGameMode(Games::Custom);
     }
     else
-        setGameMode(Games::uiToGame(ui));
+        setGameMode(Games::uiToGame(_ui));
 
-    if (!bLockVariables)
+    if (!_bLockVariables)
         saveUi();
 
     loadUi();
@@ -189,77 +189,78 @@ void MainWindow::refreshUI()
 
 void MainWindow::saveUi()
 {
-    uiSettings->setValue("bShowAdvancedSettings", ui->advancedSettingsCheckbox->isChecked());
-    uiSettings->setValue("bDarkMode", ui->actionEnableDarkTheme->isChecked());
+    _uiSettings->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
+    _uiSettings->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
 
-    options.readFromUi(ui);
-    options.saveToIni(settings);
+    _options.readFromUi(_ui);
+    _options.saveToIni(_settings);
 
-    if (ui->advancedSettingsCheckbox->isChecked())
+    if (_ui->advancedSettingsCheckbox->isChecked())
     {
         QSettings sets("settings/Custom/config.ini", QSettings::IniFormat, this);
-        Games::getInstance()->readFromUi(ui);
+        Games::getInstance()->readFromUi(_ui);
         Games::getInstance()->saveToIni(&sets);
     }
 }
 
 void MainWindow::loadUi()
 {
-    ui->actionEnableDarkTheme->setChecked(uiSettings->value("bDarkMode").toBool());
-    ui->advancedSettingsCheckbox->setChecked(uiSettings->value("bShowAdvancedSettings").toBool());
-    for (int i = 0; i < ui->presets->count(); ++i)
+    _ui->actionEnableDarkTheme->setChecked(_uiSettings->value("bDarkMode").toBool());
+    _ui->advancedSettingsCheckbox->setChecked(_uiSettings->value("bShowAdvancedSettings").toBool());
+    for (int i = 0; i < _ui->presets->count(); ++i)
     {
-        if (ui->presets->itemData(i) == Games::game())
+        if (_ui->presets->itemData(i) == Games::game())
         {
-            ui->presets->setCurrentIndex(i);
+            _ui->presets->setCurrentIndex(i);
             break;
         }
     }
 
-    options.readFromIni(settings);
-    options.saveToUi(ui);
+    _options.readFromIni(_settings);
+    _options.saveToUi(_ui);
 
-    if (ui->advancedSettingsCheckbox->isChecked())
-        Games::getInstance()->saveToUi(ui);
+    if (_ui->advancedSettingsCheckbox->isChecked())
+        Games::getInstance()->saveToUi(_ui);
 }
 
-void MainWindow::resetUi()
+void MainWindow::resetUi() const
 {
     //Resetting the window
-    const int animTabIndex = ui->tabWidget->indexOf(ui->AnimationsTab);
-    const int meshesTabIndex = ui->tabWidget->indexOf(ui->meshesTab);
-    ui->tabWidget->setTabEnabled(animTabIndex, true);
-    ui->tabWidget->setTabEnabled(meshesTabIndex, true);
+    const int animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
+    const int meshesTabIndex = _ui->tabWidget->indexOf(_ui->meshesTab);
+    _ui->tabWidget->setTabEnabled(animTabIndex, true);
+    _ui->tabWidget->setTabEnabled(meshesTabIndex, true);
 
-    ui->meshesFullOptimizationRadioButton->show();
-    ui->meshesMediumOptimizationRadioButton->show();
+    _ui->meshesFullOptimizationRadioButton->show();
+    _ui->meshesMediumOptimizationRadioButton->show();
 }
 
-void MainWindow::readProgress(const QString &text, const int &max, const int &value)
+void MainWindow::readProgress(const QString &text, const int &max, const int &value) const
 {
-    ui->progressBar->setFormat(text);
-    ui->progressBar->setMaximum(max);
-    ui->progressBar->setValue(value);
+    _ui->progressBar->setFormat(text);
+    _ui->progressBar->setMaximum(max);
+    _ui->progressBar->setValue(value);
 }
 
 void MainWindow::initProcess()
 {
-    refreshUI();
-    ui->processButton->setDisabled(true);
-    bLockVariables = true;
+    refreshUi();
+    _ui->processButton->setDisabled(true);
+    _bLockVariables = true;
 
     try
     {
-        caoProcess.reset();
-        caoProcess = std::make_unique<Manager>(options);
-        connect(&*caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
-        QtConcurrent::run(&*caoProcess, &Manager::runOptimization);
+        _caoProcess.reset();
+        _caoProcess = std::make_unique<Manager>(_options);
+        connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+        QtConcurrent::run(&*_caoProcess, &Manager::runOptimization);
     }
     catch (const std::exception &e)
     {
         QMessageBox box(QMessageBox::Critical,
                         tr("Error"),
-                        tr("An exception has been encountered and the process was forced to stop: ") + QString(e.what()));
+                        tr("An exception has been encountered and the process was forced to stop: ")
+                            + QString(e.what()));
         box.exec();
     }
     endProcess();
@@ -267,37 +268,37 @@ void MainWindow::initProcess()
 
 void MainWindow::endProcess()
 {
-    ui->processButton->setDisabled(false);
-    bLockVariables = false;
+    _ui->processButton->setDisabled(false);
+    _bLockVariables = false;
 
-    if(caoProcess)
-        disconnect(&*caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+    if (_caoProcess)
+        disconnect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
 
-    ui->progressBar->setMaximum(100);
-    ui->progressBar->setValue(100);
-    ui->progressBar->setFormat(tr("Done"));
+    _ui->progressBar->setMaximum(100);
+    _ui->progressBar->setValue(100);
+    _ui->progressBar->setFormat(tr("Done"));
     updateLog();
 }
 
-void MainWindow::updateLog()
+void MainWindow::updateLog() const
 {
-    ui->logTextEdit->clear();
+    _ui->logTextEdit->clear();
 
     QFile log(Games::logPath());
     if (log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
-        ui->logTextEdit->appendHtml(ts.readAll());
+        _ui->logTextEdit->appendHtml(ts.readAll());
         log.close();
     }
 }
 
-void MainWindow::setGameMode(const Games::GameMode &mode)
+void MainWindow::setGameMode(const Games::GameMode &mode) const
 {
     //Resetting the window
-    const int animTabIndex = ui->tabWidget->indexOf(ui->AnimationsTab);
-    const int meshesTabIndex = ui->tabWidget->indexOf(ui->meshesTab);
+    const int animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
+    const int meshesTabIndex = _ui->tabWidget->indexOf(_ui->meshesTab);
     resetUi();
 
     //Actually setting the window mode
@@ -305,49 +306,49 @@ void MainWindow::setGameMode(const Games::GameMode &mode)
 
     switch (mode)
     {
-    //Doing nothing for SSE : it is the default mode
+        //Doing nothing for SSE : it is the default mode
     case Games::SSE: break;
     case Games::Custom: break;
 
     case Games::TES5:
-        ui->meshesMediumOptimizationRadioButton->setChecked(false);
-        ui->meshesMediumOptimizationRadioButton->hide();
+        _ui->meshesMediumOptimizationRadioButton->setChecked(false);
+        _ui->meshesMediumOptimizationRadioButton->hide();
 
-        ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
-        ui->tabWidget->setTabEnabled(animTabIndex, false);
+        _ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
+        _ui->tabWidget->setTabEnabled(animTabIndex, false);
         break;
 
     case Games::FO4:
-        ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
-        ui->tabWidget->setTabEnabled(animTabIndex, false);
+        _ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
+        _ui->tabWidget->setTabEnabled(animTabIndex, false);
 
-        ui->meshesGroupBox->setChecked(false);
-        ui->tabWidget->setTabEnabled(meshesTabIndex, false);
+        _ui->meshesGroupBox->setChecked(false);
+        _ui->tabWidget->setTabEnabled(meshesTabIndex, false);
         break;
 
-    case Games::Invalid: throw std::runtime_error("Invalid game: " + ui->presets->currentText().toStdString());
+    case Games::Invalid: throw std::runtime_error("Invalid game: " + _ui->presets->currentText().toStdString());
     }
 }
 
-void MainWindow::hideAdvancedSettings()
+void MainWindow::hideAdvancedSettings() const
 {
-    ui->bsaAdvancedGroupBox->hide();
-    ui->meshesAdvancedGroupBox->hide();
-    ui->meshesVeryAdvancedGroupBox->hide();
-    ui->texturesAdvancedGroupBox->hide();
-    ui->animationsAdvancedGroupBox->hide();
+    _ui->bsaAdvancedGroupBox->hide();
+    _ui->meshesAdvancedGroupBox->hide();
+    _ui->meshesVeryAdvancedGroupBox->hide();
+    _ui->texturesAdvancedGroupBox->hide();
+    _ui->animationsAdvancedGroupBox->hide();
 }
 
-void MainWindow::showAdvancedSettings()
+void MainWindow::showAdvancedSettings() const
 {
-    ui->bsaAdvancedGroupBox->show();
-    ui->meshesAdvancedGroupBox->show();
-    ui->meshesVeryAdvancedGroupBox->show();
-    ui->texturesAdvancedGroupBox->show();
-    ui->animationsAdvancedGroupBox->show();
+    _ui->bsaAdvancedGroupBox->show();
+    _ui->meshesAdvancedGroupBox->show();
+    _ui->meshesVeryAdvancedGroupBox->show();
+    _ui->texturesAdvancedGroupBox->show();
+    _ui->animationsAdvancedGroupBox->show();
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete _ui;
 }

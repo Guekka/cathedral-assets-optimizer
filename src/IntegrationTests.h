@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Manager.h"
 #include "pch.h"
 
 class IntegrationTests
@@ -12,8 +11,8 @@ class IntegrationTests
 public:
     explicit IntegrationTests(const QString &path);
 
-    bool runAllTests();
+    bool runAllTests() const;
 
 private:
-    QDir m_dir;
+    QDir _dir;
 };

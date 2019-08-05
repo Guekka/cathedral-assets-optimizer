@@ -7,7 +7,7 @@
 
 TexturesOptimizer::TexturesOptimizer()
 {
-    PLOG_WARNING_IF(!createDevice(0, pDevice.GetAddressOf()))
+    PLOG_WARNING_IF(!createDevice(0, _pDevice.GetAddressOf()))
         << "DirectCompute is not available, using BC6H / BC7 CPU codec."
            " Textures compression will be slower";
 
@@ -18,7 +18,7 @@ TexturesOptimizer::TexturesOptimizer()
         throw std::runtime_error("Failed to initialize COM. Textures processing won't work.");
 }
 
-bool TexturesOptimizer::GetDXGIFactory(IDXGIFactory1 **pFactory)
+bool TexturesOptimizer::getDXGIFactory(IDXGIFactory1 **pFactory) const
 {
     if (!pFactory)
         return false;
@@ -27,24 +27,24 @@ bool TexturesOptimizer::GetDXGIFactory(IDXGIFactory1 **pFactory)
 
     typedef HRESULT(WINAPI * pfn_CreateDXGIFactory1)(REFIID riid, _Out_ void **ppFactory);
 
-    static pfn_CreateDXGIFactory1 s_CreateDXGIFactory1 = nullptr;
+    static pfn_CreateDXGIFactory1 sCreateDXGIFactory1 = nullptr;
 
-    if (!s_CreateDXGIFactory1)
+    if (!sCreateDXGIFactory1)
     {
-      const HMODULE hModDXGI = LoadLibraryW(L"dxgi.dll");
+        const HMODULE hModDXGI = LoadLibraryW(L"dxgi.dll");
         if (!hModDXGI)
             return false;
 
-        s_CreateDXGIFactory1 = reinterpret_cast<pfn_CreateDXGIFactory1>(
+        sCreateDXGIFactory1 = reinterpret_cast<pfn_CreateDXGIFactory1>(
             reinterpret_cast<void *>(GetProcAddress(hModDXGI, "CreateDXGIFactory1")));
-        if (!s_CreateDXGIFactory1)
+        if (!sCreateDXGIFactory1)
             return false;
     }
 
-    return SUCCEEDED(s_CreateDXGIFactory1(IID_PPV_ARGS(pFactory)));
+    return SUCCEEDED(sCreateDXGIFactory1(IID_PPV_ARGS(pFactory)));
 }
 
-bool TexturesOptimizer::createDevice(int adapter, ID3D11Device **pDevice)
+bool TexturesOptimizer::createDevice(const int adapter, ID3D11Device **pDevice) const
 {
     if (!pDevice)
         return false;
@@ -55,7 +55,7 @@ bool TexturesOptimizer::createDevice(int adapter, ID3D11Device **pDevice)
 
     if (!s_DynamicD3D11CreateDevice)
     {
-      const HMODULE hModD3D11 = LoadLibraryW(L"d3d11.dll");
+        const HMODULE hModD3D11 = LoadLibraryW(L"d3d11.dll");
         if (!hModD3D11)
             return false;
 
@@ -77,7 +77,7 @@ bool TexturesOptimizer::createDevice(int adapter, ID3D11Device **pDevice)
     if (adapter >= 0)
     {
         Microsoft::WRL::ComPtr<IDXGIFactory1> dxgiFactory;
-        if (GetDXGIFactory(dxgiFactory.GetAddressOf()))
+        if (getDXGIFactory(dxgiFactory.GetAddressOf()))
         {
             if (FAILED(dxgiFactory->EnumAdapters(static_cast<uint>(adapter), pAdapter.GetAddressOf())))
             {
@@ -126,27 +126,26 @@ bool TexturesOptimizer::createDevice(int adapter, ID3D11Device **pDevice)
 
         return SUCCEEDED(hr);
     }
-    else
-        return false;
+    return false;
 }
 
 bool TexturesOptimizer::optimize(const bool &bNecessary,
                                  const bool &bCompress,
                                  const bool &bMipmaps,
-                                 const std::optional<size_t> &twidth,
-                                 const std::optional<size_t> &theight)
+                                 const std::optional<size_t> &tWidth,
+                                 const std::optional<size_t> &tHeight)
 {
-  const size_t newWidth = twidth.has_value() ? twidth.value() : info.width;
-  const size_t newHeight = theight.has_value() ? theight.value() : info.height;
+    const size_t newWidth = tWidth.has_value() ? tWidth.value() : _info.width;
+    const size_t newHeight = tHeight.has_value() ? tHeight.value() : _info.height;
 
-    const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != info.height || newWidth != info.width);
+    const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != _info.height || newWidth != _info.width);
 
-    const bool needsConversion = (bNecessary && (isIncompatible() || _type == tga))
-                                 || (bCompress && canBeCompressed() && info.format != Games::texturesFormat());
+    const bool needsConversion = (bNecessary && (isIncompatible() || _type == TGA))
+                                 || (bCompress && canBeCompressed() && _info.format != Games::texturesFormat());
 
-    const bool needsMipMaps = bMipmaps && info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
+    const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
-    PLOG_INFO << tr("Optimizing texture: ") << name;
+    PLOG_INFO << tr("Optimizing texture: ") << _name;
 
     if (!needsConversion && !needsMipMaps && !needsResize)
     {
@@ -183,27 +182,27 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
             return false;
     }
 
-    PLOG_INFO << tr("Successfully processed texture: ") + name;
+    PLOG_INFO << tr("Successfully processed texture: ") + _name;
     return true;
 }
 
 void TexturesOptimizer::dryOptimize(const bool &bNecessary,
                                     const bool &bCompress,
                                     const bool &bMipmaps,
-                                    const std::optional<size_t> &twidth,
-                                    const std::optional<size_t> &theight)
+                                    const std::optional<size_t> &tWidth,
+                                    const std::optional<size_t> &tHeight)
 {
-  const size_t newWidth = twidth.has_value() ? twidth.value() : info.width;
-  const size_t newHeight = theight.has_value() ? theight.value() : info.height;
+    const size_t newWidth = tWidth.has_value() ? tWidth.value() : _info.width;
+    const size_t newHeight = tHeight.has_value() ? tHeight.value() : _info.height;
 
-    const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != info.height || newWidth != info.width);
+    const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != _info.height || newWidth != _info.width);
 
-    const bool needsConversion = (bNecessary && (isIncompatible() || _type == tga))
-                                 || (bCompress && canBeCompressed() && info.format != Games::texturesFormat());
+    const bool needsConversion = (bNecessary && (isIncompatible() || _type == TGA))
+                                 || (bCompress && canBeCompressed() && _info.format != Games::texturesFormat());
 
-    const bool needsMipMaps = bMipmaps && info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
+    const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
-    PLOG_INFO << tr("Analyzing texture: ") << name;
+    PLOG_INFO << tr("Analyzing texture: ") << _name;
 
     if (!needsConversion && !needsMipMaps && !needsResize)
     {
@@ -224,17 +223,15 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
     //Converting or compressing to the new format
     if (needsConversion)
     {
-        PLOG_VERBOSE << tr("This texture would be converted to format: ") << dxgiFormatToString(Games::texturesFormat());
+        PLOG_VERBOSE << tr("This texture would be converted to format: ")
+                     << dxgiFormatToString(Games::texturesFormat());
     }
 }
 
-bool TexturesOptimizer::canBeCompressed()
+bool TexturesOptimizer::canBeCompressed() const
 {
-    if ((name.contains("interface", Qt::CaseInsensitive) && !Games::texturesCompressInterface())
-        || DirectX::IsCompressed(info.format))
-        return false;
-
-    return true;
+    return !((_name.contains("interface", Qt::CaseInsensitive) && !Games::texturesCompressInterface())
+             || DirectX::IsCompressed(_info.format));
 }
 
 bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
@@ -245,34 +242,34 @@ bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
     QDir::toNativeSeparators(filePath).toWCharArray(fileName);
     fileName[filePath.length()] = '\0';
 
-    image.reset(new (std::nothrow) DirectX::ScratchImage);
-    if (!image)
+    _image.reset(new (std::nothrow) DirectX::ScratchImage);
+    if (!_image)
         return false;
 
-    HRESULT hr;
+    HRESULT hr = S_FALSE;
     switch (type)
     {
-    case tga: hr = LoadFromTGAFile(fileName, &info, *image); break;
-    case dds:
-      const DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
-        hr = LoadFromDDSFile(fileName, ddsFlags, &info, *image);
+    case TGA: hr = LoadFromTGAFile(fileName, &_info, *_image); break;
+    case DDS:
+        const DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
+        hr = LoadFromDDSFile(fileName, ddsFlags, &_info, *_image);
         if (FAILED(hr))
             return false;
 
-        if (DirectX::IsTypeless(info.format))
+        if (DirectX::IsTypeless(_info.format))
         {
-            info.format = DirectX::MakeTypelessUNORM(info.format);
+            _info.format = DirectX::MakeTypelessUNORM(_info.format);
 
-            if (DirectX::IsTypeless(info.format))
+            if (DirectX::IsTypeless(_info.format))
                 return false;
 
-            image->OverrideFormat(info.format);
+            _image->OverrideFormat(_info.format);
         }
     }
     if (SUCCEEDED(hr))
     {
         _type = type;
-        name = filePath;
+        _name = filePath;
         return true;
     }
     return false;
@@ -281,29 +278,29 @@ bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
 bool TexturesOptimizer::open(const void *pSource, const size_t &size, const TextureType &type, const QString &fileName)
 {
     PLOG_VERBOSE << "Opening " << fileName << " from memory with textures type " << type;
-    name = fileName;
+    _name = fileName;
 
-    image.reset(new (std::nothrow) DirectX::ScratchImage);
-    if (!image)
+    _image.reset(new (std::nothrow) DirectX::ScratchImage);
+    if (!_image)
         return false;
 
     switch (type)
     {
-    case tga: return LoadFromTGAMemory(pSource, size, &info, *image);
-    case dds:
-      const DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
-      const HRESULT hr = LoadFromDDSMemory(pSource, size, ddsFlags, &info, *image);
+    case TGA: return LoadFromTGAMemory(pSource, size, &_info, *_image);
+    case DDS:
+        const DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
+        const HRESULT hr = LoadFromDDSMemory(pSource, size, ddsFlags, &_info, *_image);
         if (FAILED(hr))
             return false;
 
-        if (DirectX::IsTypeless(info.format))
+        if (DirectX::IsTypeless(_info.format))
         {
-            info.format = DirectX::MakeTypelessUNORM(info.format);
+            _info.format = DirectX::MakeTypelessUNORM(_info.format);
 
-            if (DirectX::IsTypeless(info.format))
-                return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+            if (DirectX::IsTypeless(_info.format))
+                return false;
 
-            image->OverrideFormat(info.format);
+            _image->OverrideFormat(_info.format);
         }
         return true;
     }
@@ -312,12 +309,12 @@ bool TexturesOptimizer::open(const void *pSource, const size_t &size, const Text
 
 bool TexturesOptimizer::decompress()
 {
-    if (!DirectX::IsCompressed(info.format))
+    if (!DirectX::IsCompressed(_info.format))
         return false;
 
-    const auto img = image->GetImage(0, 0, 0);
+    const auto img = _image->GetImage(0, 0, 0);
     assert(img);
-    const size_t nimg = image->GetImageCount();
+    const size_t nimg = _image->GetImageCount();
 
     std::unique_ptr<DirectX::ScratchImage> timage(new (std::nothrow) DirectX::ScratchImage);
     if (!timage)
@@ -326,26 +323,26 @@ bool TexturesOptimizer::decompress()
         return false;
     }
 
-    const HRESULT hr = Decompress(img, nimg, info, DXGI_FORMAT_UNKNOWN /* picks good default */, *timage);
+    const HRESULT hr = Decompress(img, nimg, _info, DXGI_FORMAT_UNKNOWN /* picks good default */, *timage);
     if (FAILED(hr))
     {
-        PLOG_ERROR << "Failed to decompress: " << name;
+        PLOG_ERROR << "Failed to decompress: " << _name;
         return false;
     }
 
     const auto &tinfo = timage->GetMetadata();
-    info.format = tinfo.format;
+    _info.format = tinfo.format;
 
-    if (!compareInfo(info, tinfo))
+    if (!compareInfo(_info, tinfo))
         return false;
 
-    image.swap(timage);
+    _image.swap(timage);
     return true;
 }
 
 bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
 {
-    if (info.width <= targetWidth && info.height <= targetHeight)
+    if (_info.width <= targetWidth && _info.height <= targetHeight)
         return true;
 
     fitPowerOfTwo(targetWidth, targetHeight);
@@ -357,29 +354,29 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
         return false;
     }
 
-    const auto imgs = image->GetImages();
+    const auto imgs = _image->GetImages();
     if (!imgs)
         return false;
 
     const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
-    const HRESULT hr = Resize(imgs, image->GetImageCount(), info, targetWidth, targetHeight, filter, *timage);
+    const HRESULT hr = Resize(imgs, _image->GetImageCount(), _info, targetWidth, targetHeight, filter, *timage);
     if (FAILED(hr))
     {
-        PLOG_ERROR << "Failed to resize: " + name;
+        PLOG_ERROR << "Failed to resize: " + _name;
         return false;
     }
 
     auto &tinfo = timage->GetMetadata();
 
     assert(tinfo.width == targetWidth && tinfo.height == targetHeight && tinfo.mipLevels == 1);
-    info.width = tinfo.width;
-    info.height = tinfo.height;
-    info.mipLevels = 1;
+    _info.width = tinfo.width;
+    _info.height = tinfo.height;
+    _info.mipLevels = 1;
 
-    if (!compareInfo(info, tinfo))
+    if (!compareInfo(_info, tinfo))
         return false;
 
-    image.swap(timage);
+    _image.swap(timage);
     return true;
 }
 
@@ -390,9 +387,9 @@ bool TexturesOptimizer::canHaveMipMaps()
 
 bool TexturesOptimizer::generateMipMaps()
 {
-  const size_t tMips = calculateOptimalMipMapsNumber();
+    const size_t tMips = calculateOptimalMipMapsNumber();
 
-    if (info.mipLevels != 1 && info.mipLevels != tMips)
+    if (_info.mipLevels != 1 && _info.mipLevels != tMips)
     {
         // Mips generation only works on a single base image, so strip off existing mip levels
         // Also required for preserve alpha coverage so that existing mips are regenerated
@@ -403,21 +400,21 @@ bool TexturesOptimizer::generateMipMaps()
             return false;
         }
 
-        DirectX::TexMetadata mdata = info;
+        DirectX::TexMetadata mdata = _info;
         mdata.mipLevels = 1;
         HRESULT hr = timage->Initialize(mdata);
         if (FAILED(hr))
         {
             PLOG_ERROR << "Failed to copy texture data to single level (when generating mipmaps) when processing: "
-                       << name;
+                       << _name;
             return false;
         }
 
-        for (size_t i = 0; i < info.arraySize; ++i)
+        for (size_t i = 0; i < _info.arraySize; ++i)
         {
             const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
-            hr = CopyRectangle(*image->GetImage(0, i, 0),
-                               DirectX::Rect(0, 0, info.width, info.height),
+            hr = CopyRectangle(*_image->GetImage(0, i, 0),
+                               DirectX::Rect(0, 0, _info.width, _info.height),
                                *timage->GetImage(0, i, 0),
                                filter,
                                0,
@@ -425,16 +422,16 @@ bool TexturesOptimizer::generateMipMaps()
             if (FAILED(hr))
             {
                 PLOG_ERROR << "Failed to copy texture data to single level (when generating mipmaps) when processing: "
-                           << name;
+                           << _name;
                 return false;
             }
         }
 
-        image.swap(timage);
-        info.mipLevels = image->GetMetadata().mipLevels;
+        _image.swap(timage);
+        _info.mipLevels = _image->GetMetadata().mipLevels;
     }
 
-    if ((info.width > 1 || info.height > 1 || info.depth > 1))
+    if ((_info.width > 1 || _info.height > 1 || _info.depth > 1))
     {
         std::unique_ptr<DirectX::ScratchImage> timage(new (std::nothrow) DirectX::ScratchImage);
         if (!timage)
@@ -445,29 +442,33 @@ bool TexturesOptimizer::generateMipMaps()
 
         //Forcing non wic since WIC won't work on my computer, and thus probably on other computers
         const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
-        const HRESULT hr
-            = GenerateMipMaps(image->GetImages(), image->GetImageCount(), image->GetMetadata(), filter, tMips, *timage);
+        const HRESULT hr = GenerateMipMaps(_image->GetImages(),
+                                           _image->GetImageCount(),
+                                           _image->GetMetadata(),
+                                           filter,
+                                           tMips,
+                                           *timage);
         if (FAILED(hr))
         {
-            PLOG_ERROR << "Failed to generate mipmaps when processing: " << name;
+            PLOG_ERROR << "Failed to generate mipmaps when processing: " << _name;
             return false;
         }
 
         const auto &tinfo = timage->GetMetadata();
-        info.mipLevels = tinfo.mipLevels;
+        _info.mipLevels = tinfo.mipLevels;
 
-        if (!compareInfo(info, tinfo))
+        if (!compareInfo(_info, tinfo))
             return false;
 
-        image.swap(timage);
+        _image.swap(timage);
     }
     return true;
 }
 
-size_t TexturesOptimizer::calculateOptimalMipMapsNumber()
+size_t TexturesOptimizer::calculateOptimalMipMapsNumber() const
 {
-    size_t height = info.height;
-    size_t width = info.width;
+    size_t height = _info.height;
+    size_t width = _info.width;
     size_t tMips = 1;
     //Calculating mips levels
     while (height > 1 || width > 1)
@@ -483,27 +484,26 @@ size_t TexturesOptimizer::calculateOptimalMipMapsNumber()
     return tMips;
 }
 
-bool TexturesOptimizer::isCompressed()
+bool TexturesOptimizer::isCompressed() const
 {
-    return DirectX::IsCompressed(info.format);
+    return DirectX::IsCompressed(_info.format);
 }
 
-DirectX::TexMetadata TexturesOptimizer::getInfo()
+DirectX::TexMetadata TexturesOptimizer::getInfo() const
 {
-    return info;
+    return _info;
 }
 
 bool TexturesOptimizer::convert(const DXGI_FORMAT &format)
 {
     if (DirectX::IsCompressed(format))
         return convertWithCompression(format);
-    else
-        return convertWithoutCompression(format);
+    return convertWithoutCompression(format);
 }
 
 bool TexturesOptimizer::convertWithoutCompression(const DXGI_FORMAT &format)
 {
-    if (info.format != format)
+    if (_info.format != format)
     {
         std::unique_ptr<DirectX::ScratchImage> timage(new (std::nothrow) DirectX::ScratchImage);
         if (!timage)
@@ -512,46 +512,46 @@ bool TexturesOptimizer::convertWithoutCompression(const DXGI_FORMAT &format)
             return false;
         }
 
-        const HRESULT hr = Convert(image->GetImages(),
-                                   image->GetImageCount(),
-                                   image->GetMetadata(),
+        const HRESULT hr = Convert(_image->GetImages(),
+                                   _image->GetImageCount(),
+                                   _image->GetMetadata(),
                                    format,
                                    0,
                                    DirectX::TEX_THRESHOLD_DEFAULT,
                                    *timage);
         if (FAILED(hr))
         {
-            PLOG_ERROR << "Failed to convert: " + name;
+            PLOG_ERROR << "Failed to convert: " + _name;
             return false;
         }
 
         const auto &tinfo = timage->GetMetadata();
         if (tinfo.format != format)
             return false;
-        info.format = tinfo.format;
+        _info.format = tinfo.format;
 
-        if (!compareInfo(info, tinfo))
+        if (!compareInfo(_info, tinfo))
             return false;
 
-        image.swap(timage);
+        _image.swap(timage);
     }
     return true;
 }
 
 bool TexturesOptimizer::convertWithCompression(const DXGI_FORMAT &format)
 {
-    if (isCompressed() || image->GetMetadata().format == format)
+    if (isCompressed() || _image->GetMetadata().format == format)
         return true;
 
-    const auto img = image->GetImage(0, 0, 0);
+    const auto img = _image->GetImage(0, 0, 0);
     if (!img)
         return false;
-    const size_t nimg = image->GetImageCount();
+    const size_t nimg = _image->GetImageCount();
 
     std::unique_ptr<DirectX::ScratchImage> timage(new (std::nothrow) DirectX::ScratchImage);
     if (!timage)
     {
-        PLOG_ERROR << tr("Memory allocation failed when compressing: ") + name;
+        PLOG_ERROR << tr("Memory allocation failed when compressing: ") + _name;
         return false;
     }
 
@@ -564,54 +564,54 @@ bool TexturesOptimizer::convertWithCompression(const DXGI_FORMAT &format)
     }
 
     HRESULT hr;
-    if (bc6hbc7 && pDevice)
-        hr = Compress(pDevice.Get(),
+    if (bc6hbc7 && _pDevice)
+        hr = Compress(_pDevice.Get(),
                       img,
                       nimg,
-                      info,
+                      _info,
                       format,
                       DirectX::TEX_COMPRESS_FLAGS::TEX_COMPRESS_BC7_USE_3SUBSETS,
                       1.f,
                       *timage);
     else
-        hr = Compress(img, nimg, info, format, DirectX::TEX_COMPRESS_DEFAULT, DirectX::TEX_THRESHOLD_DEFAULT, *timage);
+        hr = Compress(img, nimg, _info, format, DirectX::TEX_COMPRESS_DEFAULT, DirectX::TEX_THRESHOLD_DEFAULT, *timage);
 
     if (FAILED(hr))
     {
-        PLOG_ERROR << "Failed to compress: " + name;
+        PLOG_ERROR << "Failed to compress: " + _name;
         return false;
     }
 
     const auto &tinfo = timage->GetMetadata();
-    info.format = tinfo.format;
+    _info.format = tinfo.format;
 
-    if (!compareInfo(info, tinfo))
+    if (!compareInfo(_info, tinfo))
         return false;
 
-    image.swap(timage);
+    _image.swap(timage);
     return true;
 }
 
-bool TexturesOptimizer::saveToFile(const QString &filePath)
+bool TexturesOptimizer::saveToFile(const QString &filePath) const
 {
-  const auto img = image->GetImage(0, 0, 0);
+    const auto img = _image->GetImage(0, 0, 0);
     if (!img)
         return false;
-  const size_t nimg = image->GetImageCount();
+    const size_t nimg = _image->GetImageCount();
 
     // Write texture
     wchar_t wFilePath[1024];
     QDir::toNativeSeparators(filePath).toWCharArray(wFilePath);
     wFilePath[filePath.length()] = '\0';
 
-    const HRESULT hr = SaveToDDSFile(img, nimg, info, DirectX::DDS_FLAGS_NONE, wFilePath);
+    const HRESULT hr = SaveToDDSFile(img, nimg, _info, DirectX::DDS_FLAGS_NONE, wFilePath);
     return SUCCEEDED(hr);
 }
 
-bool TexturesOptimizer::isIncompatible()
+bool TexturesOptimizer::isIncompatible() const
 {
     //Checking incompatibility with file format
-    const DXGI_FORMAT fileFormat = info.format;
+    const DXGI_FORMAT fileFormat = _info.format;
     for (const auto &f : Games::texturesUnwantedFormats())
         if (f == fileFormat)
             return true;
@@ -632,10 +632,10 @@ void TexturesOptimizer::fitPowerOfTwo(uint &resultX, uint &resultY)
     resultY = y;
 }
 
-bool TexturesOptimizer::isPowerOfTwo()
+bool TexturesOptimizer::isPowerOfTwo() const
 {
-    return ((info.width != 0) && !(info.width & (info.width - 1)))
-           && ((info.height != 0) && !(info.height & (info.height - 1)));
+    return ((_info.width != 0) && !(_info.width & (_info.width - 1)))
+           && ((_info.height != 0) && !(_info.height & (_info.height - 1)));
 }
 
 bool TexturesOptimizer::compareInfo(const DirectX::TexMetadata &info1, const DirectX::TexMetadata &info2)

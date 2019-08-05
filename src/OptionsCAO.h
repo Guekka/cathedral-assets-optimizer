@@ -17,7 +17,7 @@ namespace plog
     }
 }*/
 
-class OptionsCAO : public QObject
+class OptionsCAO final : public QObject
 {
     //TODO separate mipmaps generation and texture compression
 public:
@@ -26,7 +26,7 @@ public:
 
     void parseArguments(const QStringList &args);
 
-    void saveToIni(QSettings *settings);
+    void saveToIni(QSettings *settings) const;
     void readFromIni(QSettings *settings);
 #ifdef GUI
     void saveToUi(Ui::MainWindow *ui);
@@ -34,9 +34,9 @@ public:
 #endif
 
     /*!
-     * \brief Checks if the current settings are allowed
-     */
-    QString isValid();
+   * \brief Checks if the current settings are allowed
+   */
+    QString isValid() const;
 
     /*--------------VARS-------------------*/
     bool bBsaExtract = false;
@@ -65,19 +65,21 @@ public:
     uint iTexturesTargetHeightRatio = 1;
 
     bool bDebugLog = false;
+
     /*!
-     * \brief The optimization mode
-     */
+   * \brief The optimization mode
+   */
     enum OptimizationMode
     {
-        singleMod = 0,
-        severalMods = 1
+        SingleMod = 0,
+        SeveralMods = 1
     } mode;
+
     Q_ENUM(OptimizationMode)
 
     /*!
-      * \brief The path given by the user
-      */
+    * \brief The path given by the user
+    */
     QString userPath;
     /*-----------END OF VARS---------------*/
 };

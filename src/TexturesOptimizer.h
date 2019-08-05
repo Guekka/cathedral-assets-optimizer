@@ -7,84 +7,85 @@
 #include "Games.h"
 #include "pch.h"
 
-class TexturesOptimizer : public QObject
+class TexturesOptimizer final : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(TexturesOptimizer)
 
 public:
     TexturesOptimizer();
+
     enum TextureType
     {
-        dds,
-        tga
+        DDS,
+        TGA
     };
+
     bool open(const void *pSource, const size_t &size, const TextureType &type, const QString &fileName);
     bool open(const QString &filePath, const TextureType &type);
 
-    bool saveToFile(const QString &filePath);
+    bool saveToFile(const QString &filePath) const;
     /*!
-     * \brief Decompress the current texture. It is required to use several functions.
-     * \return False if an error happens
-     */
+   * \brief Decompress the current texture. It is required to use several functions.
+   * \return False if an error happens
+   */
     bool decompress();
     /*!
-     * \brief Convenience function, that will use appropriately convertWithCompression or convertWithoutCompression
-     * \param format The format to use
-     * \return False in case of error
-     */
+   * \brief Convenience function, that will use appropriately convertWithCompression or convertWithoutCompression
+   * \param format The format to use
+   * \return False in case of error
+   */
     bool convert(const DXGI_FORMAT &format);
     /*!
-     * \brief Compress the file using the provided compression format,
-     * \param format The format to use
-     */
+   * \brief Compress the file using the provided compression format,
+   * \param format The format to use
+   */
     bool convertWithCompression(const DXGI_FORMAT &format);
     bool convertWithoutCompression(const DXGI_FORMAT &format);
     /*!
-     * \brief Check if a texture is compressed
-     * \return True if the file is compressed
-     */
-    bool isCompressed();
-    bool canBeCompressed();
+   * \brief Check if a texture is compressed
+   * \return True if the file is compressed
+   */
+    bool isCompressed() const;
+    [[nodiscard]] bool canBeCompressed() const;
     /*!
-     * \brief Perform various optimizations on the current texture
-     * \param optLevel The optimization level
-     * \return False if an error happens
-     */
+   * \brief Perform various optimizations on the current texture
+   * \return False if an error happens
+   */
     bool optimize(const bool &bNecessary,
                   const bool &bCompress,
                   const bool &bMipmaps,
-                  const std::optional<size_t> &twidth,
-                  const std::optional<size_t> &theight);
+                  const std::optional<size_t> &tWidth,
+                  const std::optional<size_t> &tHeight);
 
     void dryOptimize(const bool &bNecessary,
                      const bool &bCompress,
                      const bool &bMipmaps,
-                     const std::optional<size_t> &twidth,
-                     const std::optional<size_t> &theight);
+                     const std::optional<size_t> &tWidth,
+                     const std::optional<size_t> &tHeight);
 
     bool resize(size_t targetWidth, size_t targetHeight);
 
     static void fitPowerOfTwo(uint &resultX, uint &resultY);
-    bool isPowerOfTwo();
+    bool isPowerOfTwo() const;
 
     bool generateMipMaps();
     bool canHaveMipMaps();
-    size_t calculateOptimalMipMapsNumber();
+    size_t calculateOptimalMipMapsNumber() const;
 
-    DirectX::TexMetadata getInfo();
+    DirectX::TexMetadata getInfo() const;
 
-    bool isIncompatible();
+    bool isIncompatible() const;
 
     static bool compareInfo(const DirectX::TexMetadata &info1, const DirectX::TexMetadata &info2);
 
 private:
-    std::unique_ptr<DirectX::ScratchImage> image{};
-    DirectX::TexMetadata info{};
-    QString name;
+    std::unique_ptr<DirectX::ScratchImage> _image{};
+    DirectX::TexMetadata _info{};
+    QString _name;
     TextureType _type;
 
-    Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
+    Microsoft::WRL::ComPtr<ID3D11Device> _pDevice;
 
-    bool createDevice(int adapter, ID3D11Device **pDevice);
-    bool GetDXGIFactory(IDXGIFactory1 **pFactory);
+    bool createDevice(int adapter, ID3D11Device **pDevice) const;
+    bool getDXGIFactory(IDXGIFactory1 **pFactory) const;
 };

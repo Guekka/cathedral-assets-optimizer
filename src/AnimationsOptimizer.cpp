@@ -9,9 +9,9 @@ AnimationsOptimizer::AnimationsOptimizer()
     try
     {
         // Need to have memory allocated for the solver. Allocate 1mb for it.
-        memoryRouter = hkMemoryInitUtil::initDefault(hkMallocAllocator::m_defaultMallocAllocator,
-                                                     hkMemorySystem::FrameInfo(1024 * 1024));
-        hkBaseSystem::init(memoryRouter, errorReport);
+        _memoryRouter = hkMemoryInitUtil::initDefault(hkMallocAllocator::m_defaultMallocAllocator,
+                                                      hkMemorySystem::FrameInfo(1024 * 1024));
+        hkBaseSystem::init(_memoryRouter, errorReport);
     }
     catch (const std::exception &e)
     {
@@ -26,12 +26,11 @@ AnimationsOptimizer::~AnimationsOptimizer()
     hkMemoryInitUtil::quit();
 }
 
-void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &pkFormat)
+void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &pkFormat) const
 {
     try
     {
-        hkSerializeUtil::SaveOptionBits flags = static_cast<hkSerializeUtil::SaveOptionBits>(
-            hkSerializeUtil::SAVE_DEFAULT);
+        auto flags = static_cast<hkSerializeUtil::SaveOptionBits>(hkSerializeUtil::SAVE_DEFAULT);
 
         if (pkFormat == HKPF_DEFAULT)
             flags = static_cast<hkSerializeUtil::SaveOptionBits>(hkSerializeUtil::SAVE_TEXT_FORMAT
@@ -40,9 +39,8 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
             flags = static_cast<hkSerializeUtil::SaveOptionBits>(flags | hkSerializeUtil::SAVE_TEXT_FORMAT);
         const hkPackfileWriter::Options packFileOptions = GetWriteOptionsFromFormat(pkFormat);
 
-        hkVariant root;
+        hkVariant root{};
         hkResource *resource;
-        hkResult res;
 
         hkIstream istream(qPrintable(filePath));
         if (!istream.isOk())
@@ -50,7 +48,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
 
         hkStreamReader *reader = istream.getStreamReader();
 
-        res = hkSerializeLoad(reader, root, resource);
+        hkResult res = hkSerializeLoad(reader, root, resource);
 
         if (res != HK_SUCCESS)
             PLOG_WARNING << tr("File is not loadable: ") + filePath + '\n' + tr("It is probably already converted.");

@@ -4,16 +4,17 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #pragma once
-#include "pch.h"
+#include "dxgiformat.h"
 
 //Used to convert enum to string and vice versa
 
-namespace detail
+namespace Detail
 {
 #define DEFFMT(fmt) \
     { \
 #fmt, DXGI_FORMAT_##fmt \
     }
+
 struct SValue
 {
     std::string name;
@@ -105,11 +106,11 @@ const SValue DxgiFormats[] = {
     DEFFMT(B4G4R4A4_UNORM),
 };
 #undef DEFMTT //cleanup
-} // namespace detail
+} // namespace Detail
 
 inline DXGI_FORMAT stringToDxgiFormat(const std::string &string)
 {
-    for (const auto &format : detail::DxgiFormats)
+    for (const auto &format : Detail::DxgiFormats)
     {
         if (format.name == string)
             return format.format;
@@ -119,7 +120,7 @@ inline DXGI_FORMAT stringToDxgiFormat(const std::string &string)
 
 inline std::string dxgiFormatToString(const DXGI_FORMAT &format)
 {
-    for (const auto &dxFormat : detail::DxgiFormats)
+    for (const auto &dxFormat : Detail::DxgiFormats)
     {
         if (dxFormat.format == format)
             return dxFormat.name;

@@ -12,7 +12,7 @@
 constexpr double GigaByte = 1024 * 1024 * 1024;
 #define CAO_SET_CURRENT_GAME(game) Games::getInstance()->setGame(game);
 
-class Games : public QObject
+class Games final : public QObject
 {
 public:
     enum GameMode
@@ -23,6 +23,7 @@ public:
         FO4,
         Custom
     };
+
     Q_ENUM(GameMode)
     //Declaring enums to Qt system
     Q_ENUM(bsa_archive_type_e)
@@ -30,68 +31,67 @@ public:
     Q_ENUM(DXGI_FORMAT)
 
     //static getters
-    static inline bsa_archive_type_t bsaFormat() { return Games::getInstance()->GetBsaFormat(); }
-    static inline bsa_archive_type_t bsaTexturesFormat() { return Games::getInstance()->getBsaTexturesFormat(); }
-    static inline double maxBsaUncompressedSize() { return Games::getInstance()->getBsaUncompressedMaxSize(); }
-    static inline bool hasBsaTextures() { return Games::getInstance()->getHasBsaTextures(); }
-    static inline double maxBsaTexturesSize() { return Games::getInstance()->getBsaTexturesMaxSize(); }
-    static inline QString bsaExtension() { return Games::getInstance()->getBsaExtension(); }
-    static inline QString bsaSuffix() { return Games::getInstance()->getBsaSuffix(); }
-    static inline QString bsaTexturesSuffix() { return Games::getInstance()->getBsaTexturesSuffix(); }
+    static bsa_archive_type_t bsaFormat() { return getInstance()->getBsaFormat(); }
+    static bsa_archive_type_t bsaTexturesFormat() { return getInstance()->getBsaTexturesFormat(); }
+    static double maxBsaUncompressedSize() { return getInstance()->getBsaUncompressedMaxSize(); }
+    static bool hasBsaTextures() { return getInstance()->getHasBsaTextures(); }
+    static double maxBsaTexturesSize() { return getInstance()->getBsaTexturesMaxSize(); }
+    static QString bsaExtension() { return getInstance()->getBsaExtension(); }
+    static QString bsaSuffix() { return getInstance()->getBsaSuffix(); }
+    static QString bsaTexturesSuffix() { return getInstance()->getBsaTexturesSuffix(); }
 
-    static inline NiFileVersion meshesFileVersion() { return Games::getInstance()->getMeshesFileVersion(); }
-    static inline uint meshesStream() { return Games::getInstance()->getMeshesStream(); }
-    static inline uint meshesUser() { return Games::getInstance()->getMeshesUser(); }
+    static NiFileVersion meshesFileVersion() { return getInstance()->getMeshesFileVersion(); }
+    static uint meshesStream() { return getInstance()->getMeshesStream(); }
+    static uint meshesUser() { return getInstance()->getMeshesUser(); }
 
-    static inline hkPackFormat animationFormat() { return Games::getInstance()->getAnimationsFormat(); }
+    static hkPackFormat animationFormat() { return getInstance()->getAnimationsFormat(); }
 
-    static inline DXGI_FORMAT texturesFormat() { return Games::getInstance()->getTexturesFormat(); }
-    static inline bool texturesConvertTga() { return Games::getInstance()->getTexturesConvertTga(); }
-    static inline QList<DXGI_FORMAT> texturesUnwantedFormats()
-    {
-        return Games::getInstance()->getTexturesUnwantedFormats();
-    }
-    static inline bool texturesCompressInterface() { return Games::getInstance()->getTexturesCompressInterface(); }
+    static DXGI_FORMAT texturesFormat() { return getInstance()->getTexturesFormat(); }
+    static bool texturesConvertTga() { return getInstance()->getTexturesConvertTga(); }
 
-    static inline QString iniPath() { return Games::getInstance()->getIniPath(); }
-    static inline QString logPath() { return Games::getInstance()->getLogPath(); }
-    static inline QString resourcePath() { return Games::getInstance()->getResourcePath(); }
+    static QList<DXGI_FORMAT> texturesUnwantedFormats() { return getInstance()->getTexturesUnwantedFormats(); }
+
+    static bool texturesCompressInterface() { return getInstance()->getTexturesCompressInterface(); }
+
+    static QString iniPath() { return getInstance()->getIniPath(); }
+    static QString logPath() { return getInstance()->getLogPath(); }
+    static QString resourcePath() { return getInstance()->getResourcePath(); }
 
     static Games *getInstance();
-    static inline Games::GameMode game() { return Games::getInstance()->getGame(); }
+    static GameMode game() { return getInstance()->getGame(); }
 
     //instance getters
-    bsa_archive_type_e GetBsaFormat() const;
-    bsa_archive_type_t getBsaTexturesFormat() const;
-    double getBsaUncompressedMaxSize() const;
-    double getBsaTexturesMaxSize() const;
-    QString getBsaExtension() const;
-    bool getHasBsaTextures() const;
-    QString getBsaSuffix() const;
-    QString getBsaTexturesSuffix() const;
+    [[nodiscard]] bsa_archive_type_e getBsaFormat() const;
+    [[nodiscard]] bsa_archive_type_t getBsaTexturesFormat() const;
+    [[nodiscard]] double getBsaUncompressedMaxSize() const;
+    [[nodiscard]] double getBsaTexturesMaxSize() const;
+    [[nodiscard]] QString getBsaExtension() const;
+    [[nodiscard]] bool getHasBsaTextures() const;
+    [[nodiscard]] QString getBsaSuffix() const;
+    [[nodiscard]] QString getBsaTexturesSuffix() const;
 
-    NiFileVersion getMeshesFileVersion() const;
-    uint getMeshesStream() const;
-    uint getMeshesUser() const;
+    [[nodiscard]] NiFileVersion getMeshesFileVersion() const;
+    [[nodiscard]] uint getMeshesStream() const;
+    [[nodiscard]] uint getMeshesUser() const;
 
-    hkPackFormat getAnimationsFormat() const;
+    [[nodiscard]] hkPackFormat getAnimationsFormat() const;
 
-    DXGI_FORMAT getTexturesFormat() const;
-    bool getTexturesConvertTga() const;
-    QList<DXGI_FORMAT> getTexturesUnwantedFormats() const;
-    bool getTexturesCompressInterface() const;
+    [[nodiscard]] DXGI_FORMAT getTexturesFormat() const;
+    [[nodiscard]] bool getTexturesConvertTga() const;
+    [[nodiscard]] QList<DXGI_FORMAT> getTexturesUnwantedFormats() const;
+    [[nodiscard]] bool getTexturesCompressInterface() const;
 
-    QString getIniPath() const;
-    QString getLogPath() const;
-    QString getResourcePath() const;
+    [[nodiscard]] QString getIniPath() const;
+    [[nodiscard]] QString getLogPath() const;
+    [[nodiscard]] QString getResourcePath() const;
 
     void setGame(const GameMode &newGame);
     void setGame(const QString &gameString);
-    GameMode getGame() const;
+    [[nodiscard]] GameMode getGame() const;
 
     static GameMode stringToGame(const QString &string);
 
-    void saveToIni(QSettings *settings);
+    void saveToIni(QSettings *settings) const;
     void readFromIni(QSettings *settings);
 
 #ifdef GUI

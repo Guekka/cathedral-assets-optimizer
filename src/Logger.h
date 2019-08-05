@@ -20,6 +20,7 @@ public:
         //For spacing
         return util::nstring(L"<style>html{line-height:1.5rem}pre{line-height:1rem}</style>");
     }
+
     static util::nstring format(const Record &record)
     {
         util::nostringstream ss;
@@ -66,6 +67,7 @@ public:
         //For spacing
         return util::nstring(L"<style>html{line-height:1.5rem}pre{line-height:1rem}</style>");
     }
+
     static util::nstring format(const Record &record)
     {
         util::nostringstream ss;

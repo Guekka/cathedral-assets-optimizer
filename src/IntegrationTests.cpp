@@ -4,17 +4,18 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "IntegrationTests.h"
+#include "FilesystemOperations.h"
 
 IntegrationTests::IntegrationTests(const QString &path)
-    : m_dir(QDir(path)){};
+    : _dir(QDir(path)){};
 
 //TODO fix this class (broken with refactoring and ini changes)
 
-bool IntegrationTests::runAllTests()
+bool IntegrationTests::runAllTests() const
 {
-    qDebug() << "tests folder: " << m_dir.path();
+    qDebug() << "tests folder: " << _dir.path();
 
-    const QStringList dirs = m_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    const QStringList dirs = _dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
     const QStringList ignoredTests;
 
     QVector<bool> results;
@@ -25,13 +26,13 @@ bool IntegrationTests::runAllTests()
         {
             //Assigning folders
 
-            const QString input = m_dir.filePath(dir + "/INPUT");
-            const QString output = m_dir.filePath(dir + "/OUTPUT");
-            const QString expected = m_dir.filePath(dir + "/EXPECTED");
+            const QString input = _dir.filePath(dir + "/INPUT");
+            const QString output = _dir.filePath(dir + "/OUTPUT");
+            const QString expected = _dir.filePath(dir + "/EXPECTED");
 
             //Replacing ini file with predefined config
 
-            QString config = m_dir.filePath(dir + "/config.ini");
+            QString config = _dir.filePath(dir + "/config.ini");
             QString CathedralIni = QDir::currentPath() + "/Cathedral Assets Optimizer.ini";
             QFile::remove(CathedralIni);
             QFile::copy(config, CathedralIni);
@@ -42,8 +43,8 @@ bool IntegrationTests::runAllTests()
 
             //Running the optimization
             /*
-            Manager manager;
-            manager.runOptimization();
+      Manager manager;
+      manager.runOptimization();
 */
             results << FilesystemOperations::compareFolders(output, expected, true);
 

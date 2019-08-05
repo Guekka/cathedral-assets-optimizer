@@ -5,7 +5,7 @@
 #include "Manager.h"
 
 Manager::Manager(OptionsCAO &opt)
-    : options(opt)
+    : _options(opt)
 
 {
 #ifndef GUI
@@ -17,10 +17,10 @@ Manager::Manager(OptionsCAO &opt)
         options.parseArguments(QCoreApplication::arguments());
 #endif
     //Preparing logging
-    initCustomLogger(Games::logPath(), options.bDebugLog);
+    initCustomLogger(Games::logPath(), _options.bDebugLog);
 
     PLOG_VERBOSE << tr("Checking settings...");
-    const QString error = options.isValid();
+    const QString error = _options.isValid();
     if (!error.isEmpty())
     {
         PLOG_FATAL << error;
@@ -36,62 +36,63 @@ Manager::Manager(OptionsCAO &opt)
 
 void Manager::listDirectories()
 {
-    modsToProcess.clear();
+    _modsToProcess.clear();
 
-    if (options.mode == OptionsCAO::singleMod)
-        modsToProcess << options.userPath;
+    if (_options.mode == OptionsCAO::SingleMod)
+        _modsToProcess << _options.userPath;
 
-    else if (options.mode == OptionsCAO::severalMods)
+    else if (_options.mode == OptionsCAO::SeveralMods)
     {
-      const QDir dir(options.userPath);
+        const QDir dir(_options.userPath);
         for (auto subDir : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
             if (!subDir.contains("separator")
-                && !ignoredMods.contains(subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
-                modsToProcess << dir.filePath(subDir);
+                && !_ignoredMods.contains(subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
+                _modsToProcess << dir.filePath(subDir);
     }
 }
 
 void Manager::printProgress(const int &total, const QString &text = "Processing files")
 {
-    //'|' is used a separator by the frontend
 #ifndef GUI
     std::cout << "PROGRESS:|" << text.toStdString() << " - %v/%m - %p%|" << numberCompletedFiles << '|' << total
               << std::endl;
 #else
-    emit progressBarTextChanged(text, total, numberCompletedFiles);
+    emit progressBarTextChanged(text, total, _numberCompletedFiles);
 #endif
 }
 
 void Manager::listFiles()
 {
-    numberFiles = 0;
-    files.clear();
-    animations.clear();
+    _numberFiles = 0;
+    _files.clear();
+    _animations.clear();
     BSAs.clear();
 
-    for (auto &subDir : modsToProcess)
+    for (auto &subDir : _modsToProcess)
     {
         QDirIterator it(subDir, QDirIterator::Subdirectories);
         while (it.hasNext())
         {
             it.next();
 
-            const bool mesh = options.iMeshesOptimizationLevel >= 1 && it.fileName().endsWith(".nif", Qt::CaseInsensitive);
+            const bool mesh = _options.iMeshesOptimizationLevel >= 1
+                              && it.fileName().endsWith(".nif", Qt::CaseInsensitive);
             const bool textureDDS = it.fileName().endsWith(".dds", Qt::CaseInsensitive);
             const bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
-            const bool animation = options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
+            const bool animation = _options.bAnimationsOptimization
+                                   && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            const bool bsa = options.bBsaExtract && it.fileName().endsWith(Games::bsaExtension(), Qt::CaseInsensitive);
+            const bool bsa = _options.bBsaExtract && it.fileName().endsWith(Games::bsaExtension(), Qt::CaseInsensitive);
 
             auto addToList = [&](QStringList &list) {
-                ++numberFiles;
+                ++_numberFiles;
                 list << it.filePath();
             };
 
             if (mesh || textureDDS || textureTGA)
-                addToList(files);
+                addToList(_files);
             else if (animation)
-                addToList(animations);
+                addToList(_animations);
             else if (bsa)
                 addToList(BSAs);
         }
@@ -108,7 +109,7 @@ void Manager::readIgnoredMods()
         {
             QString readLine = ts.readLine();
             if (readLine.left(1) != "#" && !readLine.isEmpty())
-                ignoredMods << readLine;
+                _ignoredMods << readLine;
         }
     }
     else
@@ -121,16 +122,16 @@ void Manager::runOptimization()
     PLOG_DEBUG << "Game:" << Games::game();
     PLOG_INFO << "Beginning...";
 
-    MainOptimizer optimizer(options);
+    MainOptimizer optimizer(_options);
 
     //Reading headparts. Used for meshes optimization
-    optimizer.addHeadparts(options.userPath, options.mode == OptionsCAO::severalMods);
+    optimizer.addHeadparts(_options.userPath, _options.mode == OptionsCAO::SeveralMods);
 
     //Extracting BSAs
     for (const auto &file : BSAs)
     {
         optimizer.process(file);
-        ++numberCompletedFiles;
+        ++_numberCompletedFiles;
         printProgress(BSAs.size(), "Extracting BSAs");
     }
 
@@ -138,17 +139,17 @@ void Manager::runOptimization()
     listFiles();
 
     //Processing animations separately since they cannot be processed in a multithreaded way
-    printProgress(numberFiles, "Processing animations");
-    for (const auto &file : animations)
+    printProgress(_numberFiles, "Processing animations");
+    for (const auto &file : _animations)
     {
         optimizer.process(file);
-        ++numberCompletedFiles;
-        if (numberCompletedFiles % 10 == 0)
-            printProgress(numberFiles);
+        ++_numberCompletedFiles;
+        if (_numberCompletedFiles % 10 == 0)
+            printProgress(_numberFiles);
     }
 
     //Processing other files
-    for (const auto &file : files)
+    for (const auto &file : _files)
     {
         //Processing files in several threads
         QVector<QFuture<void>> futures;
@@ -158,27 +159,25 @@ void Manager::runOptimization()
         for (auto &future : futures)
         {
             future.waitForFinished();
-            ++numberCompletedFiles;
-            if (numberCompletedFiles % 10 == 0)
-                printProgress(numberFiles);
+            ++_numberCompletedFiles;
+            if (_numberCompletedFiles % 10 == 0)
+                printProgress(_numberFiles);
         }
     }
 
-    numberCompletedFiles = 0;
-    printProgress(modsToProcess.size(), "Packing BSAs");
+    _numberCompletedFiles = 0;
+    printProgress(_modsToProcess.size(), "Packing BSAs");
 
     //Packing BSAs
-    if (options.bBsaCreate)
-        for (const auto &folder : modsToProcess)
+    if (_options.bBsaCreate)
+        for (const auto &folder : _modsToProcess)
         {
             optimizer.packBsa(folder);
-            ++numberCompletedFiles;
-            printProgress(modsToProcess.size(), "Packing BSAs");
+            ++_numberCompletedFiles;
+            printProgress(_modsToProcess.size(), "Packing BSAs");
         }
 
-    FilesystemOperations::deleteEmptyDirectories(options.userPath);
+    FilesystemOperations::deleteEmptyDirectories(_options.userPath);
 
     PLOG_INFO << "\n\n\nProcess completed";
-
-    return;
 }

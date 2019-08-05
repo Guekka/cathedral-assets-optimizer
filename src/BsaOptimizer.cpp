@@ -27,7 +27,7 @@ BsaOptimizer::BsaOptimizer()
                          "by FNIS and Nemesis.");
 }
 
-void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)
+void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
 {
     bsaPath = backup(bsaPath);
 
@@ -55,9 +55,9 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)
     PLOG_INFO << tr("BSA successfully extracted: ") + bsaPath;
 }
 
-void BsaOptimizer::create(Bsa bsa)
+void BsaOptimizer::create(Bsa &bsa) const
 {
-  const QDir bsaDir(QFileInfo(bsa.path).path());
+    const QDir bsaDir(QFileInfo(bsa.path).path());
 
     //Checking if a bsa already exists
 
@@ -135,20 +135,21 @@ void BsaOptimizer::create(Bsa bsa)
     }
 }
 
-void BsaOptimizer::packAll(const QString &folderPath)
+void BsaOptimizer::packAll(const QString &folderPath) const
 {
     PLOG_VERBOSE << "Entering" __FUNCTION__ "function."
                                             "Packing all loose files into BSAs";
 
     Bsa texturesBsa, standardBsa;
     //Setting type
-    texturesBsa.type = bsaType::texturesBsa;
-    standardBsa.type = bsaType::standardBsa;
+    texturesBsa.type = BsaType::TexturesBsa;
+    standardBsa.type = BsaType::StandardBsa;
 
     //Naming BSAs
     texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
                        + Games::bsaTexturesSuffix();
-    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type) + Games::bsaSuffix();
+    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
+                       + Games::bsaSuffix();
 
     //Setting maxsize
     texturesBsa.maxSize = Games::maxBsaTexturesSize();
@@ -166,8 +167,7 @@ void BsaOptimizer::packAll(const QString &folderPath)
         const bool doNotPack = isIgnoredFile(it.fileName()) || it.fileInfo().isDir();
         if (allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !doNotPack)
         {
-          const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Games::hasBsaTextures();
-            ;                                                  //If false, it means that it's a "standard" asset
+            const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Games::hasBsaTextures();
             Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
 
             if (pBsa.filesSize > pBsa.maxSize)
@@ -210,8 +210,8 @@ void BsaOptimizer::packAll(const QString &folderPath)
 
 QString BsaOptimizer::backup(const QString &bsaPath) const
 {
-  const QFile bsaBackupFile(bsaPath + ".bak");
-  const QFile bsaFile(bsaPath);
+    const QFile bsaBackupFile(bsaPath + ".bak");
+    const QFile bsaFile(bsaPath);
 
     if (!bsaBackupFile.exists())
         QFile::rename(bsaPath, bsaBackupFile.fileName());
@@ -238,12 +238,8 @@ bool BsaOptimizer::isIgnoredFile(const QString &filepath) const
     return false;
 }
 
-bool BsaOptimizer::canBeCompressedFile(const QString &filename) const
+bool BsaOptimizer::canBeCompressedFile(const QString &filename)
 {
-    if (filename.endsWith(".wav", Qt::CaseInsensitive) || filename.endsWith(".xwm", Qt::CaseInsensitive)
-        || filename.contains(QRegularExpression("^.+\\.[^.]*strings$")))
-    {
-        return false;
-    }
-    return true;
+    return (filename.endsWith(".wav", Qt::CaseInsensitive) || filename.endsWith(".xwm", Qt::CaseInsensitive)
+            || filename.contains(QRegularExpression("^.+\\.[^.]*strings$")));
 }

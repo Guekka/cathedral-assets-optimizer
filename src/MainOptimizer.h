@@ -13,7 +13,7 @@
 /*!
  * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
  */
-class MainOptimizer : public QObject
+class MainOptimizer final : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(MainOptimizer)
 
@@ -25,15 +25,15 @@ public:
     void addHeadparts(const QString &folder, bool processSubDirs);
 
 private:
-    void processBsa(const QString &file);
+    void processBsa(const QString &file) const;
     void processNif(const QString &file);
     void processTexture(const QString &file, const TexturesOptimizer::TextureType &type);
-    void processHkx(const QString &file);
+    void processHkx(const QString &file) const;
 
-    OptionsCAO optOptions;
+    OptionsCAO _optOptions;
 
-    BsaOptimizer bsaOpt;
-    MeshesOptimizer meshesOpt;
-    AnimationsOptimizer animOpt;
-    TexturesOptimizer texturesOpt;
+    BsaOptimizer _bsaOpt;
+    MeshesOptimizer _meshesOpt;
+    AnimationsOptimizer _animOpt;
+    TexturesOptimizer _texturesOpt;
 };

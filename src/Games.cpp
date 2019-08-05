@@ -115,17 +115,16 @@ Games::GameMode Games::stringToGame(const QString &string)
 {
     if (string == "SSE")
         return SSE;
-    else if (string == "TES5")
+    if (string == "TES5")
         return TES5;
-    else if (string == "FO4")
+    if (string == "FO4")
         return FO4;
-    else if (string == "Custom")
+    if (string == "Custom")
         return Custom;
-    else
-        return Invalid;
+    return Invalid;
 }
 
-void Games::saveToIni(QSettings *settings)
+void Games::saveToIni(QSettings *settings) const
 {
     settings->setValue("bsaFormat", _bsaFormat);
     settings->setValue("bsaTexturesFormat", _bsaTexturesFormat);
@@ -180,13 +179,12 @@ Games::GameMode Games::uiToGame(Ui::MainWindow *ui)
 {
     if (ui->presets->currentData().canConvert<GameMode>())
         return ui->presets->currentData().value<GameMode>();
-    else
-        return Invalid;
+    return Invalid;
 }
 
 void Games::saveToUi(Ui::MainWindow *ui)
 {
-  const auto iterateComboBox = [](QComboBox *box, QVariant data) {
+    const auto iterateComboBox = [](QComboBox *box, const QVariant data) {
         for (int i = 0; i < box->count(); ++i)
         {
             if (box->itemData(i) == data)
@@ -269,13 +267,13 @@ Games::GameMode Games::getGame() const
 
 Games *Games::getInstance()
 {
-    if (!Games::_INSTANCE)
-        Games::_INSTANCE = new Games();
+    if (!_INSTANCE)
+        _INSTANCE = new Games();
 
-    return Games::_INSTANCE;
+    return _INSTANCE;
 }
 
-bsa_archive_type_e Games::GetBsaFormat() const
+bsa_archive_type_e Games::getBsaFormat() const
 {
     return _bsaFormat;
 }

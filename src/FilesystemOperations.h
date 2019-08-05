@@ -14,29 +14,29 @@ const QStringList allAssets = texturesAssets + otherAssets;
 /*!
  * \brief Manages filesystem operations : moving files, deleting empty dirs...
  */
-class FilesystemOperations : public QObject
+class FilesystemOperations final : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(FilesystemOperations)
 
 public:
     /*!
-    * \brief Delete empty directories in the given directory
-    * \param folderPath The path of the folder where empty dirs will be deleted
-    */
+  * \brief Delete empty directories in the given directory
+  * \param folderPath The path of the folder where empty dirs will be deleted
+  */
     static void deleteEmptyDirectories(const QString &folderPath);
     /*!
-     * \brief Compares if two folders have the same file structure. Currently only used for testing.
-     * \param folder1 The first folder
-     * \param folder2 The second folder
-     * \param checkFileSize Wheter file sizes will be checked or not
-     * \return a bool : true if the folders are identical, false otherwise
-     */
+   * \brief Compares if two folders have the same file structure. Currently only used for testing.
+   * \param folder1 The first folder
+   * \param folder2 The second folder
+   * \param checkFileSize Whether file sizes will be checked or not
+   * \return a bool : true if the folders are identical, false otherwise
+   */
     static bool compareFolders(const QString &folder1, const QString &folder2, const bool &checkFileSize);
     /*!
-     * \brief Will copy all files from source folder into destination folder.Currently only used for testing.
-     * \param source The source directory
-     * \param destination The destination directory
-     * \param overwriteExisting If enabled, source files will overwrite destination files
-     */
+   * \brief Will copy all files from source folder into destination folder.Currently only used for testing.
+   * \param source The source directory
+   * \param destination The destination directory
+   * \param overwriteExisting If enabled, source files will overwrite destination files
+   */
     static void copyDir(const QString &source, const QString &destination, bool overwriteExisting);
 };

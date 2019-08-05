@@ -79,9 +79,9 @@ bool FilesystemOperations::compareFolders(const QString &folder1, const QString 
     return true;
 }
 
-void FilesystemOperations::copyDir(const QString &source, const QString &destination, bool overwriteExisting)
+void FilesystemOperations::copyDir(const QString &source, const QString &destination, const bool overwriteExisting)
 {
-  const QDir sourceDir(source);
+    const QDir sourceDir(source);
     QDir destinationDir(destination);
     QDirIterator it(source, QDirIterator::Subdirectories);
 
@@ -90,7 +90,7 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
 
     QStringList oldFiles;
 
-  const QString currentDir = QDir::currentPath();
+    const QString currentDir = QDir::currentPath();
     QDir::setCurrent(destination);
 
     while (it.hasNext())

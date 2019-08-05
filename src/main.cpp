@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     }
 
 #ifdef GUI
-    return app.exec();
+    return QApplication::exec();
 #elif ifndef GUI
     return 0;
 #endif

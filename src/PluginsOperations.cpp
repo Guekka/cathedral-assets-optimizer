@@ -7,7 +7,7 @@
 
 void PluginsOperations::makeDummyPlugins(const QString &folderPath)
 {
-    PLOG_VERBOSE << "Entering makeDummyPluginsfunction: creating enough dummy plugins to load BSAs";
+    PLOG_VERBOSE << "Creating enough dummy plugins to load BSAs";
 
     QDirIterator it(folderPath);
 
@@ -36,7 +36,7 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
     PLOG_VERBOSE << "Exiting makeDummyPlugins function";
 }
 
-QString PluginsOperations::findPlugin(const QString &folderPath, const bsaType &bsaType)
+QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &bsaType)
 {
     QDirIterator it(folderPath);
     QStringList espName;
@@ -68,15 +68,15 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const bsaType &
     {
         for (auto esp : espName)
         {
-          const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
-                                   && bsaType == bsaType::texturesBsa;
+            const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
+                                         && bsaType == TexturesBsa;
 
-          const bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
-                                   && bsaType == bsaType::standardBsa;
+            const bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
+                                         && bsaType == StandardBsa;
 
-          const bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
-                               && !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
-                               && bsaType == bsaType::texturesAndStandardBsa;
+            const bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
+                                     && !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
+                                     && bsaType == TexturesAndStandardBsa;
 
             if (texturesBsaGood || standardBsaGood || bothBsaGood)
                 returnedEsp = esp;
@@ -115,8 +115,8 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
     if (!file.is_open())
         return QStringList();
 
-    PluginRecordHeader header;
-    PluginFieldHeader pluginFieldHeader;
+    PluginRecordHeader header{};
+    PluginFieldHeader pluginFieldHeader{};
 
     QStringList headparts;
 
@@ -188,8 +188,8 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
     if (!file.is_open())
         return QStringList();
 
-    PluginRecordHeader header;
-    PluginFieldHeader pluginFieldHeader;
+    PluginRecordHeader header{};
+    PluginFieldHeader pluginFieldHeader{};
 
     const auto readHeaders = [&]() {
         file.read(reinterpret_cast<char *>(&header), sizeof header);

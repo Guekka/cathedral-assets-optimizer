@@ -13,7 +13,7 @@ namespace Ui
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow final : public QMainWindow
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
@@ -22,33 +22,33 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *_ui;
 
-    bool bLockVariables = false;
+    bool _bLockVariables = false;
 
     void saveUi();
     void loadUi();
-    void refreshUI();
+    void refreshUi();
 
-    void resetUi();
+    void resetUi() const;
 
-    void setGameMode(const Games::GameMode &mode);
+    void setGameMode(const Games::GameMode &mode) const;
 
-    void updateLog();
+    void updateLog() const;
     void initProcess();
     void endProcess();
-    void readProgress(const QString &text, const int &max, const int &value);
+    void readProgress(const QString &text, const int &max, const int &value) const;
 
-    void hideAdvancedSettings();
-    void showAdvancedSettings();
+    void hideAdvancedSettings() const;
+    void showAdvancedSettings() const;
 
-    int progressBarValue{};
+    int _progressBarValue{};
 
-    QSettings *uiSettings;
-    QSettings *settings;
-    OptionsCAO options;
+    QSettings *_uiSettings;
+    QSettings *_settings;
+    OptionsCAO _options;
 
-    std::unique_ptr<Manager> caoProcess;
+    std::unique_ptr<Manager> _caoProcess;
 
-    QTimer *timer;
+    QTimer *_timer;
 };

@@ -28,7 +28,7 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel, b
         PLOG_ERROR << tr("No custom headparts file found. Vanilla headparts won't be detected.");
 }
 
-ScanResult MeshesOptimizer::scan(const QString &filePath)
+ScanResult MeshesOptimizer::scan(const QString &filePath) const
 {
     NifFile nif;
     if (nif.Load(filePath.toStdString()) != 0)
@@ -77,7 +77,8 @@ void MeshesOptimizer::listHeadparts(const QString &directory)
     headparts.removeDuplicates();
 }
 
-void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected mesh
+void MeshesOptimizer::optimize(const QString &filePath)
+// Optimize the selected mesh
 {
     NifFile nif;
     if (nif.Load(filePath.toStdString()) != 0)
@@ -142,10 +143,10 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     }
 }
 
-void MeshesOptimizer::dryOptimize(const QString &filePath)
+void MeshesOptimizer::dryOptimize(const QString &filePath) const
 {
-  const ScanResult scanResult = scan(filePath);
-  const QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
+    const ScanResult scanResult = scan(filePath);
+    const QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
 
     //Headparts have to get a special optimization
     if (iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))

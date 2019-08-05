@@ -5,7 +5,7 @@
 #include "OptionsCAO.h"
 
 OptionsCAO::OptionsCAO()
-    : mode(singleMod)
+    : mode(SingleMod)
 {
 }
 
@@ -46,7 +46,7 @@ OptionsCAO::OptionsCAO(const OptionsCAO &other)
 {
 }
 
-void OptionsCAO::saveToIni(QSettings *settings)
+void OptionsCAO::saveToIni(QSettings *settings) const
 {
     //General
     settings->setValue("bDryRun", bDryRun);
@@ -279,9 +279,9 @@ void OptionsCAO::parseArguments(const QStringList &args)
 
     const QString readMode = parser.positionalArguments().at(1);
     if (readMode == "om")
-        mode = singleMod;
+        mode = SingleMod;
     else if (readMode == "sm")
-        mode = severalMods;
+        mode = SeveralMods;
 
     const QString readGame = parser.positionalArguments().at(2);
     CAO_SET_CURRENT_GAME(readGame)
@@ -305,12 +305,12 @@ void OptionsCAO::parseArguments(const QStringList &args)
     bBsaProcessContent = parser.isSet("bo");
 }
 
-QString OptionsCAO::isValid()
+QString OptionsCAO::isValid() const
 {
     if (!QDir(userPath).exists() || userPath.size() < 5)
         return (tr("This path does not exist or is shorter than 5 characters. Path:") + " '" + userPath + "'");
 
-    if (mode != OptionsCAO::singleMod && mode != OptionsCAO::severalMods)
+    if (mode != SingleMod && mode != SeveralMods)
         return tr("This mode does not exist.");
 
     if (iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
