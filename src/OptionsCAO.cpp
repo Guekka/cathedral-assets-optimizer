@@ -137,7 +137,6 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
     ui->bsaExtractCheckBox->setChecked(bBsaExtract);
     ui->bsaCreateCheckbox->setChecked(bBsaCreate);
     ui->bsaDeleteBackupsCheckbox->setChecked(bBsaDeleteBackup);
-    ui->bsaProcessContentCheckBox->setChecked(bBsaProcessContent);
 
     //Textures
     const bool texturesOpt = bTexturesMipmaps || bTexturesCompress || bTexturesNecessary;
@@ -194,7 +193,6 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     bBsaExtract = ui->bsaExtractCheckBox->isChecked();
     bBsaCreate = ui->bsaCreateCheckbox->isChecked();
     bBsaDeleteBackup = ui->bsaDeleteBackupsCheckbox->isChecked();
-    bBsaProcessContent = ui->bsaProcessContentCheckBox->isChecked();
 
     //Textures
     const bool texturesEnabled = ui->texturesGroupBox->isChecked();
