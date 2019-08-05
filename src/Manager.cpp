@@ -20,7 +20,7 @@ Manager::Manager(OptionsCAO &opt)
     initCustomLogger(Games::logPath(), options.bDebugLog);
 
     PLOG_VERBOSE << tr("Checking settings...");
-    QString error = options.isValid();
+    const QString error = options.isValid();
     if (!error.isEmpty())
     {
         PLOG_FATAL << error;
@@ -43,7 +43,7 @@ void Manager::listDirectories()
 
     else if (options.mode == OptionsCAO::severalMods)
     {
-        QDir dir(options.userPath);
+      const QDir dir(options.userPath);
         for (auto subDir : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
             if (!subDir.contains("separator")
                 && !ignoredMods.contains(subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
@@ -76,12 +76,12 @@ void Manager::listFiles()
         {
             it.next();
 
-            bool mesh = options.iMeshesOptimizationLevel >= 1 && it.fileName().endsWith(".nif", Qt::CaseInsensitive);
-            bool textureDDS = it.fileName().endsWith(".dds", Qt::CaseInsensitive);
-            bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
-            bool animation = options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
+            const bool mesh = options.iMeshesOptimizationLevel >= 1 && it.fileName().endsWith(".nif", Qt::CaseInsensitive);
+            const bool textureDDS = it.fileName().endsWith(".dds", Qt::CaseInsensitive);
+            const bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
+            const bool animation = options.bAnimationsOptimization && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            bool bsa = options.bBsaExtract && it.fileName().endsWith(Games::bsaExtension(), Qt::CaseInsensitive);
+            const bool bsa = options.bBsaExtract && it.fileName().endsWith(Games::bsaExtension(), Qt::CaseInsensitive);
 
             auto addToList = [&](QStringList &list) {
                 ++numberFiles;

@@ -68,13 +68,13 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const bsaType &
     {
         for (auto esp : espName)
         {
-            bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
+          const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
                                    && bsaType == bsaType::texturesBsa;
 
-            bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
+          const bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
                                    && bsaType == bsaType::standardBsa;
 
-            bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
+          const bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
                                && !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
                                && bsaType == bsaType::texturesAndStandardBsa;
 
@@ -96,13 +96,13 @@ bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath)
     bsaName.remove(Games::bsaExtension());
     bsaName.remove(" - Textures" + Games::bsaExtension()); // x.esp will also load x - Textures.bsa
 
-    QString eslName = bsaName + ".esl";
-    QString esmName = bsaName + ".esm";
-    QString espName = bsaName + ".esp";
+    const QString eslName = bsaName + ".esl";
+    const QString esmName = bsaName + ".esm";
+    const QString espName = bsaName + ".esp";
 
-    bool hasEsl = QFile(eslName).exists();
-    bool hasEsm = QFile(esmName).exists();
-    bool hasEsp = QFile(espName).exists();
+    const bool hasEsl = QFile(eslName).exists();
+    const bool hasEsm = QFile(esmName).exists();
+    const bool hasEsp = QFile(espName).exists();
 
     return hasEsl || hasEsm || hasEsp;
 }
@@ -120,9 +120,9 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
 
     QStringList headparts;
 
-    auto readHeaders = [&]() { file.read(reinterpret_cast<char *>(&header), sizeof header); };
+    const auto readHeaders = [&]() { file.read(reinterpret_cast<char *>(&header), sizeof header); };
 
-    auto readFieldPluginHeader = [&]() {
+    const auto readFieldPluginHeader = [&]() {
         file.read(reinterpret_cast<char *>(&pluginFieldHeader), sizeof pluginFieldHeader);
     };
 
@@ -146,13 +146,13 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
         }
 
         //Reading all headpart records
-        int64_t groupEndPos = header.plugin.groupSize - sizeof header + file.tellg();
+        const int64_t groupEndPos = header.plugin.groupSize - sizeof header + file.tellg();
         while (file.tellg() < groupEndPos)
         {
             readHeaders();
 
             // reading all record fields
-            int64_t recEndPos = header.record.dataSize + file.tellg();
+            const int64_t recEndPos = header.record.dataSize + file.tellg();
             while (file.tellg() < recEndPos)
             {
                 readFieldPluginHeader();
@@ -191,12 +191,12 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
     PluginRecordHeader header;
     PluginFieldHeader pluginFieldHeader;
 
-    auto readHeaders = [&]() {
+    const auto readHeaders = [&]() {
         file.read(reinterpret_cast<char *>(&header), sizeof header);
         return strncmp(header.plugin.type, GROUP_GRUP, sizeof GROUP_GRUP) == 0;
     };
 
-    auto readFieldPluginHeader = [&]() {
+    const auto readFieldPluginHeader = [&]() {
         file.read(reinterpret_cast<char *>(&pluginFieldHeader), sizeof pluginFieldHeader);
     };
 
@@ -226,13 +226,13 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
         memcpy(signatureGroup, header.plugin.label, 4);
 
         //Reading all records
-        int64_t groupEndPos = header.plugin.groupSize - sizeof header + file.tellg();
+        const int64_t groupEndPos = header.plugin.groupSize - sizeof header + file.tellg();
         while (file.tellg() < groupEndPos)
         {
             readHeaders();
 
             // reading all record fields
-            int64_t recEndPos = header.record.dataSize + file.tellg();
+            const int64_t recEndPos = header.record.dataSize + file.tellg();
             while (file.tellg() < recEndPos)
             {
                 readFieldPluginHeader();

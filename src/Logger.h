@@ -111,7 +111,7 @@ inline void initCustomLogger(const QString &logPath, const bool &debugLog)
         return;
 
     //Creating log folder
-    QDir dir;
+    const QDir dir;
     dir.mkpath(QFileInfo(logPath).path());
 
     //Creating log file

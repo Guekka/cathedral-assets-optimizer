@@ -92,8 +92,8 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
     options.targetVersion.SetStream(Games::meshesStream());
     options.targetVersion.SetUser(Games::meshesUser());
 
-    ScanResult scanResult = scan(filePath);
-    QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
+    const ScanResult scanResult = scan(filePath);
+    const QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
 
     //Headparts have to get a special optimization
     if (iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
@@ -144,8 +144,8 @@ void MeshesOptimizer::optimize(const QString &filePath) // Optimize the selected
 
 void MeshesOptimizer::dryOptimize(const QString &filePath)
 {
-    ScanResult scanResult = scan(filePath);
-    QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
+  const ScanResult scanResult = scan(filePath);
+  const QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
 
     //Headparts have to get a special optimization
     if (iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))

@@ -41,7 +41,7 @@ void MainOptimizer::addHeadparts(const QString &folder, bool processSubDirs)
     meshesOpt.listHeadparts(folder);
     if (processSubDirs)
     {
-        QDir dir(folder);
+      const QDir dir(folder);
         for (const auto &directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
             meshesOpt.listHeadparts(dir.filePath(directory));
     }

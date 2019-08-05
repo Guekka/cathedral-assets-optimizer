@@ -16,14 +16,14 @@ void FilesystemOperations::deleteEmptyDirectories(const QString &folderPath)
         QString path = QDir::cleanPath(dirIt.next());
         int size = path.size();
 
-        bool alreadyExist = dirs[size].contains(path);
-        bool isSeparator = path.contains("separator", Qt::CaseInsensitive);
+        const bool alreadyExist = dirs[size].contains(path);
+        const bool isSeparator = path.contains("separator", Qt::CaseInsensitive);
 
         if (!alreadyExist && !isSeparator)
             dirs[size].append(path);
     }
 
-    QDir dir(folderPath);
+    const QDir dir(folderPath);
     QMapIterator<int, QStringList> i(dirs);
 
     i.toBack();
@@ -43,8 +43,8 @@ bool FilesystemOperations::compareFolders(const QString &folder1, const QString 
     QStringList files1;
     QStringList files2;
 
-    QDir dir1(folder1);
-    QDir dir2(folder2);
+    const QDir dir1(folder1);
+    const QDir dir2(folder2);
 
     QVector<qint64> filesSize1;
     QVector<qint64> filesSize2;
@@ -81,7 +81,7 @@ bool FilesystemOperations::compareFolders(const QString &folder1, const QString 
 
 void FilesystemOperations::copyDir(const QString &source, const QString &destination, bool overwriteExisting)
 {
-    QDir sourceDir(source);
+  const QDir sourceDir(source);
     QDir destinationDir(destination);
     QDirIterator it(source, QDirIterator::Subdirectories);
 
@@ -90,7 +90,7 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
 
     QStringList oldFiles;
 
-    QString currentDir = QDir::currentPath();
+  const QString currentDir = QDir::currentPath();
     QDir::setCurrent(destination);
 
     while (it.hasNext())

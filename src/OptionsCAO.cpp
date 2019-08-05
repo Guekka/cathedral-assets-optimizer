@@ -274,16 +274,16 @@ void OptionsCAO::parseArguments(const QStringList &args)
 
     parser.process(args);
 
-    QString path = QDir::cleanPath(parser.positionalArguments().at(0));
+    const QString path = QDir::cleanPath(parser.positionalArguments().at(0));
     userPath = path;
 
-    QString readMode = parser.positionalArguments().at(1);
+    const QString readMode = parser.positionalArguments().at(1);
     if (readMode == "om")
         mode = singleMod;
     else if (readMode == "sm")
         mode = severalMods;
 
-    QString readGame = parser.positionalArguments().at(2);
+    const QString readGame = parser.positionalArguments().at(2);
     CAO_SET_CURRENT_GAME(readGame)
 
     bDryRun = parser.isSet("dr");

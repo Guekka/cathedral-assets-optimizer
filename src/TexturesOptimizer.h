@@ -64,7 +64,7 @@ public:
 
     bool resize(size_t targetWidth, size_t targetHeight);
 
-    void fitPowerOfTwo(uint &resultX, uint &resultY);
+    static void fitPowerOfTwo(uint &resultX, uint &resultY);
     bool isPowerOfTwo();
 
     bool generateMipMaps();
@@ -78,8 +78,8 @@ public:
     static bool compareInfo(const DirectX::TexMetadata &info1, const DirectX::TexMetadata &info2);
 
 private:
-    std::unique_ptr<DirectX::ScratchImage> image;
-    DirectX::TexMetadata info;
+    std::unique_ptr<DirectX::ScratchImage> image{};
+    DirectX::TexMetadata info{};
     QString name;
     TextureType _type;
 

@@ -23,7 +23,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 #Qt
-set(Qt5_DIR "E:/Qt/5.12.3/msvc2017/lib/cmake/Qt5")
+set(Qt5_DIR "C:/IT/Qt/5.12.4/msvc2017/lib/cmake/Qt5")
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 #Setting GUI

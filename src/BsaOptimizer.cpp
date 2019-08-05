@@ -31,7 +31,7 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)
 {
     bsaPath = backup(bsaPath);
 
-    QString bsaRoot(QFileInfo(bsaPath).path());
+    const QString bsaRoot(QFileInfo(bsaPath).path());
     BSArchiveAuto archive(bsaRoot);
 
     try
@@ -57,7 +57,7 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup)
 
 void BsaOptimizer::create(Bsa bsa)
 {
-    QDir bsaDir(QFileInfo(bsa.path).path());
+  const QDir bsaDir(QFileInfo(bsa.path).path());
 
     //Checking if a bsa already exists
 
@@ -163,10 +163,10 @@ void BsaOptimizer::packAll(const QString &folderPath)
     while (it.hasNext())
     {
         it.next();
-        bool doNotPack = isIgnoredFile(it.fileName()) || it.fileInfo().isDir();
+        const bool doNotPack = isIgnoredFile(it.fileName()) || it.fileInfo().isDir();
         if (allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !doNotPack)
         {
-            bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Games::hasBsaTextures();
+          const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Games::hasBsaTextures();
             ;                                                  //If false, it means that it's a "standard" asset
             Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
 
@@ -210,8 +210,8 @@ void BsaOptimizer::packAll(const QString &folderPath)
 
 QString BsaOptimizer::backup(const QString &bsaPath) const
 {
-    QFile bsaBackupFile(bsaPath + ".bak");
-    QFile bsaFile(bsaPath);
+  const QFile bsaBackupFile(bsaPath + ".bak");
+  const QFile bsaFile(bsaPath);
 
     if (!bsaBackupFile.exists())
         QFile::rename(bsaPath, bsaBackupFile.fileName());

@@ -38,7 +38,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
                                                                  | hkSerializeUtil::SAVE_TEXT_NUMBERS);
         if (pkFormat == HKPF_XML || pkFormat == HKPF_TAGXML) // set text format to indicate xml
             flags = static_cast<hkSerializeUtil::SaveOptionBits>(flags | hkSerializeUtil::SAVE_TEXT_FORMAT);
-        hkPackfileWriter::Options packFileOptions = GetWriteOptionsFromFormat(pkFormat);
+        const hkPackfileWriter::Options packFileOptions = GetWriteOptionsFromFormat(pkFormat);
 
         hkVariant root;
         hkResource *resource;

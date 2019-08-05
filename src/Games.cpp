@@ -186,7 +186,7 @@ Games::GameMode Games::uiToGame(Ui::MainWindow *ui)
 
 void Games::saveToUi(Ui::MainWindow *ui)
 {
-    auto iterateComboBox = [](QComboBox *box, QVariant data) {
+  const auto iterateComboBox = [](QComboBox *box, QVariant data) {
         for (int i = 0; i < box->count(); ++i)
         {
             if (box->itemData(i) == data)
