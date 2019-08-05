@@ -230,7 +230,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -330,25 +330,6 @@
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QCheckBox" name="bsaProcessContentCheckBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Process BSA content (BROKEN)</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </widget>
         </item>
@@ -405,6 +386,9 @@
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_5">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size of the files. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Maximum size</string>
              </property>
@@ -431,6 +415,9 @@
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_6">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Suffix</string>
              </property>
@@ -492,6 +479,9 @@
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_7">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>Suffix</string>
                 </property>
@@ -642,6 +632,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
             <widget class="QCheckBox" name="meshesHeadpartsCheckBox">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When this option is disabled, headparts are ignored. It is recommended to keep it disabled when processing several mods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Always process headparts</string>
              </property>
@@ -649,6 +642,9 @@
            </item>
            <item>
             <widget class="QCheckBox" name="meshesResaveCheckBox">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will resave meshes even if optimization is disabled. Will perform the same optimization as opening a mesh in NifSkope.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Resave meshes</string>
              </property>
@@ -800,6 +796,12 @@
            </item>
            <item>
             <widget class="QCheckBox" name="texturesCompressCheckBox">
+             <property name="cursor">
+              <cursorShape>WhatsThisCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Compress textures</string>
              </property>
@@ -821,15 +823,15 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
-               <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
               </font>
              </property>
              <property name="cursor">
               <cursorShape>WhatsThisCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BC7 is the most efficient compression SSE supports, reducing VRAM usage without observable quality loss. Will also convert uncompressed textures to BC7.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Generate mipmaps</string>
@@ -940,6 +942,9 @@
            </item>
            <item row="0" column="0">
             <widget class="QRadioButton" name="texturesResizingByRatioRadioButton">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes textures by ratio. The number are dividers. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>By ratio</string>
              </property>
@@ -947,6 +952,9 @@
            </item>
            <item row="1" column="0">
             <widget class="QRadioButton" name="texturesResizingBySizeRadioButton">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes textures by fixed size. Not recommended except in special cases. Will resize all textures to the given size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>By fixed size</string>
              </property>
@@ -995,6 +1003,9 @@
           <layout class="QFormLayout" name="formLayout_4">
            <item row="0" column="0">
             <widget class="QLabel" name="label_14">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts TGA to DDS.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>TGA</string>
              </property>
@@ -1009,6 +1020,9 @@
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_12">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures and/or modified textures.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Output format</string>
              </property>
@@ -1040,6 +1054,9 @@
            </item>
            <item row="2" column="0">
             <widget class="QLabel" name="label_13">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some games do not support compressed interface textures.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Interface</string>
              </property>
@@ -1054,6 +1071,9 @@
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_19">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Unwanted formats</string>
              </property>
