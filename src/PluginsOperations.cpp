@@ -17,20 +17,20 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
 
         it.next();
 
-        if (!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(Games::bsaExtension(), Qt::CaseInsensitive))
+        if (!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
         {
-            if (it.fileName().contains(Games::bsaTexturesSuffix(), Qt::CaseInsensitive))
+            if (it.fileName().contains(Profiles::bsaTexturesSuffix(), Qt::CaseInsensitive))
             {
-                espName = it.fileName().remove(Games::bsaTexturesSuffix(), Qt::CaseInsensitive) + ".esp";
+                espName = it.fileName().remove(Profiles::bsaTexturesSuffix(), Qt::CaseInsensitive) + ".esp";
                 PLOG_VERBOSE << "Created textures bsa plugin:" + espName;
             }
 
             else
             {
-                espName = it.fileName().remove(Games::bsaSuffix(), Qt::CaseInsensitive) + ".esp";
+                espName = it.fileName().remove(Profiles::bsaSuffix(), Qt::CaseInsensitive) + ".esp";
                 PLOG_VERBOSE << "Created standard bsa plugin:" + espName;
             }
-            QFile::copy(Games::resourcePath() + "DummyPlugin.esp", folderPath + "/" + espName);
+            QFile::copy(Profiles::resourcePath() + "DummyPlugin.esp", folderPath + "/" + espName);
         }
     }
     PLOG_VERBOSE << "Exiting makeDummyPlugins function";
@@ -49,8 +49,8 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &
         if (it.fileName().contains(QRegularExpression("\\.es[plm]$")))
             espName << it.fileName();
 
-        if (it.fileName().endsWith(Games::bsaSuffix(), Qt::CaseInsensitive)
-            && !it.fileName().endsWith(Games::bsaTexturesSuffix(), Qt::CaseInsensitive))
+        if (it.fileName().endsWith(Profiles::bsaSuffix(), Qt::CaseInsensitive)
+            && !it.fileName().endsWith(Profiles::bsaTexturesSuffix(), Qt::CaseInsensitive))
         {
             bsaName = it.fileName().chopped(4) + ".esp";
         }
@@ -68,14 +68,14 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &
     {
         for (auto esp : espName)
         {
-            const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
+            const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaTexturesSuffix()).exists()
                                          && bsaType == TexturesBsa;
 
-            const bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
+            const bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaSuffix()).exists()
                                          && bsaType == StandardBsa;
 
-            const bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + Games::bsaTexturesSuffix()).exists()
-                                     && !QFile(folderPath + "/" + esp.chopped(4) + Games::bsaSuffix()).exists()
+            const bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaTexturesSuffix()).exists()
+                                     && !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaSuffix()).exists()
                                      && bsaType == TexturesAndStandardBsa;
 
             if (texturesBsaGood || standardBsaGood || bothBsaGood)
@@ -93,8 +93,8 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &
 bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
-    bsaName.remove(Games::bsaExtension());
-    bsaName.remove(" - Textures" + Games::bsaExtension()); // x.esp will also load x - Textures.bsa
+    bsaName.remove(Profiles::bsaExtension());
+    bsaName.remove(" - Textures" + Profiles::bsaExtension()); // x.esp will also load x - Textures.bsa
 
     const QString eslName = bsaName + ".esl";
     const QString esmName = bsaName + ".esm";

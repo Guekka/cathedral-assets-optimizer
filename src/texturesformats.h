@@ -5,6 +5,7 @@
 
 #pragma once
 #include "dxgiformat.h"
+#include <string>
 
 //Used to convert enum to string and vice versa
 

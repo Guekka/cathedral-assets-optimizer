@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Games.h"
+#include "Profiles.h"
 #include "pch.h"
 
 class TexturesOptimizer final : public QObject

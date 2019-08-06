@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "MainOptimizer.h"
-#include "Games.h"
+#include "Profiles.h"
 #include "PluginsOperations.h"
 #include "TexturesOptimizer.h"
 
@@ -21,9 +21,9 @@ void MainOptimizer::process(const QString &file)
         processTexture(file, TexturesOptimizer::DDS);
     else if (file.endsWith(".nif", Qt::CaseInsensitive))
         processNif(file);
-    else if (file.endsWith(".tga", Qt::CaseInsensitive) && Games::texturesConvertTga())
+    else if (file.endsWith(".tga", Qt::CaseInsensitive) && Profiles::texturesConvertTga())
         processTexture(file, TexturesOptimizer::TGA);
-    else if (file.endsWith(Games::bsaExtension(), Qt::CaseInsensitive))
+    else if (file.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
         processBsa(file);
     else if (file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
@@ -135,7 +135,7 @@ void MainOptimizer::processHkx(const QString &file) const
     if (_optOptions.bAnimationsOptimization && _optOptions.bDryRun)
         PLOG_INFO << file + QObject::tr(" would be ported to SSE");
     else if (_optOptions.bAnimationsOptimization)
-        _animOpt.convert(file, Games::animationFormat());
+        _animOpt.convert(file, Profiles::animationFormat());
 }
 
 void MainOptimizer::processNif(const QString &file)

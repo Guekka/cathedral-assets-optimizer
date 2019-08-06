@@ -43,7 +43,7 @@ set(SOURCES
     AnimationsOptimizer.cpp
     MainOptimizer.cpp
     IntegrationTests.cpp
-    Games.cpp
+    Profiles.cpp
     OptionsCAO.cpp
 
     #Ui
@@ -64,7 +64,7 @@ set(HEADERS
     MainOptimizer.h
     IntegrationTests.h
     pch.h
-    Games.h
+    Profiles.h
     Logger.h
     OptionsCAO.h
     TexturesFormats.h

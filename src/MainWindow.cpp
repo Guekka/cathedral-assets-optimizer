@@ -10,13 +10,6 @@ MainWindow::MainWindow()
     _ui->setupUi(this);
 
     //Setting data for widgets
-    //Games combo box
-    for (int i = 0; i < _ui->presets->count(); ++i)
-    {
-        QString text = _ui->presets->itemText(i);
-        Games::GameMode game = Games::stringToGame(text);
-        _ui->presets->setItemData(i, game);
-    }
 
     //Mode chooser combo box
     _ui->modeChooserComboBox->setItemData(0, OptionsCAO::SingleMod);
@@ -72,8 +65,8 @@ MainWindow::MainWindow()
     });
 
     connect(_ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        CAO_SET_CURRENT_GAME(Games::uiToGame(_ui))
-        Games::getInstance()->saveToUi(_ui);
+        Profiles::setCurrentProfile(Profiles::uiToGame(_ui));
+        Profiles::getInstance()->saveToUi(_ui);
         this->refreshUi();
     });
 
@@ -93,7 +86,7 @@ MainWindow::MainWindow()
     connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
         QString dir = QFileDialog::getExistingDirectory(this,
                                                         "Open Directory",
-                                                        _settings->value("SelectedPath").toString(),
+                                                        Profiles::settings()->value("SelectedPath").toString(),
                                                         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
             _ui->userPathTextEdit->setText(dir);
@@ -124,22 +117,9 @@ MainWindow::MainWindow()
     hideAdvancedSettings();
     resetUi();
 
-    _uiSettings = new QSettings("settings/common/config.ini", QSettings::IniFormat, this);
-    Games::GameMode mode = _uiSettings->value("game").value<Games::GameMode>();
-    if (mode == Games::Invalid)
-    {
-        _uiSettings->setValue("game", Games::Custom);
-        mode = Games::Custom;
-    }
-    else if (mode == Games::Custom)
-    {
-        QSettings gamesSettings("settings/Custom/config.ini", QSettings::IniFormat);
-        Games::getInstance()->readFromIni(&gamesSettings);
-        Games::getInstance()->saveToUi(_ui);
-    }
-
-    CAO_SET_CURRENT_GAME(mode)
-    _settings = new QSettings(Games::iniPath(), QSettings::IniFormat, this);
+    _commonSettings = new QSettings("settings/common.ini", QSettings::IniFormat, this);
+    const QString mode = _commonSettings->value("profile").toString();
+    Profiles::setCurrentProfile(mode);
 
     loadUi();
     refreshUi();
@@ -174,12 +154,9 @@ void MainWindow::refreshUi()
 
     //Enabling advanced options
     if (_ui->advancedSettingsCheckbox->isChecked())
-    {
         this->showAdvancedSettings();
-        this->setGameMode(Games::Custom);
-    }
     else
-        setGameMode(Games::uiToGame(_ui));
+        this->hideAdvancedSettings();
 
     if (!_bLockVariables)
         saveUi();
@@ -189,38 +166,31 @@ void MainWindow::refreshUi()
 
 void MainWindow::saveUi()
 {
-    _uiSettings->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
-    _uiSettings->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
+    _commonSettings->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
+    _commonSettings->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
 
     _options.readFromUi(_ui);
-    _options.saveToIni(_settings);
-
-    if (_ui->advancedSettingsCheckbox->isChecked())
-    {
-        QSettings sets("settings/Custom/config.ini", QSettings::IniFormat, this);
-        Games::getInstance()->readFromUi(_ui);
-        Games::getInstance()->saveToIni(&sets);
-    }
+    _options.saveToIni(Profiles::settings());
 }
 
 void MainWindow::loadUi()
 {
-    _ui->actionEnableDarkTheme->setChecked(_uiSettings->value("bDarkMode").toBool());
-    _ui->advancedSettingsCheckbox->setChecked(_uiSettings->value("bShowAdvancedSettings").toBool());
+    _ui->actionEnableDarkTheme->setChecked(_commonSettings->value("bDarkMode").toBool());
+    _ui->advancedSettingsCheckbox->setChecked(_commonSettings->value("bShowAdvancedSettings").toBool());
     for (int i = 0; i < _ui->presets->count(); ++i)
     {
-        if (_ui->presets->itemData(i) == Games::game())
+        if (_ui->presets->itemData(i) == Profiles::game())
         {
             _ui->presets->setCurrentIndex(i);
             break;
         }
     }
 
-    _options.readFromIni(_settings);
+    _options.readFromIni(Profiles::settings());
     _options.saveToUi(_ui);
 
     if (_ui->advancedSettingsCheckbox->isChecked())
-        Games::getInstance()->saveToUi(_ui);
+        Profiles::getInstance()->saveToUi(_ui);
 }
 
 void MainWindow::resetUi() const
@@ -284,7 +254,7 @@ void MainWindow::updateLog() const
 {
     _ui->logTextEdit->clear();
 
-    QFile log(Games::logPath());
+    QFile log(Profiles::logPath());
     if (log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);
@@ -294,7 +264,7 @@ void MainWindow::updateLog() const
     }
 }
 
-void MainWindow::setGameMode(const Games::GameMode &mode) const
+void MainWindow::setGameMode(const QString &mode) const
 {
     //Resetting the window
     const int animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
@@ -302,15 +272,16 @@ void MainWindow::setGameMode(const Games::GameMode &mode) const
     resetUi();
 
     //Actually setting the window mode
-    CAO_SET_CURRENT_GAME(mode)
+    Profiles::setCurrentProfile(mode);
 
-    switch (mode)
+    //TODO let the user customize the UI
+    /*    switch (mode)
     {
         //Doing nothing for SSE : it is the default mode
-    case Games::SSE: break;
-    case Games::Custom: break;
+    case Profiles::SSE: break;
+    case Profiles::Custom: break;
 
-    case Games::TES5:
+    case Profiles::TES5:
         _ui->meshesMediumOptimizationRadioButton->setChecked(false);
         _ui->meshesMediumOptimizationRadioButton->hide();
 
@@ -318,7 +289,7 @@ void MainWindow::setGameMode(const Games::GameMode &mode) const
         _ui->tabWidget->setTabEnabled(animTabIndex, false);
         break;
 
-    case Games::FO4:
+    case Profiles::FO4:
         _ui->animationsNecessaryOptimizationCheckBox->setChecked(false);
         _ui->tabWidget->setTabEnabled(animTabIndex, false);
 
@@ -326,8 +297,8 @@ void MainWindow::setGameMode(const Games::GameMode &mode) const
         _ui->tabWidget->setTabEnabled(meshesTabIndex, false);
         break;
 
-    case Games::Invalid: throw std::runtime_error("Invalid game: " + _ui->presets->currentText().toStdString());
-    }
+    case Profiles::Invalid: throw std::runtime_error("Invalid game: " + _ui->presets->currentText().toStdString());
+    }*/
 }
 
 void MainWindow::hideAdvancedSettings() const

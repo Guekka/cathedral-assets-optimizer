@@ -282,7 +282,7 @@ void OptionsCAO::parseArguments(const QStringList &args)
         mode = SeveralMods;
 
     const QString readGame = parser.positionalArguments().at(2);
-    CAO_SET_CURRENT_GAME(readGame)
+    Profiles::setCurrentProfile(readGame);
 
     bDryRun = parser.isSet("dr");
     bDebugLog = parser.isSet("l");

@@ -32,7 +32,7 @@ private:
 
     void resetUi() const;
 
-    void setGameMode(const Games::GameMode &mode) const;
+    void setGameMode(const QString &mode) const;
 
     void updateLog() const;
     void initProcess();
@@ -44,7 +44,7 @@ private:
 
     int _progressBarValue{};
 
-    QSettings *_uiSettings;
+    QSettings *_commonSettings;
     QSettings *_settings;
     OptionsCAO _options;
 

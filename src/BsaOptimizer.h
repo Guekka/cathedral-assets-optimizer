@@ -5,7 +5,7 @@
 #pragma once
 
 #include "FilesystemOperations.h"
-#include "Games.h"
+#include "Profiles.h"
 #include "pch.h"
 
 enum BsaType
