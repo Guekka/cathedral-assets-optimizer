@@ -5,7 +5,7 @@
 #include "Profiles.h"
 #include "Manager.h"
 
-Profiles *Profiles::_INSTANCE = nullptr;
+Profiles Profiles::_instance = Profiles();
 
 Profiles::Profiles()
 {
@@ -22,16 +22,17 @@ size_t Profiles::findProfiles(const QDir &dir)
         QString ini = dir.filePath(subDir + "/config.ini");
         if (QFile::exists(ini))
         {
-            _profiles << dir.absoluteFilePath(subDir);
+            _profiles << subDir;
             ++counter;
         }
     }
+    PLOG_VERBOSE << "Profiles found: " << _profiles.join('\n');
     return counter;
 }
 
 void Profiles::loadProfile(const QString &newProfile)
 {
-    if (!_profiles.contains(newProfile))
+    if (!exists(newProfile))
         throw std::runtime_error("This profile does not exist: " + newProfile.toStdString());
 
     _currentProfile = newProfile;
@@ -41,9 +42,19 @@ void Profiles::loadProfile(const QString &newProfile)
     _logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/" + _currentProfile + ".html");
     QString iniPath = _profileDir.absoluteFilePath(_currentProfile + "/config.ini");
     _settings = new QSettings(iniPath, QSettings::IniFormat, this);
-    _resourcePath = QDir::currentPath() + "/resources/SkyrimSE/";
+    _resourcePath = _profileDir.absoluteFilePath(_currentProfile);
 
     readFromIni();
+}
+
+bool Profiles::exists(const QString &profile)
+{
+    return getInstance()._profiles.contains(profile);
+}
+
+QStringList Profiles::list()
+{
+    return getInstance()._profiles;
 }
 
 void Profiles::saveToIni()
@@ -171,113 +182,7 @@ void Profiles::readFromUi(Ui::MainWindow *ui)
 }
 #endif
 
-bool Profiles::getTexturesCompressInterface() const
+Profiles &Profiles::getInstance()
 {
-    return _texturesCompressInterface;
-}
-
-QString Profiles::getProfile() const
-{
-    return _currentProfile;
-}
-
-Profiles *Profiles::getInstance()
-{
-    if (!_INSTANCE)
-        _INSTANCE = new Profiles();
-
-    return _INSTANCE;
-}
-
-bsa_archive_type_e Profiles::getBsaFormat() const
-{
-    return _bsaFormat;
-}
-
-bsa_archive_type_t Profiles::getBsaTexturesFormat() const
-{
-    return _bsaTexturesFormat;
-}
-
-double Profiles::getBsaUncompressedMaxSize() const
-{
-    return _maxBsaUncompressedSize;
-}
-
-double Profiles::getBsaTexturesMaxSize() const
-{
-    return _maxBsaTexturesSize;
-}
-
-QString Profiles::getBsaExtension() const
-{
-    return _bsaExtension;
-}
-
-bool Profiles::getHasBsaTextures() const
-{
-    return _hasBsaTextures;
-}
-
-QString Profiles::getBsaSuffix() const
-{
-    return _bsaSuffix;
-}
-
-QString Profiles::getBsaTexturesSuffix() const
-{
-    return _bsaTexturesSuffix;
-}
-
-uint Profiles::getMeshesUser() const
-{
-    return _meshesUser;
-}
-
-uint Profiles::getMeshesStream() const
-{
-    return _meshesStream;
-}
-
-NiFileVersion Profiles::getMeshesFileVersion() const
-{
-    return _meshesFileVersion;
-}
-
-DXGI_FORMAT Profiles::getTexturesFormat() const
-{
-    return _texturesFormat;
-}
-
-hkPackFormat Profiles::getAnimationsFormat() const
-{
-    return _animationFormat;
-}
-
-bool Profiles::getTexturesConvertTga() const
-{
-    return _texturesConvertTga;
-}
-
-QList<DXGI_FORMAT> Profiles::getTexturesUnwantedFormats() const
-{
-    QList<DXGI_FORMAT> list;
-    for (auto &format : _texturesUnwantedFormats)
-        list << QVariant::fromValue(format).value<DXGI_FORMAT>();
-    return list;
-}
-
-QSettings *Profiles::getSettings() const
-{
-    return _settings;
-}
-
-QString Profiles::getLogPath() const
-{
-    return _logPath;
-}
-
-QString Profiles::getResourcePath() const
-{
-    return _resourcePath;
+    return _instance;
 }

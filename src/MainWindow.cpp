@@ -11,6 +11,10 @@ MainWindow::MainWindow()
 
     //Setting data for widgets
 
+    //Profiles
+    for (const auto &profile : Profiles::list())
+        _ui->presets->addItem(profile);
+
     //Mode chooser combo box
     _ui->modeChooserComboBox->setItemData(0, OptionsCAO::SingleMod);
     _ui->modeChooserComboBox->setItemData(1, OptionsCAO::SeveralMods);
@@ -66,7 +70,7 @@ MainWindow::MainWindow()
 
     connect(_ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
         Profiles::setCurrentProfile(Profiles::uiToGame(_ui));
-        Profiles::getInstance()->saveToUi(_ui);
+        Profiles::getInstance().saveToUi(_ui);
         this->refreshUi();
     });
 
@@ -118,7 +122,8 @@ MainWindow::MainWindow()
     resetUi();
 
     _commonSettings = new QSettings("settings/common.ini", QSettings::IniFormat, this);
-    const QString mode = _commonSettings->value("profile").toString();
+    QString mode = _commonSettings->value("profile").toString();
+    mode = Profiles::exists(mode) ? mode : "Default";
     Profiles::setCurrentProfile(mode);
 
     loadUi();
@@ -190,7 +195,7 @@ void MainWindow::loadUi()
     _options.saveToUi(_ui);
 
     if (_ui->advancedSettingsCheckbox->isChecked())
-        Profiles::getInstance()->saveToUi(_ui);
+        Profiles::getInstance().saveToUi(_ui);
 }
 
 void MainWindow::resetUi() const

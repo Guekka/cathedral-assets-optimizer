@@ -976,8 +976,7 @@ OptResult NifFile::OptimizeFor(OptOptions& options) {
 					result.shapesVColorsRemoved.push_back(shapeName);
 
                 BSTriShape* bsOptShape = nullptr;
-                //Only converting niTriShape to bsTriShape if required
-                if(options.bsTriShape || shape->HasType<NiTriStrips>() || shape->HasType<bhkMultiSphereShape>())
+                if (options.bsTriShape || shape->HasType<NiTriStrips>() || shape->HasType<bhkMultiSphereShape>())
                 {
                     auto bsSegmentShape = dynamic_cast<BSSegmentedTriShape*>(shape);
                     if (bsSegmentShape) {

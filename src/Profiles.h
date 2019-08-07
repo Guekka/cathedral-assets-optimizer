@@ -14,10 +14,9 @@ constexpr double GigaByte = 1024 * 1024 * 1024;
 class Profiles final : public QObject
 {
 public:
-    size_t findProfiles(const QDir &dir);
-
+    static bool exists(const QString &profile);
     void loadProfile(const QString &newProfile);
-
+    static QStringList list();
     void saveToIni();
 
 #ifdef GUI
@@ -35,71 +34,48 @@ public:
     //static getters
     [[nodiscard]] static bsa_archive_type_t bsaFormat()
     {
-        return getInstance()->getBsaFormat();
+        return getInstance()._bsaFormat;
     }
-    [[nodiscard]] static bsa_archive_type_t bsaTexturesFormat() { return getInstance()->getBsaTexturesFormat(); }
-    [[nodiscard]] static double maxBsaUncompressedSize() { return getInstance()->getBsaUncompressedMaxSize(); }
-    [[nodiscard]] static bool hasBsaTextures() { return getInstance()->getHasBsaTextures(); }
-    [[nodiscard]] static double maxBsaTexturesSize() { return getInstance()->getBsaTexturesMaxSize(); }
-    [[nodiscard]] static QString bsaExtension() { return getInstance()->getBsaExtension(); }
-    [[nodiscard]] static QString bsaSuffix() { return getInstance()->getBsaSuffix(); }
-    [[nodiscard]] static QString bsaTexturesSuffix() { return getInstance()->getBsaTexturesSuffix(); }
+    [[nodiscard]] static bsa_archive_type_t bsaTexturesFormat() { return getInstance()._bsaTexturesFormat; }
+    [[nodiscard]] static double maxBsaUncompressedSize() { return getInstance()._maxBsaUncompressedSize; }
+    [[nodiscard]] static bool hasBsaTextures() { return getInstance()._hasBsaTextures; }
+    [[nodiscard]] static double maxBsaTexturesSize() { return getInstance()._maxBsaTexturesSize; }
+    [[nodiscard]] static QString bsaExtension() { return getInstance()._bsaExtension; }
+    [[nodiscard]] static QString bsaSuffix() { return getInstance()._bsaSuffix; }
+    [[nodiscard]] static QString bsaTexturesSuffix() { return getInstance()._bsaTexturesSuffix; }
 
-    [[nodiscard]] static NiFileVersion meshesFileVersion() { return getInstance()->getMeshesFileVersion(); }
-    [[nodiscard]] static uint meshesStream() { return getInstance()->getMeshesStream(); }
-    [[nodiscard]] static uint meshesUser() { return getInstance()->getMeshesUser(); }
+    [[nodiscard]] static NiFileVersion meshesFileVersion() { return getInstance()._meshesFileVersion; }
+    [[nodiscard]] static uint meshesStream() { return getInstance()._meshesStream; }
+    [[nodiscard]] static uint meshesUser() { return getInstance()._meshesUser; }
 
-    [[nodiscard]] static hkPackFormat animationFormat() { return getInstance()->getAnimationsFormat(); }
+    [[nodiscard]] static hkPackFormat animationFormat() { return getInstance()._animationFormat; }
 
-    [[nodiscard]] static DXGI_FORMAT texturesFormat() { return getInstance()->getTexturesFormat(); }
-    [[nodiscard]] static bool texturesConvertTga() { return getInstance()->getTexturesConvertTga(); }
+    [[nodiscard]] static DXGI_FORMAT texturesFormat() { return getInstance()._texturesFormat; }
+    [[nodiscard]] static bool texturesConvertTga() { return getInstance()._texturesConvertTga; }
 
     [[nodiscard]] static QList<DXGI_FORMAT> texturesUnwantedFormats()
     {
-        return getInstance()->getTexturesUnwantedFormats();
+        QList<DXGI_FORMAT> list;
+        for (const QVariant &variant : getInstance()._texturesUnwantedFormats)
+            list << variant.value<DXGI_FORMAT>();
+        return list;
     }
 
-    [[nodiscard]] static bool texturesCompressInterface() { return getInstance()->getTexturesCompressInterface(); }
+    [[nodiscard]] static bool texturesCompressInterface() { return getInstance()._texturesCompressInterface; }
 
-    [[nodiscard]] static QSettings *settings() { return getInstance()->getSettings(); }
-    [[nodiscard]] static QString logPath() { return getInstance()->getLogPath(); }
-    [[nodiscard]] static QString resourcePath() { return getInstance()->getResourcePath(); }
+    [[nodiscard]] static QSettings *settings() { return getInstance()._settings; }
+    [[nodiscard]] static QString logPath() { return getInstance()._logPath; }
+    [[nodiscard]] static QString resourcePath() { return getInstance()._resourcePath; }
 
-    [[nodiscard]] static Profiles *getInstance();
-    [[nodiscard]] static QString game() { return getInstance()->getProfile(); }
+    [[nodiscard]] static Profiles &getInstance();
+    [[nodiscard]] static QString game() { return getInstance()._currentProfile; }
 
     //static setter
-    static void setCurrentProfile(const QString &newProfile) { getInstance()->loadProfile(newProfile); }
-
-    //instance getters
-    [[nodiscard]] bsa_archive_type_e getBsaFormat() const;
-    [[nodiscard]] bsa_archive_type_t getBsaTexturesFormat() const;
-    [[nodiscard]] double getBsaUncompressedMaxSize() const;
-    [[nodiscard]] double getBsaTexturesMaxSize() const;
-    [[nodiscard]] QString getBsaExtension() const;
-    [[nodiscard]] bool getHasBsaTextures() const;
-    [[nodiscard]] QString getBsaSuffix() const;
-    [[nodiscard]] QString getBsaTexturesSuffix() const;
-
-    [[nodiscard]] NiFileVersion getMeshesFileVersion() const;
-    [[nodiscard]] uint getMeshesStream() const;
-    [[nodiscard]] uint getMeshesUser() const;
-
-    [[nodiscard]] hkPackFormat getAnimationsFormat() const;
-
-    [[nodiscard]] DXGI_FORMAT getTexturesFormat() const;
-    [[nodiscard]] bool getTexturesConvertTga() const;
-    [[nodiscard]] QList<DXGI_FORMAT> getTexturesUnwantedFormats() const;
-    [[nodiscard]] bool getTexturesCompressInterface() const;
-
-    [[nodiscard]] QSettings *getSettings() const;
-    [[nodiscard]] QString getLogPath() const;
-    [[nodiscard]] QString getResourcePath() const;
-
-    [[nodiscard]] QString getProfile() const;
+    static void setCurrentProfile(const QString &newProfile) { getInstance().loadProfile(newProfile); }
 
 private:
     void readFromIni();
+    size_t findProfiles(const QDir &dir);   
 
     bsa_archive_type_t _bsaFormat;
     bsa_archive_type_t _bsaTexturesFormat;
@@ -125,11 +101,11 @@ private:
     QString _logPath;
     QString _resourcePath;
 
-    static Profiles *_INSTANCE;
-
     QDir _profileDir;
     QString _currentProfile;
-    QVector<QString> _profiles;
+    QStringList _profiles;
+
+    static Profiles _instance;
 
     Profiles();
 };

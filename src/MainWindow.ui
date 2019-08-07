@@ -204,28 +204,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QComboBox" name="presets">
-      <item>
-       <property name="text">
-        <string>SSE</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>TES5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>FO4</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Custom</string>
-       </property>
-      </item>
-     </widget>
+     <widget class="QComboBox" name="presets"/>
     </item>
     <item>
      <widget class="QTabWidget" name="tabWidget">
