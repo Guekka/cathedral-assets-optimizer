@@ -47,7 +47,9 @@ ScanResult MeshesOptimizer::scan(const QString &filePath) const
     {
         for (const auto &shape : nif.GetShapes())
         {
-            if (shape->HasType<NiTriStrips>() || shape->HasType<bhkMultiSphereShape>())
+            const bool needsOpt = shape->HasType<bhkMultiSphereShape>() || shape->HasType<NiTriStrips>()
+                                  || shape->HasType<NiTriStripsData>() || shape->HasType<NiSkinPartition>();
+            if (needsOpt)
                 if (result < criticalIssue)
                     result = criticalIssue;
 
