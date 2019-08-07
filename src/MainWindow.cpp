@@ -12,8 +12,7 @@ MainWindow::MainWindow()
     //Setting data for widgets
 
     //Profiles
-    for (const auto &profile : Profiles::list())
-        _ui->presets->addItem(profile);
+    _ui->presets->insertItems(0, Profiles::list());
 
     //Mode chooser combo box
     _ui->modeChooserComboBox->setItemData(0, OptionsCAO::SingleMod);
@@ -79,18 +78,17 @@ MainWindow::MainWindow()
         {
             QMessageBox warning(this);
             warning.setText(tr("You have selected the several mods option. This process may take a very long time, "
-                               "especially if you process BSA. "
-                               "\nThis process has only been tested on the Mod Organizer mods folder."));
+                               "especially if you process BSA. ")
+                            + '\n' + tr("This process has only been tested on the Mod Organizer mods folder."));
             warning.exec();
         }
-
         this->refreshUi();
     });
 
     connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
         QString dir = QFileDialog::getExistingDirectory(this,
-                                                        "Open Directory",
-                                                        Profiles::settings()->value("SelectedPath").toString(),
+                                                        tr("Open Directory"),
+                                                        _options.userPath,
                                                         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
             _ui->userPathTextEdit->setText(dir);
@@ -121,11 +119,12 @@ MainWindow::MainWindow()
     hideAdvancedSettings();
     resetUi();
 
-    _commonSettings = new QSettings("settings/common.ini", QSettings::IniFormat, this);
+    _commonSettings = new QSettings("profiles/common.ini", QSettings::IniFormat, this);
     QString mode = _commonSettings->value("profile").toString();
+    qDebug() << mode;
     mode = Profiles::exists(mode) ? mode : "Default";
     Profiles::setCurrentProfile(mode);
-
+    _ui->presets->setCurrentIndex(_ui->presets->findText(mode));
     loadUi();
     refreshUi();
 
@@ -173,7 +172,7 @@ void MainWindow::saveUi()
 {
     _commonSettings->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
     _commonSettings->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
-
+    _commonSettings->setValue("profile", Profiles::currentProfile());
     _options.readFromUi(_ui);
     _options.saveToIni(Profiles::settings());
 }
@@ -182,14 +181,7 @@ void MainWindow::loadUi()
 {
     _ui->actionEnableDarkTheme->setChecked(_commonSettings->value("bDarkMode").toBool());
     _ui->advancedSettingsCheckbox->setChecked(_commonSettings->value("bShowAdvancedSettings").toBool());
-    for (int i = 0; i < _ui->presets->count(); ++i)
-    {
-        if (_ui->presets->itemData(i) == Profiles::game())
-        {
-            _ui->presets->setCurrentIndex(i);
-            break;
-        }
-    }
+    _ui->presets->setCurrentIndex(_ui->presets->findText(_commonSettings->value("profile").toString()));
 
     _options.readFromIni(Profiles::settings());
     _options.saveToUi(_ui);

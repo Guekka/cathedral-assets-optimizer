@@ -57,6 +57,13 @@ QStringList Profiles::list()
     return getInstance()._profiles;
 }
 
+void Profiles::create(const QString &name)
+{
+    FilesystemOperations::copyDir(_instance._profileDir.absoluteFilePath("default"),
+                                  _instance._profileDir.absoluteFilePath(name),
+                                  false);
+}
+
 void Profiles::saveToIni()
 {
     _settings->setValue("bsaFormat", _bsaFormat);
