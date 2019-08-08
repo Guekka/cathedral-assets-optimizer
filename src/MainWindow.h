@@ -29,6 +29,10 @@ private:
     void saveUi();
     void loadUi();
     void refreshUi();
+    void refreshProfiles();
+    void createProfile();
+
+    void setDarkTheme(const bool &enabled);
 
     void resetUi() const;
 

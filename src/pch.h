@@ -12,6 +12,7 @@
 #include <QDateTime>
 #include <QDirIterator>
 #include <QFile>
+#include <QInputDialog>
 #include <QMap>
 #include <QMutex>
 #include <QProcess>

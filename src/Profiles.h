@@ -33,10 +33,11 @@ public:
     Q_ENUM(DXGI_FORMAT)
 
     //static getters
-    [[nodiscard]] static bsa_archive_type_t bsaFormat()
+    [[nodiscard]] static bool bsaEnabled()
     {
-        return _instance._bsaFormat;
+        return _instance._bsaEnabled;
     }
+    [[nodiscard]] static bsa_archive_type_t bsaFormat() { return _instance._bsaFormat; }
     [[nodiscard]] static bsa_archive_type_t bsaTexturesFormat() { return _instance._bsaTexturesFormat; }
     [[nodiscard]] static double maxBsaUncompressedSize() { return _instance._maxBsaUncompressedSize; }
     [[nodiscard]] static bool hasBsaTextures() { return _instance._hasBsaTextures; }
@@ -45,15 +46,17 @@ public:
     [[nodiscard]] static QString bsaSuffix() { return _instance._bsaSuffix; }
     [[nodiscard]] static QString bsaTexturesSuffix() { return _instance._bsaTexturesSuffix; }
 
+    [[nodiscard]] static bool meshesEnabled() { return _instance._meshesEnabled; }
     [[nodiscard]] static NiFileVersion meshesFileVersion() { return _instance._meshesFileVersion; }
     [[nodiscard]] static uint meshesStream() { return _instance._meshesStream; }
     [[nodiscard]] static uint meshesUser() { return _instance._meshesUser; }
 
+    [[nodiscard]] static bool animationsEnabled() { return _instance._animationsEnabled; }
     [[nodiscard]] static hkPackFormat animationFormat() { return _instance._animationFormat; }
 
+    [[nodiscard]] static bool texturesEnabled() { return _instance._texturesEnabled; }
     [[nodiscard]] static DXGI_FORMAT texturesFormat() { return _instance._texturesFormat; }
     [[nodiscard]] static bool texturesConvertTga() { return _instance._texturesConvertTga; }
-
     [[nodiscard]] static QList<DXGI_FORMAT> texturesUnwantedFormats()
     {
         QList<DXGI_FORMAT> list;
@@ -70,6 +73,10 @@ public:
 
     [[nodiscard]] static Profiles &getInstance();
     [[nodiscard]] static QString currentProfile() { return _instance._currentProfile; }
+    [[nodiscard]] static QString currentProfileDir()
+    {
+        return _instance._profileDir.absoluteFilePath(_instance.currentProfile());
+    }
 
     //static setter
     static void setCurrentProfile(const QString &newProfile) { _instance.loadProfile(newProfile); }
@@ -78,6 +85,7 @@ private:
     void readFromIni();
     size_t findProfiles(const QDir &dir);
 
+    bool _bsaEnabled;
     bsa_archive_type_t _bsaFormat;
     bsa_archive_type_t _bsaTexturesFormat;
     double _maxBsaUncompressedSize;
@@ -87,12 +95,15 @@ private:
     QString _bsaSuffix;
     QString _bsaTexturesSuffix;
 
+    bool _meshesEnabled;
     NiFileVersion _meshesFileVersion;
     uint _meshesStream;
     uint _meshesUser;
 
+    bool _animationsEnabled;
     hkPackFormat _animationFormat;
 
+    bool _texturesEnabled;
     DXGI_FORMAT _texturesFormat;
     bool _texturesConvertTga;
     QList<QVariant> _texturesUnwantedFormats;
