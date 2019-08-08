@@ -11,7 +11,8 @@ BsaOptimizer::BsaOptimizer()
     //Reading filesToNotPack to add them to the list.
     //Done in the constructor since the file won't change at runtime.
 
-    QFile filesToNotPackFile("resources/FilesToNotPack.txt");
+    QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
+
     if (filesToNotPackFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&filesToNotPackFile);

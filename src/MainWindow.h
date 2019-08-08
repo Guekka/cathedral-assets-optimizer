@@ -36,7 +36,7 @@ private:
 
     void resetUi() const;
 
-    void setGameMode(const QString &mode) const;
+    void setGameMode(const QString &mode);
 
     void updateLog() const;
     void initProcess();

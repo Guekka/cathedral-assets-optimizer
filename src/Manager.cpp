@@ -101,7 +101,7 @@ void Manager::listFiles()
 
 void Manager::readIgnoredMods()
 {
-    QFile ignoredModsFile(Profiles::resourcePath() + "ignoredMods.txt");
+    QFile &&ignoredModsFile = Profiles::getFile("ignoredMods.txt");
     if (ignoredModsFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&ignoredModsFile);

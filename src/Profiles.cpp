@@ -37,20 +37,21 @@ void Profiles::loadProfile(const QString &newProfile)
         throw std::runtime_error("This profile does not exist: " + newProfile.toStdString());
 
     _currentProfile = newProfile;
-    QSettings s("settings/common.ini", QSettings::IniFormat);
+    QSettings s("profiles/common.ini", QSettings::IniFormat);
     s.setValue("profile", _currentProfile);
 
     _logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/" + _currentProfile + ".html");
-    QString iniPath = _profileDir.absoluteFilePath(_currentProfile + "/profile.ini");
-    _settings = new QSettings(iniPath, QSettings::IniFormat, this);
-    _resourcePath = _profileDir.absoluteFilePath(_currentProfile);
+    QString folder = _profileDir.absoluteFilePath(_currentProfile);
+    _profileSettings = new QSettings(folder + "/profile.ini", QSettings::IniFormat, this);
+    _optionsSettings = new QSettings(folder + "/settings.ini", QSettings::IniFormat, this);
 
     readFromIni();
 }
 
 bool Profiles::exists(const QString &profile)
 {
-    return getInstance()._profiles.contains(profile);
+    _instance.findProfiles(QDir("profiles"));
+    return _instance._profiles.contains(profile);
 }
 
 QStringList Profiles::list()
@@ -66,68 +67,81 @@ void Profiles::create(const QString &name)
     _instance.findProfiles(_instance._profileDir);
 }
 
+QFile Profiles::getFile(const QString &filename)
+{
+    const QDir &currentProfileDir(_instance._profileDir.absoluteFilePath(_instance.currentProfile()));
+    const QDir &defaultProfileDir(_instance._profileDir.absoluteFilePath("Default"));
+
+    if (currentProfileDir.exists(filename))
+        return QFile(currentProfileDir.filePath(filename));
+    else if (defaultProfileDir.exists(filename))
+        return QFile(defaultProfileDir.filePath(filename));
+    else
+        return QFile();
+}
+
 void Profiles::saveToIni()
 {
-    _settings->beginGroup("BSA");
-    _settings->setValue("bsaEnabled", _bsaEnabled);
-    _settings->setValue("bsaFormat", _bsaFormat);
-    _settings->setValue("bsaTexturesFormat", _bsaTexturesFormat);
-    _settings->setValue("maxBsaUncompressedSize", _maxBsaUncompressedSize);
-    _settings->setValue("hasBsaTextures", _hasBsaTextures);
-    _settings->setValue("maxBsaTexturesSize", _maxBsaTexturesSize);
-    _settings->setValue("bsaExtension", _bsaExtension);
-    _settings->setValue("bsaSuffix", _bsaSuffix);
-    _settings->setValue("bsaTexturesSuffix", _bsaTexturesSuffix);
-    _settings->endGroup();
-    _settings->beginGroup("Meshes");
-    _settings->setValue("meshesEnabled", _meshesEnabled);
-    _settings->setValue("meshesFileVersion", _meshesFileVersion);
-    _settings->setValue("meshesStream", _meshesStream);
-    _settings->setValue("meshesUser", _meshesUser);
-    _settings->endGroup();
-    _settings->beginGroup("Animations");
-    _settings->setValue("animationsEnabled", _animationsEnabled);
-    _settings->setValue("animationFormat", _animationFormat);
-    _settings->endGroup();
-    _settings->beginGroup("Textures");
-    _settings->setValue("texturesEnabled", _texturesEnabled);
-    _settings->setValue("texturesFormat", _texturesFormat);
-    _settings->setValue("texturesConvertTga", _texturesConvertTga);
-    _settings->setValue("texturesUnwantedFormats", _texturesUnwantedFormats);
-    _settings->setValue("texturesCompressInterface", _texturesCompressInterface);
-    _settings->endGroup();
+    _profileSettings->beginGroup("BSA");
+    _profileSettings->setValue("bsaEnabled", _bsaEnabled);
+    _profileSettings->setValue("bsaFormat", _bsaFormat);
+    _profileSettings->setValue("bsaTexturesFormat", _bsaTexturesFormat);
+    _profileSettings->setValue("maxBsaUncompressedSize", _maxBsaUncompressedSize);
+    _profileSettings->setValue("hasBsaTextures", _hasBsaTextures);
+    _profileSettings->setValue("maxBsaTexturesSize", _maxBsaTexturesSize);
+    _profileSettings->setValue("bsaExtension", _bsaExtension);
+    _profileSettings->setValue("bsaSuffix", _bsaSuffix);
+    _profileSettings->setValue("bsaTexturesSuffix", _bsaTexturesSuffix);
+    _profileSettings->endGroup();
+    _profileSettings->beginGroup("Meshes");
+    _profileSettings->setValue("meshesEnabled", _meshesEnabled);
+    _profileSettings->setValue("meshesFileVersion", _meshesFileVersion);
+    _profileSettings->setValue("meshesStream", _meshesStream);
+    _profileSettings->setValue("meshesUser", _meshesUser);
+    _profileSettings->endGroup();
+    _profileSettings->beginGroup("Animations");
+    _profileSettings->setValue("animationsEnabled", _animationsEnabled);
+    _profileSettings->setValue("animationFormat", _animationFormat);
+    _profileSettings->endGroup();
+    _profileSettings->beginGroup("Textures");
+    _profileSettings->setValue("texturesEnabled", _texturesEnabled);
+    _profileSettings->setValue("texturesFormat", _texturesFormat);
+    _profileSettings->setValue("texturesConvertTga", _texturesConvertTga);
+    _profileSettings->setValue("texturesUnwantedFormats", _texturesUnwantedFormats);
+    _profileSettings->setValue("texturesCompressInterface", _texturesCompressInterface);
+    _profileSettings->endGroup();
 }
 
 void Profiles::readFromIni()
 {
-    _settings->beginGroup("BSA");
-    _bsaEnabled = _settings->value("bsaEnabled").toBool();
-    _bsaFormat = static_cast<bsa_archive_type_t>(_settings->value("bsaFormat").toInt());
-    _bsaTexturesFormat = static_cast<bsa_archive_type_t>(_settings->value("bsaTexturesFormat").toInt());
-    _maxBsaUncompressedSize = _settings->value("maxBsaUncompressedSize").toDouble();
-    _hasBsaTextures = _settings->value("hasBsaTextures").toBool();
-    _maxBsaTexturesSize = _settings->value("maxBsaTexturesSize").toDouble();
-    _bsaExtension = _settings->value("bsaExtension").toString();
-    _bsaSuffix = _settings->value("bsaSuffix").toString();
-    _bsaTexturesSuffix = _settings->value("bsaTexturesSuffix").toString();
-    _settings->endGroup();
-    _settings->beginGroup("Meshes");
-    _meshesEnabled = _settings->value("meshesEnabled").toBool();
-    _meshesFileVersion = static_cast<NiFileVersion>(_settings->value("meshesFileVersion").toInt());
-    _meshesStream = _settings->value("meshesStream").toUInt();
-    _meshesUser = _settings->value("meshesUser").toUInt();
-    _settings->endGroup();
-    _settings->beginGroup("Animations");
-    _animationsEnabled = _settings->value("animationsEnabled").toBool();
-    _animationFormat = static_cast<hkPackFormat>(_settings->value("animationFormat").toInt());
-    _settings->endGroup();
-    _settings->beginGroup("Textures");
-    _texturesEnabled = _settings->value("texturesEnabled").toBool();
-    _texturesFormat = _settings->value("texturesFormat").value<DXGI_FORMAT>();
-    _texturesConvertTga = _settings->value("texturesConvertTga").toBool();
-    _texturesUnwantedFormats = _settings->value("texturesUnwantedFormats").toList();
-    _texturesCompressInterface = _settings->value("texturesCompressInterface").toBool();
-    _settings->endGroup();
+    _profileSettings->beginGroup("BSA");
+    _bsaEnabled = _profileSettings->value("bsaEnabled").toBool();
+    _bsaFormat = static_cast<bsa_archive_type_t>(_profileSettings->value("bsaFormat").toInt());
+    _bsaTexturesFormat = static_cast<bsa_archive_type_t>(_profileSettings->value("bsaTexturesFormat").toInt());
+    _maxBsaUncompressedSize = _profileSettings->value("maxBsaUncompressedSize").toDouble();
+    _hasBsaTextures = _profileSettings->value("hasBsaTextures").toBool();
+    _maxBsaTexturesSize = _profileSettings->value("maxBsaTexturesSize").toDouble();
+    _bsaExtension = _profileSettings->value("bsaExtension").toString();
+    _bsaSuffix = _profileSettings->value("bsaSuffix").toString();
+    _bsaTexturesSuffix = _profileSettings->value("bsaTexturesSuffix").toString();
+    _profileSettings->endGroup();
+    _profileSettings->beginGroup("Meshes");
+    _meshesEnabled = _profileSettings->value("meshesEnabled").toBool();
+    _meshesFileVersion = static_cast<NiFileVersion>(_profileSettings->value("meshesFileVersion").toInt());
+    _meshesStream = _profileSettings->value("meshesStream").toUInt();
+    _meshesUser = _profileSettings->value("meshesUser").toUInt();
+    _profileSettings->endGroup();
+    _profileSettings->beginGroup("Animations");
+    _animationsEnabled = _profileSettings->value("animationsEnabled").toBool();
+    _animationFormat = static_cast<hkPackFormat>(_profileSettings->value("animationFormat").toInt());
+    _profileSettings->endGroup();
+    _profileSettings->beginGroup("Textures");
+    _texturesEnabled = _profileSettings->value("texturesEnabled").toBool();
+    _texturesFormat = _profileSettings->value("texturesFormat").value<DXGI_FORMAT>();
+    _texturesConvertTga = _profileSettings->value("texturesConvertTga").toBool();
+    _texturesUnwantedFormats = _profileSettings->value("texturesUnwantedFormats").toList();
+    _texturesCompressInterface = _profileSettings->value("texturesCompressInterface").toBool();
+    _profileSettings->endGroup();
 }
 #ifdef GUI
 void Profiles::loadProfile(Ui::MainWindow *ui)

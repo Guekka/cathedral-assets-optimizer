@@ -245,6 +245,7 @@ void OptionsCAO::parseArguments(const QStringList &args)
     QCommandLineParser parser;
 
     parser.addHelpOption();
+
     parser.addPositionalArgument("folder", "The folder to process, surrounded with quotes.");
     parser.addPositionalArgument("mode", "Either om (one mod) or sm (several mods)");
     parser.addPositionalArgument("game", "Currently, only 'SSE', 'TES5', 'FO4' and 'Custom' are supported");

@@ -160,8 +160,7 @@ void MainWindow::saveUi()
     _commonSettings->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
     _commonSettings->setValue("profile", Profiles::currentProfile());
     _options.readFromUi(_ui);
-    QSettings set(Profiles::currentProfileDir() + "/settings.ini", QSettings::IniFormat, this);
-    _options.saveToIni(&set);
+    _options.saveToIni(Profiles::optionsSettings());
 }
 
 void MainWindow::loadUi()
@@ -171,8 +170,7 @@ void MainWindow::loadUi()
     _ui->advancedSettingsCheckbox->setChecked(_commonSettings->value("bShowAdvancedSettings").toBool());
     _ui->presets->setCurrentIndex(_ui->presets->findText(_commonSettings->value("profile").toString()));
 
-    QSettings set(Profiles::currentProfileDir() + "/settings.ini", QSettings::IniFormat, this);
-    _options.readFromIni(&set);
+    _options.readFromIni(Profiles::optionsSettings());
     _options.saveToUi(_ui);
 
     if (_ui->advancedSettingsCheckbox->isChecked())
@@ -285,7 +283,7 @@ void MainWindow::updateLog() const
     }
 }
 
-void MainWindow::setGameMode(const QString &mode) const
+void MainWindow::setGameMode(const QString &mode)
 {
     //Resetting the window
     const int &animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
@@ -297,6 +295,8 @@ void MainWindow::setGameMode(const QString &mode) const
     //Actually setting the window mode
     Profiles::setCurrentProfile(mode);
     Profiles::getInstance().saveToUi(_ui);
+    _options.readFromIni(Profiles::optionsSettings());
+    _options.saveToUi(_ui);
 
     _ui->tabWidget->setTabEnabled(animTabIndex, Profiles::animationsEnabled());
     _ui->tabWidget->setTabEnabled(meshesTabIndex, Profiles::meshesEnabled());

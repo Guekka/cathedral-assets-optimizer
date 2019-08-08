@@ -13,7 +13,7 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel, b
     //Reading custom headparts file to add them to the list.
     //Done in the constructor since the file won't change at runtime.
 
-    QFile customHeadpartsFile("resources/customHeadparts.txt");
+    QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
     if (customHeadpartsFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&customHeadpartsFile);

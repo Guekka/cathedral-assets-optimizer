@@ -14,10 +14,11 @@ constexpr double GigaByte = 1024 * 1024 * 1024;
 class Profiles final : public QObject
 {
 public:
-    static bool exists(const QString &profile);
+    [[nodiscard]] static bool exists(const QString &profile);
     void loadProfile(const QString &newProfile);
-    static QStringList list();
+    [[nodiscard]] static QStringList list();
     static void create(const QString &name);
+    [[nodiscard]] static QFile getFile(const QString &filename);
     void saveToIni();
 
 #ifdef GUI
@@ -67,16 +68,12 @@ public:
 
     [[nodiscard]] static bool texturesCompressInterface() { return _instance._texturesCompressInterface; }
 
-    [[nodiscard]] static QSettings *settings() { return _instance._settings; }
+    [[nodiscard]] static QSettings *profileSettings() { return _instance._profileSettings; }
+    [[nodiscard]] static QSettings *optionsSettings() { return _instance._optionsSettings; }
     [[nodiscard]] static QString logPath() { return _instance._logPath; }
-    [[nodiscard]] static QString resourcePath() { return _instance._resourcePath; }
 
     [[nodiscard]] static Profiles &getInstance();
     [[nodiscard]] static QString currentProfile() { return _instance._currentProfile; }
-    [[nodiscard]] static QString currentProfileDir()
-    {
-        return _instance._profileDir.absoluteFilePath(_instance.currentProfile());
-    }
 
     //static setter
     static void setCurrentProfile(const QString &newProfile) { _instance.loadProfile(newProfile); }
@@ -109,9 +106,9 @@ private:
     QList<QVariant> _texturesUnwantedFormats;
     bool _texturesCompressInterface;
 
-    QSettings *_settings;
+    QSettings *_profileSettings;
+    QSettings *_optionsSettings;
     QString _logPath;
-    QString _resourcePath;
 
     QDir _profileDir;
     QString _currentProfile;

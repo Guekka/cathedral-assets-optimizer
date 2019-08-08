@@ -30,7 +30,7 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
                 espName = it.fileName().remove(Profiles::bsaSuffix(), Qt::CaseInsensitive) + ".esp";
                 PLOG_VERBOSE << "Created standard bsa plugin:" + espName;
             }
-            QFile::copy(Profiles::resourcePath() + "DummyPlugin.esp", folderPath + "/" + espName);
+            Profiles::getFile("DummyPlugin.esp").copy(folderPath + "/" + espName);
         }
     }
     PLOG_VERBOSE << "Exiting makeDummyPlugins function";
