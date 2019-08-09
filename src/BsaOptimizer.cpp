@@ -11,7 +11,8 @@ BsaOptimizer::BsaOptimizer()
     //Reading filesToNotPack to add them to the list.
     //Done in the constructor since the file won't change at runtime.
 
-    QFile filesToNotPackFile("resources/FilesToNotPack.txt");
+    QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
+
     if (filesToNotPackFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&filesToNotPackFile);
@@ -147,17 +148,17 @@ void BsaOptimizer::packAll(const QString &folderPath) const
 
     //Naming BSAs
     texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                       + Games::bsaTexturesSuffix();
+                       + Profiles::bsaTexturesSuffix();
     standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                       + Games::bsaSuffix();
+                       + Profiles::bsaSuffix();
 
     //Setting maxsize
-    texturesBsa.maxSize = Games::maxBsaTexturesSize();
-    standardBsa.maxSize = Games::maxBsaUncompressedSize();
+    texturesBsa.maxSize = Profiles::maxBsaTexturesSize();
+    standardBsa.maxSize = Profiles::maxBsaUncompressedSize();
 
     //Setting format
-    texturesBsa.format = Games::bsaTexturesFormat();
-    standardBsa.format = Games::bsaFormat();
+    texturesBsa.format = Profiles::bsaTexturesFormat();
+    standardBsa.format = Profiles::bsaFormat();
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
 
@@ -167,7 +168,7 @@ void BsaOptimizer::packAll(const QString &folderPath) const
         const bool doNotPack = isIgnoredFile(it.fileName()) || it.fileInfo().isDir();
         if (allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !doNotPack)
         {
-            const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Games::hasBsaTextures();
+            const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Profiles::hasBsaTextures();
             Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
 
             if (pBsa.filesSize > pBsa.maxSize)
@@ -176,10 +177,10 @@ void BsaOptimizer::packAll(const QString &folderPath) const
 
                 if (isTexture)
                     pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                                + Games::bsaTexturesSuffix();
+                                + Profiles::bsaTexturesSuffix();
                 else
                     pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                                + Games::bsaSuffix();
+                                + Profiles::bsaSuffix();
 
                 create(pBsa);
 
@@ -197,13 +198,13 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     if (!texturesBsa.files.isEmpty())
     {
         texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                           + Games::bsaTexturesSuffix();
+                           + Profiles::bsaTexturesSuffix();
         create(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
         standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                           + Games::bsaSuffix();
+                           + Profiles::bsaSuffix();
         create(standardBsa);
     }
 }

@@ -6,7 +6,6 @@
 #ifdef GUI
 #include "MainWindow.h"
 #endif
-#include "IntegrationTests.h"
 
 int main(int argc, char *argv[])
 {

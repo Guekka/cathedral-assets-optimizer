@@ -13,7 +13,7 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel, b
     //Reading custom headparts file to add them to the list.
     //Done in the constructor since the file won't change at runtime.
 
-    QFile customHeadpartsFile("resources/customHeadparts.txt");
+    QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
     if (customHeadpartsFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&customHeadpartsFile);
@@ -39,9 +39,9 @@ ScanResult MeshesOptimizer::scan(const QString &filePath) const
     ScanResult result = good;
 
     NiVersion version;
-    version.SetFile(Games::meshesFileVersion());
-    version.SetStream(Games::meshesStream());
-    version.SetUser(Games::meshesUser());
+    version.SetFile(Profiles::meshesFileVersion());
+    version.SetStream(Profiles::meshesStream());
+    version.SetUser(Profiles::meshesUser());
 
     if (version.IsSSE())
     {
@@ -91,9 +91,9 @@ void MeshesOptimizer::optimize(const QString &filePath)
     PLOG_VERBOSE << tr("Loading mesh: ") << filePath;
 
     OptOptions options;
-    options.targetVersion.SetFile(Games::meshesFileVersion());
-    options.targetVersion.SetStream(Games::meshesStream());
-    options.targetVersion.SetUser(Games::meshesUser());
+    options.targetVersion.SetFile(Profiles::meshesFileVersion());
+    options.targetVersion.SetStream(Profiles::meshesStream());
+    options.targetVersion.SetUser(Profiles::meshesUser());
 
     const ScanResult scanResult = scan(filePath);
     const QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);

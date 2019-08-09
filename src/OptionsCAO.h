@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Games.h"
+#include "Profiles.h"
 #include "pch.h"
 #include "ui_mainWindow.h"
 
@@ -19,7 +19,6 @@ namespace plog
 
 class OptionsCAO final : public QObject
 {
-    //TODO separate mipmaps generation and texture compression
 public:
     OptionsCAO();
     OptionsCAO(const OptionsCAO &other);

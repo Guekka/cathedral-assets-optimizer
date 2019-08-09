@@ -141,7 +141,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
     const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != _info.height || newWidth != _info.width);
 
     const bool needsConversion = (bNecessary && (isIncompatible() || _type == TGA))
-                                 || (bCompress && canBeCompressed() && _info.format != Games::texturesFormat());
+                                 || (bCompress && canBeCompressed() && _info.format != Profiles::texturesFormat());
 
     const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
@@ -177,8 +177,8 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
     //Converting or compressing to the new format
     if (needsConversion)
     {
-        PLOG_VERBOSE << tr("Converting this texture to format: ") << dxgiFormatToString(Games::texturesFormat());
-        if (!convert(Games::texturesFormat()))
+        PLOG_VERBOSE << tr("Converting this texture to format: ") << dxgiFormatToString(Profiles::texturesFormat());
+        if (!convert(Profiles::texturesFormat()))
             return false;
     }
 
@@ -198,7 +198,7 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
     const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != _info.height || newWidth != _info.width);
 
     const bool needsConversion = (bNecessary && (isIncompatible() || _type == TGA))
-                                 || (bCompress && canBeCompressed() && _info.format != Games::texturesFormat());
+                                 || (bCompress && canBeCompressed() && _info.format != Profiles::texturesFormat());
 
     const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
@@ -224,13 +224,13 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
     if (needsConversion)
     {
         PLOG_VERBOSE << tr("This texture would be converted to format: ")
-                     << dxgiFormatToString(Games::texturesFormat());
+                     << dxgiFormatToString(Profiles::texturesFormat());
     }
 }
 
 bool TexturesOptimizer::canBeCompressed() const
 {
-    return !((_name.contains("interface", Qt::CaseInsensitive) && !Games::texturesCompressInterface())
+    return !((_name.contains("interface", Qt::CaseInsensitive) && !Profiles::texturesCompressInterface())
              || DirectX::IsCompressed(_info.format));
 }
 
@@ -382,7 +382,7 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
 
 bool TexturesOptimizer::canHaveMipMaps()
 {
-    return Games::texturesCompressInterface();
+    return Profiles::texturesCompressInterface();
 }
 
 bool TexturesOptimizer::generateMipMaps()
@@ -612,7 +612,7 @@ bool TexturesOptimizer::isIncompatible() const
 {
     //Checking incompatibility with file format
     const DXGI_FORMAT fileFormat = _info.format;
-    for (const auto &f : Games::texturesUnwantedFormats())
+    for (const auto &f : Profiles::texturesUnwantedFormats())
         if (f == fileFormat)
             return true;
     return false;

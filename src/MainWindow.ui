@@ -199,7 +199,7 @@
     <item>
      <widget class="QLabel" name="label_8">
       <property name="text">
-       <string>Preset</string>
+       <string>Profile</string>
       </property>
      </widget>
     </item>
@@ -207,22 +207,7 @@
      <widget class="QComboBox" name="presets">
       <item>
        <property name="text">
-        <string>SSE</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>TES5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>FO4</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Custom</string>
+        <string>New profile</string>
        </property>
       </item>
      </widget>
@@ -230,7 +215,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <property name="movable">
        <bool>true</bool>

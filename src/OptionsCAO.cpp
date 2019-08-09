@@ -190,18 +190,19 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
 void OptionsCAO::readFromUi(Ui::MainWindow *ui)
 {
     //BSA
-    bBsaExtract = ui->bsaExtractCheckBox->isChecked();
-    bBsaCreate = ui->bsaCreateCheckbox->isChecked();
-    bBsaDeleteBackup = ui->bsaDeleteBackupsCheckbox->isChecked();
+    const bool bsaEnabled = ui->bsaTab->isEnabled();
+    bBsaExtract = bsaEnabled && ui->bsaExtractCheckBox->isChecked();
+    bBsaCreate = bsaEnabled && ui->bsaCreateCheckbox->isChecked();
+    bBsaDeleteBackup = bsaEnabled && ui->bsaDeleteBackupsCheckbox->isChecked();
 
     //Textures
-    const bool texturesEnabled = ui->texturesGroupBox->isChecked();
+    const bool texturesEnabled = ui->texturesGroupBox->isChecked() && ui->texturesTab->isEnabled();
     bTexturesNecessary = texturesEnabled && ui->texturesNecessaryOptimizationCheckBox->isChecked();
     bTexturesMipmaps = texturesEnabled && ui->texturesMipmapCheckBox->isChecked();
     bTexturesCompress = texturesEnabled && ui->texturesCompressCheckBox->isChecked();
 
     //Textures resizing
-    const bool texturesResizing = ui->texturesResizingGroupBox->isChecked();
+    const bool texturesResizing = ui->texturesResizingGroupBox->isChecked() && ui->texturesTab->isEnabled();
     bTexturesResizeSize = ui->texturesResizingBySizeRadioButton->isChecked() && texturesResizing;
     iTexturesTargetWidth = static_cast<size_t>(ui->texturesResizingBySizeWidth->value());
     iTexturesTargetHeight = static_cast<size_t>(ui->texturesResizingBySizeHeight->value());
@@ -211,21 +212,23 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     iTexturesTargetHeightRatio = static_cast<size_t>(ui->texturesResizingByRatioHeight->value());
 
     //Meshes base
+    const bool meshesEnabled = ui->meshesTab->isEnabled();
     if (ui->meshesNecessaryOptimizationRadioButton->isChecked())
         iMeshesOptimizationLevel = 1;
     else if (ui->meshesMediumOptimizationRadioButton->isChecked())
         iMeshesOptimizationLevel = 2;
     else if (ui->meshesFullOptimizationRadioButton->isChecked())
         iMeshesOptimizationLevel = 3;
-    if (!ui->meshesGroupBox->isChecked())
+    if (!ui->meshesGroupBox->isChecked() || !meshesEnabled)
         iMeshesOptimizationLevel = 0;
 
     //Meshes advanced
-    bMeshesHeadparts = ui->meshesHeadpartsCheckBox->isChecked();
-    bMeshesResave = ui->meshesResaveCheckBox->isChecked();
+    bMeshesHeadparts = meshesEnabled && ui->meshesHeadpartsCheckBox->isChecked();
+    bMeshesResave = meshesEnabled && ui->meshesResaveCheckBox->isChecked();
 
     //Animations
-    bAnimationsOptimization = ui->animationsNecessaryOptimizationCheckBox->isChecked();
+    bAnimationsOptimization = ui->AnimationsTab->isEnabled()
+                              && ui->animationsNecessaryOptimizationCheckBox->isChecked();
 
     //General
     bDryRun = ui->dryRunCheckBox->isChecked();
@@ -242,6 +245,7 @@ void OptionsCAO::parseArguments(const QStringList &args)
     QCommandLineParser parser;
 
     parser.addHelpOption();
+
     parser.addPositionalArgument("folder", "The folder to process, surrounded with quotes.");
     parser.addPositionalArgument("mode", "Either om (one mod) or sm (several mods)");
     parser.addPositionalArgument("game", "Currently, only 'SSE', 'TES5', 'FO4' and 'Custom' are supported");
@@ -282,7 +286,7 @@ void OptionsCAO::parseArguments(const QStringList &args)
         mode = SeveralMods;
 
     const QString readGame = parser.positionalArguments().at(2);
-    CAO_SET_CURRENT_GAME(readGame)
+    Profiles::setCurrentProfile(readGame);
 
     bDryRun = parser.isSet("dr");
     bDebugLog = parser.isSet("l");

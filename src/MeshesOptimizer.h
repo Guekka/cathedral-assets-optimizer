@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Games.h"
 #include "PluginsOperations.h"
+#include "Profiles.h"
 #include "pch.h"
 
 enum ScanResult

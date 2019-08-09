@@ -17,7 +17,7 @@ Manager::Manager(OptionsCAO &opt)
         options.parseArguments(QCoreApplication::arguments());
 #endif
     //Preparing logging
-    initCustomLogger(Games::logPath(), _options.bDebugLog);
+    initCustomLogger(Profiles::logPath(), _options.bDebugLog);
 
     PLOG_VERBOSE << tr("Checking settings...");
     const QString error = _options.isValid();
@@ -82,7 +82,7 @@ void Manager::listFiles()
             const bool animation = _options.bAnimationsOptimization
                                    && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            const bool bsa = _options.bBsaExtract && it.fileName().endsWith(Games::bsaExtension(), Qt::CaseInsensitive);
+            const bool bsa = _options.bBsaExtract && it.fileName().endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive);
 
             auto addToList = [&](QStringList &list) {
                 ++_numberFiles;
@@ -101,7 +101,7 @@ void Manager::listFiles()
 
 void Manager::readIgnoredMods()
 {
-    QFile ignoredModsFile(Games::resourcePath() + "ignoredMods.txt");
+    QFile &&ignoredModsFile = Profiles::getFile("ignoredMods.txt");
     if (ignoredModsFile.open(QIODevice::ReadOnly))
     {
         QTextStream ts(&ignoredModsFile);
@@ -119,7 +119,7 @@ void Manager::readIgnoredMods()
 
 void Manager::runOptimization()
 {
-    PLOG_DEBUG << "Game:" << Games::game();
+    PLOG_DEBUG << "Game:" << Profiles::currentProfile();
     PLOG_INFO << "Beginning...";
 
     MainOptimizer optimizer(_options);
