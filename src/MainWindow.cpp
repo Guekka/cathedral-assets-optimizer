@@ -140,6 +140,9 @@ MainWindow::MainWindow()
     loadUi();
     refreshUi();
 
+    if (_ui->advancedSettingsCheckbox->isChecked())
+        showAdvancedSettings();
+
     setGameMode(mode);
 }
 

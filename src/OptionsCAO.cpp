@@ -94,7 +94,8 @@ void OptionsCAO::readFromIni(QSettings *settings)
     bDryRun = settings->value("bDryRun").toBool();
     bDebugLog = settings->value("bDebugLog").toBool();
     mode = settings->value("mode").value<OptimizationMode>();
-    userPath = settings->value("userPath").toString();
+    if (!settings->value("userPath").toString().isEmpty())
+        userPath = settings->value("userPath").toString();
 
     //BSA
     settings->beginGroup("BSA");
