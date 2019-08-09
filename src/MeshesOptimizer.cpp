@@ -47,14 +47,30 @@ ScanResult MeshesOptimizer::scan(const QString &filePath) const
     {
         for (const auto &shape : nif.GetShapes())
         {
-            const bool needsOpt = shape->HasType<bhkMultiSphereShape>() || shape->HasType<NiTriStrips>()
-                                  || shape->HasType<NiTriStripsData>() || shape->HasType<NiSkinPartition>();
-            if (needsOpt)
-                if (result < criticalIssue)
-                    result = criticalIssue;
-
             if (shape->HasType<NiParticles>() || shape->HasType<NiParticleSystem>() || shape->HasType<NiParticlesData>())
                 return doNotProcess;
+
+            // Check if shape has strips in the geometry or skin partition
+            bool hasStrips = shape->HasType<NiTriStrips>();
+            if (!hasStrips)
+            {
+                auto skinInst = nif.GetHeader().GetBlock<NiSkinInstance>(shape->GetSkinInstanceRef());
+                if (skinInst)
+                {
+                    auto skinPart = nif.GetHeader().GetBlock<NiSkinPartition>(skinInst->GetSkinPartitionRef());
+                    if (skinPart)
+                        for (auto &partition : skinPart->partitions)
+                            if (partition.numStrips > 0)
+                            {
+                                hasStrips = true;
+                                break;
+                            }
+                }
+            }
+
+            // Check to optimize all shapes or only mandatory ones
+            if (hasStrips && result < criticalIssue)
+                result = criticalIssue;
         }
     }
     else if (version.IsSK())
@@ -101,7 +117,6 @@ void MeshesOptimizer::optimize(const QString &filePath)
     //Headparts have to get a special optimization
     if (iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
     {
-        options.bsTriShape = true;
         options.headParts = true;
         PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath
                          + tr(" as an headpart due to necessary optimization");
@@ -116,12 +131,13 @@ void MeshesOptimizer::optimize(const QString &filePath)
         case lightIssue:
             if (iMeshesOptimizationLevel >= 3)
             {
-                options.bsTriShape = true;
+                options.mandatoryOnly = false;
                 PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath + tr(" due to full optimization");
                 nif.OptimizeFor(options);
             }
             else if (iMeshesOptimizationLevel >= 2)
             {
+                options.mandatoryOnly = true;
                 PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath
                                  + tr(" due to medium optimization");
                 nif.OptimizeFor(options);
@@ -130,7 +146,7 @@ void MeshesOptimizer::optimize(const QString &filePath)
         case criticalIssue:
             if (iMeshesOptimizationLevel >= 1)
             {
-                options.bsTriShape = true;
+                options.mandatoryOnly = false;
                 PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath
                                  + tr(" due to necessary optimization");
                 nif.OptimizeFor(options);
@@ -138,7 +154,7 @@ void MeshesOptimizer::optimize(const QString &filePath)
             break;
         }
     }
-    if (bMeshesResave || (iMeshesOptimizationLevel >= 1 && scanResult >= lightIssue))
+    if (bMeshesResave || (iMeshesOptimizationLevel >= 1 && scanResult >= criticalIssue) || iMeshesOptimizationLevel >= 2)
     {
         PLOG_VERBOSE << "Resaving mesh: " + filePath;
         nif.Save(filePath.toStdString());
