@@ -15,16 +15,6 @@ enum BsaType
     TexturesAndStandardBsa
 };
 
-struct Bsa
-{
-    QString path;
-    qint64 filesSize = 0;
-    QStringList files;
-    double maxSize = LONG_MAX;
-    BsaType type = StandardBsa;
-    bsa_archive_type_t format;
-};
-
 /*!
  * \brief Manages BSA : extract and create them
  */
@@ -33,6 +23,19 @@ class BsaOptimizer final : public QObject
     Q_DECLARE_TR_FUNCTIONS(BsaOptimizer)
 
 public:
+    /*! 
+     * \brief Used for several internal operations
+     */
+    struct Bsa
+    {
+        QString path;
+        qint64 filesSize = 0;
+        QStringList files;
+        double maxSize = LONG_MAX;
+        BsaType type = StandardBsa;
+        bsa_archive_type_t format;
+    };
+
     /*!
    * \brief Default constructor
    */
@@ -47,7 +50,7 @@ public:
    * \brief Will create a BSA containing all the files given as argument
    * \param bsa The BSA to create
    */
-    void create(Bsa &bsa) const;
+    int create(Bsa &bsa) const;
 
     /*!
    * \brief Packs all the loose files in the directory into BSAs
@@ -80,3 +83,14 @@ private:
    */
     static bool canBeCompressedFile(const QString &filename);
 };
+
+namespace plog
+{
+inline Record &operator<<(Record &record, const BsaOptimizer::Bsa &bsa)
+{
+    return record << "BSA Structure:\nPath: " + bsa.path
+                         + " \nUncompressed files size: " + QString::number(static_cast<int>(GigaByte * bsa.filesSize))
+                         + "Gb" + "\nmaxSize: " + QString::number(static_cast<int>(GigaByte * bsa.maxSize)) + "Gb"
+                         + "\nType: " + bsa.type + "\nFormat: " + bsa.format;
+}
+} // namespace plog

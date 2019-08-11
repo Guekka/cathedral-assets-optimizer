@@ -2,18 +2,25 @@
 
 #include "BSArchive.h"
 #include "BSArchiveEntries.h"
+#include <QMap>
+
 /*!
- * \brief A convenience class for BSArchive and BSArchiveEntries. Its performance is worse than using these two classes separately, but it removes the need to manually handle
- * the BSArchiveEntries.
+ * \brief A convenience class for BSArchive and BSArchiveEntries. Its performance is worse than using these 
+ * two classes separately, but it removes the need to manually handle the BSArchiveEntries.
  */
-class BSArchiveAuto : public BSArchiveEntries, public BSArchive
+class BSArchiveAuto
 {
 public:
     /*!
      * \brief Constructor
      * \param rootDirectory The root directory of the BSA. This directory is the one containing folders such as textures and meshes.
      */
-    BSArchiveAuto(const QString &rootDirectory);
+    BSArchiveAuto(const QString &_rootDirectory);
+    /*!
+     * \brief Opens an existing archive
+     * \param archivePath The path of the archive
+     */
+    void open(const QString &archivePath);
     /*!
      * \brief Creates a BSA in memory
      * \param archiveName The BSA name
@@ -54,16 +61,26 @@ public:
      * \param destinationDirectory The directory where all files will be extracted.
      * \param overwriteExistingFiles Whether files in archive will overwrite existing loose files or not
      */
-    void extractAll(const QString& destinationDirectory, const bool& overwriteExistingFiles);
+    void extractAll(const QString &destinationDirectory, const bool &overwriteExistingFiles);
+    /*!
+     * \brief Saves the archive to the disk
+     */
+    void save();
+
+    void setShareData(const bool state);
+    void setCompressed(const bool state);
 
     void reset();
+
 private:
     /*!
      * \brief The key will store the "save as" path, while the value will hold the disk path
      */
-    QMap<QString, QString> filesFromDisk;
-    QStringList filesFromDiskRoot;
-    QMap<QString, QByteArray> filesfromMemory;
-    QDir rootDirectory;
+    QMap<QString, QString> _filesFromDisk;
+    QStringList _filesFromDiskRoot;
+    QMap<QString, QByteArray> _filesfromMemory;
+    QDir _rootDirectory;
 
+    BSArchive _archive;
+    BSArchiveEntries _entries;
 };

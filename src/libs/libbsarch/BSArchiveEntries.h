@@ -19,5 +19,5 @@ public:
     bsa_entry_list_t getEntries() const;
 
 private:
-    bsa_entry_list_t m_entries;
+    bsa_entry_list_t _entries;
 };

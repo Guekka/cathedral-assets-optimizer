@@ -13,7 +13,7 @@ BsaOptimizer::BsaOptimizer()
 
     QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
 
-    if (filesToNotPackFile.open(QIODevice::ReadOnly))
+    if (filesToNotPackFile.open(QFile::ReadOnly))
     {
         QTextStream ts(&filesToNotPackFile);
         while (!ts.atEnd())
@@ -45,10 +45,8 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
         PLOG_ERROR << e.what();
         PLOG_ERROR << "An error occured during the extraction of: " + bsaPath + 'n'
                           + "Please extract it manually. The BSA was not deleted.";
-        archive.close();
         return;
     }
-    archive.close();
 
     if (deleteBackup)
         QFile::remove(bsaPath);
@@ -56,16 +54,15 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
 
-void BsaOptimizer::create(Bsa &bsa) const
+int BsaOptimizer::create(Bsa &bsa) const
 {
     const QDir bsaDir(QFileInfo(bsa.path).path());
 
     //Checking if a bsa already exists
-
     if (QFile(bsa.path).exists())
     {
         PLOG_ERROR << "Cannot pack existing loose files: a BSA already exists.";
-        return;
+        return 1;
     }
 
     BSArchiveAuto archive(bsaDir.path());
@@ -98,27 +95,22 @@ void BsaOptimizer::create(Bsa &bsa) const
     catch (const std::exception &e)
     {
         PLOG_ERROR << e.what() << "Cancelling packing of: " + bsa.path;
-        archive.close();
-        return;
+        return 2;
     }
 
     //Creating the archive
-    PLOG_DEBUG << "\nBSA folder :" + bsa.path + "\nBsaName : " + bsa.path
-                      + "\nBSAFilesSize: " + QString::number(bsa.filesSize) + "\nformat: "
-               << bsa.format;
+    PLOG_DEBUG << bsa;
 
     try
     {
         archive.create(bsa.path, bsa.format);
         archive.save();
-        archive.close();
     }
     catch (const std::exception &e)
     {
         PLOG_ERROR << e.what();
         PLOG_ERROR << "Cancelling packing of: " + bsa.path;
-        archive.close();
-        return;
+        return 2;
     }
 
     //Checking if the archive is below 2.15gb, since a BSA cannot be greater
@@ -134,11 +126,23 @@ void BsaOptimizer::create(Bsa &bsa) const
         PLOG_ERROR << "The BSA was not compressed: it is over 2.15gb: " + bsa.path;
         QFile::remove(bsa.path);
     }
+    return 0;
 }
 
 void BsaOptimizer::packAll(const QString &folderPath) const
 {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
+
+    auto createArchive = [&](Bsa &bsa) {
+        try
+        {
+            this->create(bsa);
+        }
+        catch (const std::exception &e)
+        {
+            PLOG_ERROR << e.what() << "Cancelling packing of: " + bsa.path;
+        }
+    };
 
     Bsa texturesBsa, standardBsa;
     //Setting type
@@ -181,7 +185,7 @@ void BsaOptimizer::packAll(const QString &folderPath) const
                     pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
                                 + Profiles::bsaSuffix();
 
-                create(pBsa);
+                createArchive(pBsa);
 
                 //Resetting for next loop
                 pBsa.filesSize = 0;
@@ -198,13 +202,13 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     {
         texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
                            + Profiles::bsaTexturesSuffix();
-        create(texturesBsa);
+        createArchive(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
         standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
                            + Profiles::bsaSuffix();
-        create(standardBsa);
+        createArchive(standardBsa);
     }
 }
 

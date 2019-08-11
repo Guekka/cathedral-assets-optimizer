@@ -12,10 +12,10 @@ public:
 
     void open(const QString& archivePath);
     void close();
-    virtual void create(const QString& archiveName, const bsa_archive_type_e &type, const BSArchiveEntries &entries);
+    void create(const QString &archiveName, const bsa_archive_type_e &type, const BSArchiveEntries &entries);
     void save();
-    virtual void addFileFromDiskRoot(const QString& rootDir, const QString& filename);
-    virtual void addFileFromDiskRoot(const QString& rootDir, const QStringList& files);
+    void addFileFromDiskRoot(const QString &rootDir, const QString &filename);
+    void addFileFromDiskRoot(const QString &rootDir, const QStringList &files);
     void addFileFromDisk(const QString& pathInArchive, const QString& filePath);
     void addFileFromMemory(const QString& filename, const QByteArray& data);
     void setCompressed(bool value);
@@ -31,6 +31,5 @@ public:
     bsa_archive_t getArchive() const;
 
 private:
-    bsa_archive_t m_archive;
-
+    bsa_archive_t _archive;
 };
