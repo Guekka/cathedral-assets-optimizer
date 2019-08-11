@@ -11,17 +11,19 @@ AnimationsOptimizer::AnimationsOptimizer()
         // Need to have memory allocated for the solver. Allocate 1mb for it.
         _memoryRouter = hkMemoryInitUtil::initDefault(hkMallocAllocator::m_defaultMallocAllocator,
                                                       hkMemorySystem::FrameInfo(1024 * 1024));
+        PLOG_VERBOSE << "Initializing Havok";
         hkBaseSystem::init(_memoryRouter, errorReport);
     }
     catch (const std::exception &e)
     {
-        PLOG_ERROR << tr("An error occured while creating the animations optimizer. Animations won't be optimized.")
-                          + "\n" + QString(e.what());
+        PLOG_ERROR << "An error occured while creating the animations optimizer. Animations won't be optimized.\n"
+                   << e.what();
     }
 }
 
 AnimationsOptimizer::~AnimationsOptimizer()
 {
+    PLOG_VERBOSE << "Exiting Havok";
     hkBaseSystem::quit();
     hkMemoryInitUtil::quit();
 }
@@ -51,7 +53,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
         hkResult res = hkSerializeLoad(reader, root, resource);
 
         if (res != HK_SUCCESS)
-            PLOG_WARNING << tr("File is not loadable: ") + filePath + '\n' + tr("It is probably already converted.");
+            PLOG_WARNING << "File is not loadable: " + filePath + "\nIt is probably already converted.";
         else
         {
             hkBool32 failed = true;
@@ -78,7 +80,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
     }
     catch (const std::exception &e)
     {
-        PLOG_ERROR << "Unexpected exception occurred: " + QString(e.what()) + "\nwhile processing: " + filePath;
+        PLOG_ERROR << "Unexpected exception occurred: " << e.what() << "\nwhile processing: " + filePath;
     }
 
     if (QFile::exists(filePath.chopped(3) + "out.hkx"))

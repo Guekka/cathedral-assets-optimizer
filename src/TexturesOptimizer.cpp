@@ -145,17 +145,17 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
 
     const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
-    PLOG_INFO << tr("Optimizing texture: ") << _name;
+    PLOG_INFO << "Optimizing texture: " << _name;
 
     if (!needsConversion && !needsMipMaps && !needsResize)
     {
-        PLOG_VERBOSE << tr("This texture does not need optimization.");
+        PLOG_VERBOSE << "This texture does not need optimization.";
         return true;
     }
 
     if (isCompressed())
     {
-        PLOG_VERBOSE << tr("Decompressing this texture.");
+        PLOG_VERBOSE << "Decompressing this texture.";
         if (!decompress())
             return false;
     }
@@ -163,26 +163,26 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
     //Fitting to a power of two or resizing
     if (needsResize)
     {
-        PLOG_VERBOSE << tr("Resizing this texture.");
+        PLOG_VERBOSE << "Resizing this texture.";
         if (!resize(newWidth, newHeight))
             return false;
     }
 
     if (needsMipMaps)
     {
-        PLOG_VERBOSE << tr("Generating mipmaps for this texture.");
+        PLOG_VERBOSE << "Generating mipmaps for this texture.";
         if (!generateMipMaps())
             return false;
     }
     //Converting or compressing to the new format
     if (needsConversion)
     {
-        PLOG_VERBOSE << tr("Converting this texture to format: ") << dxgiFormatToString(Profiles::texturesFormat());
+        PLOG_VERBOSE << "Converting this texture to format: " << dxgiFormatToString(Profiles::texturesFormat());
         if (!convert(Profiles::texturesFormat()))
             return false;
     }
 
-    PLOG_INFO << tr("Successfully processed texture: ") + _name;
+    PLOG_INFO << "Successfully processed texture: " + _name;
     return true;
 }
 
@@ -202,29 +202,28 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
 
     const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
-    PLOG_INFO << tr("Analyzing texture: ") << _name;
+    PLOG_INFO << "Analyzing texture: " << _name;
 
     if (!needsConversion && !needsMipMaps && !needsResize)
     {
-        PLOG_VERBOSE << tr("This texture does not need optimization.");
+        PLOG_VERBOSE << "This texture does not need optimization.";
     }
 
     //Fitting to a power of two or resizing
     if (needsResize)
     {
-        PLOG_VERBOSE << tr("This texture would be resized.");
+        PLOG_VERBOSE << "This texture would be resized.";
     }
 
     if (needsMipMaps)
     {
-        PLOG_VERBOSE << tr("This texture would have mipmaps generated.");
+        PLOG_VERBOSE << "This texture would have mipmaps generated.";
     }
 
     //Converting or compressing to the new format
     if (needsConversion)
     {
-        PLOG_VERBOSE << tr("This texture would be converted to format: ")
-                     << dxgiFormatToString(Profiles::texturesFormat());
+        PLOG_VERBOSE << "This texture would be converted to format: " << dxgiFormatToString(Profiles::texturesFormat());
     }
 }
 
@@ -236,7 +235,7 @@ bool TexturesOptimizer::canBeCompressed() const
 
 bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
 {
-    PLOG_VERBOSE << tr("Opening ") << filePath << tr("with textures type ") << type;
+    PLOG_VERBOSE << "Opening " << filePath << "with textures type " << type;
 
     wchar_t fileName[1024];
     QDir::toNativeSeparators(filePath).toWCharArray(fileName);
@@ -551,7 +550,7 @@ bool TexturesOptimizer::convertWithCompression(const DXGI_FORMAT &format)
     std::unique_ptr<DirectX::ScratchImage> timage(new (std::nothrow) DirectX::ScratchImage);
     if (!timage)
     {
-        PLOG_ERROR << tr("Memory allocation failed when compressing: ") + _name;
+        PLOG_ERROR << "Memory allocation failed when compressing: " + _name;
         return false;
     }
 

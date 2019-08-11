@@ -54,14 +54,13 @@ void MainOptimizer::processBsa(const QString &file) const
 
     if (_optOptions.bBsaExtract && QFileInfo(file).isFile())
     {
-        PLOG_INFO << tr("BSA found ! Extracting...(this may take a long time, do not force close the program): ")
-                         + file;
+        PLOG_INFO << "BSA found ! Extracting...(this may take a long time, do not force close the program): " + file;
         _bsaOpt.extract(file, _optOptions.bBsaDeleteBackup);
     }
 
     if (_optOptions.bBsaCreate && QDir(file).exists())
     {
-        PLOG_INFO << tr("Creating BSA...");
+        PLOG_INFO << "Creating BSA...";
         _bsaOpt.packAll(file);
         PluginsOperations::makeDummyPlugins(file);
     }
@@ -79,7 +78,7 @@ void MainOptimizer::processTexture(const QString &file, const TexturesOptimizer:
 
     if (!_texturesOpt.open(file, type))
     {
-        PLOG_ERROR << tr("Failed to open: ") << file;
+        PLOG_ERROR << "Failed to open: " << file;
         return;
     }
 
@@ -133,7 +132,7 @@ void MainOptimizer::processHkx(const QString &file) const
         return;
 
     if (_optOptions.bAnimationsOptimization && _optOptions.bDryRun)
-        PLOG_INFO << file + QObject::tr(" would be ported to SSE");
+        PLOG_INFO << file + " would be converted to the appropriate format.";
     else if (_optOptions.bAnimationsOptimization)
         _animOpt.convert(file, Profiles::animationFormat());
 }

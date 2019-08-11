@@ -19,7 +19,7 @@ Manager::Manager(OptionsCAO &opt)
     //Preparing logging
     initCustomLogger(Profiles::logPath(), _options.bDebugLog);
 
-    PLOG_VERBOSE << tr("Checking settings...");
+    PLOG_VERBOSE << "Checking settings...";
     const QString error = _options.isValid();
     if (!error.isEmpty())
     {
@@ -29,7 +29,7 @@ Manager::Manager(OptionsCAO &opt)
 
     readIgnoredMods();
 
-    PLOG_INFO << tr("Listing files and directories...");
+    PLOG_INFO << "Listing files and directories...";
     listDirectories();
     listFiles();
 }
@@ -113,8 +113,8 @@ void Manager::readIgnoredMods()
         }
     }
     else
-        PLOG_WARNING << tr("ignoredMods.txt not found. All mods will be processed, including tools such as Nemesis or "
-                           "Bodyslide studio.");
+        PLOG_WARNING << "ignoredMods.txt not found. All mods will be processed, including tools such as Nemesis or "
+                        "Bodyslide studio.";
 }
 
 void Manager::runOptimization()

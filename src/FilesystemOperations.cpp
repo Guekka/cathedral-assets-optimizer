@@ -109,8 +109,8 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
 
         if (newFile.size() >= 255)
         {
-            PLOG_ERROR << tr(
-                "An error occurred while moving files. Try reducing path size (260 characters is the maximum)");
+            PLOG_ERROR
+                << "An error occurred while moving files. Try reducing path size (260 characters is the maximum)";
             return;
         }
 

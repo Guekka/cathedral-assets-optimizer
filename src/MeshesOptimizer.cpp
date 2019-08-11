@@ -25,7 +25,7 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel, b
         }
     }
     else
-        PLOG_ERROR << tr("No custom headparts file found. Vanilla headparts won't be detected.");
+        PLOG_ERROR << "No custom headparts file found. Vanilla headparts won't be detected.";
 }
 
 ScanResult MeshesOptimizer::scan(const QString &filePath) const
@@ -33,7 +33,7 @@ ScanResult MeshesOptimizer::scan(const QString &filePath) const
     NifFile nif;
     if (nif.Load(filePath.toStdString()) != 0)
     {
-        PLOG_ERROR << tr("Cannot load mesh: ") + filePath;
+        PLOG_ERROR << "Cannot load mesh: " + filePath;
         return doNotProcess;
     }
     ScanResult result = good;
@@ -101,10 +101,10 @@ void MeshesOptimizer::optimize(const QString &filePath)
     NifFile nif;
     if (nif.Load(filePath.toStdString()) != 0)
     {
-        PLOG_ERROR << tr("Cannot load mesh: ") + filePath;
+        PLOG_ERROR << "Cannot load mesh: " + filePath;
         return;
     }
-    PLOG_VERBOSE << tr("Loading mesh: ") << filePath;
+    PLOG_VERBOSE << "Loading mesh: " + filePath;
 
     OptOptions options;
     options.targetVersion.SetFile(Profiles::meshesFileVersion());
@@ -118,8 +118,7 @@ void MeshesOptimizer::optimize(const QString &filePath)
     if (iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
     {
         options.headParts = true;
-        PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath
-                         + tr(" as an headpart due to necessary optimization");
+        PLOG_INFO << "Optimizing: " + filePath + " as an headpart due to necessary optimization";
         nif.OptimizeFor(options);
     }
     else
@@ -132,14 +131,13 @@ void MeshesOptimizer::optimize(const QString &filePath)
             if (iMeshesOptimizationLevel >= 3)
             {
                 options.mandatoryOnly = false;
-                PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath + tr(" due to full optimization");
+                PLOG_INFO << "Optimizing: " + filePath + " due to full optimization";
                 nif.OptimizeFor(options);
             }
             else if (iMeshesOptimizationLevel >= 2)
             {
                 options.mandatoryOnly = true;
-                PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath
-                                 + tr(" due to medium optimization");
+                PLOG_INFO << "Optimizing: " + filePath + " due to medium optimization";
                 nif.OptimizeFor(options);
             }
             break;
@@ -147,8 +145,7 @@ void MeshesOptimizer::optimize(const QString &filePath)
             if (iMeshesOptimizationLevel >= 1)
             {
                 options.mandatoryOnly = false;
-                PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath
-                                 + tr(" due to necessary optimization");
+                PLOG_INFO << "Optimizing: " + filePath + " due to necessary optimization";
                 nif.OptimizeFor(options);
             }
             break;
@@ -159,6 +156,7 @@ void MeshesOptimizer::optimize(const QString &filePath)
         PLOG_VERBOSE << "Resaving mesh: " + filePath;
         nif.Save(filePath.toStdString());
     }
+    PLOG_VERBOSE << "Closing mesh: " + filePath;
 }
 
 void MeshesOptimizer::dryOptimize(const QString &filePath) const
@@ -168,8 +166,7 @@ void MeshesOptimizer::dryOptimize(const QString &filePath) const
 
     //Headparts have to get a special optimization
     if (iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
-        PLOG_INFO << tr("Running NifOpt...") + tr("Processing: ") + filePath
-                         + tr(" as an headpart due to necessary optimization");
+        PLOG_INFO << filePath + " would be optimized as an headpart due to necessary optimization";
     else
     {
         switch (scanResult)
@@ -178,14 +175,14 @@ void MeshesOptimizer::dryOptimize(const QString &filePath) const
         case good:
         case lightIssue:
             if (iMeshesOptimizationLevel >= 3)
-                PLOG_INFO << filePath + tr(" would be optimized due to full optimization");
+                PLOG_INFO << filePath + " would be optimized due to full optimization";
 
             else if (iMeshesOptimizationLevel >= 2)
             {
-                PLOG_INFO << filePath + tr(" would be optimized due to medium optimization");
+                PLOG_INFO << filePath + " would be optimized due to medium optimization";
             }
             break;
-        case criticalIssue: PLOG_INFO << filePath + tr(" would be optimized due to necessary optimization"); break;
+        case criticalIssue: PLOG_INFO << filePath + " would be optimized due to necessary optimization"; break;
         }
     }
 }

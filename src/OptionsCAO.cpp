@@ -311,14 +311,13 @@ void OptionsCAO::parseArguments(const QStringList &args)
 QString OptionsCAO::isValid() const
 {
     if (!QDir(userPath).exists() || userPath.size() < 5)
-        return (tr("This path does not exist or is shorter than 5 characters. Path:") + " '" + userPath + "'");
+        return ("This path does not exist or is shorter than 5 characters. Path: '" + userPath + "'");
 
     if (mode != SingleMod && mode != SeveralMods)
-        return tr("This mode does not exist.");
+        return "This mode does not exist.";
 
     if (iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
-        return (tr("This meshes optimization level does not exist. Level: ")
-                + QString::number(iMeshesOptimizationLevel));
+        return ("This meshes optimization level does not exist. Level: " + QString::number(iMeshesOptimizationLevel));
 
     return QString();
 }
