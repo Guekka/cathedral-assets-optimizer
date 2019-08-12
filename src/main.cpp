@@ -15,6 +15,9 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 #endif
 
+    QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
+    QCoreApplication::setApplicationVersion("5.0 RC1");
+
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + QLocale::system().name(), "translations");
     QCoreApplication::installTranslator(&qtTranslator);
