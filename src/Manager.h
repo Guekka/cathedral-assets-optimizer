@@ -77,4 +77,5 @@ private:
     QStringList BSAs;
 signals:
     void progressBarTextChanged(QString, int, int);
+    void end();
 };

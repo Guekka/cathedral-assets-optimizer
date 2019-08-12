@@ -178,6 +178,6 @@ void Manager::runOptimization()
         }
 
     FilesystemOperations::deleteEmptyDirectories(_options.userPath);
-
     PLOG_INFO << "\n\n\nProcess completed";
+    emit end();
 }

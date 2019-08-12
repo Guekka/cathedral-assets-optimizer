@@ -245,6 +245,7 @@ void MainWindow::initProcess()
         _caoProcess.reset();
         _caoProcess = std::make_unique<Manager>(_options);
         connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+        connect(&*_caoProcess, &Manager::end, this, &MainWindow::endProcess);
         QtConcurrent::run(&*_caoProcess, &Manager::runOptimization);
     }
     catch (const std::exception &e)
@@ -255,7 +256,6 @@ void MainWindow::initProcess()
                             + QString(e.what()));
         box.exec();
     }
-    endProcess();
 }
 
 void MainWindow::endProcess()
