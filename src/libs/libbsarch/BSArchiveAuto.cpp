@@ -9,6 +9,7 @@ BSArchiveAuto::BSArchiveAuto(const QString &rootDirectory)
 void BSArchiveAuto::open(const QString &archivePath)
 {
     _archive.open(archivePath);
+    qDebug() << "Opening archive: " << archivePath;
 }
 
 void BSArchiveAuto::create(const QString &archiveName, const bsa_archive_type_e &type)

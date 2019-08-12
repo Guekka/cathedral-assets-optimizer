@@ -1,5 +1,5 @@
 #include "BSArchive.h"
-#include <iostream>
+#include <QDebug>
 
 BSArchive::BSArchive()
     : _archive(bsa_create())
@@ -8,12 +8,15 @@ BSArchive::BSArchive()
 
 BSArchive::~BSArchive()
 {
+    if (_openedArchive)
+        close();
     free();
 }
 
 void BSArchive::free()
 {
     const auto &result = bsa_free(_archive);
+    _openedArchive = false;
 
     if(result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
@@ -22,6 +25,7 @@ void BSArchive::free()
 void BSArchive::open(const QString &archivePath)
 {
     const auto &result = bsa_load_from_file(_archive, PREPARE_PATH_LIBBSARCH(archivePath));
+    _openedArchive = true;
 
     if (result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
@@ -30,6 +34,7 @@ void BSArchive::open(const QString &archivePath)
 void BSArchive::close()
 {
     bsa_close(_archive);
+    _openedArchive = false;
 }
 
 void BSArchive::create(const QString &archiveName, const bsa_archive_type_e& type, const BSArchiveEntries& entries)
@@ -81,7 +86,6 @@ void BSArchive::addFileFromMemory(const QString &filename, const QByteArray &dat
     if (result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
 }
-
 void BSArchive::setCompressed(bool value)
 {
     bsa_compress_set(_archive, value);
@@ -128,9 +132,10 @@ QByteArray BSArchive::extractFileDataByFilename(const QString &filename)
 
 void BSArchive::extract(const QString &filename, const QString &saveAs)
 {
+    qDebug() << "Extracting: " << filename << " saved as " << saveAs;
     const auto &result = bsa_extract_file(_archive, PREPARE_PATH_LIBBSARCH(filename), PREPARE_PATH_LIBBSARCH(saveAs));
 
-    if(result.code == BSA_RESULT_EXCEPTION)
+    if (result.code == BSA_RESULT_EXCEPTION)
         throw std::runtime_error(wcharToString(result.text));
 }
 

@@ -41,13 +41,13 @@ public:
    */
     BsaOptimizer();
     /*!
-   * \brief Will extract a BSA
+   * \brief Extracts a BSA
    * \param bsaPath The path of the BSA to extract
    * \param deleteBackup Deletes the backup the existing bsa
    */
     void extract(QString bsaPath, const bool &deleteBackup) const;
     /*!
-   * \brief Will create a BSA containing all the files given as argument
+   * \brief Creates a BSA containing all the files given as argument
    * \param bsa The BSA to create
    */
     int create(Bsa &bsa) const;
@@ -60,7 +60,7 @@ public:
 
 private:
     /*!
-   * \brief Will add .bak to the bsa name. If a bak file already exist, their sizes are compared. If the size is the same, the current bsa is removed. Otherwise, the bak file
+   * \brief Adds .bak to the bsa name. If a bak file already exist, their sizes are compared. If the size is the same, the current bsa is removed. Otherwise, the bak file
    * is also renamed.
    * \param bsaPath The BSA to backup
    * \return a QString containing the name of the backup-ed bsa
@@ -86,11 +86,11 @@ private:
 
 namespace plog
 {
-inline Record &operator<<(Record &record, const BsaOptimizer::Bsa &bsa)
-{
-    return record << "BSA Structure:\nPath: " + bsa.path
-                         + " \nUncompressed files size: " + QString::number(static_cast<int>(GigaByte * bsa.filesSize))
-                         + "Gb" + "\nmaxSize: " + QString::number(static_cast<int>(GigaByte * bsa.maxSize)) + "Gb"
-                         + "\nType: " + bsa.type + "\nFormat: " + bsa.format;
-}
+    inline Record &operator<<(Record &record, const BsaOptimizer::Bsa &bsa)
+    {
+        return record << "BSA Structure:\nPath: " + bsa.path
+                             + " \nUncompressed files size: " + QString::number(bsa.filesSize / GigaByte) + "Gb"
+                             + "\nmaxSize: " + QString::number(bsa.maxSize / GigaByte) + "Gb" + "\nType: "
+                      << bsa.type << "\nFormat: " << bsa.format;
+    }
 } // namespace plog

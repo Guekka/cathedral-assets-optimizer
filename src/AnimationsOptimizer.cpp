@@ -45,14 +45,11 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
         hkResource *resource;
 
         hkIstream istream(qPrintable(filePath));
-        if (!istream.isOk())
-            throw std::runtime_error("An error occured while loading this file.");
-
         hkStreamReader *reader = istream.getStreamReader();
 
         hkResult res = hkSerializeLoad(reader, root, resource);
 
-        if (res != HK_SUCCESS)
+        if (res != HK_SUCCESS || !istream.isOk())
             PLOG_WARNING << "File is not loadable: " + filePath + "\nIt is probably already converted.";
         else
         {

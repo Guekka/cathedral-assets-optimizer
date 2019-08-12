@@ -70,17 +70,17 @@ int BsaOptimizer::create(Bsa &bsa) const
     archive.setCompressed(true);
 
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
-
-    bool isCompressed = true;
     for (const auto &file : bsa.files)
     {
-        if (isCompressed)
             if (!canBeCompressedFile(file))
             {
+                qDebug() << "canBeCompressedFile " << file;
                 archive.setCompressed(false);
-                isCompressed = false;
+                break;
             }
-
+    }
+    for (const auto &file : bsa.files)
+    {
         //Removing files at the root directory, those cannot be packed
         QString filename = QFileInfo(file).fileName();
 
@@ -98,8 +98,8 @@ int BsaOptimizer::create(Bsa &bsa) const
         return 2;
     }
 
-    //Creating the archive
     PLOG_DEBUG << bsa;
+    //Creating the archive
 
     try
     {
@@ -132,17 +132,6 @@ int BsaOptimizer::create(Bsa &bsa) const
 void BsaOptimizer::packAll(const QString &folderPath) const
 {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
-
-    auto createArchive = [&](Bsa &bsa) {
-        try
-        {
-            this->create(bsa);
-        }
-        catch (const std::exception &e)
-        {
-            PLOG_ERROR << e.what() << "Cancelling packing of: " + bsa.path;
-        }
-    };
 
     Bsa texturesBsa, standardBsa;
     //Setting type
@@ -185,7 +174,7 @@ void BsaOptimizer::packAll(const QString &folderPath) const
                     pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
                                 + Profiles::bsaSuffix();
 
-                createArchive(pBsa);
+                create(pBsa);
 
                 //Resetting for next loop
                 pBsa.filesSize = 0;
@@ -202,13 +191,13 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     {
         texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
                            + Profiles::bsaTexturesSuffix();
-        createArchive(texturesBsa);
+        create(texturesBsa);
     }
     if (!standardBsa.files.isEmpty())
     {
         standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
                            + Profiles::bsaSuffix();
-        createArchive(standardBsa);
+        create(standardBsa);
     }
 }
 
@@ -244,6 +233,8 @@ bool BsaOptimizer::isIgnoredFile(const QString &filepath) const
 
 bool BsaOptimizer::canBeCompressedFile(const QString &filename)
 {
-    return (filename.endsWith(".wav", Qt::CaseInsensitive) || filename.endsWith(".xwm", Qt::CaseInsensitive)
-            || filename.contains(QRegularExpression("^.+\\.[^.]*strings$")));
+    const bool cantBeCompressed = (filename.endsWith(".wav", Qt::CaseInsensitive)
+                                   || filename.endsWith(".xwm", Qt::CaseInsensitive)
+                                   || filename.contains(QRegularExpression("^.+\\.[^.]*strings$")));
+    return !cantBeCompressed;
 }

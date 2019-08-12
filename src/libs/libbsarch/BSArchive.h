@@ -31,5 +31,6 @@ public:
     bsa_archive_t getArchive() const;
 
 private:
+    bool _openedArchive = false;
     bsa_archive_t _archive;
 };

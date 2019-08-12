@@ -282,7 +282,6 @@ void MainWindow::updateLog() const
         QTextStream ts(&log);
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
         _ui->logTextEdit->appendHtml(ts.readAll());
-        log.close();
     }
 }
 
