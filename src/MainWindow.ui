@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>676</width>
-    <height>688</height>
+    <height>702</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,11 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="font">
+   <font>
+    <kerning>true</kerning>
+   </font>
   </property>
   <property name="cursor">
    <cursorShape>ArrowCursor</cursorShape>
@@ -540,6 +545,7 @@
               <font>
                <weight>75</weight>
                <bold>true</bold>
+               <kerning>true</kerning>
               </font>
              </property>
              <property name="cursor">
@@ -810,6 +816,7 @@
               <font>
                <weight>50</weight>
                <bold>false</bold>
+               <kerning>true</kerning>
               </font>
              </property>
              <property name="cursor">
@@ -1070,6 +1077,13 @@
           </layout>
          </widget>
         </item>
+        <item>
+         <widget class="QComboBox" name="comboBox">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="AnimationsTab">
@@ -1119,6 +1133,7 @@
               <font>
                <weight>75</weight>
                <bold>true</bold>
+               <kerning>true</kerning>
               </font>
              </property>
              <property name="cursor">
@@ -1206,7 +1221,17 @@
     <addaction name="actionEnableDarkTheme"/>
     <addaction name="actionEnable_debug_log"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionDocumentation"/>
+    <addaction name="actionDiscord"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
+   </widget>
    <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionEnableDarkTheme">
    <property name="checkable">
@@ -1228,6 +1253,26 @@
    </property>
    <property name="toolTip">
     <string>Used when reporting bugs</string>
+   </property>
+  </action>
+  <action name="actionDocumentation">
+   <property name="text">
+    <string>Documentation</string>
+   </property>
+  </action>
+  <action name="actionDiscord">
+   <property name="text">
+    <string>Discord</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
    </property>
   </action>
  </widget>

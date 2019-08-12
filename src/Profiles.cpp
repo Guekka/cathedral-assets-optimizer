@@ -9,8 +9,10 @@ Profiles Profiles::_instance = Profiles();
 
 Profiles::Profiles()
 {
+    _commonSettings = new QSettings("profiles/common.ini", QSettings::IniFormat, this);
     findProfiles(QDir("profiles"));
-    loadProfile("Default");
+    QString mode = _commonSettings->value("profile").toString();
+    loadProfile(mode);
 };
 
 size_t Profiles::findProfiles(const QDir &dir)
@@ -34,11 +36,10 @@ size_t Profiles::findProfiles(const QDir &dir)
 void Profiles::loadProfile(const QString &newProfile)
 {
     if (!exists(newProfile))
-        throw std::runtime_error("This profile does not exist: " + newProfile.toStdString());
+        loadProfile("Default");
 
     _currentProfile = newProfile;
-    QSettings s("profiles/common.ini", QSettings::IniFormat);
-    s.setValue("profile", _currentProfile);
+    _commonSettings->setValue("profile", _currentProfile);
 
     _logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/" + _currentProfile + ".html");
     QString folder = _profileDir.absoluteFilePath(_currentProfile);

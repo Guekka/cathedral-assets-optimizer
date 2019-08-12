@@ -48,8 +48,6 @@ private:
 
     int _progressBarValue{};
 
-    QSettings *_commonSettings;
-    QSettings *_settings;
     OptionsCAO _options;
 
     std::unique_ptr<Manager> _caoProcess;

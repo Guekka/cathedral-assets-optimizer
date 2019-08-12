@@ -122,28 +122,32 @@ MainWindow::MainWindow()
     connect(_ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::setDarkTheme);
     connect(_ui->actionEnable_debug_log, &QAction::triggered, this, &MainWindow::refreshUi);
 
+    connect(_ui->actionAbout, &QAction::triggered, this, [&] {
+        QMessageBox::about(
+            this,
+            tr("About"),
+            QCoreApplication::applicationName() + ' ' + QCoreApplication::applicationVersion()
+                + tr("\nMade by G'k\nThis program is distributed in the hope that it will be useful but WITHOUT ANY "
+                     "WARRANTLY. See the Mozilla Public License"));
+    });
+    connect(_ui->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
+
+    connect(_ui->actionDocumentation, &QAction::triggered, this, [&] {
+        QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
+    });
+
+    connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
+        QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
+    });
+
     //Setting timer to refresh UI
     _timer = new QTimer(this);
-    _timer->start(10000);
+    _timer->start(15000);
     connect(_timer, &QTimer::timeout, this, &MainWindow::updateLog);
     connect(_timer, &QTimer::timeout, this, &MainWindow::refreshUi);
 
     //Loading remembered settings
-    hideAdvancedSettings();
-    resetUi();
-
-    _commonSettings = new QSettings("profiles/common.ini", QSettings::IniFormat, this);
-    QString mode = _commonSettings->value("profile").toString();
-    mode = Profiles::exists(mode) ? mode : "Default";
-    Profiles::setCurrentProfile(mode);
-    _ui->presets->setCurrentIndex(_ui->presets->findText(mode));
-    loadUi();
-    refreshUi();
-
-    if (_ui->advancedSettingsCheckbox->isChecked())
-        showAdvancedSettings();
-
-    setGameMode(mode);
+    setGameMode(Profiles::currentProfile());
 }
 
 void MainWindow::refreshUi()
@@ -159,19 +163,18 @@ void MainWindow::refreshUi()
 
 void MainWindow::saveUi()
 {
-    _commonSettings->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
-    _commonSettings->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
-    _commonSettings->setValue("profile", Profiles::currentProfile());
+    Profiles::commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
+    Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
+    Profiles::commonSettings()->setValue("profile", Profiles::currentProfile());
     _options.readFromUi(_ui);
     _options.saveToIni(Profiles::optionsSettings());
 }
 
 void MainWindow::loadUi()
 {
-    _ui->actionEnableDarkTheme->setChecked(_commonSettings->value("bDarkMode").toBool());
-    setDarkTheme(_ui->actionEnableDarkTheme->isChecked());
-    _ui->advancedSettingsCheckbox->setChecked(_commonSettings->value("bShowAdvancedSettings").toBool());
-    _ui->presets->setCurrentIndex(_ui->presets->findText(_commonSettings->value("profile").toString()));
+    setDarkTheme(Profiles::commonSettings()->value("bDarkMode").toBool());
+    _ui->advancedSettingsCheckbox->setChecked(Profiles::commonSettings()->value("bShowAdvancedSettings").toBool());
+    _ui->presets->setCurrentIndex(_ui->presets->findText(Profiles::commonSettings()->value("profile").toString()));
 
     _options.readFromIni(Profiles::optionsSettings());
     _options.saveToUi(_ui);
@@ -223,6 +226,7 @@ void MainWindow::createProfile()
 
 void MainWindow::setDarkTheme(const bool &enabled)
 {
+    _ui->actionEnableDarkTheme->setChecked(enabled);
     if (enabled)
     {
         QFile f(":qdarkstyle/style.qss");
@@ -297,13 +301,14 @@ void MainWindow::setGameMode(const QString &mode)
     //Actually setting the window mode
     Profiles::setCurrentProfile(mode);
     Profiles::getInstance().saveToUi(_ui);
-    _options.readFromIni(Profiles::optionsSettings());
-    _options.saveToUi(_ui);
+    loadUi();
 
     _ui->tabWidget->setTabEnabled(animTabIndex, Profiles::animationsEnabled());
     _ui->tabWidget->setTabEnabled(meshesTabIndex, Profiles::meshesEnabled());
     _ui->tabWidget->setTabEnabled(bsaTabIndex, Profiles::bsaEnabled());
     _ui->tabWidget->setTabEnabled(TexturesTabIndex, Profiles::texturesEnabled());
+
+    _ui->advancedSettingsCheckbox->isChecked() ? showAdvancedSettings() : hideAdvancedSettings();
 }
 
 void MainWindow::hideAdvancedSettings() const

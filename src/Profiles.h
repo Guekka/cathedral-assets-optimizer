@@ -70,6 +70,7 @@ public:
 
     [[nodiscard]] static QSettings *profileSettings() { return _instance._profileSettings; }
     [[nodiscard]] static QSettings *optionsSettings() { return _instance._optionsSettings; }
+    [[nodiscard]] static QSettings *commonSettings() { return _instance._commonSettings; }
     [[nodiscard]] static QString logPath() { return _instance._logPath; }
 
     [[nodiscard]] static Profiles &getInstance();
@@ -108,6 +109,7 @@ private:
 
     QSettings *_profileSettings;
     QSettings *_optionsSettings;
+    QSettings *_commonSettings;
     QString _logPath;
 
     QDir _profileDir;

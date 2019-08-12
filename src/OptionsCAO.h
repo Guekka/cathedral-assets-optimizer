@@ -25,7 +25,7 @@ public:
 
     void parseArguments(const QStringList &args);
 
-    void saveToIni(QSettings *settings) const;
+    void saveToIni(QSettings *settings);
     void readFromIni(QSettings *settings);
 #ifdef GUI
     void saveToUi(Ui::MainWindow *ui);
@@ -81,4 +81,7 @@ public:
     */
     QString userPath;
     /*-----------END OF VARS---------------*/
+
+private:
+    QMutex *mutex;
 };

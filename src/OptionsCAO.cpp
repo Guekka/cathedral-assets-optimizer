@@ -6,6 +6,7 @@
 
 OptionsCAO::OptionsCAO()
     : mode(SingleMod)
+    , mutex(new QMutex)
 {
 }
 
@@ -46,8 +47,10 @@ OptionsCAO::OptionsCAO(const OptionsCAO &other)
 {
 }
 
-void OptionsCAO::saveToIni(QSettings *settings) const
+void OptionsCAO::saveToIni(QSettings *settings)
 {
+    QMutexLocker lock(mutex);
+
     //General
     settings->setValue("bDryRun", bDryRun);
     settings->setValue("bDebugLog", bDebugLog);
@@ -90,6 +93,8 @@ void OptionsCAO::saveToIni(QSettings *settings) const
 
 void OptionsCAO::readFromIni(QSettings *settings)
 {
+    QMutexLocker lock(mutex);
+
     //General
     bDryRun = settings->value("bDryRun").toBool();
     bDebugLog = settings->value("bDebugLog").toBool();
@@ -134,6 +139,8 @@ void OptionsCAO::readFromIni(QSettings *settings)
 #ifdef GUI
 void OptionsCAO::saveToUi(Ui::MainWindow *ui)
 {
+    QMutexLocker lock(mutex);
+
     //BSA
     ui->bsaExtractCheckBox->setChecked(bBsaExtract);
     ui->bsaCreateCheckbox->setChecked(bBsaCreate);
@@ -177,19 +184,21 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
     ui->meshesHeadpartsCheckBox->setChecked(bMeshesHeadparts);
 
     //Animations
-    ui->animationsGroupBox->setChecked(bAnimationsOptimization);
-
-    //General and GUI
-    ui->dryRunCheckBox->setChecked(bDryRun);
-    ui->modeChooserComboBox->setCurrentIndex(mode);
-    ui->userPathTextEdit->setText(userPath);
+    ui->animationsNecessaryOptimizationCheckBox->setChecked(bAnimationsOptimization);
 
     //Log level
     ui->actionEnable_debug_log->setChecked(bDebugLog);
+
+    //General and GUI
+    ui->dryRunCheckBox->setChecked(bDryRun);
+    ui->modeChooserComboBox->setCurrentIndex(ui->modeChooserComboBox->findData(mode));
+    ui->userPathTextEdit->setText(userPath);
 }
 
 void OptionsCAO::readFromUi(Ui::MainWindow *ui)
 {
+    QMutexLocker lock(mutex);
+
     //BSA
     const bool bsaEnabled = ui->bsaTab->isEnabled();
     bBsaExtract = bsaEnabled && ui->bsaExtractCheckBox->isChecked();
@@ -235,13 +244,14 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     bDryRun = ui->dryRunCheckBox->isChecked();
     userPath = QDir::cleanPath(ui->userPathTextEdit->text());
     mode = ui->modeChooserComboBox->currentData().value<OptimizationMode>();
-
     bDebugLog = ui->actionEnable_debug_log->isChecked();
 }
 #endif
 
 void OptionsCAO::parseArguments(const QStringList &args)
 {
+    QMutexLocker lock(mutex);
+
     //TODO update before release
     QCommandLineParser parser;
 

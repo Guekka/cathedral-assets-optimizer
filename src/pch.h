@@ -10,6 +10,7 @@
 #include <QCommandLineParser>
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QDesktopServices>
 #include <QDirIterator>
 #include <QFile>
 #include <QInputDialog>
