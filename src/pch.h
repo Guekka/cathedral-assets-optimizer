@@ -8,6 +8,7 @@
 /*---CORE---------------*/
 #include <utility>
 #include <QCommandLineParser>
+#include <QCompleter>
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDesktopServices>

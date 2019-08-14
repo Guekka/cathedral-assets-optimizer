@@ -13,74 +13,60 @@ MainWindow::MainWindow()
 
     //Profiles
     refreshProfiles();
+    {
+        //Mode chooser combo box
+        _ui->modeChooserComboBox->setItemData(0, OptionsCAO::SingleMod);
+        _ui->modeChooserComboBox->setItemData(1, OptionsCAO::SeveralMods);
 
-    //Mode chooser combo box
-    _ui->modeChooserComboBox->setItemData(0, OptionsCAO::SingleMod);
-    _ui->modeChooserComboBox->setItemData(1, OptionsCAO::SeveralMods);
+        //Advanced BSA
+        _ui->bsaFormat->setItemData(0, baTES3);
+        _ui->bsaTexturesFormat->setItemData(0, baTES3);
+        _ui->bsaFormat->setItemData(1, baTES4);
+        _ui->bsaTexturesFormat->setItemData(1, baTES4);
+        _ui->bsaFormat->setItemData(2, baFO3);
+        _ui->bsaTexturesFormat->setItemData(2, baFO3);
+        _ui->bsaFormat->setItemData(3, baSSE);
+        _ui->bsaTexturesFormat->setItemData(3, baSSE);
+        _ui->bsaFormat->setItemData(4, baFO4);
+        _ui->bsaTexturesFormat->setItemData(4, baFO4dds);
+        //Advanced meshes
+        _ui->meshesUser->setItemData(0, 11);
+        _ui->meshesUser->setItemData(1, 12);
 
-    //Advanced BSA
-    _ui->bsaFormat->setItemData(0, baTES3);
-    _ui->bsaTexturesFormat->setItemData(0, baTES3);
-    _ui->bsaFormat->setItemData(1, baTES4);
-    _ui->bsaTexturesFormat->setItemData(1, baTES4);
-    _ui->bsaFormat->setItemData(2, baFO3);
-    _ui->bsaTexturesFormat->setItemData(2, baFO3);
-    _ui->bsaFormat->setItemData(3, baSSE);
-    _ui->bsaTexturesFormat->setItemData(3, baSSE);
-    _ui->bsaFormat->setItemData(4, baFO4);
-    _ui->bsaTexturesFormat->setItemData(4, baFO4dds);
-    //Advanced meshes
-    _ui->meshesUser->setItemData(0, 11);
-    _ui->meshesUser->setItemData(1, 12);
+        _ui->meshesVersion->setItemData(0, V20_0_0_5);
+        _ui->meshesVersion->setItemData(1, V20_2_0_7);
 
-    _ui->meshesVersion->setItemData(0, V20_0_0_5);
-    _ui->meshesVersion->setItemData(1, V20_2_0_7);
+        _ui->meshesStream->setItemData(0, 82);
+        _ui->meshesStream->setItemData(1, 83);
+        _ui->meshesStream->setItemData(2, 100);
+        _ui->meshesStream->setItemData(3, 130);
 
-    _ui->meshesStream->setItemData(0, 82);
-    _ui->meshesStream->setItemData(1, 83);
-    _ui->meshesStream->setItemData(2, 100);
-    _ui->meshesStream->setItemData(3, 130);
-
-    _ui->texturesOutputFormat->setItemData(0, DXGI_FORMAT_BC7_UNORM);
-    _ui->texturesOutputFormat->setItemData(1, DXGI_FORMAT_BC3_UNORM);
-    _ui->texturesOutputFormat->setItemData(2, DXGI_FORMAT_BC1_UNORM);
-    _ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_R8G8B8A8_UNORM);
+        _ui->texturesOutputFormat->setItemData(0, DXGI_FORMAT_BC7_UNORM);
+        _ui->texturesOutputFormat->setItemData(1, DXGI_FORMAT_BC3_UNORM);
+        _ui->texturesOutputFormat->setItemData(2, DXGI_FORMAT_BC1_UNORM);
+        _ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_R8G8B8A8_UNORM);
+    }
 
     //Connecting widgets
-    connect(_ui->dryRunCheckBox, &QCheckBox::clicked, this, [&] {
+    connect(_ui->dryRunCheckBox, &QCheckBox::clicked, this, [&](const bool &checked) {
         //Disabling BSA options if dry run is enabled
-        const bool dryRunEnabled = _ui->dryRunCheckBox->isChecked();
-        _ui->bsaBaseGroupBox->setDisabled(dryRunEnabled);
-        _ui->bsaExtractCheckBox->setDisabled(dryRunEnabled);
-        _ui->bsaCreateCheckbox->setDisabled(dryRunEnabled);
-        _ui->bsaDeleteBackupsCheckbox->setDisabled(dryRunEnabled);
-
-        if (dryRunEnabled)
-            _ui->bsaBaseGroupBox->setChecked(false);
-
-        this->refreshUi();
+        _ui->bsaBaseGroupBox->setDisabled(checked);
+        _ui->bsaExtractCheckBox->setDisabled(checked);
+        _ui->bsaCreateCheckbox->setDisabled(checked);
+        _ui->bsaDeleteBackupsCheckbox->setDisabled(checked);
     });
 
-    connect(_ui->userPathTextEdit, &QLineEdit::textChanged, this, &MainWindow::refreshUi);
-
-    connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&](bool checked) {
-        if (checked)
-            showAdvancedSettings();
-        else
-            hideAdvancedSettings();
-    });
+    connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, &MainWindow::setAdvancedSettingsEnabled);
 
     connect(_ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
         if (_ui->presets->currentText() == "New profile")
             this->createProfile();
         else
             this->setGameMode(_ui->presets->currentText());
-
-        this->refreshUi();
     });
 
     connect(_ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        const bool severalModsEnabled = (_ui->modeChooserComboBox->currentIndex() == 1);
+        const bool severalModsEnabled = (_ui->modeChooserComboBox->currentData() == OptionsCAO::SeveralMods);
 
         //Disabling some meshes options when several mods mode is enabled
         _ui->meshesMediumOptimizationRadioButton->setDisabled(severalModsEnabled);
@@ -95,7 +81,6 @@ MainWindow::MainWindow()
                             + '\n' + tr("This process has only been tested on the Mod Organizer mods folder."));
             warning.exec();
         }
-        this->refreshUi();
     });
 
     connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
@@ -105,67 +90,107 @@ MainWindow::MainWindow()
                                                         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
             _ui->userPathTextEdit->setText(dir);
-        this->refreshUi();
     });
 
-    connect(_ui->processButton, &QPushButton::pressed, this, [&] {
-        if (QDir(_ui->userPathTextEdit->text()).exists())
-            this->initProcess();
-        else
-            QMessageBox::critical(this,
-                                  tr("Non existing path"),
-                                  tr("This path does not exist. Process aborted."),
-                                  QMessageBox::Ok);
+    connect(_ui->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
+
+    texturesFormatDialog = new TexturesFormatSelectDialog(this);
+
+    connect(_ui->texturesUnwantedFormatsEditButton, &QPushButton::pressed, this, [&] {
+        QStringList unwantedFormats;
+        for (int i = 0; i < _ui->texturesUnwantedFormatsList->count(); ++i)
+            unwantedFormats << _ui->texturesUnwantedFormatsList->item(i)->text();
+        _ui->texturesUnwantedFormatsList->clear();
+
+        texturesFormatDialog->setCheckedItems(unwantedFormats);
+        texturesFormatDialog->open();
+    });
+
+    connect(texturesFormatDialog, &QDialog::finished, this, [&] {
+        for (const auto &itemText : texturesFormatDialog->getChoices())
+        {
+            auto *item = new QListWidgetItem(itemText);
+            item->setFlags(item->flags() & (~Qt::ItemIsUserCheckable));
+            _ui->texturesUnwantedFormatsList->addItem(item);
+        };
     });
 
     //Connecting menu buttons
-    connect(_ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::setDarkTheme);
-    connect(_ui->actionEnable_debug_log, &QAction::triggered, this, &MainWindow::refreshUi);
+    {
+        connect(_ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::setDarkTheme);
 
-    connect(_ui->actionAbout, &QAction::triggered, this, [&] {
-        QMessageBox::about(
-            this,
-            tr("About"),
-            QCoreApplication::applicationName() + ' ' + QCoreApplication::applicationVersion()
-                + tr("\nMade by G'k\nThis program is distributed in the hope that it will be useful but WITHOUT ANY "
-                     "WARRANTLY. See the Mozilla Public License"));
-    });
-    connect(_ui->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
+        connect(_ui->actionAbout, &QAction::triggered, this, [&] {
+            QMessageBox::about(this,
+                               tr("About"),
+                               QCoreApplication::applicationName() + ' ' + QCoreApplication::applicationVersion()
+                                   + tr("\nMade by G'k\nThis program is distributed in the hope that it will be useful "
+                                        "but WITHOUT ANY "
+                                        "WARRANTLY. See the Mozilla Public License"));
+        });
+        connect(_ui->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
 
-    connect(_ui->actionDocumentation, &QAction::triggered, this, [&] {
-        QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
-    });
+        connect(_ui->actionDocumentation, &QAction::triggered, this, [&] {
+            QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
+        });
 
-    connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
-        QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
-    });
+        connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
+            QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
+        });
+    }
 
-    //Setting timer to refresh UI
-    _timer = new QTimer(this);
-    _timer->start(15000);
-    connect(_timer, &QTimer::timeout, this, &MainWindow::updateLog);
-    connect(_timer, &QTimer::timeout, this, &MainWindow::refreshUi);
+    //Connecting all settings changes to a variable
+    {
+        auto checkbox = this->findChildren<QCheckBox *>();
+        auto radiobutton = this->findChildren<QRadioButton *>();
+        auto lineEdit = this->findChildren<QLineEdit *>();
+        auto actions = this->findChildren<QAction *>();
+        auto list = this->findChildren<QListWidget *>();
+
+        for (const auto &c : checkbox)
+            connect(c, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &r : radiobutton)
+            connect(r, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &l : lineEdit)
+            connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &a : actions)
+            connect(a, &QAction::triggered, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &l : list)
+            connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
+    }
 
     //Loading remembered settings
+    _settingsChanged = false;
     setGameMode(Profiles::currentProfile());
-}
 
-void MainWindow::refreshUi()
-{
-    //Profiles
-    refreshProfiles();
-
-    if (!_bLockVariables)
-        saveUi();
-
-    loadUi();
+    //Setting timer to refresh log
+    _timer = new QTimer(this);
+    _timer->start(10000);
+    connect(_timer, &QTimer::timeout, this, &MainWindow::updateLog);
 }
 
 void MainWindow::saveUi()
 {
+    if (!_settingsChanged)
+        return;
+
+    _settingsChanged = false;
+
+    QMessageBox box(QMessageBox::Information,
+                    tr("Save unsaved changes"),
+                    tr("You have unsaved changes. Do you want to save them?"),
+                    QMessageBox::No | QMessageBox::Yes);
+
+    box.exec();
+
+    if (box.result() == QMessageBox::No)
+        return;
+
     Profiles::commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
     Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
-    Profiles::commonSettings()->setValue("profile", Profiles::currentProfile());
     _options.readFromUi(_ui);
     _options.saveToIni(Profiles::optionsSettings());
 }
@@ -240,7 +265,7 @@ void MainWindow::setDarkTheme(const bool &enabled)
 
 void MainWindow::initProcess()
 {
-    refreshUi();
+    saveUi();
     _ui->processButton->setDisabled(true);
     _bLockVariables = true;
 
@@ -291,11 +316,10 @@ void MainWindow::updateLog() const
 
 void MainWindow::setGameMode(const QString &mode)
 {
+    if (_settingsChanged)
+        saveUi();
+
     //Resetting the window
-    const int &animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
-    const int &meshesTabIndex = _ui->tabWidget->indexOf(_ui->meshesTab);
-    const int &bsaTabIndex = _ui->tabWidget->indexOf(_ui->bsaTab);
-    const int &TexturesTabIndex = _ui->tabWidget->indexOf(_ui->texturesTab);
     resetUi();
 
     //Actually setting the window mode
@@ -303,30 +327,44 @@ void MainWindow::setGameMode(const QString &mode)
     Profiles::getInstance().saveToUi(_ui);
     loadUi();
 
+    const int &animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
+    const int &meshesTabIndex = _ui->tabWidget->indexOf(_ui->meshesTab);
+    const int &bsaTabIndex = _ui->tabWidget->indexOf(_ui->bsaTab);
+    const int &TexturesTabIndex = _ui->tabWidget->indexOf(_ui->texturesTab);
+
     _ui->tabWidget->setTabEnabled(animTabIndex, Profiles::animationsEnabled());
     _ui->tabWidget->setTabEnabled(meshesTabIndex, Profiles::meshesEnabled());
     _ui->tabWidget->setTabEnabled(bsaTabIndex, Profiles::bsaEnabled());
     _ui->tabWidget->setTabEnabled(TexturesTabIndex, Profiles::texturesEnabled());
 
-    _ui->advancedSettingsCheckbox->isChecked() ? showAdvancedSettings() : hideAdvancedSettings();
+    setAdvancedSettingsEnabled(_ui->advancedSettingsCheckbox->isChecked());
 }
 
-void MainWindow::hideAdvancedSettings() const
+void MainWindow::setAdvancedSettingsEnabled(const bool &value)
 {
-    _ui->bsaAdvancedGroupBox->hide();
-    _ui->meshesAdvancedGroupBox->hide();
-    _ui->meshesVeryAdvancedGroupBox->hide();
-    _ui->texturesAdvancedGroupBox->hide();
-    _ui->animationsAdvancedGroupBox->hide();
+    if (value)
+    {
+        _ui->bsaAdvancedGroupBox->show();
+        _ui->meshesAdvancedGroupBox->show();
+        _ui->meshesVeryAdvancedGroupBox->show();
+        _ui->texturesAdvancedGroupBox->show();
+        _ui->animationsAdvancedGroupBox->show();
+    }
+    else
+    {
+        _ui->bsaAdvancedGroupBox->hide();
+        _ui->meshesAdvancedGroupBox->hide();
+        _ui->meshesVeryAdvancedGroupBox->hide();
+        _ui->texturesAdvancedGroupBox->hide();
+        _ui->animationsAdvancedGroupBox->hide();
+    }
 }
 
-void MainWindow::showAdvancedSettings() const
+void MainWindow::closeEvent(QCloseEvent *event)
 {
-    _ui->bsaAdvancedGroupBox->show();
-    _ui->meshesAdvancedGroupBox->show();
-    _ui->meshesVeryAdvancedGroupBox->show();
-    _ui->texturesAdvancedGroupBox->show();
-    _ui->animationsAdvancedGroupBox->show();
+    if (_settingsChanged)
+        saveUi();
+    event->accept();
 }
 
 MainWindow::~MainWindow()

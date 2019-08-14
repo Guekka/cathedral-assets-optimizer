@@ -48,6 +48,7 @@ set(SOURCES
 
     #Ui
     MainWindow.cpp
+    TexturesFormatSelectDialog.cpp
     )
 
 
@@ -70,11 +71,13 @@ set(HEADERS
     TexturesFormats.h
     #Ui
     MainWindow.h
+    TexturesFormatSelectDialog.h
     )
 
 #Ui
 set(UI
     MainWindow.ui
+    TexturesFormatSelectDialog.ui
     )
 
 #Icon and qrc

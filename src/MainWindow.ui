@@ -220,7 +220,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -992,18 +992,18 @@
           <property name="title">
            <string>Advanced</string>
           </property>
-          <layout class="QFormLayout" name="formLayout_4">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_14">
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_13">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts TGA to DDS.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some games do not support compressed interface textures.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>TGA</string>
+              <string>Interface</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="0" column="1" colspan="2">
             <widget class="QCheckBox" name="texturesTgaConversionCheckBox">
              <property name="text">
               <string>Enable TGA conversion</string>
@@ -1020,7 +1020,20 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts TGA to DDS.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>TGA</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" rowspan="2">
+            <widget class="QListWidget" name="texturesUnwantedFormatsList"/>
+           </item>
+           <item row="1" column="1" colspan="2">
             <widget class="QComboBox" name="texturesOutputFormat">
              <item>
               <property name="text">
@@ -1044,17 +1057,7 @@
              </item>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_13">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some games do not support compressed interface textures.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Interface</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
+           <item row="2" column="1" colspan="2">
             <widget class="QCheckBox" name="texturesCompressInterfaceCheckBox">
              <property name="text">
               <string>Compress interface textures</string>
@@ -1071,8 +1074,12 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QPlainTextEdit" name="texturesUnwantedFormats"/>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="texturesUnwantedFormatsEditButton">
+             <property name="text">
+              <string>Edit</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

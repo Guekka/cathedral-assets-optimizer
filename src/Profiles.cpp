@@ -190,13 +190,12 @@ void Profiles::saveToUi(Ui::MainWindow *ui)
     ui->texturesCompressInterfaceCheckBox->setChecked(_texturesCompressInterface);
 
     QStringList unwantedFormats;
+    ui->texturesUnwantedFormatsList->clear();
     for (const QVariant &variant : _texturesUnwantedFormats)
     {
-        DXGI_FORMAT format = variant.value<DXGI_FORMAT>();
-        unwantedFormats << QString::fromStdString(dxgiFormatToString(format));
+        DXGI_FORMAT &&format = variant.value<DXGI_FORMAT>();
+        ui->texturesUnwantedFormatsList->addItem(dxgiFormatToString(format));
     }
-    unwantedFormats.removeDuplicates();
-    ui->texturesUnwantedFormats->setPlainText(unwantedFormats.join('\n'));
 }
 
 void Profiles::readFromUi(Ui::MainWindow *ui)
@@ -221,9 +220,10 @@ void Profiles::readFromUi(Ui::MainWindow *ui)
     _texturesCompressInterface = ui->texturesCompressInterfaceCheckBox->isChecked();
 
     _texturesUnwantedFormats.clear();
-    for (const auto &line : ui->texturesUnwantedFormats->toPlainText().split('\n'))
+    for (int i = 0; i < ui->texturesUnwantedFormatsList->count(); ++i)
     {
-        const DXGI_FORMAT format = stringToDxgiFormat(line.toStdString());
+        const auto &entry = ui->texturesUnwantedFormatsList->item(i);
+        const DXGI_FORMAT &format = stringToDxgiFormat(entry->text());
         if (!_texturesUnwantedFormats.contains(format) && format != DXGI_FORMAT_UNKNOWN)
             _texturesUnwantedFormats += format;
     }

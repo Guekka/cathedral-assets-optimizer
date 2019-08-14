@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Manager.h"
+#include "TexturesFormatSelectDialog.h"
 #include "pch.h"
 #include "ui_mainWindow.h"
 
@@ -28,7 +29,6 @@ private:
 
     void saveUi();
     void loadUi();
-    void refreshUi();
     void refreshProfiles();
     void createProfile();
 
@@ -43,8 +43,9 @@ private:
     void endProcess();
     void readProgress(const QString &text, const int &max, const int &value) const;
 
-    void hideAdvancedSettings() const;
-    void showAdvancedSettings() const;
+    void setAdvancedSettingsEnabled(const bool &value);
+
+    void closeEvent(QCloseEvent *event);
 
     int _progressBarValue{};
 
@@ -53,4 +54,8 @@ private:
     std::unique_ptr<Manager> _caoProcess;
 
     QTimer *_timer;
+
+    bool _settingsChanged;
+
+    TexturesFormatSelectDialog *texturesFormatDialog;
 };
