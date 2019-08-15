@@ -6,12 +6,16 @@
 #ifdef GUI
 #include "MainWindow.h"
 #endif
+#ifndef GUI
+#include "Manager.h"
+#endif
 
 int main(int argc, char *argv[])
 {
 #ifdef GUI
     QApplication app(argc, argv);
-#elif ifndef GUI
+#endif
+#ifndef GUI
     QCoreApplication app(argc, argv);
 #endif
 
@@ -27,19 +31,19 @@ int main(int argc, char *argv[])
     QCoreApplication::installTranslator(&AssetsOptTranslator);
 
 #ifdef GUI
-    MainWindow *window;
-#elif ifndef GUI
-    Manager *manger;
+    MainWindow *window = new MainWindow;
+#endif
+#ifndef GUI
+    Manager *manager = new Manager(QCoreApplication::arguments());
 #endif
 
     try
     {
 #ifdef GUI
-        window = new MainWindow;
         window->show();
-#elif ifndef GUI
-        Manager manager;
-        manager.runOptimization();
+#endif
+#ifndef GUI
+        manager->runOptimization();
 #endif
     }
     catch (const std::exception &e)
@@ -51,7 +55,8 @@ int main(int argc, char *argv[])
 
 #ifdef GUI
     return QApplication::exec();
-#elif ifndef GUI
+#endif
+#ifndef GUI
     return 0;
 #endif
 }

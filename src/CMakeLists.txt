@@ -27,8 +27,9 @@ set(Qt5_DIR "C:/IT/Qt/5.12.4/msvc2017/lib/cmake/Qt5")
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 #Setting GUI
-#Comment out the next line to create a CLI version instead (untested)
+#Comment out the next lines to create a CLI version instead (untested)
 add_compile_definitions(GUI)
+set(GUI true)
 
 #SOURCES
 
@@ -45,12 +46,7 @@ set(SOURCES
     IntegrationTests.cpp
     Profiles.cpp
     OptionsCAO.cpp
-
-    #Ui
-    MainWindow.cpp
-    TexturesFormatSelectDialog.cpp
     )
-
 
 #HEADERS
 
@@ -70,15 +66,23 @@ set(HEADERS
     OptionsCAO.h
     TexturesFormats.h
     #Ui
-    MainWindow.h
-    TexturesFormatSelectDialog.h
+
     )
 
 #Ui
-set(UI
+if(GUI)
+    list (APPEND HEADERS     MainWindow.h
+        TexturesFormatSelectDialog.h)
+
+    list (APPEND SOURCES MainWindow.cpp
+        TexturesFormatSelectDialog.cpp)
+
+    set(UI
     MainWindow.ui
     TexturesFormatSelectDialog.ui
     )
+
+endif()
 
 #Icon and qrc
 set(ICON_RC_PATH "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc")

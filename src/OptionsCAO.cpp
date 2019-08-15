@@ -252,14 +252,15 @@ void OptionsCAO::parseArguments(const QStringList &args)
 {
     QMutexLocker lock(mutex);
 
-    //TODO update before release
+    if (args.count() < 4)
+        throw std::runtime_error("Not enough arguments");
     QCommandLineParser parser;
 
     parser.addHelpOption();
 
     parser.addPositionalArgument("folder", "The folder to process, surrounded with quotes.");
     parser.addPositionalArgument("mode", "Either om (one mod) or sm (several mods)");
-    parser.addPositionalArgument("game", "Currently, only 'SSE', 'TES5', 'FO4' and 'Custom' are supported");
+    parser.addPositionalArgument("profile", "One of the profile located in CAO/profiles");
 
     parser.addOptions({
         {"dr", "Enables dry run"},
@@ -274,20 +275,28 @@ void OptionsCAO::parseArguments(const QStringList &args)
         {"t1", "Enables textures compression"},
         {"t2", "Enables textures mipmaps generation"},
 
+        {"trr", "Enables textures resizing by ratio"},
+        {"trrw", "The width ratio"},
+        {"trrh", "The height ratio"},
+
+        {"trs", "Enables textures resizing by fixed size"},
+        {"trsw", "The width size"},
+        {"trsh", "The height size"},
+
         {"a", "Enables animations processing"},
         {"mh", "Enables headparts detection and processing"},
         {"mr", "Enables meshes resaving"},
         {"be", "Enables BSA extraction."},
         {"bc", "Enables BSA creation."},
         {"bd", "Enables deletion of BSA backups."},
-        {"bo",
+        /*{"bo",
          "NOT WORKING. Enables BSA optimization. The files inside the "
-         "BSA will be extracted to memory and processed according to the provided settings "},
+         "BSA will be extracted to memory and processed according to the provided settings "},*/
     });
 
     parser.process(args);
 
-    const QString path = QDir::cleanPath(parser.positionalArguments().at(0));
+    const QString &path = QDir::cleanPath(parser.positionalArguments().at(0));
     userPath = path;
 
     const QString readMode = parser.positionalArguments().at(1);
@@ -295,8 +304,10 @@ void OptionsCAO::parseArguments(const QStringList &args)
         mode = SingleMod;
     else if (readMode == "sm")
         mode = SeveralMods;
+    else
+        throw std::runtime_error("Invalid argument for mode");
 
-    const QString readGame = parser.positionalArguments().at(2);
+    const QString &readGame = parser.positionalArguments().at(2);
     Profiles::setCurrentProfile(readGame);
 
     bDryRun = parser.isSet("dr");
@@ -309,6 +320,14 @@ void OptionsCAO::parseArguments(const QStringList &args)
     bTexturesNecessary = parser.isSet("t0");
     bTexturesCompress = parser.isSet("t1");
     bTexturesMipmaps = parser.isSet("t2");
+
+    bTexturesResizeRatio = parser.isSet("trr");
+    iTexturesTargetWidthRatio = parser.value("trrw").toUInt();
+    iTexturesTargetHeightRatio = parser.value("trrh").toUInt();
+
+    bTexturesResizeSize = parser.isSet("trs");
+    iTexturesTargetWidth = parser.value("trsw").toUInt();
+    iTexturesTargetHeight = parser.value("trsh").toUInt();
 
     bAnimationsOptimization = parser.isSet("a");
 

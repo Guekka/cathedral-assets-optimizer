@@ -145,7 +145,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
 
     const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
-    PLOG_INFO << "Optimizing texture: " << _name;
+    PLOG_VERBOSE << "Processing texture: " << _name;
 
     if (!needsConversion && !needsMipMaps && !needsResize)
     {

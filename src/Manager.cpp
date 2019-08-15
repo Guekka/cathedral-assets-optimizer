@@ -8,14 +8,29 @@ Manager::Manager(OptionsCAO &opt)
     : _options(opt)
 
 {
-#ifndef GUI
-    //Setting game
-    setGame();
+    //Preparing logging
+    initCustomLogger(Profiles::logPath(), _options.bDebugLog);
 
-    //Reading arguments
-    if (QCoreApplication::arguments().count() >= 2)
-        options.parseArguments(QCoreApplication::arguments());
-#endif
+    PLOG_VERBOSE << "Checking settings...";
+    const QString error = _options.isValid();
+    if (!error.isEmpty())
+    {
+        PLOG_FATAL << error;
+        throw std::runtime_error("Options are not valid." + error.toStdString());
+    }
+
+    readIgnoredMods();
+
+    PLOG_INFO << "Listing files and directories...";
+    listDirectories();
+    listFiles();
+}
+
+Manager::Manager(const QStringList &args)
+{
+    //Parsing args
+    _options.parseArguments(args);
+
     //Preparing logging
     initCustomLogger(Profiles::logPath(), _options.bDebugLog);
 
@@ -54,9 +69,9 @@ void Manager::listDirectories()
 void Manager::printProgress(const int &total, const QString &text = "Processing files")
 {
 #ifndef GUI
-    std::cout << "PROGRESS:|" << text.toStdString() << " - %v/%m - %p%|" << numberCompletedFiles << '|' << total
-              << std::endl;
-#else
+    QTextStream(stdout) << "PROGRESS:|" << text << " - %v/%m - %p%|" << _numberCompletedFiles << '|' << total << endl;
+#endif
+#ifdef GUI
     emit progressBarTextChanged(text, total, _numberCompletedFiles);
 #endif
 }

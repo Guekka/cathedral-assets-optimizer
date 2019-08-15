@@ -16,6 +16,10 @@ public:
    */
     explicit Manager(OptionsCAO &opt);
     /*!
+   * \brief Constructor that will perform a number of functions and read options from CLI
+   */
+    explicit Manager(const QStringList &args);
+    /*!
    * \brief The main process
    */
     void runOptimization();
@@ -50,7 +54,7 @@ private:
     /*!
    * \brief The optimization options, that will be given to the MainOptimizer
    */
-    OptionsCAO &_options;
+    OptionsCAO _options;
     /*!
     * \brief The list of directories to process
     */
