@@ -143,8 +143,8 @@ MainWindow::MainWindow()
         auto checkbox = this->findChildren<QCheckBox *>();
         auto radiobutton = this->findChildren<QRadioButton *>();
         auto lineEdit = this->findChildren<QLineEdit *>();
-        auto actions = this->findChildren<QAction *>();
         auto list = this->findChildren<QListWidget *>();
+        auto comboBox = this->findChildren<QComboBox *>();
 
         for (const auto &c : checkbox)
             connect(c, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
@@ -155,11 +155,11 @@ MainWindow::MainWindow()
         for (const auto &l : lineEdit)
             connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
 
-        for (const auto &a : actions)
-            connect(a, &QAction::triggered, this, [this] { this->_settingsChanged = true; });
-
         for (const auto &l : list)
             connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &c : comboBox)
+            connect(c, QOverload<int>::of(&QComboBox::activated), this, [this] { this->_settingsChanged = true; });
     }
 
     //Loading remembered settings
@@ -174,6 +174,9 @@ MainWindow::MainWindow()
 
 void MainWindow::saveUi()
 {
+    Profiles::commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
+    Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
+
     if (!_settingsChanged)
         return;
 
@@ -189,8 +192,6 @@ void MainWindow::saveUi()
     if (box.result() == QMessageBox::No)
         return;
 
-    Profiles::commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
-    Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
     _options.readFromUi(_ui);
     _options.saveToIni(Profiles::optionsSettings());
 }
