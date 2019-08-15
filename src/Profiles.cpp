@@ -5,6 +5,8 @@
 #include "Profiles.h"
 #include "Manager.h"
 
+const QString defaultProfile = "SSE";
+
 Profiles Profiles::_instance = Profiles();
 
 Profiles::Profiles()
@@ -36,7 +38,7 @@ size_t Profiles::findProfiles(const QDir &dir)
 void Profiles::loadProfile(const QString &newProfile)
 {
     if (!exists(newProfile))
-        loadProfile("Default");
+        loadProfile(defaultProfile);
 
     _currentProfile = newProfile;
     _commonSettings->setValue("profile", _currentProfile);
@@ -45,6 +47,8 @@ void Profiles::loadProfile(const QString &newProfile)
     QString folder = _profileDir.absoluteFilePath(_currentProfile);
     _profileSettings = new QSettings(folder + "/profile.ini", QSettings::IniFormat, this);
     _optionsSettings = new QSettings(folder + "/settings.ini", QSettings::IniFormat, this);
+
+    _isBaseProfile = QFile::exists(folder + "/isBase");
 
     readFromIni();
 }
@@ -62,16 +66,16 @@ QStringList Profiles::list()
 
 void Profiles::create(const QString &name)
 {
-    FilesystemOperations::copyDir(_instance._profileDir.absoluteFilePath("default"),
-                                  _instance._profileDir.absoluteFilePath(name),
-                                  false);
+    const QString newFolder = _instance._profileDir.absoluteFilePath(name);
+    FilesystemOperations::copyDir(_instance._profileDir.absoluteFilePath(currentProfile()), newFolder, false);
+    QFile::remove(newFolder + "/isBase");
     _instance.findProfiles(_instance._profileDir);
 }
 
 QFile Profiles::getFile(const QString &filename)
 {
     const QDir &currentProfileDir(_instance._profileDir.absoluteFilePath(_instance.currentProfile()));
-    const QDir &defaultProfileDir(_instance._profileDir.absoluteFilePath("Default"));
+    const QDir &defaultProfileDir(_instance._profileDir.absoluteFilePath(defaultProfile));
 
     if (currentProfileDir.exists(filename))
         return QFile(currentProfileDir.filePath(filename));

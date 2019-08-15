@@ -34,10 +34,12 @@ public:
     Q_ENUM(DXGI_FORMAT)
 
     //static getters
-    [[nodiscard]] static bool bsaEnabled()
+    [[nodiscard]] static bool isBaseProfile()
     {
-        return _instance._bsaEnabled;
+        return getInstance()._isBaseProfile;
     }
+
+    [[nodiscard]] static bool bsaEnabled() { return _instance._bsaEnabled; }
     [[nodiscard]] static bsa_archive_type_t bsaFormat() { return _instance._bsaFormat; }
     [[nodiscard]] static bsa_archive_type_t bsaTexturesFormat() { return _instance._bsaTexturesFormat; }
     [[nodiscard]] static double maxBsaUncompressedSize() { return _instance._maxBsaUncompressedSize; }
@@ -115,6 +117,8 @@ private:
     QDir _profileDir;
     QString _currentProfile;
     QStringList _profiles;
+
+    bool _isBaseProfile;
 
     static Profiles _instance;
 

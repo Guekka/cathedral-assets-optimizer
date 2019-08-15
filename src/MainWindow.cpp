@@ -10,6 +10,36 @@ MainWindow::MainWindow()
 {
     _ui->setupUi(this);
 
+    //Connecting all settings changes to a variable
+    {
+        auto checkbox = this->findChildren<QCheckBox *>();
+        auto radiobutton = this->findChildren<QRadioButton *>();
+        auto lineEdit = this->findChildren<QLineEdit *>();
+        auto list = this->findChildren<QListWidget *>();
+        auto comboBox = this->findChildren<QComboBox *>();
+        auto spinBox = this->findChildren<QDoubleSpinBox *>();
+
+        for (const auto &c : checkbox)
+            connect(c, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &r : radiobutton)
+            connect(r, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &l : lineEdit)
+            connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &l : list)
+            connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &c : comboBox)
+            connect(c, QOverload<int>::of(&QComboBox::activated), this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &s : spinBox)
+            connect(s, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this] {
+                this->_settingsChanged = true;
+            });
+    }
+
     //Setting data for widgets
 
     //Profiles
@@ -57,8 +87,14 @@ MainWindow::MainWindow()
         _ui->bsaDeleteBackupsCheckbox->setDisabled(checked);
     });
 
-    connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, &MainWindow::setAdvancedSettingsEnabled);
+    connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&](const bool &enabled) {
+        QMessageBox(QMessageBox::Information,
+                    tr("Advanced settings"),
+                    tr("Advanced settings can only be modified when using custom profiles."));
+        this->setAdvancedSettingsEnabled(enabled);
+    });
 
+    _ui->presets->disconnect(); //resetting
     connect(_ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
         if (_ui->presets->currentText() == "New profile")
             this->createProfile();
@@ -137,30 +173,6 @@ MainWindow::MainWindow()
         connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
             QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
         });
-    }
-
-    //Connecting all settings changes to a variable
-    {
-        auto checkbox = this->findChildren<QCheckBox *>();
-        auto radiobutton = this->findChildren<QRadioButton *>();
-        auto lineEdit = this->findChildren<QLineEdit *>();
-        auto list = this->findChildren<QListWidget *>();
-        auto comboBox = this->findChildren<QComboBox *>();
-
-        for (const auto &c : checkbox)
-            connect(c, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &r : radiobutton)
-            connect(r, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &l : lineEdit)
-            connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &l : list)
-            connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &c : comboBox)
-            connect(c, QOverload<int>::of(&QComboBox::activated), this, [this] { this->_settingsChanged = true; });
     }
 
     //Loading remembered settings
@@ -247,8 +259,13 @@ void MainWindow::createProfile()
 
     bool ok = false;
     QString text = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
-    if (ok && !text.isEmpty())
-        Profiles::create(text);
+    if (!ok || text.isEmpty())
+        return;
+
+    Profiles::create(text);
+    refreshProfiles();
+    _ui->presets->setCurrentIndex(_ui->presets->findText(text));
+    setGameMode(text);
 }
 
 void MainWindow::setDarkTheme(const bool &enabled)
@@ -344,21 +361,22 @@ void MainWindow::setGameMode(const QString &mode)
 
 void MainWindow::setAdvancedSettingsEnabled(const bool &value)
 {
-    if (value)
+    QWidgetList advancedSettings = {_ui->bsaAdvancedGroupBox,
+                                    _ui->bsaExpertGroupBox,
+                                    _ui->meshesAdvancedGroupBox,
+                                    _ui->meshesVeryAdvancedGroupBox,
+                                    _ui->texturesAdvancedGroupBox,
+                                    _ui->animationsAdvancedGroupBox};
+
+    const bool readOnly = Profiles::isBaseProfile();
+    for (auto &window : advancedSettings)
     {
-        _ui->bsaAdvancedGroupBox->show();
-        _ui->meshesAdvancedGroupBox->show();
-        _ui->meshesVeryAdvancedGroupBox->show();
-        _ui->texturesAdvancedGroupBox->show();
-        _ui->animationsAdvancedGroupBox->show();
-    }
-    else
-    {
-        _ui->bsaAdvancedGroupBox->hide();
-        _ui->meshesAdvancedGroupBox->hide();
-        _ui->meshesVeryAdvancedGroupBox->hide();
-        _ui->texturesAdvancedGroupBox->hide();
-        _ui->animationsAdvancedGroupBox->hide();
+        if (value)
+            window->show();
+        else
+            window->hide();
+
+        window->setDisabled(readOnly);
     }
 }
 
