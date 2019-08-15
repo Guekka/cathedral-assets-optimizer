@@ -43,7 +43,6 @@ set(SOURCES
     PluginsOperations.cpp
     AnimationsOptimizer.cpp
     MainOptimizer.cpp
-    IntegrationTests.cpp
     Profiles.cpp
     OptionsCAO.cpp
     )
@@ -59,7 +58,6 @@ set(HEADERS
     PluginsOperations.h
     AnimationsOptimizer.h
     MainOptimizer.h
-    IntegrationTests.h
     pch.h
     Profiles.h
     Logger.h
