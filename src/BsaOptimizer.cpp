@@ -72,12 +72,11 @@ int BsaOptimizer::create(Bsa &bsa) const
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
     for (const auto &file : bsa.files)
     {
-            if (!canBeCompressedFile(file))
-            {
-                qDebug() << "canBeCompressedFile " << file;
-                archive.setCompressed(false);
-                break;
-            }
+        if (!canBeCompressedFile(file))
+        {
+            archive.setCompressed(false);
+            break;
+        }
     }
     for (const auto &file : bsa.files)
     {
@@ -113,19 +112,10 @@ int BsaOptimizer::create(Bsa &bsa) const
         return 2;
     }
 
-    //Checking if the archive is below 2.15gb, since a BSA cannot be greater
+    PLOG_INFO << "BSA successfully compressed: " + bsa.path;
+    for (const auto &file : bsa.files)
+        QFile::remove(file);
 
-    if (QFile(bsa.path).size() < LONG_MAX)
-    {
-        PLOG_INFO << "BSA successfully compressed: " + bsa.path;
-        for (const auto &file : bsa.files)
-            QFile::remove(file);
-    }
-    else
-    {
-        PLOG_ERROR << "The BSA was not compressed: it is over 2.15gb: " + bsa.path;
-        QFile::remove(bsa.path);
-    }
     return 0;
 }
 

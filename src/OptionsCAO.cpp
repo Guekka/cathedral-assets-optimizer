@@ -44,6 +44,8 @@ OptionsCAO::OptionsCAO(const OptionsCAO &other)
     , bDebugLog(other.bDebugLog)
     , mode(other.mode)
     , userPath(other.userPath)
+    , mutex(new QMutex)
+
 {
 }
 
