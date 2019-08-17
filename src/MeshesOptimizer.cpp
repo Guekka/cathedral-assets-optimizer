@@ -14,18 +14,14 @@ MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel, b
     //Done in the constructor since the file won't change at runtime.
 
     QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
-    if (customHeadpartsFile.open(QIODevice::ReadOnly))
+
+    headparts = FilesystemOperations::readFile(customHeadpartsFile);
+
+    if (headparts.isEmpty())
     {
-        QTextStream ts(&customHeadpartsFile);
-        while (!ts.atEnd())
-        {
-            QString readLine = ts.readLine();
-            if (readLine.left(1) != "#" && !readLine.isEmpty())
-                headparts << readLine;
-        }
+        PLOG_ERROR << "customHeadparts.txt not found. This can cause issue when optimizing meshes, as some headparts "
+                      "won't be detected.";
     }
-    else
-        PLOG_ERROR << "No custom headparts file found. Vanilla headparts won't be detected.";
 }
 
 ScanResult MeshesOptimizer::scan(const QString &filePath) const

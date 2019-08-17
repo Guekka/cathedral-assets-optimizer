@@ -13,19 +13,13 @@ BsaOptimizer::BsaOptimizer()
 
     QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
 
-    if (filesToNotPackFile.open(QFile::ReadOnly))
+    filesToNotPack = FilesystemOperations::readFile(filesToNotPackFile);
+    if (filesToNotPack.isEmpty())
     {
-        QTextStream ts(&filesToNotPackFile);
-        while (!ts.atEnd())
-        {
-            QString readLine = ts.readLine();
-            if (readLine.left(1) != "#" && !readLine.isEmpty())
-                filesToNotPack << readLine;
-        }
-    }
-    else
-        PLOG_ERROR << "FilesToNotPack.txt not found. Animations will be packed, preventing them from being detected "
+        PLOG_ERROR << "FilesToNotPack.txt not found. This can cause a number of issues. For example, for Skyrim, "
+                      "animations will be packed to BSA, preventing them from being detected "
                       "by FNIS and Nemesis.";
+    }
 }
 
 void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
@@ -40,7 +34,7 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
         archive.open(bsaPath);
         archive.extractAll(bsaRoot, false);
     }
-    catch (std::exception &e)
+    catch (const std::exception &e)
     {
         PLOG_ERROR << e.what();
         PLOG_ERROR << "An error occured during the extraction of: " + bsaPath + 'n'

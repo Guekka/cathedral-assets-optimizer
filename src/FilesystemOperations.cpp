@@ -125,3 +125,42 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
 
     QDir::setCurrent(currentDir);
 }
+
+QStringList FilesystemOperations::readFile(QFile &file, void (*function)(QString &line))
+{
+    QStringList list;
+
+    file.open(QFile::ReadOnly);
+    if (!file.isOpen())
+        return list;
+
+    while (!file.atEnd())
+    {
+        QString &&line = file.readLine().simplified();
+        if (line.startsWith("#") || line.isEmpty())
+            continue;
+
+        function(line);
+        list << line;
+    }
+    return list;
+}
+
+QStringList FilesystemOperations::readFile(QFile &file)
+{
+    QStringList list;
+
+    file.open(QFile::ReadOnly);
+    if (!file.isOpen())
+        return list;
+
+    while (!file.atEnd())
+    {
+        QString &&line = file.readLine().simplified();
+        if (line.startsWith("#") || line.isEmpty())
+            continue;
+
+        list << line;
+    }
+    return list;
+}

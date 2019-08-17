@@ -117,24 +117,18 @@ void Manager::listFiles()
 void Manager::readIgnoredMods()
 {
     QFile &&ignoredModsFile = Profiles::getFile("ignoredMods.txt");
-    if (ignoredModsFile.open(QIODevice::ReadOnly))
+
+    _ignoredMods = FilesystemOperations::readFile(ignoredModsFile);
+    if (_ignoredMods.isEmpty())
     {
-        QTextStream ts(&ignoredModsFile);
-        while (!ts.atEnd())
-        {
-            QString readLine = ts.readLine();
-            if (readLine.left(1) != "#" && !readLine.isEmpty())
-                _ignoredMods << readLine;
-        }
-    }
-    else
         PLOG_WARNING << "ignoredMods.txt not found. All mods will be processed, including tools such as Nemesis or "
                         "Bodyslide studio.";
+    }
 }
 
 void Manager::runOptimization()
 {
-    PLOG_DEBUG << "Game:" << Profiles::currentProfile();
+    PLOG_DEBUG << "Game: " << Profiles::currentProfile();
     PLOG_INFO << "Beginning...";
 
     MainOptimizer optimizer(_options);

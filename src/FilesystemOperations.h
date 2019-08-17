@@ -39,4 +39,7 @@ public:
    * \param overwriteExisting If enabled, source files will overwrite destination files
    */
     static void copyDir(const QString &source, const QString &destination, bool overwriteExisting);
+
+    static QStringList readFile(QFile &file, void (*function)(QString &line));
+    static QStringList readFile(QFile &file);
 };
