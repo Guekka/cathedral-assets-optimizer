@@ -119,6 +119,7 @@ void Manager::readIgnoredMods()
     QFile &&ignoredModsFile = Profiles::getFile("ignoredMods.txt");
 
     _ignoredMods = FilesystemOperations::readFile(ignoredModsFile);
+
     if (_ignoredMods.isEmpty())
     {
         PLOG_WARNING << "ignoredMods.txt not found. All mods will be processed, including tools such as Nemesis or "

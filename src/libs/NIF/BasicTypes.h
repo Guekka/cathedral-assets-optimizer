@@ -7,11 +7,12 @@ See the included LICENSE file
 
 #include "utils/Object3d.h"
 
-#include <set>
-#include <streambuf>
-#include <string>
 #include <algorithm>
 #include <memory>
+#include <set>
+#include <sstream>
+#include <streambuf>
+#include <string>
 
 enum NiFileVersion : uint {
 	V2_3 = 0x02030000,
@@ -115,63 +116,77 @@ enum NiEndian : byte {
 class NiStream {
 private:
 	std::iostream* stream = nullptr;
-	NiVersion* version = nullptr;
-	int blockSize = 0;
+    std::stringstream *sstream = nullptr;
+    NiVersion *version = nullptr;
+    int blockSize = 0;
 
 public:
-	NiStream(std::iostream* stream, NiVersion* version) {
-		this->stream = stream;
-		this->version = version;
-	}
+    NiStream(std::iostream *stream, NiVersion *version)
+    {
+        this->stream = stream;
+        this->version = version;
+    }
 
-	void write(const char* ptr, std::streamsize count) {
-		stream->write(ptr, count);
-		blockSize += count;
-	}
+    NiStream(std::stringstream *stream, NiVersion *version)
+    {
+        this->sstream = stream;
+        this->version = version;
+    }
 
-	void writeline(const char* ptr, std::streamsize count) {
-		stream->write(ptr, count);
-		stream->write("\n", 1);
-		blockSize += count + 1;
-	}
+    void write(const char *ptr, std::streamsize count)
+    {
+        auto *str = sstream ? sstream : stream;
+        str->write(ptr, count);
+        blockSize += count;
+    }
 
-	void read(char* ptr, std::streamsize count) {
-		stream->read(ptr, count);
-	}
+    void writeline(const char *ptr, std::streamsize count)
+    {
+        auto *str = sstream ? sstream : stream;
+        str->write(ptr, count);
+        str->write("\n", 1);
+        blockSize += count + 1;
+    }
 
-	void getline(char* ptr, std::streamsize maxCount) {
-		stream->getline(ptr, maxCount);
-	}
+    void read(char *ptr, std::streamsize count)
+    {
+        auto *str = sstream ? sstream : stream;
+        str->read(ptr, count);
+    }
 
-	std::streampos tellp() {
-		return stream->tellp();
-	}
+    void getline(char *ptr, std::streamsize maxCount)
+    {
+        auto *str = sstream ? sstream : stream;
+        str->getline(ptr, maxCount);
+    }
 
-	// Be careful with sizes of structs and classes
-	template<typename T>
-	NiStream& operator<<(const T& t) {
-		write((const char*)&t, sizeof(T));
-		return *this;
-	}
+    std::streampos tellp()
+    {
+        auto *str = sstream ? sstream : stream;
+        return str->tellp();
+    }
 
-	// Be careful with sizes of structs and classes
-	template<typename T>
-	NiStream& operator>>(T& t) {
-		read((char*)&t, sizeof(T));
-		return *this;
-	}
+    // Be careful with sizes of structs and classes
+    template<typename T>
+    NiStream &operator<<(const T &t)
+    {
+        write((const char *) &t, sizeof(T));
+        return *this;
+    }
 
-	void InitBlockSize() {
-		blockSize = 0;
-	}
+    // Be careful with sizes of structs and classes
+    template<typename T>
+    NiStream &operator>>(T &t)
+    {
+        read((char *) &t, sizeof(T));
+        return *this;
+    }
 
-	int GetBlockSize() {
-		return blockSize;
-	}
+    void InitBlockSize() { blockSize = 0; }
 
-	NiVersion& GetVersion() {
-		return *version;
-	}
+    int GetBlockSize() { return blockSize; }
+
+    NiVersion &GetVersion() { return *version; }
 };
 
 class NiString {
@@ -179,26 +194,18 @@ private:
 	std::string str;
 
 public:
-	NiString() {};
+    NiString() {}
 
-	std::string GetString() {
-		return str;
-	}
+    std::string GetString() { return str; }
 
-	void SetString(const std::string& s) {
-		this->str = s;
-	}
+    void SetString(const std::string &s) { this->str = s; }
 
-	size_t GetLength() {
-		return str.length();
-	}
+    size_t GetLength() { return str.length(); }
 
-	void Clear() {
-		str.clear();
-	}
+    void Clear() { str.clear(); }
 
-	void Get(NiStream& stream, const int szSize);
-	void Put(NiStream& stream, const int szSize, const bool wantNullOutput = true);
+    void Get(NiStream &stream, const int szSize);
+    void Put(NiStream &stream, const int szSize, const bool wantNullOutput = true);
 };
 
 class StringRef {
