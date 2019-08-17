@@ -6,7 +6,10 @@
 
 #include "FilesystemOperations.h"
 #include "Profiles.h"
+#include "TexturesOptimizer.h"
 #include "pch.h"
+
+void DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info);
 
 enum BsaType
 {

@@ -35,6 +35,8 @@ void BSArchiveEntries::reset()
 
 void BSArchiveEntries::add(const QString &filepath)
 {
+    LOG_LIBBSARCH << "Adding to entries: " << filepath;
+
     const auto &result = bsa_entry_list_add(_entries, PREPARE_PATH_LIBBSARCH(filepath));
 
     if(result.code == BSA_RESULT_EXCEPTION)

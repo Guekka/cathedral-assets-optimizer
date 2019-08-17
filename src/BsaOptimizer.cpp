@@ -68,6 +68,7 @@ int BsaOptimizer::create(Bsa &bsa) const
     BSArchiveAuto archive(bsaDir.path());
     archive.setShareData(true);
     archive.setCompressed(true);
+    archive.setDDSCallback(&DDSCallback);
 
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
     for (const auto &file : bsa.files)
@@ -227,4 +228,15 @@ bool BsaOptimizer::canBeCompressedFile(const QString &filename)
                                    || filename.endsWith(".xwm", Qt::CaseInsensitive)
                                    || filename.contains(QRegularExpression("^.+\\.[^.]*strings$")));
     return !cantBeCompressed;
+}
+
+void DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info)
+{
+    TexturesOptimizer opt;
+    opt.open(QString::fromWCharArray(file_path), TexturesOptimizer::DDS);
+    const auto &info = opt.getInfo();
+
+    dds_info->width = info.width;
+    dds_info->height = info.height;
+    dds_info->mipmaps = info.mipLevels;
 }
