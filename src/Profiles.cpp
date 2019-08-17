@@ -56,7 +56,7 @@ void Profiles::loadProfile(const QString &newProfile)
 bool Profiles::exists(const QString &profile)
 {
     _instance.findProfiles(QDir("profiles"));
-    return _instance._profiles.contains(profile);
+    return _instance._profiles.contains(profile) && !profile.isEmpty();
 }
 
 QStringList Profiles::list()

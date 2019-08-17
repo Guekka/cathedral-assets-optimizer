@@ -26,7 +26,7 @@ MainWindow::MainWindow()
             connect(r, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
 
         for (const auto &l : lineEdit)
-            connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
+            connect(l, &QLineEdit::editingFinished, this, [this] { this->_settingsChanged = true; });
 
         for (const auto &l : list)
             connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
@@ -35,9 +35,7 @@ MainWindow::MainWindow()
             connect(c, QOverload<int>::of(&QComboBox::activated), this, [this] { this->_settingsChanged = true; });
 
         for (const auto &s : spinBox)
-            connect(s, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this] {
-                this->_settingsChanged = true;
-            });
+            connect(s, &QDoubleSpinBox::editingFinished, this, [this] { this->_settingsChanged = true; });
     }
 
     //Setting data for widgets
@@ -94,7 +92,7 @@ MainWindow::MainWindow()
         this->setAdvancedSettingsEnabled(enabled);
     });
 
-    _ui->presets->disconnect(); //resetting
+    disconnect(_ui->presets, nullptr, nullptr, nullptr); //resetting
     connect(_ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
         if (_ui->presets->currentText() == "New profile")
             this->createProfile();
@@ -183,6 +181,8 @@ MainWindow::MainWindow()
     _timer = new QTimer(this);
     _timer->start(10000);
     connect(_timer, &QTimer::timeout, this, &MainWindow::updateLog);
+
+    _settingsChanged = false;
 }
 
 void MainWindow::saveUi()
