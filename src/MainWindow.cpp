@@ -303,6 +303,7 @@ void MainWindow::initProcess()
                         tr("An exception has been encountered and the process was forced to stop: ")
                             + QString(e.what()));
         box.exec();
+        endProcess();
     }
 }
 
