@@ -182,6 +182,8 @@ MainWindow::MainWindow()
     _timer->start(10000);
     connect(_timer, &QTimer::timeout, this, &MainWindow::updateLog);
 
+    firstStart();
+
     _settingsChanged = false;
 }
 
@@ -189,21 +191,33 @@ void MainWindow::saveUi()
 {
     Profiles::commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
     Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
+    Profiles::commonSettings()->setValue("alwaysSaveSettings", _alwaysSaveSettings);
 
     if (!_settingsChanged)
         return;
 
     _settingsChanged = false;
 
-    QMessageBox box(QMessageBox::Information,
-                    tr("Save unsaved changes"),
-                    tr("You have unsaved changes. Do you want to save them?"),
-                    QMessageBox::No | QMessageBox::Yes);
+    if (!_alwaysSaveSettings)
+    {
+        QMessageBox
+            box(QMessageBox::Information,
+                tr("Save unsaved changes"),
+                tr("You have unsaved changes. Do you want to save them? You can also press 'Yes to all' to always "
+                   "save unsaved changes"),
+                QMessageBox::No | QMessageBox::Yes | QMessageBox::YesToAll);
 
-    box.exec();
+        box.exec();
 
-    if (box.result() == QMessageBox::No)
-        return;
+        if (box.result() == QMessageBox::No)
+            return;
+
+        if (box.result() == QMessageBox::YesToAll)
+        {
+            _alwaysSaveSettings = true;
+            saveUi();
+        }
+    }
 
     _options.readFromUi(_ui);
     _options.saveToIni(Profiles::optionsSettings());
@@ -214,6 +228,7 @@ void MainWindow::loadUi()
     setDarkTheme(Profiles::commonSettings()->value("bDarkMode").toBool());
     _ui->advancedSettingsCheckbox->setChecked(Profiles::commonSettings()->value("bShowAdvancedSettings").toBool());
     _ui->presets->setCurrentIndex(_ui->presets->findText(Profiles::commonSettings()->value("profile").toString()));
+    _alwaysSaveSettings = Profiles::commonSettings()->value("alwaysSaveSettings").toBool();
 
     _options.readFromIni(Profiles::optionsSettings());
     _options.saveToUi(_ui);
@@ -386,6 +401,21 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if (_settingsChanged)
         saveUi();
     event->accept();
+}
+
+void MainWindow::firstStart()
+{
+    if (!Profiles::commonSettings()->value("notFirstStart").toBool())
+    {
+        QMessageBox(
+            QMessageBox::Information,
+            tr("Welcome to %1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
+            tr("It appears you are running CAO for the first time. All options have tooltips explaining what they "
+               "do. If you need help, you can also join us on Discord."))
+            .exec();
+
+        Profiles::commonSettings()->setValue("notFirstStart", true);
+    }
 }
 
 MainWindow::~MainWindow()

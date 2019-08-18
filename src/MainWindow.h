@@ -47,15 +47,14 @@ private:
 
     void closeEvent(QCloseEvent *event);
 
+    void firstStart();
+
     int _progressBarValue{};
 
     OptionsCAO _options;
-
     std::unique_ptr<Manager> _caoProcess;
-
     QTimer *_timer;
-
     bool _settingsChanged;
-
+    bool _alwaysSaveSettings;
     TexturesFormatSelectDialog *texturesFormatDialog;
 };
