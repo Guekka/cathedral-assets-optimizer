@@ -37,9 +37,15 @@
       <property name="title">
        <string/>
       </property>
-      <layout class="QFormLayout" name="formLayout_5">
+      <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
         <widget class="QLabel" name="label_8">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Profile</string>
          </property>
@@ -52,6 +58,19 @@
            <string>New profile</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="newProfilePushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>New</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -161,7 +180,7 @@
          </item>
          <item>
           <property name="text">
-           <string>Several mods (MO)</string>
+           <string>Several mods </string>
           </property>
          </item>
         </widget>
@@ -229,7 +248,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -248,7 +267,7 @@
            </sizepolicy>
           </property>
           <property name="title">
-           <string>Base</string>
+           <string>Process BSAs</string>
           </property>
           <property name="checkable">
            <bool>false</bool>
@@ -557,7 +576,7 @@
            </sizepolicy>
           </property>
           <property name="title">
-           <string>Base</string>
+           <string>Process meshes</string>
           </property>
           <property name="flat">
            <bool>true</bool>
@@ -796,7 +815,7 @@
            </sizepolicy>
           </property>
           <property name="title">
-           <string>Base</string>
+           <string>Process textures</string>
           </property>
           <property name="flat">
            <bool>true</bool>
@@ -1169,7 +1188,7 @@
            </sizepolicy>
           </property>
           <property name="title">
-           <string>Base</string>
+           <string>Process animations</string>
           </property>
           <property name="flat">
            <bool>true</bool>

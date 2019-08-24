@@ -12,12 +12,12 @@ MainWindow::MainWindow()
 
     //Connecting all settings changes to a variable
     {
-        auto checkbox = this->findChildren<QCheckBox *>();
-        auto radiobutton = this->findChildren<QRadioButton *>();
-        auto lineEdit = this->findChildren<QLineEdit *>();
-        auto list = this->findChildren<QListWidget *>();
-        auto comboBox = this->findChildren<QComboBox *>();
-        auto spinBox = this->findChildren<QDoubleSpinBox *>();
+        const auto &checkbox = this->findChildren<QCheckBox *>();
+        const auto &radiobutton = this->findChildren<QRadioButton *>();
+        const auto &lineEdit = this->findChildren<QLineEdit *>();
+        const auto &list = this->findChildren<QListWidget *>();
+        const auto &comboBox = this->findChildren<QComboBox *>();
+        const auto &spinBox = this->findChildren<QDoubleSpinBox *>();
 
         for (const auto &c : checkbox)
             connect(c, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
@@ -94,14 +94,13 @@ MainWindow::MainWindow()
 
     disconnect(_ui->presets, nullptr, nullptr, nullptr); //resetting
     connect(_ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        if (_ui->presets->currentText() == "New profile")
-            this->createProfile();
-        else
-            this->setGameMode(_ui->presets->currentText());
+        this->setGameMode(_ui->presets->currentText());
     });
 
+    connect(_ui->newProfilePushButton, &QPushButton::pressed, this, &MainWindow::createProfile);
+
     connect(_ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        const bool severalModsEnabled = (_ui->modeChooserComboBox->currentData() == OptionsCAO::SeveralMods);
+        const bool &severalModsEnabled = (_ui->modeChooserComboBox->currentData() == OptionsCAO::SeveralMods);
 
         //Disabling some meshes options when several mods mode is enabled
         _ui->meshesMediumOptimizationRadioButton->setDisabled(severalModsEnabled);
@@ -110,11 +109,12 @@ MainWindow::MainWindow()
 
         if (severalModsEnabled)
         {
-            QMessageBox warning(this);
-            warning.setText(tr("You have selected the several mods option. This process may take a very long time, "
-                               "especially if you process BSA. ")
-                            + '\n' + tr("This process has only been tested on the Mod Organizer mods folder."));
-            warning.exec();
+            QMessageBox::warning(
+                this,
+                tr("Several mods option"),
+                tr("You have selected the several mods option. This process may take a very long time, "
+                   "especially if you process BSA. ")
+                    + '\n' + tr("This process has only been tested on the Mod Organizer mods folder."));
         }
     });
 
@@ -221,6 +221,8 @@ void MainWindow::saveUi()
 
     _options.readFromUi(_ui);
     _options.saveToIni(Profiles::optionsSettings());
+    Profiles::getInstance().readFromUi(_ui);
+    Profiles::getInstance().saveToIni();
 }
 
 void MainWindow::loadUi()
@@ -258,7 +260,6 @@ void MainWindow::refreshProfiles()
 {
     _ui->presets->clear();
     _ui->presets->addItems(Profiles::list());
-    _ui->presets->addItem("New profile");
 }
 
 void MainWindow::createProfile()
@@ -273,11 +274,28 @@ void MainWindow::createProfile()
         return;
 
     bool ok = false;
-    QString text = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
+    const QString &text = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
     if (!ok || text.isEmpty())
         return;
 
-    Profiles::create(text);
+    //Choosing base profile
+
+    QStringList profilesList;
+    for (int i = 0; i < _ui->presets->count(); ++i)
+        profilesList << _ui->presets->itemText(i);
+
+    const QString &baseProfile = QInputDialog::getItem(this,
+                                                       tr("Base profile"),
+                                                       tr("Which profile do you want to use as a base?"),
+                                                       profilesList,
+                                                       _ui->presets->currentIndex(),
+                                                       false,
+                                                       &ok);
+
+    if (!ok)
+        return;
+
+    Profiles::create(text, baseProfile);
     refreshProfiles();
     _ui->presets->setCurrentIndex(_ui->presets->findText(text));
     setGameMode(text);

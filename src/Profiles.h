@@ -17,7 +17,7 @@ public:
     [[nodiscard]] static bool exists(const QString &profile);
     void loadProfile(const QString &newProfile);
     [[nodiscard]] static QStringList list();
-    static void create(const QString &name);
+    static void create(const QString &name, const QString &baseProfile);
     [[nodiscard]] static QFile getFile(const QString &filename);
     void saveToIni();
 

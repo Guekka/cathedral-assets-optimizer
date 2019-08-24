@@ -64,10 +64,12 @@ QStringList Profiles::list()
     return getInstance()._profiles;
 }
 
-void Profiles::create(const QString &name)
+void Profiles::create(const QString &name, const QString &baseProfile)
 {
-    const QString newFolder = _instance._profileDir.absoluteFilePath(name);
-    FilesystemOperations::copyDir(_instance._profileDir.absoluteFilePath(currentProfile()), newFolder, false);
+    const QString &baseFolder = _instance._profileDir.absoluteFilePath(exists(baseProfile) ? baseProfile
+                                                                                           : defaultProfile);
+    const QString &newFolder = _instance._profileDir.absoluteFilePath(name);
+    FilesystemOperations::copyDir(baseFolder, newFolder, false);
     QFile::remove(newFolder + "/isBase");
     _instance.findProfiles(_instance._profileDir);
 }
