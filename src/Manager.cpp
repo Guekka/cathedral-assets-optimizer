@@ -130,7 +130,7 @@ void Manager::readIgnoredMods()
 void Manager::runOptimization()
 {
     PLOG_DEBUG << "Game: " << Profiles::currentProfile();
-    PLOG_INFO << "Beginning...";
+    PLOG_INFO << "\n\n\nBeginning...";
 
     MainOptimizer optimizer(_options);
 

@@ -26,11 +26,12 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
 {
     bsaPath = backup(bsaPath);
 
-    const QString bsaRoot(QFileInfo(bsaPath).path());
-    BSArchiveAuto archive(bsaRoot);
+    const QString &bsaRoot(QFileInfo(bsaPath).path());
 
     try
     {
+        BSArchiveAuto archive(bsaRoot);
+        archive.setDDSCallback(&DDSCallback);
         archive.open(bsaPath);
         archive.extractAll(bsaRoot, false);
     }
@@ -202,6 +203,8 @@ QString BsaOptimizer::backup(const QString &bsaPath) const
     }
 
     QFile::rename(bsaPath, bsaBackupFile.fileName());
+
+    PLOG_VERBOSE << "Backuping BSA : " << bsaPath << " to " << bsaBackupFile.fileName();
 
     return bsaBackupFile.fileName();
 }

@@ -38,6 +38,8 @@ private:
 
     void setGameMode(const QString &mode);
 
+    void showTutorialWindow(const QString &title, const QString &text);
+
     void updateLog() const;
     void initProcess();
     void endProcess();
@@ -53,8 +55,8 @@ private:
 
     OptionsCAO _options;
     std::unique_ptr<Manager> _caoProcess;
-    QTimer *_timer;
     bool _settingsChanged;
     bool _alwaysSaveSettings;
+    bool _showTutorials;
     TexturesFormatSelectDialog *texturesFormatDialog;
 };

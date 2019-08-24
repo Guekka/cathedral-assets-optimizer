@@ -1305,6 +1305,7 @@
     </property>
     <addaction name="actionEnableDarkTheme"/>
     <addaction name="actionEnable_debug_log"/>
+    <addaction name="actionShow_tutorials"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1358,6 +1359,17 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionShow_tutorials">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show tutorials</string>
    </property>
   </action>
  </widget>

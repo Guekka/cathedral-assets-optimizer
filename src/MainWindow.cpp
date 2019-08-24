@@ -86,9 +86,8 @@ MainWindow::MainWindow()
     });
 
     connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&](const bool &enabled) {
-        QMessageBox(QMessageBox::Information,
-                    tr("Advanced settings"),
-                    tr("Advanced settings can only be modified when using custom profiles."));
+        this->showTutorialWindow(tr("Advanced settings"),
+                                 tr("Advanced settings can only be modified when using custom profiles."));
         this->setAdvancedSettingsEnabled(enabled);
     });
 
@@ -109,8 +108,7 @@ MainWindow::MainWindow()
 
         if (severalModsEnabled)
         {
-            QMessageBox::warning(
-                this,
+            this->showTutorialWindow(
                 tr("Several mods option"),
                 tr("You have selected the several mods option. This process may take a very long time, "
                    "especially if you process BSA. ")
@@ -153,6 +151,14 @@ MainWindow::MainWindow()
     //Connecting menu buttons
     {
         connect(_ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::setDarkTheme);
+        connect(_ui->actionShow_tutorials, &QAction::triggered, this, [this](const bool &checked) {
+            this->_showTutorials = checked;
+        });
+
+        connect(_ui->actionEnable_debug_log, &QAction::triggered, this, [this] {
+            this->_settingsChanged = true;
+            this->saveUi();
+        });
 
         connect(_ui->actionAbout, &QAction::triggered, this, [&] {
             QMessageBox::about(this,
@@ -176,11 +182,6 @@ MainWindow::MainWindow()
     //Loading remembered settings
     _settingsChanged = false;
     setGameMode(Profiles::currentProfile());
-
-    //Setting timer to refresh log
-    _timer = new QTimer(this);
-    _timer->start(10000);
-    connect(_timer, &QTimer::timeout, this, &MainWindow::updateLog);
 
     firstStart();
 
@@ -264,14 +265,9 @@ void MainWindow::refreshProfiles()
 
 void MainWindow::createProfile()
 {
-    QMessageBox box(QMessageBox::Information,
-                    tr("New profile"),
-                    tr("You are about to create a new profile. It will create a new directory in 'CAO/profiles'. "
-                       "Please check it out after creation, some files will be created inside it."),
-                    QMessageBox::Ok);
-    box.exec();
-    if (box.result() == QMessageBox::Rejected)
-        return;
+    showTutorialWindow(tr("New profile"),
+                       tr("You are about to create a new profile. It will create a new directory in 'CAO/profiles'. "
+                          "Please check it out after creation, some files will be created inside it."));
 
     bool ok = false;
     const QString &text = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
@@ -326,6 +322,7 @@ void MainWindow::initProcess()
         _caoProcess.reset();
         _caoProcess = std::make_unique<Manager>(_options);
         connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+        connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
         connect(&*_caoProcess, &Manager::end, this, &MainWindow::endProcess);
         QtConcurrent::run(&*_caoProcess, &Manager::runOptimization);
     }
@@ -346,7 +343,7 @@ void MainWindow::endProcess()
     _bLockVariables = false;
 
     if (_caoProcess)
-        disconnect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+        _caoProcess->disconnect();
 
     _ui->progressBar->setMaximum(100);
     _ui->progressBar->setValue(100);
@@ -421,6 +418,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
+void MainWindow::showTutorialWindow(const QString &title, const QString &text)
+{
+    if (_showTutorials)
+        QMessageBox::information(this, title, text);
+}
+
 void MainWindow::firstStart()
 {
     if (!Profiles::commonSettings()->value("notFirstStart").toBool())
@@ -429,7 +432,7 @@ void MainWindow::firstStart()
             QMessageBox::Information,
             tr("Welcome to %1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
             tr("It appears you are running CAO for the first time. All options have tooltips explaining what they "
-               "do. If you need help, you can also join us on Discord."))
+               "do. If you need help, you can also join us on Discord. A dark theme is also available."))
             .exec();
 
         Profiles::commonSettings()->setValue("notFirstStart", true);
