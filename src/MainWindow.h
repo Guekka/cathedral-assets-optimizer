@@ -48,6 +48,8 @@ private:
     void setAdvancedSettingsEnabled(const bool &value);
 
     void closeEvent(QCloseEvent *event);
+    void dragEnterEvent(QDragEnterEvent *e);
+    void dropEvent(QDropEvent *e);
 
     void firstStart();
 

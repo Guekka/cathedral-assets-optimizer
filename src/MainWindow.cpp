@@ -9,6 +9,7 @@ MainWindow::MainWindow()
     : _ui(new Ui::MainWindow)
 {
     _ui->setupUi(this);
+    setAcceptDrops(true);
 
     //Connecting all settings changes to a variable
     {
@@ -416,6 +417,20 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if (_settingsChanged)
         saveUi();
     event->accept();
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *e)
+{
+    if (e->mimeData()->hasUrls())
+        e->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *e)
+{
+    const QString &fileName = e->mimeData()->urls().at(0).toLocalFile();
+    QDir dir;
+    if (dir.exists(fileName))
+        _ui->userPathTextEdit->setText(QDir::cleanPath(fileName));
 }
 
 void MainWindow::showTutorialWindow(const QString &title, const QString &text)
