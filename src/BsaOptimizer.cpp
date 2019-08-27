@@ -6,6 +6,9 @@
 #include "BsaOptimizer.h"
 #include "PluginsOperations.h"
 
+//Global variable until libbsarch is fixed
+static QString sCurrentBsaRootDir;
+
 BsaOptimizer::BsaOptimizer()
 {
     //Reading filesToNotPack to add them to the list.
@@ -51,7 +54,8 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
 
 int BsaOptimizer::create(Bsa &bsa) const
 {
-    const QDir bsaDir(QFileInfo(bsa.path).path());
+    sCurrentBsaRootDir = QFileInfo(bsa.path).path();
+    const QDir bsaDir(sCurrentBsaRootDir);
 
     //Checking if a bsa already exists
     if (QFile(bsa.path).exists())
@@ -229,9 +233,14 @@ bool BsaOptimizer::canBeCompressedFile(const QString &filename)
 
 void DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info)
 {
-    TexturesOptimizer opt;
-    opt.open(QString::fromWCharArray(file_path), TexturesOptimizer::DDS);
-    const auto &info = opt.getInfo();
+    const QString path = sCurrentBsaRootDir + QDir::separator() + QString::fromWCharArray(file_path);
+
+    auto image = std::make_unique<DirectX::ScratchImage>();
+    DirectX::TexMetadata info;
+
+    const auto hr = LoadFromDDSFile(PREPARE_PATH_LIBBSARCH(path), DirectX::DDS_FLAGS_NONE, &info, *image);
+    if (FAILED(hr))
+        throw std::runtime_error("Failed to open DDS");
 
     dds_info->width = info.width;
     dds_info->height = info.height;
