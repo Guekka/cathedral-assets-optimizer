@@ -301,6 +301,8 @@ void MainWindow::createProfile()
 void MainWindow::setDarkTheme(const bool &enabled)
 {
     _ui->actionEnableDarkTheme->setChecked(enabled);
+    saveUi();
+
     if (enabled)
     {
         QFile f(":qdarkstyle/style.qss");

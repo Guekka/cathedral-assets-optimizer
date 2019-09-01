@@ -6,9 +6,6 @@
 #include "BsaOptimizer.h"
 #include "PluginsOperations.h"
 
-//Global variable until libbsarch is fixed
-static QString sCurrentBsaRootDir;
-
 BsaOptimizer::BsaOptimizer()
 {
     //Reading filesToNotPack to add them to the list.
@@ -29,14 +26,14 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
 {
     bsaPath = backup(bsaPath);
 
-    const QString &bsaRoot(QFileInfo(bsaPath).path());
+    auto rootPath = new QString(QFileInfo(bsaPath).path());
 
     try
     {
-        BSArchiveAuto archive(bsaRoot);
-        archive.setDDSCallback(&DDSCallback);
+        BSArchiveAuto archive(*rootPath);
+        archive.setDDSCallback(&BsaOptimizer::DDSCallback, rootPath);
         archive.open(bsaPath);
-        archive.extractAll(bsaRoot, false);
+        archive.extractAll(*rootPath, false);
     }
     catch (const std::exception &e)
     {
@@ -54,8 +51,8 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
 
 int BsaOptimizer::create(Bsa &bsa) const
 {
-    sCurrentBsaRootDir = QFileInfo(bsa.path).path();
-    const QDir bsaDir(sCurrentBsaRootDir);
+    auto rootPath = new QString(QFileInfo(bsa.path).path());
+    const QDir bsaDir(*rootPath);
 
     //Checking if a bsa already exists
     if (QFile(bsa.path).exists())
@@ -64,10 +61,10 @@ int BsaOptimizer::create(Bsa &bsa) const
         return 1;
     }
 
-    BSArchiveAuto archive(bsaDir.path());
+    BSArchiveAuto archive(*rootPath);
     archive.setShareData(true);
     archive.setCompressed(true);
-    archive.setDDSCallback(&DDSCallback);
+    archive.setDDSCallback(&BsaOptimizer::DDSCallback, rootPath);
 
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
     for (const auto &file : bsa.files)
@@ -231,9 +228,9 @@ bool BsaOptimizer::canBeCompressedFile(const QString &filename)
     return !cantBeCompressed;
 }
 
-void DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info)
+void BsaOptimizer::DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info, void *context)
 {
-    const QString path = sCurrentBsaRootDir + QDir::separator() + QString::fromWCharArray(file_path);
+    const QString &path = *static_cast<QString *>(context) + '/' + QString::fromWCharArray(file_path);
 
     auto image = std::make_unique<DirectX::ScratchImage>();
     DirectX::TexMetadata info;

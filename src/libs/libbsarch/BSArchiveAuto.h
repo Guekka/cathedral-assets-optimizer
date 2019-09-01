@@ -75,7 +75,7 @@ public:
      * \brief Required in order to create FO4 DDS archive
      * \param fileDDSInfoProc The function that will process the DDS file
      */
-    void setDDSCallback(bsa_file_dds_info_proc_t fileDDSInfoProc);
+    void setDDSCallback(bsa_file_dds_info_proc_t fileDDSInfoProc, void *context);
 
 private:
     /*!

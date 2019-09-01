@@ -39,12 +39,7 @@ void BSArchiveEntries::add(const QString &filepath)
 
     const auto &result = bsa_entry_list_add(_entries, PREPARE_PATH_LIBBSARCH(filepath));
 
-    if (result.code == BSA_RESULT_EXCEPTION)
-    {
-        const std::string &error = QLibBsarch::wcharToString(result.text);
-        LOG_LIBBSARCH << QString::fromStdString(error);
-        throw std::runtime_error(error);
-    }
+    QLibBsarch::checkResult(result);
 }
 
 uint32_t BSArchiveEntries::count()

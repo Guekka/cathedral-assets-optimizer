@@ -213,6 +213,8 @@ file(GLOB_RECURSE NIFLIB_SRC
 
 #DirectXTex library
 
+#Windows 7 compatibility
+add_compile_definitions(_WIN32_WINNT=_WIN32_WINNT_WIN7)
 
 set(DIRECTX_INCLUDES_PATH
     "${PROJECT_SOURCE_DIR}/libs/DirectXTex"

@@ -95,7 +95,7 @@ void BSArchiveAuto::setCompressed(const bool state)
     _archive.setCompressed(state);
 }
 
-void BSArchiveAuto::setDDSCallback(bsa_file_dds_info_proc_t fileDDSInfoProc)
+void BSArchiveAuto::setDDSCallback(bsa_file_dds_info_proc_t fileDDSInfoProc, void *context)
 {
-    _archive.setDDSCallback(fileDDSInfoProc);
+    _archive.setDDSCallback(fileDDSInfoProc, context);
 }

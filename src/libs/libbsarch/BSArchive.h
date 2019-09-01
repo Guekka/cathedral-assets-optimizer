@@ -28,7 +28,7 @@ public:
     void free();
     void reset();
 
-    void setDDSCallback(bsa_file_dds_info_proc_t fileDDSInfoProc);
+    void setDDSCallback(bsa_file_dds_info_proc_t fileDDSInfoProc, void *context);
 
     bsa_archive_t getArchive() const;
 
