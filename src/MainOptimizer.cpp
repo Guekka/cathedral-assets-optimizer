@@ -31,11 +31,6 @@ void MainOptimizer::process(const QString &file)
         PLOG_ERROR << "Cannot process: " + file;
 }
 
-void MainOptimizer::packBsa(const QString &folder)
-{
-    processBsa(folder);
-}
-
 void MainOptimizer::addHeadparts(const QString &folder, bool processSubDirs)
 {
     _meshesOpt.listHeadparts(folder);
@@ -58,14 +53,17 @@ void MainOptimizer::processBsa(const QString &file) const
         _bsaOpt.extract(file, _optOptions.bBsaDeleteBackup);
     }
 
-    if (_optOptions.bBsaCreate && QDir(file).exists())
+    //TODO if(options.bBsaOptimizeAssets)
+}
+
+void MainOptimizer::packBsa(const QString &folder)
+{
+    if (_optOptions.bBsaCreate && QDir(folder).exists())
     {
         PLOG_INFO << "Creating BSA...";
-        _bsaOpt.packAll(file);
-        PluginsOperations::makeDummyPlugins(file);
+        _bsaOpt.packAll(folder);
+        PluginsOperations::makeDummyPlugins(folder);
     }
-
-    //TODO if(options.bBsaOptimizeAssets)
 }
 
 void MainOptimizer::processTexture(const QString &file, const TexturesOptimizer::TextureType &type)

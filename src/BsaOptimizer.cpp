@@ -144,32 +144,33 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     while (it.hasNext())
     {
         it.next();
-        const bool doNotPack = isIgnoredFile(it.fileName()) || it.fileInfo().isDir();
-        if (allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive) && !doNotPack)
+
+        if (isIgnoredFile(it.fileName()) || it.fileInfo().isDir()
+            || !allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
+            continue;
+
+        const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Profiles::hasBsaTextures();
+        Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
+
+        //adding files and sizes to list
+        pBsa.files << it.filePath();
+        pBsa.filesSize += it.fileInfo().size();
+
+        //Each time the maximum size is reached, a BSA is created
+        if (pBsa.filesSize >= pBsa.maxSize)
         {
-            const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Profiles::hasBsaTextures();
-            Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
+            if (isTexture)
+                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
+                            + Profiles::bsaTexturesSuffix();
+            else
+                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
+                            + Profiles::bsaSuffix();
 
-            if (pBsa.filesSize > pBsa.maxSize)
-            {
-                //Each time the maximum size is reached, a BSA is created
+            create(pBsa);
 
-                if (isTexture)
-                    pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                                + Profiles::bsaTexturesSuffix();
-                else
-                    pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                                + Profiles::bsaSuffix();
-
-                create(pBsa);
-
-                //Resetting for next loop
-                pBsa.filesSize = 0;
-                pBsa.files.clear();
-            }
-            //adding files and sizes to list
-            pBsa.files << it.filePath();
-            pBsa.filesSize += it.fileInfo().size();
+            //Resetting for next loop
+            pBsa.filesSize = 0;
+            pBsa.files.clear();
         }
     }
 
@@ -228,7 +229,10 @@ bool BsaOptimizer::canBeCompressedFile(const QString &filename)
     return !cantBeCompressed;
 }
 
-void BsaOptimizer::DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info, void *context)
+void BsaOptimizer::DDSCallback([[maybe_unused]] bsa_archive_t archive,
+                               const wchar_t *file_path,
+                               bsa_dds_info_t *dds_info,
+                               void *context)
 {
     const QString &path = *static_cast<QString *>(context) + '/' + QString::fromWCharArray(file_path);
 

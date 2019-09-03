@@ -12,8 +12,6 @@
 
 class AnimationsOptimizer final : public QObject
 {
-    Q_DECLARE_TR_FUNCTIONS(AnimationsOptimizer)
-
 public:
     AnimationsOptimizer();
     ~AnimationsOptimizer();

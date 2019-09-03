@@ -15,8 +15,9 @@ AnimationsOptimizer::AnimationsOptimizer()
     }
     catch (const std::exception &e)
     {
-        PLOG_ERROR << tr("An error occured while creating the animations optimizer. Animations won't be optimized.")
-                          + "\n" + QString(e.what());
+        PLOG_ERROR
+            << QString("An error occured while creating the animations optimizer. Animations won't be optimized.\n%1")
+                   .arg(e.what());
     }
 }
 
@@ -30,33 +31,29 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
 {
     try
     {
-        hkSerializeUtil::SaveOptionBits flags = static_cast<hkSerializeUtil::SaveOptionBits>(
-            hkSerializeUtil::SAVE_DEFAULT);
+        auto flags = static_cast<hkSerializeUtil::SaveOptionBits>(hkSerializeUtil::SAVE_DEFAULT);
 
         if (pkFormat == HKPF_DEFAULT)
             flags = static_cast<hkSerializeUtil::SaveOptionBits>(hkSerializeUtil::SAVE_TEXT_FORMAT
                                                                  | hkSerializeUtil::SAVE_TEXT_NUMBERS);
         if (pkFormat == HKPF_XML || pkFormat == HKPF_TAGXML) // set text format to indicate xml
             flags = static_cast<hkSerializeUtil::SaveOptionBits>(flags | hkSerializeUtil::SAVE_TEXT_FORMAT);
-        hkPackfileWriter::Options packFileOptions = GetWriteOptionsFromFormat(pkFormat);
-
-        hkVariant root;
-        hkResource *resource;
-        hkResult res;
+        auto packFileOptions = GetWriteOptionsFromFormat(pkFormat);
 
         hkIstream istream(qPrintable(filePath));
         if (!istream.isOk())
             throw std::runtime_error("An error occured while loading this file.");
 
         hkStreamReader *reader = istream.getStreamReader();
+        hkVariant root;
+        hkResource *resource;
 
-        res = hkSerializeLoad(reader, root, resource);
+        hkResult res = hkSerializeLoad(reader, root, resource);
 
-        if (res != HK_SUCCESS)
+        if (res)
             PLOG_WARNING << QString("File is not loadable: %1\nIt is probably already converted.").arg(filePath);
         else
         {
-            hkBool32 failed = true;
             if (root.m_object != nullptr)
             {
                 hkOstream ostream(qPrintable(filePath.chopped(3) + "out.hkx"));
@@ -66,8 +63,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
 
                 res = hkSerializeUtilSave(pkFormat, root, ostream, flags, packFileOptions);
 
-                failed = (res != HK_SUCCESS);
-                if (failed)
+                if (res)
                 {
                     PLOG_ERROR << "Failed to save file: " + filePath;
                 }
@@ -80,7 +76,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
     }
     catch (const std::exception &e)
     {
-        PLOG_ERROR << "Unexpected exception occurred: " + QString(e.what()) + "\nwhile processing: " + filePath;
+        PLOG_ERROR << QString("Unexpected exception occurred: '%1' while processing: %2").arg(e.what(), filePath);
     }
 
     if (QFile::exists(filePath.chopped(3) + "out.hkx"))

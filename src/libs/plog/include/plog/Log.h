@@ -32,8 +32,13 @@
 //////////////////////////////////////////////////////////////////////////
 // Log severity level checker
 
-#define IF_PLOG_(instance, severity)     if (!plog::get<instance>() || !plog::get<instance>()->checkSeverity(severity)) {;} else
-#define IF_PLOG(severity)                IF_PLOG_(PLOG_DEFAULT_INSTANCE, severity)
+#define IF_PLOG_(instance, severity) \
+    if (!plog::get<instance>() || !plog::get<instance>()->checkSeverity(severity)) \
+    { \
+        ; \
+    } \
+    else
+#define IF_PLOG(severity) IF_PLOG_(PLOG_DEFAULT_INSTANCE, severity)
 
 //////////////////////////////////////////////////////////////////////////
 // Main logging macros
