@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 #endif
 
     QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
-    QCoreApplication::setApplicationVersion("5.0 RC1");
+    QCoreApplication::setApplicationVersion("5.0 RC2");
 
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + QLocale::system().name(), "translations");

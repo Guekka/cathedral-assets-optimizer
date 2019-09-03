@@ -130,7 +130,7 @@ void Manager::readIgnoredMods()
 void Manager::runOptimization()
 {
     PLOG_DEBUG << "Game: " << Profiles::currentProfile();
-    PLOG_INFO << "\n\n\nBeginning...";
+    PLOG_INFO << "Beginning...";
 
     MainOptimizer optimizer(_options);
 
@@ -188,6 +188,6 @@ void Manager::runOptimization()
         }
 
     FilesystemOperations::deleteEmptyDirectories(_options.userPath);
-    PLOG_INFO << "\n\n\nProcess completed";
+    PLOG_INFO << "Process completed<br><br><br>";
     emit end();
 }

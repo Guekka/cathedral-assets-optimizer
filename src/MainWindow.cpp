@@ -161,6 +161,10 @@ MainWindow::MainWindow()
             this->saveUi();
         });
 
+        connect(_ui->actionOpen_log_file, &QAction::triggered, this, [] {
+            QDesktopServices::openUrl(QUrl("file:///" + Profiles::logPath(), QUrl::TolerantMode));
+        });
+
         connect(_ui->actionAbout, &QAction::triggered, this, [&] {
             QMessageBox::about(this,
                                tr("About"),

@@ -248,7 +248,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -1306,6 +1306,7 @@
     <addaction name="actionEnableDarkTheme"/>
     <addaction name="actionEnable_debug_log"/>
     <addaction name="actionShow_tutorials"/>
+    <addaction name="actionOpen_log_file"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1370,6 +1371,11 @@
    </property>
    <property name="text">
     <string>Show tutorials</string>
+   </property>
+  </action>
+  <action name="actionOpen_log_file">
+   <property name="text">
+    <string>Open log file</string>
    </property>
   </action>
  </widget>
