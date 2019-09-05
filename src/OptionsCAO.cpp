@@ -5,8 +5,7 @@
 #include "OptionsCAO.h"
 
 OptionsCAO::OptionsCAO()
-    : mode(SingleMod)
-    , mutex(new QMutex)
+    : mutex(new QMutex)
 {
 }
 
@@ -96,6 +95,9 @@ void OptionsCAO::saveToIni(QSettings *settings)
 void OptionsCAO::readFromIni(QSettings *settings)
 {
     QMutexLocker lock(mutex);
+
+    if (!QFile(settings->fileName()).exists())
+        return;
 
     //General
     bDryRun = settings->value("bDryRun").toBool();
@@ -349,6 +351,9 @@ QString OptionsCAO::isValid() const
 
     if (iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
         return ("This meshes optimization level does not exist. Level: " + QString::number(iMeshesOptimizationLevel));
+
+    if (iTexturesTargetWidth % 2 != 0 || iTexturesTargetHeight % 2 != 0)
+        return ("Textures target size has to be a power of two");
 
     return QString();
 }

@@ -49,7 +49,7 @@ public:
 
     int iMeshesOptimizationLevel = 0;
 
-    bool bMeshesHeadparts = false;
+    bool bMeshesHeadparts = true;
     bool bMeshesResave = true;
 
     bool bTexturesNecessary = true;

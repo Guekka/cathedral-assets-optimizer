@@ -84,7 +84,7 @@ void MeshesOptimizer::listHeadparts(const QString &directory)
     while (it.hasNext())
     {
         it.next();
-        if (it.fileName().contains(QRegularExpression("\\.es[plm]$")))
+        if (it.fileName().contains(QRegularExpression("\\.es[plm]$")) && !it.fileInfo().isDir())
             headparts += PluginsOperations::listHeadparts(it.filePath());
     }
 
@@ -111,11 +111,16 @@ void MeshesOptimizer::optimize(const QString &filePath)
     const QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
 
     //Headparts have to get a special optimization
-    if (iMeshesOptimizationLevel >= 1 && bMeshesHeadparts && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
+    if (iMeshesOptimizationLevel >= 1 && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
     {
-        options.headParts = true;
-        PLOG_INFO << "Optimizing: " + filePath + " as an headpart due to necessary optimization";
-        nif.OptimizeFor(options);
+        if (bMeshesHeadparts)
+        {
+            options.headParts = true;
+            PLOG_INFO << "Optimizing: " + filePath + " as an headpart due to necessary optimization";
+            nif.OptimizeFor(options);
+        }
+        else
+            PLOG_VERBOSE << "Headpart mesh ignored: " + filePath;
     }
     else
     {
