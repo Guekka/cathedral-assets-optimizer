@@ -129,29 +129,45 @@ bool TexturesOptimizer::createDevice(const int adapter, ID3D11Device **pDevice) 
     return false;
 }
 
+TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const bool &bNecessary,
+                                                                           const bool &bCompress,
+                                                                           const bool &bMipmaps,
+                                                                           const std::optional<size_t> &tWidth,
+                                                                           const std::optional<size_t> &tHeight)
+{
+    TexOptOptionsResult result;
+    result.tWidth = tWidth.has_value() ? tWidth.value() : _info.width;
+    result.tHeight = tHeight.has_value() ? tHeight.value() : _info.height;
+    result.bNeedsResize = (bNecessary && !isPowerOfTwo())
+                          || (result.tHeight != _info.height || result.tWidth != _info.width);
+
+    result.bNeedsCompress = (bNecessary && (isIncompatible() || _type == TGA))
+                            || (bCompress && canBeCompressed() && _info.format != Profiles::texturesFormat());
+
+    result.bNeedsMipmaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
+
+    return result;
+}
+
 bool TexturesOptimizer::optimize(const bool &bNecessary,
                                  const bool &bCompress,
                                  const bool &bMipmaps,
                                  const std::optional<size_t> &tWidth,
                                  const std::optional<size_t> &tHeight)
 {
-    const size_t newWidth = tWidth.has_value() ? tWidth.value() : _info.width;
-    const size_t newHeight = tHeight.has_value() ? tHeight.value() : _info.height;
+    //Getting operations to perform. This will be repeated several times, since the texture will change after each operation
+    auto options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
-    const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != _info.height || newWidth != _info.width);
-
-    const bool needsConversion = (bNecessary && (isIncompatible() || _type == TGA))
-                                 || (bCompress && canBeCompressed() && _info.format != Profiles::texturesFormat());
-
-    const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
+    DXGI_FORMAT targetFormat = _info.format;
 
     PLOG_VERBOSE << "Processing texture: " << _name;
 
-    if (!needsConversion && !needsMipMaps && !needsResize)
+    if (!options.bNeedsCompress && !options.bNeedsResize && !options.bNeedsMipmaps)
     {
         PLOG_VERBOSE << "This texture does not need optimization.";
         return true;
     }
+    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
     if (isCompressed())
     {
@@ -159,28 +175,33 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
         if (!decompress())
             return false;
     }
+    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
     //Fitting to a power of two or resizing
-    if (needsResize)
+    if (options.bNeedsResize)
     {
         PLOG_VERBOSE << "Resizing this texture.";
-        if (!resize(newWidth, newHeight))
+        if (!resize(options.tWidth, options.tHeight))
             return false;
     }
+    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
-    if (needsMipMaps)
+    if (options.bNeedsMipmaps)
     {
         PLOG_VERBOSE << "Generating mipmaps for this texture.";
         if (!generateMipMaps())
             return false;
     }
-    //Converting or compressing to the new format
-    if (needsConversion)
+    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
+
+    //Converting to the new format, or the compressing back into the original format
+    if (options.bNeedsCompress)
     {
-        PLOG_VERBOSE << "Converting this texture to format: " << dxgiFormatToString(Profiles::texturesFormat());
-        if (!convert(Profiles::texturesFormat()))
-            return false;
+        targetFormat = Profiles::texturesFormat();
+        PLOG_VERBOSE << "Converting this texture to format: " << dxgiFormatToString(targetFormat);
     }
+    if (!convert(targetFormat))
+        return false;
 
     PLOG_INFO << "Successfully processed texture: " + _name;
     return true;

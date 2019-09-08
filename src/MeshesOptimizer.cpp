@@ -111,7 +111,8 @@ void MeshesOptimizer::optimize(const QString &filePath)
     const QString relativeFilePath = filePath.mid(filePath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
 
     //Headparts have to get a special optimization
-    if (iMeshesOptimizationLevel >= 1 && headparts.contains(relativeFilePath, Qt::CaseInsensitive))
+    if (iMeshesOptimizationLevel >= 1
+        && (headparts.contains(relativeFilePath, Qt::CaseInsensitive) || relativeFilePath.contains("facegen")))
     {
         if (bMeshesHeadparts)
         {

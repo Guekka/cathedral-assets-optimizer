@@ -27,7 +27,7 @@ MainWindow::MainWindow()
             connect(r, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
 
         for (const auto &l : lineEdit)
-            connect(l, &QLineEdit::editingFinished, this, [this] { this->_settingsChanged = true; });
+            connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
 
         for (const auto &l : list)
             connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
@@ -401,7 +401,6 @@ void MainWindow::setAdvancedSettingsEnabled(const bool &value)
 {
     QWidgetList advancedSettings = {_ui->bsaAdvancedGroupBox,
                                     _ui->bsaExpertGroupBox,
-                                    _ui->meshesAdvancedGroupBox,
                                     _ui->meshesVeryAdvancedGroupBox,
                                     _ui->texturesAdvancedGroupBox,
                                     _ui->animationsAdvancedGroupBox};

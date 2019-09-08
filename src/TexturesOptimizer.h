@@ -78,6 +78,21 @@ public:
 
     static bool compareInfo(const DirectX::TexMetadata &info1, const DirectX::TexMetadata &info2);
 
+    struct TexOptOptionsResult
+    {
+        bool bNeedsResize;
+        bool bNeedsCompress;
+        bool bNeedsMipmaps;
+        size_t tWidth;
+        size_t tHeight;
+    };
+
+    TexOptOptionsResult processArguments(const bool &bNecessary,
+                                         const bool &bCompress,
+                                         const bool &bMipmaps,
+                                         const std::optional<size_t> &tWidth,
+                                         const std::optional<size_t> &tHeight);
+
 private:
     std::unique_ptr<DirectX::ScratchImage> _image{};
     DirectX::TexMetadata _info{};

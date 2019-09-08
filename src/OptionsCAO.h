@@ -50,7 +50,7 @@ public:
     int iMeshesOptimizationLevel = 0;
 
     bool bMeshesHeadparts = true;
-    bool bMeshesResave = true;
+    bool bMeshesResave = false;
 
     bool bTexturesNecessary = true;
     bool bTexturesCompress = false;
