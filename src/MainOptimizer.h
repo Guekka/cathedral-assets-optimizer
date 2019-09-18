@@ -28,7 +28,7 @@ private:
     void processBsa(const QString &file) const;
     void processNif(const QString &file);
     void processTexture(const QString &file, const TexturesOptimizer::TextureType &type);
-    void processHkx(const QString &file) const;
+    void processHkx(const QString &file);
 
     OptionsCAO _optOptions;
 

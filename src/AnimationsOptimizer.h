@@ -13,14 +13,12 @@
 class AnimationsOptimizer final : public QObject
 {
 public:
-    AnimationsOptimizer();
-    ~AnimationsOptimizer();
     /*!
    * \brief Port an Oldrim animation to Skyrim Special Edition using Bethesda Havok Post Processing Tool
    * \param filePath The path of the file to optimize
    * \param pkFormat The format to use
    */
-    void convert(const QString &filePath, const hkPackFormat &pkFormat) const;
+    void convert(const QString &filePath, const hkPackFormat &pkFormat);
 
 private:
     hkMemoryRouter *_memoryRouter;

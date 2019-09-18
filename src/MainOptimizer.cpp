@@ -124,7 +124,7 @@ void MainOptimizer::processTexture(const QString &file, const TexturesOptimizer:
     }
 }
 
-void MainOptimizer::processHkx(const QString &file) const
+void MainOptimizer::processHkx(const QString &file)
 {
     if (!_optOptions.bAnimationsOptimization)
         return;
