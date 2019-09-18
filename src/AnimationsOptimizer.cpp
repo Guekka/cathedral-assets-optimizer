@@ -12,6 +12,8 @@ AnimationsOptimizer::AnimationsOptimizer()
         _memoryRouter = hkMemoryInitUtil::initDefault(hkMallocAllocator::m_defaultMallocAllocator,
                                                       hkMemorySystem::FrameInfo(1024 * 1024));
         hkBaseSystem::init(_memoryRouter, errorReport);
+
+        LoadDefaultRegistry();
     }
     catch (const std::exception &e)
     {
@@ -31,6 +33,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
 {
     try
     {
+
         auto flags = static_cast<hkSerializeUtil::SaveOptionBits>(hkSerializeUtil::SAVE_DEFAULT);
 
         if (pkFormat == HKPF_DEFAULT)
@@ -38,6 +41,7 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
                                                                  | hkSerializeUtil::SAVE_TEXT_NUMBERS);
         if (pkFormat == HKPF_XML || pkFormat == HKPF_TAGXML) // set text format to indicate xml
             flags = static_cast<hkSerializeUtil::SaveOptionBits>(flags | hkSerializeUtil::SAVE_TEXT_FORMAT);
+
         auto packFileOptions = GetWriteOptionsFromFormat(pkFormat);
 
         hkIstream istream(qPrintable(filePath));

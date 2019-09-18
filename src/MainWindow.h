@@ -58,7 +58,7 @@ private:
     OptionsCAO _options;
     std::unique_ptr<Manager> _caoProcess;
     bool _settingsChanged;
-    bool _alwaysSaveSettings;
+    bool _alwaysSaveSettings = false;
     bool _showTutorials;
     TexturesFormatSelectDialog *texturesFormatDialog;
 };

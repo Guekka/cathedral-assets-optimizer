@@ -21,10 +21,10 @@ MainWindow::MainWindow()
         const auto &spinBox = this->findChildren<QDoubleSpinBox *>();
 
         for (const auto &c : checkbox)
-            connect(c, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
+            connect(c, &QAbstractButton::pressed, this, [this] { this->_settingsChanged = true; });
 
         for (const auto &r : radiobutton)
-            connect(r, &QAbstractButton::clicked, this, [this] { this->_settingsChanged = true; });
+            connect(r, &QAbstractButton::pressed, this, [this] { this->_settingsChanged = true; });
 
         for (const auto &l : lineEdit)
             connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
@@ -84,6 +84,10 @@ MainWindow::MainWindow()
         _ui->bsaExtractCheckBox->setDisabled(checked);
         _ui->bsaCreateCheckbox->setDisabled(checked);
         _ui->bsaDeleteBackupsCheckbox->setDisabled(checked);
+
+        _ui->bsaExtractCheckBox->setChecked(false);
+        _ui->bsaCreateCheckbox->setChecked(false);
+        _ui->bsaDeleteBackupsCheckbox->setChecked(false);
     });
 
     connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&](const bool &enabled) {
@@ -118,12 +122,22 @@ MainWindow::MainWindow()
     });
 
     connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
-        QString dir = QFileDialog::getExistingDirectory(this,
-                                                        tr("Open Directory"),
-                                                        _options.userPath,
-                                                        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        const QString &dir = QFileDialog::getExistingDirectory(this,
+                                                               tr("Open Directory"),
+                                                               _options.userPath,
+                                                               QFileDialog::ShowDirsOnly
+                                                                   | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
             _ui->userPathTextEdit->setText(dir);
+        this->_settingsChanged = true;
+    });
+
+    connect(_ui->userPathTextEdit, &QLineEdit::editingFinished, this, [this] {
+        _settingsChanged = true;
+        QDir dir(_ui->userPathTextEdit->text());
+
+        if (!dir.exists())
+            _ui->userPathTextEdit->setText(_options.userPath);
     });
 
     connect(_ui->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
@@ -146,7 +160,7 @@ MainWindow::MainWindow()
             auto *item = new QListWidgetItem(itemText);
             item->setFlags(item->flags() & (~Qt::ItemIsUserCheckable));
             _ui->texturesUnwantedFormatsList->addItem(item);
-        };
+        }
     });
 
     //Connecting menu buttons
@@ -200,7 +214,10 @@ void MainWindow::saveUi()
     Profiles::commonSettings()->setValue("alwaysSaveSettings", _alwaysSaveSettings);
 
     if (!_settingsChanged)
+    {
+        _options.saveToUi(_ui); //Restoring previous settings in case an unregistered change happened
         return;
+    }
 
     _settingsChanged = false;
 
@@ -216,7 +233,10 @@ void MainWindow::saveUi()
         box.exec();
 
         if (box.result() == QMessageBox::No)
+        {
+            _options.saveToUi(_ui); //Restoring previous settings
             return;
+        }
 
         if (box.result() == QMessageBox::YesToAll)
         {
@@ -435,7 +455,10 @@ void MainWindow::dropEvent(QDropEvent *e)
     const QString &fileName = e->mimeData()->urls().at(0).toLocalFile();
     QDir dir;
     if (dir.exists(fileName))
+    {
         _ui->userPathTextEdit->setText(QDir::cleanPath(fileName));
+        _settingsChanged = true;
+    }
 }
 
 void MainWindow::showTutorialWindow(const QString &title, const QString &text)

@@ -204,7 +204,7 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
     QMutexLocker lock(mutex);
 
     //BSA
-    const bool bsaEnabled = ui->bsaTab->isEnabled();
+    const bool bsaEnabled = ui->bsaTab->isEnabled() && ui->bsaBaseGroupBox->isEnabled();
     bBsaExtract = bsaEnabled && ui->bsaExtractCheckBox->isChecked();
     bBsaCreate = bsaEnabled && ui->bsaCreateCheckbox->isChecked();
     bBsaDeleteBackup = bsaEnabled && ui->bsaDeleteBackupsCheckbox->isChecked();

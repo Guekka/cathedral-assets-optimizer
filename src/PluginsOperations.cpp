@@ -33,7 +33,6 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
             Profiles::getFile("DummyPlugin.esp").copy(folderPath + "/" + espName);
         }
     }
-    PLOG_VERBOSE << "Exiting makeDummyPlugins function";
 }
 
 QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &bsaType)
@@ -66,7 +65,7 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &
 
     do
     {
-        for (auto esp : espName)
+        for (const auto &esp : espName)
         {
             const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaTexturesSuffix()).exists()
                                          && bsaType == TexturesBsa;
@@ -93,18 +92,15 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &
 bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
-    bsaName.remove(Profiles::bsaExtension());
-    bsaName.remove(" - Textures" + Profiles::bsaExtension()); // x.esp will also load x - Textures.bsa
+    bsaName.remove(Profiles::bsaSuffix());
+    bsaName.remove(Profiles::bsaTexturesSuffix());
 
-    const QString eslName = bsaName + ".esl";
-    const QString esmName = bsaName + ".esm";
-    const QString espName = bsaName + ".esp";
+    const QStringList pluginNames = {bsaName + ".esl", bsaName + ".esm", bsaName + ".esp"};
+    for (const auto &name : pluginNames)
+        if (QFile(name).exists())
+            return true;
 
-    const bool hasEsl = QFile(eslName).exists();
-    const bool hasEsm = QFile(esmName).exists();
-    const bool hasEsp = QFile(espName).exists();
-
-    return hasEsl || hasEsm || hasEsp;
+    return false;
 }
 
 QStringList PluginsOperations::listHeadparts(const QString &filepath)

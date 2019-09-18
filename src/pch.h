@@ -40,6 +40,7 @@
 #include <QPlainTextEdit>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QValidator>
 #include <QWidget>
 /*----------------------*/
 

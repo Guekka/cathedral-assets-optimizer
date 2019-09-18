@@ -7,15 +7,17 @@
 
 const QString defaultProfile = "SSE";
 
-Profiles Profiles::_instance = Profiles();
+Profiles *Profiles::_instance;
 
-Profiles::Profiles()
+Profiles::Profiles(){};
+
+void Profiles::init()
 {
     _commonSettings = new QSettings("profiles/common.ini", QSettings::IniFormat, this);
     findProfiles(QDir("profiles"));
-    QString mode = _commonSettings->value("profile").toString();
+    const QString &mode = _commonSettings->value("profile").toString();
     loadProfile(mode);
-};
+}
 
 size_t Profiles::findProfiles(const QDir &dir)
 {
@@ -24,7 +26,7 @@ size_t Profiles::findProfiles(const QDir &dir)
     _profiles.clear();
     for (const auto &subDir : _profileDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
-        QString ini = dir.absoluteFilePath(subDir + "/profile.ini");
+        const QString &ini = dir.absoluteFilePath(subDir + "/profile.ini");
         if (QFile::exists(ini))
         {
             _profiles << subDir;
@@ -37,14 +39,13 @@ size_t Profiles::findProfiles(const QDir &dir)
 
 void Profiles::loadProfile(const QString &newProfile)
 {
-    if (!exists(newProfile))
-        loadProfile(defaultProfile);
-
-    _currentProfile = newProfile;
+    _currentProfile = exists(newProfile) ? newProfile : "SSE";
     _commonSettings->setValue("profile", _currentProfile);
 
-    _logPath = QDir::toNativeSeparators(QDir::currentPath() + "/logs/" + _currentProfile + ".html");
-    QString folder = _profileDir.absoluteFilePath(_currentProfile);
+    _logPath = QDir::toNativeSeparators(
+        QString("%1/logs/%2/%3.html")
+            .arg(QDir::currentPath(), _currentProfile, QDateTime::currentDateTime().toString("yy.MM.dd.hh.mm")));
+    const QString &folder = _profileDir.absoluteFilePath(_currentProfile);
     _profileSettings = new QSettings(folder + "/profile.ini", QSettings::IniFormat, this);
     _optionsSettings = new QSettings(folder + "/settings.ini", QSettings::IniFormat, this);
 
@@ -55,8 +56,8 @@ void Profiles::loadProfile(const QString &newProfile)
 
 bool Profiles::exists(const QString &profile)
 {
-    _instance.findProfiles(QDir("profiles"));
-    return _instance._profiles.contains(profile) && !profile.isEmpty();
+    getInstance().findProfiles(QDir("profiles"));
+    return getInstance()._profiles.contains(profile) && !profile.isEmpty();
 }
 
 QStringList Profiles::list()
@@ -66,18 +67,18 @@ QStringList Profiles::list()
 
 void Profiles::create(const QString &name, const QString &baseProfile)
 {
-    const QString &baseFolder = _instance._profileDir.absoluteFilePath(exists(baseProfile) ? baseProfile
-                                                                                           : defaultProfile);
-    const QString &newFolder = _instance._profileDir.absoluteFilePath(name);
+    const QString &baseFolder = getInstance()._profileDir.absoluteFilePath(exists(baseProfile) ? baseProfile
+                                                                                               : defaultProfile);
+    const QString &newFolder = getInstance()._profileDir.absoluteFilePath(name);
     FilesystemOperations::copyDir(baseFolder, newFolder, false);
     QFile::remove(newFolder + "/isBase");
-    _instance.findProfiles(_instance._profileDir);
+    getInstance().findProfiles(getInstance()._profileDir);
 }
 
 QFile Profiles::getFile(const QString &filename)
 {
-    const QDir &currentProfileDir(_instance._profileDir.absoluteFilePath(_instance.currentProfile()));
-    const QDir &defaultProfileDir(_instance._profileDir.absoluteFilePath(defaultProfile));
+    const QDir &currentProfileDir(getInstance()._profileDir.absoluteFilePath(getInstance().currentProfile()));
+    const QDir &defaultProfileDir(getInstance()._profileDir.absoluteFilePath(defaultProfile));
 
     if (currentProfileDir.exists(filename))
         return QFile(currentProfileDir.filePath(filename));
@@ -199,7 +200,7 @@ void Profiles::saveToUi(Ui::MainWindow *ui)
     ui->texturesUnwantedFormatsList->clear();
     for (const QVariant &variant : _texturesUnwantedFormats)
     {
-        DXGI_FORMAT &&format = variant.value<DXGI_FORMAT>();
+        const DXGI_FORMAT &format = variant.value<DXGI_FORMAT>();
         ui->texturesUnwantedFormatsList->addItem(dxgiFormatToString(format));
     }
 }
@@ -238,5 +239,11 @@ void Profiles::readFromUi(Ui::MainWindow *ui)
 
 Profiles &Profiles::getInstance()
 {
-    return _instance;
+    if (!_instance)
+    {
+        _instance = new Profiles();
+        _instance->init();
+    }
+
+    return *_instance;
 }
