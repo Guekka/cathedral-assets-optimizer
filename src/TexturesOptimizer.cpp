@@ -251,12 +251,12 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
 bool TexturesOptimizer::canBeCompressed() const
 {
     return !((_name.contains("interface", Qt::CaseInsensitive) && !Profiles::texturesCompressInterface())
-             || DirectX::IsCompressed(_info.format));
+             || DirectX::IsCompressed(_info.format) || _info.width < 2 || _info.height < 2);
 }
 
 bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
 {
-    PLOG_VERBOSE << "Opening " << filePath << "with textures type " << type;
+    PLOG_VERBOSE << "Opening " << filePath << " with textures type " << type;
 
     wchar_t fileName[1024];
     QDir::toNativeSeparators(filePath).toWCharArray(fileName);
@@ -402,7 +402,8 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
 
 bool TexturesOptimizer::canHaveMipMaps()
 {
-    return Profiles::texturesCompressInterface();
+    return !((_name.contains("interface", Qt::CaseInsensitive) && !Profiles::texturesCompressInterface())
+             || DirectX::IsCompressed(_info.format) || _info.width < 2 || _info.height < 2);
 }
 
 bool TexturesOptimizer::generateMipMaps()
