@@ -19,6 +19,7 @@ MainWindow::MainWindow()
         const auto &list = this->findChildren<QListWidget *>();
         const auto &comboBox = this->findChildren<QComboBox *>();
         const auto &spinBox = this->findChildren<QDoubleSpinBox *>();
+        const auto &groupBox = this->findChildren<QGroupBox *>();
 
         for (const auto &c : checkbox)
             connect(c, &QAbstractButton::pressed, this, [this] { this->_settingsChanged = true; });
@@ -37,6 +38,9 @@ MainWindow::MainWindow()
 
         for (const auto &s : spinBox)
             connect(s, &QDoubleSpinBox::editingFinished, this, [this] { this->_settingsChanged = true; });
+
+        for (const auto &g : groupBox)
+            connect(g, &QGroupBox::toggled, this, [this] { this->_settingsChanged = true; });
     }
 
     //Setting data for widgets
@@ -132,13 +136,7 @@ MainWindow::MainWindow()
         this->_settingsChanged = true;
     });
 
-    connect(_ui->userPathTextEdit, &QLineEdit::editingFinished, this, [this] {
-        _settingsChanged = true;
-        QDir dir(_ui->userPathTextEdit->text());
-
-        if (!dir.exists())
-            _ui->userPathTextEdit->setText(_options.userPath);
-    });
+    connect(_ui->userPathTextEdit, &QLineEdit::textChanged, this, [this] { this->_settingsChanged = true; });
 
     connect(_ui->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
 
@@ -166,6 +164,7 @@ MainWindow::MainWindow()
     //Connecting menu buttons
     {
         connect(_ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::setDarkTheme);
+
         connect(_ui->actionShow_tutorials, &QAction::triggered, this, [this](const bool &checked) {
             this->_showTutorials = checked;
         });
@@ -196,6 +195,8 @@ MainWindow::MainWindow()
         connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
             QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
         });
+
+        connect(_ui->actionSave_UI, &QAction::triggered, this, &MainWindow::saveUi);
     }
 
     //Loading remembered settings
@@ -212,14 +213,13 @@ void MainWindow::saveUi()
     Profiles::commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
     Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
     Profiles::commonSettings()->setValue("alwaysSaveSettings", _alwaysSaveSettings);
+    Profiles::commonSettings()->setValue("showTutorial", _showTutorials);
 
     if (!_settingsChanged)
     {
         _options.saveToUi(_ui); //Restoring previous settings in case an unregistered change happened
         return;
     }
-
-    _settingsChanged = false;
 
     if (!_alwaysSaveSettings)
     {
@@ -239,10 +239,7 @@ void MainWindow::saveUi()
         }
 
         if (box.result() == QMessageBox::YesToAll)
-        {
             _alwaysSaveSettings = true;
-            saveUi();
-        }
     }
 
     _options.readFromUi(_ui);
@@ -257,12 +254,16 @@ void MainWindow::loadUi()
     _ui->advancedSettingsCheckbox->setChecked(Profiles::commonSettings()->value("bShowAdvancedSettings").toBool());
     _ui->presets->setCurrentIndex(_ui->presets->findText(Profiles::commonSettings()->value("profile").toString()));
     _alwaysSaveSettings = Profiles::commonSettings()->value("alwaysSaveSettings").toBool();
+    _showTutorials = Profiles::commonSettings()->value("showTutorial").toBool();
+    _ui->actionShow_tutorials->setChecked(_showTutorials);
 
     _options.readFromIni(Profiles::optionsSettings());
     _options.saveToUi(_ui);
 
     if (_ui->advancedSettingsCheckbox->isChecked())
         Profiles::getInstance().saveToUi(_ui);
+
+    _settingsChanged = false;
 }
 
 void MainWindow::resetUi() const
@@ -325,7 +326,7 @@ void MainWindow::createProfile()
 void MainWindow::setDarkTheme(const bool &enabled)
 {
     _ui->actionEnableDarkTheme->setChecked(enabled);
-    saveUi();
+    _settingsChanged = true;
 
     if (enabled)
     {
