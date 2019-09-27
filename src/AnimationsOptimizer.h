@@ -22,4 +22,7 @@ public:
 
 private:
     hkMemoryRouter *_memoryRouter;
+
+    bool hkxcmdFound = false;
+    std::once_flag onceFlag;
 };

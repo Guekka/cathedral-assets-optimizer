@@ -145,7 +145,7 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     {
         it.next();
 
-        if (isIgnoredFile(it.fileName()) || it.fileInfo().isDir()
+        if (isIgnoredFile(it.filePath()) || it.fileInfo().isDir()
             || !allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
             continue;
 
@@ -191,20 +191,20 @@ void BsaOptimizer::packAll(const QString &folderPath) const
 
 QString BsaOptimizer::backup(const QString &bsaPath) const
 {
-    const QFile bsaBackupFile(bsaPath + ".bak");
+    QFile bsaBackupFile(bsaPath + ".bak");
     const QFile bsaFile(bsaPath);
 
     if (!bsaBackupFile.exists())
-        QFile::rename(bsaPath, bsaBackupFile.fileName());
-    else
-    {
-        if (bsaFile.size() == bsaBackupFile.size())
-            QFile::remove(bsaBackupFile.fileName());
-        else
-            QFile::rename(bsaBackupFile.fileName(), bsaBackupFile.fileName() + ".bak");
-    }
 
-    QFile::rename(bsaPath, bsaBackupFile.fileName());
+        while (bsaBackupFile.exists())
+        {
+            if (bsaFile.size() == bsaBackupFile.size())
+                QFile::remove(bsaBackupFile.fileName());
+            else
+                bsaBackupFile.setFileName(bsaBackupFile.fileName() + ".bak");
+        }
+
+    qDebug() << QFile::rename(bsaPath, bsaBackupFile.fileName());
 
     PLOG_VERBOSE << "Backuping BSA : " << bsaPath << " to " << bsaBackupFile.fileName();
 
@@ -213,6 +213,7 @@ QString BsaOptimizer::backup(const QString &bsaPath) const
 
 bool BsaOptimizer::isIgnoredFile(const QString &filepath) const
 {
+    qDebug() << filesToNotPack;
     for (const auto &fileToNotPack : filesToNotPack)
     {
         if (filepath.contains(fileToNotPack, Qt::CaseInsensitive))

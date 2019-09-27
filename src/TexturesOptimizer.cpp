@@ -595,7 +595,13 @@ bool TexturesOptimizer::convertWithCompression(const DXGI_FORMAT &format)
                       1.f,
                       *timage);
     else
-        hr = Compress(img, nimg, _info, format, DirectX::TEX_COMPRESS_DEFAULT, DirectX::TEX_THRESHOLD_DEFAULT, *timage);
+        hr = Compress(img,
+                      nimg,
+                      _info,
+                      format,
+                      DirectX::TEX_COMPRESS_DEFAULT | DirectX::TEX_FILTER_SEPARATE_ALPHA,
+                      DirectX::TEX_THRESHOLD_DEFAULT,
+                      *timage);
 
     if (FAILED(hr))
     {
