@@ -6,25 +6,9 @@
 
 #include "pch.h"
 
-const QStringList texturesAssets{"png", "dds"};
-const QStringList otherAssets{"nif",
-                              "seq",
-                              "pex",
-                              "psc",
-                              "lod",
-                              "fuz",
-                              "wav",
-                              "xwm",
-                              "swf",
-                              "hkx",
-                              "tri",
-                              "btr",
-                              "bto",
-                              "btt",
-                              "lip",
-                              "txt",
-                              "lst",
-                              "gid"};
+const QStringList texturesAssets{"dds"};
+const QStringList otherAssets{"png", "nif", "seq", "pex", "psc", "lod", "fuz", "wav", "xwm",  "swf",  "hkx",
+                              "tri", "btr", "bto", "btt", "lip", "txt", "lst", "gid", "bgsm", "bgem", "xml"};
 const QStringList allAssets = texturesAssets + otherAssets;
 
 /*!

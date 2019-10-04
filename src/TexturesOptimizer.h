@@ -93,6 +93,8 @@ public:
                                          const std::optional<size_t> &tWidth,
                                          const std::optional<size_t> &tHeight);
 
+    bool modifiedCurrentTexture = false;
+
 private:
     std::unique_ptr<DirectX::ScratchImage> _image{};
     DirectX::TexMetadata _info{};

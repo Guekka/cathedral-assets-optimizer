@@ -251,7 +251,7 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
 bool TexturesOptimizer::canBeCompressed() const
 {
     return !((_name.contains("interface", Qt::CaseInsensitive) && !Profiles::texturesCompressInterface())
-             || DirectX::IsCompressed(_info.format) || _info.width < 2 || _info.height < 2);
+             || DirectX::IsCompressed(_info.format) || _info.width < 4 || _info.height < 4);
 }
 
 bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
@@ -265,6 +265,8 @@ bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
     _image.reset(new (std::nothrow) DirectX::ScratchImage);
     if (!_image)
         return false;
+
+    modifiedCurrentTexture = false;
 
     HRESULT hr = S_FALSE;
     switch (type)
@@ -303,6 +305,8 @@ bool TexturesOptimizer::open(const void *pSource, const size_t &size, const Text
     _image.reset(new (std::nothrow) DirectX::ScratchImage);
     if (!_image)
         return false;
+
+    modifiedCurrentTexture = false;
 
     switch (type)
     {
@@ -357,6 +361,7 @@ bool TexturesOptimizer::decompress()
         return false;
 
     _image.swap(timage);
+    modifiedCurrentTexture = true;
     return true;
 }
 
@@ -397,13 +402,14 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
         return false;
 
     _image.swap(timage);
+    modifiedCurrentTexture = true;
     return true;
 }
 
 bool TexturesOptimizer::canHaveMipMaps()
 {
     return !((_name.contains("interface", Qt::CaseInsensitive) && !Profiles::texturesCompressInterface())
-             || DirectX::IsCompressed(_info.format) || _info.width < 2 || _info.height < 2);
+             || DirectX::IsCompressed(_info.format) || _info.width < 4 || _info.height < 4);
 }
 
 bool TexturesOptimizer::generateMipMaps()
@@ -448,6 +454,7 @@ bool TexturesOptimizer::generateMipMaps()
             }
         }
 
+        modifiedCurrentTexture = true;
         _image.swap(timage);
         _info.mipLevels = _image->GetMetadata().mipLevels;
     }
@@ -482,6 +489,7 @@ bool TexturesOptimizer::generateMipMaps()
             return false;
 
         _image.swap(timage);
+        modifiedCurrentTexture = true;
     }
     return true;
 }
@@ -555,6 +563,7 @@ bool TexturesOptimizer::convertWithoutCompression(const DXGI_FORMAT &format)
             return false;
 
         _image.swap(timage);
+        modifiedCurrentTexture = true;
     }
     return true;
 }
@@ -616,6 +625,7 @@ bool TexturesOptimizer::convertWithCompression(const DXGI_FORMAT &format)
         return false;
 
     _image.swap(timage);
+    modifiedCurrentTexture = true;
     return true;
 }
 

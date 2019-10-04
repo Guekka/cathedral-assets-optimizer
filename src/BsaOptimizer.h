@@ -74,7 +74,7 @@ private:
    * \param filepath The file to check
    * \return a bool indicating the state of the file. True if is ignored, false otherwise
    */
-    bool isIgnoredFile(const QString &filepath) const;
+    bool isIgnoredFile(const QString &bsaFolder, const QString &filepath) const;
     /*!
    * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
    */

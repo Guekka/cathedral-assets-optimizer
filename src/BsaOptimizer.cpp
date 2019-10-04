@@ -75,14 +75,6 @@ int BsaOptimizer::create(Bsa &bsa) const
             break;
         }
     }
-    for (const auto &file : bsa.files)
-    {
-        //Removing files at the root directory, those cannot be packed
-        QString filename = QFileInfo(file).fileName();
-
-        if (bsaDir.filePath(filename) == file)
-            bsa.files.removeAll(file);
-    }
 
     try
     {
@@ -145,11 +137,12 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     {
         it.next();
 
-        if (isIgnoredFile(it.filePath()) || it.fileInfo().isDir()
-            || !allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
+        if (isIgnoredFile(folderPath, it.filePath()) || it.fileInfo().isDir()
+            || !allAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive))
             continue;
 
-        const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Profiles::hasBsaTextures();
+        const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
+                               && Profiles::hasBsaTextures();
         Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
 
         //adding files and sizes to list
@@ -204,21 +197,28 @@ QString BsaOptimizer::backup(const QString &bsaPath) const
                 bsaBackupFile.setFileName(bsaBackupFile.fileName() + ".bak");
         }
 
-    qDebug() << QFile::rename(bsaPath, bsaBackupFile.fileName());
+    QFile::rename(bsaPath, bsaBackupFile.fileName());
 
     PLOG_VERBOSE << "Backuping BSA : " << bsaPath << " to " << bsaBackupFile.fileName();
 
     return bsaBackupFile.fileName();
 }
 
-bool BsaOptimizer::isIgnoredFile(const QString &filepath) const
+bool BsaOptimizer::isIgnoredFile(const QString &bsaFolder, const QString &filepath) const
 {
-    qDebug() << filesToNotPack;
     for (const auto &fileToNotPack : filesToNotPack)
     {
         if (filepath.contains(fileToNotPack, Qt::CaseInsensitive))
             return true;
     }
+
+    //Removing files at the root directory, those cannot be packed
+    const QString &filename = QFileInfo(filepath).fileName();
+
+    QDir bsaDir(bsaFolder);
+    if (bsaDir.filePath(filename) == filepath)
+        return true;
+
     return false;
 }
 
@@ -240,9 +240,12 @@ void BsaOptimizer::DDSCallback([[maybe_unused]] bsa_archive_t archive,
     auto image = std::make_unique<DirectX::ScratchImage>();
     DirectX::TexMetadata info;
 
-    const auto hr = LoadFromDDSFile(PREPARE_PATH_LIBBSARCH(path), DirectX::DDS_FLAGS_NONE, &info, *image);
+    const auto hr = LoadFromDDSFile(PREPARE_PATH_LIBBSARCH(path), DirectX::DDS_FLAGS_BAD_DXTN_TAILS, &info, *image);
     if (FAILED(hr))
-        throw std::runtime_error("Failed to open DDS");
+    {
+        PLOG_ERROR << "Failed to open DDS when packing archive: " << path;
+        return;
+    }
 
     dds_info->width = info.width;
     dds_info->height = info.height;

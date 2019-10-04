@@ -149,7 +149,7 @@ QByteArray BSArchive::extractFileDataByFilename(const QString &filename)
 
 void BSArchive::extract(const QString &filename, const QString &saveAs)
 {
-    qDebug() << "Extracting: " << filename << " saved as " << saveAs;
+    LOG_LIBBSARCH << "Extracting: " << filename << " saved as " << saveAs;
     const auto &result = bsa_extract_file(_archive, PREPARE_PATH_LIBBSARCH(filename), PREPARE_PATH_LIBBSARCH(saveAs));
 
     QLibBsarch::checkResult(result);

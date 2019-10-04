@@ -102,6 +102,7 @@ source_group(
 
 include_directories(${PROJECT_SOURCE_DIR}/libs/plog/include)
 file(GLOB_RECURSE HEADERS_PLOG ${PROJECT_SOURCE_DIR}/libs/plog/include/*.h)
+add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
 
 #LibBsarch
 
