@@ -12,8 +12,7 @@
 enum BsaType
 {
     TexturesBsa = 0,
-    StandardBsa,
-    TexturesAndStandardBsa
+    StandardBsa
 };
 
 /*!
@@ -29,6 +28,9 @@ public:
      */
     struct Bsa
     {
+        static Bsa getStandardBsa();
+        static Bsa getTexturesBsa();
+
         QString path;
         qint64 filesSize = 0;
         QStringList files;
@@ -58,6 +60,12 @@ public:
    * \param folderPath The folder to process
    */
     void packAll(const QString &folderPath) const;
+    /*!
+     * \brief Finds a name for a BSA
+     * \param bsa The BSA to name
+     * \param folder The folder in which the BSA will be
+     */
+    void nameBsa(std::initializer_list<Bsa *> bsaList, const QString &folder) const;
 
     static void DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info, void *context);
 

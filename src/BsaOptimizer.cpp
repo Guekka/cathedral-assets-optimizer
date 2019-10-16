@@ -112,27 +112,12 @@ void BsaOptimizer::packAll(const QString &folderPath) const
 {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
-    Bsa texturesBsa, standardBsa;
-    //Setting type
-    texturesBsa.type = BsaType::TexturesBsa;
-    standardBsa.type = BsaType::StandardBsa;
+    auto texturesBsa = Bsa::getTexturesBsa();
+    auto standardBsa = Bsa::getStandardBsa();
 
-    //Naming BSAs
-    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                       + Profiles::bsaTexturesSuffix();
-    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                       + Profiles::bsaSuffix();
-
-    //Setting maxsize
-    texturesBsa.maxSize = Profiles::maxBsaTexturesSize();
-    standardBsa.maxSize = Profiles::maxBsaUncompressedSize();
-
-    //Setting format
-    texturesBsa.format = Profiles::bsaTexturesFormat();
-    standardBsa.format = Profiles::bsaFormat();
+    nameBsa({&texturesBsa, &standardBsa}, folderPath);
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
-
     while (it.hasNext())
     {
         it.next();
@@ -152,13 +137,7 @@ void BsaOptimizer::packAll(const QString &folderPath) const
         //Each time the maximum size is reached, a BSA is created
         if (pBsa.filesSize >= pBsa.maxSize)
         {
-            if (isTexture)
-                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                            + Profiles::bsaTexturesSuffix();
-            else
-                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                            + Profiles::bsaSuffix();
-
+            nameBsa({&pBsa}, folderPath);
             create(pBsa);
 
             //Resetting for next loop
@@ -168,18 +147,43 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     }
 
     //Since the maximum size wasn't reached for the last archive, some files are still unpacked
-    if (!texturesBsa.files.isEmpty())
+    for (Bsa *bsa : {&texturesBsa, &standardBsa})
     {
-        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                           + Profiles::bsaTexturesSuffix();
-        create(texturesBsa);
+        if (!bsa->files.isEmpty())
+        {
+            nameBsa({bsa}, folderPath);
+            create(*bsa);
+        }
     }
-    if (!standardBsa.files.isEmpty())
+}
+
+void BsaOptimizer::nameBsa(std::initializer_list<Bsa *> bsaList, const QString &folder) const
+{
+    for (auto bsa : bsaList)
     {
-        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                           + Profiles::bsaSuffix();
-        create(standardBsa);
+        const QString &suffix = bsa->type == TexturesBsa ? Profiles::bsaTexturesSuffix() : Profiles::bsaSuffix();
+        bsa->path = folder + "/" + PluginsOperations::findPlugin(folder, bsa->type) + suffix;
     }
+}
+
+BsaOptimizer::Bsa BsaOptimizer::Bsa::getStandardBsa()
+{
+    Bsa bsa;
+    bsa.type = BsaType::StandardBsa;
+    bsa.maxSize = Profiles::maxBsaUncompressedSize();
+    bsa.format = Profiles::bsaFormat();
+
+    return bsa;
+}
+
+BsaOptimizer::Bsa BsaOptimizer::Bsa::getTexturesBsa()
+{
+    Bsa bsa;
+    bsa.type = BsaType::StandardBsa;
+    bsa.maxSize = Profiles::maxBsaTexturesSize();
+    bsa.format = Profiles::Profiles::bsaTexturesFormat();
+
+    return bsa;
 }
 
 QString BsaOptimizer::backup(const QString &bsaPath) const
