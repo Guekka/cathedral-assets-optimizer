@@ -45,6 +45,7 @@ set(SOURCES
     MainOptimizer.cpp
     Profiles.cpp
     OptionsCAO.cpp
+    BSA.cpp
     )
 
 #HEADERS
@@ -63,6 +64,7 @@ set(HEADERS
     Logger.h
     OptionsCAO.h
     TexturesFormats.h
+    BSA.h
     #Ui
 
     )

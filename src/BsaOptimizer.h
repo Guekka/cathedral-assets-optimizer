@@ -4,16 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "BSA.h"
 #include "FilesystemOperations.h"
 #include "Profiles.h"
 #include "TexturesOptimizer.h"
 #include "pch.h"
-
-enum BsaType
-{
-    TexturesBsa = 0,
-    StandardBsa
-};
 
 /*!
  * \brief Manages BSA : extract and create them
@@ -23,22 +18,6 @@ class BsaOptimizer final : public QObject
     Q_DECLARE_TR_FUNCTIONS(BsaOptimizer)
 
 public:
-    /*! 
-     * \brief Used for several internal operations
-     */
-    struct Bsa
-    {
-        static Bsa getStandardBsa();
-        static Bsa getTexturesBsa();
-
-        QString path;
-        qint64 filesSize = 0;
-        QStringList files;
-        double maxSize = LONG_MAX;
-        BsaType type = StandardBsa;
-        bsa_archive_type_t format;
-    };
-
     /*!
    * \brief Default constructor
    */
@@ -60,12 +39,6 @@ public:
    * \param folderPath The folder to process
    */
     void packAll(const QString &folderPath) const;
-    /*!
-     * \brief Finds a name for a BSA
-     * \param bsa The BSA to name
-     * \param folder The folder in which the BSA will be
-     */
-    void nameBsa(std::initializer_list<Bsa *> bsaList, const QString &folder) const;
 
     static void DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info, void *context);
 
@@ -95,13 +68,3 @@ private:
     static bool canBeCompressedFile(const QString &filename);
 };
 
-namespace plog
-{
-    inline Record &operator<<(Record &record, const BsaOptimizer::Bsa &bsa)
-    {
-        return record << "BSA Structure:\nPath: " + bsa.path
-                             + " \nUncompressed files size: " + QString::number(bsa.filesSize / GigaByte) + "Gb"
-                             + "\nmaxSize: " + QString::number(bsa.maxSize / GigaByte) + "Gb" + "\nType: "
-                      << bsa.type << "\nFormat: " << bsa.format;
-    }
-} // namespace plog

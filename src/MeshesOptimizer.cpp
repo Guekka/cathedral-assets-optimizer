@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "MeshesOptimizer.h"
+#include "FilesystemOperations.h"
 
 MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel, bool resaveMeshes)
     : bMeshesHeadparts(processHeadparts)

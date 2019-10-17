@@ -76,6 +76,9 @@ int BsaOptimizer::create(Bsa &bsa) const
         }
     }
 
+    if (bsa.files.isEmpty())
+        return 3;
+
     try
     {
         archive.addFileFromDiskRoot(bsa.files);
@@ -112,10 +115,13 @@ void BsaOptimizer::packAll(const QString &folderPath) const
 {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
-    auto texturesBsa = Bsa::getTexturesBsa();
-    auto standardBsa = Bsa::getStandardBsa();
+    QVector<Bsa> bsas;
+    bsas.reserve(10000);
+    bsas << Bsa::getBsa(StandardBsa) << Bsa::getBsa(UncompressableBsa) << Bsa::getBsa(TexturesBsa);
 
-    nameBsa({&texturesBsa, &standardBsa}, folderPath);
+    auto *standardBsa = &bsas[0];
+    auto *uncompressableBsa = &bsas[1];
+    auto *texturesBsa = &bsas[2];
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
     while (it.hasNext())
@@ -128,62 +134,30 @@ void BsaOptimizer::packAll(const QString &folderPath) const
 
         const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
                                && Profiles::hasBsaTextures();
-        Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
+        const bool isUncompressable = uncompressableAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive);
+
+        Bsa **pBsa = isTexture ? &texturesBsa : &standardBsa;
+        pBsa = isUncompressable ? &uncompressableBsa : pBsa;
 
         //adding files and sizes to list
-        pBsa.files << it.filePath();
-        pBsa.filesSize += it.fileInfo().size();
+        (*pBsa)->files << it.filePath();
+        (*pBsa)->filesSize += it.fileInfo().size();
 
-        //Each time the maximum size is reached, a BSA is created
-        if (pBsa.filesSize >= pBsa.maxSize)
+        if ((*pBsa)->filesSize >= (*pBsa)->maxSize)
         {
-            nameBsa({&pBsa}, folderPath);
-            create(pBsa);
-
-            //Resetting for next loop
-            pBsa.filesSize = 0;
-            pBsa.files.clear();
+            bsas << Bsa::getBsa((*pBsa)->type);
+            *pBsa = &bsas.last();
         }
     }
 
-    //Since the maximum size wasn't reached for the last archive, some files are still unpacked
-    for (Bsa *bsa : {&texturesBsa, &standardBsa})
+    //Merging BSAs that can be merged
+    Bsa::mergeBsa(bsas);
+
+    for (int i = 0; i < bsas.size(); ++i)
     {
-        if (!bsa->files.isEmpty())
-        {
-            nameBsa({bsa}, folderPath);
-            create(*bsa);
-        }
+        Bsa::nameBsa({&bsas[i]}, folderPath);
+        create(bsas[i]);
     }
-}
-
-void BsaOptimizer::nameBsa(std::initializer_list<Bsa *> bsaList, const QString &folder) const
-{
-    for (auto bsa : bsaList)
-    {
-        const QString &suffix = bsa->type == TexturesBsa ? Profiles::bsaTexturesSuffix() : Profiles::bsaSuffix();
-        bsa->path = folder + "/" + PluginsOperations::findPlugin(folder, bsa->type) + suffix;
-    }
-}
-
-BsaOptimizer::Bsa BsaOptimizer::Bsa::getStandardBsa()
-{
-    Bsa bsa;
-    bsa.type = BsaType::StandardBsa;
-    bsa.maxSize = Profiles::maxBsaUncompressedSize();
-    bsa.format = Profiles::bsaFormat();
-
-    return bsa;
-}
-
-BsaOptimizer::Bsa BsaOptimizer::Bsa::getTexturesBsa()
-{
-    Bsa bsa;
-    bsa.type = BsaType::StandardBsa;
-    bsa.maxSize = Profiles::maxBsaTexturesSize();
-    bsa.format = Profiles::Profiles::bsaTexturesFormat();
-
-    return bsa;
 }
 
 QString BsaOptimizer::backup(const QString &bsaPath) const
