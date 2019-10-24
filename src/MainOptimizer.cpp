@@ -112,6 +112,11 @@ void MainOptimizer::processTexture(const QString &file, const TexturesOptimizer:
             PLOG_ERROR << "Failed to optimize: " + file;
             return;
         }
+
+        if (type == TexturesOptimizer::DDS && !_texturesOpt.modifiedCurrentTexture)
+            return; //Not saving if there wasn't any change
+
+        //Saving to file
         QString newName = file;
         if (type == TexturesOptimizer::TGA)
             newName = newName.chopped(4) + ".dds";

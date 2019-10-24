@@ -96,7 +96,7 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
     while (it.hasNext())
     {
         it.next();
-        if (!QFileInfo(it.filePath()).isDir()) //Skipping all directories
+        if (!it.fileInfo().isDir()) //Skipping all directories
             oldFiles << it.filePath();
     }
 

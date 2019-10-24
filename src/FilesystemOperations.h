@@ -5,27 +5,21 @@
 #pragma once
 
 #include "pch.h"
+/*!
+\brief List of textures assets (dds)
+*/
+const QStringList texturesAssets{"dds"};
+/*!
+\brief List of standard assets. Includes uncompressable assets but does not include textures assets 
+*/
+const QStringList standardAssets{"png", "nif", "seq", "pex", "psc", "lod", "fuz", "wav", "xwm",  "swf",  "hkx",
+                                 "tri", "btr", "bto", "btt", "lip", "txt", "lst", "gid", "bgsm", "bgem", "xml"};
+/*!
+\brief List of uncompressable assets (sounds)
+*/
+const QStringList uncompressableAssets{"wav", "xwm"};
 
-const QStringList texturesAssets{"png", "dds"};
-const QStringList otherAssets{"nif",
-                              "seq",
-                              "pex",
-                              "psc",
-                              "lod",
-                              "fuz",
-                              "wav",
-                              "xwm",
-                              "swf",
-                              "hkx",
-                              "tri",
-                              "btr",
-                              "bto",
-                              "btt",
-                              "lip",
-                              "txt",
-                              "lst",
-                              "gid"};
-const QStringList allAssets = texturesAssets + otherAssets;
+const QStringList allAssets = texturesAssets + standardAssets;
 
 /*!
  * \brief Manages filesystem operations : moving files, deleting empty dirs...

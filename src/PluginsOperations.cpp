@@ -71,13 +71,9 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &
                                          && bsaType == TexturesBsa;
 
             const bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaSuffix()).exists()
-                                         && bsaType == StandardBsa;
+                                         && bsaType != TexturesBsa;
 
-            const bool bothBsaGood = QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaTexturesSuffix()).exists()
-                                     && !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaSuffix()).exists()
-                                     && bsaType == TexturesAndStandardBsa;
-
-            if (texturesBsaGood || standardBsaGood || bothBsaGood)
+            if (texturesBsaGood || standardBsaGood)
                 returnedEsp = esp;
         }
         if (returnedEsp.isEmpty())

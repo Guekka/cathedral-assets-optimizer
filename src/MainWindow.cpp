@@ -246,6 +246,8 @@ void MainWindow::saveUi()
     _options.saveToIni(Profiles::optionsSettings());
     Profiles::getInstance().readFromUi(_ui);
     Profiles::getInstance().saveToIni();
+
+    _settingsChanged = false;
 }
 
 void MainWindow::loadUi()

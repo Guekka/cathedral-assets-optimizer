@@ -39,7 +39,7 @@ size_t Profiles::findProfiles(const QDir &dir)
 
 void Profiles::loadProfile(const QString &newProfile)
 {
-    _currentProfile = exists(newProfile) ? newProfile : "SSE";
+    _currentProfile = exists(newProfile) ? newProfile : defaultProfile;
     _commonSettings->setValue("profile", _currentProfile);
 
     _logPath = QDir::toNativeSeparators(

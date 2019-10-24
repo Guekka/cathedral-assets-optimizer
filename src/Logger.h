@@ -6,7 +6,6 @@
 /* Custom functions for plog */
 
 #pragma once
-#define PLOG_OMIT_PLOG_DEFINES
 #include "pch.h"
 #include "plog/Log.h"
 

@@ -72,7 +72,7 @@ void Manager::printProgress(const int &total, const QString &text = "Processing 
     QTextStream(stdout) << "PROGRESS:|" << text << " - %v/%m - %p%|" << _numberCompletedFiles << '|' << total << endl;
 #endif
 #ifdef GUI
-    emit progressBarTextChanged(text, total, _numberCompletedFiles);
+    emit progressBarTextChanged(text + "- %v/%m - %p%", total, _numberCompletedFiles);
 #endif
 }
 
@@ -157,22 +157,12 @@ void Manager::runOptimization()
         if (_numberCompletedFiles % 10 == 0)
             printProgress(_numberFiles);
     }
-
-    //Processing other files
     for (const auto &file : _files)
     {
-        //Processing files in several threads
-        QVector<QFuture<void>> futures;
-        futures << QtConcurrent::run([&]() { optimizer.process(file); });
-
-        //Waiting for the processes to be completed
-        for (auto &future : futures)
-        {
-            future.waitForFinished();
-            ++_numberCompletedFiles;
-            if (_numberCompletedFiles % 10 == 0)
-                printProgress(_numberFiles);
-        }
+        optimizer.process(file);
+        ++_numberCompletedFiles;
+        if (_numberCompletedFiles % 10 == 0)
+            printProgress(_numberFiles);
     }
 
     _numberCompletedFiles = 0;
@@ -184,7 +174,7 @@ void Manager::runOptimization()
         {
             optimizer.packBsa(folder);
             ++_numberCompletedFiles;
-            printProgress(_modsToProcess.size(), "Packing BSAs");
+            printProgress(_modsToProcess.size(), "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
         }
 
     FilesystemOperations::deleteEmptyDirectories(_options.userPath);

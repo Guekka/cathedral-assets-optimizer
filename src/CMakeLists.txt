@@ -45,6 +45,7 @@ set(SOURCES
     MainOptimizer.cpp
     Profiles.cpp
     OptionsCAO.cpp
+    BSA.cpp
     )
 
 #HEADERS
@@ -63,6 +64,7 @@ set(HEADERS
     Logger.h
     OptionsCAO.h
     TexturesFormats.h
+    BSA.h
     #Ui
 
     )
@@ -102,6 +104,7 @@ source_group(
 
 include_directories(${PROJECT_SOURCE_DIR}/libs/plog/include)
 file(GLOB_RECURSE HEADERS_PLOG ${PROJECT_SOURCE_DIR}/libs/plog/include/*.h)
+add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
 
 #LibBsarch
 

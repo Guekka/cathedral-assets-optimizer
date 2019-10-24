@@ -75,14 +75,9 @@ int BsaOptimizer::create(Bsa &bsa) const
             break;
         }
     }
-    for (const auto &file : bsa.files)
-    {
-        //Removing files at the root directory, those cannot be packed
-        QString filename = QFileInfo(file).fileName();
 
-        if (bsaDir.filePath(filename) == file)
-            bsa.files.removeAll(file);
-    }
+    if (bsa.files.isEmpty())
+        return 3;
 
     try
     {
@@ -120,72 +115,48 @@ void BsaOptimizer::packAll(const QString &folderPath) const
 {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
-    Bsa texturesBsa, standardBsa;
-    //Setting type
-    texturesBsa.type = BsaType::TexturesBsa;
-    standardBsa.type = BsaType::StandardBsa;
+    QVector<Bsa> bsas;
+    bsas.reserve(10000);
+    bsas << Bsa::getBsa(StandardBsa) << Bsa::getBsa(UncompressableBsa) << Bsa::getBsa(TexturesBsa);
 
-    //Naming BSAs
-    texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                       + Profiles::bsaTexturesSuffix();
-    standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                       + Profiles::bsaSuffix();
-
-    //Setting maxsize
-    texturesBsa.maxSize = Profiles::maxBsaTexturesSize();
-    standardBsa.maxSize = Profiles::maxBsaUncompressedSize();
-
-    //Setting format
-    texturesBsa.format = Profiles::bsaTexturesFormat();
-    standardBsa.format = Profiles::bsaFormat();
+    auto *standardBsa = &bsas[0];
+    auto *uncompressableBsa = &bsas[1];
+    auto *texturesBsa = &bsas[2];
 
     QDirIterator it(folderPath, QDirIterator::Subdirectories);
-
     while (it.hasNext())
     {
         it.next();
 
-        if (isIgnoredFile(it.filePath()) || it.fileInfo().isDir()
-            || !allAssets.contains(it.fileName().right(3), Qt::CaseInsensitive))
+        if (isIgnoredFile(folderPath, it.filePath()) || it.fileInfo().isDir()
+            || !allAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive))
             continue;
 
-        const bool isTexture = texturesAssets.contains(it.fileName().right(3)) && Profiles::hasBsaTextures();
-        Bsa &pBsa = isTexture ? texturesBsa : standardBsa; //Using references to avoid duplicating the code
+        const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
+                               && Profiles::hasBsaTextures();
+        const bool isUncompressable = uncompressableAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive);
+
+        Bsa **pBsa = isTexture ? &texturesBsa : &standardBsa;
+        pBsa = isUncompressable ? &uncompressableBsa : pBsa;
 
         //adding files and sizes to list
-        pBsa.files << it.filePath();
-        pBsa.filesSize += it.fileInfo().size();
+        (*pBsa)->files << it.filePath();
+        (*pBsa)->filesSize += it.fileInfo().size();
 
-        //Each time the maximum size is reached, a BSA is created
-        if (pBsa.filesSize >= pBsa.maxSize)
+        if ((*pBsa)->filesSize >= (*pBsa)->maxSize)
         {
-            if (isTexture)
-                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                            + Profiles::bsaTexturesSuffix();
-            else
-                pBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                            + Profiles::bsaSuffix();
-
-            create(pBsa);
-
-            //Resetting for next loop
-            pBsa.filesSize = 0;
-            pBsa.files.clear();
+            bsas << Bsa::getBsa((*pBsa)->type);
+            *pBsa = &bsas.last();
         }
     }
 
-    //Since the maximum size wasn't reached for the last archive, some files are still unpacked
-    if (!texturesBsa.files.isEmpty())
+    //Merging BSAs that can be merged
+    Bsa::mergeBsas(bsas);
+
+    for (int i = 0; i < bsas.size(); ++i)
     {
-        texturesBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, texturesBsa.type)
-                           + Profiles::bsaTexturesSuffix();
-        create(texturesBsa);
-    }
-    if (!standardBsa.files.isEmpty())
-    {
-        standardBsa.path = folderPath + "/" + PluginsOperations::findPlugin(folderPath, standardBsa.type)
-                           + Profiles::bsaSuffix();
-        create(standardBsa);
+        Bsa::nameBsa({&bsas[i]}, folderPath);
+        create(bsas[i]);
     }
 }
 
@@ -204,21 +175,28 @@ QString BsaOptimizer::backup(const QString &bsaPath) const
                 bsaBackupFile.setFileName(bsaBackupFile.fileName() + ".bak");
         }
 
-    qDebug() << QFile::rename(bsaPath, bsaBackupFile.fileName());
+    QFile::rename(bsaPath, bsaBackupFile.fileName());
 
     PLOG_VERBOSE << "Backuping BSA : " << bsaPath << " to " << bsaBackupFile.fileName();
 
     return bsaBackupFile.fileName();
 }
 
-bool BsaOptimizer::isIgnoredFile(const QString &filepath) const
+bool BsaOptimizer::isIgnoredFile(const QString &bsaFolder, const QString &filepath) const
 {
-    qDebug() << filesToNotPack;
     for (const auto &fileToNotPack : filesToNotPack)
     {
         if (filepath.contains(fileToNotPack, Qt::CaseInsensitive))
             return true;
     }
+
+    //Removing files at the root directory, those cannot be packed
+    const QString &filename = QFileInfo(filepath).fileName();
+
+    QDir bsaDir(bsaFolder);
+    if (bsaDir.filePath(filename) == filepath)
+        return true;
+
     return false;
 }
 
@@ -240,9 +218,12 @@ void BsaOptimizer::DDSCallback([[maybe_unused]] bsa_archive_t archive,
     auto image = std::make_unique<DirectX::ScratchImage>();
     DirectX::TexMetadata info;
 
-    const auto hr = LoadFromDDSFile(PREPARE_PATH_LIBBSARCH(path), DirectX::DDS_FLAGS_NONE, &info, *image);
+    const auto hr = LoadFromDDSFile(PREPARE_PATH_LIBBSARCH(path), DirectX::DDS_FLAGS_BAD_DXTN_TAILS, &info, *image);
     if (FAILED(hr))
-        throw std::runtime_error("Failed to open DDS");
+    {
+        PLOG_ERROR << "Failed to open DDS when packing archive: " << path;
+        return;
+    }
 
     dds_info->width = info.width;
     dds_info->height = info.height;
