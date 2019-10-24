@@ -40,7 +40,7 @@ struct Bsa
      * \param list The list of BSAs to merge
      * \return The number of merges done
      */
-    static size_t mergeBsa(QVector<Bsa> &list);
+    static size_t mergeBsas(QVector<Bsa> &list);
 };
 
 namespace plog

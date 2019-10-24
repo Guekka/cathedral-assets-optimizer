@@ -151,7 +151,7 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     }
 
     //Merging BSAs that can be merged
-    Bsa::mergeBsa(bsas);
+    Bsa::mergeBsas(bsas);
 
     for (int i = 0; i < bsas.size(); ++i)
     {

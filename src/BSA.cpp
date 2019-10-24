@@ -39,7 +39,7 @@ void Bsa::nameBsa(std::initializer_list<Bsa *> bsaList, const QString &folder)
     }
 }
 
-size_t Bsa::mergeBsa(QVector<Bsa> &list)
+size_t Bsa::mergeBsas(QVector<Bsa> &list)
 {
     size_t counter = 0;
     for (int j = 0; j < list.size(); ++j)
@@ -49,8 +49,8 @@ size_t Bsa::mergeBsa(QVector<Bsa> &list)
             if (j == k)
                 continue;
 
-            if (list[j].filesSize + list[k].filesSize < list[j].maxSize
-                && (list[j].type == list[k].type || list[j].type == StandardBsa))
+            if (list.at(j).filesSize + list.at(k).filesSize < list.at(j).maxSize
+                && (list.at(j).type == list.at(k).type || list.at(j).type == StandardBsa))
             {
                 list[j] += list[k];
                 list.remove(k);
@@ -61,7 +61,7 @@ size_t Bsa::mergeBsa(QVector<Bsa> &list)
 
     //Removing empty BSAs
     for (int j = 0; j < list.size(); ++j)
-        if (list[j].files.isEmpty())
+        if (list.at(j).files.isEmpty())
             list.remove(j);
 
     return counter;
