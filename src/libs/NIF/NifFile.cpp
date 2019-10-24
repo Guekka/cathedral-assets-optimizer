@@ -5,6 +5,7 @@ See the included LICENSE file
 
 #include "NifFile.h"
 
+#include <filesystem>
 #include <fstream>
 #include <regex>
 #include <set>
@@ -134,7 +135,7 @@ void NifFile::Clear()
 
 int NifFile::Load(const std::string &fileName, const NifLoadOptions &options)
 {
-    std::fstream file(fileName.c_str(), std::ios::in | std::ios::binary);
+    std::fstream file(std::filesystem::u8path(fileName), std::ios::in | std::ios::binary);
     return Load(file, options);
 }
 
@@ -919,7 +920,7 @@ int NifFile::CloneNamedNode(const std::string &nodeName, NifFile *srcNif)
 
 int NifFile::Save(const std::string &fileName, const NifSaveOptions &options)
 {
-    std::fstream file(fileName.c_str(), std::ios::out | std::ios::binary);
+    std::fstream file(std::filesystem::u8path(fileName), std::ios::out | std::ios::binary);
     return Save(file, options);
 }
 
