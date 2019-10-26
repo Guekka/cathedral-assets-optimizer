@@ -22,9 +22,11 @@ public:
 
     void process(const QString &file);
     void packBsa(const QString &folder);
-    void addHeadparts(const QString &folder, bool processSubDirs);
 
 private:
+    void addLandscapeTextures();
+    void addHeadparts();
+
     void processBsa(const QString &file) const;
     void processNif(const QString &file);
     void processTexture(const QString &file, const TexturesOptimizer::TextureType &type);

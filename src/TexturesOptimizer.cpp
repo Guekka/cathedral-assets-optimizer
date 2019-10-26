@@ -18,6 +18,27 @@ TexturesOptimizer::TexturesOptimizer()
         throw std::runtime_error("Failed to initialize COM. Textures processing won't work.");
 }
 
+void TexturesOptimizer::listLandscapeTextures(QDirIterator &it)
+{
+    QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
+    _landscapeTextures = FilesystemOperations::readFile(customHeadpartsFile);
+
+    if (_landscapeTextures.isEmpty())
+    {
+        PLOG_ERROR << "customHeadparts.txt not found. This can cause issue when optimizing meshes, as some headparts "
+                      "won't be detected.";
+    }
+
+    for (const auto &plugin : FilesystemOperations::listPlugins(it))
+        _landscapeTextures += PluginsOperations::listLandscapeTextures(plugin);
+
+    for (auto &tex : _landscapeTextures)
+        if (!tex.endsWith("_n.dds"))
+            tex.insert(tex.size() - 4, "_n");
+
+    _landscapeTextures.removeDuplicates();
+}
+
 bool TexturesOptimizer::getDXGIFactory(IDXGIFactory1 **pFactory) const
 {
     if (!pFactory)

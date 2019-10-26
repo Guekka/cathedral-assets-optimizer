@@ -50,6 +50,8 @@ public:
    */
     static void copyDir(const QString &source, const QString &destination, bool overwriteExisting);
 
-    static QStringList readFile(QFile &file, void (*function)(QString &line));
+    static QStringList readFile(QFile &file, std::function<void(QString &line)> function);
     static QStringList readFile(QFile &file);
+
+    static QStringList listPlugins(QDirIterator &it);
 };

@@ -32,6 +32,10 @@ public:
 
 private:
     /*!
+     * \brief Initializes the manager
+     */
+    void init();
+    /*!
    * \brief List all the directories to process
    */
     void listDirectories();
@@ -71,10 +75,6 @@ private:
    * \brief The files to process
    */
     QStringList _files;
-    /*!
-   * \brief The animations to process. Separated, since they don't support multithreading
-   */
-    QStringList _animations;
     /*!
    * \brief The BSAs to extract
    */

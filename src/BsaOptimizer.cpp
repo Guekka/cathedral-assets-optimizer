@@ -13,7 +13,8 @@ BsaOptimizer::BsaOptimizer()
 
     QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
 
-    filesToNotPack = FilesystemOperations::readFile(filesToNotPackFile);
+    filesToNotPack = FilesystemOperations::readFile(filesToNotPackFile,
+                                                    [](QString &line) { line = QDir::fromNativeSeparators(line); });
     if (filesToNotPack.isEmpty())
     {
         PLOG_ERROR << "FilesToNotPack.txt not found. This can cause a number of issues. For example, for Skyrim, "
@@ -128,8 +129,7 @@ void BsaOptimizer::packAll(const QString &folderPath) const
     {
         it.next();
 
-        if (isIgnoredFile(folderPath, it.filePath()) || it.fileInfo().isDir()
-            || !allAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive))
+        if (isIgnoredFile(folderPath, it.filePath()) || !allAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive))
             continue;
 
         const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
@@ -182,19 +182,19 @@ QString BsaOptimizer::backup(const QString &bsaPath) const
     return bsaBackupFile.fileName();
 }
 
-bool BsaOptimizer::isIgnoredFile(const QString &bsaFolder, const QString &filepath) const
+bool BsaOptimizer::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo) const
 {
+    if (fileinfo.isDir())
+        return true;
+
     for (const auto &fileToNotPack : filesToNotPack)
     {
-        if (filepath.contains(fileToNotPack, Qt::CaseInsensitive))
+        if (fileinfo.absoluteFilePath().contains(fileToNotPack, Qt::CaseInsensitive))
             return true;
     }
 
     //Removing files at the root directory, those cannot be packed
-    const QString &filename = QFileInfo(filepath).fileName();
-
-    QDir bsaDir(bsaFolder);
-    if (bsaDir.filePath(filename) == filepath)
+    if (bsaDir.absoluteFilePath(fileinfo.fileName()) == fileinfo.absoluteFilePath())
         return true;
 
     return false;
