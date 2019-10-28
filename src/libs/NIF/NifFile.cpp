@@ -71,8 +71,8 @@ void NifFile::CopyFrom(const NifFile &other)
     size_t nBlocks = other.blocks.size();
     blocks.resize(nBlocks);
 
-    for (uint i = 0; i < nBlocks; i++)
-        blocks[i] = std::unique_ptr<NiObject>(other.blocks[i]->Clone());
+    for (int i = 0; i < nBlocks; i++)
+        blocks[i] = std::move(std::unique_ptr<NiObject>(other.blocks[i]->Clone()));
 
     hdr.SetBlockReference(&blocks);
     LinkGeomData();
@@ -171,10 +171,10 @@ int NifFile::Load(Stream &file, const NifLoadOptions &options)
         blocks.resize(nBlocks);
 
         auto &nifactories = NiFactoryRegister::Get();
-        for (uint i = 0; i < nBlocks; i++)
+        for (int i = 0; i < nBlocks; i++)
         {
             NiObject *block = nullptr;
-            std::string blockTypeStr = hdr.GetBlockTypeStringById(static_cast<int>(i));
+            std::string blockTypeStr = hdr.GetBlockTypeStringById(i);
 
             auto nifactory = nifactories.GetFactoryByName(blockTypeStr);
             if (nifactory)
@@ -188,7 +188,7 @@ int NifFile::Load(Stream &file, const NifLoadOptions &options)
             }
 
             if (block)
-                blocks[i] = std::unique_ptr<NiObject>(block);
+                blocks[i] = std::move(std::unique_ptr<NiObject>(block));
         }
 
         hdr.SetBlockReference(&blocks);

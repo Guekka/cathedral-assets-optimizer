@@ -6,8 +6,8 @@
 /* Custom functions for plog */
 
 #pragma once
+#include "libs/plog/include/plog/Log.h"
 #include "pch.h"
-#include "plog/Log.h"
 
 namespace plog
 {

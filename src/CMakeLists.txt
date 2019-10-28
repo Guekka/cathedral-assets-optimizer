@@ -1,9 +1,14 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.12...3.15)
 
-project(Cathedral_Assets_Optimizer)
+project(Cathedral_Assets_Optimizer VERSION 3.0.7 LANGUAGES CXX)
+
+#Setting version for C++ files
+configure_file (
+    "${PROJECT_SOURCE_DIR}/Version.h.in"
+    "${PROJECT_SOURCE_DIR}/Version.h"
+    )
 
 #Include Cotire
-
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
 include(cotire)
 
@@ -16,11 +21,6 @@ set(CMAKE_AUTOUIC ON)
 #Ressources
 set(CMAKE_AUTORCC ON)
 
-#C++17
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 #Qt
 set(Qt5_DIR "C:/IT/Qt/5.12.4/msvc2017/lib/cmake/Qt5")
@@ -66,224 +66,56 @@ set(HEADERS
     TexturesFormats.h
     BSA.h
     #Ui
-
     )
 
 #Ui
 if(GUI)
-    list (APPEND HEADERS     MainWindow.h
+    list (APPEND HEADERS
+        MainWindow.h
         TexturesFormatSelectDialog.h)
 
-    list (APPEND SOURCES MainWindow.cpp
+    list (APPEND SOURCES
+        MainWindow.cpp
         TexturesFormatSelectDialog.cpp)
 
     set(UI
-    MainWindow.ui
-    TexturesFormatSelectDialog.ui
-    )
-
+        MainWindow.ui
+        TexturesFormatSelectDialog.ui
+        )
 endif()
 
 #Icon and qrc
 set(ICON_RC_PATH "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc")
 set(QRC_PATH "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc")
 
-#Groups
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-source_group(
-    TREE ${PROJECT_SOURCE_DIR}
-    PREFIX "Headers"
-    FILES ${HEADERS})
-source_group(
-    TREE ${PROJECT_SOURCE_DIR}
-    PREFIX "Sources"
-    FILES ${SOURCES})
-
 #plog
-
-include_directories(${PROJECT_SOURCE_DIR}/libs/plog/include)
-file(GLOB_RECURSE HEADERS_PLOG ${PROJECT_SOURCE_DIR}/libs/plog/include/*.h)
+message("Building Plog library")
+add_subdirectory(libs/plog)
 add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
-
 #LibBsarch
-
-include_directories(${PROJECT_SOURCE_DIR}/libs/libbsarch)
-file(GLOB_RECURSE SOURCES_LIBBSARCH ${PROJECT_SOURCE_DIR}/libs/libbsarch/*.cpp)
-file(GLOB_RECURSE HEADERS_LIBBSARCH ${PROJECT_SOURCE_DIR}/libs/libbsarch/*.h)
-
-#Havok
-
-include_directories("${PROJECT_SOURCE_DIR}/libs/havok_2010_2_0/Source")
-
-set ( HAVOK_LIBS_DIR_RELEASE
-    ${PROJECT_SOURCE_DIR}/libs/havok_2010_2_0/Lib/win32_net_9-0/release_multithreaded)
-
-set ( HAVOK_LIBS_DIR_DEBUG
-    ${PROJECT_SOURCE_DIR}/libs/havok_2010_2_0/Lib/win32_net_9-0/debug_multithreaded)
-
-set ( HAVOK_LIBS
-    hkaAnimation
-    hkaInternal
-    hkaRagdoll
-    hkBase
-    hkCompat
-    hkgBridge
-    hkgCommon
-    hkgDx10
-    hkgDx9
-    hkgDx9s
-    hkGeometryUtilities
-    hkgOgl
-    hkgOglES
-    hkgOglES2
-    hkgOgls
-    hkInternal
-    hkpCollide
-    hkpConstraintSolver
-    hkpDynamics
-    hkpInternal
-    hkpUtilities
-    hkpVehicle
-    hkSceneData
-    hksCommon
-    hkSerialize
-    hksXAudio2
-    hkVisualize
-    )
-
-foreach(havok_lib IN LISTS HAVOK_LIBS)
-    message( "[MAIN]: adding ${havok_lib}" )
-
-    add_library(
-        ${havok_lib}
-        STATIC
-        IMPORTED GLOBAL
-        )
-
-    set_target_properties(
-        ${havok_lib}
-        PROPERTIES IMPORTED_LOCATION
-        "${HAVOK_LIBS_DIR_RELEASE}/${havok_lib}.lib"
-        )
-
-    set_target_properties(
-        ${havok_lib}
-        PROPERTIES IMPORTED_LOCATION_DEBUG
-        "${HAVOK_LIBS_DIR_DEBUG}/${havok_lib}.lib"
-        )
-
-endforeach(havok_lib)
-
+message("Building Libbsarch library")
+add_subdirectory(libs/libbsarch)
 #hkxcmd
-
-include_directories(${PROJECT_SOURCE_DIR}/libs/hkxcmd)
-file(GLOB_RECURSE SOURCES_CK-CMD ${PROJECT_SOURCE_DIR}/libs/hkxcmd/*.cpp)
-file(GLOB_RECURSE HEADERS_CK-CMD ${PROJECT_SOURCE_DIR}/libs/hkxcmd/*.h)
-
-#2010 Behavior compat
-
-set(HAVOK_COMPAT_INCLUDES_PATH
-    "${PROJECT_SOURCE_DIR}/libs/havok_2010_2_0/compat"
-    )
-
-include_directories(${HAVOK_COMPAT_INCLUDES_PATH})
-
-file(GLOB_RECURSE HAVOK_COMPAT_HEADERS
-    "${HAVOK_COMPAT_INCLUDES_PATH}/*.h"
-    "${HAVOK_COMPAT_INCLUDES_PATH}/*.inl"
-    )
-
-file(GLOB_RECURSE HAVOK_COMPAT_SRC
-    "${HAVOK_COMPAT_INCLUDES_PATH}/*.cpp"
-    )
-
+message("Building hkxcmd library")
+add_subdirectory(libs/hkxcmd)
 #Nif Library
-
-set(NIFLIB_INCLUDES_PATH
-    "${PROJECT_SOURCE_DIR}/libs/NIF"
-    )
-
-include_directories(${NIFLIB_INCLUDES_PATH})
-
-file(GLOB_RECURSE NIFLIB_HEADERS
-    "${NIFLIB_INCLUDES_PATH}/*.h"
-    )
-
-file(GLOB_RECURSE NIFLIB_SRC
-    "${NIFLIB_INCLUDES_PATH}/*.cpp"
-    )
-
+message("Building nif library")
+add_subdirectory(libs/NIF)
 #DirectXTex library
-
+message("Building DirectXTex library")
+add_subdirectory("libs/DirectXTex")
 #Windows 7 compatibility
 add_compile_definitions(_WIN32_WINNT=_WIN32_WINNT_WIN7)
 
-set(DIRECTX_INCLUDES_PATH
-    "${PROJECT_SOURCE_DIR}/libs/DirectXTex"
-    )
-
-include_directories(${DIRECTX_INCLUDES_PATH})
-
-file(GLOB_RECURSE DIRECTX_HEADERS
-    "${DIRECTX_INCLUDES_PATH}/*.h"
-    )
-
-file(GLOB_RECURSE DIRECTX_SRC
-    "${DIRECTX_INCLUDES_PATH}/*.cpp"
-    )
-
-
-#Merge all
-
-list (APPEND SOURCES ${SOURCES_LIBBSARCH})
-list (APPEND SOURCES ${SOURCES_HAVOK})
-list (APPEND SOURCES ${SOURCES_CK-CMD})
-list (APPEND SOURCES ${HAVOK_COMPAT_SRC})
-list (APPEND SOURCES ${NIFLIB_SRC})
-list (APPEND SOURCES ${DIRECTX_SRC})
-
-list (APPEND HEADERS ${HEADERS_PLOG})
-list (APPEND HEADERS ${HEADERS_LIBBSARCH})
-list (APPEND HEADERS ${HEADERS_HAVOK})
-list (APPEND HEADERS ${HEADERS_CK-CMD})
-list (APPEND HEADERS ${HAVOK_COMPAT_HEADERS})
-list (APPEND HEADERS ${NIFLIB_HEADERS})
-list (APPEND HEADERS ${DIRECTX_HEADERS})
-
-list (APPEND LIBS Qt5::Core Qt5::Widgets)
-list (APPEND LIBS ${PROJECT_SOURCE_DIR}/libs/libbsarch/libbsarch.lib)
-list (APPEND LIBS ${HAVOK_LIBS})
-list (APPEND LIBS Shlwapi.lib legacy_stdio_definitions.lib)
-
-source_group("Havok Compat\\Headers" FILES ${HAVOK_COMPAT_HEADERS})
-source_group("Havok Compat\\Sources" FILES ${HAVOK_COMPAT_SRC})
-source_group("Header Files" FILES ${HEADERS})
-
-#MSVC
-
-IF (MSVC)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /D_SCL_SECURE_NO_WARNINGS=1 /D_CRT_NONSTDC_NO_DEPRECATE=1 /EHsc")
-add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)
-# Update compiler flags.
-IF (PROJECT_STATIC_RUNTIME)
-FOREACH(flag
-    CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_RELWITHDEBINFO
-    CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_DEBUG_INIT
-    CMAKE_CXX_FLAGS_RELEASE  CMAKE_CXX_FLAGS_RELWITHDEBINFO
-    CMAKE_CXX_FLAGS_DEBUG  CMAKE_CXX_FLAGS_DEBUG_INIT)
-STRING(REPLACE "/MD"  "/MT" "${flag}" "${${flag}}")
-ENDFOREACH()
-set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT /NODEFAULTLIB:MSVCRTD")
-set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT /NODEFAULTLIB:MSVCRTD")
-ENDIF ()
-ENDIF ()
-
 #Build
-
+message("Building CAO.exe")
 add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${HEADERS} ${QON_QM_FILES} ${UI} ${ICON_RC_PATH} ${QRC_PATH})
-target_link_libraries(Cathedral_Assets_Optimizer ${LIBS})
+target_link_libraries(Cathedral_Assets_Optimizer PRIVATE Qt5::Core Qt5::Widgets)
+target_link_libraries(Cathedral_Assets_Optimizer PRIVATE hkxcmd plog nif directxtex qlibbsarch)
 
 #Cotire (PCH)
 set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.h")
 cotire(Cathedral_Assets_Optimizer)
+
+#C++17
+target_compile_features(Cathedral_Assets_Optimizer PUBLIC cxx_std_17)
