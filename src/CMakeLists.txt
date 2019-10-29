@@ -25,6 +25,10 @@ set(CMAKE_AUTORCC ON)
 #Qt
 set(Qt5_DIR "C:/IT/Qt/5.12.4/msvc2017/lib/cmake/Qt5")
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+#Qt Linguist
+set(QtBin "C:/IT/Qt/5.12.4/msvc2017/lib/cmake/Qt5LinguistTools")
+find_package(Qt5LinguistTools)
+
 
 #Setting GUI
 #Comment out the next lines to create a CLI version instead (untested)
@@ -88,6 +92,19 @@ endif()
 set(ICON_RC_PATH "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc")
 set(QRC_PATH "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc")
 
+#Generate translations
+set(TS_FILES
+    translations/AssetsOpt_de.ts
+    translations/AssetsOpt_en.ts
+    translations/AssetsOpt_fr.ts
+    translations/AssetsOpt_ja.ts
+    )
+
+message("Updating translations files")
+qt5_create_translation(QM_FILES ${TS_FILES} ${SOURCES} ${HEADERS} ${UI})
+add_custom_target(Localization ALL DEPENDS ${QM_FILES})
+
+
 #plog
 message("Building Plog library")
 add_subdirectory(libs/plog)
@@ -109,7 +126,7 @@ add_compile_definitions(_WIN32_WINNT=_WIN32_WINNT_WIN7)
 
 #Build
 message("Building CAO.exe")
-add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${HEADERS} ${QON_QM_FILES} ${UI} ${ICON_RC_PATH} ${QRC_PATH})
+add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${HEADERS} ${QM_FILES} ${QON_QM_FILES} ${UI} ${ICON_RC_PATH} ${QRC_PATH})
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE Qt5::Core Qt5::Widgets)
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE hkxcmd plog nif directxtex qlibbsarch)
 
