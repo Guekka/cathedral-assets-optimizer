@@ -4,11 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "BSA.h"
-#include "FilesystemOperations.h"
-#include "Profiles.h"
-#include "TexturesOptimizer.h"
-#include "pch.h"
+#include "BSA.hpp"
+#include "FilesystemOperations.hpp"
+#include "Profiles.hpp"
+#include "TexturesOptimizer.hpp"
+#include "pch.hpp"
 
 /*!
  * \brief Manages BSA : extract and create them

@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Bsa.h"
-#include "pch.h"
+#include "Bsa.hpp"
+#include "pch.hpp"
 
 PACKED(struct PluginHeader {
     char type[4];

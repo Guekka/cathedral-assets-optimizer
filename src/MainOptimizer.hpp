@@ -4,11 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "AnimationsOptimizer.h"
-#include "BsaOptimizer.h"
-#include "MeshesOptimizer.h"
-#include "OptionsCAO.h"
-#include "TexturesOptimizer.h"
+#include "AnimationsOptimizer.hpp"
+#include "BsaOptimizer.hpp"
+#include "MeshesOptimizer.hpp"
+#include "OptionsCAO.hpp"
+#include "TexturesOptimizer.hpp"
 
 /*!
  * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations

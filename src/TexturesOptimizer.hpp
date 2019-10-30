@@ -4,10 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "FilesystemOperations.h"
-#include "PluginsOperations.h"
-#include "Profiles.h"
-#include "pch.h"
+#include "FilesystemOperations.hpp"
+#include "PluginsOperations.hpp"
+#include "Profiles.hpp"
+#include "pch.hpp"
 
 class TexturesOptimizer final : public QObject
 {

@@ -3,11 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "Version.h"
+#include "Version.hpp"
 #ifdef GUI
-#include "MainWindow.h"
+#include "MainWindow.hpp"
 #endif
-#include "Manager.h"
+#include "Manager.hpp"
 
 int main(int argc, char *argv[])
 {

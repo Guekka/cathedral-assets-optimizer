@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 3.12...3.15)
+include_guard(GLOBAL)
 
 project(Cathedral_Assets_Optimizer VERSION 3.0.7 LANGUAGES CXX)
 
+
 #Setting version for C++ files
 configure_file (
-    "${PROJECT_SOURCE_DIR}/Version.h.in"
-    "${PROJECT_SOURCE_DIR}/Version.h"
+    "${PROJECT_SOURCE_DIR}/Version.hpp.in"
+    "${PROJECT_SOURCE_DIR}/Version.hpp"
     )
 
 #Include Cotire
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 include(cotire)
 
 # Find includes in corresponding build directories
@@ -32,41 +34,43 @@ set(GUI true)
 
 set(SOURCES
     AnimationsOptimizer.cpp
-    AnimationsOptimizer.h
+    AnimationsOptimizer.hpp
     BSA.cpp
-    BSA.h
+    BSA.hpp
     BsaOptimizer.cpp
-    BsaOptimizer.h
+    BsaOptimizer.hpp
     FilesystemOperations.cpp
-    FilesystemOperations.h
-    Logger.h
+    FilesystemOperations.hpp
+    Logger.hpp
     MainOptimizer.cpp
-    MainOptimizer.h
+    MainOptimizer.hpp
     Manager.cpp
-    Manager.h
+    Manager.hpp
     MeshesOptimizer.cpp
-    MeshesOptimizer.h
+    MeshesOptimizer.hpp
     OptionsCAO.cpp
-    OptionsCAO.h
+    OptionsCAO.hpp
     PluginsOperations.cpp
-    PluginsOperations.h
+    PluginsOperations.hpp
     Profiles.cpp
-    Profiles.h
-    TexturesFormats.h
+    Profiles.hpp
+    TextureFile.cpp
+    TextureFile.hpp
+    TexturesFormats.hpp
     TexturesOptimizer.cpp
-    TexturesOptimizer.h
+    TexturesOptimizer.hpp
     main.cpp
-    pch.h
+    pch.hpp
     )
 
 #Ui
 if(GUI)
     list (APPEND SOURCES
         MainWindow.cpp
-        MainWindow.h
+        MainWindow.hpp
         MainWindow.ui
         TexturesFormatSelectDialog.cpp
-        TexturesFormatSelectDialog.h
+        TexturesFormatSelectDialog.hpp
         TexturesFormatSelectDialog.ui)
 endif()
 
@@ -121,7 +125,7 @@ target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     hkxcmd plog nif directxtex qlibbsarch)
 
 #Cotire (PCH)
-set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.h")
+set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.hpp")
 cotire(Cathedral_Assets_Optimizer)
 
 #C++17

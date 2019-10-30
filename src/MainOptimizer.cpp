@@ -3,10 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "MainOptimizer.h"
-#include "Profiles.h"
-#include "PluginsOperations.h"
-#include "TexturesOptimizer.h"
+#include "MainOptimizer.hpp"
+#include "Profiles.hpp"
+#include "PluginsOperations.hpp"
+#include "TexturesOptimizer.hpp"
 
 MainOptimizer::MainOptimizer(const OptionsCAO &optOptions)
     : _optOptions(optOptions)

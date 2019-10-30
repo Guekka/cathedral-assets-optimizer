@@ -7,7 +7,7 @@
 
 #pragma once
 #include "libs/plog/include/plog/Log.h"
-#include "pch.h"
+#include "pch.hpp"
 
 namespace plog
 {

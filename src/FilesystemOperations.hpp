@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.h"
+#include "pch.hpp"
 /*!
 \brief List of textures assets (dds)
 */

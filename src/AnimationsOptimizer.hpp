@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.h"
+#include "pch.hpp"
 
 /*!
  * \brief The AnimationsOptimizer class will handle all operations related to animations (hkx files)

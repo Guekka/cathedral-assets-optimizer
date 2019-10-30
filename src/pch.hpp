@@ -54,8 +54,8 @@
 /*----------------------*/
 
 /*---CUSTOM FILES-----*/
-#include "Logger.h"
-#include "TexturesFormats.h"
+#include "Logger.hpp"
+#include "TexturesFormats.hpp"
 #include "libs/DirectXTex/DirectXTex.h"
 #include "libs/NIF/NifFile.h"
 #include "libs/hkxcmd/hkfutils.h"

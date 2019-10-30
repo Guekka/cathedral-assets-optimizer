@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Profiles.h"
-#include "pch.h"
+#include "Profiles.hpp"
+#include "pch.hpp"
 #include "ui_mainWindow.h"
 
 /*

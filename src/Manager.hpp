@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "MainOptimizer.h"
-#include "pch.h"
+#include "MainOptimizer.hpp"
+#include "pch.hpp"
 
 class Manager final : public QObject
 {

@@ -4,9 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Manager.h"
-#include "TexturesFormatSelectDialog.h"
-#include "pch.h"
+#include "Manager.hpp"
+#include "TexturesFormatSelectDialog.hpp"
+#include "pch.hpp"
 #include "ui_mainWindow.h"
 
 namespace Ui

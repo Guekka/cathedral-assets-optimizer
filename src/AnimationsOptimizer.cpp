@@ -2,7 +2,7 @@
   * Stripped down version of this file https://github.com/aerisarn/ck-cmd/blob/master/src/commands/hkx/Convert.cpp
   */
 
-#include "AnimationsOptimizer.h"
+#include "AnimationsOptimizer.hpp"
 
 void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &pkFormat)
 {

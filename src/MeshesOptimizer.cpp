@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "MeshesOptimizer.h"
-#include "FilesystemOperations.h"
+#include "MeshesOptimizer.hpp"
+#include "FilesystemOperations.hpp"
 
 MeshesOptimizer::MeshesOptimizer(const bool &processHeadparts, const int &optimizationLevel, const bool &resaveMeshes)
     : bMeshesHeadparts(processHeadparts)

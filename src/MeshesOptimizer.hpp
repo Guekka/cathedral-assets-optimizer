@@ -4,9 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "PluginsOperations.h"
-#include "Profiles.h"
-#include "pch.h"
+#include "PluginsOperations.hpp"
+#include "Profiles.hpp"
+#include "pch.hpp"
 
 enum ScanResult
 {
