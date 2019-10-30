@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "MainOptimizer.hpp"
-#include "Profiles.hpp"
 #include "PluginsOperations.hpp"
+#include "Profiles.hpp"
 #include "TexturesOptimizer.hpp"
 
 MainOptimizer::MainOptimizer(const OptionsCAO &optOptions)
@@ -42,11 +42,11 @@ void MainOptimizer::addLandscapeTextures()
 void MainOptimizer::process(const QString &file)
 {
     if (file.endsWith(".dds", Qt::CaseInsensitive))
-        processTexture(file, TexturesOptimizer::DDS);
+        processTexture(file, TextureFile::TextureType::DDS);
     else if (file.endsWith(".nif", Qt::CaseInsensitive))
         processNif(file);
     else if (file.endsWith(".tga", Qt::CaseInsensitive) && Profiles::texturesConvertTga())
-        processTexture(file, TexturesOptimizer::TGA);
+        processTexture(file, TextureFile::TextureType::TGA);
     else if (file.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
         processBsa(file);
     else if (file.endsWith(".hkx", Qt::CaseInsensitive))
@@ -79,7 +79,7 @@ void MainOptimizer::packBsa(const QString &folder)
     }
 }
 
-void MainOptimizer::processTexture(const QString &file, const TexturesOptimizer::TextureType &type)
+void MainOptimizer::processTexture(const QString &file, const TextureFile::TextureType &type)
 {
     const bool processTextures = _optOptions.bTexturesMipmaps || _optOptions.bTexturesCompress
                                  || _optOptions.bTexturesNecessary || _optOptions.bTexturesResizeSize
@@ -126,18 +126,18 @@ void MainOptimizer::processTexture(const QString &file, const TexturesOptimizer:
             return;
         }
 
-        if (type == TexturesOptimizer::DDS && !_texturesOpt.modifiedCurrentTexture)
+        if (type == TextureFile::TextureType::DDS && !_texturesOpt.modifiedCurrentTexture)
             return; //Not saving if there wasn't any change
 
         //Saving to file
         QString newName = file;
-        if (type == TexturesOptimizer::TGA)
+        if (type == TextureFile::TextureType::TGA)
             newName = newName.chopped(4) + ".dds";
         if (!_texturesOpt.saveToFile(newName))
         {
             PLOG_ERROR << "Failed to optimize: " + file;
         }
-        else if (type == TexturesOptimizer::TGA)
+        else if (type == TextureFile::TextureType::TGA)
             QFile(file).remove();
     }
 }

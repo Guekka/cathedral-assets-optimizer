@@ -4,19 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "TexturesOptimizer.hpp"
-
-TexturesOptimizer::TexturesOptimizer()
-{
-    PLOG_WARNING_IF(!createDevice(0, _pDevice.GetAddressOf()))
-        << "DirectCompute is not available, using BC6H / BC7 CPU codec."
-           " Textures compression will be slower";
-
-    // Initialize COM (needed for WIC)
-    const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-
-    if (FAILED(hr))
-        throw std::runtime_error("Failed to initialize COM. Textures processing won't work.");
-}
+#include "TextureFile.hpp"
+TexturesOptimizer::TexturesOptimizer() {}
 
 void TexturesOptimizer::listLandscapeTextures(QDirIterator &it)
 {
@@ -37,117 +26,6 @@ void TexturesOptimizer::listLandscapeTextures(QDirIterator &it)
             tex.insert(tex.size() - 4, "_n");
 
     _landscapeTextures.removeDuplicates();
-}
-
-bool TexturesOptimizer::getDXGIFactory(IDXGIFactory1 **pFactory) const
-{
-    if (!pFactory)
-        return false;
-
-    *pFactory = nullptr;
-
-    typedef HRESULT(WINAPI * pfn_CreateDXGIFactory1)(REFIID riid, _Out_ void **ppFactory);
-
-    static pfn_CreateDXGIFactory1 sCreateDXGIFactory1 = nullptr;
-
-    if (!sCreateDXGIFactory1)
-    {
-        const HMODULE hModDXGI = LoadLibraryW(L"dxgi.dll");
-        if (!hModDXGI)
-            return false;
-
-        sCreateDXGIFactory1 = reinterpret_cast<pfn_CreateDXGIFactory1>(
-            reinterpret_cast<void *>(GetProcAddress(hModDXGI, "CreateDXGIFactory1")));
-        if (!sCreateDXGIFactory1)
-            return false;
-    }
-
-    return SUCCEEDED(sCreateDXGIFactory1(IID_PPV_ARGS(pFactory)));
-}
-
-bool TexturesOptimizer::createDevice(const int adapter, ID3D11Device **pDevice) const
-{
-    if (!pDevice)
-        return false;
-
-    *pDevice = nullptr;
-
-    static PFN_D3D11_CREATE_DEVICE s_DynamicD3D11CreateDevice = nullptr;
-
-    if (!s_DynamicD3D11CreateDevice)
-    {
-        const HMODULE hModD3D11 = LoadLibraryW(L"d3d11.dll");
-        if (!hModD3D11)
-            return false;
-
-        s_DynamicD3D11CreateDevice = reinterpret_cast<PFN_D3D11_CREATE_DEVICE>(
-            reinterpret_cast<void *>(GetProcAddress(hModD3D11, "D3D11CreateDevice")));
-        if (!s_DynamicD3D11CreateDevice)
-            return false;
-    }
-
-    D3D_FEATURE_LEVEL featureLevels[] = {
-        D3D_FEATURE_LEVEL_11_0,
-        D3D_FEATURE_LEVEL_10_1,
-        D3D_FEATURE_LEVEL_10_0,
-    };
-
-    const UINT createDeviceFlags = 0;
-
-    Microsoft::WRL::ComPtr<IDXGIAdapter> pAdapter;
-    if (adapter >= 0)
-    {
-        Microsoft::WRL::ComPtr<IDXGIFactory1> dxgiFactory;
-        if (getDXGIFactory(dxgiFactory.GetAddressOf()))
-        {
-            if (FAILED(dxgiFactory->EnumAdapters(static_cast<uint>(adapter), pAdapter.GetAddressOf())))
-            {
-                PLOG_ERROR << "ERROR: Invalid GPU adapter index: " << adapter;
-                return false;
-            }
-        }
-    }
-
-    D3D_FEATURE_LEVEL fl;
-    HRESULT hr = s_DynamicD3D11CreateDevice(pAdapter.Get(),
-                                            (pAdapter) ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE,
-                                            nullptr,
-                                            createDeviceFlags,
-                                            featureLevels,
-                                            _countof(featureLevels),
-                                            D3D11_SDK_VERSION,
-                                            pDevice,
-                                            &fl,
-                                            nullptr);
-    if (SUCCEEDED(hr))
-    {
-        if (fl < D3D_FEATURE_LEVEL_11_0)
-        {
-            D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS hwopts;
-            hr = (*pDevice)->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &hwopts, sizeof(hwopts));
-            if (FAILED(hr))
-                memset(&hwopts, 0, sizeof(hwopts));
-
-            if (!hwopts.ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x)
-            {
-                if (*pDevice)
-                {
-                    (*pDevice)->Release();
-                    *pDevice = nullptr;
-                }
-                hr = HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
-            }
-        }
-    }
-
-    if (SUCCEEDED(hr))
-    {
-        Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
-        hr = (*pDevice)->QueryInterface(IID_PPV_ARGS(dxgiDevice.GetAddressOf()));
-
-        return SUCCEEDED(hr);
-    }
-    return false;
 }
 
 TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const bool &bNecessary,
@@ -283,83 +161,6 @@ bool TexturesOptimizer::canBeCompressed() const
 {
     return !((_name.contains("interface", Qt::CaseInsensitive) && !Profiles::texturesCompressInterface())
              || DirectX::IsCompressed(_info.format) || _info.width < 4 || _info.height < 4);
-}
-
-bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
-{
-    PLOG_VERBOSE << "Opening " << filePath << " with textures type " << type;
-
-    wchar_t fileName[1024];
-    QDir::toNativeSeparators(filePath).toWCharArray(fileName);
-    fileName[filePath.length()] = '\0';
-
-    _image.reset(new (std::nothrow) DirectX::ScratchImage);
-    if (!_image)
-        return false;
-
-    modifiedCurrentTexture = false;
-
-    HRESULT hr = S_FALSE;
-    switch (type)
-    {
-    case TGA: hr = LoadFromTGAFile(fileName, &_info, *_image); break;
-    case DDS:
-        const DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
-        hr = LoadFromDDSFile(fileName, ddsFlags, &_info, *_image);
-        if (FAILED(hr))
-            return false;
-
-        if (DirectX::IsTypeless(_info.format))
-        {
-            _info.format = DirectX::MakeTypelessUNORM(_info.format);
-
-            if (DirectX::IsTypeless(_info.format))
-                return false;
-
-            _image->OverrideFormat(_info.format);
-        }
-    }
-    if (SUCCEEDED(hr))
-    {
-        _type = type;
-        _name = filePath;
-        return true;
-    }
-    return false;
-}
-
-bool TexturesOptimizer::open(const void *pSource, const size_t &size, const TextureType &type, const QString &fileName)
-{
-    PLOG_VERBOSE << "Opening " << fileName << " from memory with textures type " << type;
-    _name = fileName;
-
-    _image.reset(new (std::nothrow) DirectX::ScratchImage);
-    if (!_image)
-        return false;
-
-    modifiedCurrentTexture = false;
-
-    switch (type)
-    {
-    case TGA: return LoadFromTGAMemory(pSource, size, &_info, *_image);
-    case DDS:
-        const DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
-        const HRESULT hr = LoadFromDDSMemory(pSource, size, ddsFlags, &_info, *_image);
-        if (FAILED(hr))
-            return false;
-
-        if (DirectX::IsTypeless(_info.format))
-        {
-            _info.format = DirectX::MakeTypelessUNORM(_info.format);
-
-            if (DirectX::IsTypeless(_info.format))
-                return false;
-
-            _image->OverrideFormat(_info.format);
-        }
-        return true;
-    }
-    return false;
 }
 
 bool TexturesOptimizer::decompress()
@@ -658,22 +459,6 @@ bool TexturesOptimizer::convertWithCompression(const DXGI_FORMAT &format)
     _image.swap(timage);
     modifiedCurrentTexture = true;
     return true;
-}
-
-bool TexturesOptimizer::saveToFile(const QString &filePath) const
-{
-    const auto img = _image->GetImage(0, 0, 0);
-    if (!img)
-        return false;
-    const size_t nimg = _image->GetImageCount();
-
-    // Write texture
-    wchar_t wFilePath[1024];
-    QDir::toNativeSeparators(filePath).toWCharArray(wFilePath);
-    wFilePath[filePath.length()] = '\0';
-
-    const HRESULT hr = SaveToDDSFile(img, nimg, _info, DirectX::DDS_FLAGS_NONE, wFilePath);
-    return SUCCEEDED(hr);
 }
 
 bool TexturesOptimizer::isIncompatible() const

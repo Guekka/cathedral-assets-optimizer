@@ -11,23 +11,11 @@
 
 class TexturesOptimizer final : public QObject
 {
-    Q_DECLARE_TR_FUNCTIONS(TexturesOptimizer)
-
 public:
     TexturesOptimizer();
 
-    enum TextureType
-    {
-        DDS,
-        TGA
-    };
-
     void listLandscapeTextures(QDirIterator &it);
 
-    bool open(const void *pSource, const size_t &size, const TextureType &type, const QString &fileName);
-    bool open(const QString &filePath, const TextureType &type);
-
-    bool saveToFile(const QString &filePath) const;
     /*!
    * \brief Decompress the current texture. It is required to use several functions.
    * \return False if an error happens
@@ -102,15 +90,5 @@ public:
     bool modifiedCurrentTexture = false;
 
 private:
-    std::unique_ptr<DirectX::ScratchImage> _image{};
-    DirectX::TexMetadata _info{};
-    QString _name;
-    TextureType _type;
-
-    Microsoft::WRL::ComPtr<ID3D11Device> _pDevice;
-
-    bool createDevice(int adapter, ID3D11Device **pDevice) const;
-    bool getDXGIFactory(IDXGIFactory1 **pFactory) const;
-
     QStringList _landscapeTextures;
 };

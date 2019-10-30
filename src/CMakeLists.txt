@@ -41,6 +41,8 @@ set(SOURCES
     BsaOptimizer.hpp
     FilesystemOperations.cpp
     FilesystemOperations.hpp
+    ICommand.cpp
+    ICommand.hpp
     Logger.hpp
     MainOptimizer.cpp
     MainOptimizer.hpp
@@ -54,6 +56,8 @@ set(SOURCES
     PluginsOperations.hpp
     Profiles.cpp
     Profiles.hpp
+    TextureCompressionDevice.cpp
+    TextureCompressionDevice.hpp
     TextureFile.cpp
     TextureFile.hpp
     TexturesFormats.hpp
