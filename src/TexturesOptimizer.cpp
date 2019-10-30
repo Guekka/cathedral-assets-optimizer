@@ -157,8 +157,17 @@ TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const
                                                                            const std::optional<size_t> &tHeight)
 {
     TexOptOptionsResult result;
-    result.tWidth = tWidth.has_value() ? tWidth.value() : _info.width;
-    result.tHeight = tHeight.has_value() ? tHeight.value() : _info.height;
+    //Calculating target width and height
+
+    if (tWidth.has_value() && tHeight.has_value() && _info.width > tWidth.value() && _info.height > tHeight.value())
+    {
+        do
+        {
+            result.tWidth = _info.width / 2;
+            result.tHeight = _info.height / 2;
+        } while (result.tWidth > tWidth.value() && result.tHeight > tHeight.value());
+    }
+
     result.bNeedsResize = (bNecessary && !isPowerOfTwo())
                           || (result.tHeight != _info.height || result.tWidth != _info.width);
 
@@ -188,8 +197,8 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
         PLOG_VERBOSE << "This texture does not need optimization.";
         return true;
     }
-    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
+    //Decompressing
     if (isCompressed())
     {
         PLOG_VERBOSE << "Decompressing this texture.";
@@ -207,6 +216,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
     }
     options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
+    //Generating mipmaps
     if (options.bNeedsMipmaps)
     {
         PLOG_VERBOSE << "Generating mipmaps for this texture.";

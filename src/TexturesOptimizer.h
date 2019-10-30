@@ -76,6 +76,8 @@ public:
     bool canHaveMipMaps();
     size_t calculateOptimalMipMapsNumber() const;
 
+    bool convertLandscapeTextures();
+
     DirectX::TexMetadata getInfo() const;
 
     bool isIncompatible() const;
