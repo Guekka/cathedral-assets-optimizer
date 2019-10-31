@@ -6,7 +6,7 @@
 #include "BsaOptimizer.h"
 #include "PluginsOperations.h"
 
-BsaOptimizer::BsaOptimizer()
+BSAOptimizer::BSAOptimizer()
 {
     //Reading filesToNotPack to add them to the list.
     //Done in the constructor since the file won't change at runtime.
@@ -23,7 +23,7 @@ BsaOptimizer::BsaOptimizer()
     }
 }
 
-void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
+void BSAOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
 {
     bsaPath = backup(bsaPath);
 
@@ -32,7 +32,7 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
     try
     {
         BSArchiveAuto archive(*rootPath);
-        archive.setDDSCallback(&BsaOptimizer::DDSCallback, rootPath);
+        archive.setDDSCallback(&BSAOptimizer::DDSCallback, rootPath);
         archive.open(bsaPath);
         archive.extractAll(*rootPath, false);
     }
@@ -50,7 +50,7 @@ void BsaOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
 
-int BsaOptimizer::create(Bsa &bsa) const
+int BSAOptimizer::create(BSA &bsa) const
 {
     auto rootPath = new QString(QFileInfo(bsa.path).path());
     const QDir bsaDir(*rootPath);
@@ -65,7 +65,7 @@ int BsaOptimizer::create(Bsa &bsa) const
     BSArchiveAuto archive(*rootPath);
     archive.setShareData(true);
     archive.setCompressed(true);
-    archive.setDDSCallback(&BsaOptimizer::DDSCallback, rootPath);
+    archive.setDDSCallback(&BSAOptimizer::DDSCallback, rootPath);
 
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
     for (const auto &file : bsa.files)
@@ -112,13 +112,13 @@ int BsaOptimizer::create(Bsa &bsa) const
     return 0;
 }
 
-void BsaOptimizer::packAll(const QString &folderPath) const
+void BSAOptimizer::packAll(const QString &folderPath) const
 {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
-    QVector<Bsa> bsas;
+    QVector<BSA> bsas;
     bsas.reserve(10000);
-    bsas << Bsa::getBsa(StandardBsa) << Bsa::getBsa(UncompressableBsa) << Bsa::getBsa(TexturesBsa);
+    bsas << BSA::getBsa(StandardBsa) << BSA::getBsa(UncompressableBsa) << BSA::getBsa(TexturesBsa);
 
     auto *standardBsa = &bsas[0];
     auto *uncompressableBsa = &bsas[1];
@@ -136,7 +136,7 @@ void BsaOptimizer::packAll(const QString &folderPath) const
                                && Profiles::hasBsaTextures();
         const bool isUncompressable = uncompressableAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive);
 
-        Bsa **pBsa = isTexture ? &texturesBsa : &standardBsa;
+        BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
         pBsa = isUncompressable ? &uncompressableBsa : pBsa;
 
         //adding files and sizes to list
@@ -145,22 +145,22 @@ void BsaOptimizer::packAll(const QString &folderPath) const
 
         if ((*pBsa)->filesSize >= (*pBsa)->maxSize)
         {
-            bsas << Bsa::getBsa((*pBsa)->type);
+            bsas << BSA::getBsa((*pBsa)->type);
             *pBsa = &bsas.last();
         }
     }
 
     //Merging BSAs that can be merged
-    Bsa::mergeBsas(bsas);
+    BSA::mergeBsas(bsas);
 
     for (int i = 0; i < bsas.size(); ++i)
     {
-        Bsa::nameBsa({&bsas[i]}, folderPath);
+        BSA::nameBsa({&bsas[i]}, folderPath);
         create(bsas[i]);
     }
 }
 
-QString BsaOptimizer::backup(const QString &bsaPath) const
+QString BSAOptimizer::backup(const QString &bsaPath) const
 {
     QFile bsaBackupFile(bsaPath + ".bak");
     const QFile bsaFile(bsaPath);
@@ -182,7 +182,7 @@ QString BsaOptimizer::backup(const QString &bsaPath) const
     return bsaBackupFile.fileName();
 }
 
-bool BsaOptimizer::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo) const
+bool BSAOptimizer::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo) const
 {
     if (fileinfo.isDir())
         return true;
@@ -200,7 +200,7 @@ bool BsaOptimizer::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo) 
     return false;
 }
 
-bool BsaOptimizer::canBeCompressedFile(const QString &filename)
+bool BSAOptimizer::canBeCompressedFile(const QString &filename)
 {
     const bool cantBeCompressed = (filename.endsWith(".wav", Qt::CaseInsensitive)
                                    || filename.endsWith(".xwm", Qt::CaseInsensitive)
@@ -208,7 +208,7 @@ bool BsaOptimizer::canBeCompressedFile(const QString &filename)
     return !cantBeCompressed;
 }
 
-void BsaOptimizer::DDSCallback([[maybe_unused]] bsa_archive_t archive,
+void BSAOptimizer::DDSCallback([[maybe_unused]] bsa_archive_t archive,
                                const wchar_t *file_path,
                                bsa_dds_info_t *dds_info,
                                void *context)

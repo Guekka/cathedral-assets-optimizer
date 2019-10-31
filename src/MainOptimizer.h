@@ -34,7 +34,7 @@ private:
 
     OptionsCAO _optOptions;
 
-    BsaOptimizer _bsaOpt;
+    BSAOptimizer _bsaOpt;
     MeshesOptimizer _meshesOpt;
     AnimationsOptimizer _animOpt;
     TexturesOptimizer _texturesOpt;

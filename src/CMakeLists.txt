@@ -35,8 +35,8 @@ set(SOURCES
     AnimationsOptimizer.h
     BSA.cpp
     BSA.h
-    BsaOptimizer.cpp
-    BsaOptimizer.h
+    BSAOptimizer.cpp
+    BSAOptimizer.h
     FilesystemOperations.cpp
     FilesystemOperations.h
     Logger.h
