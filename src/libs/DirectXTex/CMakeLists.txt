@@ -57,4 +57,4 @@ if ( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
 endif()
 
 # Windows 10 is used here to build the DirectX 12 code paths as well as 11
-add_compile_definitions(_UNICODE UNICODE _WIN32_WINNT=0x0A00)
+#target_compile_definitions(directxtex PRIVATE _UNICODE UNICODE _WIN32_WINNT=0x0A00)
