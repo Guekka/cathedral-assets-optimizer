@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "OptionsCAO.hpp"
-
+namespace CAO {
 OptionsCAO::OptionsCAO()
     : mutex(new QMutex)
 {
@@ -178,10 +178,10 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
     ui->meshesGroupBox->setChecked(true);
     switch (iMeshesOptimizationLevel)
     {
-    case 0: ui->meshesGroupBox->setChecked(false); break;
-    case 1: ui->meshesNecessaryOptimizationRadioButton->setChecked(true); break;
-    case 2: ui->meshesMediumOptimizationRadioButton->setChecked(true); break;
-    case 3: ui->meshesFullOptimizationRadioButton->setChecked(true); break;
+        case 0: ui->meshesGroupBox->setChecked(false); break;
+        case 1: ui->meshesNecessaryOptimizationRadioButton->setChecked(true); break;
+        case 2: ui->meshesMediumOptimizationRadioButton->setChecked(true); break;
+        case 3: ui->meshesFullOptimizationRadioButton->setChecked(true); break;
     }
 
     ui->meshesResaveCheckBox->setChecked(bMeshesResave);
@@ -357,3 +357,4 @@ QString OptionsCAO::isValid() const
 
     return QString();
 }
+} // namespace CAO

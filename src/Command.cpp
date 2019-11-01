@@ -2,13 +2,14 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-#pragma once
 
-#include "pch.hpp"
+#include "Command.hpp"
 
-class IFile
+namespace CAO {
+int Command::processIfApplicable(File &file, const OptionsCAO &options)
 {
-public:
-    virtual QString getName() = 0;
-    virtual ~IFile();
-};
+    if (isApplicable(file, options))
+        return process(file, options);
+    return 0;
+}
+} // namespace CAO

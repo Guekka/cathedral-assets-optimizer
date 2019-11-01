@@ -9,8 +9,7 @@
 #include "libs/plog/include/plog/Log.h"
 #include "pch.hpp"
 
-namespace plog
-{
+namespace plog {
 class CustomDebugFormatter
 {
 public:
@@ -28,13 +27,13 @@ public:
 
         switch (record.getSeverity())
         {
-        case none: break;
-        case fatal: color = L"<font color=DarkRed>"; break;
-        case error: color = L"<font color=Red>"; break;
-        case warning: color = L"<font color=Orange>"; break;
-        case info: color = L"<font color=Green>"; break;
-        case debug: color = L"<font color=Blue>"; break;
-        case verbose: color = L"<font color=Purple>"; break;
+            case none: break;
+            case fatal: color = L"<font color=DarkRed>"; break;
+            case error: color = L"<font color=Red>"; break;
+            case warning: color = L"<font color=Orange>"; break;
+            case info: color = L"<font color=Green>"; break;
+            case debug: color = L"<font color=Blue>"; break;
+            case verbose: color = L"<font color=Purple>"; break;
         }
 
         tm t;
@@ -75,13 +74,13 @@ public:
 
         switch (record.getSeverity())
         {
-        case none: break;
-        case fatal: color = L"<font color=DarkRed>"; break;
-        case error: color = L"<font color=Red>"; break;
-        case warning: color = L"<font color=Orange>"; break;
-        case info: color = L"<font color=Green>"; break;
-        case debug: color = L"<font color=Blue>"; break;
-        case verbose: color = L"<font color=Purple>"; break;
+            case none: break;
+            case fatal: color = L"<font color=DarkRed>"; break;
+            case error: color = L"<font color=Red>"; break;
+            case warning: color = L"<font color=Orange>"; break;
+            case info: color = L"<font color=Green>"; break;
+            case debug: color = L"<font color=Blue>"; break;
+            case verbose: color = L"<font color=Purple>"; break;
         }
 
         tm t;
@@ -104,7 +103,7 @@ public:
     }
 };
 } // namespace plog
-
+namespace CAO {
 inline void initCustomLogger(const QString &logPath, const bool &debugLog)
 {
     //Cancelling if logger is already ready
@@ -126,3 +125,4 @@ inline void initCustomLogger(const QString &logPath, const bool &debugLog)
     else
         plog::init<plog::CustomInfoFormatter>(plog::Severity::info, qPrintable(logPath));
 }
+} // namespace CAO

@@ -5,8 +5,9 @@
 
 #include "MainWindow.hpp"
 
+namespace CAO {
 MainWindow::MainWindow()
-    : _ui(new Ui::MainWindow)
+    : _ui(new ::Ui::MainWindow)
 {
     _ui->setupUi(this);
     setAcceptDrops(true);
@@ -489,3 +490,4 @@ MainWindow::~MainWindow()
 {
     delete _ui;
 }
+} // namespace CAO

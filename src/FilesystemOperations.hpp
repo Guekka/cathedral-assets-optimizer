@@ -5,6 +5,7 @@
 #pragma once
 
 #include "pch.hpp"
+namespace CAO {
 /*!
 \brief List of textures assets (dds)
 */
@@ -55,3 +56,4 @@ public:
 
     static QStringList listPlugins(QDirIterator &it);
 };
+} // namespace CAO

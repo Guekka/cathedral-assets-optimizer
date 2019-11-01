@@ -4,6 +4,7 @@
 
 #include "AnimationsOptimizer.hpp"
 
+namespace CAO {
 void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &pkFormat)
 {
     std::call_once(onceFlag, [this] {
@@ -53,3 +54,4 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
         QFile::rename(tempHkx, filePath);
     }
 }
+} // namespace CAO

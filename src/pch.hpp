@@ -26,6 +26,7 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QTranslator>
+#include <QVector>
 #include <QtConcurrent/QtConcurrent>
 #include <QtMath>
 /*----------------------*/
@@ -45,6 +46,7 @@
 /*----------------------*/
 
 /*--STD-----------------*/
+#include <any>
 #include <fstream>
 #include <optional>
 /*----------------------*/
@@ -55,7 +57,7 @@
 
 /*---CUSTOM FILES-----*/
 #include "Logger.hpp"
-#include "TexturesFormats.hpp"
+#include "Textures/TextureFormats.hpp"
 #include "libs/DirectXTex/DirectXTex.h"
 #include "libs/NIF/NifFile.h"
 #include "libs/hkxcmd/hkfutils.h"

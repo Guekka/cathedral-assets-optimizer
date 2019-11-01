@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "TextureCompressionDevice.hpp"
 
+namespace CAO {
 TextureCompressionDevice::TextureCompressionDevice()
 {
     PLOG_WARNING_IF(!createDevice(0, _pDevice.GetAddressOf()))
@@ -11,9 +12,9 @@ TextureCompressionDevice::TextureCompressionDevice()
            " Textures compression will be slower";
 }
 
-Microsoft::WRL::ComPtr<ID3D11Device> TextureCompressionDevice::getDevice() const
+ID3D11Device *TextureCompressionDevice::getDevice() const
 {
-    return _pDevice;
+    return _pDevice.Get();
 }
 
 bool TextureCompressionDevice::isValid() const
@@ -136,3 +137,4 @@ bool TextureCompressionDevice::createDevice(const int adapter, ID3D11Device **pD
     }
     return false;
 }
+} // namespace CAO

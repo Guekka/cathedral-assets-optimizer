@@ -6,17 +6,9 @@
 
 #include "Profiles.hpp"
 #include "pch.hpp"
-#include "ui_mainWindow.h"
+#include "GUI/ui_mainWindow.h"
 
-/*
-namespace plog
-{
-    Record& operator<<(Record& record, const OptionsCAO& opt)
-    {
-
-    }
-}*/
-
+namespace CAO {
 class OptionsCAO final : public QObject
 {
 public:
@@ -85,3 +77,4 @@ public:
 private:
     QMutex *mutex;
 };
+} // namespace CAO

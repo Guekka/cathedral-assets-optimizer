@@ -6,8 +6,8 @@
 #include "MainOptimizer.hpp"
 #include "PluginsOperations.hpp"
 #include "Profiles.hpp"
-#include "TexturesOptimizer.hpp"
 
+namespace CAO {
 MainOptimizer::MainOptimizer(const OptionsCAO &optOptions)
     : _optOptions(optOptions)
     , _meshesOpt(
@@ -42,12 +42,12 @@ void MainOptimizer::addLandscapeTextures()
 void MainOptimizer::process(const QString &file)
 {
     if (file.endsWith(".dds", Qt::CaseInsensitive))
-        processTexture(file, TextureFile::TextureType::DDS);
+        processTexture(file);
     else if (file.endsWith(".nif", Qt::CaseInsensitive))
         processNif(file);
-    else if (file.endsWith(".tga", Qt::CaseInsensitive) && Profiles::texturesConvertTga())
-        processTexture(file, TextureFile::TextureType::TGA);
-    else if (file.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
+    else if (file.endsWith(".tga") && CAO::Profiles::texturesConvertTga())
+        processTexture(file);
+    else if (file.endsWith(CAO::Profiles::bsaExtension(), Qt::CaseInsensitive))
         processBsa(file);
     else if (file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
@@ -79,7 +79,7 @@ void MainOptimizer::packBsa(const QString &folder)
     }
 }
 
-void MainOptimizer::processTexture(const QString &file, const TextureFile::TextureType &type)
+void MainOptimizer::processTexture(const QString &file)
 {
     const bool processTextures = _optOptions.bTexturesMipmaps || _optOptions.bTexturesCompress
                                  || _optOptions.bTexturesNecessary || _optOptions.bTexturesResizeSize
@@ -87,59 +87,28 @@ void MainOptimizer::processTexture(const QString &file, const TextureFile::Textu
     if (!processTextures)
         return;
 
-    if (!_texturesOpt.open(file, type))
+    if (!_textureFile.loadFromDisk(file))
     {
         PLOG_ERROR << "Failed to open: " << file;
         return;
     }
 
-    //Resizing
-    std::optional<size_t> width;
-    std::optional<size_t> height;
+    for (auto &command : commandBook.getTextureCommands())
+        command->processIfApplicable(_textureFile, _optOptions);
 
-    if (_optOptions.bTexturesResizeRatio)
+    if (!_textureFile.modifiedCurrentFile())
+        return;
+
+    //Saving to file
+    QString newName = file;
+    if (_textureFile.isTGA())
+        newName = newName.chopped(4) + ".dds";
+    if (_textureFile.saveToDisk(newName))
     {
-        width = _texturesOpt.getInfo().width / _optOptions.iTexturesTargetWidthRatio;
-        height = _texturesOpt.getInfo().height / _optOptions.iTexturesTargetHeightRatio;
+        PLOG_ERROR << "Failed to optimize: " + file;
     }
-    else if (_optOptions.bTexturesResizeSize)
-    {
-        width = _optOptions.iTexturesTargetWidth;
-        height = _optOptions.iTexturesTargetHeight;
-    }
-
-    if (_optOptions.bDryRun)
-        _texturesOpt.dryOptimize(_optOptions.bTexturesNecessary,
-                                 _optOptions.bTexturesCompress,
-                                 _optOptions.bTexturesMipmaps,
-                                 width,
-                                 height);
-    else
-    {
-        if (!_texturesOpt.optimize(_optOptions.bTexturesNecessary,
-                                   _optOptions.bTexturesCompress,
-                                   _optOptions.bTexturesMipmaps,
-                                   width,
-                                   height))
-        {
-            PLOG_ERROR << "Failed to optimize: " + file;
-            return;
-        }
-
-        if (type == TextureFile::TextureType::DDS && !_texturesOpt.modifiedCurrentTexture)
-            return; //Not saving if there wasn't any change
-
-        //Saving to file
-        QString newName = file;
-        if (type == TextureFile::TextureType::TGA)
-            newName = newName.chopped(4) + ".dds";
-        if (!_texturesOpt.saveToFile(newName))
-        {
-            PLOG_ERROR << "Failed to optimize: " + file;
-        }
-        else if (type == TextureFile::TextureType::TGA)
-            QFile(file).remove();
-    }
+    else if (_textureFile.isTGA())
+        QFile(file).remove();
 }
 
 void MainOptimizer::processHkx(const QString &file)
@@ -150,7 +119,7 @@ void MainOptimizer::processHkx(const QString &file)
     if (_optOptions.bAnimationsOptimization && _optOptions.bDryRun)
         PLOG_INFO << file + " would be converted to the appropriate format.";
     else if (_optOptions.bAnimationsOptimization)
-        _animOpt.convert(file, Profiles::animationFormat());
+        _animOpt.convert(file, CAO::Profiles::animationFormat());
 }
 
 void MainOptimizer::processNif(const QString &file)
@@ -163,3 +132,4 @@ void MainOptimizer::processNif(const QString &file)
     else if (_optOptions.iMeshesOptimizationLevel >= 1 && !_optOptions.bDryRun)
         _meshesOpt.optimize(file);
 }
+} // namespace CAO

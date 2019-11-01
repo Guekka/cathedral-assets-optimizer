@@ -3,11 +3,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "TexturesFormatSelectDialog.hpp"
-#include "ui_TexturesFormatSelectDialog.h"
+#include "GUI/ui_TexturesFormatSelectDialog.h"
 
+namespace CAO {
 TexturesFormatSelectDialog::TexturesFormatSelectDialog(QWidget *parent)
     : QDialog(parent)
-    , _ui(new Ui::TexturesFormatSelectDialog)
+    , _ui(new ::Ui::TexturesFormatSelectDialog)
 {
     _ui->setupUi(this);
 
@@ -60,4 +61,4 @@ TexturesFormatSelectDialog::~TexturesFormatSelectDialog()
 {
     delete _ui;
 }
-
+} // namespace CAO

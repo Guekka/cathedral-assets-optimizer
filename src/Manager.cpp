@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "Manager.hpp"
-
+namespace CAO {
 Manager::Manager(OptionsCAO &opt)
     : _options(opt)
 
@@ -78,13 +78,17 @@ void Manager::listFiles()
         {
             it.next();
 
+            if (it.fileInfo().size() == 0)
+                continue;
+
             const bool mesh = it.fileName().endsWith(".nif", Qt::CaseInsensitive);
             const bool textureDDS = it.fileName().endsWith(".dds", Qt::CaseInsensitive);
             const bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
             const bool animation = _options.bAnimationsOptimization
                                    && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            const bool bsa = _options.bBsaExtract && it.fileName().endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive);
+            const bool bsa = _options.bBsaExtract
+                             && it.fileName().endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive);
 
             auto addToList = [&](QStringList &list) {
                 ++_numberFiles;
@@ -155,3 +159,4 @@ void Manager::runOptimization()
     PLOG_INFO << "Process completed<br><br><br>";
     emit end();
 }
+} // namespace CAO

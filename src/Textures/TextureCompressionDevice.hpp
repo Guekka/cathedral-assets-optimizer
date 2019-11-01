@@ -6,16 +6,17 @@
 
 #include "pch.hpp"
 
+namespace CAO {
 class TextureCompressionDevice
 {
 public:
     TextureCompressionDevice();
-    virtual ~TextureCompressionDevice();
+    ~TextureCompressionDevice() = default;
 
     explicit operator bool() const;
     bool isValid() const;
 
-    Microsoft::WRL::ComPtr<ID3D11Device> getDevice() const;
+    ID3D11Device *getDevice() const;
 
 protected:
     Microsoft::WRL::ComPtr<ID3D11Device> _pDevice;
@@ -24,3 +25,4 @@ private:
     bool createDevice(int adapter, ID3D11Device **pDevice) const;
     bool getDXGIFactory(IDXGIFactory1 **pFactory) const;
 };
+} // namespace CAO

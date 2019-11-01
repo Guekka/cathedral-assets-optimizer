@@ -6,11 +6,12 @@
 
 #include "AnimationsOptimizer.hpp"
 #include "BsaOptimizer.hpp"
+#include "CommandBook.hpp"
 #include "MeshesOptimizer.hpp"
 #include "OptionsCAO.hpp"
-#include "TextureFile.hpp"
-#include "TexturesOptimizer.hpp"
+#include "Textures/TextureFile.hpp"
 
+namespace CAO {
 /*!
  * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
  */
@@ -30,13 +31,15 @@ private:
 
     void processBsa(const QString &file) const;
     void processNif(const QString &file);
-    void processTexture(const QString &file, const TextureFile::TextureType &type);
+    void processTexture(const QString &file);
     void processHkx(const QString &file);
 
     OptionsCAO _optOptions;
 
-    BsaOptimizer _bsaOpt;
+    BSAOptimizer _bsaOpt;
     MeshesOptimizer _meshesOpt;
     AnimationsOptimizer _animOpt;
-    TexturesOptimizer _texturesOpt;
+    TextureFile _textureFile;
+    CommandBook commandBook;
 };
+} // namespace CAO

@@ -5,7 +5,7 @@
 
 #include "MeshesOptimizer.hpp"
 #include "FilesystemOperations.hpp"
-
+namespace CAO {
 MeshesOptimizer::MeshesOptimizer(const bool &processHeadparts, const int &optimizationLevel, const bool &resaveMeshes)
     : bMeshesHeadparts(processHeadparts)
     , bMeshesResave(resaveMeshes)
@@ -234,3 +234,4 @@ bool MeshesOptimizer::saveMesh(NifFile &nif, const QString &filepath) const
     }
     return true;
 }
+} // namespace CAO

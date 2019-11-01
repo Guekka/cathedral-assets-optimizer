@@ -5,9 +5,11 @@
 
 #include "Version.hpp"
 #ifdef GUI
-#include "MainWindow.hpp"
+#include "GUI/MainWindow.hpp"
 #endif
 #include "Manager.hpp"
+
+using namespace CAO;
 
 int main(int argc, char *argv[])
 {

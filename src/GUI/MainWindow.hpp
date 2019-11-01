@@ -4,15 +4,15 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "GUI/ui_mainWindow.h"
 #include "Manager.hpp"
 #include "TexturesFormatSelectDialog.hpp"
 #include "pch.hpp"
-#include "ui_mainWindow.h"
 
-namespace Ui
-{
+namespace Ui {
 class MainWindow;
 }
+namespace CAO {
 
 class MainWindow final : public QMainWindow
 {
@@ -23,7 +23,7 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *_ui;
+    ::Ui::MainWindow *_ui;
 
     bool _bLockVariables = false;
 
@@ -62,3 +62,4 @@ private:
     bool _showTutorials;
     TexturesFormatSelectDialog *texturesFormatDialog;
 };
+} // namespace CAO

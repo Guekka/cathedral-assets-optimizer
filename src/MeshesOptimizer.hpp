@@ -7,7 +7,7 @@
 #include "PluginsOperations.hpp"
 #include "Profiles.hpp"
 #include "pch.hpp"
-
+namespace CAO {
 enum ScanResult
 {
     doNotProcess = -1,
@@ -59,3 +59,4 @@ private:
     bool bMeshesResave;
     int iMeshesOptimizationLevel;
 };
+} // namespace CAO

@@ -4,9 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Bsa.hpp"
+#include "BSA.hpp"
 #include "pch.hpp"
-
+namespace CAO {
 PACKED(struct PluginHeader {
     char type[4];
     uint32_t groupSize;
@@ -60,7 +60,7 @@ public:
    * \param bsaType The type of BSA to load.
    * \return a QString containing the name of the plugin. If no plugin is found, it will return the name of the directory.
    */
-    static QString findPlugin(const QString &folderPath, const BsaType &bsaType);
+    static QString findPlugin(const QString &folderPath, const BSAType &bsaType);
     /*!
    * \brief Create enough plugins to load all BSAs
    * \param folderPath The folder to create plugins into
@@ -80,3 +80,4 @@ public:
 
     static QStringList listLandscapeTextures(const QString &filepath);
 };
+} // namespace CAO

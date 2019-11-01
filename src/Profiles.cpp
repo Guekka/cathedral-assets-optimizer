@@ -5,6 +5,7 @@
 #include "Profiles.hpp"
 #include "Manager.hpp"
 
+namespace CAO {
 const QString defaultProfile = "SSE";
 
 Profiles *Profiles::_instance;
@@ -247,3 +248,12 @@ Profiles &Profiles::getInstance()
 
     return *_instance;
 }
+
+QList<DXGI_FORMAT> Profiles::texturesUnwantedFormats()
+{
+    QList<DXGI_FORMAT> list;
+    for (const QVariant &variant : getInstance()._texturesUnwantedFormats)
+        list << variant.value<DXGI_FORMAT>();
+    return list;
+}
+} // namespace CAO

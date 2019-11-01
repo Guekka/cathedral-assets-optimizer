@@ -6,7 +6,7 @@
 
 #include "MainOptimizer.hpp"
 #include "pch.hpp"
-
+namespace CAO {
 class Manager final : public QObject
 {
     Q_OBJECT
@@ -83,3 +83,4 @@ signals:
     void progressBarTextChanged(QString, int, int);
     void end();
 };
+} // namespace CAO

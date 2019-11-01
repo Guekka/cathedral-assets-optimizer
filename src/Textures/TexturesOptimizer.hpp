@@ -31,8 +31,7 @@ public:
    * \brief Compress the file using the provided compression format,
    * \param format The format to use
    */
-    bool convertWithCompression(const DXGI_FORMAT &format);
-    bool convertWithoutCompression(const DXGI_FORMAT &format);
+
     /*!
    * \brief Check if a texture is compressed
    * \return True if the file is compressed
@@ -62,7 +61,6 @@ public:
 
     bool generateMipMaps();
     bool canHaveMipMaps();
-    size_t calculateOptimalMipMapsNumber() const;
 
     bool convertLandscapeTextures();
 

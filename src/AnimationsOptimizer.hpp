@@ -6,6 +6,7 @@
 
 #include "pch.hpp"
 
+namespace CAO {
 /*!
  * \brief The AnimationsOptimizer class will handle all operations related to animations (hkx files)
  */
@@ -26,3 +27,4 @@ private:
     bool hkxcmdFound = false;
     std::once_flag onceFlag;
 };
+} // namespace CAO

@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "PluginsOperations.hpp"
-
+namespace CAO {
 void PluginsOperations::makeDummyPlugins(const QString &folderPath)
 {
     PLOG_VERBOSE << "Creating enough dummy plugins to load BSAs";
@@ -35,7 +35,7 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
     }
 }
 
-QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &bsaType)
+QString PluginsOperations::findPlugin(const QString &folderPath, const BSAType &bsaType)
 {
     QDirIterator it(folderPath);
     QStringList espName;
@@ -67,7 +67,8 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &
     {
         for (const auto &esp : espName)
         {
-            const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaTexturesSuffix()).exists()
+            const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaTexturesSuffix())
+                                              .exists()
                                          && bsaType == TexturesBsa;
 
             const bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaSuffix()).exists()
@@ -266,3 +267,4 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
 
     return finalTextures;
 }
+} // namespace CAO

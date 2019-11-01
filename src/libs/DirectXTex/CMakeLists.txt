@@ -12,10 +12,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
-
 add_library (directxtex STATIC
     BC.h
     BCDirectCompute.h
@@ -33,7 +29,6 @@ add_library (directxtex STATIC
     DirectXTexCompressGPU.cpp
     DirectXTexConvert.cpp
     DirectXTexD3D11.cpp
-    DirectXTexD3D12.cpp
     DirectXTexDDS.cpp
     DirectXTexFlipRotate.cpp
     DirectXTexHDR.cpp
@@ -60,5 +55,4 @@ if ( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
     target_compile_options( directxtex PRIVATE /Wall /permissive- /Zc:__cplusplus )
 endif()
 
-# Windows 10 is used here to build the DirectX 12 code paths as well as 11
-add_compile_definitions(_UNICODE UNICODE _WIN32_WINNT=0x0A00)
+target_compile_definitions(directxtex PRIVATE _UNICODE UNICODE _WIN32_WINNT=_WIN32_WINNT_WIN7)

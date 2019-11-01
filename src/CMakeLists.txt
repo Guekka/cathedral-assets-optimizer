@@ -31,7 +31,6 @@ add_compile_definitions(GUI)
 set(GUI true)
 
 #SOURCES
-
 set(SOURCES
     AnimationsOptimizer.cpp
     AnimationsOptimizer.hpp
@@ -41,8 +40,12 @@ set(SOURCES
     BsaOptimizer.hpp
     FilesystemOperations.cpp
     FilesystemOperations.hpp
-    ICommand.cpp
-    ICommand.hpp
+    Command.cpp
+    Command.hpp
+    CommandBook.cpp
+    CommandBook.hpp
+    File.cpp
+    File.hpp
     Logger.hpp
     MainOptimizer.cpp
     MainOptimizer.hpp
@@ -56,13 +59,21 @@ set(SOURCES
     PluginsOperations.hpp
     Profiles.cpp
     Profiles.hpp
-    TextureCompressionDevice.cpp
-    TextureCompressionDevice.hpp
-    TextureFile.cpp
-    TextureFile.hpp
-    TexturesFormats.hpp
-    TexturesOptimizer.cpp
-    TexturesOptimizer.hpp
+    Textures/TextureConvert.cpp
+    Textures/TextureConvert.hpp
+    Textures/TextureCompressionDevice.cpp
+    Textures/TextureCompressionDevice.hpp
+    Textures/TextureDecompress.cpp
+    Textures/TextureDecompress.hpp
+    Textures/TextureFile.cpp
+    Textures/TextureFile.hpp
+    Textures/TextureFormats.hpp
+    Textures/TextureGenerateMipmaps.cpp
+    Textures/TextureGenerateMipmaps.hpp
+    Textures/TextureResize.cpp
+    Textures/TextureResize.hpp
+ #   Textures/TexturesOptimizer.cpp
+  #  Textures/TexturesOptimizer.hpp
     main.cpp
     pch.hpp
     )
@@ -70,12 +81,12 @@ set(SOURCES
 #Ui
 if(GUI)
     list (APPEND SOURCES
-        MainWindow.cpp
-        MainWindow.hpp
-        MainWindow.ui
-        TexturesFormatSelectDialog.cpp
-        TexturesFormatSelectDialog.hpp
-        TexturesFormatSelectDialog.ui)
+        GUI/MainWindow.cpp
+        GUI/MainWindow.hpp
+        GUI/MainWindow.ui
+        GUI/TexturesFormatSelectDialog.cpp
+        GUI/TexturesFormatSelectDialog.hpp
+        GUI/TexturesFormatSelectDialog.ui)
 endif()
 
 #Icon and qrc
@@ -109,9 +120,6 @@ add_subdirectory(libs/NIF)
 #DirectXTex library
 message("Adding DirectXTex library")
 add_subdirectory("libs/DirectXTex")
-#Windows 7 compatibility
-add_compile_definitions(_WIN32_WINNT=_WIN32_WINNT_WIN7)
-
 
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)

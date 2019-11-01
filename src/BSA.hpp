@@ -6,50 +6,60 @@
 
 #include "Profiles.hpp"
 #include "pch.hpp"
-
-enum BsaType
+namespace CAO {
+enum BSAType
 {
     TexturesBsa = 0,
     StandardBsa,
     UncompressableBsa
 };
 
-struct Bsa
+struct BSA
 {
-    static Bsa getBsa(const BsaType &type);
+    static BSA getBsa(const BSAType &type);
 
     QString path;
     qint64 filesSize = 0;
     QStringList files;
     double maxSize = LONG_MAX;
-    BsaType type = StandardBsa;
+    BSAType type = StandardBsa;
     bsa_archive_type_t format;
 
-    Bsa &operator+(const Bsa &other);
-    Bsa &operator+=(const Bsa &other);
-    bool operator==(const Bsa &other);
+    BSA &operator+(const BSA &other);
+    BSA &operator+=(const BSA &other);
+    bool operator==(const BSA &other);
 
     /*!
      * \brief Finds a name for a BSA
      * \param bsa The BSA to name
      * \param folder The folder in which the BSA will be
      */
-    static void nameBsa(std::initializer_list<Bsa *> bsaList, const QString &folder);
+    static void nameBsa(std::initializer_list<BSA *> bsaList, const QString &folder);
     /*!
      * \brief Merges BSAs when possible, according to their max size
      * \param list The list of BSAs to merge
      * \return The number of merges done
      */
-    static size_t mergeBsas(QVector<Bsa> &list);
+    static size_t mergeBsas(QVector<BSA> &list);
 };
-
-namespace plog
+} // namespace CAO
+namespace plog {
+inline Record &operator<<(Record &record, const CAO::BSA &bsa)
 {
-    inline Record &operator<<(Record &record, const Bsa &bsa)
+    return record << "BSA Structure:\nPath: " + bsa.path + " \nUncompressed files size: "
+                  << (bsa.filesSize / CAO::GigaByte) << "Gb\nMax size: " << bsa.maxSize / CAO::GigaByte
+                  << "Gb\nType: " << bsa.type << "\nFormat: " << bsa.format
+                  << "\nNumber of files: " << bsa.files.size();
+}
+
+inline Record &operator<<(Record &record, const CAO::BSAType &type)
+{
+    switch (type)
     {
-        return record << "BSA Structure:\nPath: " + bsa.path + " \nUncompressed files size: "
-                      << (bsa.filesSize / GigaByte) << "Gb\nMax size: " << bsa.maxSize / GigaByte
-                      << "Gb\nType: " << bsa.type << "\nFormat: " << bsa.format
-                      << "\nNumber of files: " << bsa.files.size();
+        case CAO::StandardBsa: return record << "Standard BSA";
+        case CAO::UncompressableBsa: return record << "Uncompressable BSA";
+        case CAO::TexturesBsa: return record << "Textures BSA";
     }
+    return record << "Unknown BSA type";
+}
 } // namespace plog

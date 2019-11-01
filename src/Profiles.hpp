@@ -6,9 +6,15 @@
 
 #include "pch.hpp"
 #ifdef GUI
-#include "ui_mainWindow.h"
+#include "GUI/ui_mainWindow.h"
 #endif
 
+//Declaring enums to Qt system
+Q_DECLARE_METATYPE(::bsa_archive_type_e)
+Q_DECLARE_METATYPE(::DXGI_FORMAT)
+Q_DECLARE_METATYPE(::NiFileVersion)
+
+namespace CAO {
 constexpr double GigaByte = 1024 * 1024 * 1024;
 
 class Profiles final : public QObject
@@ -27,11 +33,6 @@ public:
     void saveToUi(Ui::MainWindow *ui);
     void readFromUi(Ui::MainWindow *ui);
 #endif
-
-    //Declaring enums to Qt system
-    Q_ENUM(bsa_archive_type_e)
-    Q_ENUM(NiFileVersion)
-    Q_ENUM(DXGI_FORMAT)
 
     //static getters
     [[nodiscard]] static bool isBaseProfile()
@@ -60,13 +61,7 @@ public:
     [[nodiscard]] static bool texturesEnabled() { return getInstance()._texturesEnabled; }
     [[nodiscard]] static DXGI_FORMAT texturesFormat() { return getInstance()._texturesFormat; }
     [[nodiscard]] static bool texturesConvertTga() { return getInstance()._texturesConvertTga; }
-    [[nodiscard]] static QList<DXGI_FORMAT> texturesUnwantedFormats()
-    {
-        QList<DXGI_FORMAT> list;
-        for (const QVariant &variant : getInstance()._texturesUnwantedFormats)
-            list << variant.value<DXGI_FORMAT>();
-        return list;
-    }
+    [[nodiscard]] static QList<DXGI_FORMAT> texturesUnwantedFormats();
 
     [[nodiscard]] static bool texturesCompressInterface() { return getInstance()._texturesCompressInterface; }
 
@@ -125,3 +120,4 @@ private:
     Profiles();
     void init();
 };
+} // namespace CAO

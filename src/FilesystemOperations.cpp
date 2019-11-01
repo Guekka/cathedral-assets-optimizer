@@ -5,7 +5,7 @@
 
 #include "FilesystemOperations.hpp"
 #include "PluginsOperations.hpp"
-
+namespace CAO {
 void FilesystemOperations::deleteEmptyDirectories(const QString &folderPath)
 {
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
@@ -178,3 +178,4 @@ QStringList FilesystemOperations::listPlugins(QDirIterator &it)
 
     return plugins;
 }
+} // namespace CAO
