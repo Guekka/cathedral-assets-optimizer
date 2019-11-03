@@ -16,9 +16,10 @@ public:
     {
         _type = CommandType::Texture;
         _priority = Medium;
+        _name = "Generate Mipmaps for Texture";
     }
 
-    int process(File &file, const OptionsCAO &options) override;
+    CommandResult process(File &file, const OptionsCAO &options) override;
     bool isApplicable(File &file, const OptionsCAO &options) override;
 
 protected:

@@ -94,7 +94,18 @@ void MainOptimizer::processTexture(const QString &file)
     }
 
     for (auto &command : commandBook.getTextureCommands())
-        command->processIfApplicable(_textureFile, _optOptions);
+    {
+        const auto &result = command->processIfApplicable(_textureFile, _optOptions);
+        if (result.processedFile)
+        {
+            PLOG_VERBOSE << QString("Successfully applied module '%1' while processing '%2'").arg(command->name(), file);
+        }
+        else if (result.errorCode)
+        {
+            PLOG_ERROR << QString("An error happened in module '%1' while processing '%2' with error code %3")
+                              .arg(command->name(), file, QString::number(result));
+        }
+    }
 
     if (!_textureFile.modifiedCurrentFile())
         return;
@@ -106,9 +117,12 @@ void MainOptimizer::processTexture(const QString &file)
     if (_textureFile.saveToDisk(newName))
     {
         PLOG_ERROR << "Failed to optimize: " + file;
+        return;
     }
     else if (_textureFile.isTGA())
         QFile(file).remove();
+
+    PLOG_INFO << "Successfully optimized " << file;
 }
 
 void MainOptimizer::processHkx(const QString &file)

@@ -6,10 +6,14 @@
 #include "Command.hpp"
 
 namespace CAO {
-int Command::processIfApplicable(File &file, const OptionsCAO &options)
+CommandResult Command::processIfApplicable(File &file, const OptionsCAO &options)
 {
+    CommandResult result;
+    result.processedFile = false;
+    result.errorCode = 0;
+
     if (isApplicable(file, options))
         return process(file, options);
-    return 0;
+    return result;
 }
 } // namespace CAO

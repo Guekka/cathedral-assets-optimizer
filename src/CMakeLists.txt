@@ -44,6 +44,8 @@ set(SOURCES
     Command.hpp
     CommandBook.cpp
     CommandBook.hpp
+    CommandResult.cpp
+    CommandResult.hpp
     File.cpp
     File.hpp
     Logger.hpp
@@ -72,8 +74,6 @@ set(SOURCES
     Textures/TextureGenerateMipmaps.hpp
     Textures/TextureResize.cpp
     Textures/TextureResize.hpp
- #   Textures/TexturesOptimizer.cpp
-  #  Textures/TexturesOptimizer.hpp
     main.cpp
     pch.hpp
     )

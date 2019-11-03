@@ -5,28 +5,28 @@
 #include "TextureConvert.hpp"
 
 namespace CAO {
-int TextureConvert::process(File &file, const OptionsCAO &options)
+CommandResult TextureConvert::process(File &file, const OptionsCAO &options)
 {
     auto texFile = dynamic_cast<TextureFile *>(&file);
     if (!texFile)
-        return 3;
+        return _resultFactory.getCannotCastFileResult();
 
     const auto &outputFormat = Profiles::texturesFormat();
+    auto timage = std::make_unique<DirectX::ScratchImage>();
 
-    std::any aTimage = new DirectX::ScratchImage;
-    DirectX::ScratchImage &timage = std::any_cast<DirectX::ScratchImage &>(aTimage);
-
-    int result = 1;
     if (DirectX::IsCompressed(outputFormat))
-        result = convertWithCompression(texFile->getFile(), timage, outputFormat);
+    {
+        if (auto result = convertWithCompression(texFile->getFile(), *timage, outputFormat))
+            return _resultFactory.getFailedResult(result, "Failed to convert with compression");
+    }
     else
-        result = convertWithoutCompression(texFile->getFile(), timage, outputFormat);
-
-    if (result)
-        return 1;
+    {
+        if (auto result = convertWithoutCompression(texFile->getFile(), *timage, outputFormat))
+            return _resultFactory.getFailedResult(result, "Failed to convert without compression");
+    }
 
     texFile->setFile(timage);
-    return 0;
+    return _resultFactory.getSuccessfulResult();
 }
 
 bool TextureConvert::isApplicable(File &file, const OptionsCAO &options)
@@ -35,9 +35,12 @@ bool TextureConvert::isApplicable(File &file, const OptionsCAO &options)
     if (!texFile)
         return false;
 
+    const DXGI_FORMAT fileFormat = texFile->getFile().GetMetadata().format;
+    if (DirectX::IsCompressed(fileFormat))
+        return false; //Cannot process compressed file
+
     //Checking incompatibility with file format
     const auto &unwantedFormats = Profiles::texturesUnwantedFormats();
-    const DXGI_FORMAT fileFormat = texFile->getFile().GetMetadata().format;
     const bool isIncompatible = unwantedFormats.contains(fileFormat);
 
     //Truely incompatible

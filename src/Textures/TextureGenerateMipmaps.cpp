@@ -5,11 +5,11 @@
 #include "TextureGenerateMipmaps.hpp"
 
 namespace CAO {
-int TextureGenerateMipmaps::process(File &file, const OptionsCAO &options)
+CommandResult TextureGenerateMipmaps::process(File &file, const OptionsCAO &options)
 {
     auto texFile = dynamic_cast<TextureFile *>(&file);
     if (!texFile)
-        return 3;
+        return _resultFactory.getCannotCastFileResult();
 
     const auto &image = texFile->getFile();
     const auto &info = image.GetMetadata();
@@ -25,7 +25,7 @@ int TextureGenerateMipmaps::process(File &file, const OptionsCAO &options)
         mdata.mipLevels = 1;
         HRESULT hr = timage->Initialize(mdata);
         if (FAILED(hr))
-            return 1;
+            return _resultFactory.getFailedResult(1, "Failed to initialize target image with source metadata");
 
         for (size_t i = 0; i < info.arraySize; ++i)
         {
@@ -37,7 +37,7 @@ int TextureGenerateMipmaps::process(File &file, const OptionsCAO &options)
                                0,
                                0);
             if (FAILED(hr))
-                return 1;
+                return _resultFactory.getFailedResult(1, "Failed to copy image to single level");
         }
     }
 
@@ -47,10 +47,10 @@ int TextureGenerateMipmaps::process(File &file, const OptionsCAO &options)
         = GenerateMipMaps(timage->GetImages(), timage->GetImageCount(), timage->GetMetadata(), filter, tMips, *timage2);
 
     if (FAILED(hr))
-        return 2;
+        return _resultFactory.getFailedResult(1, "Failed to generate mipmaps");
 
     texFile->setFile(timage2);
-    return 0;
+    return _resultFactory.getSuccessfulResult();
 }
 
 bool TextureGenerateMipmaps::isApplicable(File &file, const OptionsCAO &options)
@@ -62,13 +62,16 @@ bool TextureGenerateMipmaps::isApplicable(File &file, const OptionsCAO &options)
     if (!texFile)
         return false;
 
+    const DXGI_FORMAT fileFormat = texFile->getFile().GetMetadata().format;
+    if (DirectX::IsCompressed(fileFormat))
+        return false; //Cannot process compressed file
+
     const auto info = texFile->getFile().GetMetadata();
     const bool interfaceForbidden = false
                                     || (file.getName().contains("interface", Qt::CaseInsensitive)
                                         && !Profiles::texturesCompressInterface());
 
-    const bool compatible = !DirectX::IsCompressed(info.format) && info.width >= 4 && info.height >= 4;
-
+    const bool compatible = info.width >= 4 && info.height >= 4;
     const bool optimalMipMaps = info.mipLevels == calculateOptimalMipMapsNumber(info);
 
     return compatible && !interfaceForbidden && !optimalMipMaps;

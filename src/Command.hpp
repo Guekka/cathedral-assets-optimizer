@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "CommandResult.hpp"
 #include "File.hpp"
 #include "OptionsCAO.hpp"
 #include "Profiles.hpp"
@@ -29,18 +30,21 @@ public:
         VeryHigh
     };
 
-    virtual int process(File &file, const OptionsCAO &options) = 0;
+    virtual CommandResult process(File &file, const OptionsCAO &options) = 0;
 
-    [[nodiscard]] virtual bool isApplicable(File &file, const OptionsCAO &options) = 0;
-    int processIfApplicable(File &file, const OptionsCAO &options);
+    virtual bool isApplicable(File &file, const OptionsCAO &options) = 0;
+    CommandResult processIfApplicable(File &file, const OptionsCAO &options);
 
     Priority priority() { return _priority; }
     CommandType type() { return _type; }
+    QString name() { return _name; }
 
     virtual ~Command() = default;
 
 protected:
+    QString _name;
     Priority _priority = Low;
     CommandType _type = CommandType::Invalid;
+    CommandResultFactory _resultFactory;
 };
 } // namespace CAO

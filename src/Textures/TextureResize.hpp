@@ -16,9 +16,10 @@ public:
     {
         _type = CommandType::Texture;
         _priority = High;
+        _name = "Resize Texture";
     }
 
-    int process(File &file, const OptionsCAO &options) override;
+    CommandResult process(File &file, const OptionsCAO &options) override;
     bool isApplicable(File &file, const OptionsCAO &options) override;
 
 protected:

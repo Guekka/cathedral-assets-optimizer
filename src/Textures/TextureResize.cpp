@@ -5,11 +5,11 @@
 #include "TextureResize.hpp"
 
 namespace CAO {
-int TextureResize::process(File &file, const OptionsCAO &options)
+CommandResult TextureResize::process(File &file, const OptionsCAO &options)
 {
     auto texFile = dynamic_cast<TextureFile *>(&file);
     if (!texFile)
-        return 3;
+        return _resultFactory.getCannotCastFileResult();
 
     const auto &image = texFile->getFile();
     const auto &info = image.GetMetadata();
@@ -17,17 +17,17 @@ int TextureResize::process(File &file, const OptionsCAO &options)
     auto timage = std::make_unique<DirectX::ScratchImage>();
     const auto img = image.GetImages();
     if (!img)
-        return false;
+        return _resultFactory.getFailedResult(1, "Failed to get images from file");
 
     const auto &tinfo = calculateTargetDimensions(info, options);
 
     const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
     const HRESULT hr = Resize(img, image.GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
     if (FAILED(hr))
-        return 1;
+        return _resultFactory.getFailedResult(2, "Failed to resize image");
 
     texFile->setFile(timage);
-    return 0;
+    return _resultFactory.getSuccessfulResult();
 }
 
 bool TextureResize::isApplicable(File &file, const OptionsCAO &options)
@@ -38,6 +38,10 @@ bool TextureResize::isApplicable(File &file, const OptionsCAO &options)
     auto texFile = dynamic_cast<TextureFile *>(&file);
     if (!texFile)
         return false;
+
+    const DXGI_FORMAT fileFormat = texFile->getFile().GetMetadata().format;
+    if (DirectX::IsCompressed(fileFormat))
+        return false; //Cannot process compressed file
 
     const auto info = texFile->getFile().GetMetadata();
     const auto &tinfo = calculateTargetDimensions(info, options);

@@ -5,11 +5,11 @@
 #include "TextureDecompress.hpp"
 
 namespace CAO {
-int TextureDecompress::process(File &file, const OptionsCAO &options)
+CommandResult TextureDecompress::process(File &file, const OptionsCAO &options)
 {
     auto texFile = dynamic_cast<TextureFile *>(&file);
     if (!texFile)
-        return 3;
+        return _resultFactory.getCannotCastFileResult();
 
     const auto &image = texFile->getFile();
     const auto img = image.GetImages();
@@ -19,11 +19,11 @@ int TextureDecompress::process(File &file, const OptionsCAO &options)
     auto timage = std::make_unique<DirectX::ScratchImage>();
     const auto hr = Decompress(img, nimg, info, DXGI_FORMAT_UNKNOWN /* picks good default */, *timage);
     if (FAILED(hr))
-        return 1;
+        return _resultFactory.getFailedResult(1, "Failed to decompress");
 
     //This file is "unmodified". Decompressing the file is only done in order to perform other operations.
     texFile->setFileUnmodified(timage);
-    return 0;
+    return _resultFactory.getSuccessfulResult();
 }
 
 bool TextureDecompress::isApplicable(File &file, const OptionsCAO &options)
