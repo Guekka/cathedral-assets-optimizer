@@ -76,29 +76,32 @@ void Manager::listFiles()
         QDirIterator it(subDir, QDirIterator::Subdirectories);
         while (it.hasNext())
         {
-            it.next();
+            const QString &filename = it.next();
 
             if (it.fileInfo().size() == 0)
                 continue;
 
-            const bool mesh = it.fileName().endsWith(".nif", Qt::CaseInsensitive);
-            const bool textureDDS = it.fileName().endsWith(".dds", Qt::CaseInsensitive);
-            const bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
-            const bool animation = _options.bAnimationsOptimization
-                                   && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
+            const bool processMeshes = _options.bMeshesResave || _options.iMeshesOptimizationLevel;
+            const bool mesh = filename.endsWith(".nif", Qt::CaseInsensitive) && processMeshes;
 
-            const bool bsa = _options.bBsaExtract
-                             && it.fileName().endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive);
+            const bool processTextures = _options.bTexturesMipmaps || _options.bTexturesCompress
+                                         || _options.bTexturesNecessary || _options.bTexturesResizeSize
+                                         || _options.bTexturesResizeRatio;
 
-            auto addToList = [&](QStringList &list) {
-                ++_numberFiles;
-                list << it.filePath();
-            };
+            const bool texture = (filename.endsWith(".dds", Qt::CaseInsensitive)
+                                  || filename.endsWith(".tga", Qt::CaseInsensitive))
+                                 && processTextures;
 
-            if (mesh || textureDDS || textureTGA || animation)
-                addToList(_files);
-            else if (bsa)
-                addToList(BSAs);
+            const bool animation = _options.bAnimationsOptimization && filename.endsWith(".hkx", Qt::CaseInsensitive);
+
+            const bool bsa = _options.bBsaExtract && filename.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive);
+
+            QStringList &list = bsa ? BSAs : _files;
+            if (!mesh && !texture && !animation && !bsa)
+                continue;
+
+            list << filename;
+            ++_numberFiles;
         }
     }
 }

@@ -81,12 +81,6 @@ void MainOptimizer::packBsa(const QString &folder)
 
 void MainOptimizer::processTexture(const QString &file)
 {
-    const bool processTextures = _optOptions.bTexturesMipmaps || _optOptions.bTexturesCompress
-                                 || _optOptions.bTexturesNecessary || _optOptions.bTexturesResizeSize
-                                 || _optOptions.bTexturesResizeRatio;
-    if (!processTextures)
-        return;
-
     if (!_textureFile.loadFromDisk(file))
     {
         PLOG_ERROR << "Failed to open: " << file;
@@ -127,23 +121,17 @@ void MainOptimizer::processTexture(const QString &file)
 
 void MainOptimizer::processHkx(const QString &file)
 {
-    if (!_optOptions.bAnimationsOptimization)
-        return;
-
-    if (_optOptions.bAnimationsOptimization && _optOptions.bDryRun)
+    if (_optOptions.bDryRun)
         PLOG_INFO << file + " would be converted to the appropriate format.";
-    else if (_optOptions.bAnimationsOptimization)
+    else
         _animOpt.convert(file, CAO::Profiles::animationFormat());
 }
 
 void MainOptimizer::processNif(const QString &file)
 {
-    if (_optOptions.iMeshesOptimizationLevel == 0)
-        return;
-
-    if (_optOptions.iMeshesOptimizationLevel >= 1 && _optOptions.bDryRun)
+    if (_optOptions.bDryRun)
         _meshesOpt.dryOptimize(file);
-    else if (_optOptions.iMeshesOptimizationLevel >= 1 && !_optOptions.bDryRun)
+    else
         _meshesOpt.optimize(file);
 }
 } // namespace CAO
