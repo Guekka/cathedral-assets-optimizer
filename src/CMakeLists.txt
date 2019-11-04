@@ -115,8 +115,6 @@ set(CMAKE_AUTORCC ON)
 message("Adding CAO.exe")
 add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${ICON_RC_PATH} ${QRC_PATH} ${QM_FILES})
 #Windows 7 compatibility
-remove_definitions(_WIN32_WINNT)
-add_compile_definitions(_WIN32_WINNT=_WIN32_WINNT_WIN7)
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     Qt5::Core Qt5::Widgets
     hkxcmd plog nif directxtex qlibbsarch)

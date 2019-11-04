@@ -15,7 +15,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library (directxtex STATIC
     BC.h
     BCDirectCompute.h
-    d3dx12.h
     DDS.h
     DirectXTex.h
     DirectXTexP.h
@@ -29,7 +28,6 @@ add_library (directxtex STATIC
     DirectXTexCompressGPU.cpp
     DirectXTexConvert.cpp
     DirectXTexD3D11.cpp
-    DirectXTexD3D12.cpp
     DirectXTexDDS.cpp
     DirectXTexFlipRotate.cpp
     DirectXTexHDR.cpp
@@ -57,4 +55,4 @@ if ( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
 endif()
 
 # Windows 10 is used here to build the DirectX 12 code paths as well as 11
-#target_compile_definitions(directxtex PRIVATE _UNICODE UNICODE _WIN32_WINNT=0x0A00)
+target_compile_definitions(directxtex PRIVATE _UNICODE UNICODE _WIN32_WINNT=_WIN32_WINNT_WIN7)

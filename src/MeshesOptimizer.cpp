@@ -66,7 +66,8 @@ ScanResult MeshesOptimizer::scan(NifFile &nif) const
 void MeshesOptimizer::listHeadparts(const QString &directory)
 {
     QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
-    headparts = FilesystemOperations::readFile(customHeadpartsFile);
+    headparts = FilesystemOperations::readFile(customHeadpartsFile,
+                                               [](QString &string) { return QDir::cleanPath(string); });
 
     if (headparts.isEmpty())
     {
@@ -187,6 +188,7 @@ void MeshesOptimizer::dryOptimize(const QString &filepath) const
 bool MeshesOptimizer::renameReferencedTexturesExtension(NifFile &file)
 {
     bool meshChanged = false;
+    constexpr int limit = 1000;
 
     for (auto shape : file.GetShapes())
     {
@@ -205,7 +207,11 @@ bool MeshesOptimizer::renameReferencedTexturesExtension(NifFile &file)
                     file.SetTextureSlot(shader, tex, texCounter);
                     meshChanged = true;
                 }
-                ++texCounter;
+                if (++texCounter > limit)
+                {
+                    PLOG_ERROR << "Failed to renamed referenced textures from TGA to DDS in this mesh";
+                    return false;
+                }
             }
         }
     }
