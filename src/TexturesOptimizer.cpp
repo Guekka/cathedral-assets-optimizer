@@ -159,13 +159,15 @@ TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const
     TexOptOptionsResult result;
     //Calculating target width and height
 
-    if (tWidth.has_value() && tHeight.has_value() && _info.width > tWidth.value() && _info.height > tHeight.value())
+    result.tWidth = _info.width;
+    result.tHeight = _info.height;
+    if (tWidth.has_value() && tHeight.has_value())
     {
-        do
+        while (result.tWidth > tWidth.value() && result.tHeight > tHeight.value())
         {
             result.tWidth = _info.width / 2;
             result.tHeight = _info.height / 2;
-        } while (result.tWidth > tWidth.value() && result.tHeight > tHeight.value());
+        }
     }
 
     result.bNeedsResize = (bNecessary && !isPowerOfTwo())

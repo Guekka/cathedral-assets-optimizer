@@ -440,6 +440,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (_settingsChanged)
         saveUi();
+    endProcess();
     event->accept();
 }
 

@@ -135,7 +135,7 @@ void Manager::runOptimization()
     {
         optimizer.process(file);
         ++_numberCompletedFiles;
-        if (_numberCompletedFiles % 10 == 0)
+        if (_numberCompletedFiles % 100 == 0)
             printProgress(_numberFiles);
     }
 
