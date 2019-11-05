@@ -10,32 +10,18 @@
 namespace CAO {
 MainOptimizer::MainOptimizer(const OptionsCAO &optOptions)
     : _optOptions(optOptions)
-    , _meshesOpt(
-          MeshesOptimizer(_optOptions.bMeshesHeadparts, optOptions.iMeshesOptimizationLevel, optOptions.bMeshesResave))
 {
-    addHeadparts();
     addLandscapeTextures();
-}
-
-void MainOptimizer::addHeadparts()
-{
-    _meshesOpt.listHeadparts(_optOptions.userPath);
-    if (_optOptions.mode == OptionsCAO::SeveralMods)
-    {
-        const QDir dir(_optOptions.userPath);
-        for (const auto &directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-            _meshesOpt.listHeadparts(dir.filePath(directory));
-    }
 }
 
 void MainOptimizer::addLandscapeTextures()
 {
-    _meshesOpt.listHeadparts(_optOptions.userPath);
+    _meshFile.listHeadparts(_optOptions.userPath);
     if (_optOptions.mode == OptionsCAO::SeveralMods)
     {
         const QDir dir(_optOptions.userPath);
         for (const auto &directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-            _meshesOpt.listHeadparts(dir.filePath(directory));
+            _meshFile.listHeadparts(dir.filePath(directory));
     }
 }
 
@@ -87,7 +73,7 @@ void MainOptimizer::processTexture(const QString &file)
         return;
     }
 
-    for (auto &command : commandBook.getTextureCommands())
+    for (auto &command : _commandBook.getTextureCommands())
     {
         const auto &result = command->processIfApplicable(_textureFile, _optOptions);
         if (result.processedFile)
@@ -129,9 +115,19 @@ void MainOptimizer::processHkx(const QString &file)
 
 void MainOptimizer::processNif(const QString &file)
 {
-    if (_optOptions.bDryRun)
-        _meshesOpt.dryOptimize(file);
-    else
-        _meshesOpt.optimize(file);
+    if (_meshFile.loadFromDisk(file))
+    {
+        PLOG_ERROR << "Cannot load mesh from disk: " << file;
+    }
+
+    for (auto command : _commandBook.getMeshCommands())
+        command->processIfApplicable(_meshFile, _optOptions);
+
+    if (_meshFile.saveToDisk(file))
+    {
+        PLOG_ERROR << "Cannot save mesh to disk: " << file;
+    }
+
+    PLOG_INFO << "Successfully optimized " << file;
 }
 } // namespace CAO

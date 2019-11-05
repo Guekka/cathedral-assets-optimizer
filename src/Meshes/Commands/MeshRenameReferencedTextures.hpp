@@ -4,22 +4,21 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Command.hpp"
-#include "TextureFile.hpp"
+#include "Commands/Command.hpp"
+#include "Meshes/MeshFile.hpp"
 
 namespace CAO {
-class TextureDecompress final : public Command
+class MeshRenameReferencedTextures : public Command
 {
 public:
-    TextureDecompress()
+    MeshRenameReferencedTextures()
     {
-        _type = CommandType::Texture;
-        _priority = VeryHigh;
-        _name = "Decompress Texture";
+        _name = "Rename referenced textures in Mesh";
+        _type = CommandType::Mesh;
+        _priority = Low;
     }
 
     CommandResult process(File &file, const OptionsCAO &options) override;
-
     bool isApplicable(File &file, const OptionsCAO &options) override;
 };
 } // namespace CAO

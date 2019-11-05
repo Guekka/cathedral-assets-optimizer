@@ -8,6 +8,7 @@
 namespace CAO {
 
 TextureFile::TextureFile()
+    : _image(new DirectX::ScratchImage)
 {
     // Initialize COM (needed for WIC)
     const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);

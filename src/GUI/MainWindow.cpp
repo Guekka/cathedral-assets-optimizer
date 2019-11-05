@@ -432,11 +432,7 @@ void MainWindow::setAdvancedSettingsEnabled(const bool &value)
     const bool readOnly = Profiles::isBaseProfile();
     for (auto &window : advancedSettings)
     {
-        if (value)
-            window->show();
-        else
-            window->hide();
-
+        window->setVisible(value);
         window->setDisabled(readOnly);
     }
 }

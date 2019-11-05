@@ -4,9 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Command.hpp"
-#include "TextureCompressionDevice.hpp"
-#include "TextureFile.hpp"
+#include "Commands/Command.hpp"
+#include "Textures/TextureCompressionDevice.hpp"
+#include "Textures/TextureFile.hpp"
 
 namespace CAO {
 class TextureConvert final : public Command

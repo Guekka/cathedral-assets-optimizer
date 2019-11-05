@@ -4,25 +4,22 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Command.hpp"
-#include "TextureFile.hpp"
-#include "pch.hpp"
+#include "Commands/Command.hpp"
+#include "Textures/TextureFile.hpp"
 
 namespace CAO {
-class TextureResize final : public Command
+class TextureDecompress final : public Command
 {
 public:
-    TextureResize()
+    TextureDecompress()
     {
         _type = CommandType::Texture;
-        _priority = High;
-        _name = "Resize Texture";
+        _priority = VeryHigh;
+        _name = "Decompress Texture";
     }
 
     CommandResult process(File &file, const OptionsCAO &options) override;
-    bool isApplicable(File &file, const OptionsCAO &options) override;
 
-protected:
-    DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info, const OptionsCAO &options);
+    bool isApplicable(File &file, const OptionsCAO &options) override;
 };
 } // namespace CAO

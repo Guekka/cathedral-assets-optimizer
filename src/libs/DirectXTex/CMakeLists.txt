@@ -15,7 +15,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library (directxtex STATIC
     BC.h
     BCDirectCompute.h
-    d3dx12.h
     DDS.h
     DirectXTex.h
     DirectXTexP.h

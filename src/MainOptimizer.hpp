@@ -6,10 +6,10 @@
 
 #include "AnimationsOptimizer.hpp"
 #include "BsaOptimizer.hpp"
-#include "CommandBook.hpp"
-#include "MeshesOptimizer.hpp"
+#include "Commands/CommandBook.hpp"
+#include "Meshes/Mesh.hpp"
 #include "OptionsCAO.hpp"
-#include "Textures/TextureFile.hpp"
+#include "Textures/Texture.hpp"
 
 namespace CAO {
 /*!
@@ -27,7 +27,6 @@ public:
 
 private:
     void addLandscapeTextures();
-    void addHeadparts();
 
     void processBsa(const QString &file) const;
     void processNif(const QString &file);
@@ -37,9 +36,9 @@ private:
     OptionsCAO _optOptions;
 
     BSAOptimizer _bsaOpt;
-    MeshesOptimizer _meshesOpt;
+    MeshFile _meshFile;
     AnimationsOptimizer _animOpt;
     TextureFile _textureFile;
-    CommandBook commandBook;
+    CommandBook _commandBook;
 };
 } // namespace CAO

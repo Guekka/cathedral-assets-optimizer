@@ -4,25 +4,31 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Command.hpp"
-#include "TextureFile.hpp"
-#include "pch.hpp"
+#include "Commands/Command.hpp"
+#include "FilesystemOperations.hpp"
+#include "Meshes/MeshFile.hpp"
+#include "PluginsOperations.hpp"
 
 namespace CAO {
-class TextureGenerateMipmaps final : public Command
+class MeshConvert : public Command
 {
 public:
-    TextureGenerateMipmaps()
+    MeshConvert()
     {
-        _type = CommandType::Texture;
-        _priority = Medium;
-        _name = "Generate Mipmaps for Texture";
+        _name = "Convert Mesh";
+        _type = CommandType::Mesh;
+        _priority = Priority::Medium;
     }
 
     CommandResult process(File &file, const OptionsCAO &options) override;
     bool isApplicable(File &file, const OptionsCAO &options) override;
 
 protected:
-    size_t calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const;
+    bool isHeadpart(const QString &filepath);
+    void listHeadparts(const OptionsCAO &options);
+
+    static QStringList headpartList;
+
+    std::once_flag _onceHeadpartsFlag;
 };
 } // namespace CAO

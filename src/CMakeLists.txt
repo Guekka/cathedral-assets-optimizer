@@ -40,12 +40,14 @@ set(SOURCES
     BsaOptimizer.hpp
     FilesystemOperations.cpp
     FilesystemOperations.hpp
-    Command.cpp
-    Command.hpp
-    CommandBook.cpp
-    CommandBook.hpp
-    CommandResult.cpp
-    CommandResult.hpp
+
+    Commands/Command.cpp
+    Commands/Command.hpp
+    Commands/CommandBook.cpp
+    Commands/CommandBook.hpp
+    Commands/CommandResult.cpp
+    Commands/CommandResult.hpp
+
     File.cpp
     File.hpp
     Logger.hpp
@@ -53,27 +55,40 @@ set(SOURCES
     MainOptimizer.hpp
     Manager.cpp
     Manager.hpp
-    MeshesOptimizer.cpp
-    MeshesOptimizer.hpp
+
+    Meshes/Mesh.hpp
+
+    Meshes/MeshFile.cpp
+    Meshes/MeshFile.hpp
+    Meshes/Commands/MeshConvert.cpp
+    Meshes/Commands/MeshConvert.hpp
+    Meshes/Commands/MeshRenameReferencedTextures.cpp
+    Meshes/Commands/MeshRenameReferencedTextures.hpp
+
     OptionsCAO.cpp
     OptionsCAO.hpp
     PluginsOperations.cpp
     PluginsOperations.hpp
     Profiles.cpp
     Profiles.hpp
-    Textures/TextureConvert.cpp
-    Textures/TextureConvert.hpp
+
+    Textures/Texture.hpp
+
     Textures/TextureCompressionDevice.cpp
     Textures/TextureCompressionDevice.hpp
-    Textures/TextureDecompress.cpp
-    Textures/TextureDecompress.hpp
     Textures/TextureFile.cpp
     Textures/TextureFile.hpp
     Textures/TextureFormats.hpp
-    Textures/TextureGenerateMipmaps.cpp
-    Textures/TextureGenerateMipmaps.hpp
-    Textures/TextureResize.cpp
-    Textures/TextureResize.hpp
+
+    Textures/Commands/TextureConvert.cpp
+    Textures/Commands/TextureConvert.hpp
+    Textures/Commands/TextureDecompress.cpp
+    Textures/Commands/TextureDecompress.hpp
+    Textures/Commands/TextureGenerateMipmaps.cpp
+    Textures/Commands/TextureGenerateMipmaps.hpp
+    Textures/Commands/TextureResize.cpp
+    Textures/Commands/TextureResize.hpp  
+
     main.cpp
     pch.hpp
     )
@@ -132,6 +147,7 @@ set(CMAKE_AUTORCC ON)
 #Build
 message("Adding CAO.exe")
 add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${ICON_RC_PATH} ${QRC_PATH} ${QM_FILES})
+#Windows 7 compatibility
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     Qt5::Core Qt5::Widgets
     hkxcmd plog nif directxtex qlibbsarch)

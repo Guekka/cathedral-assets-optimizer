@@ -19,7 +19,8 @@ public:
         Texture,
         Mesh,
         BSA,
-        Animation
+        Animation,
+        Plugin
     };
 
     enum Priority

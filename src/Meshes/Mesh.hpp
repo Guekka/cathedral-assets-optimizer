@@ -4,8 +4,5 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/TextureConvert.hpp"
-#include "Commands/TextureDecompress.hpp"
-#include "Commands/TextureGenerateMipmaps.hpp"
-#include "Commands/TextureResize.hpp"
-#include "TextureFile.hpp"
+#include "Commands/MeshConvert.hpp"
+#include "Commands/MeshRenameReferencedTextures.hpp"

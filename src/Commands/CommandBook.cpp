@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "CommandBook.hpp"
+#include "Meshes/Mesh.hpp"
 #include "Textures/Texture.hpp"
 
 namespace CAO {
@@ -18,6 +19,8 @@ CommandBook::CommandBook()
     registerCommand(new TextureConvert);
     registerCommand(new TextureDecompress);
     registerCommand(new TextureGenerateMipmaps);
+    registerCommand(new MeshConvert);
+    registerCommand(new MeshRenameReferencedTextures);
 }
 
 void CommandBook::registerCommand(Command *command)
@@ -34,7 +37,11 @@ void CommandBook::registerCommand(Command *command)
 
     for (int i = 0; i < correspondingVector.size(); ++i)
     {
-        if (correspondingVector.at(i)->priority() <= command->priority())
+        auto &commandInVector = correspondingVector.at(i);
+
+        if (commandInVector->name() == command->name())
+            return; //Preventing duplicate commands
+        if (commandInVector->priority() <= command->priority())
         {
             correspondingVector.insert(i, command);
             break;
