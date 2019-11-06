@@ -127,16 +127,25 @@ void Manager::runOptimization()
         printProgress(BSAs.size(), "Extracting BSAs");
     }
 
-    //Listing new extracted files
+    //Listing newly extracted files
     listFiles();
 
-    //Processing animations separately since they cannot be processed in a multithreaded way
+    //Using time in order to prevent printing progress too often
+    QDateTime time1 = QDateTime::currentDateTime();
+    QDateTime time2;
     for (const auto &file : _files)
     {
         optimizer.process(file);
         ++_numberCompletedFiles;
-        if (_numberCompletedFiles % 100 == 0)
-            printProgress(_numberFiles);
+        if (_numberCompletedFiles % 10 == 0)
+        {
+            time2 = QDateTime::currentDateTime();
+            if (time2 > time1.addMSecs(3000))
+            {
+                printProgress(_numberFiles);
+                time1 = time2;
+            }
+        }
     }
 
     _numberCompletedFiles = 0;
