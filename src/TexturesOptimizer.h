@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "FilesystemOperations.h"
+#include "PluginsOperations.h"
 #include "Profiles.h"
 #include "pch.h"
 
@@ -19,6 +21,8 @@ public:
         DDS,
         TGA
     };
+
+    void listLandscapeTextures(QDirIterator &it);
 
     bool open(const void *pSource, const size_t &size, const TextureType &type, const QString &fileName);
     bool open(const QString &filePath, const TextureType &type);
@@ -72,6 +76,8 @@ public:
     bool canHaveMipMaps();
     size_t calculateOptimalMipMapsNumber() const;
 
+    bool convertLandscapeTextures();
+
     DirectX::TexMetadata getInfo() const;
 
     bool isIncompatible() const;
@@ -105,4 +111,6 @@ private:
 
     bool createDevice(int adapter, ID3D11Device **pDevice) const;
     bool getDXGIFactory(IDXGIFactory1 **pFactory) const;
+
+    QStringList _landscapeTextures;
 };

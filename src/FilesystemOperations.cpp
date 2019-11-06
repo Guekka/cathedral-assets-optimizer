@@ -126,7 +126,7 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
     QDir::setCurrent(currentDir);
 }
 
-QStringList FilesystemOperations::readFile(QFile &file, void (*function)(QString &line))
+QStringList FilesystemOperations::readFile(QFile &file, std::function<void(QString &line)> function)
 {
     QStringList list;
 
@@ -163,4 +163,18 @@ QStringList FilesystemOperations::readFile(QFile &file)
         list << line;
     }
     return list;
+}
+
+QStringList FilesystemOperations::listPlugins(QDirIterator &it)
+{
+    QStringList plugins;
+    const QRegularExpression pluginsExt("\\.es[plm]$");
+    while (it.hasNext())
+    {
+        it.next();
+        if (it.fileName().contains(pluginsExt) && !it.fileInfo().isDir())
+            plugins << it.filePath();
+    }
+
+    return plugins;
 }

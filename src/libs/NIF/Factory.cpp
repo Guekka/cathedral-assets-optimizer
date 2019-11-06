@@ -5,9 +5,10 @@ See the included LICENSE file
 
 #include "Factory.h"
 
-NiFactoryRegister& NiFactoryRegister::Get() {
-	static NiFactoryRegister instance;
-	return instance;
+NiFactoryRegister &NiFactoryRegister::Get()
+{
+    static NiFactoryRegister instance;
+    return instance;
 }
 
 NiFactoryRegister::NiFactoryRegister() {

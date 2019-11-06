@@ -35,7 +35,7 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
     }
 }
 
-QString PluginsOperations::findPlugin(const QString &folderPath, const BsaType &bsaType)
+QString PluginsOperations::findPlugin(const QString &folderPath, const BSAType &bsaType)
 {
     QDirIterator it(folderPath);
     QStringList espName;

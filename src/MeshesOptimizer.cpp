@@ -11,18 +11,6 @@ MeshesOptimizer::MeshesOptimizer(const bool &processHeadparts, const int &optimi
     , bMeshesResave(resaveMeshes)
     , iMeshesOptimizationLevel(optimizationLevel)
 {
-    //Reading custom headparts file to add them to the list.
-    //Done in the constructor since the file won't change at runtime.
-
-    QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
-
-    headparts = FilesystemOperations::readFile(customHeadpartsFile);
-
-    if (headparts.isEmpty())
-    {
-        PLOG_ERROR << "customHeadparts.txt not found. This can cause issue when optimizing meshes, as some headparts "
-                      "won't be detected.";
-    }
 }
 
 ScanResult MeshesOptimizer::scan(NifFile &nif) const
@@ -77,14 +65,19 @@ ScanResult MeshesOptimizer::scan(NifFile &nif) const
 
 void MeshesOptimizer::listHeadparts(const QString &directory)
 {
-    QDirIterator it(directory, QDirIterator::Subdirectories);
+    QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
+    headparts = FilesystemOperations::readFile(customHeadpartsFile,
+                                               [](QString &string) { return QDir::cleanPath(string); });
 
-    while (it.hasNext())
+    if (headparts.isEmpty())
     {
-        it.next();
-        if (it.fileName().contains(QRegularExpression("\\.es[plm]$")) && !it.fileInfo().isDir())
-            headparts += PluginsOperations::listHeadparts(it.filePath());
+        PLOG_ERROR << "customHeadparts.txt not found. This can cause issue when optimizing meshes, as some headparts "
+                      "won't be detected.";
     }
+
+    QDirIterator it(directory, QDirIterator::Subdirectories);
+    for (const auto &plugin : FilesystemOperations::listPlugins(it))
+        headparts += PluginsOperations::listHeadparts(plugin);
 
     headparts.removeDuplicates();
 }
@@ -195,6 +188,7 @@ void MeshesOptimizer::dryOptimize(const QString &filepath) const
 bool MeshesOptimizer::renameReferencedTexturesExtension(NifFile &file)
 {
     bool meshChanged = false;
+    constexpr int limit = 1000;
 
     for (auto shape : file.GetShapes())
     {
@@ -213,7 +207,11 @@ bool MeshesOptimizer::renameReferencedTexturesExtension(NifFile &file)
                     file.SetTextureSlot(shader, tex, texCounter);
                     meshChanged = true;
                 }
-                ++texCounter;
+                if (++texCounter > limit)
+                {
+                    PLOG_ERROR << "Failed to renamed referenced textures from TGA to DDS in this mesh";
+                    return false;
+                }
             }
         }
     }
@@ -224,7 +222,7 @@ std::tuple<bool, NifFile> MeshesOptimizer::loadMesh(const QString &filepath) con
 {
     PLOG_VERBOSE << "Loading mesh: " + filepath;
     NifFile nif;
-    if (nif.Load(filepath.toStdString()) != 0)
+    if (nif.Load(filepath.toStdString()))
     {
         PLOG_ERROR << "Cannot load mesh: " + filepath;
         return std::make_tuple(false, std::move(nif));
@@ -235,7 +233,7 @@ std::tuple<bool, NifFile> MeshesOptimizer::loadMesh(const QString &filepath) con
 bool MeshesOptimizer::saveMesh(NifFile &nif, const QString &filepath) const
 {
     PLOG_VERBOSE << "Saving mesh: " + filepath;
-    if (!nif.Save(filepath.toStdString()))
+    if (nif.Save(filepath.toStdString()))
     {
         PLOG_ERROR << "Cannot save mesh: " + filepath;
         return false;

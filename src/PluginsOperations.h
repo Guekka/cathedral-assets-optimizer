@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Bsa.h"
+#include "BSA.h"
 #include "pch.h"
 
 PACKED(struct PluginHeader {
@@ -60,7 +60,7 @@ public:
    * \param bsaType The type of BSA to load.
    * \return a QString containing the name of the plugin. If no plugin is found, it will return the name of the directory.
    */
-    static QString findPlugin(const QString &folderPath, const BsaType &bsaType);
+    static QString findPlugin(const QString &folderPath, const BSAType &bsaType);
     /*!
    * \brief Create enough plugins to load all BSAs
    * \param folderPath The folder to create plugins into

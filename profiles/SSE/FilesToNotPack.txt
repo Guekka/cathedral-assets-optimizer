@@ -8,6 +8,5 @@ meshes/animationdatasinglefile.txt
 meshes/animationsetdatasinglefile.txt
 
 readme
-
-CalienteTools
+CalienteTools/
 xml

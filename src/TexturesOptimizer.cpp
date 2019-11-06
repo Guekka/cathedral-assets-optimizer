@@ -18,6 +18,27 @@ TexturesOptimizer::TexturesOptimizer()
         throw std::runtime_error("Failed to initialize COM. Textures processing won't work.");
 }
 
+void TexturesOptimizer::listLandscapeTextures(QDirIterator &it)
+{
+    QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
+    _landscapeTextures = FilesystemOperations::readFile(customHeadpartsFile);
+
+    if (_landscapeTextures.isEmpty())
+    {
+        PLOG_ERROR << "customHeadparts.txt not found. This can cause issue when optimizing meshes, as some headparts "
+                      "won't be detected.";
+    }
+
+    for (const auto &plugin : FilesystemOperations::listPlugins(it))
+        _landscapeTextures += PluginsOperations::listLandscapeTextures(plugin);
+
+    for (auto &tex : _landscapeTextures)
+        if (!tex.endsWith("_n.dds"))
+            tex.insert(tex.size() - 4, "_n");
+
+    _landscapeTextures.removeDuplicates();
+}
+
 bool TexturesOptimizer::getDXGIFactory(IDXGIFactory1 **pFactory) const
 {
     if (!pFactory)
@@ -136,8 +157,19 @@ TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const
                                                                            const std::optional<size_t> &tHeight)
 {
     TexOptOptionsResult result;
-    result.tWidth = tWidth.has_value() ? tWidth.value() : _info.width;
-    result.tHeight = tHeight.has_value() ? tHeight.value() : _info.height;
+    //Calculating target width and height
+
+    result.tWidth = _info.width;
+    result.tHeight = _info.height;
+    if (tWidth.has_value() && tHeight.has_value())
+    {
+        while (result.tWidth > tWidth.value() && result.tHeight > tHeight.value())
+        {
+            result.tWidth = _info.width / 2;
+            result.tHeight = _info.height / 2;
+        }
+    }
+
     result.bNeedsResize = (bNecessary && !isPowerOfTwo())
                           || (result.tHeight != _info.height || result.tWidth != _info.width);
 
@@ -167,8 +199,8 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
         PLOG_VERBOSE << "This texture does not need optimization.";
         return true;
     }
-    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
+    //Decompressing
     if (isCompressed())
     {
         PLOG_VERBOSE << "Decompressing this texture.";
@@ -186,6 +218,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
     }
     options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
+    //Generating mipmaps
     if (options.bNeedsMipmaps)
     {
         PLOG_VERBOSE << "Generating mipmaps for this texture.";

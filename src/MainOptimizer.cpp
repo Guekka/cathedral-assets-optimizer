@@ -13,6 +13,30 @@ MainOptimizer::MainOptimizer(const OptionsCAO &optOptions)
     , _meshesOpt(
           MeshesOptimizer(_optOptions.bMeshesHeadparts, optOptions.iMeshesOptimizationLevel, optOptions.bMeshesResave))
 {
+    addHeadparts();
+    addLandscapeTextures();
+}
+
+void MainOptimizer::addHeadparts()
+{
+    _meshesOpt.listHeadparts(_optOptions.userPath);
+    if (_optOptions.mode == OptionsCAO::SeveralMods)
+    {
+        const QDir dir(_optOptions.userPath);
+        for (const auto &directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
+            _meshesOpt.listHeadparts(dir.filePath(directory));
+    }
+}
+
+void MainOptimizer::addLandscapeTextures()
+{
+    _meshesOpt.listHeadparts(_optOptions.userPath);
+    if (_optOptions.mode == OptionsCAO::SeveralMods)
+    {
+        const QDir dir(_optOptions.userPath);
+        for (const auto &directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
+            _meshesOpt.listHeadparts(dir.filePath(directory));
+    }
 }
 
 void MainOptimizer::process(const QString &file)
@@ -29,17 +53,6 @@ void MainOptimizer::process(const QString &file)
         processHkx(file);
     else
         PLOG_ERROR << "Cannot process: " + file;
-}
-
-void MainOptimizer::addHeadparts(const QString &folder, bool processSubDirs)
-{
-    _meshesOpt.listHeadparts(folder);
-    if (processSubDirs)
-    {
-        const QDir dir(folder);
-        for (const auto &directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-            _meshesOpt.listHeadparts(dir.filePath(directory));
-    }
 }
 
 void MainOptimizer::processBsa(const QString &file) const

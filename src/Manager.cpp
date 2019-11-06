@@ -8,29 +8,18 @@ Manager::Manager(OptionsCAO &opt)
     : _options(opt)
 
 {
-    //Preparing logging
-    initCustomLogger(Profiles::logPath(), _options.bDebugLog);
-
-    PLOG_VERBOSE << "Checking settings...";
-    const QString error = _options.isValid();
-    if (!error.isEmpty())
-    {
-        PLOG_FATAL << error;
-        throw std::runtime_error("Options are not valid." + error.toStdString());
-    }
-
-    readIgnoredMods();
-
-    PLOG_INFO << "Listing files and directories...";
-    listDirectories();
-    listFiles();
+    init();
 }
 
 Manager::Manager(const QStringList &args)
 {
     //Parsing args
     _options.parseArguments(args);
+    init();
+}
 
+void Manager::init()
+{
     //Preparing logging
     initCustomLogger(Profiles::logPath(), _options.bDebugLog);
 
@@ -80,7 +69,6 @@ void Manager::listFiles()
 {
     _numberFiles = 0;
     _files.clear();
-    _animations.clear();
     BSAs.clear();
 
     for (auto &subDir : _modsToProcess)
@@ -90,8 +78,7 @@ void Manager::listFiles()
         {
             it.next();
 
-            const bool mesh = _options.iMeshesOptimizationLevel >= 1
-                              && it.fileName().endsWith(".nif", Qt::CaseInsensitive);
+            const bool mesh = it.fileName().endsWith(".nif", Qt::CaseInsensitive);
             const bool textureDDS = it.fileName().endsWith(".dds", Qt::CaseInsensitive);
             const bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
             const bool animation = _options.bAnimationsOptimization
@@ -104,10 +91,8 @@ void Manager::listFiles()
                 list << it.filePath();
             };
 
-            if (mesh || textureDDS || textureTGA)
+            if (mesh || textureDDS || textureTGA || animation)
                 addToList(_files);
-            else if (animation)
-                addToList(_animations);
             else if (bsa)
                 addToList(BSAs);
         }
@@ -117,7 +102,6 @@ void Manager::listFiles()
 void Manager::readIgnoredMods()
 {
     QFile &&ignoredModsFile = Profiles::getFile("ignoredMods.txt");
-
     _ignoredMods = FilesystemOperations::readFile(ignoredModsFile);
 
     if (_ignoredMods.isEmpty())
@@ -130,12 +114,10 @@ void Manager::readIgnoredMods()
 void Manager::runOptimization()
 {
     PLOG_DEBUG << "Game: " << Profiles::currentProfile();
+    PLOG_INFO << "Processing: " + _options.userPath;
     PLOG_INFO << "Beginning...";
 
     MainOptimizer optimizer(_options);
-
-    //Reading headparts. Used for meshes optimization
-    optimizer.addHeadparts(_options.userPath, _options.mode == OptionsCAO::SeveralMods);
 
     //Extracting BSAs
     for (const auto &file : BSAs)
@@ -145,24 +127,25 @@ void Manager::runOptimization()
         printProgress(BSAs.size(), "Extracting BSAs");
     }
 
-    //Listing new extracted files
+    //Listing newly extracted files
     listFiles();
 
-    //Processing animations separately since they cannot be processed in a multithreaded way
-    printProgress(_numberFiles, "Processing animations");
-    for (const auto &file : _animations)
-    {
-        optimizer.process(file);
-        ++_numberCompletedFiles;
-        if (_numberCompletedFiles % 10 == 0)
-            printProgress(_numberFiles);
-    }
+    //Using time in order to prevent printing progress too often
+    QDateTime time1 = QDateTime::currentDateTime();
+    QDateTime time2;
     for (const auto &file : _files)
     {
         optimizer.process(file);
         ++_numberCompletedFiles;
         if (_numberCompletedFiles % 10 == 0)
-            printProgress(_numberFiles);
+        {
+            time2 = QDateTime::currentDateTime();
+            if (time2 > time1.addMSecs(3000))
+            {
+                printProgress(_numberFiles);
+                time1 = time2;
+            }
+        }
     }
 
     _numberCompletedFiles = 0;

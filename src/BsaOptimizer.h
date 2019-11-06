@@ -13,7 +13,7 @@
 /*!
  * \brief Manages BSA : extract and create them
  */
-class BsaOptimizer final : public QObject
+class BSAOptimizer final : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(BsaOptimizer)
 
@@ -21,7 +21,7 @@ public:
     /*!
    * \brief Default constructor
    */
-    BsaOptimizer();
+    BSAOptimizer();
     /*!
    * \brief Extracts a BSA
    * \param bsaPath The path of the BSA to extract
@@ -32,7 +32,7 @@ public:
    * \brief Creates a BSA containing all the files given as argument
    * \param bsa The BSA to create
    */
-    int create(Bsa &bsa) const;
+    int create(BSA &bsa) const;
 
     /*!
    * \brief Packs all the loose files in the directory into BSAs
@@ -55,7 +55,7 @@ private:
    * \param filepath The file to check
    * \return a bool indicating the state of the file. True if is ignored, false otherwise
    */
-    bool isIgnoredFile(const QString &bsaFolder, const QString &filepath) const;
+    bool isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo) const;
     /*!
    * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
    */
@@ -67,4 +67,3 @@ private:
    */
     static bool canBeCompressedFile(const QString &filename);
 };
-
