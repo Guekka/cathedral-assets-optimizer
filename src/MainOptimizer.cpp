@@ -10,20 +10,7 @@
 namespace CAO {
 MainOptimizer::MainOptimizer(const OptionsCAO &optOptions)
     : _optOptions(optOptions)
-{
-    addLandscapeTextures();
-}
-
-void MainOptimizer::addLandscapeTextures()
-{
-    _meshFile.listHeadparts(_optOptions.userPath);
-    if (_optOptions.mode == OptionsCAO::SeveralMods)
-    {
-        const QDir dir(_optOptions.userPath);
-        for (const auto &directory : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-            _meshFile.listHeadparts(dir.filePath(directory));
-    }
-}
+{}
 
 void MainOptimizer::process(const QString &file)
 {
@@ -33,7 +20,7 @@ void MainOptimizer::process(const QString &file)
         processNif(file);
     else if (file.endsWith(".tga") && CAO::Profiles::texturesConvertTga())
         processTexture(file);
-    else if (file.endsWith(CAO::Profiles::bsaExtension(), Qt::CaseInsensitive))
+    else if (file.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
         processBsa(file);
     else if (file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
@@ -57,12 +44,9 @@ void MainOptimizer::processBsa(const QString &file) const
 
 void MainOptimizer::packBsa(const QString &folder)
 {
-    if (_optOptions.bBsaCreate && QDir(folder).exists())
-    {
         PLOG_INFO << "Creating BSA...";
         _bsaOpt.packAll(folder);
         PluginsOperations::makeDummyPlugins(folder);
-    }
 }
 
 void MainOptimizer::processTexture(const QString &file)

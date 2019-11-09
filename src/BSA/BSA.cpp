@@ -5,6 +5,7 @@
 
 #include "BSA.hpp"
 #include "PluginsOperations.hpp"
+
 namespace CAO {
 BSA BSA::getBsa(const BSAType &type)
 {

@@ -142,7 +142,7 @@ int NifFile::Load(const std::string &fileName, const NifLoadOptions &options)
 template<class Stream>
 int NifFile::Load(Stream &file, const NifLoadOptions &options)
 {
-    static_assert(std::is_same<Stream, std::fstream>() || std::is_same<Stream, std::stringstream>(),
+    static_assert(std::is_same_v<Stream, std::fstream> || std::is_same_v<Stream, std::stringstream>,
                   "Stream must be fstream or stringstream");
 
     Clear();
@@ -927,7 +927,7 @@ int NifFile::Save(const std::string &fileName, const NifSaveOptions &options)
 template<class Stream>
 int NifFile::Save(Stream &file, const NifSaveOptions &options)
 {
-    static_assert(std::is_same<Stream, std::fstream>() || std::is_same<Stream, std::stringstream>(),
+    static_assert(std::is_same_v<Stream, std::fstream> || std::is_same_v<Stream, std::stringstream>,
                   "Stream must be fstream or stringstream");
 
     if (file.is_open())

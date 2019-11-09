@@ -32,7 +32,7 @@ void BSAOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
 
     try
     {
-        BSArchiveAuto archive(*rootPath);
+        Qlibbsarch::BSArchiveAuto archive(*rootPath);
         archive.setDDSCallback(&BSAOptimizer::DDSCallback, rootPath);
         archive.open(bsaPath);
         archive.extractAll(*rootPath, false);
@@ -63,7 +63,7 @@ int BSAOptimizer::create(BSA &bsa) const
         return 1;
     }
 
-    BSArchiveAuto archive(*rootPath);
+    Qlibbsarch::BSArchiveAuto archive(*rootPath);
     archive.setShareData(true);
     archive.setCompressed(true);
     archive.setDDSCallback(&BSAOptimizer::DDSCallback, rootPath);

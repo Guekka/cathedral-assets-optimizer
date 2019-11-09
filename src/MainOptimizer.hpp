@@ -5,7 +5,7 @@
 #pragma once
 
 #include "AnimationsOptimizer.hpp"
-#include "BsaOptimizer.hpp"
+#include "BSA/BsaOptimizer.hpp"
 #include "Commands/CommandBook.hpp"
 #include "Meshes/Mesh.hpp"
 #include "OptionsCAO.hpp"
@@ -26,8 +26,6 @@ public:
     void packBsa(const QString &folder);
 
 private:
-    void addLandscapeTextures();
-
     void processBsa(const QString &file) const;
     void processNif(const QString &file);
     void processTexture(const QString &file);

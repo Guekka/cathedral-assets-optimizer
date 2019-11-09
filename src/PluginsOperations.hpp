@@ -4,8 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "BSA.hpp"
+#include "BSA/BSA.hpp"
 #include "pch.hpp"
+
 namespace CAO {
 PACKED(struct PluginHeader {
     char type[4];

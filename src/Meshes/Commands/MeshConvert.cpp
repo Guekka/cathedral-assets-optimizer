@@ -5,6 +5,7 @@
 #include "MeshConvert.hpp"
 
 namespace CAO {
+QStringList MeshConvert::headpartList;
 
 CommandResult MeshConvert::process(File &file, const OptionsCAO &options)
 {

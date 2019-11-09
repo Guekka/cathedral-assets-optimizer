@@ -4,6 +4,7 @@
 #include "BSArchiveEntries.h"
 #include <QMap>
 
+namespace Qlibbsarch {
 /*!
  * \brief A convenience class for BSArchive and BSArchiveEntries. Its performance is worse than using these 
  * two classes separately, but it removes the need to manually handle the BSArchiveEntries.
@@ -26,36 +27,36 @@ public:
      * \param archiveName The BSA name
      * \param type The BSA type
      */
-    void create(const QString& archiveName, const bsa_archive_type_e& type);
+    void create(const QString &archiveName, const bsa_archive_type_e &type);
     /*!
      * \brief Adds a file from the disk to the BSA. Also adds it to the BSA entries.
      * \param rootDir The root directory of the file.
      * \param filename The complete path to the file.
      */
-    void addFileFromDiskRoot(const QString& filename);
+    void addFileFromDiskRoot(const QString &filename);
     /*!
      * \brief Adds files from the disk to the BSA. Also adds them to the BSA entries.
      * \param rootDir The root directory of the file. This directory is the one containing folders such as textures and meshes.
      * \param files A list containing the complete paths to the files.
      */
-    void addFileFromDiskRoot(const QStringList& files);
+    void addFileFromDiskRoot(const QStringList &files);
     /*!
      * \brief Adds file from the memory to the BSA. Also adds it to the BSA entries.
      * \param filename The name of the file. It connot be a full path, and has to be a relative path.
      * \param data The file bytes data.
      */
-    void addFileFromMemory(const QString& filename, const QByteArray& data);
+    void addFileFromMemory(const QString &filename, const QByteArray &data);
     /*!
      * \brief Adds a file from the disk to the BSA. Also adds it to the BSA entries.
      * \param saveAs The path of the file in the BSA
      * \param diskPath The path of the file on disk
      */
-    void addFileFromDisk(const QString& saveAs, const QString& diskPath);
+    void addFileFromDisk(const QString &saveAs, const QString &diskPath);
     /*!
      * \brief Adds files from the disk to the BSA. Also adds it to the BSA entries.
      * \param map A map containing "save as" path as keys and disk path as values
      */
-    void addFileFromDisk(const QMap<QString, QString>& map);
+    void addFileFromDisk(const QMap<QString, QString> &map);
     /*!
      * \brief Extracts all files from the BSA to the destination.
      * \param destinationDirectory The directory where all files will be extracted.
@@ -89,3 +90,4 @@ private:
     BSArchive _archive;
     BSArchiveEntries _entries;
 };
+} // namespace Qlibbsarch

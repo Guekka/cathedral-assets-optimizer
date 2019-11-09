@@ -1,19 +1,20 @@
 #pragma once
 
-#include "QLibbsarch.h"
+#include "QLibbsarch.hpp"
 
+namespace Qlibbsarch {
 class BSArchiveEntries
 {
 public:
     BSArchiveEntries();
-    explicit BSArchiveEntries(const QStringList& QSLEntries);
-    explicit BSArchiveEntries(const bsa_entry_list_t& entries);
+    explicit BSArchiveEntries(const QStringList &QSLEntries);
+    explicit BSArchiveEntries(const bsa_entry_list_t &entries);
     ~BSArchiveEntries();
 
-    void add(const QString& filepath);
+    void add(const QString &filepath);
     void free();
     void reset();
-    uint32_t count() ;
+    uint32_t count();
     QStringList list();
 
     bsa_entry_list_t getEntries() const;
@@ -21,3 +22,4 @@ public:
 private:
     bsa_entry_list_t _entries;
 };
+} // namespace Qlibbsarch

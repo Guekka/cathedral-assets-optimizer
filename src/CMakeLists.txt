@@ -34,10 +34,12 @@ set(GUI true)
 set(SOURCES
     AnimationsOptimizer.cpp
     AnimationsOptimizer.hpp
-    BSA.cpp
-    BSA.hpp
-    BsaOptimizer.cpp
-    BsaOptimizer.hpp
+
+    BSA/BSA.cpp
+    BSA/BSA.hpp
+    BSA/BsaOptimizer.cpp
+    BSA/BsaOptimizer.hpp
+
     FilesystemOperations.cpp
     FilesystemOperations.hpp
 

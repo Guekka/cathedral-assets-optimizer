@@ -14,11 +14,12 @@ MeshFile::MeshFile()
 int MeshFile::loadFromDisk(const QString &filePath)
 {
     return _file->Load(filePath.toStdString());
+    _modifiedCurrentFile = false;
 }
 
 int MeshFile::saveToDisk(const QString &filePath) const
 {
-    return _file->Save(filePath);
+    return _file->Save(filePath.toStdString());
 }
 
 const NifFile &MeshFile::getFile() const
@@ -29,11 +30,13 @@ const NifFile &MeshFile::getFile() const
 void MeshFile::setFile(NifFile &file)
 {
     _file.reset(&file);
+    _modifiedCurrentFile = true;
 }
 
 void MeshFile::reset()
 {
     _file.reset(new NifFile);
+    _modifiedCurrentFile = false;
 }
 
 } // namespace CAO

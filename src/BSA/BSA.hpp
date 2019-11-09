@@ -6,6 +6,7 @@
 
 #include "Profiles.hpp"
 #include "pch.hpp"
+
 namespace CAO {
 enum BSAType
 {
@@ -43,6 +44,7 @@ struct BSA
     static size_t mergeBsas(QVector<BSA> &list);
 };
 } // namespace CAO
+
 namespace plog {
 inline Record &operator<<(Record &record, const CAO::BSA &bsa)
 {
