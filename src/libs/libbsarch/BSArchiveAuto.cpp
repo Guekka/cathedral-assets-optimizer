@@ -57,7 +57,7 @@ void BSArchiveAuto::addFileFromMemory(const QString &filename, const QByteArray 
     _filesfromMemory.insert(filename, data);
 }
 
-void BSArchiveAuto::extractAll(const QString &destinationDirectory, const bool &overwriteExistingFiles)
+void BSArchiveAuto::extractAll(const QString &destinationDirectory, const bool &overwriteExistingFiles) const
 {
     for (const auto &file : _archive.listFiles())
     {
@@ -73,7 +73,7 @@ void BSArchiveAuto::extractAll(const QString &destinationDirectory, const bool &
     }
 }
 
-void BSArchiveAuto::save()
+void BSArchiveAuto::save() const
 {
     _archive.save();
 }

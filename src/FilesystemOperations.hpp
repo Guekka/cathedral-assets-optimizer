@@ -51,6 +51,14 @@ public:
    */
     static void copyDir(const QString &source, const QString &destination, bool overwriteExisting);
 
+    /*!
+     * \brief Renames a file in order to add .bak at the end. If an identical bak file exists, it will be deleted. If a different bak file exists, 
+     * it will be renamed to .bak.bak etc
+     * \param filePath The file to backup
+     * \return The new path of the file
+     */
+    static QString backupFile(const QString &filePath);
+
     static QStringList readFile(QFile &file, std::function<void(QString &line)> function);
     static QStringList readFile(QFile &file);
 

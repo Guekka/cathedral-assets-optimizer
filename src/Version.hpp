@@ -1,1 +1,1 @@
-#define CAO_VERSION "3.0.7"
+#define CAO_VERSION "6.0.0"

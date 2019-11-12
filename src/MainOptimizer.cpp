@@ -28,15 +28,23 @@ void MainOptimizer::process(const QString &file)
         PLOG_ERROR << "Cannot process: " + file;
 }
 
-void MainOptimizer::processBsa(const QString &file) const
+void MainOptimizer::processBsa(const QString &file)
 {
     if (_optOptions.bDryRun)
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
-    if (_optOptions.bBsaExtract && QFileInfo(file).isFile())
+    PLOG_INFO << "Extracting BSA: " + file;
+    if (_bsaFile.loadFromDisk(file))
     {
-        PLOG_INFO << "BSA found ! Extracting...(this may take a long time, do not force close the program): " + file;
-        _bsaOpt.extract(file, _optOptions.bBsaDeleteBackup);
+        PLOG_ERROR << "Cannot extract BSA: " + file;
+        return;
+    }
+    auto command = _commandBook.getCommandByName("BSA Extract");
+    auto result = command->processIfApplicable(_bsaFile, _optOptions);
+    if (result.errorCode)
+    {
+        PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
+                          .arg(command->name(), file, result.errorMessage);
     }
 
     //TODO if(options.bBsaOptimizeAssets)
@@ -44,9 +52,21 @@ void MainOptimizer::processBsa(const QString &file) const
 
 void MainOptimizer::packBsa(const QString &folder)
 {
-        PLOG_INFO << "Creating BSA...";
-        _bsaOpt.packAll(folder);
-        PluginsOperations::makeDummyPlugins(folder);
+    PLOG_INFO << "Creating BSA...";
+    BSAFolder bsa;
+    if (bsa.loadFromDisk(folder))
+    {
+        PLOG_ERROR << "Cannot pack folder into BSA: " << folder;
+        return;
+    }
+    auto command = _commandBook.getCommandByName("BSA Create");
+    auto result = command->processIfApplicable(bsa, _optOptions);
+    if (result.errorCode)
+    {
+        PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
+                          .arg(command->name(), folder, result.errorMessage);
+    }
+    PluginsOperations::makeDummyPlugins(folder);
 }
 
 void MainOptimizer::processTexture(const QString &file)
@@ -66,8 +86,8 @@ void MainOptimizer::processTexture(const QString &file)
         }
         else if (result.errorCode)
         {
-            PLOG_ERROR << QString("An error happened in module '%1' while processing '%2' with error code %3")
-                              .arg(command->name(), file, QString::number(result));
+            PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
+                              .arg(command->name(), file, result.errorMessage);
         }
     }
 

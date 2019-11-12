@@ -5,7 +5,8 @@
 #pragma once
 
 #include "AnimationsOptimizer.hpp"
-#include "BSA/BsaOptimizer.hpp"
+#include "BSA/BSAFile.hpp"
+#include "BSA/BSAFolder.hpp"
 #include "Commands/CommandBook.hpp"
 #include "Meshes/Mesh.hpp"
 #include "OptionsCAO.hpp"
@@ -26,14 +27,14 @@ public:
     void packBsa(const QString &folder);
 
 private:
-    void processBsa(const QString &file) const;
+    void processBsa(const QString &file);
     void processNif(const QString &file);
     void processTexture(const QString &file);
     void processHkx(const QString &file);
 
     OptionsCAO _optOptions;
 
-    BSAOptimizer _bsaOpt;
+    BSAFile _bsaFile;
     MeshFile _meshFile;
     AnimationsOptimizer _animOpt;
     TextureFile _textureFile;

@@ -26,15 +26,15 @@ add_library(
 set_target_properties(
     libbsarch
     PROPERTIES IMPORTED_LOCATION
-    libbsarch.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/libbsarch.lib
     )
 
 set_target_properties(
     libbsarch
     PROPERTIES IMPORTED_LOCATION_DEBUG
-    libbsarchd.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/libbsarchd.lib
     )
 
-target_link_libraries(Qlibbsarch PRIVATE Qt5::Core)
+target_link_libraries(Qlibbsarch PUBLIC Qt5::Core libbsarch)
 
 target_compile_features(Qlibbsarch PUBLIC cxx_std_17)

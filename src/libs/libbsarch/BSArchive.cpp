@@ -52,7 +52,7 @@ void BSArchive::create(const QString &archiveName, const bsa_archive_type_e &typ
     _openedArchive = true;
 }
 
-void BSArchive::save()
+void BSArchive::save() const
 {
     LOG_LIBBSARCH << "Saving archive: " << _archive;
 
@@ -148,7 +148,7 @@ QByteArray BSArchive::extractFileDataByFilename(const QString &filename)
     return byte_array;
 }
 
-void BSArchive::extract(const QString &filename, const QString &saveAs)
+void BSArchive::extract(const QString &filename, const QString &saveAs) const
 {
     qDebug() << "Extracting: " << filename << " saved as " << saveAs;
     const auto &result = bsa_extract_file(_archive, PREPARE_PATH_LIBBSARCH(filename), PREPARE_PATH_LIBBSARCH(saveAs));
@@ -156,7 +156,7 @@ void BSArchive::extract(const QString &filename, const QString &saveAs)
     Qlibbsarch::checkResult(result);
 }
 
-QStringList BSArchive::listFiles()
+QStringList BSArchive::listFiles() const
 {
     bsa_entry_list_t list = bsa_entry_list_create();
     const auto &result = bsa_get_resource_list(_archive, list, L"");

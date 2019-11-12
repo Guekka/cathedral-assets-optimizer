@@ -62,11 +62,11 @@ public:
      * \param destinationDirectory The directory where all files will be extracted.
      * \param overwriteExistingFiles Whether files in archive will overwrite existing loose files or not
      */
-    void extractAll(const QString &destinationDirectory, const bool &overwriteExistingFiles);
+    void extractAll(const QString &destinationDirectory, const bool &overwriteExistingFiles) const;
     /*!
      * \brief Saves the archive to the disk
      */
-    void save();
+    void save() const;
 
     void setShareData(const bool state);
     void setCompressed(const bool state);

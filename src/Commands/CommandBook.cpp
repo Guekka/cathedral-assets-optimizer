@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "CommandBook.hpp"
+#include "BSA/BSA.hpp"
 #include "Meshes/Mesh.hpp"
 #include "Textures/Texture.hpp"
 
@@ -21,6 +22,8 @@ CommandBook::CommandBook()
     registerCommand(new TextureGenerateMipmaps);
     registerCommand(new MeshConvert);
     registerCommand(new MeshRenameReferencedTextures);
+    registerCommand(new BSAExtract);
+    registerCommand(new BSACreate);
 }
 
 void CommandBook::registerCommand(Command *command)
@@ -67,6 +70,15 @@ QVector<Command *> CommandBook::getAnimationCommands()
 QVector<Command *> CommandBook::getBSACommands()
 {
     return BSACommands;
+}
+
+Command *CommandBook::getCommandByName(const QString &name)
+{
+    for (const auto &vec : {BSACommands, animationCommands, meshCommands, textureCommands})
+        for (const auto &command : vec)
+            if (command->name() == name)
+                return command;
+    return nullptr;
 }
 
 } // namespace CAO

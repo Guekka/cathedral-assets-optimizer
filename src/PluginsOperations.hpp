@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "BSA/BSA.hpp"
+#include "BSA/Utils/BSA.hpp"
 #include "pch.hpp"
 
 namespace CAO {

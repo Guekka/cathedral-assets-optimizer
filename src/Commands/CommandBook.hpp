@@ -18,6 +18,7 @@ public:
     static QVector<Command *> getMeshCommands();
     static QVector<Command *> getAnimationCommands();
     static QVector<Command *> getBSACommands();
+    static Command *getCommandByName(const QString &name);
 
 protected:
     static QVector<Command *> textureCommands;

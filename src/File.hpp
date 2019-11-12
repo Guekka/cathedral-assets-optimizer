@@ -9,7 +9,7 @@
 namespace CAO {
 class File
 {
-public:
+public:  
     const QString &getName() const { return _filename; }
     void setName(const QString &name) { _filename = name; }
 

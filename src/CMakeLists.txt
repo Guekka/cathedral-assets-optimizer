@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12...3.15)
 include_guard(GLOBAL)
 
-project(Cathedral_Assets_Optimizer VERSION 3.0.7 LANGUAGES CXX)
+project(Cathedral_Assets_Optimizer VERSION 6.0.0 LANGUAGES CXX)
 
 
 #Setting version for C++ files
@@ -35,10 +35,21 @@ set(SOURCES
     AnimationsOptimizer.cpp
     AnimationsOptimizer.hpp
 
-    BSA/BSA.cpp
-    BSA/BSA.hpp
-    BSA/BsaOptimizer.cpp
-    BSA/BsaOptimizer.hpp
+    BSA/BSAFile.cpp
+    BSA/BSAFile.hpp
+    BSA/BSAFolder.cpp
+    BSA/BSAFolder.hpp
+
+    BSA/Utils/BSA.cpp
+    BSA/Utils/BSA.hpp
+    BSA/Utils/BSACallback.hpp
+    BSA/Utils/BSASplit.cpp
+    BSA/Utils/BSASplit.hpp
+
+    BSA/Commands/BSACreate.cpp
+    BSA/Commands/BSACreate.hpp
+    BSA/Commands/BSAExtract.cpp
+    BSA/Commands/BSAExtract.hpp
 
     FilesystemOperations.cpp
     FilesystemOperations.hpp
@@ -152,7 +163,7 @@ add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${ICON_RC_PATH} ${QRC
 #Windows 7 compatibility
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     Qt5::Core Qt5::Widgets
-    hkxcmd plog nif directxtex qlibbsarch)
+    hkxcmd plog nif directxtex Qlibbsarch)
 
 #Cotire (PCH)
 set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.hpp")

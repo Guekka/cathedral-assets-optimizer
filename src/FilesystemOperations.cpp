@@ -126,6 +126,26 @@ void FilesystemOperations::copyDir(const QString &source, const QString &destina
     QDir::setCurrent(currentDir);
 }
 
+QString FilesystemOperations::backupFile(const QString &filePath)
+{
+    QFile backupFile(filePath + ".bak");
+    const QFile newFile(filePath);
+
+    if (!backupFile.exists())
+
+        while (backupFile.exists())
+        {
+            if (newFile.size() == backupFile.size())
+                QFile::remove(backupFile.fileName());
+            else
+                backupFile.setFileName(backupFile.fileName() + ".bak");
+        }
+
+    QFile::copy(filePath, backupFile.fileName());
+    PLOG_VERBOSE << QString("Backup-ed file: '%1' to '%2'").arg(filePath, backupFile.fileName());
+    return backupFile.fileName();
+}
+
 QStringList FilesystemOperations::readFile(QFile &file, std::function<void(QString &line)> function)
 {
     QStringList list;
