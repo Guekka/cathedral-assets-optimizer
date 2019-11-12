@@ -26,6 +26,10 @@ public:
     void process(const QString &file);
     void packBsa(const QString &folder);
 
+protected:
+    bool runCommand(Command *command, File &file);
+    bool loadFile(File &file, const QString &path);
+
 private:
     void processBsa(const QString &file);
     void processNif(const QString &file);

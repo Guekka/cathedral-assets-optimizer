@@ -24,8 +24,6 @@ void MainOptimizer::process(const QString &file)
         processBsa(file);
     else if (file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
-    else
-        PLOG_ERROR << "Cannot process: " + file;
 }
 
 void MainOptimizer::processBsa(const QString &file)
@@ -34,18 +32,11 @@ void MainOptimizer::processBsa(const QString &file)
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
     PLOG_INFO << "Extracting BSA: " + file;
-    if (_bsaFile.loadFromDisk(file))
-    {
-        PLOG_ERROR << "Cannot extract BSA: " + file;
+    if (!loadFile(_bsaFile, file))
         return;
-    }
     auto command = _commandBook.getCommandByName("BSA Extract");
-    auto result = command->processIfApplicable(_bsaFile, _optOptions);
-    if (result.errorCode)
-    {
-        PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
-                          .arg(command->name(), file, result.errorMessage);
-    }
+    if (!runCommand(command, _bsaFile))
+        return;
 
     //TODO if(options.bBsaOptimizeAssets)
 }
@@ -54,42 +45,23 @@ void MainOptimizer::packBsa(const QString &folder)
 {
     PLOG_INFO << "Creating BSA...";
     BSAFolder bsa;
-    if (bsa.loadFromDisk(folder))
-    {
-        PLOG_ERROR << "Cannot pack folder into BSA: " << folder;
+    if (!loadFile(bsa, folder))
         return;
-    }
     auto command = _commandBook.getCommandByName("BSA Create");
-    auto result = command->processIfApplicable(bsa, _optOptions);
-    if (result.errorCode)
-    {
-        PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
-                          .arg(command->name(), folder, result.errorMessage);
-    }
+    if (!runCommand(command, bsa))
+        return;
+
     PluginsOperations::makeDummyPlugins(folder);
 }
 
 void MainOptimizer::processTexture(const QString &file)
 {
-    if (!_textureFile.loadFromDisk(file))
-    {
-        PLOG_ERROR << "Failed to open: " << file;
+    if (!loadFile(_textureFile, file))
         return;
-    }
 
     for (auto &command : _commandBook.getTextureCommands())
-    {
-        const auto &result = command->processIfApplicable(_textureFile, _optOptions);
-        if (result.processedFile)
-        {
-            PLOG_VERBOSE << QString("Successfully applied module '%1' while processing '%2'").arg(command->name(), file);
-        }
-        else if (result.errorCode)
-        {
-            PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
-                              .arg(command->name(), file, result.errorMessage);
-        }
-    }
+        if (!runCommand(command, _textureFile))
+            return;
 
     if (!_textureFile.modifiedCurrentFile())
         return;
@@ -119,19 +91,59 @@ void MainOptimizer::processHkx(const QString &file)
 
 void MainOptimizer::processNif(const QString &file)
 {
-    if (_meshFile.loadFromDisk(file))
-    {
-        PLOG_ERROR << "Cannot load mesh from disk: " << file;
-    }
+    if (!loadFile(_meshFile, file))
+        return;
 
     for (auto command : _commandBook.getMeshCommands())
-        command->processIfApplicable(_meshFile, _optOptions);
+        if (!runCommand(command, _meshFile))
+            return;
+
+    if (!_meshFile.modifiedCurrentFile())
+        return;
 
     if (_meshFile.saveToDisk(file))
     {
-        PLOG_ERROR << "Cannot save mesh to disk: " << file;
+        PLOG_ERROR << "Cannot save file to disk: " << file;
     }
 
     PLOG_INFO << "Successfully optimized " << file;
 }
+
+bool MainOptimizer::runCommand(Command *command, File &file)
+{
+    const auto &result = command->processIfApplicable(file, _optOptions);
+    if (result.processedFile)
+    {
+        PLOG_VERBOSE << QString("Successfully applied module '%1' while processing '%2'")
+                            .arg(command->name(), file.getName());
+        return true;
+    }
+    else if (result.errorCode)
+    {
+        PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
+                          .arg(command->name(), file.getName(), result.errorMessage);
+        return false;
+    }
+    else
+    {
+        PLOG_ERROR
+            << QString(
+                   "Unknown error happened in command '%1'. The error code was '%2' and the error message was '%3'. "
+                   "This message shouldn't be printed. If you see it, "
+                   "please report it.")
+                   .arg(command->name(), QString::number(result.errorCode), result.errorMessage);
+    }
+    return false;
+}
+
+bool MainOptimizer::loadFile(File &file, const QString &path)
+{
+    if (file.loadFromDisk(path))
+    {
+        PLOG_ERROR << "Cannot load file from disk: " << file.getName();
+        return false;
+    }
+    return true;
+}
+
 } // namespace CAO
