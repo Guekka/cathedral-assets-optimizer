@@ -4,12 +4,9 @@
 // Add C++ includes here
 
 //Win7 compatibility
-#undef _WIN32_WINNT
-#define _WIN32_WINNT _WIN32_WINNT_WIN7
 #include <Windows.h>
 
 /*---CORE---------------*/
-#include <utility>
 #include <QCommandLineParser>
 #include <QCompleter>
 #include <QCoreApplication>
@@ -52,6 +49,7 @@
 #include <any>
 #include <fstream>
 #include <optional>
+#include <utility>
 /*----------------------*/
 
 /*--WINDOWS-------------*/

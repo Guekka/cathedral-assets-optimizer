@@ -6,7 +6,9 @@
 
 #include "Profiles.hpp"
 #include "pch.hpp"
+#ifdef GUI
 #include "GUI/ui_mainWindow.h"
+#endif
 
 namespace CAO {
 class OptionsCAO final : public QObject

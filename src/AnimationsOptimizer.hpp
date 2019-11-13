@@ -22,7 +22,7 @@ public:
     void convert(const QString &filePath, const hkPackFormat &pkFormat);
 
 private:
-    hkMemoryRouter *_memoryRouter;
+    //hkMemoryRouter *_memoryRouter;
 
     bool hkxcmdFound = false;
     std::once_flag onceFlag;

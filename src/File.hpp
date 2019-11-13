@@ -27,7 +27,7 @@ public:
 
 protected:
     QString _filename;
-    bool _modifiedCurrentFile;
+    bool _modifiedCurrentFile = false;
 };
 
 } // namespace CAO
