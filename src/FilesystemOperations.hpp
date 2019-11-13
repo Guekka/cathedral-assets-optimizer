@@ -59,8 +59,8 @@ public:
      */
     static QString backupFile(const QString &filePath);
 
-    static QStringList readFile(QFile &file, std::function<void(QString &line)> function);
-    static QStringList readFile(QFile &file);
+    static QStringList readFile(
+        QFile &file, std::function<void(QString &line)> function = [](QString &line) {});
 
     static QStringList listPlugins(QDirIterator &it);
 };

@@ -80,8 +80,10 @@ set(SOURCES
 
     OptionsCAO.cpp
     OptionsCAO.hpp
-    PluginsOperations.cpp
-    PluginsOperations.hpp
+
+    Plugins/PluginsOperations.cpp
+    Plugins/PluginsOperations.hpp
+
     Profiles.cpp
     Profiles.hpp
 

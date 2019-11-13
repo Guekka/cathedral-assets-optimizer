@@ -4,7 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "FilesystemOperations.hpp"
-#include "PluginsOperations.hpp"
+#include "Plugins/PluginsOperations.hpp"
+
 namespace CAO {
 void FilesystemOperations::deleteEmptyDirectories(const QString &folderPath)
 {
@@ -161,25 +162,6 @@ QStringList FilesystemOperations::readFile(QFile &file, std::function<void(QStri
             continue;
 
         function(line);
-        list << line;
-    }
-    return list;
-}
-
-QStringList FilesystemOperations::readFile(QFile &file)
-{
-    QStringList list;
-
-    file.open(QFile::ReadOnly);
-    if (!file.isOpen())
-        return list;
-
-    while (!file.atEnd())
-    {
-        QString &&line = file.readLine().simplified();
-        if (line.startsWith("#") || line.isEmpty())
-            continue;
-
         list << line;
     }
     return list;

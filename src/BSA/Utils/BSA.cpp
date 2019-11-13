@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "BSA.hpp"
-#include "PluginsOperations.hpp"
+#include "Plugins/PluginsOperations.hpp"
 
 namespace CAO {
 BSA BSA::getBsa(const BSAType &type)
