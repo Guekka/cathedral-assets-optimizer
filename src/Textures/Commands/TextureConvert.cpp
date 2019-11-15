@@ -31,29 +31,41 @@ CommandResult TextureConvert::process(File &file, const OptionsCAO &options)
 
 bool TextureConvert::isApplicable(File &file, const OptionsCAO &options)
 {
-    auto texResource = dynamic_cast<const TextureResource *>(&file);
+    auto texResource = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texResource)
         return false;
 
-    auto texFile = dynamic_cast<TextureFile *>(&file);
-    if (!texResource)
-        return false;
-
-    const DXGI_FORMAT fileFormat = texResource->GetMetadata().format;
-    if (DirectX::IsCompressed(fileFormat))
+    const DXGI_FORMAT origFormat = texResource->origFormat;
+    const DXGI_FORMAT currentFormat = texResource->GetMetadata().format;
+    if (DirectX::IsCompressed(currentFormat))
         return false; //Cannot process compressed file
 
+    const bool sameFormatAsOrig = currentFormat == origFormat;
+
+    //Compatible but compressing in order to improve performance
+    const bool userWantsConvert = options.bTexturesCompress
+                                  && sameFormatAsOrig; //If true, the file was not compressed originally
+
+    const bool necessary = needsConvert(*texResource, options);
+
+    //If the file was optimized, it was previously in a different format, and thus needs a conversion
+    const bool optimizedFile = file.optimizedCurrentFile();
+
+    return necessary || userWantsConvert || optimizedFile;
+}
+
+bool TextureConvert::needsConvert(const TextureResource &res, const OptionsCAO &options)
+{
     //Checking incompatibility with file format
+    const DXGI_FORMAT origFormat = res.origFormat;
     const auto &unwantedFormats = Profiles::texturesUnwantedFormats();
-    const bool isIncompatible = unwantedFormats.contains(fileFormat);
+    const bool isIncompatible = unwantedFormats.contains(origFormat);
 
     //Truely incompatible
-    const bool needsConvert = options.bTexturesNecessary && (isIncompatible || texFile->isTGA());
-    //Compatible but compressing in order to improve performance
-    const bool wantsConvert = options.bTexturesCompress && !DirectX::IsCompressed(fileFormat)
-                              && !!DirectX::IsCompressed(Profiles::texturesFormat());
+    const bool needsConvert = (options.bTexturesNecessary && isIncompatible)
+                              || (res.isTGA && Profiles::texturesConvertTga());
 
-    return needsConvert || wantsConvert;
+    return needsConvert;
 }
 
 int TextureConvert::convertWithoutCompression(const DirectX::ScratchImage &image,

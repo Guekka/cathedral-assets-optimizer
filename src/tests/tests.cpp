@@ -1,25 +1,36 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "Commands/CommandBook.hpp"
 #include "Textures/Texture.hpp"
 #include "doctest.h"
 #include "pch.hpp"
 
 using namespace CAO;
 
+static std::unique_ptr<TextureFile> getStandardTextureFile(const bool optimizedFile = true,
+                                                           const DXGI_FORMAT &format = DXGI_FORMAT_A8_UNORM)
+{
+    auto textureResource = new TextureResource;
+    auto file = std::make_unique<TextureFile>();
+    textureResource->Initialize2D(format, 16, 16, 1, 1);
+    textureResource->origFormat = format;
+    file->setFile(*textureResource, optimizedFile);
+
+    //Checking that the file is valid
+    auto res = dynamic_cast<const TextureResource *>(&file->getFile());
+    REQUIRE(res->GetImages());
+
+    return file;
+}
+
 SCENARIO("Saving and loading a dds file to the disk")
 {
     GIVEN("A valid TextureFile and a valid path")
     {
-        auto image = std::make_unique<TextureResource>();
-        TextureFile file;
-        image->Initialize2D(DXGI_FORMAT_A8_UNORM, 16, 16, 1, 1);
-        //Checking that the file is valid
-        REQUIRE(image->GetImages());
-
-        file.setFile(*image.release(), false);
+        auto file = getStandardTextureFile(false);
         WHEN("The file is saved to disk")
         {
             const QString filePath = QDir::currentPath() + "/image.dds";
-            file.saveToDisk(filePath);
+            file->saveToDisk(filePath);
             THEN("The file should be correctly saved") { CHECK(QFile::exists(filePath)); }
             WHEN("The file is loaded from disk")
             {
@@ -28,7 +39,7 @@ SCENARIO("Saving and loading a dds file to the disk")
                     //We assume here here the loadFromDisk function works correctly
                     TextureFile file2;
                     CHECK(file2.loadFromDisk(filePath) == 0);
-                    auto info1 = dynamic_cast<const TextureResource *>(&file.getFile())->GetMetadata();
+                    auto info1 = dynamic_cast<const TextureResource *>(&file->getFile())->GetMetadata();
                     auto info2 = dynamic_cast<const TextureResource *>(&file2.getFile())->GetMetadata();
                     CHECK(info1.width == info2.width);
                     CHECK(info1.height == info2.height);
@@ -53,28 +64,76 @@ SCENARIO("Optimizing a texture file")
         }
         WHEN("The TextureFile is changed with 'optimizedFile' set to false")
         {
-            auto image = std::make_unique<TextureResource>();
-            image->Initialize2D(DXGI_FORMAT_A8_UNORM, 16, 16, 1, 1);
-            file.setFile(*image.release(), false);
-            THEN("optimizedCurrentFile should be false") { CHECK(file.optimizedCurrentFile() == false); }
+            auto file2 = getStandardTextureFile(false);
+            THEN("optimizedCurrentFile should be false") { CHECK(file2->optimizedCurrentFile() == false); }
         }
         WHEN("The TextureFile is changed with default arguments")
         {
-            auto image = std::make_unique<TextureResource>();
-            image->Initialize2D(DXGI_FORMAT_A8_UNORM, 16, 16, 1, 1);
-            file.setFile(*image.release());
-            THEN("optimizedCurrentFile should be true") { CHECK(file.optimizedCurrentFile() == true); }
+            auto file3 = getStandardTextureFile();
+            THEN("optimizedCurrentFile should be true") { CHECK(file3->optimizedCurrentFile() == true); }
         }
     }
 }
 
 SCENARIO("Converting a texture")
 {
-    GIVEN("An image compressed using an incompatible format")
+    auto convert = TextureConvert();
+    OptionsCAO opt;
+
+    GIVEN("An unmodified image using an incompatible format, and options with necessary opt enabled")
     {
-        auto image = std::make_unique<TextureResource>();
-        TextureFile file;
-        image->Initialize2D(DXGI_FORMAT_A8_UNORM, 16, 16, 1, 1);
-        file.setFile(*image.release(), false);
+        auto file = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
+        opt.bTexturesNecessary = true;
+
+        WHEN("The file is scanned")
+        {
+            auto isApplicable = convert.isApplicable(*file, opt);
+            CHECK(isApplicable == true);
+        }
+    }
+    GIVEN("An unmodified image using a compatible format, and options with necessary opt enabled")
+    {
+        auto file = getStandardTextureFile(false);
+        opt.bTexturesNecessary = true;
+
+        WHEN("The file is scanned")
+        {
+            auto isApplicable = convert.isApplicable(*file, opt);
+            CHECK(isApplicable == false);
+        }
+    }
+    GIVEN("An unmodified image using a incompatible format, and options with necessary opt disabled")
+    {
+        auto file = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
+        opt.bTexturesNecessary = false;
+
+        WHEN("The file is scanned")
+        {
+            auto isApplicable = convert.isApplicable(*file, opt);
+            CHECK(isApplicable == false);
+        }
+    }
+    GIVEN("A modified image using a compatible format, and options with necessary opt enabled")
+    {
+        auto file = getStandardTextureFile(true);
+        opt.bTexturesNecessary = true;
+
+        WHEN("The file is scanned")
+        {
+            auto isApplicable = convert.isApplicable(*file, opt);
+            CHECK(isApplicable == true);
+        }
+    }
+    GIVEN("A modified image using the same format as the output format, and options with necessary opt "
+          "enabled")
+    {
+        auto file = getStandardTextureFile(true, Profiles::texturesFormat());
+        opt.bTexturesNecessary = true;
+
+        WHEN("The file is scanned")
+        {
+            auto isApplicable = convert.isApplicable(*file, opt);
+            CHECK(isApplicable == false);
+        }
     }
 }

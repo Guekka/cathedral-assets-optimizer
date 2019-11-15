@@ -19,6 +19,9 @@ class MeshResource : public Resource, public NifFile
 
 class TextureResource : public Resource, public DirectX::ScratchImage
 {
+public:
+    bool isTGA = false;
+    DXGI_FORMAT origFormat{};
 };
 
 class BSAFolderResource : public Resource, public QDir

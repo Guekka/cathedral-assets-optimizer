@@ -43,18 +43,7 @@ bool BSAFile::setFile(Resource &file, bool optimizedFile)
         return false;
 
     _file.reset(&file);
-    _optimizedCurrentFile = optimizedFile;
-    return true;
-}
-
-bool BSAFile::setFile(std::unique_ptr<Resource> &file, bool optimizedFile)
-{
-    auto bsa = dynamic_cast<TextureResource *>(&*_file);
-    if (!bsa)
-        return false;
-
-    _file = std::move(file);
-    _optimizedCurrentFile = optimizedFile;
+    _optimizedCurrentFile |= optimizedFile;
     return true;
 }
 

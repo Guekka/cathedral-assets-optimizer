@@ -30,19 +30,8 @@ bool BSAFolder::setFile(Resource &file, bool optimizedFile)
     if (!dir)
         return false;
 
-    _optimizedCurrentFile = optimizedFile;
+    _optimizedCurrentFile |= optimizedFile;
     _file.reset(&file);
-    return true;
-}
-
-bool BSAFolder::setFile(std::unique_ptr<Resource> &file, bool optimizedFile)
-{
-    auto dir = dynamic_cast<BSAFolderResource *>(&*file);
-    if (!dir)
-        return false;
-
-    _optimizedCurrentFile = optimizedFile;
-    _file = std::move(file);
     return true;
 }
 

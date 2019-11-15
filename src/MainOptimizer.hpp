@@ -29,6 +29,7 @@ public:
 protected:
     bool runCommand(Command *command, File &file);
     bool loadFile(File &file, const QString &path);
+    bool saveFile(File &file, const QString &path);
 
 private:
     void processBsa(const QString &file);

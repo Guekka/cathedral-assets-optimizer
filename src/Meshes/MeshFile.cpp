@@ -31,17 +31,7 @@ bool MeshFile::setFile(Resource &file, bool optimizedFile)
         return false;
 
     _file.reset(&file);
-    _optimizedCurrentFile = optimizedFile;
-}
-
-bool MeshFile::setFile(std::unique_ptr<Resource> &file, bool optimizedFile)
-{
-    auto meshFile = dynamic_cast<MeshResource *>(&*file);
-    if (!meshFile)
-        return false;
-
-    _file = std::move(file);
-    _optimizedCurrentFile = optimizedFile;
+    _optimizedCurrentFile |= optimizedFile;
 }
 
 void MeshFile::reset()

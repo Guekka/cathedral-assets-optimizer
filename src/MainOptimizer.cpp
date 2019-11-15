@@ -66,17 +66,8 @@ void MainOptimizer::processTexture(const QString &file)
     if (!_textureFile.optimizedCurrentFile())
         return;
 
-    //Saving to file
-    QString newName = file;
-    if (_textureFile.isTGA())
-        newName = newName.chopped(4) + ".dds";
-    if (_textureFile.saveToDisk(newName))
-    {
-        PLOG_ERROR << "Failed to optimize: " + file;
+    if (!saveFile(_textureFile, file))
         return;
-    }
-    else if (_textureFile.isTGA())
-        QFile(file).remove();
 
     PLOG_INFO << "Successfully optimized " << file;
 }
@@ -101,10 +92,8 @@ void MainOptimizer::processNif(const QString &file)
     if (!_meshFile.optimizedCurrentFile())
         return;
 
-    if (_meshFile.saveToDisk(file))
-    {
-        PLOG_ERROR << "Cannot save file to disk: " << file;
-    }
+    if (saveFile(_meshFile, file))
+        return;
 
     PLOG_INFO << "Successfully optimized " << file;
 }
@@ -141,6 +130,16 @@ bool MainOptimizer::loadFile(File &file, const QString &path)
     if (file.loadFromDisk(path))
     {
         PLOG_ERROR << "Cannot load file from disk: " << file.getName();
+        return false;
+    }
+    return true;
+}
+
+bool MainOptimizer::saveFile(File &file, const QString &path)
+{
+    if (file.saveToDisk(path))
+    {
+        PLOG_ERROR << "Cannot save file to disk: " << file.getName();
         return false;
     }
     return true;

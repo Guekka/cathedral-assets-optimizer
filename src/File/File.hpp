@@ -10,7 +10,7 @@
 namespace CAO {
 class File
 {
-public:  
+public:
     const QString &getName() const { return _filename; }
     void setName(const QString &name) { _filename = name; }
 
@@ -24,7 +24,6 @@ public:
 
     const Resource &getFile() { return *_file; }
     virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
-    virtual bool setFile(std::unique_ptr<Resource> &file, bool optimizedFile = true) = 0;
 
     virtual void reset() = 0;
 

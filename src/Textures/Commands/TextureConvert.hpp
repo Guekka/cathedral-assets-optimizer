@@ -30,5 +30,7 @@ protected:
     int convertWithCompression(const DirectX::ScratchImage &image,
                                DirectX::ScratchImage &timage,
                                const DXGI_FORMAT &format);
+
+    bool needsConvert(const TextureResource &res, const OptionsCAO &options);
 };
 } // namespace CAO

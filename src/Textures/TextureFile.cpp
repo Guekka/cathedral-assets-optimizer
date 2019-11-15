@@ -34,7 +34,7 @@ int TextureFile::loadFromDisk(const QString &filePath)
             reset();
             return 1;
         }
-        _isTGA = true;
+        image->isTGA = true;
     }
 
     if (DirectX::IsTypeless(_info.format))
@@ -47,6 +47,7 @@ int TextureFile::loadFromDisk(const QString &filePath)
         }
         image->OverrideFormat(_info.format);
     }
+    image->origFormat = _info.format;
 
     _filename = filePath;
     return 0;
@@ -89,12 +90,18 @@ int TextureFile::saveToDisk(const QString &filePath) const
         return 1;
     const size_t nimg = image->GetImageCount();
 
+    QString newName = filePath;
+    if (image->isTGA)
+        newName = newName.replace(".tga", ".dds");
+
     // Write texture
     wchar_t wFilePath[1024];
-    QDir::toNativeSeparators(filePath).toWCharArray(wFilePath);
+    QDir::toNativeSeparators(newName).toWCharArray(wFilePath);
     wFilePath[filePath.length()] = '\0';
 
     const HRESULT hr = SaveToDDSFile(img, nimg, _info, DirectX::DDS_FLAGS_NONE, wFilePath);
+    if (SUCCEEDED(hr) && image->isTGA)
+        QFile(_filename).remove();
     return FAILED(hr);
 }
 
@@ -105,19 +112,7 @@ bool TextureFile::setFile(Resource &file, bool optimizedFile)
         return false;
 
     _file.reset(&file);
-    _optimizedCurrentFile = optimizedFile;
-    _info = image->GetMetadata();
-    return true;
-}
-
-bool TextureFile::setFile(std::unique_ptr<Resource> &file, bool optimizedFile)
-{
-    auto image = dynamic_cast<TextureResource *>(&*file);
-    if (!image)
-        return false;
-
-    _file = std::move(file);
-    _optimizedCurrentFile = optimizedFile;
+    _optimizedCurrentFile |= optimizedFile;
     _info = image->GetMetadata();
     return true;
 }
