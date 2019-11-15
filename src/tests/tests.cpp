@@ -5,53 +5,76 @@
 
 using namespace CAO;
 
-SCENARIO("Saving a dds file to the disk")
+SCENARIO("Saving and loading a dds file to the disk")
 {
     GIVEN("A valid TextureFile and a valid path")
     {
+        auto image = std::make_unique<TextureResource>();
+        TextureFile file;
+        image->Initialize2D(DXGI_FORMAT_A8_UNORM, 16, 16, 1, 1);
+        //Checking that the file is valid
+        REQUIRE(image->GetImages());
+
+        file.setFile(*image.release(), false);
         WHEN("The file is saved to disk")
         {
-            THEN("The file should be correctly saved") {}
+            const QString filePath = QDir::currentPath() + "/image.dds";
+            file.saveToDisk(filePath);
+            THEN("The file should be correctly saved") { CHECK(QFile::exists(filePath)); }
+            WHEN("The file is loaded from disk")
+            {
+                THEN("The loaded file should be identical to the saved file")
+                {
+                    //We assume here here the loadFromDisk function works correctly
+                    TextureFile file2;
+                    CHECK(file2.loadFromDisk(filePath) == 0);
+                    auto info1 = dynamic_cast<const TextureResource *>(&file.getFile())->GetMetadata();
+                    auto info2 = dynamic_cast<const TextureResource *>(&file2.getFile())->GetMetadata();
+                    CHECK(info1.width == info2.width);
+                    CHECK(info1.height == info2.height);
+                    CHECK(info1.depth == info2.depth);
+                    CHECK(info1.format == info2.format);
+                    CHECK(info1.arraySize == info2.arraySize);
+                    CHECK(info1.mipLevels == info2.mipLevels);
+                }
+            }
         }
     }
 }
 
-SCENARIO("Loading a dds file from the disk")
+SCENARIO("Optimizing a texture file")
 {
-    SUBCASE("Modified file is correctly set after using TextureFile::setFile")
+    GIVEN("A valid TextureFile")
     {
-        auto image = std::make_unique<DirectX::ScratchImage>();
         TextureFile file;
-        CHECK(file.modifiedCurrentFile() == false);
-        file.setFileUnmodified(image);
-        CHECK(file.modifiedCurrentFile() == false);
-        image = std::make_unique<DirectX::ScratchImage>();
-        file.setFile(image);
-        CHECK(file.modifiedCurrentFile() == true);
-    }
-    SUBCASE("Filesystem operations")
-    {
-        const QString filePath = QDir::currentPath() + "/image.dds";
-        CAPTURE(filePath.toStdString());
-        SUBCASE("Saving file to disk")
+        WHEN("The TextureFile is unchanged")
         {
-            auto image = std::make_unique<DirectX::ScratchImage>();
+            THEN("optimizedCurrentFile should be false") { CHECK(file.optimizedCurrentFile() == false); }
+        }
+        WHEN("The TextureFile is changed with 'optimizedFile' set to false")
+        {
+            auto image = std::make_unique<TextureResource>();
             image->Initialize2D(DXGI_FORMAT_A8_UNORM, 16, 16, 1, 1);
-            TextureFile file;
-            file.setFile(image);
-            auto result = file.saveToDisk(filePath);
-            CHECK(result == 0);
+            file.setFile(*image.release(), false);
+            THEN("optimizedCurrentFile should be false") { CHECK(file.optimizedCurrentFile() == false); }
         }
-        SUBCASE("Loading file from disk")
+        WHEN("The TextureFile is changed with default arguments")
         {
-            TextureFile file;
-            auto result = file.loadFromDisk(filePath);
-            CHECK(result == 0);
-            const auto &loadedImage = file.getFile();
-            CHECK(loadedImage.GetMetadata().width == 16);
-            CHECK(loadedImage.GetMetadata().height == 16);
-            CHECK(file.isTGA() == false);
-            QFile::remove(filePath);
+            auto image = std::make_unique<TextureResource>();
+            image->Initialize2D(DXGI_FORMAT_A8_UNORM, 16, 16, 1, 1);
+            file.setFile(*image.release());
+            THEN("optimizedCurrentFile should be true") { CHECK(file.optimizedCurrentFile() == true); }
         }
+    }
+}
+
+SCENARIO("Converting a texture")
+{
+    GIVEN("An image compressed using an incompatible format")
+    {
+        auto image = std::make_unique<TextureResource>();
+        TextureFile file;
+        image->Initialize2D(DXGI_FORMAT_A8_UNORM, 16, 16, 1, 1);
+        file.setFile(*image.release(), false);
     }
 }
