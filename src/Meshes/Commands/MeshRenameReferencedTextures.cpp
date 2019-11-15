@@ -7,11 +7,11 @@
 namespace CAO {
 CommandResult MeshRenameReferencedTextures::process(File &file, const OptionsCAO &options)
 {
-    auto meshFile = dynamic_cast<MeshFile *>(&file);
+    auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
     if (!meshFile)
         return _resultFactory.getCannotCastFileResult();
 
-    NifFile nif = meshFile->getFile();
+    MeshResource nif = *meshFile;
 
     bool meshChanged = false;
     constexpr int limit = 1000;
@@ -42,7 +42,7 @@ CommandResult MeshRenameReferencedTextures::process(File &file, const OptionsCAO
         }
     }
     if (meshChanged)
-        meshFile->setFile(nif);
+        file.setFile(nif);
 
     auto result = _resultFactory.getSuccessfulResult();
     result.processedFile = meshChanged;
@@ -51,6 +51,10 @@ CommandResult MeshRenameReferencedTextures::process(File &file, const OptionsCAO
 
 bool MeshRenameReferencedTextures::isApplicable(File &file, const OptionsCAO &options)
 {
+    auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
+    if (!meshFile)
+        return false;
+
     return Profiles::texturesConvertTga();
 }
 } // namespace CAO

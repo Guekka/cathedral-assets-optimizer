@@ -8,8 +8,8 @@
 namespace CAO {
 
 TextureFile::TextureFile()
-    : _image(new DirectX::ScratchImage)
 {
+    _file = std::make_unique<TextureResource>();
     // Initialize COM (needed for WIC)
     const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     if (FAILED(hr))
@@ -26,9 +26,10 @@ int TextureFile::loadFromDisk(const QString &filePath)
     wFilePath[filePath.length()] = '\0';
 
     //Trying to guess texture type. DDS is more common
-    if (FAILED(LoadFromDDSFile(wFilePath, DirectX::DDS_FLAGS_NONE, &_info, *_image)))
+    auto image = static_cast<TextureResource *>(&*_file);
+    if (FAILED(LoadFromDDSFile(wFilePath, DirectX::DDS_FLAGS_NONE, &_info, *image)))
     {
-        if (FAILED(LoadFromTGAFile(wFilePath, &_info, *_image)))
+        if (FAILED(LoadFromTGAFile(wFilePath, &_info, *image)))
         {
             reset();
             return 1;
@@ -44,7 +45,7 @@ int TextureFile::loadFromDisk(const QString &filePath)
             reset();
             return 2;
         }
-        _image->OverrideFormat(_info.format);
+        image->OverrideFormat(_info.format);
     }
 
     _filename = filePath;
@@ -57,8 +58,9 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
     PLOG_VERBOSE << "Loading from memory " << fileName;
     _filename = fileName;
 
-    if (FAILED(LoadFromDDSMemory(pSource, size, DirectX::DDS_FLAGS_NONE, &_info, *_image)))
-        if (FAILED(LoadFromTGAMemory(pSource, size, &_info, *_image)))
+    auto image = static_cast<TextureResource *>(&*_file);
+    if (FAILED(LoadFromDDSMemory(pSource, size, DirectX::DDS_FLAGS_NONE, &_info, *image)))
+        if (FAILED(LoadFromTGAMemory(pSource, size, &_info, *image)))
         {
             reset();
             return 1;
@@ -72,7 +74,7 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
             reset();
             return 2;
         }
-        _image->OverrideFormat(_info.format);
+        image->OverrideFormat(_info.format);
     }
 
     _filename = fileName;
@@ -81,10 +83,11 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
 
 int TextureFile::saveToDisk(const QString &filePath) const
 {
-    const auto img = _image->GetImages();
+    auto image = static_cast<TextureResource *>(&*_file);
+    const auto img = image->GetImages();
     if (!img)
         return 1;
-    const size_t nimg = _image->GetImageCount();
+    const size_t nimg = image->GetImageCount();
 
     // Write texture
     wchar_t wFilePath[1024];
@@ -95,42 +98,35 @@ int TextureFile::saveToDisk(const QString &filePath) const
     return FAILED(hr);
 }
 
-const DirectX::ScratchImage &TextureFile::getFile() const
+bool TextureFile::setFile(Resource &file, bool optimizedFile)
 {
-    return *_image;
+    auto image = dynamic_cast<TextureResource *>(&file);
+    if (!image)
+        return false;
+
+    _file.reset(&file);
+    _optimizedCurrentFile = optimizedFile;
+    _info = image->GetMetadata();
+    return true;
 }
 
-void TextureFile::setFile(DirectX::ScratchImage &file)
+bool TextureFile::setFile(std::unique_ptr<Resource> &file, bool optimizedFile)
 {
-    _image.reset(&file);
-    _modifiedCurrentFile = true;
-    _info = _image->GetMetadata();
-}
+    auto image = dynamic_cast<TextureResource *>(&*file);
+    if (!image)
+        return false;
 
-void TextureFile::setFile(DXScratchImagePtr &file)
-{
-    _image = std::move(file);
-    _modifiedCurrentFile = true;
-    _info = _image->GetMetadata();
-}
-
-void TextureFile::setFileUnmodified(DirectX::ScratchImage &file)
-{
-    _image.reset(&file);
-    _info = _image->GetMetadata();
-}
-
-void TextureFile::setFileUnmodified(DXScratchImagePtr &file)
-{
-    _image = std::move(file);
-    _info = _image->GetMetadata();
+    _file = std::move(file);
+    _optimizedCurrentFile = optimizedFile;
+    _info = image->GetMetadata();
+    return true;
 }
 
 void TextureFile::reset()
 {
     _filename.clear();
-    _image.reset(new DirectX::ScratchImage);
+    _file.reset(new TextureResource);
     _info = DirectX::TexMetadata();
-    _modifiedCurrentFile = false;
+    _optimizedCurrentFile = false;
 }
 } // namespace CAO

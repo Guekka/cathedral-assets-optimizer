@@ -67,8 +67,10 @@ set(SOURCES
     Commands/CommandResult.cpp
     Commands/CommandResult.hpp
 
-    File.cpp
-    File.hpp
+    File/Resources.hpp
+    File/File.cpp
+    File/File.hpp
+
     Logger.hpp
     MainOptimizer.cpp
     MainOptimizer.hpp

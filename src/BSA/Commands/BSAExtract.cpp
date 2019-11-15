@@ -9,11 +9,11 @@
 namespace CAO {
 CommandResult BSAExtract::process(File &file, const OptionsCAO &options)
 {
-    auto bsafile = dynamic_cast<BSAFile *>(&file);
+    auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());
     if (!bsafile)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsaPath = bsafile->getName();
+    auto bsaPath = file.getName();
     if (!options.bBsaDeleteBackup)
         bsaPath = FilesystemOperations::backupFile(bsaPath);
 

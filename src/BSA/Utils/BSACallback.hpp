@@ -20,7 +20,7 @@ inline void BSACallback([[maybe_unused]] bsa_archive_t archive,
         PLOG_ERROR << QString("Failed to open DDS '%1' when packing archive: ").arg(path);
     }
 
-    const auto &info = tex.getFile().GetMetadata();
+    const auto &info = static_cast<const TextureResource *>(&tex.getFile())->GetMetadata();
 
     dds_info->width = info.width;
     dds_info->height = info.height;

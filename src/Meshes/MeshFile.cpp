@@ -7,36 +7,48 @@
 namespace CAO {
 
 MeshFile::MeshFile()
-    : _file(new NifFile)
 {
+    _file = std::make_unique<MeshResource>();
 }
 
 int MeshFile::loadFromDisk(const QString &filePath)
 {
-    return _file->Load(filePath.toStdString());
-    _modifiedCurrentFile = false;
+    auto meshFile = static_cast<MeshResource *>(&*_file);
+    return meshFile->Load(filePath.toStdString());
+    _optimizedCurrentFile = false;
 }
 
 int MeshFile::saveToDisk(const QString &filePath) const
 {
-    return _file->Save(filePath.toStdString());
+    auto meshFile = static_cast<MeshResource *>(&*_file);
+    return meshFile->Save(filePath.toStdString());
 }
 
-const NifFile &MeshFile::getFile() const
+bool MeshFile::setFile(Resource &file, bool optimizedFile)
 {
-    return *_file;
-}
+    auto meshFile = dynamic_cast<MeshResource *>(&file);
+    if (!meshFile)
+        return false;
 
-void MeshFile::setFile(NifFile &file)
-{
     _file.reset(&file);
-    _modifiedCurrentFile = true;
+    _optimizedCurrentFile = optimizedFile;
+}
+
+bool MeshFile::setFile(std::unique_ptr<Resource> &file, bool optimizedFile)
+{
+    auto meshFile = dynamic_cast<MeshResource *>(&*file);
+    if (!meshFile)
+        return false;
+
+    _file = std::move(file);
+    _optimizedCurrentFile = optimizedFile;
 }
 
 void MeshFile::reset()
 {
-    _file.reset(new NifFile);
-    _modifiedCurrentFile = false;
+    _file.reset(new MeshResource);
+    _optimizedCurrentFile = false;
+    _filename.clear();
 }
 
 } // namespace CAO

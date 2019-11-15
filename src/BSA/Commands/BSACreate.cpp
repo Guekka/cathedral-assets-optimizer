@@ -10,18 +10,17 @@
 namespace CAO {
 CommandResult BSACreate::process(File &file, const OptionsCAO &options)
 {
-    auto bsaFolder = dynamic_cast<BSAFolder *>(&file);
+    auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto dir = bsaFolder->getFile();
-    auto bsas = BSASplit::splitBSA(dir);
+    auto bsas = BSASplit::splitBSA(*bsaFolder);
 
     for (auto bsa : bsas)
     {
-        BSA::nameBsa({&bsa}, dir.path());
+        BSA::nameBsa({&bsa}, bsaFolder->path());
 
-        auto rootPath = new QString(dir.path());
+        auto rootPath = new QString(bsaFolder->path());
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
@@ -67,7 +66,7 @@ bool BSACreate::isApplicable(File &file, const OptionsCAO &options)
     if (!options.bBsaCreate)
         return false;
 
-    auto bsaFolder = dynamic_cast<BSAFolder *>(&file);
+    auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
     if (!bsaFolder)
         return false;
 

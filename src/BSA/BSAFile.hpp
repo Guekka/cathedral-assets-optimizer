@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "File.hpp"
+#include "File/File.hpp"
 
 namespace CAO {
 class BSAFile : public File
@@ -15,11 +15,9 @@ public:
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) const override;
 
+    bool setFile(Resource &file, bool optimizedFile = false) override;
+    bool setFile(std::unique_ptr<Resource> &file, bool optimizedFile = false) override;
+
     void reset() override;
-
-    const Qlibbsarch::BSArchiveAuto &getFile();
-
-protected:
-    std::unique_ptr<Qlibbsarch::BSArchiveAuto> _file;
 };
 } // namespace CAO

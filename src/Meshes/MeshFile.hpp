@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "File.hpp"
+#include "File/File.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -16,12 +16,9 @@ public:
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) const override;
 
-    const NifFile &getFile() const;
-    void setFile(NifFile &file);
+    bool setFile(Resource &file, bool optimizedFile = false) override;
+    bool setFile(std::unique_ptr<Resource> &file, bool optimizedFile = false) override;
 
     void reset() override;
-
-protected:
-    std::unique_ptr<NifFile> _file;
 };
 } // namespace CAO

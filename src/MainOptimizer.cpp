@@ -63,7 +63,7 @@ void MainOptimizer::processTexture(const QString &file)
         if (!runCommand(command, _textureFile))
             return;
 
-    if (!_textureFile.modifiedCurrentFile())
+    if (!_textureFile.optimizedCurrentFile())
         return;
 
     //Saving to file
@@ -98,7 +98,7 @@ void MainOptimizer::processNif(const QString &file)
         if (!runCommand(command, _meshFile))
             return;
 
-    if (!_meshFile.modifiedCurrentFile())
+    if (!_meshFile.optimizedCurrentFile())
         return;
 
     if (_meshFile.saveToDisk(file))

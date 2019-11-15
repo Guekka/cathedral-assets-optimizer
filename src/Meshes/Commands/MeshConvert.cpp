@@ -9,11 +9,11 @@ QStringList MeshConvert::headpartList;
 
 CommandResult MeshConvert::process(File &file, const OptionsCAO &options)
 {
-    auto meshFile = dynamic_cast<MeshFile *>(&file);
+    auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
     if (!meshFile)
         return _resultFactory.getCannotCastFileResult();
 
-    NifFile nifFile = meshFile->getFile();
+    MeshResource nifFile = *meshFile;
     NiVersion niVersion;
     niVersion.SetUser(Profiles::meshesUser());
     niVersion.SetFile(Profiles::meshesFileVersion());
@@ -24,7 +24,7 @@ CommandResult MeshConvert::process(File &file, const OptionsCAO &options)
     optOptions.headParts = isHeadpart(file.getName());
 
     nifFile.OptimizeFor(optOptions);
-    meshFile->setFile(nifFile);
+    file.setFile(nifFile);
 
     return _resultFactory.getSuccessfulResult();
 }
@@ -34,14 +34,14 @@ bool MeshConvert::isApplicable(File &file, const OptionsCAO &options)
     if (options.iMeshesOptimizationLevel == 0)
         return false;
 
-    auto meshFile = dynamic_cast<MeshFile *>(&file);
+    auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
     if (!meshFile)
         return false;
 
     //Listing headparts
     std::call_once(_onceHeadpartsFlag, [this, &options] { this->listHeadparts(options); });
 
-    NifFile nif = meshFile->getFile();
+    MeshResource nif = *meshFile;
 
     const bool headpart = isHeadpart(file.getName());
 

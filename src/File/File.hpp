@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Resources.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -19,7 +20,11 @@ public:
     virtual int saveToDisk(const QString &filePath) const = 0;
     virtual int saveToMemory(const void *pSource, const size_t &size, const QString &fileName) const;
 
-    bool modifiedCurrentFile() const { return _modifiedCurrentFile; }
+    bool optimizedCurrentFile() const { return _optimizedCurrentFile; }
+
+    const Resource &getFile() { return *_file; }
+    virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
+    virtual bool setFile(std::unique_ptr<Resource> &file, bool optimizedFile = true) = 0;
 
     virtual void reset() = 0;
 
@@ -27,7 +32,8 @@ public:
 
 protected:
     QString _filename;
-    bool _modifiedCurrentFile = false;
+    std::unique_ptr<Resource> _file;
+    bool _optimizedCurrentFile = false;
 };
 
 } // namespace CAO

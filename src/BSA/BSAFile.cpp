@@ -6,22 +6,24 @@
 
 namespace CAO {
 BSAFile::BSAFile()
-    : _file(new Qlibbsarch::BSArchiveAuto(""))
 {
+    _file = std::make_unique<BSAFileResource>();
 }
 
 int BSAFile::loadFromDisk(const QString &filePath)
 {
-    _file->open(filePath);
+    auto bsaFile = static_cast<BSAFileResource *>(&*_file);
+    bsaFile->open(filePath);
     _filename = filePath;
-    _modifiedCurrentFile = false;
+    _optimizedCurrentFile = false;
 
     return 0;
 }
 
 int BSAFile::saveToDisk(const QString &filePath) const
 {
-    _file->save();
+    auto bsaFile = static_cast<BSAFileResource *>(&*_file);
+    bsaFile->save();
 
     if (filePath != _filename)
     {
@@ -34,16 +36,33 @@ int BSAFile::saveToDisk(const QString &filePath) const
     return 0;
 }
 
+bool BSAFile::setFile(Resource &file, bool optimizedFile)
+{
+    auto bsa = dynamic_cast<TextureResource *>(&*_file);
+    if (!bsa)
+        return false;
+
+    _file.reset(&file);
+    _optimizedCurrentFile = optimizedFile;
+    return true;
+}
+
+bool BSAFile::setFile(std::unique_ptr<Resource> &file, bool optimizedFile)
+{
+    auto bsa = dynamic_cast<TextureResource *>(&*_file);
+    if (!bsa)
+        return false;
+
+    _file = std::move(file);
+    _optimizedCurrentFile = optimizedFile;
+    return true;
+}
+
 void BSAFile::reset()
 {
     _file.reset();
     _filename.clear();
-    _modifiedCurrentFile = false;
-}
-
-const Qlibbsarch::BSArchiveAuto &BSAFile::getFile()
-{
-    return *_file;
+    _optimizedCurrentFile = false;
 }
 
 } // namespace CAO

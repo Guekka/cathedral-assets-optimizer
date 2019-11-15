@@ -7,31 +7,30 @@
 namespace CAO {
 CommandResult TextureDecompress::process(File &file, const OptionsCAO &options)
 {
-    auto texFile = dynamic_cast<TextureFile *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
-    const auto &image = texFile->getFile();
-    const auto img = image.GetImages();
-    const size_t nimg = image.GetImageCount();
-    auto info = image.GetMetadata();
+    const auto img = texFile->GetImages();
+    const size_t nimg = texFile->GetImageCount();
+    auto info = texFile->GetMetadata();
 
-    auto timage = std::make_unique<DirectX::ScratchImage>();
+    auto timage = std::make_unique<TextureResource>();
     const auto hr = Decompress(img, nimg, info, DXGI_FORMAT_UNKNOWN /* picks good default */, *timage);
     if (FAILED(hr))
         return _resultFactory.getFailedResult(1, "Failed to decompress");
 
     //This file is "unmodified". Decompressing the file is only done in order to perform other operations.
-    texFile->setFileUnmodified(timage);
+    file.setFile(*timage.release(), false);
     return _resultFactory.getSuccessfulResult();
 }
 
 bool TextureDecompress::isApplicable(File &file, const OptionsCAO &options)
 {
-    auto texFile = dynamic_cast<TextureFile *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)
         return false;
 
-    return DirectX::IsCompressed(texFile->getFile().GetMetadata().format);
+    return DirectX::IsCompressed(texFile->GetMetadata().format);
 }
 } // namespace CAO

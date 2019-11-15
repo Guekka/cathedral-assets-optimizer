@@ -7,35 +7,39 @@
 namespace CAO {
 CommandResult TextureConvert::process(File &file, const OptionsCAO &options)
 {
-    auto texFile = dynamic_cast<TextureFile *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
     const auto &outputFormat = Profiles::texturesFormat();
-    auto timage = std::make_unique<DirectX::ScratchImage>();
+    auto timage = std::make_unique<TextureResource>();
 
     if (DirectX::IsCompressed(outputFormat))
     {
-        if (auto result = convertWithCompression(texFile->getFile(), *timage, outputFormat))
+        if (auto result = convertWithCompression(*texFile, *timage, outputFormat))
             return _resultFactory.getFailedResult(result, "Failed to convert with compression");
     }
     else
     {
-        if (auto result = convertWithoutCompression(texFile->getFile(), *timage, outputFormat))
+        if (auto result = convertWithoutCompression(*texFile, *timage, outputFormat))
             return _resultFactory.getFailedResult(result, "Failed to convert without compression");
     }
 
-    texFile->setFile(timage);
+    file.setFile(*timage.release());
     return _resultFactory.getSuccessfulResult();
 }
 
 bool TextureConvert::isApplicable(File &file, const OptionsCAO &options)
 {
-    auto texFile = dynamic_cast<TextureFile *>(&file);
-    if (!texFile)
+    auto texResource = dynamic_cast<const TextureResource *>(&file);
+    if (!texResource)
         return false;
 
-    const DXGI_FORMAT fileFormat = texFile->getFile().GetMetadata().format;
+    auto texFile = dynamic_cast<TextureFile *>(&file);
+    if (!texResource)
+        return false;
+
+    const DXGI_FORMAT fileFormat = texResource->GetMetadata().format;
     if (DirectX::IsCompressed(fileFormat))
         return false; //Cannot process compressed file
 

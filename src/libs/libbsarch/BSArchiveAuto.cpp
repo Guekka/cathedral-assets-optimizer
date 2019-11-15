@@ -3,14 +3,19 @@
 
 namespace Qlibbsarch {
 BSArchiveAuto::BSArchiveAuto(const QString &rootDirectory)
-    : _rootDirectory(QDir::toNativeSeparators(QDir::cleanPath(rootDirectory)))
+    : _rootDirectory(rootDirectory)
 {
+}
+
+void BSArchiveAuto::setRootDirectory(const QString &rootDirectory)
+{
+    _rootDirectory.setPath(rootDirectory);
 }
 
 void BSArchiveAuto::open(const QString &archivePath)
 {
     _archive.open(archivePath);
-    qDebug() << "Opening archive: " << archivePath;
+    LOG_LIBBSARCH << "Opening archive: " << archivePath;
 }
 
 void BSArchiveAuto::create(const QString &archiveName, const bsa_archive_type_e &type)

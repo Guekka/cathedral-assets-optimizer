@@ -12,11 +12,13 @@ namespace Qlibbsarch {
 class BSArchiveAuto
 {
 public:
+    BSArchiveAuto() = default;
     /*!
      * \brief Constructor
      * \param rootDirectory The root directory of the BSA. This directory is the one containing folders such as textures and meshes.
      */
     BSArchiveAuto(const QString &_rootDirectory);
+    void setRootDirectory(const QString &rootDirectory);
     /*!
      * \brief Opens an existing archive
      * \param archivePath The path of the archive
