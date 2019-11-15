@@ -33,8 +33,8 @@ find_package(Qt5LinguistTools)
 
 #Setting GUI
 #Comment out the next lines to create a CLI version instead (untested)
-#add_compile_definitions(GUI)
-#set(GUI true)
+add_compile_definitions(GUI)
+set(GUI true)
 
 #SOURCES
 set(SOURCES
@@ -166,19 +166,17 @@ target_link_libraries(Cathedral_Assets_Optimizer_lib PUBLIC
     hkxcmd plog nif directxtex Qlibbsarch)
 
 add_executable(Cathedral_Assets_Optimizer WIN32 main.cpp
-    $<TARGET_OBJECTS:Cathedral_Assets_Optimizer_lib>
     ${ICON_RC_PATH} ${QRC_PATH} ${QM_FILES})
 
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE Cathedral_Assets_Optimizer_lib)
+target_include_directories(Cathedral_Assets_Optimizer PRIVATE "${CMAKE_BINARY_DIR}/Cathedral_Assets_Optimizer_lib_autogen/include")
 
 add_executable(Cathedral_Assets_Optimizer_tests
     tests/tests.cpp
     tests/doctest.h
-    $<TARGET_OBJECTS:Cathedral_Assets_Optimizer_lib>)
-
+    )
+target_include_directories(Cathedral_Assets_Optimizer_tests PRIVATE "${CMAKE_BINARY_DIR}/Cathedral_Assets_Optimizer_lib_autogen/include")
 target_link_libraries(Cathedral_Assets_Optimizer_tests PRIVATE Cathedral_Assets_Optimizer_lib)
-
-
 #Cotire (PCH)
 set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.hpp")
 cotire(Cathedral_Assets_Optimizer)
