@@ -110,7 +110,7 @@ set(SOURCES
     Textures/Commands/TextureGenerateMipmaps.cpp
     Textures/Commands/TextureGenerateMipmaps.hpp
     Textures/Commands/TextureResize.cpp
-    Textures/Commands/TextureResize.hpp  
+    Textures/Commands/TextureResize.hpp
 
     pch.hpp
     )
@@ -157,13 +157,16 @@ add_subdirectory(libs/NIF)
 #DirectXTex library
 message("Adding DirectXTex library")
 add_subdirectory("libs/DirectXTex")
+#Json library
+message("Adding json library")
+add_subdirectory("libs/json")
 
 #Build
 message("Adding CAO.exe")
 add_library(Cathedral_Assets_Optimizer_lib ${SOURCES})
 target_link_libraries(Cathedral_Assets_Optimizer_lib PUBLIC
     Qt5::Core Qt5::Widgets
-    hkxcmd plog nif directxtex Qlibbsarch)
+    hkxcmd plog nif directxtex Qlibbsarch nlohmann_json::nlohmann_json)
 
 add_executable(Cathedral_Assets_Optimizer WIN32 main.cpp
     ${ICON_RC_PATH} ${QRC_PATH} ${QM_FILES})
@@ -183,4 +186,3 @@ cotire(Cathedral_Assets_Optimizer)
 
 #C++17
 target_compile_features(Cathedral_Assets_Optimizer PUBLIC cxx_std_17)
-

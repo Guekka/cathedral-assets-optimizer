@@ -11,16 +11,63 @@
 #endif
 
 namespace CAO {
-class OptionsCAO final : public QObject
+class OptionsCAO final
 {
+    Q_GADGET
 public:
     OptionsCAO();
-    OptionsCAO(const OptionsCAO &other);
+    OptionsCAO(const OptionsCAO &other) = default;
+
+    enum StandardKeys
+    {
+        bDebugLog,
+        bDryRun,
+        eMode,
+        sUserPath,
+
+        bBsaExtract,
+        bBsaCreate,
+        bBsaDeleteBackup,
+        bBsaProcessContent,
+
+        bTexturesNecessary,
+        bTexturesCompress,
+        bTexturesMipmaps,
+
+        bTexturesResizeSize,
+        iTexturesTargetHeight,
+        iTexturesTargetWidth,
+
+        bTexturesResizeRatio,
+        iTexturesTargetWidthRatio,
+        iTexturesTargetHeightRatio,
+
+        iMeshesOptimizationLevel,
+
+        bMeshesHeadparts,
+        bMeshesResave,
+
+        bAnimationsOptimization,
+    };
 
     void parseArguments(const QStringList &args);
 
-    void saveToIni(QSettings *settings);
-    void readFromIni(QSettings *settings);
+    template<class T>
+    T getMandatoryValue(const QString &key) const;
+    template<class T>
+    T getMandatoryValue(const StandardKeys &key) const;
+
+    template<class T>
+    T getOptionalValue(const QString &key) const;
+
+    template<class T>
+    void setValue(const QString &key, const T &value);
+
+    template<class T>
+    void setValue(const StandardKeys &key, const T &value);
+
+    void saveToJSON(const QString &filepath) const;
+    void readFromJSON(const QString &filepath);
 #ifdef GUI
     void saveToUi(Ui::MainWindow *ui);
     void readFromUi(Ui::MainWindow *ui);
@@ -31,50 +78,23 @@ public:
    */
     QString isValid() const;
 
-    /*--------------VARS-------------------*/
-    bool bBsaExtract = false;
-    bool bBsaCreate = false;
-    bool bBsaDeleteBackup = false;
-    bool bBsaProcessContent = false;
-
-    bool bAnimationsOptimization = false;
-
-    bool bDryRun = false;
-
-    int iMeshesOptimizationLevel = 0;
-
-    bool bMeshesHeadparts = true;
-    bool bMeshesResave = false;
-
-    bool bTexturesNecessary = true;
-    bool bTexturesCompress = false;
-    bool bTexturesMipmaps = false;
-
-    bool bTexturesResizeSize = false;
-    size_t iTexturesTargetHeight = 2048;
-    size_t iTexturesTargetWidth = 2048;
-    bool bTexturesResizeRatio = false;
-    uint iTexturesTargetWidthRatio = 1;
-    uint iTexturesTargetHeightRatio = 1;
-
-    bool bDebugLog = false;
-
-    /*!
-   * \brief The optimization mode
-   */
     enum OptimizationMode
     {
         SingleMod = 0,
         SeveralMods = 1
     } mode;
-
     Q_ENUM(OptimizationMode)
 
-    /*!
-    * \brief The path given by the user
-    */
-    QString userPath;
-    /*-----------END OF VARS---------------*/
+protected:
+    json _json;
+    json &enumToKey(const StandardKeys &sKey);
+    const json &enumToKey(const StandardKeys &sKey) const;
+
+    json &splitKeySafe(const QString &key);
+    const json &splitKeySafe(const QString &key) const;
+
+    json &splitKey(const QString &key);
+    const json &splitKey(const QString &key) const;
 
 private:
     QMutex *mutex;

@@ -47,6 +47,7 @@
 
 /*--STD-----------------*/
 #include <any>
+#include <filesystem>
 #include <fstream>
 #include <optional>
 #include <utility>
@@ -62,6 +63,8 @@
 #include "libs/DirectXTex/DirectXTex.h"
 #include "libs/NIF/NifFile.h"
 #include "libs/hkxcmd/hkfutils.h"
+#include "libs/json/single_include/nlohmann/json.hpp"
+using json = nlohmann::json;
 #include "libs/libbsarch/BSArchiveAuto.h"
 /*----------------------*/
 

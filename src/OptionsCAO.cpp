@@ -9,135 +9,83 @@ OptionsCAO::OptionsCAO()
 {
 }
 
-OptionsCAO::OptionsCAO(const OptionsCAO &other)
-    : bBsaExtract(other.bBsaExtract)
-    , bBsaCreate(other.bBsaCreate)
-    , bBsaDeleteBackup(other.bBsaDeleteBackup)
-    , bBsaProcessContent(other.bBsaProcessContent)
-    ,
-
-    bAnimationsOptimization(other.bAnimationsOptimization)
-    ,
-
-    bDryRun(other.bDryRun)
-    ,
-
-    iMeshesOptimizationLevel(other.iMeshesOptimizationLevel)
-    , bMeshesHeadparts(other.bMeshesHeadparts)
-    , bMeshesResave(other.bMeshesResave)
-    ,
-
-    bTexturesNecessary(other.bTexturesNecessary)
-    , bTexturesCompress(other.bTexturesCompress)
-    , bTexturesMipmaps(other.bTexturesMipmaps)
-    ,
-
-    bTexturesResizeSize(other.bTexturesResizeSize)
-    , iTexturesTargetHeight(other.iTexturesTargetHeight)
-    , iTexturesTargetWidth(other.iTexturesTargetWidth)
-    ,
-
-    bTexturesResizeRatio(other.bTexturesResizeRatio)
-    , iTexturesTargetWidthRatio(other.iTexturesTargetWidthRatio)
-    , iTexturesTargetHeightRatio(other.iTexturesTargetHeightRatio)
-    , bDebugLog(other.bDebugLog)
-    , mode(other.mode)
-    , userPath(other.userPath)
-    , mutex(new QMutex)
-
+void OptionsCAO::saveToJSON(const QString &filepath) const
 {
+    QMutexLocker lock(mutex);
+    std::fstream stream(std::filesystem::u8path(filepath.toStdString()));
+
+    stream << _json;
 }
 
-void OptionsCAO::saveToIni(QSettings *settings)
+void OptionsCAO::readFromJSON(const QString &filepath)
 {
     QMutexLocker lock(mutex);
 
-    //General
-    settings->setValue("bDryRun", bDryRun);
-    settings->setValue("bDebugLog", bDebugLog);
-    settings->setValue("mode", mode);
-    settings->setValue("userPath", userPath);
-
-    //BSA
-    settings->beginGroup("BSA");
-    settings->setValue("bBsaExtract", bBsaExtract);
-    settings->setValue("bBsaCreate", bBsaCreate);
-    settings->setValue("bBsaDeleteBackup", bBsaDeleteBackup);
-    settings->setValue("bBsaProcessContent", bBsaProcessContent);
-    settings->endGroup();
-
-    //Textures
-    settings->beginGroup("Textures");
-    settings->setValue("bTexturesNecessary", bTexturesNecessary);
-    settings->setValue("bTexturesCompress", bTexturesCompress);
-    settings->setValue("bTexturesMipmaps", bTexturesMipmaps);
-
-    settings->setValue("bTexturesResizeSize", bTexturesResizeSize);
-    settings->setValue("iTexturesTargetWidth", iTexturesTargetWidth);
-    settings->setValue("iTexturesTargetHeight", iTexturesTargetHeight);
-
-    settings->setValue("bTexturesResizeRatio", bTexturesResizeRatio);
-    settings->setValue("iTexturesTargetHeightRatio", iTexturesTargetHeightRatio);
-    settings->setValue("iTexturesTargetWidthRatio", iTexturesTargetWidthRatio);
-    settings->endGroup();
-
-    //Meshes
-    settings->setValue("Meshes/iMeshesOptimizationLevel", iMeshesOptimizationLevel);
-
-    //Meshes advanced
-    settings->setValue("Meshes/bMeshesHeadparts", bMeshesHeadparts);
-    settings->setValue("Meshes/bMeshesResave", bMeshesResave);
-
-    //Animations
-    settings->setValue("Animations/bAnimationsOptimization", bAnimationsOptimization);
+    std::fstream stream(std::filesystem::u8path(filepath.toStdString()));
+    stream >> _json;
 }
 
-void OptionsCAO::readFromIni(QSettings *settings)
+template<class T>
+T OptionsCAO::getMandatoryValue(const QString &key) const
 {
-    QMutexLocker lock(mutex);
+    return splitKeySafe(key).get<T>();
+}
 
-    if (!QFile(settings->fileName()).exists())
-        return;
+template<>
+QString OptionsCAO::getMandatoryValue(const QString &key) const
+{
+    auto value = splitKeySafe(key);
+    return QString::fromStdString(value.get<std::string>());
+}
 
-    //General
-    bDryRun = settings->value("bDryRun").toBool();
-    bDebugLog = settings->value("bDebugLog").toBool();
-    mode = settings->value("mode").value<OptimizationMode>();
-    if (!settings->value("userPath").toString().isEmpty())
-        userPath = settings->value("userPath").toString();
+template<class T>
+T OptionsCAO::getMandatoryValue(const StandardKeys &key) const
+{
+    return enumToKey(key).get<T>();
+}
 
-    //BSA
-    settings->beginGroup("BSA");
-    bBsaExtract = settings->value("bBsaExtract").toBool();
-    bBsaCreate = settings->value("bBsaCreate").toBool();
-    bBsaDeleteBackup = settings->value("bBsaDeleteBackup").toBool();
-    bBsaProcessContent = settings->value("bBsaProcessContent").toBool();
-    settings->endGroup();
+template<>
+QString OptionsCAO::getMandatoryValue(const StandardKeys &key) const
+{
+    auto value = enumToKey(key);
+    return QString::fromStdString(value.get<std::string>());
+}
 
-    //Textures
-    settings->beginGroup("Textures");
-    bTexturesNecessary = settings->value("bTexturesNecessary").toBool();
-    bTexturesCompress = settings->value("bTexturesCompress").toBool();
-    bTexturesMipmaps = settings->value("bTexturesMipmaps").toBool();
+template<class T>
+T OptionsCAO::getOptionalValue(const QString &key) const
+{
+    return splitKey(key).get<T>();
+}
 
-    bTexturesResizeSize = settings->value("bTexturesResizeSize").toBool();
-    iTexturesTargetWidth = settings->value("iTexturesTargetWidth").toUInt();
-    iTexturesTargetHeight = settings->value("iTexturesTargetHeight").toUInt();
+template<>
+QString OptionsCAO::getOptionalValue(const QString &key) const
+{
+    auto value = splitKey(key);
+    return QString::fromStdString(value.get<std::string>());
+}
 
-    bTexturesResizeRatio = settings->value("bTexturesResizeRatio").toBool();
-    iTexturesTargetWidthRatio = settings->value("iTexturesTargetWidthRatio").toUInt();
-    iTexturesTargetHeightRatio = settings->value("iTexturesTargetHeightRatio").toUInt();
-    settings->endGroup();
+template<class T>
+void OptionsCAO::setValue(const QString &key, const T &value)
+{
+    splitKey(key) = value;
+}
 
-    //Meshes
-    iMeshesOptimizationLevel = settings->value("Meshes/iMeshesOptimizationLevel").toInt();
+template<>
+void OptionsCAO::setValue(const QString &key, const QString &value)
+{
+    splitKey(key) = value.toStdString();
+}
 
-    //Meshes advanced
-    bMeshesHeadparts = settings->value("Meshes/bMeshesHeadparts").toBool();
-    bMeshesResave = settings->value("Meshes/bMeshesResave").toBool();
+template<class T>
+void OptionsCAO::setValue(const StandardKeys &key, const T &value)
+{
+    enumToKey(key) = value;
+}
 
-    //Animations
-    bAnimationsOptimization = settings->value("Animations/bAnimationsOptimization").toBool();
+template<>
+void OptionsCAO::setValue(const StandardKeys &key, const QString &value)
+{
+    enumToKey(key) = value.toStdString();
 }
 
 #ifdef GUI
@@ -146,37 +94,39 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
     QMutexLocker lock(mutex);
 
     //BSA
-    ui->bsaExtractCheckBox->setChecked(bBsaExtract);
-    ui->bsaCreateCheckbox->setChecked(bBsaCreate);
-    ui->bsaDeleteBackupsCheckbox->setChecked(bBsaDeleteBackup);
+    ui->bsaExtractCheckBox->setChecked(getMandatoryValue<bool>(bBsaExtract));
+    ui->bsaCreateCheckbox->setChecked(getMandatoryValue<bool>(bBsaCreate));
+    ui->bsaDeleteBackupsCheckbox->setChecked(getMandatoryValue<bool>(bBsaDeleteBackup));
 
     //Textures
-    const bool texturesOpt = bTexturesMipmaps || bTexturesCompress || bTexturesNecessary;
+    const bool texturesOpt = getMandatoryValue<bool>(bTexturesMipmaps) || getMandatoryValue<bool>(bTexturesCompress)
+                             || getMandatoryValue<bool>(bTexturesNecessary);
     if (!texturesOpt)
         ui->texturesGroupBox->setChecked(false);
     else
     {
         ui->texturesGroupBox->setChecked(true);
-        ui->texturesNecessaryOptimizationCheckBox->setChecked(bTexturesNecessary);
-        ui->texturesCompressCheckBox->setChecked(bTexturesCompress);
-        ui->texturesMipmapCheckBox->setChecked(bTexturesMipmaps);
+        ui->texturesNecessaryOptimizationCheckBox->setChecked(getMandatoryValue<bool>(bTexturesNecessary));
+        ui->texturesCompressCheckBox->setChecked(getMandatoryValue<bool>(bTexturesCompress));
+        ui->texturesMipmapCheckBox->setChecked(getMandatoryValue<bool>(bTexturesMipmaps));
     }
 
     //Textures resizing
-    ui->texturesResizingGroupBox->setChecked(bTexturesResizeSize || bTexturesResizeRatio);
+    ui->texturesResizingGroupBox->setChecked(getMandatoryValue<bool>(bTexturesResizeSize)
+                                             || getMandatoryValue<bool>(bTexturesResizeRatio));
 
-    ui->texturesResizingBySizeRadioButton->setChecked(bTexturesResizeSize);
-    ui->texturesResizingBySizeWidth->setValue(static_cast<int>(iTexturesTargetWidth));
-    ui->texturesResizingBySizeHeight->setValue(static_cast<int>(iTexturesTargetHeight));
+    ui->texturesResizingBySizeRadioButton->setChecked(getMandatoryValue<bool>(bTexturesResizeSize));
+    ui->texturesResizingBySizeWidth->setValue(getMandatoryValue<int>(iTexturesTargetWidth));
+    ui->texturesResizingBySizeHeight->setValue(getMandatoryValue<int>(iTexturesTargetHeight));
 
-    ui->texturesResizingByRatioRadioButton->setChecked(bTexturesResizeRatio);
-    ui->texturesResizingByRatioWidth->setValue(static_cast<int>(iTexturesTargetWidthRatio));
-    ui->texturesResizingByRatioHeight->setValue(static_cast<int>(iTexturesTargetHeightRatio));
+    ui->texturesResizingByRatioRadioButton->setChecked(getMandatoryValue<bool>(bTexturesResizeRatio));
+    ui->texturesResizingByRatioWidth->setValue(getMandatoryValue<int>(iTexturesTargetWidthRatio));
+    ui->texturesResizingByRatioHeight->setValue(getMandatoryValue<int>(iTexturesTargetHeightRatio));
 
     //Meshes
 
     ui->meshesGroupBox->setChecked(true);
-    switch (iMeshesOptimizationLevel)
+    switch (getMandatoryValue<uint>(iMeshesOptimizationLevel))
     {
         case 0: ui->meshesGroupBox->setChecked(false); break;
         case 1: ui->meshesNecessaryOptimizationRadioButton->setChecked(true); break;
@@ -184,19 +134,20 @@ void OptionsCAO::saveToUi(Ui::MainWindow *ui)
         case 3: ui->meshesFullOptimizationRadioButton->setChecked(true); break;
     }
 
-    ui->meshesResaveCheckBox->setChecked(bMeshesResave);
-    ui->meshesHeadpartsCheckBox->setChecked(bMeshesHeadparts);
+    ui->meshesResaveCheckBox->setChecked(getMandatoryValue<bool>(bMeshesResave));
+    ui->meshesHeadpartsCheckBox->setChecked(getMandatoryValue<bool>(bMeshesHeadparts));
 
     //Animations
-    ui->animationsNecessaryOptimizationCheckBox->setChecked(bAnimationsOptimization);
+    ui->animationsNecessaryOptimizationCheckBox->setChecked(getMandatoryValue<bool>(bAnimationsOptimization));
 
     //Log level
-    ui->actionEnable_debug_log->setChecked(bDebugLog);
+    ui->actionEnable_debug_log->setChecked(getMandatoryValue<bool>(bDebugLog));
 
     //General and GUI
-    ui->dryRunCheckBox->setChecked(bDryRun);
-    ui->modeChooserComboBox->setCurrentIndex(ui->modeChooserComboBox->findData(mode));
-    ui->userPathTextEdit->setText(userPath);
+    ui->dryRunCheckBox->setChecked(getMandatoryValue<bool>(bDryRun));
+    ui->modeChooserComboBox->setCurrentIndex(
+        ui->modeChooserComboBox->findData(getMandatoryValue<OptimizationMode>(eMode)));
+    ui->userPathTextEdit->setText(getMandatoryValue<QString>(sUserPath));
 }
 
 void OptionsCAO::readFromUi(Ui::MainWindow *ui)
@@ -205,50 +156,50 @@ void OptionsCAO::readFromUi(Ui::MainWindow *ui)
 
     //BSA
     const bool bsaEnabled = ui->bsaTab->isEnabled() && ui->bsaBaseGroupBox->isEnabled();
-    bBsaExtract = bsaEnabled && ui->bsaExtractCheckBox->isChecked();
-    bBsaCreate = bsaEnabled && ui->bsaCreateCheckbox->isChecked();
-    bBsaDeleteBackup = bsaEnabled && ui->bsaDeleteBackupsCheckbox->isChecked();
+    setValue(bBsaExtract, bsaEnabled && ui->bsaExtractCheckBox->isChecked());
+    setValue(bBsaCreate, bsaEnabled && ui->bsaCreateCheckbox->isChecked());
+    setValue(bBsaDeleteBackup, bsaEnabled && ui->bsaDeleteBackupsCheckbox->isChecked());
 
     //Textures
     const bool texturesEnabled = ui->texturesGroupBox->isChecked() && ui->texturesTab->isEnabled();
-    bTexturesNecessary = texturesEnabled && ui->texturesNecessaryOptimizationCheckBox->isChecked();
-    bTexturesMipmaps = texturesEnabled && ui->texturesMipmapCheckBox->isChecked();
-    bTexturesCompress = texturesEnabled && ui->texturesCompressCheckBox->isChecked();
+    setValue(bTexturesNecessary, texturesEnabled && ui->texturesNecessaryOptimizationCheckBox->isChecked());
+    setValue(bTexturesMipmaps, texturesEnabled && ui->texturesMipmapCheckBox->isChecked());
+    setValue(bTexturesCompress, texturesEnabled && ui->texturesCompressCheckBox->isChecked());
 
     //Textures resizing
     const bool texturesResizing = ui->texturesResizingGroupBox->isChecked() && ui->texturesTab->isEnabled();
-    bTexturesResizeSize = ui->texturesResizingBySizeRadioButton->isChecked() && texturesResizing;
-    iTexturesTargetWidth = static_cast<size_t>(ui->texturesResizingBySizeWidth->value());
-    iTexturesTargetHeight = static_cast<size_t>(ui->texturesResizingBySizeHeight->value());
+    setValue(bTexturesResizeSize, ui->texturesResizingBySizeRadioButton->isChecked() && texturesResizing);
+    setValue(iTexturesTargetWidth, static_cast<size_t>(ui->texturesResizingBySizeWidth->value()));
+    setValue(iTexturesTargetHeight, static_cast<size_t>(ui->texturesResizingBySizeHeight->value()));
 
-    bTexturesResizeRatio = ui->texturesResizingByRatioRadioButton->isChecked() && texturesResizing;
-    iTexturesTargetWidthRatio = static_cast<size_t>(ui->texturesResizingByRatioWidth->value());
-    iTexturesTargetHeightRatio = static_cast<size_t>(ui->texturesResizingByRatioHeight->value());
+    setValue(bTexturesResizeRatio, ui->texturesResizingByRatioRadioButton->isChecked() && texturesResizing);
+    setValue(iTexturesTargetWidthRatio, static_cast<size_t>(ui->texturesResizingByRatioWidth->value()));
+    setValue(iTexturesTargetHeightRatio, static_cast<size_t>(ui->texturesResizingByRatioHeight->value()));
 
     //Meshes base
     const bool meshesEnabled = ui->meshesTab->isEnabled();
     if (ui->meshesNecessaryOptimizationRadioButton->isChecked())
-        iMeshesOptimizationLevel = 1;
+        setValue(iMeshesOptimizationLevel, 1);
     else if (ui->meshesMediumOptimizationRadioButton->isChecked())
-        iMeshesOptimizationLevel = 2;
+        setValue(iMeshesOptimizationLevel, 2);
     else if (ui->meshesFullOptimizationRadioButton->isChecked())
-        iMeshesOptimizationLevel = 3;
+        setValue(iMeshesOptimizationLevel, 3);
     if (!ui->meshesGroupBox->isChecked() || !meshesEnabled)
-        iMeshesOptimizationLevel = 0;
+        setValue(iMeshesOptimizationLevel, 0);
 
     //Meshes advanced
-    bMeshesHeadparts = meshesEnabled && ui->meshesHeadpartsCheckBox->isChecked();
-    bMeshesResave = meshesEnabled && ui->meshesResaveCheckBox->isChecked();
+    setValue(bMeshesHeadparts, meshesEnabled && ui->meshesHeadpartsCheckBox->isChecked());
+    setValue(bMeshesResave, meshesEnabled && ui->meshesResaveCheckBox->isChecked());
 
     //Animations
-    bAnimationsOptimization = ui->AnimationsTab->isEnabled()
-                              && ui->animationsNecessaryOptimizationCheckBox->isChecked();
+    setValue(bAnimationsOptimization,
+             ui->AnimationsTab->isEnabled() && ui->animationsNecessaryOptimizationCheckBox->isChecked());
 
     //General
-    bDryRun = ui->dryRunCheckBox->isChecked();
-    userPath = QDir::cleanPath(ui->userPathTextEdit->text());
-    mode = ui->modeChooserComboBox->currentData().value<OptimizationMode>();
-    bDebugLog = ui->actionEnable_debug_log->isChecked();
+    setValue(bDryRun, ui->dryRunCheckBox->isChecked());
+    setValue(sUserPath, QDir::cleanPath(ui->userPathTextEdit->text()));
+    setValue(eMode, ui->modeChooserComboBox->currentData().value<OptimizationMode>());
+    setValue(bDebugLog, ui->actionEnable_debug_log->isChecked());
 }
 #endif
 
@@ -314,37 +265,116 @@ void OptionsCAO::parseArguments(const QStringList &args)
     const QString &readGame = parser.positionalArguments().at(2);
     Profiles::setCurrentProfile(readGame);
 
-    bDryRun = parser.isSet("dr");
-    bDebugLog = parser.isSet("l");
+    _json["General"]["bDryRun"] = parser.isSet("dr");
+    _json["General"]["bDebugLog"] = parser.isSet("l");
+    _json["General"]["mode"] = mode;
+    _json["General"]["userPath"] = userPath.toStdString();
 
-    iMeshesOptimizationLevel = parser.value("m").toInt();
-    bMeshesHeadparts = parser.isSet("mh");
-    bMeshesResave = parser.isSet("mr");
+    //BSA
+    _json["BSA"]["bBsaExtract"] = parser.isSet("be");
+    _json["BSA"]["bBsaCreate"] = parser.isSet("bc");
+    _json["BSA"]["bBsaDeleteBackup"] = parser.isSet("bd");
+    _json["BSA"]["bBsaProcessContent"] = parser.isSet("bo");
 
-    bTexturesNecessary = parser.isSet("t0");
-    bTexturesCompress = parser.isSet("t1");
-    bTexturesMipmaps = parser.isSet("t2");
+    //Textures
+    _json["Textures"]["bTexturesNecessary"] = parser.isSet("t0");
+    _json["Textures"]["bTexturesCompress"] = parser.isSet("t1");
+    _json["Textures"]["bTexturesMipmaps"] = parser.isSet("t2");
 
-    bTexturesResizeRatio = parser.isSet("trr");
-    iTexturesTargetWidthRatio = parser.value("trrw").toUInt();
-    iTexturesTargetHeightRatio = parser.value("trrh").toUInt();
+    _json["Textures"]["Resizing"]["bTexturesResizeSize"] = parser.isSet("trs");
+    _json["Textures"]["Resizing"]["iTexturesTargetWidth"] = parser.value("trsw").toUInt();
+    _json["Textures"]["Resizing"]["iTexturesTargetHeight"] = parser.value("trsh").toUInt();
 
-    bTexturesResizeSize = parser.isSet("trs");
-    iTexturesTargetWidth = parser.value("trsw").toUInt();
-    iTexturesTargetHeight = parser.value("trsh").toUInt();
+    _json["Textures"]["Resizing"]["bTexturesResizeRatio"] = parser.isSet("trr");
+    _json["Textures"]["Resizing"]["iTexturesTargetHeightRatio"] = parser.value("trrw").toUInt();
+    _json["Textures"]["Resizing"]["iTexturesTargetWidthRatio"] = parser.value("trrh").toUInt();
 
-    bAnimationsOptimization = parser.isSet("a");
+    //Meshes
+    _json["Meshes"]["iMeshesOptimizationLevel"] = parser.value("m").toInt();
 
-    bBsaExtract = parser.isSet("be");
-    bBsaCreate = parser.isSet("bc");
-    bBsaDeleteBackup = parser.isSet("bd");
-    bBsaProcessContent = parser.isSet("bo");
+    _json["Meshes"]["bMeshesHeadparts"] = parser.isSet("mh");
+    _json["Meshes"]["bMeshesResave"] = parser.isSet("mr");
+
+    //Animations
+    _json["Animations"]["bAnimationsOptimization"] = parser.isSet("a");
+}
+
+const json &OptionsCAO::enumToKey(const StandardKeys &sKey) const
+{
+    const json *j = &_json;
+    switch (sKey)
+    {
+        case bDebugLog: j = &j->at("General").at("bDebugLog");
+        case bDryRun: j = &j->at("General").at("bDryRun");
+        case eMode: j = &j->at("General").at("eMode");
+        case sUserPath: j = &j->at("General").at("sUserPath");
+
+        case bBsaExtract: j = &j->at("BSA").at("bBsaExtract");
+        case bBsaCreate: j = &j->at("BSA").at("bBsaCreate");
+        case bBsaDeleteBackup: j = &j->at("BSA").at("bBsaDeleteBackup");
+        case bBsaProcessContent: j = &j->at("BSA").at("bBsaProcessContent");
+
+        case bTexturesNecessary: j = &j->at("Textures").at("bTexturesNecessary");
+        case bTexturesCompress: j = &j->at("Textures").at("bTexturesCompress");
+        case bTexturesMipmaps: j = &j->at("Textures").at("bTexturesMipmaps");
+
+        case bTexturesResizeSize: j = &j->at("Textures").at("Resizing").at("BySize").at("Enabled");
+        case iTexturesTargetHeight: j = &j->at("Textures").at("Resizing").at("BySize").at("Width");
+        case iTexturesTargetWidth: j = &j->at("Textures").at("Resizing").at("BySize").at("Height");
+
+        case bTexturesResizeRatio: j = &j->at("Textures").at("Resizing").at("ByRatio").at("Enabled");
+        case iTexturesTargetWidthRatio: j = &j->at("Textures").at("Resizing").at("ByRatio").at("Width");
+        case iTexturesTargetHeightRatio: j = &j->at("Textures").at("Resizing").at("ByRatio").at("Height");
+
+        case iMeshesOptimizationLevel: j = &j->at("Meshes").at("iMeshesOptimizationLevel");
+        case bMeshesHeadparts: j = &j->at("Meshes").at("bMeshesHeadparts");
+        case bMeshesResave: j = &j->at("Meshes").at("bMeshesResave");
+
+        case bAnimationsOptimization: j = &j->at("Animations").at("bAnimationsOptimization");
+    }
+    return *j;
+}
+
+json &OptionsCAO::enumToKey(const StandardKeys &sKey)
+{
+    return const_cast<json &>(enumToKey(sKey));
+}
+
+const json &OptionsCAO::splitKey(const QString &key) const
+{
+    auto split = key.split("/");
+    const json *j = &_json;
+    for (const auto &subKey : split)
+        j = &(*j)[subKey.toStdString()];
+
+    return *j;
+}
+
+json &OptionsCAO::splitKey(const QString &key)
+{
+    return const_cast<json &>(splitKey(key));
+}
+
+const json &OptionsCAO::splitKeySafe(const QString &key) const
+{
+    auto split = key.split("/");
+    const json *j = &_json;
+    for (const auto &subKey : split)
+        j = &j->at(subKey.toStdString());
+
+    return *j;
+}
+
+json &OptionsCAO::splitKeySafe(const QString &key)
+{
+    return const_cast<json &>(splitKeySafe(key));
 }
 
 QString OptionsCAO::isValid() const
 {
-    if (!QDir(userPath).exists() || userPath.size() < 5)
-        return ("This path does not exist or is shorter than 5 characters. Path: '" + userPath + "'");
+    if (!QDir(getMandatoryValue<QString>(sUserPath)).exists() || getMandatoryValue<QString>(sUserPath).size() < 5)
+        return QString("This path does not exist or is shorter than 5 characters. Path: '%1'")
+            .arg(getMandatoryValue<QString>(sUserPath));
 
     if (mode != SingleMod && mode != SeveralMods)
         return "This mode does not exist.";
@@ -352,9 +382,11 @@ QString OptionsCAO::isValid() const
     if (iMeshesOptimizationLevel < 0 || iMeshesOptimizationLevel > 3)
         return ("This meshes optimization level does not exist. Level: " + QString::number(iMeshesOptimizationLevel));
 
-    if (iTexturesTargetWidth % 2 != 0 || iTexturesTargetHeight % 2 != 0)
+    if (getMandatoryValue<uint>(iTexturesTargetWidth) % 2 != 0
+        || getMandatoryValue<uint>(iTexturesTargetHeight) % 2 != 0)
         return ("Textures target size has to be a power of two");
 
     return QString();
 }
+
 } // namespace CAO
