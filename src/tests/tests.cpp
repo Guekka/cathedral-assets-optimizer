@@ -1,5 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "Commands/CommandBook.hpp"
+#include "Settings/Settings.hpp"
 #include "Textures/Texture.hpp"
 #include "doctest.h"
 #include "pch.hpp"
@@ -78,61 +79,61 @@ SCENARIO("Optimizing a texture file")
 SCENARIO("Converting a texture")
 {
     auto convert = TextureConvert();
-    OptionsCAO opt;
+    Settings sets;
 
-    GIVEN("An unmodified image using an incompatible format, and options with necessary opt enabled")
+    GIVEN("An unmodified image using an incompatible format, and settings with necessary opt enabled")
     {
         auto file = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
-        opt.bTexturesNecessary = true;
+        sets.setValue(StandardSettings::bTexturesNecessary, true);
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, opt);
+            auto isApplicable = convert.isApplicable(*file, sets);
             CHECK(isApplicable == true);
         }
     }
-    GIVEN("An unmodified image using a compatible format, and options with necessary opt enabled")
+    GIVEN("An unmodified image using a compatible format, and settings with necessary opt enabled")
     {
         auto file = getStandardTextureFile(false);
-        opt.bTexturesNecessary = true;
+        sets.setValue(StandardSettings::bTexturesNecessary, true);
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, opt);
+            auto isApplicable = convert.isApplicable(*file, sets);
             CHECK(isApplicable == false);
         }
     }
-    GIVEN("An unmodified image using a incompatible format, and options with necessary opt disabled")
+    GIVEN("An unmodified image using a incompatible format, and settings with necessary opt disabled")
     {
         auto file = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
-        opt.bTexturesNecessary = false;
+        sets.setValue(StandardSettings::bTexturesNecessary, false);
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, opt);
+            auto isApplicable = convert.isApplicable(*file, sets);
             CHECK(isApplicable == false);
         }
     }
-    GIVEN("A modified image using a compatible format, and options with necessary opt enabled")
+    GIVEN("A modified image using a compatible format, and settings with necessary opt enabled")
     {
         auto file = getStandardTextureFile(true);
-        opt.bTexturesNecessary = true;
+        sets.setValue(StandardSettings::bTexturesNecessary, true);
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, opt);
+            auto isApplicable = convert.isApplicable(*file, sets);
             CHECK(isApplicable == true);
         }
     }
-    GIVEN("A modified image using the same format as the output format, and options with necessary opt "
+    GIVEN("A modified image using the same format as the output format, and settings with necessary opt "
           "enabled")
     {
-        auto file = getStandardTextureFile(true, Profiles::texturesFormat());
-        opt.bTexturesNecessary = true;
+        auto file = getStandardTextureFile(true, sets.getMandatoryValue<DXGI_FORMAT>(AdvancedSettings::eTexturesFormat));
+        sets.setValue(StandardSettings::bTexturesNecessary, true);
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, opt);
+            auto isApplicable = convert.isApplicable(*file, sets);
             CHECK(isApplicable == false);
         }
     }

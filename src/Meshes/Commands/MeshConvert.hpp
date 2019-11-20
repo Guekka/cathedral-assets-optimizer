@@ -20,12 +20,12 @@ public:
         _priority = Priority::Medium;
     }
 
-    CommandResult process(File &file, const OptionsCAO &options) override;
-    bool isApplicable(File &file, const OptionsCAO &options) override;
+    CommandResult process(File &file, const Settings &settings) override;
+    bool isApplicable(File &file, const Settings &settings) override;
 
 protected:
     bool isHeadpart(const QString &filepath);
-    void listHeadparts(const OptionsCAO &options);
+    void listHeadparts(const Settings &settings);
 
     static QStringList headpartList;
 

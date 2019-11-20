@@ -5,10 +5,10 @@
 
 #include "MainOptimizer.hpp"
 #include "Plugins/PluginsOperations.hpp"
-#include "Profiles.hpp"
+#include "Settings/Profiles.hpp"
 
 namespace CAO {
-MainOptimizer::MainOptimizer(const OptionsCAO &optOptions)
+MainOptimizer::MainOptimizer(const Settings &optOptions)
     : _optOptions(optOptions)
 {}
 
@@ -18,9 +18,9 @@ void MainOptimizer::process(const QString &file)
         processTexture(file);
     else if (file.endsWith(".nif", Qt::CaseInsensitive))
         processNif(file);
-    else if (file.endsWith(".tga") && CAO::Profiles::texturesConvertTga())
+    else if (file.endsWith(".tga") && _optOptions.getMandatoryValue<bool>(AdvancedSettings::bTexturesTGAConvertEnabled))
         processTexture(file);
-    else if (file.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
+    else if (file.endsWith(_optOptions.getMandatoryValue<QString>(AdvancedSettings::sBSASuffix), Qt::CaseInsensitive))
         processBsa(file);
     else if (file.endsWith(".hkx", Qt::CaseInsensitive))
         processHkx(file);
@@ -28,7 +28,7 @@ void MainOptimizer::process(const QString &file)
 
 void MainOptimizer::processBsa(const QString &file)
 {
-    if (_optOptions.bDryRun)
+    if (_optOptions.getMandatoryValue<bool>(StandardSettings::bDryRun))
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
     PLOG_INFO << "Extracting BSA: " + file;
@@ -38,7 +38,7 @@ void MainOptimizer::processBsa(const QString &file)
     if (!runCommand(command, _bsaFile))
         return;
 
-    //TODO if(options.bBsaOptimizeAssets)
+    //TODO if(settings.bBsaOptimizeAssets)
 }
 
 void MainOptimizer::packBsa(const QString &folder)
@@ -51,7 +51,7 @@ void MainOptimizer::packBsa(const QString &folder)
     if (!runCommand(command, bsa))
         return;
 
-    PluginsOperations::makeDummyPlugins(folder);
+    PluginsOperations::makeDummyPlugins(folder, _optOptions);
 }
 
 void MainOptimizer::processTexture(const QString &file)
@@ -74,10 +74,10 @@ void MainOptimizer::processTexture(const QString &file)
 
 void MainOptimizer::processHkx(const QString &file)
 {
-    if (_optOptions.bDryRun)
+    if (_optOptions.getMandatoryValue<bool>(StandardSettings::bDryRun))
         PLOG_INFO << file + " would be converted to the appropriate format.";
     else
-        _animOpt.convert(file, CAO::Profiles::animationFormat());
+        _animOpt.convert(file, _optOptions.getMandatoryValue<hkPackFormat>(AdvancedSettings::eAnimationsFormat));
 }
 
 void MainOptimizer::processNif(const QString &file)

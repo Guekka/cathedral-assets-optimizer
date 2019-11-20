@@ -6,13 +6,13 @@
 
 #include "BSA/BSAFolder.hpp"
 #include "BSA/Utils/BSA.hpp"
-#include "OptionsCAO.hpp"
+#include "Settings/Settings.hpp"
 
 namespace CAO {
 class BSASplit
 {
 public:
-    static QVector<BSA> splitBSA(const QDir &dir);
+    static QVector<BSA> splitBSA(const QDir &dir, const Settings &settings);
 
 protected:
     static bool isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo);

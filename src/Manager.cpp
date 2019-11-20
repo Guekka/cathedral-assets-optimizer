@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "Manager.hpp"
 namespace CAO {
-Manager::Manager(OptionsCAO &opt)
-    : _options(opt)
+Manager::Manager(Settings &opt)
+    : _settings(opt)
 
 {
     init();
@@ -14,17 +14,17 @@ Manager::Manager(OptionsCAO &opt)
 Manager::Manager(const QStringList &args)
 {
     //Parsing args
-    _options.parseArguments(args);
+    _settings.parseArguments(args);
     init();
 }
 
 void Manager::init()
 {
     //Preparing logging
-    initCustomLogger(Profiles::logPath(), _options.bDebugLog);
+    initCustomLogger(Profiles::logPath(), _settings.getMandatoryValue<bool>(StandardSettings::bDebugLog));
 
     PLOG_VERBOSE << "Checking settings...";
-    const QString error = _options.isValid();
+    const QString error = _settings.isValid();
     if (!error.isEmpty())
     {
         PLOG_FATAL << error;
@@ -42,12 +42,15 @@ void Manager::listDirectories()
 {
     _modsToProcess.clear();
 
-    if (_options.mode == OptionsCAO::SingleMod)
-        _modsToProcess << _options.userPath;
+    const auto &userPath = _settings.getMandatoryValue<QString>(StandardSettings::sUserPath);
 
-    else if (_options.mode == OptionsCAO::SeveralMods)
+    if (_settings.getMandatoryValue<StandardSettings::OptimizationMode>(StandardSettings::eMode)
+        == StandardSettings::SingleMod)
+        _modsToProcess << userPath;
+
+    else
     {
-        const QDir dir(_options.userPath);
+        const QDir dir(userPath);
         for (auto subDir : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
             if (!subDir.contains("separator")
                 && !_ignoredMods.contains(subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
@@ -59,8 +62,7 @@ void Manager::printProgress(const int &total, const QString &text = "Processing 
 {
 #ifndef GUI
     QTextStream(stdout) << "PROGRESS:|" << text << " - %v/%m - %p%|" << _numberCompletedFiles << '|' << total << endl;
-#endif
-#ifdef GUI
+#else
     emit progressBarTextChanged(text + "- %v/%m - %p%", total, _numberCompletedFiles);
 #endif
 }
@@ -81,20 +83,30 @@ void Manager::listFiles()
             if (it.fileInfo().size() == 0)
                 continue;
 
-            const bool processMeshes = _options.bMeshesResave || _options.iMeshesOptimizationLevel;
+            auto getBool = [this](const StandardSettings::StandardKey &key) {
+                return _settings.getMandatoryValue<bool>(key);
+            };
+
+            const bool processMeshes = getBool(StandardSettings::bMeshesResave)
+                                       || getBool(StandardSettings::iMeshesOptimizationLevel);
             const bool mesh = filename.endsWith(".nif", Qt::CaseInsensitive) && processMeshes;
 
-            const bool processTextures = _options.bTexturesMipmaps || _options.bTexturesCompress
-                                         || _options.bTexturesNecessary || _options.bTexturesResizeSize
-                                         || _options.bTexturesResizeRatio;
+            const bool processTextures = getBool(StandardSettings::bTexturesMipmaps)
+                                         || getBool(StandardSettings::bTexturesCompress)
+                                         || getBool(StandardSettings::bTexturesNecessary)
+                                         || getBool(StandardSettings::bTexturesResizeSize)
+                                         || getBool(StandardSettings::bTexturesResizeRatio);
 
             const bool texture = (filename.endsWith(".dds", Qt::CaseInsensitive)
                                   || filename.endsWith(".tga", Qt::CaseInsensitive))
                                  && processTextures;
 
-            const bool animation = _options.bAnimationsOptimization && filename.endsWith(".hkx", Qt::CaseInsensitive);
+            const bool animation = getBool(StandardSettings::bAnimationsOptimization)
+                                   && filename.endsWith(".hkx", Qt::CaseInsensitive);
 
-            const bool bsa = _options.bBsaExtract && filename.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive);
+            const bool bsa = getBool(StandardSettings::bBsaExtract)
+                             && filename.endsWith(_settings.getMandatoryValue<QString>(AdvancedSettings::sBSAExtension),
+                                                  Qt::CaseInsensitive);
 
             QStringList &list = bsa ? BSAs : _files;
             if (!mesh && !texture && !animation && !bsa)
@@ -121,10 +133,10 @@ void Manager::readIgnoredMods()
 void Manager::runOptimization()
 {
     PLOG_DEBUG << "Game: " << Profiles::currentProfile();
-    PLOG_INFO << "Processing: " + _options.userPath;
+    PLOG_INFO << "Processing: " + _settings.getMandatoryValue<QString>(StandardSettings::sUserPath);
     PLOG_INFO << "Beginning...";
 
-    MainOptimizer optimizer(_options);
+    MainOptimizer optimizer(_settings);
 
     //Extracting BSAs
     for (const auto &file : BSAs)
@@ -150,7 +162,7 @@ void Manager::runOptimization()
     printProgress(_modsToProcess.size(), "Packing BSAs");
 
     //Packing BSAs
-    if (_options.bBsaCreate)
+    if (_settings.getMandatoryValue<bool>(StandardSettings::bBsaCreate))
         for (const auto &folder : _modsToProcess)
         {
             optimizer.packBsa(folder);
@@ -158,7 +170,7 @@ void Manager::runOptimization()
             printProgress(_modsToProcess.size(), "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
         }
 
-    FilesystemOperations::deleteEmptyDirectories(_options.userPath);
+    FilesystemOperations::deleteEmptyDirectories(_settings.getMandatoryValue<QString>(StandardSettings::sUserPath));
     PLOG_INFO << "Process completed<br><br><br>";
     emit end();
 }

@@ -5,7 +5,7 @@
 #include "MeshRenameReferencedTextures.hpp"
 
 namespace CAO {
-CommandResult MeshRenameReferencedTextures::process(File &file, const OptionsCAO &options)
+CommandResult MeshRenameReferencedTextures::process(File &file, const Settings &settings)
 {
     auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
     if (!meshFile)
@@ -49,12 +49,12 @@ CommandResult MeshRenameReferencedTextures::process(File &file, const OptionsCAO
     return result;
 }
 
-bool MeshRenameReferencedTextures::isApplicable(File &file, const OptionsCAO &options)
+bool MeshRenameReferencedTextures::isApplicable(File &file, const Settings &settings)
 {
     auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
     if (!meshFile)
         return false;
 
-    return Profiles::texturesConvertTga();
+    return settings.getMandatoryValue<bool>(AdvancedSettings::bTexturesTGAConvertEnabled);
 }
 } // namespace CAO

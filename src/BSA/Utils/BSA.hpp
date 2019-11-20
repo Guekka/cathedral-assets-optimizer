@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Profiles.hpp"
+#include "Settings/Settings.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -17,7 +17,7 @@ enum BSAType
 
 struct BSA
 {
-    static BSA getBsa(const BSAType &type);
+    static BSA getBSA(const BSAType &type, const Settings &settings);
 
     QString path;
     qint64 filesSize = 0;
@@ -35,13 +35,13 @@ struct BSA
      * \param bsa The BSA to name
      * \param folder The folder in which the BSA will be
      */
-    static void nameBsa(std::initializer_list<BSA *> bsaList, const QString &folder);
+    static void nameBSA(std::initializer_list<BSA *> bsaList, const QString &folder, const Settings &settings);
     /*!
      * \brief Merges BSAs when possible, according to their max size
      * \param list The list of BSAs to merge
      * \return The number of merges done
      */
-    static size_t mergeBsas(QVector<BSA> &list);
+    static size_t mergeBSAs(QVector<BSA> &list);
 };
 } // namespace CAO
 

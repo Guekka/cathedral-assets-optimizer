@@ -61,17 +61,17 @@ public:
    * \param bsaType The type of BSA to load.
    * \return a QString containing the name of the plugin. If no plugin is found, it will return the name of the directory.
    */
-    static QString findPlugin(const QString &folderPath, const BSAType &bsaType);
+    static QString findPlugin(const QString &folderPath, const BSAType &bsaType, const Settings &settings);
     /*!
    * \brief Create enough plugins to load all BSAs
    * \param folderPath The folder to create plugins into
    */
-    static void makeDummyPlugins(const QString &folderPath);
+    static void makeDummyPlugins(const QString &folderPath, const Settings &settings);
     /*!
    * \brief Check if a bsa already has a plugin to load it
    * \param bsaPath The path of the bsa to check
    */
-    static bool checkIfBsaHasPlugin(const QString &bsaPath);
+    static bool checkIfBsaHasPlugin(const QString &bsaPath, const Settings &settings);
     /*!
    * \brief listHeadparts List all the headparts in a plugin file
    * \param filepath The path of the file to scan

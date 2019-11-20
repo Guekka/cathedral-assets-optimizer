@@ -7,7 +7,7 @@
 #include "Plugins/PluginsOperations.hpp"
 
 namespace CAO {
-BSA BSA::getBsa(const BSAType &type)
+BSA BSA::getBSA(const BSAType &type, const Settings &settings)
 {
     BSA bsa;
 
@@ -15,34 +15,36 @@ BSA BSA::getBsa(const BSAType &type)
     {
         case StandardBsa:
             bsa.type = BSAType::StandardBsa;
-            bsa.maxSize = Profiles::maxBsaUncompressedSize();
-            bsa.format = Profiles::bsaFormat();
+            bsa.maxSize = settings.getMandatoryValue<int>(AdvancedSettings::iBSAMaxSize);
+            bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSAFormat);
             break;
         case TexturesBsa:
             bsa.type = BSAType::TexturesBsa;
-            bsa.maxSize = Profiles::maxBsaTexturesSize();
-            bsa.format = Profiles::Profiles::bsaTexturesFormat();
+            bsa.maxSize = settings.getMandatoryValue<int>(AdvancedSettings::iBSATexturesMaxSize);
+            bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSATexturesFormat);
             break;
         case UncompressableBsa:
             bsa.type = BSAType::UncompressableBsa;
-            bsa.maxSize = Profiles::maxBsaUncompressedSize();
-            bsa.format = Profiles::bsaFormat();
+            bsa.maxSize = settings.getMandatoryValue<int>(AdvancedSettings::iBSAMaxSize);
+            bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSAFormat);
             break;
     }
     return bsa;
 }
 
-void BSA::nameBsa(std::initializer_list<BSA *> bsaList, const QString &folder)
+void BSA::nameBSA(std::initializer_list<BSA *> bsaList, const QString &folder, const Settings &settings)
 {
+    const auto &bsaSuffix = settings.getMandatoryValue<QString>(AdvancedSettings::sBSASuffix);
+    const auto &bsaTexSuffix = settings.getMandatoryValue<QString>(AdvancedSettings::sBSATexturesSuffix);
     for (auto bsa : bsaList)
     {
-        const QString &suffix = bsa->type == TexturesBsa ? Profiles::bsaTexturesSuffix() : Profiles::bsaSuffix();
-        bsa->path = folder + "/" + PluginsOperations::findPlugin(folder, bsa->type) + suffix;
+        const QString &suffix = bsa->type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
+        bsa->path = folder + "/" + PluginsOperations::findPlugin(folder, bsa->type, settings) + suffix;
         PLOG_VERBOSE << "Named " << bsa->type << bsa->path;
     }
 }
 
-size_t BSA::mergeBsas(QVector<BSA> &list)
+size_t BSA::mergeBSAs(QVector<BSA> &list)
 {
     size_t counter = 0;
     for (int j = 0; j < list.size(); ++j)

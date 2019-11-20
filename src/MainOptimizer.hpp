@@ -9,7 +9,7 @@
 #include "BSA/BSAFolder.hpp"
 #include "Commands/CommandBook.hpp"
 #include "Meshes/Mesh.hpp"
-#include "OptionsCAO.hpp"
+#include "Settings/Settings.hpp"
 #include "Textures/Texture.hpp"
 
 namespace CAO {
@@ -21,7 +21,7 @@ class MainOptimizer final : public QObject
     Q_DECLARE_TR_FUNCTIONS(MainOptimizer)
 
 public:
-    explicit MainOptimizer(const OptionsCAO &optOptions);
+    explicit MainOptimizer(const Settings &optOptions);
 
     void process(const QString &file);
     void packBsa(const QString &folder);
@@ -37,7 +37,7 @@ private:
     void processTexture(const QString &file);
     void processHkx(const QString &file);
 
-    OptionsCAO _optOptions;
+    Settings _optOptions;
 
     BSAFile _bsaFile;
     MeshFile _meshFile;

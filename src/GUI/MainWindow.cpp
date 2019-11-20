@@ -12,6 +12,8 @@ MainWindow::MainWindow()
     _ui->setupUi(this);
     setAcceptDrops(true);
 
+    _settings.readFromUi(_ui);
+
     //Connecting all settings changes to a variable
     {
         const auto &checkbox = this->findChildren<QCheckBox *>();
@@ -50,8 +52,8 @@ MainWindow::MainWindow()
     refreshProfiles();
     {
         //Mode chooser combo box
-        _ui->modeChooserComboBox->setItemData(0, OptionsCAO::SingleMod);
-        _ui->modeChooserComboBox->setItemData(1, OptionsCAO::SeveralMods);
+        _ui->modeChooserComboBox->setItemData(0, StandardSettings::SingleMod);
+        _ui->modeChooserComboBox->setItemData(1, StandardSettings::SeveralMods);
 
         //Advanced BSA
         _ui->bsaFormat->setItemData(0, baTES3);
@@ -84,7 +86,7 @@ MainWindow::MainWindow()
 
     //Connecting widgets
     connect(_ui->dryRunCheckBox, &QCheckBox::clicked, this, [&](const bool &checked) {
-        //Disabling BSA options if dry run is enabled
+        //Disabling BSA settings if dry run is enabled
         _ui->bsaBaseGroupBox->setDisabled(checked);
         _ui->bsaExtractCheckBox->setDisabled(checked);
         _ui->bsaCreateCheckbox->setDisabled(checked);
@@ -109,9 +111,9 @@ MainWindow::MainWindow()
     connect(_ui->newProfilePushButton, &QPushButton::pressed, this, &MainWindow::createProfile);
 
     connect(_ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        const bool &severalModsEnabled = (_ui->modeChooserComboBox->currentData() == OptionsCAO::SeveralMods);
+        const bool &severalModsEnabled = (_ui->modeChooserComboBox->currentData() == StandardSettings::SeveralMods);
 
-        //Disabling some meshes options when several mods mode is enabled
+        //Disabling some meshes settings when several mods mode is enabled
         _ui->meshesMediumOptimizationRadioButton->setDisabled(severalModsEnabled);
         _ui->meshesFullOptimizationRadioButton->setDisabled(severalModsEnabled);
         _ui->meshesNecessaryOptimizationRadioButton->setChecked(severalModsEnabled);
@@ -129,7 +131,8 @@ MainWindow::MainWindow()
     connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
         const QString &dir = QFileDialog::getExistingDirectory(this,
                                                                tr("Open Directory"),
-                                                               _options.userPath,
+                                                               _settings.getMandatoryValue<QString>(
+                                                                   StandardSettings::sUserPath),
                                                                QFileDialog::ShowDirsOnly
                                                                    | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
@@ -218,7 +221,7 @@ void MainWindow::saveUi()
 
     if (!_settingsChanged)
     {
-        _options.saveToUi(_ui); //Restoring previous settings in case an unregistered change happened
+        _settings.saveToUi(_ui); //Restoring previous settings in case an unregistered change happened
         return;
     }
 
@@ -235,7 +238,7 @@ void MainWindow::saveUi()
 
         if (box.result() == QMessageBox::No)
         {
-            _options.saveToUi(_ui); //Restoring previous settings
+            _settings.saveToUi(_ui); //Restoring previous settings
             return;
         }
 
@@ -243,10 +246,8 @@ void MainWindow::saveUi()
             _alwaysSaveSettings = true;
     }
 
-    _options.readFromUi(_ui);
-    _options.saveToIni(Profiles::optionsSettings());
-    Profiles::getInstance().readFromUi(_ui);
-    Profiles::getInstance().saveToIni();
+    _settings.readFromUi(_ui);
+    _settings.saveToJSON(Profiles::settingsPath());
 
     _settingsChanged = false;
 }
@@ -260,11 +261,8 @@ void MainWindow::loadUi()
     _showTutorials = Profiles::commonSettings()->value("showTutorial").toBool();
     _ui->actionShow_tutorials->setChecked(_showTutorials);
 
-    _options.readFromIni(Profiles::optionsSettings());
-    _options.saveToUi(_ui);
-
-    if (_ui->advancedSettingsCheckbox->isChecked())
-        Profiles::getInstance().saveToUi(_ui);
+    _settings.readFromJSON(Profiles::settingsPath());
+    _settings.saveToUi(_ui);
 
     _settingsChanged = false;
 }
@@ -351,7 +349,7 @@ void MainWindow::initProcess()
     try
     {
         _caoProcess.reset();
-        _caoProcess = std::make_unique<Manager>(_options);
+        _caoProcess = std::make_unique<Manager>(_settings);
         connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
         connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
         connect(&*_caoProcess, &Manager::end, this, &MainWindow::endProcess);
@@ -405,7 +403,7 @@ void MainWindow::setGameMode(const QString &mode)
 
     //Actually setting the window mode
     Profiles::setCurrentProfile(mode);
-    Profiles::getInstance().saveToUi(_ui);
+    _settings.saveToUi(_ui);
     loadUi();
 
     const int &animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
@@ -413,10 +411,13 @@ void MainWindow::setGameMode(const QString &mode)
     const int &bsaTabIndex = _ui->tabWidget->indexOf(_ui->bsaTab);
     const int &TexturesTabIndex = _ui->tabWidget->indexOf(_ui->texturesTab);
 
-    _ui->tabWidget->setTabEnabled(animTabIndex, Profiles::animationsEnabled());
-    _ui->tabWidget->setTabEnabled(meshesTabIndex, Profiles::meshesEnabled());
-    _ui->tabWidget->setTabEnabled(bsaTabIndex, Profiles::bsaEnabled());
-    _ui->tabWidget->setTabEnabled(TexturesTabIndex, Profiles::texturesEnabled());
+    _ui->tabWidget->setTabEnabled(animTabIndex,
+                                  _settings.getMandatoryValue<bool>(AdvancedSettings::bAnimationsTabEnabled));
+    _ui->tabWidget->setTabEnabled(meshesTabIndex,
+                                  _settings.getMandatoryValue<bool>(AdvancedSettings::bMeshesTabEnabled));
+    _ui->tabWidget->setTabEnabled(bsaTabIndex, _settings.getMandatoryValue<bool>(AdvancedSettings::bBSATabEnabled));
+    _ui->tabWidget->setTabEnabled(TexturesTabIndex,
+                                  _settings.getMandatoryValue<bool>(AdvancedSettings::bTexturesTabEnabled));
 
     setAdvancedSettingsEnabled(_ui->advancedSettingsCheckbox->isChecked());
 }

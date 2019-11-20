@@ -14,9 +14,9 @@ public:
     /*!
    * \brief Constructor that will perform a number of functions
    */
-    explicit Manager(OptionsCAO &opt);
+    explicit Manager(Settings &opt);
     /*!
-   * \brief Constructor that will perform a number of functions and read options from CLI
+   * \brief Constructor that will perform a number of functions and read settings from CLI
    */
     explicit Manager(const QStringList &args);
     /*!
@@ -56,9 +56,9 @@ private:
    */
     int _numberCompletedFiles = 0;
     /*!
-   * \brief The optimization options, that will be given to the MainOptimizer
+   * \brief The optimization settings, that will be given to the MainOptimizer
    */
-    OptionsCAO _options;
+    Settings _settings;
     /*!
     * \brief The list of directories to process
     */
@@ -67,10 +67,6 @@ private:
    * \brief Mods on this list won't be processed
    */
     QStringList _ignoredMods;
-    /*!
-   * \brief Used to read the INI
-   */
-    QSettings *_settings;
     /*!
    * \brief The files to process
    */

@@ -18,7 +18,7 @@ public:
         _priority = VeryHigh;
     }
 
-    CommandResult process(File &file, const OptionsCAO &options) override;
-    bool isApplicable(File &file, const OptionsCAO &options) override;
+    CommandResult process(File &file, const Settings &settings) override;
+    bool isApplicable(File &file, const Settings &settings) override;
 };
 } // namespace CAO

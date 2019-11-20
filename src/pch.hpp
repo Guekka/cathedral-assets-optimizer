@@ -64,7 +64,6 @@
 #include "libs/NIF/NifFile.h"
 #include "libs/hkxcmd/hkfutils.h"
 #include "libs/json/single_include/nlohmann/json.hpp"
-using json = nlohmann::json;
 #include "libs/libbsarch/BSArchiveAuto.h"
 /*----------------------*/
 

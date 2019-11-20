@@ -8,10 +8,11 @@
 namespace CAO {
 QStringList BSASplit::filesToNotPack;
 
-QVector<BSA> BSASplit::splitBSA(const QDir &dir)
+QVector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
 {
     QVector<BSA> bsas;
-    bsas << BSA::getBsa(StandardBsa) << BSA::getBsa(UncompressableBsa) << BSA::getBsa(TexturesBsa);
+    bsas << BSA::getBSA(StandardBsa, settings) << BSA::getBSA(UncompressableBsa, settings)
+         << BSA::getBSA(TexturesBsa, settings);
 
     auto *standardBsa = &bsas[0];
     auto *uncompressableBsa = &bsas[1];
@@ -26,7 +27,7 @@ QVector<BSA> BSASplit::splitBSA(const QDir &dir)
             continue;
 
         const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
-                               && Profiles::hasBsaTextures();
+                               && settings.getMandatoryValue<bool>(AdvancedSettings::bBSATexturesEnabled);
         const bool isUncompressable = uncompressableAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive);
 
         BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
@@ -38,13 +39,13 @@ QVector<BSA> BSASplit::splitBSA(const QDir &dir)
 
         if ((*pBsa)->filesSize >= (*pBsa)->maxSize)
         {
-            bsas << BSA::getBsa((*pBsa)->type);
+            bsas << BSA::getBSA((*pBsa)->type, settings);
             *pBsa = &bsas.last();
         }
     }
 
     //Merging BSAs that can be merged
-    BSA::mergeBsas(bsas);
+    BSA::mergeBSAs(bsas);
 
     return bsas;
 }

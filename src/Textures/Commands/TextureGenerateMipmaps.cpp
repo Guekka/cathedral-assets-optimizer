@@ -5,7 +5,7 @@
 #include "TextureGenerateMipmaps.hpp"
 
 namespace CAO {
-CommandResult TextureGenerateMipmaps::process(File &file, const OptionsCAO &options)
+CommandResult TextureGenerateMipmaps::process(File &file, const Settings &settings)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)
@@ -52,9 +52,9 @@ CommandResult TextureGenerateMipmaps::process(File &file, const OptionsCAO &opti
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureGenerateMipmaps::isApplicable(File &file, const OptionsCAO &options)
+bool TextureGenerateMipmaps::isApplicable(File &file, const Settings &settings)
 {
-    if (!options.bTexturesMipmaps)
+    if (!settings.getMandatoryValue<bool>(StandardSettings::bTexturesMipmaps))
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -68,7 +68,8 @@ bool TextureGenerateMipmaps::isApplicable(File &file, const OptionsCAO &options)
     const auto info = texFile->GetMetadata();
     const bool interfaceForbidden = false
                                     || (file.getName().contains("interface", Qt::CaseInsensitive)
-                                        && !Profiles::texturesCompressInterface());
+                                        && !settings.getMandatoryValue<bool>(
+                                            AdvancedSettings::bTexturesInterfaceConvert));
 
     const bool compatible = info.width >= 4 && info.height >= 4;
     const bool optimalMipMaps = info.mipLevels == calculateOptimalMipMapsNumber(info);

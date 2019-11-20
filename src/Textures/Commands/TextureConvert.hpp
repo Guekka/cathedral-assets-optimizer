@@ -19,8 +19,8 @@ public:
         _name = "Convert Texture";
     }
 
-    CommandResult process(File &file, const OptionsCAO &options) override;
-    bool isApplicable(File &file, const OptionsCAO &options) override;
+    CommandResult process(File &file, const Settings &settings) override;
+    bool isApplicable(File &file, const Settings &settings) override;
 
 protected:
     int convertWithoutCompression(const DirectX::ScratchImage &image,
@@ -31,6 +31,6 @@ protected:
                                DirectX::ScratchImage &timage,
                                const DXGI_FORMAT &format);
 
-    bool needsConvert(const TextureResource &res, const OptionsCAO &options);
+    bool needsConvert(const TextureResource &res, const Settings &settings);
 };
 } // namespace CAO

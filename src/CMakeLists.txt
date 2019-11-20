@@ -86,14 +86,20 @@ set(SOURCES
     Meshes/Commands/MeshRenameReferencedTextures.cpp
     Meshes/Commands/MeshRenameReferencedTextures.hpp
 
-    OptionsCAO.cpp
-    OptionsCAO.hpp
+    Settings/AdvancedSettings.cpp
+    Settings/AdvancedSettings.hpp
+    Settings/Settings.cpp
+    Settings/Settings.hpp
+    Settings/StandardSettings.cpp
+    Settings/StandardSettings.hpp
+    Settings/Profiles.cpp
+    Settings/Profiles.hpp
+    Settings/Utils/InitJSON.hpp
+
 
     Plugins/PluginsOperations.cpp
     Plugins/PluginsOperations.hpp
 
-    Profiles.cpp
-    Profiles.hpp
 
     Textures/Texture.hpp
 
@@ -163,10 +169,11 @@ add_subdirectory("libs/json")
 
 #Build
 message("Adding CAO.exe")
-add_library(Cathedral_Assets_Optimizer_lib ${SOURCES})
+add_library(Cathedral_Assets_Optimizer_lib STATIC ${SOURCES})
 target_link_libraries(Cathedral_Assets_Optimizer_lib PUBLIC
     Qt5::Core Qt5::Widgets
     hkxcmd plog nif directxtex Qlibbsarch nlohmann_json::nlohmann_json)
+set_target_properties(Cathedral_Assets_Optimizer_lib PROPERTIES AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR})
 
 add_executable(Cathedral_Assets_Optimizer WIN32 main.cpp
     ${ICON_RC_PATH} ${QRC_PATH} ${QM_FILES})
@@ -180,6 +187,7 @@ add_executable(Cathedral_Assets_Optimizer_tests
     )
 target_include_directories(Cathedral_Assets_Optimizer_tests PRIVATE "${CMAKE_BINARY_DIR}/Cathedral_Assets_Optimizer_lib_autogen/include")
 target_link_libraries(Cathedral_Assets_Optimizer_tests PRIVATE Cathedral_Assets_Optimizer_lib)
+
 #Cotire (PCH)
 set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.hpp")
 cotire(Cathedral_Assets_Optimizer)

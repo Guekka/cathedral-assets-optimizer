@@ -6,8 +6,8 @@
 
 #include "CommandResult.hpp"
 #include "File/File.hpp"
-#include "OptionsCAO.hpp"
-#include "Profiles.hpp"
+#include "Settings/Profiles.hpp"
+#include "Settings/Settings.hpp"
 
 namespace CAO {
 class Command
@@ -31,10 +31,10 @@ public:
         VeryHigh
     };
 
-    virtual CommandResult process(File &file, const OptionsCAO &options) = 0;
+    virtual CommandResult process(File &file, const Settings &settings) = 0;
 
-    virtual bool isApplicable(File &file, const OptionsCAO &options) = 0;
-    CommandResult processIfApplicable(File &file, const OptionsCAO &options);
+    virtual bool isApplicable(File &file, const Settings &settings) = 0;
+    CommandResult processIfApplicable(File &file, const Settings &settings);
 
     Priority priority() { return _priority; }
     CommandType type() { return _type; }

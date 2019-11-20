@@ -7,14 +7,14 @@
 #include "FilesystemOperations.hpp"
 
 namespace CAO {
-CommandResult BSAExtract::process(File &file, const OptionsCAO &options)
+CommandResult BSAExtract::process(File &file, const Settings &settings)
 {
     auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());
     if (!bsafile)
         return _resultFactory.getCannotCastFileResult();
 
     auto bsaPath = file.getName();
-    if (!options.bBsaDeleteBackup)
+    if (!settings.getMandatoryValue<bool>(StandardSettings::bBsaDeleteBackup))
         bsaPath = FilesystemOperations::backupFile(bsaPath);
 
     auto rootPath = new QString(QFileInfo(bsaPath).path());
@@ -39,9 +39,9 @@ CommandResult BSAExtract::process(File &file, const OptionsCAO &options)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool BSAExtract::isApplicable(File &file, const OptionsCAO &options)
+bool BSAExtract::isApplicable(File &file, const Settings &settings)
 {
-    if (!options.bBsaExtract)
+    if (!settings.getMandatoryValue<bool>(StandardSettings::bBsaExtract))
         return false;
 
     auto bsafile = dynamic_cast<BSAFile *>(&file);

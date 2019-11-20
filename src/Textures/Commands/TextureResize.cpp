@@ -5,7 +5,7 @@
 #include "TextureResize.hpp"
 
 namespace CAO {
-CommandResult TextureResize::process(File &file, const OptionsCAO &options)
+CommandResult TextureResize::process(File &file, const Settings &settings)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)
@@ -18,7 +18,7 @@ CommandResult TextureResize::process(File &file, const OptionsCAO &options)
     if (!img)
         return _resultFactory.getFailedResult(1, "Failed to get images from file");
 
-    const auto &tinfo = calculateTargetDimensions(info, options);
+    const auto &tinfo = calculateTargetDimensions(info, settings);
 
     const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
     const HRESULT hr = Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
@@ -29,9 +29,10 @@ CommandResult TextureResize::process(File &file, const OptionsCAO &options)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureResize::isApplicable(File &file, const OptionsCAO &options)
+bool TextureResize::isApplicable(File &file, const Settings &settings)
 {
-    if (!options.bTexturesResizeSize || !options.bTexturesResizeSize)
+    if (!settings.getMandatoryValue<bool>(StandardSettings::bTexturesResizeRatio)
+        || !settings.getMandatoryValue<bool>(StandardSettings::bTexturesResizeSize))
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -43,24 +44,25 @@ bool TextureResize::isApplicable(File &file, const OptionsCAO &options)
         return false; //Cannot process compressed file
 
     const auto info = texFile->GetMetadata();
-    const auto &tinfo = calculateTargetDimensions(info, options);
+    const auto &tinfo = calculateTargetDimensions(info, settings);
 
     return info.width != tinfo.width || info.height != tinfo.height;
 }
 
 DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::TexMetadata &info,
-                                                              const OptionsCAO &options)
+                                                              const Settings &settings)
 {
     //Calculating target width and height
     DirectX::TexMetadata tinfo = info;
-    if (options.bTexturesResizeRatio)
+    if (settings.getMandatoryValue<bool>(StandardSettings::bTexturesResizeRatio))
     {
-        tinfo.width = info.width / options.iTexturesTargetWidthRatio;
-        tinfo.height = info.height / options.iTexturesTargetHeightRatio;
+        tinfo.width = info.width / settings.getMandatoryValue<int>(StandardSettings::iTexturesTargetWidthRatio);
+        tinfo.height = info.height / settings.getMandatoryValue<int>(StandardSettings::iTexturesTargetHeightRatio);
     }
-    else if (options.bTexturesResizeSize)
+    else if (settings.getMandatoryValue<bool>(StandardSettings::bTexturesResizeSize))
     {
-        while (tinfo.width > options.iTexturesTargetWidth && tinfo.height > options.iTexturesTargetHeight)
+        while (tinfo.width > settings.getMandatoryValue<int>(StandardSettings::iTexturesTargetWidth)
+               && tinfo.height > settings.getMandatoryValue<int>(StandardSettings::iTexturesTargetHeight))
         {
             tinfo.width = info.width / 2;
             tinfo.height = info.height / 2;

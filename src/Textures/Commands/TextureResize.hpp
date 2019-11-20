@@ -19,10 +19,10 @@ public:
         _name = "Resize Texture";
     }
 
-    CommandResult process(File &file, const OptionsCAO &options) override;
-    bool isApplicable(File &file, const OptionsCAO &options) override;
+    CommandResult process(File &file, const Settings &settings) override;
+    bool isApplicable(File &file, const Settings &settings) override;
 
 protected:
-    DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info, const OptionsCAO &options);
+    DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info, const Settings &settings);
 };
 } // namespace CAO

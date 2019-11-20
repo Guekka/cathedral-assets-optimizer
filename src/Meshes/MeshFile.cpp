@@ -32,6 +32,7 @@ bool MeshFile::setFile(Resource &file, bool optimizedFile)
 
     _file.reset(&file);
     _optimizedCurrentFile |= optimizedFile;
+    return true;
 }
 
 void MeshFile::reset()

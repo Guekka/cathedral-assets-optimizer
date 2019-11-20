@@ -8,17 +8,17 @@
 #include "BSA/Utils/BSASplit.hpp"
 
 namespace CAO {
-CommandResult BSACreate::process(File &file, const OptionsCAO &options)
+CommandResult BSACreate::process(File &file, const Settings &settings)
 {
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsas = BSASplit::splitBSA(*bsaFolder);
+    auto bsas = BSASplit::splitBSA(*bsaFolder, settings);
 
     for (auto bsa : bsas)
     {
-        BSA::nameBsa({&bsa}, bsaFolder->path());
+        BSA::nameBSA({&bsa}, bsaFolder->path(), settings);
 
         auto rootPath = new QString(bsaFolder->path());
 
@@ -61,9 +61,9 @@ CommandResult BSACreate::process(File &file, const OptionsCAO &options)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool BSACreate::isApplicable(File &file, const OptionsCAO &options)
+bool BSACreate::isApplicable(File &file, const Settings &settings)
 {
-    if (!options.bBsaCreate)
+    if (!settings.getMandatoryValue<bool>(StandardSettings::bBsaCreate))
         return false;
 
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
