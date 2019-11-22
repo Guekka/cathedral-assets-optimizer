@@ -403,6 +403,7 @@ void MainWindow::setGameMode(const QString &mode)
 
     //Actually setting the window mode
     Profiles::setCurrentProfile(mode);
+    _settings.readFromJSON(Profiles::settingsPath());
     _settings.saveToUi(_ui);
     loadUi();
 

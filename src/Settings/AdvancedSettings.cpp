@@ -44,7 +44,7 @@ const nlohmann::json &toJSONKey(const AdvancedKey &key, const nlohmann::json &js
 
 nlohmann::json &toJSONKey(const AdvancedKey &key, nlohmann::json &json)
 {
-    return const_cast<nlohmann::json &>(toJSONKey(std::as_const(key), std::as_const(json)));
+    return const_cast<nlohmann::json &>(std::as_const(toJSONKey(key, json)));
 }
 
 #ifdef GUI
@@ -83,9 +83,9 @@ void saveToUi(Ui::MainWindow *ui, const nlohmann::json &json)
 
     iterateComboBox(ui->bsaFormat, getRawJson(eBSAFormat).get<bsa_archive_type_t>());
     iterateComboBox(ui->bsaTexturesFormat, getRawJson(eBSATexturesFormat).get<bsa_archive_type_t>());
-    ui->bsaMaximumSize->setValue(getInt(iBSAMaxSize) / GigaByte);
+    ui->bsaMaximumSize->setValue(getRawJson(iBSAMaxSize).get<double>() / GigaByte);
     ui->bsaTexturesAdvancedGroupBox->setChecked(getBool(bBSATexturesEnabled));
-    ui->bsaTexturesMaximumSize->setValue(getInt(iBSATexturesMaxSize) / GigaByte);
+    ui->bsaTexturesMaximumSize->setValue(getRawJson(iBSATexturesMaxSize).get<double>() / GigaByte);
     ui->bsaExtension->setText(getString(sBSAExtension));
     ui->bsaSuffix->setText(getString(sBSASuffix));
     ui->bsaTexturesSuffix->setText(getString(sBSATexturesSuffix));

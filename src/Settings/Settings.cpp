@@ -19,15 +19,15 @@ void Settings::saveToJSON(const QString &filepath) const
     if (!stream.is_open())
         return;
 
-    stream << _json;
+    stream << _json.dump(4);
 }
 
 void Settings::readFromJSON(const QString &filepath)
 {
-    saveToJSON(filepath);
     std::fstream stream(std::filesystem::u8path(filepath.toStdString()), std::fstream::in);
     if (!stream.is_open())
         return;
+
     stream >> _json;
 }
 

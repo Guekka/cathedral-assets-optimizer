@@ -85,6 +85,18 @@ public:
         StandardSettings::toJSONKey(key, _json) = value.toStdString();
     }
 
+    template<class T>
+    void setValue(const AdvancedSettings::AdvancedKey &key, const T &value)
+    {
+        AdvancedSettings::toJSONKey(key, _json) = value;
+    }
+
+    template<>
+    void setValue(const AdvancedSettings::AdvancedKey &key, const QString &value)
+    {
+        AdvancedSettings::toJSONKey(key, _json) = value.toStdString();
+    }
+
     void parseArguments(const QStringList &args);
 
     void saveToJSON(const QString &filepath) const;
