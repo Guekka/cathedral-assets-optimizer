@@ -4,7 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "BSA/BSA.hpp"
 #include "Commands/Command.hpp"
+#include "Meshes/Mesh.hpp"
+#include "Textures/Texture.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -12,18 +15,16 @@ class CommandBook
 {
 public:
     CommandBook();
-    static void registerCommand(Command *command);
-
-    static QVector<Command *> getTextureCommands();
-    static QVector<Command *> getMeshCommands();
-    static QVector<Command *> getAnimationCommands();
-    static QVector<Command *> getBSACommands();
-    static Command *getCommandByName(const QString &name);
+    void registerCommand(Command *command);
+    QVector<Command *> getCommandListByType(const Command::CommandType &type);
+    Command *getCommandByName(const QString &name);
 
 protected:
     static QVector<Command *> textureCommands;
     static QVector<Command *> meshCommands;
     static QVector<Command *> animationCommands;
     static QVector<Command *> BSACommands;
+
+    QVector<Command *> *commandTypeToVector(const Command::CommandType &type);
 };
 } // namespace CAO

@@ -4,9 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "CommandBook.hpp"
-#include "BSA/BSA.hpp"
-#include "Meshes/Mesh.hpp"
-#include "Textures/Texture.hpp"
 
 namespace CAO {
 QVector<Command *> CommandBook::BSACommands = QVector<Command *>();
@@ -28,48 +25,37 @@ CommandBook::CommandBook()
 
 void CommandBook::registerCommand(Command *command)
 {
-    QVector<Command *> &correspondingVector = BSACommands;
-    switch (command->type())
-    {
-        case Command::CommandType::BSA: correspondingVector = BSACommands; break;
-        case Command::CommandType::Texture: correspondingVector = textureCommands; break;
-        case Command::CommandType::Mesh: correspondingVector = meshCommands; break;
-        case Command::CommandType::Animation: correspondingVector = animationCommands; break;
-        case Command::CommandType::Invalid: return;
-    }
+    QVector<Command *> *correspondingVector = commandTypeToVector(command->type());
 
-    for (int i = 0; i < correspondingVector.size(); ++i)
+    for (int i = 0; i < correspondingVector->size(); ++i)
     {
-        auto &commandInVector = correspondingVector.at(i);
+        auto &commandInVector = correspondingVector->at(i);
 
         if (commandInVector->name() == command->name())
             return; //Preventing duplicate commands
         if (commandInVector->priority() <= command->priority())
         {
-            correspondingVector.insert(i, command);
+            correspondingVector->insert(i, command);
             break;
         }
     }
 }
 
-QVector<Command *> CommandBook::getTextureCommands()
+QVector<Command *> *CommandBook::commandTypeToVector(const Command::CommandType &type)
 {
-    return textureCommands;
+    switch (type)
+    {
+        case Command::CommandType::BSA: return &BSACommands;
+        case Command::CommandType::Texture: return &textureCommands;
+        case Command::CommandType::Mesh: return &meshCommands;
+        case Command::CommandType::Animation: return &animationCommands;
+        case Command::CommandType::Invalid: return nullptr;
+    }
 }
 
-QVector<Command *> CommandBook::getMeshCommands()
+QVector<Command *> CommandBook::getCommandListByType(const Command::CommandType &type)
 {
-    return meshCommands;
-}
-
-QVector<Command *> CommandBook::getAnimationCommands()
-{
-    return animationCommands;
-}
-
-QVector<Command *> CommandBook::getBSACommands()
-{
-    return BSACommands;
+    return *commandTypeToVector(type);
 }
 
 Command *CommandBook::getCommandByName(const QString &name)

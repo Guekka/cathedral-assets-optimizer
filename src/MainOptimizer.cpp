@@ -14,12 +14,11 @@ MainOptimizer::MainOptimizer(const Settings &optOptions)
 
 void MainOptimizer::process(const QString &file)
 {
-    if (file.endsWith(".dds", Qt::CaseInsensitive))
-        processTexture(file);
+    if (file.endsWith(".dds", Qt::CaseInsensitive)
+        || (file.endsWith(".tga") && _optOptions.getMandatoryValue<bool>(AdvancedSettings::bTexturesTGAConvertEnabled)))
+        processStandardFile(_textureFile, file, Command::CommandType::Texture);
     else if (file.endsWith(".nif", Qt::CaseInsensitive))
-        processNif(file);
-    else if (file.endsWith(".tga") && _optOptions.getMandatoryValue<bool>(AdvancedSettings::bTexturesTGAConvertEnabled))
-        processTexture(file);
+        processStandardFile(_meshFile, file, Command::CommandType::Mesh);
     else if (file.endsWith(_optOptions.getMandatoryValue<QString>(AdvancedSettings::sBSASuffix), Qt::CaseInsensitive))
         processBsa(file);
     else if (file.endsWith(".hkx", Qt::CaseInsensitive))
@@ -34,8 +33,8 @@ void MainOptimizer::processBsa(const QString &file)
     PLOG_INFO << "Extracting BSA: " + file;
     if (!loadFile(_bsaFile, file))
         return;
-    auto command = _commandBook.getCommandByName("BSA Extract");
-    if (!runCommand(command, _bsaFile))
+    BSAExtract command;
+    if (!runCommand(&command, _bsaFile))
         return;
 
     //TODO if(settings.bBsaOptimizeAssets)
@@ -47,29 +46,11 @@ void MainOptimizer::packBsa(const QString &folder)
     BSAFolder bsa;
     if (!loadFile(bsa, folder))
         return;
-    auto command = _commandBook.getCommandByName("BSA Create");
-    if (!runCommand(command, bsa))
+    BSACreate command;
+    if (!runCommand(&command, bsa))
         return;
 
     PluginsOperations::makeDummyPlugins(folder, _optOptions);
-}
-
-void MainOptimizer::processTexture(const QString &file)
-{
-    if (!loadFile(_textureFile, file))
-        return;
-
-    for (auto &command : _commandBook.getTextureCommands())
-        if (!runCommand(command, _textureFile))
-            return;
-
-    if (!_textureFile.optimizedCurrentFile())
-        return;
-
-    if (!saveFile(_textureFile, file))
-        return;
-
-    PLOG_INFO << "Successfully optimized " << file;
 }
 
 void MainOptimizer::processHkx(const QString &file)
@@ -80,22 +61,23 @@ void MainOptimizer::processHkx(const QString &file)
         _animOpt.convert(file, _optOptions.getMandatoryValue<hkPackFormat>(AdvancedSettings::eAnimationsFormat));
 }
 
-void MainOptimizer::processNif(const QString &file)
+bool MainOptimizer::processStandardFile(File &file, const QString &path, const Command::CommandType type)
 {
-    if (!loadFile(_meshFile, file))
-        return;
+    if (!loadFile(file, path))
+        return false;
 
-    for (auto command : _commandBook.getMeshCommands())
-        if (!runCommand(command, _meshFile))
-            return;
+    for (auto command : _commandBook.getCommandListByType(type))
+        if (!runCommand(command, file))
+            return false;
 
-    if (!_meshFile.optimizedCurrentFile())
-        return;
+    if (!file.optimizedCurrentFile())
+        return false;
 
-    if (saveFile(_meshFile, file))
-        return;
+    if (!saveFile(file, path))
+        return false;
 
     PLOG_INFO << "Successfully optimized " << file;
+    return true;
 }
 
 bool MainOptimizer::runCommand(Command *command, File &file)

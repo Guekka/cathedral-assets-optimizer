@@ -5,12 +5,8 @@
 #pragma once
 
 #include "AnimationsOptimizer.hpp"
-#include "BSA/BSAFile.hpp"
-#include "BSA/BSAFolder.hpp"
 #include "Commands/CommandBook.hpp"
-#include "Meshes/Mesh.hpp"
 #include "Settings/Settings.hpp"
-#include "Textures/Texture.hpp"
 
 namespace CAO {
 /*!
@@ -33,9 +29,8 @@ protected:
 
 private:
     void processBsa(const QString &file);
-    void processNif(const QString &file);
-    void processTexture(const QString &file);
     void processHkx(const QString &file);
+    bool processStandardFile(File &file, const QString &path, const Command::CommandType type);
 
     Settings _optOptions;
 
