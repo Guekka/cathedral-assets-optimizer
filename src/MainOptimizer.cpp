@@ -76,7 +76,7 @@ bool MainOptimizer::processStandardFile(File &file, const QString &path, const C
     if (!saveFile(file, path))
         return false;
 
-    PLOG_INFO << "Successfully optimized " << file;
+    PLOG_INFO << "Successfully optimized " << path;
     return true;
 }
 

@@ -88,7 +88,7 @@ void Manager::listFiles()
             };
 
             const bool processMeshes = getBool(StandardSettings::bMeshesResave)
-                                       || getBool(StandardSettings::iMeshesOptimizationLevel);
+                                       || _settings.getMandatoryValue<uint>(StandardSettings::iMeshesOptimizationLevel);
             const bool mesh = filename.endsWith(".nif", Qt::CaseInsensitive) && processMeshes;
 
             const bool processTextures = getBool(StandardSettings::bTexturesMipmaps)

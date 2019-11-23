@@ -44,7 +44,7 @@ const nlohmann::json &toJSONKey(const AdvancedKey &key, const nlohmann::json &js
 
 nlohmann::json &toJSONKey(const AdvancedKey &key, nlohmann::json &json)
 {
-    return const_cast<nlohmann::json &>(std::as_const(toJSONKey(key, json)));
+    return const_cast<nlohmann::json &>(std::as_const(toJSONKey(std::as_const(key), std::as_const(json))));
 }
 
 #ifdef GUI

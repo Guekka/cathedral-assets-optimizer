@@ -51,6 +51,7 @@ QVector<Command *> *CommandBook::commandTypeToVector(const Command::CommandType 
         case Command::CommandType::Animation: return &animationCommands;
         case Command::CommandType::Invalid: return nullptr;
     }
+    return nullptr;
 }
 
 QVector<Command *> CommandBook::getCommandListByType(const Command::CommandType &type)

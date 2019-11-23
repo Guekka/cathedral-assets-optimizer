@@ -177,7 +177,8 @@ QString Settings::isValid() const
             .arg(getMandatoryValue<QString>(StandardSettings::sUserPath));
     }
 
-    if (StandardSettings::iMeshesOptimizationLevel < 0 || StandardSettings::iMeshesOptimizationLevel > 3)
+    const auto &meshOptLevel = getMandatoryValue<uint>(StandardSettings::iMeshesOptimizationLevel);
+    if (meshOptLevel < 0 || meshOptLevel > 3)
         return ("This meshes optimization level does not exist. Level: "
                 + QString::number(StandardSettings::iMeshesOptimizationLevel));
 
