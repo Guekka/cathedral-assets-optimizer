@@ -38,8 +38,10 @@ set(GUI true)
 
 #SOURCES
 set(SOURCES
-    AnimationsOptimizer.cpp
-    AnimationsOptimizer.hpp
+    Animations/AnimationsConvert.cpp
+    Animations/AnimationsConvert.hpp
+    Animations/AnimationFile.cpp
+    Animations/AnimationFile.hpp
 
     BSA/BSAFile.cpp
     BSA/BSAFile.hpp

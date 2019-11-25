@@ -10,7 +10,7 @@ CommandResult CommandResultFactory::getSuccessfulResult()
     CommandResult result;
     result.errorCode = 0;
     result.errorMessage.clear();
-    result.processedFile = false;
+    result.processedFile = true;
     return result;
 }
 

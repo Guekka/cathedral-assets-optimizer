@@ -31,4 +31,12 @@ class BSAFolderResource : public Resource, public QDir
 class BSAFileResource : public Resource, public Qlibbsarch::BSArchiveAuto
 {
 };
+
+struct AnimationResource : public Resource
+{
+    hkVariant root;
+    hkResource *resource;
+    hkPackFormat pkFormat;
+};
+
 } // namespace CAO

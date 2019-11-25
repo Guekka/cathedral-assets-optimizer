@@ -21,11 +21,18 @@ CommandBook::CommandBook()
     registerCommand(new MeshRenameReferencedTextures);
     registerCommand(new BSAExtract);
     registerCommand(new BSACreate);
+    registerCommand(new AnimationsConvert);
 }
 
 void CommandBook::registerCommand(Command *command)
 {
     QVector<Command *> *correspondingVector = commandTypeToVector(command->type());
+
+    if (correspondingVector->isEmpty())
+    {
+        *correspondingVector << command;
+        return;
+    }
 
     for (int i = 0; i < correspondingVector->size(); ++i)
     {

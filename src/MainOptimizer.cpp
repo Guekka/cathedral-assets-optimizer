@@ -12,17 +12,17 @@ MainOptimizer::MainOptimizer(const Settings &optOptions)
     : _optOptions(optOptions)
 {}
 
-void MainOptimizer::process(const QString &file)
+void MainOptimizer::process(const QString &path)
 {
-    if (file.endsWith(".dds", Qt::CaseInsensitive)
-        || (file.endsWith(".tga") && _optOptions.getMandatoryValue<bool>(AdvancedSettings::bTexturesTGAConvertEnabled)))
-        processStandardFile(_textureFile, file, Command::CommandType::Texture);
-    else if (file.endsWith(".nif", Qt::CaseInsensitive))
-        processStandardFile(_meshFile, file, Command::CommandType::Mesh);
-    else if (file.endsWith(_optOptions.getMandatoryValue<QString>(AdvancedSettings::sBSASuffix), Qt::CaseInsensitive))
-        processBsa(file);
-    else if (file.endsWith(".hkx", Qt::CaseInsensitive))
-        processHkx(file);
+    if (path.endsWith(".dds", Qt::CaseInsensitive)
+        || (path.endsWith(".tga") && _optOptions.getMandatoryValue<bool>(AdvancedSettings::bTexturesTGAConvertEnabled)))
+        processStandardFile(_textureFile, path, Command::CommandType::Texture);
+    else if (path.endsWith(".nif", Qt::CaseInsensitive))
+        processStandardFile(_meshFile, path, Command::CommandType::Mesh);
+    else if (path.endsWith(_optOptions.getMandatoryValue<QString>(AdvancedSettings::sBSASuffix), Qt::CaseInsensitive))
+        processBsa(path);
+    else if (path.endsWith(".hkx", Qt::CaseInsensitive))
+        processStandardFile(_animFile, path, Command::CommandType::Animation);
 }
 
 void MainOptimizer::processBsa(const QString &file)
@@ -53,15 +53,7 @@ void MainOptimizer::packBsa(const QString &folder)
     PluginsOperations::makeDummyPlugins(folder, _optOptions);
 }
 
-void MainOptimizer::processHkx(const QString &file)
-{
-    if (_optOptions.getMandatoryValue<bool>(StandardSettings::bDryRun))
-        PLOG_INFO << file + " would be converted to the appropriate format.";
-    else
-        _animOpt.convert(file, _optOptions.getMandatoryValue<hkPackFormat>(AdvancedSettings::eAnimationsFormat));
-}
-
-bool MainOptimizer::processStandardFile(File &file, const QString &path, const Command::CommandType type)
+bool MainOptimizer::processStandardFile(File &file, const QString &path, const Command::CommandType &type)
 {
     if (!loadFile(file, path))
         return false;
@@ -111,7 +103,7 @@ bool MainOptimizer::loadFile(File &file, const QString &path)
 {
     if (file.loadFromDisk(path))
     {
-        PLOG_ERROR << "Cannot load file from disk: " << file.getName();
+        PLOG_ERROR << "Cannot load file from disk: " << path;
         return false;
     }
     return true;
@@ -121,7 +113,7 @@ bool MainOptimizer::saveFile(File &file, const QString &path)
 {
     if (file.saveToDisk(path))
     {
-        PLOG_ERROR << "Cannot save file to disk: " << file.getName();
+        PLOG_ERROR << "Cannot save file to disk: " << path;
         return false;
     }
     return true;

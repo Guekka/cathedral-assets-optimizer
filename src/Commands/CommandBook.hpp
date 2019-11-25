@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Animations/AnimationsConvert.hpp"
 #include "BSA/BSA.hpp"
 #include "Commands/Command.hpp"
 #include "Meshes/Mesh.hpp"

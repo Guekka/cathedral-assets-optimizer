@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "AnimationsOptimizer.hpp"
 #include "Commands/CommandBook.hpp"
 #include "Settings/Settings.hpp"
 
@@ -19,7 +18,7 @@ class MainOptimizer final : public QObject
 public:
     explicit MainOptimizer(const Settings &optOptions);
 
-    void process(const QString &file);
+    void process(const QString &path);
     void packBsa(const QString &folder);
 
 protected:
@@ -29,15 +28,14 @@ protected:
 
 private:
     void processBsa(const QString &file);
-    void processHkx(const QString &file);
-    bool processStandardFile(File &file, const QString &path, const Command::CommandType type);
+    bool processStandardFile(File &file, const QString &path, const Command::CommandType &type);
 
     Settings _optOptions;
 
     BSAFile _bsaFile;
     MeshFile _meshFile;
-    AnimationsOptimizer _animOpt;
     TextureFile _textureFile;
+    AnimationFile _animFile;
     CommandBook _commandBook;
 };
 } // namespace CAO
