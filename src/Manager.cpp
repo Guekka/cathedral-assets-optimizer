@@ -149,7 +149,7 @@ void Manager::runOptimization()
     //Listing new extracted files
     listFiles();
 
-    //Processing animations separately since they cannot be processed in a multithreaded way
+    //Processing files
     for (const auto &file : _files)
     {
         optimizer.process(file);
@@ -158,17 +158,18 @@ void Manager::runOptimization()
             printProgress(_numberFiles);
     }
 
-    _numberCompletedFiles = 0;
-    printProgress(_modsToProcess.size(), "Packing BSAs");
-
     //Packing BSAs
     if (_settings.getMandatoryValue<bool>(StandardSettings::bBsaCreate))
+    {
+        _numberCompletedFiles = 0;
+        printProgress(_modsToProcess.size(), "Packing BSAs");
         for (const auto &folder : _modsToProcess)
         {
             optimizer.packBsa(folder);
             ++_numberCompletedFiles;
             printProgress(_modsToProcess.size(), "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
         }
+    }
 
     FilesystemOperations::deleteEmptyDirectories(_settings.getMandatoryValue<QString>(StandardSettings::sUserPath));
     PLOG_INFO << "Process completed<br><br><br>";

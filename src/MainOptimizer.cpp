@@ -89,14 +89,9 @@ bool MainOptimizer::runCommand(Command *command, File &file)
     }
     else
     {
-        PLOG_ERROR
-            << QString(
-                   "Unknown error happened in command '%1'. The error code was '%2' and the error message was '%3'. "
-                   "This message shouldn't be printed. If you see it, "
-                   "please report it.")
-                   .arg(command->name(), QString::number(result.errorCode), result.errorMessage);
+        PLOG_VERBOSE << QString("Module '%1' was not applied because it was not necessary").arg(command->name());
+        return true;
     }
-    return false;
 }
 
 bool MainOptimizer::loadFile(File &file, const QString &path)
