@@ -16,4 +16,5 @@ CommandResult Command::processIfApplicable(File &file, const Settings &settings)
         return process(file, settings);
     return result;
 }
+
 } // namespace CAO

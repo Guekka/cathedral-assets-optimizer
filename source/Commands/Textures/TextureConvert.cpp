@@ -12,7 +12,7 @@ CommandResult TextureConvert::process(File &file, const Settings &settings)
         return _resultFactory.getCannotCastFileResult();
 
     const auto &outputFormat = settings.getMandatoryValue<DXGI_FORMAT>(AdvancedSettings::eTexturesFormat);
-    auto timage = std::make_unique<TextureResource>();
+    auto timage = new TextureResource;
 
     if (DirectX::IsCompressed(outputFormat))
     {
@@ -25,7 +25,7 @@ CommandResult TextureConvert::process(File &file, const Settings &settings)
             return _resultFactory.getFailedResult(result, "Failed to convert without compression");
     }
 
-    file.setFile(*timage.release());
+    file.setFile(*timage);
     return _resultFactory.getSuccessfulResult();
 }
 
@@ -35,8 +35,8 @@ bool TextureConvert::isApplicable(File &file, const Settings &settings)
     if (!texResource)
         return false;
 
-    const DXGI_FORMAT origFormat = texResource->origFormat;
-    const DXGI_FORMAT currentFormat = texResource->GetMetadata().format;
+    const DXGI_FORMAT &origFormat = texResource->origFormat;
+    const DXGI_FORMAT &currentFormat = texResource->GetMetadata().format;
     if (DirectX::IsCompressed(currentFormat))
         return false; //Cannot process compressed file
 
@@ -57,11 +57,10 @@ bool TextureConvert::isApplicable(File &file, const Settings &settings)
 bool TextureConvert::needsConvert(const TextureResource &res, const Settings &settings)
 {
     //Checking incompatibility with file format
-    const DXGI_FORMAT origFormat = res.origFormat;
+    const DXGI_FORMAT &origFormat = res.origFormat;
     const auto &unwantedFormats = settings.getMandatoryValue<std::vector<DXGI_FORMAT>>(
         AdvancedSettings::slTexturesUnwantedFormats);
-    QVector<DXGI_FORMAT> vec;
-    const bool isIncompatible = vec.fromStdVector(unwantedFormats).contains(origFormat);
+    const bool isIncompatible = QVector<DXGI_FORMAT>::fromStdVector(unwantedFormats).contains(origFormat);
 
     //Truely incompatible
     const bool needsConvert = (settings.getMandatoryValue<bool>(StandardSettings::bTexturesNecessary) && isIncompatible)

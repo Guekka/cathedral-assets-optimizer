@@ -12,8 +12,8 @@ CommandResult TextureGenerateMipmaps::process(File &file, const Settings &settin
         return _resultFactory.getCannotCastFileResult();
 
     const auto &info = texFile->GetMetadata();
-    const size_t tMips = calculateOptimalMipMapsNumber(info);
-    auto timage = std::make_unique<TextureResource>();
+    const size_t &tMips = calculateOptimalMipMapsNumber(info);
+    auto timage = new TextureResource;
 
     if (info.mipLevels != 1 && info.mipLevels != tMips)
     {
@@ -40,15 +40,15 @@ CommandResult TextureGenerateMipmaps::process(File &file, const Settings &settin
         }
     }
 
-    auto timage2 = std::make_unique<TextureResource>();
-    const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
+    auto timage2 = new TextureResource;
+    const DWORD &filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
     const auto hr
         = GenerateMipMaps(timage->GetImages(), timage->GetImageCount(), timage->GetMetadata(), filter, tMips, *timage2);
 
     if (FAILED(hr))
         return _resultFactory.getFailedResult(2, "Failed to generate mipmaps");
 
-    file.setFile(*timage2.release());
+    file.setFile(*timage2);
     return _resultFactory.getSuccessfulResult();
 }
 
@@ -61,18 +61,18 @@ bool TextureGenerateMipmaps::isApplicable(File &file, const Settings &settings)
     if (!texFile)
         return false;
 
-    const DXGI_FORMAT fileFormat = texFile->GetMetadata().format;
+    const DXGI_FORMAT &fileFormat = texFile->GetMetadata().format;
     if (DirectX::IsCompressed(fileFormat))
         return false; //Cannot process compressed file
 
-    const auto info = texFile->GetMetadata();
-    const bool interfaceForbidden = false
-                                    || (file.getName().contains("interface", Qt::CaseInsensitive)
-                                        && !settings.getMandatoryValue<bool>(
-                                            AdvancedSettings::bTexturesInterfaceConvert));
+    const auto &info = texFile->GetMetadata();
+    const bool &interfaceForbidden = false
+                                     || (file.getName().contains("interface", Qt::CaseInsensitive)
+                                         && !settings.getMandatoryValue<bool>(
+                                             AdvancedSettings::bTexturesInterfaceConvert));
 
-    const bool compatible = info.width >= 4 && info.height >= 4;
-    const bool optimalMipMaps = info.mipLevels == calculateOptimalMipMapsNumber(info);
+    const bool &compatible = info.width >= 4 && info.height >= 4;
+    const bool &optimalMipMaps = info.mipLevels == calculateOptimalMipMapsNumber(info);
 
     return compatible && !interfaceForbidden && !optimalMipMaps;
 }

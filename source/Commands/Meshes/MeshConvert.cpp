@@ -9,11 +9,10 @@ QStringList MeshConvert::headpartList;
 
 CommandResult MeshConvert::process(File &file, const Settings &settings)
 {
-    auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
-    if (!meshFile)
+    auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
+    if (!nif)
         return _resultFactory.getCannotCastFileResult();
 
-    MeshResource nifFile = *meshFile;
     NiVersion niVersion;
     niVersion.SetUser(settings.getMandatoryValue<int>(AdvancedSettings::iMeshesUser));
     niVersion.SetFile(settings.getMandatoryValue<NiFileVersion>(AdvancedSettings::eMeshesFileVersion));
@@ -23,8 +22,7 @@ CommandResult MeshConvert::process(File &file, const Settings &settings)
     optOptions.targetVersion = niVersion;
     optOptions.headParts = isHeadpart(file.getName());
 
-    nifFile.OptimizeFor(optOptions);
-    file.setFile(nifFile);
+    nif->OptimizeFor(optOptions);
 
     return _resultFactory.getSuccessfulResult();
 }

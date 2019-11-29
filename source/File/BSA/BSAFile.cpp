@@ -39,12 +39,12 @@ int BSAFile::saveToDisk(const QString &filePath) const
 
 bool BSAFile::setFile(Resource &file, bool optimizedFile)
 {
-    setFileHelper<BSAFileResource>(file, optimizedFile);
+    return setFileHelper<BSAFileResource>(file, optimizedFile);
 }
 
 void BSAFile::reset()
 {
-    resetHelper<BSAFile>();
+    resetHelper<BSAFileResource>();
 }
 
 } // namespace CAO

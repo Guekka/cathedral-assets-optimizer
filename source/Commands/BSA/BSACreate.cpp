@@ -16,7 +16,7 @@ CommandResult BSACreate::process(File &file, const Settings &settings)
 
     auto bsas = BSASplit::splitBSA(*bsaFolder, settings);
 
-    for (auto bsa : bsas)
+    for (auto &bsa : bsas)
     {
         BSA::nameBSA({&bsa}, bsaFolder->path(), settings);
 

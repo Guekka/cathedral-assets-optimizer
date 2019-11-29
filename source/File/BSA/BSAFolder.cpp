@@ -26,7 +26,7 @@ int BSAFolder::saveToDisk(const QString &filePath) const
 
 bool BSAFolder::setFile(Resource &file, bool optimizedFile)
 {
-    setFileHelper<BSAFolderResource>(file, optimizedFile);
+    return setFileHelper<BSAFolderResource>(file, optimizedFile);
 }
 
 void BSAFolder::reset()

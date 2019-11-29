@@ -44,7 +44,7 @@ bool BSAExtract::isApplicable(File &file, const Settings &settings)
     if (!settings.getMandatoryValue<bool>(StandardSettings::bBsaExtract))
         return false;
 
-    auto bsafile = dynamic_cast<BSAFile *>(&file);
+    auto bsafile = dynamic_cast<const BSAFile *>(&file.getFile());
     if (!bsafile)
         return false;
 

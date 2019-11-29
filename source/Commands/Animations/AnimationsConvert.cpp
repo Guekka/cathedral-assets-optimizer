@@ -14,13 +14,11 @@ AnimationsConvert::AnimationsConvert()
 
 CommandResult AnimationsConvert::process(File &file, const Settings &settings)
 {
-    auto havok = dynamic_cast<const AnimationResource *>(&file.getFile());
+    auto havok = dynamic_cast<AnimationResource *>(&file.getFile(true));
     if (!havok)
         return _resultFactory.getCannotCastFileResult();
 
-    AnimationResource *res = new AnimationResource(*havok);
-    res->pkFormat = settings.getMandatoryValue<hkPackFormat>(AdvancedSettings::eAnimationsFormat);
-    file.setFile(*res);
+    havok->pkFormat = settings.getMandatoryValue<hkPackFormat>(AdvancedSettings::eAnimationsFormat);
     return _resultFactory.getSuccessfulResult();
 }
 

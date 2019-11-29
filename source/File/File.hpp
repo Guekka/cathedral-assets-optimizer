@@ -21,8 +21,15 @@ public:
     virtual int saveToMemory(const void *pSource, const size_t &size, const QString &fileName) const;
 
     bool optimizedCurrentFile() const { return _optimizedCurrentFile; }
+    void setOptimizedCurrentFile(bool optimizedFile) { _optimizedCurrentFile |= optimizedFile; }
 
     const Resource &getFile() { return *_file; }
+    Resource &getFile(bool modifiedFile)
+    {
+        return *_file;
+        _optimizedCurrentFile |= modifiedFile;
+    }
+
     virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
 
     virtual void reset() = 0;

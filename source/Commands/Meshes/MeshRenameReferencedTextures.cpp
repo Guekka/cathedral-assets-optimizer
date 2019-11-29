@@ -7,30 +7,28 @@
 namespace CAO {
 CommandResult MeshRenameReferencedTextures::process(File &file, const Settings &settings)
 {
-    auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
-    if (!meshFile)
+    auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
+    if (!nif)
         return _resultFactory.getCannotCastFileResult();
-
-    MeshResource nif = *meshFile;
 
     bool meshChanged = false;
     constexpr int limit = 1000;
 
-    for (auto shape : nif.GetShapes())
+    for (auto shape : nif->GetShapes())
     {
-        auto shader = nif.GetShader(shape);
+        auto shader = nif->GetShader(shape);
         if (shader)
         {
             std::string tex;
             int texCounter = 0;
-            while (nif.GetTextureSlot(shader, tex, texCounter) && !tex.empty())
+            while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
             {
                 QString qsTex = QString::fromStdString(tex);
                 if (qsTex.contains(".tga", Qt::CaseInsensitive))
                 {
                     qsTex.replace(".tga", ".dds", Qt::CaseInsensitive);
                     tex = qsTex.toStdString();
-                    nif.SetTextureSlot(shader, tex, texCounter);
+                    nif->SetTextureSlot(shader, tex, texCounter);
                     meshChanged = true;
                 }
                 if (++texCounter > limit)
@@ -41,8 +39,7 @@ CommandResult MeshRenameReferencedTextures::process(File &file, const Settings &
             }
         }
     }
-    if (meshChanged)
-        file.setFile(nif);
+    file.setOptimizedCurrentFile(meshChanged);
 
     auto result = _resultFactory.getSuccessfulResult();
     result.processedFile = meshChanged;
