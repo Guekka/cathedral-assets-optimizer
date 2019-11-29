@@ -15,17 +15,17 @@ BSA BSA::getBSA(const BSAType &type, const Settings &settings)
     {
         case StandardBsa:
             bsa.type = BSAType::StandardBsa;
-            bsa.maxSize = settings.getMandatoryValue<int>(AdvancedSettings::iBSAMaxSize);
+            bsa.maxSize = settings.getMandatoryValue<double>(AdvancedSettings::iBSAMaxSize);
             bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSAFormat);
             break;
         case TexturesBsa:
             bsa.type = BSAType::TexturesBsa;
-            bsa.maxSize = settings.getMandatoryValue<int>(AdvancedSettings::iBSATexturesMaxSize);
+            bsa.maxSize = settings.getMandatoryValue<double>(AdvancedSettings::iBSATexturesMaxSize);
             bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSATexturesFormat);
             break;
         case UncompressableBsa:
             bsa.type = BSAType::UncompressableBsa;
-            bsa.maxSize = settings.getMandatoryValue<int>(AdvancedSettings::iBSAMaxSize);
+            bsa.maxSize = settings.getMandatoryValue<double>(AdvancedSettings::iBSAMaxSize);
             bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSAFormat);
             break;
     }

@@ -20,7 +20,7 @@ CommandResult BSACreate::process(File &file, const Settings &settings)
     {
         BSA::nameBSA({&bsa}, bsaFolder->path(), settings);
 
-        auto rootPath = new QString(bsaFolder->path());
+        const auto rootPath = new QString(bsaFolder->path());
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
