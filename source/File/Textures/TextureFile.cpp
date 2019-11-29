@@ -9,7 +9,7 @@ namespace CAO {
 
 TextureFile::TextureFile()
 {
-    _file = std::make_unique<TextureResource>();
+    reset();
     // Initialize COM (needed for WIC)
     const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     if (FAILED(hr))
@@ -107,21 +107,15 @@ int TextureFile::saveToDisk(const QString &filePath) const
 
 bool TextureFile::setFile(Resource &file, bool optimizedFile)
 {
-    auto image = dynamic_cast<TextureResource *>(&file);
-    if (!image)
+    if (!setFileHelper<TextureResource>(file, optimizedFile))
         return false;
-
-    _file.reset(&file);
-    _optimizedCurrentFile |= optimizedFile;
-    _info = image->GetMetadata();
+    _info = static_cast<TextureResource *>(&file)->GetMetadata();
     return true;
 }
 
 void TextureFile::reset()
 {
-    _filename.clear();
-    _file.reset(new TextureResource);
+    resetHelper<TextureResource>();
     _info = DirectX::TexMetadata();
-    _optimizedCurrentFile = false;
 }
 } // namespace CAO

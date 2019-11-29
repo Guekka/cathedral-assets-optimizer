@@ -9,11 +9,12 @@ namespace CAO {
 
 MeshFile::MeshFile()
 {
-    _file = std::make_unique<MeshResource>();
+    reset();
 }
 
 int MeshFile::loadFromDisk(const QString &filePath)
 {
+    reset();
     auto meshFile = static_cast<MeshResource *>(&*_file);
     _optimizedCurrentFile = false;
     _filename = filePath;
@@ -28,20 +29,12 @@ int MeshFile::saveToDisk(const QString &filePath) const
 
 bool MeshFile::setFile(Resource &file, bool optimizedFile)
 {
-    auto meshFile = dynamic_cast<MeshResource *>(&file);
-    if (!meshFile)
-        return false;
-
-    _file.reset(&file);
-    _optimizedCurrentFile |= optimizedFile;
-    return true;
+    return setFileHelper<MeshResource>(file, optimizedFile);
 }
 
 void MeshFile::reset()
 {
-    _file.reset(new MeshResource);
-    _optimizedCurrentFile = false;
-    _filename.clear();
+    resetHelper<MeshResource>();
 }
 
 } // namespace CAO

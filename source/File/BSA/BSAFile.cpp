@@ -7,11 +7,12 @@
 namespace CAO {
 BSAFile::BSAFile()
 {
-    _file = std::make_unique<BSAFileResource>();
+    reset();
 }
 
 int BSAFile::loadFromDisk(const QString &filePath)
 {
+    reset();
     auto bsaFile = static_cast<BSAFileResource *>(&*_file);
     bsaFile->open(filePath);
     _filename = filePath;
@@ -38,20 +39,12 @@ int BSAFile::saveToDisk(const QString &filePath) const
 
 bool BSAFile::setFile(Resource &file, bool optimizedFile)
 {
-    auto bsa = dynamic_cast<TextureResource *>(&*_file);
-    if (!bsa)
-        return false;
-
-    _file.reset(&file);
-    _optimizedCurrentFile |= optimizedFile;
-    return true;
+    setFileHelper<BSAFileResource>(file, optimizedFile);
 }
 
 void BSAFile::reset()
 {
-    _file.reset();
-    _filename.clear();
-    _optimizedCurrentFile = false;
+    resetHelper<BSAFile>();
 }
 
 } // namespace CAO

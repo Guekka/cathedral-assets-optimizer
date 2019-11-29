@@ -33,6 +33,26 @@ protected:
     QString _filename;
     std::unique_ptr<Resource> _file;
     bool _optimizedCurrentFile = false;
+
+    template<class T>
+    bool setFileHelper(Resource &file, bool optimizedFile)
+    {
+        auto convertedFile = dynamic_cast<T *>(&file);
+        if (!convertedFile)
+            return false;
+
+        _file.reset(&file);
+        _optimizedCurrentFile |= optimizedFile;
+        return true;
+    }
+
+    template<class T>
+    void resetHelper()
+    {
+        _filename.clear();
+        _file.reset(new T);
+        _optimizedCurrentFile = false;
+    }
 };
 
 } // namespace CAO

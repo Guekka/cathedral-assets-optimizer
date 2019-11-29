@@ -10,7 +10,7 @@ AnimationFile::AnimationFile()
 {
     try
     {
-        _file = std::make_unique<AnimationResource>();
+        reset();
 
         // Need to have memory allocated for the solver. Allocate 1mb for it.
         _memoryRouter = hkMemoryInitUtil::initDefault(hkMallocAllocator::m_defaultMallocAllocator,
@@ -35,23 +35,17 @@ AnimationFile::~AnimationFile()
 
 void AnimationFile::reset()
 {
-    _file.reset(new AnimationResource);
-    _optimizedCurrentFile = false;
-    _filename.clear();
+    resetHelper<AnimationResource>();
 }
 
 bool AnimationFile::setFile(Resource &file, bool optimizedFile)
 {
-    auto havok = dynamic_cast<AnimationResource *>(&file);
-    if (!havok)
-        return false;
-    _optimizedCurrentFile |= optimizedFile;
-    _file.reset(&file);
-    return true;
+    return setFileHelper<AnimationResource>(file, optimizedFile);
 }
 
 int AnimationFile::loadFromDisk(const QString &filePath)
 {
+    reset();
     try
     {
         auto havok = static_cast<AnimationResource *>(&*_file);

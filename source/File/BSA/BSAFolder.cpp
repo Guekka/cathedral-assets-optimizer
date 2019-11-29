@@ -7,7 +7,7 @@
 namespace CAO {
 BSAFolder::BSAFolder()
 {
-    _file = std::make_unique<BSAFolderResource>();
+    reset();
 }
 
 int BSAFolder::loadFromDisk(const QString &filePath)
@@ -26,19 +26,11 @@ int BSAFolder::saveToDisk(const QString &filePath) const
 
 bool BSAFolder::setFile(Resource &file, bool optimizedFile)
 {
-    auto dir = dynamic_cast<BSAFolderResource *>(&file);
-    if (!dir)
-        return false;
-
-    _optimizedCurrentFile |= optimizedFile;
-    _file.reset(&file);
-    return true;
+    setFileHelper<BSAFolderResource>(file, optimizedFile);
 }
 
 void BSAFolder::reset()
 {
-    auto dir = static_cast<BSAFolderResource *>(&*_file);
-    _filename.clear();
-    dir->setPath("");
+    resetHelper<BSAFolderResource>();
 }
 } // namespace CAO
