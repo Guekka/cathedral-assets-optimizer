@@ -45,7 +45,8 @@ QVector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
     }
 
     //Merging BSAs that can be merged
-    BSA::mergeBSAs(bsas);
+    if (settings.getMandatoryValue<bool>(StandardSettings::bBsaLeastBsaPossible))
+        BSA::mergeBSAs(bsas);
 
     return bsas;
 }

@@ -60,6 +60,7 @@ inline void initJSONStandard(nlohmann::json &json)
     init(json.at("BSA")["bBsaCreate"], false);
     init(json.at("BSA")["bBsaDeleteBackup"], false);
     init(json.at("BSA")["bBsaProcessContent"], false);
+    init(json.at("BSA")["bBsaLeastBsaPossible"], false);
 
     init(json.at("Textures")["bTexturesNecessary"], true);
     init(json.at("Textures")["bTexturesCompress"], false);

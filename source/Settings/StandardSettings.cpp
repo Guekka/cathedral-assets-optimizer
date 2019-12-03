@@ -21,6 +21,7 @@ const json &toJSONKey(const StandardKey &key, const json &json)
         case bBsaCreate: j = &j->at("BSA")["bBsaCreate"]; break;
         case bBsaDeleteBackup: j = &j->at("BSA")["bBsaDeleteBackup"]; break;
         case bBsaProcessContent: j = &j->at("BSA")["bBsaProcessContent"]; break;
+        case bBsaLeastBsaPossible: j = &j->at("BSA")["bBsaLeastBsaPossible"]; break;
 
         case bTexturesNecessary: j = &j->at("Textures")["bTexturesNecessary"]; break;
         case bTexturesCompress: j = &j->at("Textures")["bTexturesCompress"]; break;

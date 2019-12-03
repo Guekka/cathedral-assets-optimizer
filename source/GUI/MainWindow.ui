@@ -248,7 +248,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -272,8 +272,8 @@
           <property name="checkable">
            <bool>false</bool>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="1">
             <widget class="QCheckBox" name="bsaExtractCheckBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -298,7 +298,32 @@
              </property>
             </widget>
            </item>
-           <item>
+           <item row="0" column="3">
+            <widget class="QCheckBox" name="bsaCreateCheckbox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>29</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>WhatsThisCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Creates a new BSA, packing the existing loose files. &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Create BSA</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
             <widget class="QCheckBox" name="bsaDeleteBackupsCheckbox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -323,28 +348,19 @@
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QCheckBox" name="bsaCreateCheckbox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>29</height>
-              </size>
-             </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="checkBox">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Creates a new BSA, packing the existing loose files. &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Not recommended for FO4&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Will create the least BSAs possible instead of keeping them separate. Typically, you might get three BSAs : one for uncompressed files, one for textures and one for the rest. This option will merge them if possible. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
              </property>
              <property name="text">
-              <string>Create BSA</string>
+              <string>Create the least BSAs possible</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
