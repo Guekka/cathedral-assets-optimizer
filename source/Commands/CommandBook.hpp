@@ -4,26 +4,26 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/Animations/AnimationsConvert.hpp"
-#include "Commands/BSA/BSACreate.hpp"
-#include "Commands/BSA/BSAExtract.hpp"
-#include "Commands/BSA/Utils/BSA.hpp"
-#include "Commands/Meshes/MeshConvert.hpp"
-#include "Commands/Meshes/MeshRenameReferencedTextures.hpp"
-#include "Commands/Textures/TextureConvert.hpp"
-#include "Commands/Textures/TextureDecompress.hpp"
-#include "Commands/Textures/TextureGenerateMipmaps.hpp"
-#include "Commands/Textures/TextureResize.hpp"
+#include "Commands/Command.hpp"
 #include "pch.hpp"
 
 namespace CAO {
 class CommandBook
 {
 public:
-    CommandBook();
-    void registerCommand(Command *command);
-    QVector<Command *> getCommandListByType(const Command::CommandType &type);
-    Command *getCommandByName(const QString &name);
+    static void registerCommand(Command *command);
+    QVector<Command *> getCommandList(const Command::CommandType &type);
+    Command *getCommand(const QString &name);
+
+    template<typename T>
+    Command *getCommand()
+    {
+        for (const auto &vec : {BSACommands, animationCommands, meshCommands, textureCommands})
+            for (auto command : vec)
+                if (dynamic_cast<T *>(command))
+                    return command;
+        return nullptr;
+    }
 
 protected:
     static QVector<Command *> textureCommands;
@@ -31,6 +31,22 @@ protected:
     static QVector<Command *> animationCommands;
     static QVector<Command *> BSACommands;
 
-    QVector<Command *> *commandTypeToVector(const Command::CommandType &type);
+    static QVector<Command *> *commandTypeToVector(const Command::CommandType &type);
 };
+
+class CommandBookManager final
+{
+public:
+    //! Contructor.
+    /**
+	 * Registers the command with the appropriate commandbook.
+	 *
+	 * \param command The command to manage
+	 */
+    CommandBookManager(Command *command) { CommandBook::registerCommand(command); }
+
+//! Register a Spell using a Librarian
+#define REGISTER_COMMAND(COMMAND) static CommandBookManager __##COMMAND##__(new COMMAND);
+};
+
 } // namespace CAO

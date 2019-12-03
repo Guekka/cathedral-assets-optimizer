@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/Command.hpp"
+#include "Commands/CommandBook.hpp"
 #include "Commands/Textures/TextureCompressionDevice.hpp"
 #include "File/Textures/TextureFile.hpp"
 
@@ -33,4 +33,5 @@ protected:
 
     bool needsConvert(const TextureResource &res, const Settings &settings);
 };
+REGISTER_COMMAND(TextureConvert)
 } // namespace CAO

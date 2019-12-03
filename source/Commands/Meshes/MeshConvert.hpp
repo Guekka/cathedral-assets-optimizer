@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/Command.hpp"
+#include "Commands/CommandBook.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "File/Meshes/MeshFile.hpp"
 #include "FilesystemOperations.hpp"
@@ -31,4 +31,7 @@ protected:
 
     std::once_flag _onceHeadpartsFlag;
 };
+
+REGISTER_COMMAND(MeshConvert)
+
 } // namespace CAO

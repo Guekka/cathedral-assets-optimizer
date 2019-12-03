@@ -4,8 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "FilesystemOperations.hpp"
 #include "MainOptimizer.hpp"
 #include "pch.hpp"
+
 namespace CAO {
 class Manager final : public QObject
 {

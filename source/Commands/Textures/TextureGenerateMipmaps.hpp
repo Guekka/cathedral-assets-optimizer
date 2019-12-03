@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/Command.hpp"
+#include "Commands/CommandBook.hpp"
 #include "File/Textures/TextureFile.hpp"
 #include "pch.hpp"
 
@@ -25,4 +25,5 @@ public:
 protected:
     size_t calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const;
 };
+REGISTER_COMMAND(TextureGenerateMipmaps)
 } // namespace CAO

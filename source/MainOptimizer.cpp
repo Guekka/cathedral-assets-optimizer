@@ -33,8 +33,8 @@ void MainOptimizer::processBsa(const QString &file)
     PLOG_INFO << "Extracting BSA: " + file;
     if (!loadFile(_bsaFile, file))
         return;
-    BSAExtract command;
-    if (!runCommand(&command, _bsaFile))
+    auto command = _commandBook.getCommand<BSAExtract>();
+    if (!runCommand(command, _bsaFile))
         return;
 
     //TODO if(settings.bBsaOptimizeAssets)
@@ -46,8 +46,8 @@ void MainOptimizer::packBsa(const QString &folder)
     BSAFolder bsa;
     if (!loadFile(bsa, folder))
         return;
-    BSACreate command;
-    if (!runCommand(&command, bsa))
+    auto command = _commandBook.getCommand<BSACreate>();
+    if (!runCommand(command, bsa))
         return;
 
     PluginsOperations::makeDummyPlugins(folder, _optOptions);
@@ -58,7 +58,7 @@ bool MainOptimizer::processStandardFile(File &file, const QString &path, const C
     if (!loadFile(file, path))
         return false;
 
-    for (auto command : _commandBook.getCommandListByType(type))
+    for (auto command : _commandBook.getCommandList(type))
         if (!runCommand(command, file))
             return false;
 

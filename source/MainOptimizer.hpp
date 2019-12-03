@@ -4,7 +4,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Commands/BSA/BSACreate.hpp"
+#include "Commands/BSA/BSAExtract.hpp"
 #include "Commands/CommandBook.hpp"
+#include "File/Animations/AnimationFile.hpp"
+#include "File/BSA/BSAFile.hpp"
+#include "File/Meshes/MeshFile.hpp"
+#include "File/Textures/TextureFile.hpp"
 #include "Settings/Settings.hpp"
 
 namespace CAO {

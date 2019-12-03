@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Commands/Command.hpp"
+#include "Commands/CommandBook.hpp"
 #include "File/Animations/AnimationFile.hpp"
 
 namespace CAO {
@@ -19,4 +19,6 @@ public:
     CommandResult process(File &file, const Settings &settings) override;
     bool isApplicable(File &file, const Settings &settings) override;
 };
+
+REGISTER_COMMAND(AnimationsConvert)
 } // namespace CAO

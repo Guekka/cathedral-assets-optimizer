@@ -1,5 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "Commands/CommandBook.hpp"
+#include "Commands/Textures/TextureConvert.hpp"
 #include "File/Textures/TextureFile.hpp"
 #include "Settings/Settings.hpp"
 #include "doctest.h"
@@ -78,7 +79,8 @@ SCENARIO("Optimizing a texture file")
 
 SCENARIO("Converting a texture")
 {
-    auto convert = TextureConvert();
+    CommandBook book;
+    auto &convert = *book.getCommand<TextureConvert>();
     Settings sets;
 
     GIVEN("An unmodified image using an incompatible format, and settings with necessary opt enabled")

@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/Command.hpp"
+#include "Commands/CommandBook.hpp"
 #include "File/Textures/TextureFile.hpp"
 
 namespace CAO {
@@ -22,4 +22,5 @@ public:
 
     bool isApplicable(File &file, const Settings &settings) override;
 };
+REGISTER_COMMAND(TextureDecompress)
 } // namespace CAO

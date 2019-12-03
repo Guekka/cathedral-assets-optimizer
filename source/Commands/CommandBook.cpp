@@ -11,19 +11,6 @@ QVector<Command *> CommandBook::textureCommands = QVector<Command *>();
 QVector<Command *> CommandBook::meshCommands = QVector<Command *>();
 QVector<Command *> CommandBook::animationCommands = QVector<Command *>();
 
-CommandBook::CommandBook()
-{
-    registerCommand(new TextureResize);
-    registerCommand(new TextureConvert);
-    registerCommand(new TextureDecompress);
-    registerCommand(new TextureGenerateMipmaps);
-    registerCommand(new MeshConvert);
-    registerCommand(new MeshRenameReferencedTextures);
-    registerCommand(new BSAExtract);
-    registerCommand(new BSACreate);
-    registerCommand(new AnimationsConvert);
-}
-
 void CommandBook::registerCommand(Command *command)
 {
     QVector<Command *> *correspondingVector = commandTypeToVector(command->type());
@@ -61,12 +48,12 @@ QVector<Command *> *CommandBook::commandTypeToVector(const Command::CommandType 
     return nullptr;
 }
 
-QVector<Command *> CommandBook::getCommandListByType(const Command::CommandType &type)
+QVector<Command *> CommandBook::getCommandList(const Command::CommandType &type)
 {
     return *commandTypeToVector(type);
 }
 
-Command *CommandBook::getCommandByName(const QString &name)
+Command *CommandBook::getCommand(const QString &name)
 {
     for (const auto &vec : {BSACommands, animationCommands, meshCommands, textureCommands})
         for (const auto &command : vec)

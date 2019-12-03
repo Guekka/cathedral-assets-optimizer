@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Commands/BSA/Utils/BSA.hpp"
-#include "Commands/Command.hpp"
+#include "Commands/CommandBook.hpp"
 #include "File/BSA/BSAFolder.hpp"
 
 namespace CAO {
@@ -25,4 +25,5 @@ public:
 protected:
     bool canBeCompressedFile(const QString &filename);
 };
+REGISTER_COMMAND(BSACreate);
 } // namespace CAO
