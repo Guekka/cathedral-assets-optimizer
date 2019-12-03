@@ -26,8 +26,8 @@ public:
     const Resource &getFile() { return *_file; }
     Resource &getFile(const bool modifiedFile)
     {
-        return *_file;
         setOptimizedCurrentFile(modifiedFile);
+        return *_file;
     }
 
     virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
