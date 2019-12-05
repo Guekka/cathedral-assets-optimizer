@@ -83,7 +83,7 @@ QString PluginsOperations::findPlugin(const QString &folderPath, const BSAType &
                 returnedEsp = esp;
         }
         if (returnedEsp.isEmpty())
-            espName << espName.last().chopped(4) + QString::number(counter) + ".esp";
+            espName << espName.first().chopped(4) + QString::number(counter) + ".esp";
 
         ++counter;
     } while (returnedEsp.isEmpty());
