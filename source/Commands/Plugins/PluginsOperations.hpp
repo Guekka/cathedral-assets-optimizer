@@ -50,35 +50,43 @@ constexpr char GROUP_TNAM[4] = {'T', 'N', 'A', 'M'};
 constexpr char GROUP_TXST[4] = {'T', 'X', 'S', 'T'};
 constexpr char GROUP_TX00[4] = {'T', 'X', '0', '0'};
 
-class PluginsOperations final : public QObject
-{
-    Q_DECLARE_TR_FUNCTIONS(PluginsOperations)
+namespace PluginsOperations {
 
-public:
-    /*!
-   * \brief Try to find a plugin (.esp ; .esl ; .esm) in the given folder. It will always return an esp that isn't associated to a BSA OR a textures BSA.
-   * \param folderPath The folder to check
-   * \param bsaType The type of BSA to load.
-   * \return a QString containing the name of the plugin. If no plugin is found, it will return the name of the directory.
-   */
-    static QString findPlugin(const QString &folderPath, const BSAType &bsaType, const Settings &settings);
-    /*!
-   * \brief Create enough plugins to load all BSAs
-   * \param folderPath The folder to create plugins into
-   */
-    static void makeDummyPlugins(const QString &folderPath, const Settings &settings);
-    /*!
-   * \brief Check if a bsa already has a plugin to load it
-   * \param bsaPath The path of the bsa to check
-   */
-    static bool checkIfBsaHasPlugin(const QString &bsaPath, const Settings &settings);
-    /*!
-   * \brief listHeadparts List all the headparts in a plugin file
-   * \param filepath The path of the file to scan
-   * \return The list of headparts
-   */
-    static QStringList listHeadparts(const QString &filepath);
+/*!
+* \brief Try to find a plugin (.esp ; .esl ; .esm) in the given folder. It will always return an esp that isn't associated to a BSA.
+* \param folderPath The folder to check
+* \param bsaType The type of BSA to load.
+* \return a QString containing the name of the plugin without the extension. If no plugin is found, it will return the name of the directory.
+*/
+QString findPlugin(const QDir &folderPath, const BSAType &bsaType, const Settings &settings);
+/*!
+* \brief Create enough plugins to load all BSAs
+* \param folderPath The folder to create plugins into
+*/
+void makeDummyPlugins(const QString &folderPath, const Settings &settings);
+/*!
+* \brief Check if a bsa already has a plugin to load it
+* \param bsaPath The path of the bsa to check
+*/
+bool checkIfBsaHasPlugin(const QString &bsaPath, const Settings &settings);
 
-    static QStringList listLandscapeTextures(const QString &filepath);
-};
+/*!
+ * \brief Find all the BSAs names in a directory
+ * \param it An iterator to the dir to scan
+ * \return A list containing the names of the BSAs found
+ */
+QStringList listBSAsNames(QDirIterator it, const Settings &settings);
+/*!
+* \brief List all the headparts in a plugin file
+* \param filepath The path of the plugin to scan
+* \return The list of headparts
+*/
+QStringList listHeadparts(const QString &filepath);
+/*!
+* \brief List all the landscape textures in a plugin file
+* \param filepath The path of the plugin to scan
+* \return The list of headparts
+*/
+QStringList listLandscapeTextures(const QString &filepath);
+} // namespace PluginsOperations
 } // namespace CAO
