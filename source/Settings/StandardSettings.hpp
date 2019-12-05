@@ -30,6 +30,7 @@ enum StandardKey
     bBsaDeleteBackup,
     bBsaProcessContent,
     bBsaLeastBsaPossible,
+    bBsaCreateDummies,
 
     bTexturesNecessary,
     bTexturesCompress,

@@ -50,7 +50,8 @@ void MainOptimizer::packBsa(const QString &folder)
     if (!runCommand(command, bsa))
         return;
 
-    PluginsOperations::makeDummyPlugins(folder, _optOptions);
+    if (_optOptions.getMandatoryValue<bool>(StandardSettings::bBsaCreateDummies))
+        PluginsOperations::makeDummyPlugins(folder, _optOptions);
 }
 
 bool MainOptimizer::processStandardFile(File &file, const QString &path, const Command::CommandType &type)

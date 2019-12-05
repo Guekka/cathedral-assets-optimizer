@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>676</width>
-    <height>751</height>
+    <height>776</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -324,7 +324,7 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QCheckBox" name="bsaDeleteBackupsCheckbox">
+            <widget class="QCheckBox" name="bsaDeleteBackupsCheckBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -349,7 +349,7 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QCheckBox" name="checkBox">
+            <widget class="QCheckBox" name="bsaLeastBsasCheckBox">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Not recommended for FO4&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Will create the least BSAs possible instead of keeping them separate. Typically, you might get three BSAs : one for uncompressed files, one for textures and one for the rest. This option will merge them if possible. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
@@ -361,6 +361,13 @@
              </property>
              <property name="checked">
               <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QCheckBox" name="bsaCreateDummiesCheckBox">
+             <property name="text">
+              <string>Create dummy plugins</string>
              </property>
             </widget>
            </item>

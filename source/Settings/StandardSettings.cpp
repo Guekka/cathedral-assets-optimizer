@@ -22,10 +22,11 @@ const json &toJSONKey(const StandardKey &key, const json &json)
         case bBsaDeleteBackup: j = &j->at("BSA")["bBsaDeleteBackup"]; break;
         case bBsaProcessContent: j = &j->at("BSA")["bBsaProcessContent"]; break;
         case bBsaLeastBsaPossible: j = &j->at("BSA")["bBsaLeastBsaPossible"]; break;
+        case bBsaCreateDummies: j = &j->at("BSA")["bBsaCreateDummies"]; break;
 
         case bTexturesNecessary: j = &j->at("Textures")["bTexturesNecessary"]; break;
         case bTexturesCompress: j = &j->at("Textures")["bTexturesCompress"]; break;
-        case bTexturesMipmaps: j = &j->at("Textures")["TexturesMipmaps"]; break;
+        case bTexturesMipmaps: j = &j->at("Textures")["Textures(Mipmaps"]; break;
 
         case bTexturesResizeSize: j = &j->at("Textures").at("Resizing").at("BySize")["Enabled"]; break;
         case iTexturesTargetHeight: j = &j->at("Textures").at("Resizing").at("BySize")["Width"]; break;
@@ -70,7 +71,9 @@ void saveToUi(Ui::MainWindow *ui, const json &json)
     //BSA
     ui->bsaExtractCheckBox->setChecked(getBool(bBsaExtract));
     ui->bsaCreateCheckbox->setChecked(getBool(bBsaCreate));
-    ui->bsaDeleteBackupsCheckbox->setChecked(getBool(bBsaDeleteBackup));
+    ui->bsaDeleteBackupsCheckBox->setChecked(getBool(bBsaDeleteBackup));
+    ui->bsaLeastBsasCheckBox->setChecked(getBool(bBsaLeastBsaPossible));
+    ui->bsaCreateDummiesCheckBox->setChecked(getBool(bBsaCreateDummies));
 
     //Textures
     const bool texturesOpt = getBool(bTexturesMipmaps) || getBool(bTexturesCompress) || getBool(bTexturesNecessary);
@@ -96,7 +99,6 @@ void saveToUi(Ui::MainWindow *ui, const json &json)
     ui->texturesResizingByRatioHeight->setValue(getInt(iTexturesTargetHeightRatio));
 
     //Meshes
-
     ui->meshesGroupBox->setChecked(true);
     switch (getRawJson(iMeshesOptimizationLevel).get<uint>())
     {
@@ -133,7 +135,9 @@ void readFromUi(Ui::MainWindow *ui, json &json)
     const bool bsaEnabled = ui->bsaTab->isEnabled() && ui->bsaBaseGroupBox->isEnabled();
     setValue(bBsaExtract, bsaEnabled && ui->bsaExtractCheckBox->isChecked());
     setValue(bBsaCreate, bsaEnabled && ui->bsaCreateCheckbox->isChecked());
-    setValue(bBsaDeleteBackup, bsaEnabled && ui->bsaDeleteBackupsCheckbox->isChecked());
+    setValue(bBsaDeleteBackup, bsaEnabled && ui->bsaDeleteBackupsCheckBox->isChecked());
+    setValue(bBsaLeastBsaPossible, bsaEnabled && ui->bsaLeastBsasCheckBox->isChecked());
+    setValue(bBsaCreateDummies, bsaEnabled && ui->bsaCreateDummiesCheckBox->isChecked());
 
     //Textures
     const bool texturesEnabled = ui->texturesGroupBox->isChecked() && ui->texturesTab->isEnabled();
