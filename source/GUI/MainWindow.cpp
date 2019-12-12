@@ -12,8 +12,6 @@ MainWindow::MainWindow()
     _ui->setupUi(this);
     setAcceptDrops(true);
 
-    _settings.readFromUi(_ui);
-
     //Connecting all settings changes to a variable
     {
         const auto &checkbox = this->findChildren<QCheckBox *>();
@@ -52,8 +50,8 @@ MainWindow::MainWindow()
     refreshProfiles();
     {
         //Mode chooser combo box
-        _ui->modeChooserComboBox->setItemData(0, StandardSettings::SingleMod);
-        _ui->modeChooserComboBox->setItemData(1, StandardSettings::SeveralMods);
+        _ui->modeChooserComboBox->setItemData(0, SingleMod);
+        _ui->modeChooserComboBox->setItemData(1, SeveralMods);
 
         //Advanced BSA
         _ui->bsaFormat->setItemData(0, baTES3);
@@ -66,6 +64,7 @@ MainWindow::MainWindow()
         _ui->bsaTexturesFormat->setItemData(3, baSSE);
         _ui->bsaFormat->setItemData(4, baFO4);
         _ui->bsaTexturesFormat->setItemData(4, baFO4dds);
+
         //Advanced meshes
         _ui->meshesUser->setItemData(0, 11);
         _ui->meshesUser->setItemData(1, 12);
@@ -90,11 +89,11 @@ MainWindow::MainWindow()
         _ui->bsaBaseGroupBox->setDisabled(checked);
         _ui->bsaExtractCheckBox->setDisabled(checked);
         _ui->bsaCreateCheckbox->setDisabled(checked);
-        _ui->bsaDeleteBackupsCheckbox->setDisabled(checked);
+        _ui->bsaDeleteBackupsCheckBox->setDisabled(checked);
 
         _ui->bsaExtractCheckBox->setChecked(false);
         _ui->bsaCreateCheckbox->setChecked(false);
-        _ui->bsaDeleteBackupsCheckbox->setChecked(false);
+        _ui->bsaDeleteBackupsCheckBox->setChecked(false);
     });
 
     connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&](const bool &enabled) {
@@ -111,7 +110,7 @@ MainWindow::MainWindow()
     connect(_ui->newProfilePushButton, &QPushButton::pressed, this, &MainWindow::createProfile);
 
     connect(_ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        const bool &severalModsEnabled = (_ui->modeChooserComboBox->currentData() == StandardSettings::SeveralMods);
+        const bool &severalModsEnabled = (_ui->modeChooserComboBox->currentData() == SeveralMods);
 
         //Disabling some meshes settings when several mods mode is enabled
         _ui->meshesMediumOptimizationRadioButton->setDisabled(severalModsEnabled);
@@ -126,13 +125,14 @@ MainWindow::MainWindow()
                    "especially if you process BSA. ")
                     + '\n' + tr("This process has only been tested on the Mod Organizer mods folder."));
         }
+        _settingsChanged = true;
     });
 
     connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
         const QString &dir = QFileDialog::getExistingDirectory(this,
                                                                tr("Open Directory"),
-                                                               _settings.getMandatoryValue<QString>(
-                                                                   StandardSettings::sUserPath),
+                                                               _settings.getValue<QString>(
+                                                                   sUserPath),
                                                                QFileDialog::ShowDirsOnly
                                                                    | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
@@ -157,11 +157,11 @@ MainWindow::MainWindow()
     });
 
     connect(texturesFormatDialog, &QDialog::finished, this, [&] {
-        for (const auto &itemText : texturesFormatDialog->getChoices())
-        {
-            auto *item = new QListWidgetItem(itemText);
-            item->setFlags(item->flags() & (~Qt::ItemIsUserCheckable));
+        for (const auto &itemInList : texturesFormatDialog->getChoices()) {
+            auto *item = new QListWidgetItem(itemInList);
+            item->setFlags(item->flags() & (~Qt::ItemIsUserCheckable) & (~Qt::Checked));
             _ui->texturesUnwantedFormatsList->addItem(item);
+            _settingsChanged = true;
         }
     });
 
@@ -200,15 +200,17 @@ MainWindow::MainWindow()
             QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
         });
 
-        connect(_ui->actionSave_UI, &QAction::triggered, this, &MainWindow::saveUi);
+        connect(_ui->actionSave_UI, &QAction::triggered, this, [this] {
+            saveUi();
+            loadUi();
+        });
     }
 
     //Loading remembered settings
+    _settings.readFromUi(*_ui);
     _settingsChanged = false;
     setGameMode(Profiles::currentProfile());
-
     firstStart();
-
     _settingsChanged = false;
 }
 
@@ -221,7 +223,7 @@ void MainWindow::saveUi()
 
     if (!_settingsChanged)
     {
-        _settings.saveToUi(_ui); //Restoring previous settings in case an unregistered change happened
+        _settings.saveToUi(*_ui); //Restoring previous settings in case an unregistered change happened
         return;
     }
 
@@ -238,7 +240,7 @@ void MainWindow::saveUi()
 
         if (box.result() == QMessageBox::No)
         {
-            _settings.saveToUi(_ui); //Restoring previous settings
+            _settings.saveToUi(*_ui); //Restoring previous settings
             return;
         }
 
@@ -246,7 +248,15 @@ void MainWindow::saveUi()
             _alwaysSaveSettings = true;
     }
 
-    _settings.readFromUi(_ui);
+    //If a box is unchecked, all sub-checkboxes have to be unchecked
+    for (QGroupBox *widget : this->findChildren<QGroupBox *>())
+    {
+        if (!widget->isChecked() && widget->isCheckable())
+            for (auto &box : widget->findChildren<QCheckBox *>())
+                box->setChecked(false);
+    }
+
+    _settings.readFromUi(*_ui);
     _settings.saveToJSON(Profiles::settingsPath());
 
     _settingsChanged = false;
@@ -262,9 +272,23 @@ void MainWindow::loadUi()
     _ui->actionShow_tutorials->setChecked(_showTutorials);
 
     _settings.readFromJSON(Profiles::settingsPath());
-    _settings.saveToUi(_ui);
+    _settings.saveToUi(*_ui);
 
     _settingsChanged = false;
+
+    //Loading settings does not enable groupboxes
+    for (QGroupBox *widget : this->findChildren<QGroupBox *>())
+    {
+        if (widget->findChildren<QRadioButton *>().size())
+            continue;
+
+        bool boxesAreChecked = false;
+        for (const auto box : widget->findChildren<QCheckBox *>())
+            boxesAreChecked |= box->isChecked();
+
+        if (!boxesAreChecked)
+            widget->setChecked(false);
+    }
 }
 
 void MainWindow::resetUi() const
@@ -404,7 +428,7 @@ void MainWindow::setGameMode(const QString &mode)
     //Actually setting the window mode
     Profiles::setCurrentProfile(mode);
     _settings.readFromJSON(Profiles::settingsPath());
-    _settings.saveToUi(_ui);
+    _settings.saveToUi(*_ui);
     loadUi();
 
     const int &animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
@@ -413,12 +437,12 @@ void MainWindow::setGameMode(const QString &mode)
     const int &TexturesTabIndex = _ui->tabWidget->indexOf(_ui->texturesTab);
 
     _ui->tabWidget->setTabEnabled(animTabIndex,
-                                  _settings.getMandatoryValue<bool>(AdvancedSettings::bAnimationsTabEnabled));
+                                  _settings.getValue<bool>(bAnimationsTabEnabled));
     _ui->tabWidget->setTabEnabled(meshesTabIndex,
-                                  _settings.getMandatoryValue<bool>(AdvancedSettings::bMeshesTabEnabled));
-    _ui->tabWidget->setTabEnabled(bsaTabIndex, _settings.getMandatoryValue<bool>(AdvancedSettings::bBSATabEnabled));
+                                  _settings.getValue<bool>(bMeshesTabEnabled));
+    _ui->tabWidget->setTabEnabled(bsaTabIndex, _settings.getValue<bool>(bBSATabEnabled));
     _ui->tabWidget->setTabEnabled(TexturesTabIndex,
-                                  _settings.getMandatoryValue<bool>(AdvancedSettings::bTexturesTabEnabled));
+                                  _settings.getValue<bool>(bTexturesTabEnabled));
 
     setAdvancedSettingsEnabled(_ui->advancedSettingsCheckbox->isChecked());
 }

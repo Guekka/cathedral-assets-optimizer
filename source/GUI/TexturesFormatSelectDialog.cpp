@@ -33,14 +33,14 @@ void TexturesFormatSelectDialog::search(const QString &text)
         item->setHidden(false);
 }
 
-QStringList TexturesFormatSelectDialog::getChoices()
+QVector<QListWidgetItem> TexturesFormatSelectDialog::getChoices()
 {
-    QStringList items;
+    QVector<QListWidgetItem> items;
     for (int i = 0; i < _ui->listWidget->count(); ++i)
     {
-        auto item = _ui->listWidget->item(i);
-        if (item->checkState() == Qt::Checked)
-            items << item->text();
+        QListWidgetItem item = *_ui->listWidget->item(i);
+        if (item.checkState() == Qt::Checked)
+            items << item;
     }
     return items;
 }

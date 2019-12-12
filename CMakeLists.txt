@@ -60,8 +60,6 @@ set(SOURCES
     source/Manager.cpp
     source/Manager.hpp
     source/pch.hpp
-    source/ui_mainWindow.h
-    source/ui_TexturesFormatSelectDialog.h
     source/Version.hpp
     source/Version.hpp.in
     source/Commands/Command.cpp
@@ -113,15 +111,14 @@ set(SOURCES
     source/File/Meshes/MeshFile.hpp
     source/File/Textures/TextureFile.cpp
     source/File/Textures/TextureFile.hpp
-    source/Settings/AdvancedSettings.cpp
-    source/Settings/AdvancedSettings.hpp
-    source/Settings/Profiles.cpp
-    source/Settings/Profiles.hpp
+    source/Settings/BaseTypes.hpp
+    source/Settings/JSON.cpp
+    source/Settings/JSON.hpp
     source/Settings/Settings.cpp
     source/Settings/Settings.hpp
-    source/Settings/StandardSettings.cpp
-    source/Settings/StandardSettings.hpp
-    source/Settings/Utils/InitJSON.hpp
+    source/Settings/Profiles.cpp
+    source/Settings/Profiles.hpp
+    source/Settings/SettingsList.hpp
     )
 
 if(GUI)

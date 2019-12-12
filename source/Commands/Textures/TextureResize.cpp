@@ -31,8 +31,8 @@ CommandResult TextureResize::process(File &file, const Settings &settings)
 
 bool TextureResize::isApplicable(File &file, const Settings &settings)
 {
-    if (!settings.getMandatoryValue<bool>(StandardSettings::bTexturesResizeRatio)
-        || !settings.getMandatoryValue<bool>(StandardSettings::bTexturesResizeSize))
+    if (!settings.getValue<bool>(bTexturesResizeRatio)
+        || !settings.getValue<bool>(bTexturesResizeSize))
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -54,15 +54,15 @@ DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::Tex
 {
     //Calculating target width and height
     DirectX::TexMetadata tinfo = info;
-    if (settings.getMandatoryValue<bool>(StandardSettings::bTexturesResizeRatio))
+    if (settings.getValue<bool>(bTexturesResizeRatio))
     {
-        tinfo.width = info.width / settings.getMandatoryValue<int>(StandardSettings::iTexturesTargetWidthRatio);
-        tinfo.height = info.height / settings.getMandatoryValue<int>(StandardSettings::iTexturesTargetHeightRatio);
+        tinfo.width = info.width / settings.getValue<int>(iTexturesTargetWidthRatio);
+        tinfo.height = info.height / settings.getValue<int>(iTexturesTargetHeightRatio);
     }
-    else if (settings.getMandatoryValue<bool>(StandardSettings::bTexturesResizeSize))
+    else if (settings.getValue<bool>(bTexturesResizeSize))
     {
-        while (tinfo.width > settings.getMandatoryValue<int>(StandardSettings::iTexturesTargetWidth)
-               && tinfo.height > settings.getMandatoryValue<int>(StandardSettings::iTexturesTargetHeight))
+        while (tinfo.width > settings.getValue<int>(iTexturesTargetWidth)
+               && tinfo.height > settings.getValue<int>(iTexturesTargetHeight))
         {
             tinfo.width = info.width / 2;
             tinfo.height = info.height / 2;

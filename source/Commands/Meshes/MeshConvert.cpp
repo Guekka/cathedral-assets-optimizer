@@ -14,9 +14,9 @@ CommandResult MeshConvert::process(File &file, const Settings &settings)
         return _resultFactory.getCannotCastFileResult();
 
     NiVersion niVersion;
-    niVersion.SetUser(settings.getMandatoryValue<int>(AdvancedSettings::iMeshesUser));
-    niVersion.SetFile(settings.getMandatoryValue<NiFileVersion>(AdvancedSettings::eMeshesFileVersion));
-    niVersion.SetStream(settings.getMandatoryValue<int>(AdvancedSettings::iMeshesStream));
+    niVersion.SetUser(settings.getValue<int>(iMeshesUser));
+    niVersion.SetFile(settings.getValue<NiFileVersion>(eMeshesFileVersion));
+    niVersion.SetStream(settings.getValue<int>(iMeshesStream));
 
     OptOptions optOptions;
     optOptions.targetVersion = niVersion;
@@ -29,7 +29,7 @@ CommandResult MeshConvert::process(File &file, const Settings &settings)
 
 bool MeshConvert::isApplicable(File &file, const Settings &settings)
 {
-    const int &optLevel = settings.getMandatoryValue<int>(StandardSettings::iMeshesOptimizationLevel);
+    const int &optLevel = settings.getValue<int>(iMeshesOptimizationLevel);
     if (optLevel == 0)
         return false;
 
@@ -43,7 +43,7 @@ bool MeshConvert::isApplicable(File &file, const Settings &settings)
     MeshResource nif = *meshFile;
 
     const bool headpart = isHeadpart(file.getName())
-                          && settings.getMandatoryValue<bool>(StandardSettings::bMeshesHeadparts);
+                          && settings.getValue<bool>(bMeshesHeadparts);
 
     for (const auto &shape : nif.GetShapes())
     {
@@ -66,7 +66,7 @@ bool MeshConvert::isApplicable(File &file, const Settings &settings)
         }
     }
 
-    return headpart || settings.getMandatoryValue<bool>(StandardSettings::bMeshesResave) || optLevel >= 2;
+    return headpart || settings.getValue<bool>(bMeshesResave) || optLevel >= 2;
 }
 
 bool MeshConvert::isHeadpart(const QString &filepath)
@@ -88,11 +88,11 @@ void MeshConvert::listHeadparts(const Settings &settings)
                       "won't be detected.";
     }
 
-    const bool severalMods = settings.getMandatoryValue<StandardSettings::OptimizationMode>(StandardSettings::eMode)
-                             == StandardSettings::SeveralMods;
+    const bool severalMods = settings.getValue<OptimizationMode>(eMode)
+                             == SeveralMods;
     const auto flags = severalMods ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
 
-    QDirIterator it(settings.getMandatoryValue<QString>(StandardSettings::sUserPath), flags);
+    QDirIterator it(settings.getValue<QString>(sUserPath), flags);
     for (const auto &plugin : FilesystemOperations::listPlugins(it))
         headpartList += PluginsOperations::listHeadparts(plugin);
 

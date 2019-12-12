@@ -20,7 +20,7 @@ public:
     ~TexturesFormatSelectDialog();
 
     void search(const QString &text);
-    QStringList getChoices();
+    QVector<QListWidgetItem> getChoices();
     void setCheckedItems(const QString &text);
     void setCheckedItems(const QStringList &textList);
 

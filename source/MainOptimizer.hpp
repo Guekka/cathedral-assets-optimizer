@@ -28,7 +28,7 @@ public:
     void packBsa(const QString &folder);
 
 protected:
-    bool runCommand(Command *command, File &file);
+    bool runCommand(CommandPtr command, File &file);
     bool loadFile(File &file, const QString &path);
     bool saveFile(File &file, const QString &path);
 

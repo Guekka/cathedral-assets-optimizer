@@ -86,7 +86,7 @@ SCENARIO("Converting a texture")
     GIVEN("An unmodified image using an incompatible format, and settings with necessary opt enabled")
     {
         auto file = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
-        sets.setValue(StandardSettings::bTexturesNecessary, true);
+        sets.setValue(bTexturesNecessary, true);
 
         WHEN("The file is scanned")
         {
@@ -97,7 +97,7 @@ SCENARIO("Converting a texture")
     GIVEN("An unmodified image using a compatible format, and settings with necessary opt enabled")
     {
         auto file = getStandardTextureFile(false);
-        sets.setValue(StandardSettings::bTexturesNecessary, true);
+        sets.setValue(bTexturesNecessary, true);
 
         WHEN("The file is scanned")
         {
@@ -108,7 +108,7 @@ SCENARIO("Converting a texture")
     GIVEN("An unmodified image using a incompatible format, and settings with necessary opt disabled")
     {
         auto file = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
-        sets.setValue(StandardSettings::bTexturesNecessary, false);
+        sets.setValue(bTexturesNecessary, false);
 
         WHEN("The file is scanned")
         {
@@ -119,7 +119,7 @@ SCENARIO("Converting a texture")
     GIVEN("A modified image using a compatible format, and settings with necessary opt enabled")
     {
         auto file = getStandardTextureFile(true);
-        sets.setValue(StandardSettings::bTexturesNecessary, true);
+        sets.setValue(bTexturesNecessary, true);
 
         WHEN("The file is scanned")
         {
@@ -130,8 +130,8 @@ SCENARIO("Converting a texture")
     GIVEN("A modified image using the same format as the output format, and settings with necessary opt "
           "enabled")
     {
-        auto file = getStandardTextureFile(true, sets.getMandatoryValue<DXGI_FORMAT>(AdvancedSettings::eTexturesFormat));
-        sets.setValue(StandardSettings::bTexturesNecessary, true);
+        auto file = getStandardTextureFile(true, sets.getValue<DXGI_FORMAT>(eTexturesFormat));
+        sets.setValue(bTexturesNecessary, true);
 
         WHEN("The file is scanned")
         {

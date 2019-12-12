@@ -15,18 +15,18 @@ BSA BSA::getBSA(const BSAType &type, const Settings &settings)
     {
         case StandardBsa:
             bsa.type = BSAType::StandardBsa;
-            bsa.maxSize = settings.getMandatoryValue<double>(AdvancedSettings::iBSAMaxSize);
-            bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSAFormat);
+            bsa.maxSize = settings.getValue<double>(iBSAMaxSize);
+            bsa.format = settings.getValue<bsa_archive_type_t>(eBSAFormat);
             break;
         case TexturesBsa:
             bsa.type = BSAType::TexturesBsa;
-            bsa.maxSize = settings.getMandatoryValue<double>(AdvancedSettings::iBSATexturesMaxSize);
-            bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSATexturesFormat);
+            bsa.maxSize = settings.getValue<double>(iBSATexturesMaxSize);
+            bsa.format = settings.getValue<bsa_archive_type_t>(eBSATexturesFormat);
             break;
         case UncompressableBsa:
             bsa.type = BSAType::UncompressableBsa;
-            bsa.maxSize = settings.getMandatoryValue<double>(AdvancedSettings::iBSAMaxSize);
-            bsa.format = settings.getMandatoryValue<bsa_archive_type_t>(AdvancedSettings::eBSAFormat);
+            bsa.maxSize = settings.getValue<double>(iBSAMaxSize);
+            bsa.format = settings.getValue<bsa_archive_type_t>(eBSAFormat);
             break;
     }
     return bsa;
@@ -34,8 +34,8 @@ BSA BSA::getBSA(const BSAType &type, const Settings &settings)
 
 void BSA::nameBSA(std::initializer_list<BSA *> bsaList, const QString &folder, const Settings &settings)
 {
-    const auto &bsaSuffix = settings.getMandatoryValue<QString>(AdvancedSettings::sBSASuffix);
-    const auto &bsaTexSuffix = settings.getMandatoryValue<QString>(AdvancedSettings::sBSATexturesSuffix);
+    const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
+    const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
     for (auto bsa : bsaList)
     {
         const QString &suffix = bsa->type == TexturesBsa ? bsaTexSuffix : bsaSuffix;

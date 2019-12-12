@@ -18,20 +18,20 @@ CommandResult AnimationsConvert::process(File &file, const Settings &settings)
     if (!havok)
         return _resultFactory.getCannotCastFileResult();
 
-    havok->pkFormat = settings.getMandatoryValue<hkPackFormat>(AdvancedSettings::eAnimationsFormat);
+    havok->pkFormat = settings.getValue<hkPackFormat>(eAnimationsFormat);
     return _resultFactory.getSuccessfulResult();
 }
 
 bool AnimationsConvert::isApplicable(File &file, const Settings &settings)
 {
-    if (!settings.getMandatoryValue<bool>(StandardSettings::bAnimationsOptimization))
+    if (!settings.getValue<bool>(bAnimationsOptimization))
         return false;
 
     auto havok = dynamic_cast<const AnimationResource *>(&file.getFile());
     if (!havok)
         return false;
 
-    if (havok->pkFormat == settings.getMandatoryValue<hkPackFormat>(AdvancedSettings::eAnimationsFormat))
+    if (havok->pkFormat == settings.getValue<hkPackFormat>(eAnimationsFormat))
         return false;
 
     return true;

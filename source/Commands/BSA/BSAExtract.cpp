@@ -14,7 +14,7 @@ CommandResult BSAExtract::process(File &file, const Settings &settings)
         return _resultFactory.getCannotCastFileResult();
 
     auto bsaPath = file.getName();
-    if (!settings.getMandatoryValue<bool>(StandardSettings::bBsaDeleteBackup))
+    if (!settings.getValue<bool>(bBsaDeleteBackup))
         bsaPath = FilesystemOperations::backupFile(bsaPath);
 
     auto rootPath = new QString(QFileInfo(bsaPath).path());
@@ -41,7 +41,7 @@ CommandResult BSAExtract::process(File &file, const Settings &settings)
 
 bool BSAExtract::isApplicable(File &file, const Settings &settings)
 {
-    if (!settings.getMandatoryValue<bool>(StandardSettings::bBsaExtract))
+    if (!settings.getValue<bool>(bBsaExtract))
         return false;
 
     auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());

@@ -27,7 +27,7 @@ QVector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
             continue;
 
         const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
-                               && settings.getMandatoryValue<bool>(AdvancedSettings::bBSATexturesEnabled);
+                               && settings.getValue<bool>(bBSATexturesEnabled);
         const bool isUncompressable = uncompressableAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive);
 
         BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
@@ -45,7 +45,7 @@ QVector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
     }
 
     //Merging BSAs that can be merged
-    if (settings.getMandatoryValue<bool>(StandardSettings::bBsaLeastBsaPossible))
+    if (settings.getValue<bool>(bBsaLeastBsaPossible))
         BSA::mergeBSAs(bsas);
 
     return bsas;

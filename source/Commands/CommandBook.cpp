@@ -6,57 +6,50 @@
 #include "CommandBook.hpp"
 
 namespace CAO {
-QVector<Command *> CommandBook::BSACommands = QVector<Command *>();
-QVector<Command *> CommandBook::textureCommands = QVector<Command *>();
-QVector<Command *> CommandBook::meshCommands = QVector<Command *>();
-QVector<Command *> CommandBook::animationCommands = QVector<Command *>();
 
-void CommandBook::registerCommand(Command *command)
+QMap<Command::CommandType, QVector<CommandPtr>> &CommandBook::commands()
 {
-    QVector<Command *> *correspondingVector = commandTypeToVector(command->type());
+    static QMap<Command::CommandType, QVector<CommandPtr>> _commands = QMap<Command::CommandType, QVector<CommandPtr>>();
+    return _commands;
+}
 
-    if (correspondingVector->isEmpty())
+void CommandBook::registerCommand(CommandPtr command)
+{
+    auto correspondingVector = commandTypeToVector(command->type());
+    if (correspondingVector.isEmpty())
     {
-        *correspondingVector << command;
+        correspondingVector << command;
         return;
     }
 
-    for (int i = 0; i < correspondingVector->size(); ++i)
+    for (int i = 0; i < correspondingVector.size(); ++i)
     {
-        auto &commandInVector = correspondingVector->at(i);
+        auto &commandInVector = correspondingVector.at(i);
 
         if (commandInVector->name() == command->name())
             return; //Preventing duplicate commands
         if (commandInVector->priority() <= command->priority())
         {
-            correspondingVector->insert(i, command);
+            correspondingVector.insert(i, command);
             break;
         }
     }
 }
 
-QVector<Command *> *CommandBook::commandTypeToVector(const Command::CommandType &type)
+QVector<CommandPtr> &CommandBook::commandTypeToVector(const Command::CommandType &type)
 {
-    switch (type)
-    {
-        case Command::CommandType::BSA: return &BSACommands;
-        case Command::CommandType::Texture: return &textureCommands;
-        case Command::CommandType::Mesh: return &meshCommands;
-        case Command::CommandType::Animation: return &animationCommands;
-        case Command::CommandType::Invalid: return nullptr;
-    }
-    return nullptr;
+    return commands()[type];
 }
 
-QVector<Command *> CommandBook::getCommandList(const Command::CommandType &type)
+QVector<CommandPtr> CommandBook::getCommandList(const Command::CommandType &type)
 {
-    return *commandTypeToVector(type);
+    return commandTypeToVector(type);
 }
 
-Command *CommandBook::getCommand(const QString &name)
+CommandPtr CommandBook::getCommand(const QString &name)
 {
-    for (const auto &vec : {BSACommands, animationCommands, meshCommands, textureCommands})
-        for (const auto &command : vec)
+    for (const auto &vec : commands())
+        for (auto command : vec)
             if (command->name() == name)
                 return command;
     return nullptr;
