@@ -42,7 +42,7 @@ public:
     CommandBookManager(Command *command) { CommandBook::registerCommand(CommandPtr(command)); }
 
 //! Register a Spell using a CommandBookManager
-#define REGISTER_COMMAND(COMMAND) static CommandBookManager __##COMMAND##__(new COMMAND);
+#define REGISTER_COMMAND(COMMAND) static CommandBookManager Manager_##COMMAND##(new COMMAND);
 };
 
 } // namespace CAO

@@ -15,7 +15,7 @@ QMap<Command::CommandType, QVector<CommandPtr>> &CommandBook::commands()
 
 void CommandBook::registerCommand(CommandPtr command)
 {
-    auto correspondingVector = commandTypeToVector(command->type());
+    auto &correspondingVector = commandTypeToVector(command->type());
     if (correspondingVector.isEmpty())
     {
         correspondingVector << command;
