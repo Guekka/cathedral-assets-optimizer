@@ -42,7 +42,7 @@ CommandResult BSACreate::process(File &file, const Settings &settings)
         }
 
         if (bsa.files.isEmpty())
-            return _resultFactory.getFailedResult(2, "Failed to create BSA: this BSA does not contain any files.");
+            return CommandResult{0, "", false};
 
         try
         {

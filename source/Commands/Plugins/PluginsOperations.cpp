@@ -28,21 +28,31 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const BSAType &bsa
     const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
     const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
 
-    QStringList espNames = listBSAsNames(QDirIterator(folderPath, QDirIterator::Subdirectories), settings);
+    QStringList espNames;
+    QDirIterator it(folderPath);
+    while (it.hasNext())
+    {
+        it.next();
+        const QString espName = it.fileName().remove(QRegularExpression("\\.es[lmp]"));
+        if (espName == it.fileName() || espName.isEmpty())
+            continue;
+        espNames << espName;
+    }
+    espNames.removeDuplicates();
 
     if (espNames.isEmpty())
         espNames << folderPath.dirName();
 
-    QString returnedEsp;
     for (size_t i = 0; i >= 0; ++i)
     {
         for (const auto &esp : espNames)
         {
-            const bool goodName = !QFile(folderPath.filePath(esp + bsaTexSuffix)).exists()
-                                  && !QFile(folderPath.filePath(esp + bsaSuffix)).exists();
+            const QString &texBsaName = folderPath.filePath(esp + bsaTexSuffix);
+            const QString &bsaName = folderPath.filePath(esp + bsaSuffix);
+            const bool goodName = !QFile(texBsaName).exists() && !QFile(bsaName).exists();
 
             if (goodName)
-                return returnedEsp;
+                return esp;
         }
         const QString &newEspName = espNames.first() + QString::number(i);
         espNames.clear();
@@ -77,7 +87,7 @@ QStringList PluginsOperations::listBSAsNames(QDirIterator it, const Settings &se
     {
         it.next();
         const QString bsaName = it.fileName().remove(bsaTexSuffix).remove(bsaSuffix);
-        if (bsaName == it.fileName())
+        if (bsaName == it.fileName() || bsaName.isEmpty())
             continue;
         bsas << bsaName;
     }
