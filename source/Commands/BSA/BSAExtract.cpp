@@ -9,7 +9,8 @@
 namespace CAO {
 CommandResult BSAExtract::process(File &file, const Settings &settings)
 {
-    auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());
+    //TODO We are creating a new BSArchiveAuto while the file is already one
+    auto bsafile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
     if (!bsafile)
         return _resultFactory.getCannotCastFileResult();
 
@@ -28,14 +29,13 @@ CommandResult BSAExtract::process(File &file, const Settings &settings)
     }
     catch (const std::exception &e)
     {
-        PLOG_ERROR << e.what();
-        PLOG_ERROR << "An error occured during the extraction of: " + bsaPath + 'n'
-                          + "Please extract it manually. The BSA was not deleted.";
-        return _resultFactory.getFailedResult(1,
-                                              QString("Failed to extract BSA with error message: '%1'").arg(e.what()));
+        const QString &error = QString("Failed to extract BSA with error message: '%1'").arg(e.what());
+        return _resultFactory.getFailedResult(1, error);
     }
+    bsafile->reset();                   //We won't be able to delete the file otherwise
+    if (!QFile::remove(file.getName())) //We want to remove the original file, not the backup file
+        return _resultFactory.getFailedResult(2, "BSA Extract succeeded but failed to delete the extracted BSA");
 
-    QFile::remove(bsaPath);
     return _resultFactory.getSuccessfulResult();
 }
 
