@@ -229,13 +229,12 @@ void MainWindow::saveUi()
 
     if (!_alwaysSaveSettings)
     {
-        QMessageBox
-            box(QMessageBox::Information,
-                tr("Save unsaved changes"),
-                tr("You have unsaved changes. Do you want to save them? You can also press 'Yes to all' to always "
-                   "save unsaved changes"),
-                QMessageBox::No | QMessageBox::Yes | QMessageBox::YesToAll);
+        QMessageBox box(QMessageBox::Information,
+                        tr("Save unsaved changes"),
+                        tr("You have unsaved changes. Do you want to save them?"),
+                        QMessageBox::No | QMessageBox::Yes);
 
+        QPushButton *alwaysButton = box.addButton(tr("Always"), QMessageBox::YesRole);
         box.exec();
 
         if (box.result() == QMessageBox::No)
@@ -244,8 +243,11 @@ void MainWindow::saveUi()
             return;
         }
 
-        if (box.result() == QMessageBox::YesToAll)
+        if (box.clickedButton() == alwaysButton)
+        {
             _alwaysSaveSettings = true;
+            saveUi();
+        }
     }
 
     //If a box is unchecked, all sub-checkboxes have to be unchecked
@@ -280,7 +282,7 @@ void MainWindow::loadUi()
     for (QGroupBox *widget : this->findChildren<QGroupBox *>())
     {
         if (widget->findChildren<QRadioButton *>().size())
-            continue;
+            continue; //We do not want to disable box with radio buttons
 
         bool boxesAreChecked = false;
         for (const auto box : widget->findChildren<QCheckBox *>())
