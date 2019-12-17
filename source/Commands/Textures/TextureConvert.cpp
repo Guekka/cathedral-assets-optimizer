@@ -40,6 +40,10 @@ bool TextureConvert::isApplicable(File &file, const Settings &settings)
     if (DirectX::IsCompressed(currentFormat))
         return false; //Cannot process compressed file
 
+    //If the target format is the same as the current format, no conversion is needed
+    if (settings.getValue<DXGI_FORMAT>(eTexturesFormat) == currentFormat)
+        return false;
+
     const bool sameFormatAsOrig = currentFormat == origFormat;
 
     //Compatible but compressing in order to improve performance

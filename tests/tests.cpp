@@ -82,8 +82,11 @@ SCENARIO("Converting a texture")
     CommandBook book;
     auto &convert = *book.getCommand<TextureConvert>();
     Settings sets;
+    sets.setValue(slTexturesUnwantedFormats,
+                  std::vector<DXGI_FORMAT>{ DXGI_FORMAT_B5G6R5_UNORM });
 
-    GIVEN("An unmodified image using an incompatible format, and settings with necessary opt enabled")
+    GIVEN("An unmodified image using an incompatible format, and settings with "
+          "necessary opt enabled")
     {
         auto file = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
         sets.setValue(bTexturesNecessary, true);
@@ -130,13 +133,14 @@ SCENARIO("Converting a texture")
     GIVEN("A modified image using the same format as the output format, and settings with necessary opt "
           "enabled")
     {
-        auto file = getStandardTextureFile(true, sets.getValue<DXGI_FORMAT>(eTexturesFormat));
-        sets.setValue(bTexturesNecessary, true);
+      sets.setValue(eTexturesFormat, DXGI_FORMAT_A8_UNORM);
+      auto file = getStandardTextureFile(true, DXGI_FORMAT_A8_UNORM);
+      sets.setValue(bTexturesNecessary, true);
 
-        WHEN("The file is scanned")
-        {
-            auto isApplicable = convert.isApplicable(*file, sets);
-            CHECK(isApplicable == false);
-        }
+      WHEN("The file is scanned")
+      {
+        auto isApplicable = convert.isApplicable(*file, sets);
+        CHECK(isApplicable == false);
+      }
     }
 }
