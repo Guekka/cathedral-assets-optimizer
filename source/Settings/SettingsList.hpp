@@ -452,7 +452,7 @@ struct settingBuilder
 
       REGISTER_SETTING(bAnimationsTabEnabled,
           "Advanced/Animations/bAnimationsTabEnabled",
-          ui.animationsNecessaryOptimizationCheckBox,
+          ui.AnimationsTab,
           bool)
 
       REGISTER_SETTING_NO_UI(eAnimationsFormat,
