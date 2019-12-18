@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>676</width>
-    <height>776</height>
+    <height>809</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -541,7 +541,7 @@
              </item>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="label_3">
              <property name="text">
               <string>Textures BSA Format</string>
@@ -551,7 +551,7 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="2" column="1">
             <widget class="QComboBox" name="bsaTexturesFormat">
              <item>
               <property name="text">
@@ -581,6 +581,13 @@
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bsaFilesToPackButton">
+          <property name="text">
+           <string>Edit files to pack</string>
+          </property>
          </widget>
         </item>
        </layout>

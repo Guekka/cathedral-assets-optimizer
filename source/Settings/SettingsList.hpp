@@ -6,6 +6,7 @@
 
 #include "BaseTypes.hpp"
 #include "JSON.hpp"
+#include "ui_BSAFilesToPack.h"
 #include "ui_mainWindow.h"
 
 /*
@@ -212,53 +213,101 @@ inline void saveUiData(QListWidget *widget, const std::vector<DXGI_FORMAT> &valu
     }
 }
 
-using uiRead = void(const Ui::MainWindow &ui, JSON &json);
-using uiSave = void(Ui::MainWindow &ui, const JSON &json);
+using uiReadMW = void (*)(const Ui::MainWindow &ui, JSON &json);
+using uiSaveMW = void (*)(Ui::MainWindow &ui, const JSON &json);
+using uiReadBSAFiles = void (*)(const Ui::BSAFilesToPack &ui, JSON &json);
+using uiSaveBSAFiles = void (*)(Ui::BSAFilesToPack &ui, const JSON &json);
 
-struct Setting
+class Setting
 {
+private:
+    enum class TargetUI
+    {
+        bsaUi,
+        mainUi
+    } _targetUI;
+
+    uiReadMW _readMW;
+    uiReadBSAFiles _readBSA;
+    uiSaveMW _saveMW;
+    uiSaveBSAFiles _saveBSA;
+
+public:
+    Setting(const QString &key, uiReadMW readMW, uiSaveMW saveMW)
+        : jsonKey(key)
+        , _readMW(readMW)
+        , _saveMW(saveMW)
+        , _targetUI(TargetUI::mainUi)
+    {
+    }
+
+    Setting(const QString &key, uiReadBSAFiles readBSA, uiSaveBSAFiles saveBSA)
+        : jsonKey(key)
+        , _readBSA(readBSA)
+        , _saveBSA(saveBSA)
+        , _targetUI(TargetUI::bsaUi)
+
+    {
+    }
+
     QString jsonKey;
-    uiRead *readFromUI;
-    uiSave *saveToUI;
+
+    void readFromUI(const Ui::MainWindow &ui, const Ui::BSAFilesToPack &bsUi, JSON &json) const
+    {
+        switch (_targetUI)
+        {
+            case TargetUI::bsaUi: _readBSA(bsUi, json);
+            case TargetUI::mainUi: _readMW(ui, json);
+        }
+    }
+    void saveToUI(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi, const JSON &json) const
+    {
+        switch (_targetUI)
+        {
+            case TargetUI::bsaUi: _saveBSA(bsUi, json);
+            case TargetUI::mainUi: _saveMW(ui, json);
+        }
+    }
 };
 
 // Used to register settings into a list
 struct settingBuilder
 {
-    settingBuilder(QVector<Setting> &vec, const Setting &setting) { vec << setting; }
+    settingBuilder(QVector<const Setting *> &vec, const Setting *setting) { vec << setting; }
 };
 
+#define REGISTER_SETTING_CUSTOM(name, key, readFunc, saveFunc) \
+    static const Setting name(key, readFunc, saveFunc); \
+    static settingBuilder builder_##name(settingsList, &name);
+
 #define REGISTER_SETTING_WITH_CONTEXT(name, key, uiElement, type, context) \
-    static const Setting name{key, \
-                              [](const Ui::MainWindow &ui, JSON &json) { \
-                                  json.setValue(key, readUiData<type>(uiElement, context)); \
-                              }, \
-                              [](Ui::MainWindow &ui, const JSON &json) { \
-                                  saveUiData(uiElement, json.getValue<type>(key), context); \
-                              }}; \
-    static settingBuilder builder__##name(settingsList, name);
+    REGISTER_SETTING_CUSTOM( \
+        name, \
+        key, \
+        [](const Ui::MainWindow &ui, JSON &json) { json.setValue(key, readUiData<type>(uiElement, context)); }, \
+        [](Ui::MainWindow &ui, const JSON &json) { saveUiData(uiElement, json.getValue<type>(key), context); })
 
 #define REGISTER_SETTING(name, key, uiElement, type) REGISTER_SETTING_WITH_CONTEXT(name, key, uiElement, type, nullptr)
 
 #define REGISTER_SETTING_VECTOR(name, key, uiElement, type, context) \
-    static const Setting name{key, \
-                              [](const Ui::MainWindow &ui, JSON &json) { \
-                                  json.setValue(key, readUiData<type>(uiElement, context)); \
-                              }, \
-                              [](Ui::MainWindow &ui, const JSON &json) { \
-                                  saveUiData(uiElement, json.getValue<std::vector<type>>(key), context); \
-                              }}; \
-    static settingBuilder builder__##name(settingsList, name);
+    REGISTER_SETTING_CUSTOM( \
+        name, \
+        key, \
+        [](const Ui::MainWindow &ui, JSON &json) { json.setValue(key, readUiData<type>(uiElement, context)); }, \
+        [](Ui::MainWindow &ui, const JSON &json) { \
+            saveUiData(uiElement, json.getValue<std::vector<type>>(key), context); \
+        })
 
 #define REGISTER_SETTING_CHECKBOX(name, key, uiElement) REGISTER_SETTING(name, key, uiElement, bool)
 
 #define REGISTER_SETTING_NO_UI(name, key) \
-    static const Setting name{key, \
-                              [](const Ui::MainWindow &ui, JSON &json) { return; }, \
-                              [](Ui::MainWindow &ui, const JSON &json) { return; }};
+    static const Setting name( \
+        key, \
+        [](const Ui::MainWindow &ui, JSON &json) { return; }, \
+        [](Ui::MainWindow &ui, const JSON &json) { return; });
 
 // clang-format off
-      static QVector<Setting> settingsList;
+      static QVector<const Setting*> settingsList;
 
       REGISTER_SETTING_CHECKBOX(bDebugLog,
           "General/bDebugLog",

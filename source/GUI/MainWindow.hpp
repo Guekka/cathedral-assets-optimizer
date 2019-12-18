@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "BSAFilesToPack.hpp"
 #include "Manager.hpp"
 #include "TexturesFormatSelectDialog.hpp"
 #include "pch.hpp"
@@ -61,5 +62,6 @@ private:
     bool _alwaysSaveSettings = false;
     bool _showTutorials;
     TexturesFormatSelectDialog *texturesFormatDialog;
+    BSAFilesToPackWidget *bsaFilesToPackDialog;
 };
 } // namespace CAO

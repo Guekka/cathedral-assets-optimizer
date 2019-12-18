@@ -144,6 +144,10 @@ MainWindow::MainWindow()
 
     connect(_ui->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
 
+    bsaFilesToPackDialog = new BSAFilesToPackWidget(this);
+    bsaFilesToPackDialog->hide();
+    connect(_ui->bsaFilesToPackButton, &QPushButton::pressed, this, [this] { bsaFilesToPackDialog->show(); });
+
     texturesFormatDialog = new TexturesFormatSelectDialog(this);
 
     connect(_ui->texturesUnwantedFormatsEditButton, &QPushButton::pressed, this, [&] {
@@ -207,7 +211,7 @@ MainWindow::MainWindow()
     }
 
     //Loading remembered settings
-    _settings.readFromUi(*_ui);
+    _settings.readFromUi(*_ui, bsaFilesToPackDialog->getUi());
     _settingsChanged = false;
     setGameMode(Profiles::currentProfile());
     firstStart();
@@ -223,7 +227,8 @@ void MainWindow::saveUi()
 
     if (!_settingsChanged)
     {
-        _settings.saveToUi(*_ui); //Restoring previous settings in case an unregistered change happened
+        //Restoring previous settings in case an unregistered change happened
+        _settings.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
         return;
     }
 
@@ -239,7 +244,7 @@ void MainWindow::saveUi()
 
         if (box.result() == QMessageBox::No)
         {
-            _settings.saveToUi(*_ui); //Restoring previous settings
+            _settings.saveToUi(*_ui, bsaFilesToPackDialog->getUi()); //Restoring previous settings
             return;
         }
 
@@ -258,7 +263,7 @@ void MainWindow::saveUi()
                 box->setChecked(false);
     }
 
-    _settings.readFromUi(*_ui);
+    _settings.readFromUi(*_ui, bsaFilesToPackDialog->getUi());
     _settings.saveToJSON(Profiles::settingsPath());
 
     _settingsChanged = false;
@@ -274,7 +279,7 @@ void MainWindow::loadUi()
     _ui->actionShow_tutorials->setChecked(_showTutorials);
 
     _settings.readFromJSON(Profiles::settingsPath());
-    _settings.saveToUi(*_ui);
+    _settings.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
 
     _settingsChanged = false;
 
@@ -430,7 +435,7 @@ void MainWindow::setGameMode(const QString &mode)
     //Actually setting the window mode
     Profiles::setCurrentProfile(mode);
     _settings.readFromJSON(Profiles::settingsPath());
-    _settings.saveToUi(*_ui);
+    _settings.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
     loadUi();
 
     const int &animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);

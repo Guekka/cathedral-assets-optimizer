@@ -18,16 +18,16 @@ void Settings::readFromJSON(const QString &filepath)
 }
 
 #ifdef GUI
-void Settings::readFromUi(Ui::MainWindow &ui)
+void Settings::readFromUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi)
 {
-    for (const Setting &set : settingsList)
-        set.readFromUI(ui, _json);
+    for (const Setting *set : settingsList)
+        set->readFromUI(ui, bsUi, _json);
 }
 
-void Settings::saveToUi(Ui::MainWindow &ui)
+void Settings::saveToUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi)
 {
-    for (const Setting &set : settingsList)
-        set.saveToUI(ui, _json);
+    for (const Setting *set : settingsList)
+        set->saveToUI(ui, bsUi, _json);
 }
 #endif
 
@@ -131,7 +131,7 @@ QString Settings::isValid() const
     }
 
     const auto &meshOptLevel = getValue<uint>(iMeshesOptimizationLevel);
-    if (meshOptLevel < 0 || meshOptLevel > 3)
+    if (meshOptLevel > 3)
         return ("This meshes optimization level does not exist. Level: "
                 + QString::number(meshOptLevel));
 

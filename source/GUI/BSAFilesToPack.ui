@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BSAFilesToPack</class>
+ <widget class="QWidget" name="BSAFilesToPack">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>309</width>
+    <height>508</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QLabel" name="StandardFilesLabel">
+     <property name="text">
+      <string>Standard</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="StandardFilesEdit"/>
+   </item>
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QLabel" name="TexturesFilesLabel">
+     <property name="text">
+      <string>Textures</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="TexturesFilesEdit"/>
+   </item>
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QLabel" name="UncompressableFilesLabel">
+     <property name="text">
+      <string>Cannot be compressed</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="UncompressableFilesEdit"/>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

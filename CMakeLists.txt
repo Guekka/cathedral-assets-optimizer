@@ -123,6 +123,9 @@ set(SOURCES
 
 if(GUI)
     list(APPEND SOURCES
+        source/GUI/BSAFilesToPack.cpp
+        source/GUI/BSAFilesToPack.hpp
+        source/GUI/BSAFilesToPack.ui
         source/GUI/MainWindow.cpp
         source/GUI/MainWindow.hpp
         source/GUI/MainWindow.ui

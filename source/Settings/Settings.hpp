@@ -9,6 +9,7 @@
 #include "SettingsList.hpp"
 
 #ifdef GUI
+#include "ui_BSAFilesToPack.h"
 #include "ui_mainWindow.h"
 #endif
 
@@ -34,8 +35,8 @@ public:
     void saveToJSON(const QString &filepath) const;
     void readFromJSON(const QString &filepath);
 #ifdef GUI
-    void saveToUi(Ui::MainWindow &ui);
-    void readFromUi(Ui::MainWindow &ui);
+    void saveToUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi);
+    void readFromUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi);
 #endif
 
     /*!
