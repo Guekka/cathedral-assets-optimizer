@@ -5,8 +5,8 @@
 #pragma once
 
 #include "BSAFilesToPack.hpp"
+#include "ListDialog.hpp"
 #include "Manager.hpp"
-#include "TexturesFormatSelectDialog.hpp"
 #include "pch.hpp"
 #include "ui_mainWindow.h"
 
@@ -61,7 +61,7 @@ private:
     bool _settingsChanged;
     bool _alwaysSaveSettings = false;
     bool _showTutorials;
-    TexturesFormatSelectDialog *texturesFormatDialog;
+    ListDialog *texturesFormatDialog;
     BSAFilesToPackWidget *bsaFilesToPackDialog;
 };
 } // namespace CAO

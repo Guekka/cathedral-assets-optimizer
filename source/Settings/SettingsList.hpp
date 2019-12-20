@@ -14,177 +14,173 @@
  */
 
 namespace CAO {
-template<typename returnValue, typename Widget>
-inline returnValue readUiData(const Widget *widget, const void *context = nullptr);
 
-template<>
-inline bool readUiData(const QCheckBox *widget, const void *context)
+namespace {
+//Here we are implementing functions for reading different UI widgets
+
+inline bool readCheckbox(const QCheckBox *widget)
 {
     return widget->isChecked();
 }
 
-template<>
-inline bool readUiData(const QAction *widget, const void *context)
+inline bool readCheckbox(const QAction *widget)
 {
     return widget->isChecked();
 }
 
-template<>
-inline bool readUiData(const QRadioButton *widget, const void *context)
+inline bool readCheckbox(const QRadioButton *widget, const QGroupBox *parent)
 {
-    auto parentGroupBox = context ? static_cast<const QGroupBox *>(context) : nullptr;
-    if (parentGroupBox)
-        if (!parentGroupBox->isChecked())
-            return false;
+    if (!parent->isChecked())
+        return false;
     return widget->isChecked();
 }
 
-template<>
-inline bool readUiData(const QGroupBox *widget, const void *context)
+inline bool readCheckbox(const QGroupBox *widget)
 {
     return widget->isChecked();
 }
 
-template<>
-// NOTE Overload used for meshes optimization level. Very dependant of the UI layout.
-inline int readUiData(const QGroupBox *widget, const void *context)
+inline int readMeshesOptLevel(const Ui::MainWindow &ui)
 {
-    if (!widget->isChecked())
+    if (!ui.meshesGroupBox->isChecked())
         return 0;
-    auto widgetList = widget->findChildren<QRadioButton *>();
-    int counter = 0;
-    for (auto child : widgetList)
-    {
-        counter++;
-        if (child->isChecked())
-            return counter;
-    }
+    if (ui.meshesNecessaryOptimizationRadioButton->isChecked())
+        return 1;
+    if (ui.meshesMediumOptimizationRadioButton->isChecked())
+        return 2;
+    if (ui.meshesFullOptimizationRadioButton->isChecked())
+        return 3;
     return 0;
 }
 
-template<>
-inline bool readUiData(const QWidget *widget, const void *context)
+inline bool readTab(const QWidget *widget)
 {
     return widget->isEnabled();
 }
 
-template<>
-inline int readUiData(const QSpinBox *widget, const void *context)
+inline int readValue(const QSpinBox *widget)
 {
     return widget->value();
 }
 
-template<>
-inline double readUiData(const QDoubleSpinBox *widget, const void *context)
+inline double readGigaByteValue(const QDoubleSpinBox *widget)
 {
-    double mul = context ? *static_cast<const double *>(context) : 1.0;
-    return widget->value() * mul;
+    return widget->value() * GigaByte;
 }
 
-template<>
-inline std::string readUiData(const QLineEdit *widget, const void *context)
+inline std::string readText(const QLineEdit *widget)
 {
     return widget->text().toStdString();
 }
 
-template<typename returnValue>
-inline returnValue readUiData(const QComboBox *widget, const void *context)
+inline std::vector<std::string> readText(const QPlainTextEdit *widget)
 {
-    auto temp = widget->currentData().value<returnValue>();
-    return temp;
+    auto list = widget->toPlainText().split('\n').toVector();
+    std::vector<std::string> out;
+    out.resize(static_cast<size_t>(list.size()));
+    std::transform(list.begin(), list.end(), std::back_inserter(out), [](const QString &string) {
+        return string.toStdString();
+    });
+    return out;
 }
 
 template<typename returnValue>
-inline std::vector<returnValue> readUiData(const QListWidget *widget, const void *context)
+inline returnValue readValue(const QComboBox *widget)
 {
-    QVector<returnValue> data;
+    return widget->currentData().value<returnValue>();
+}
+
+template<typename Type>
+inline std::vector<Type> readList(const QListWidget *widget)
+{
+    QVector<Type> data;
     for (int i = 0; i < widget->count(); ++i)
     {
         const auto &entry = widget->item(i);
-        const returnValue &format = entry->data(Qt::UserRole).value<returnValue>();
-        if (!data.contains(format))
-            data += format;
+        const auto &value = entry->data(Qt::UserRole).value<Type>();
+        if (!data.contains(value))
+            data += value;
     }
     return data.toStdVector();
 }
 
-template<typename Widget, typename Type>
-inline void saveUiData(Widget *widget, const Type &value, const void *context = nullptr);
-
-template<>
-inline void saveUiData(QCheckBox *widget, const bool &value, const void *context)
+inline std::vector<std::string> readList(const QListWidget *widget)
 {
-    widget->setChecked(value);
-}
-
-template<>
-inline void saveUiData(QRadioButton *widget, const bool &value, const void *context)
-{
-    widget->setChecked(value);
-}
-
-template<>
-inline void saveUiData(QAction *widget, const bool &value, const void *context)
-{
-    widget->setChecked(value);
-}
-
-template<>
-inline void saveUiData(QGroupBox *widget, const bool &value, const void *context)
-{
-    widget->setChecked(value);
-}
-
-template<>
-inline void saveUiData(QGroupBox *widget, const int &value, const void *context)
-{
-    auto widgetList = widget->findChildren<QRadioButton *>();
-    int counter = 0;
-    widget->setChecked(false);
-    for (auto child : widgetList)
+    QVector<std::string> data;
+    for (int i = 0; i < widget->count(); ++i)
     {
-        counter++;
-        child->setChecked(false);
-        if (counter == value)
-        {
-            child->setChecked(true);
-            widget->setChecked(true);
-        }
+        const auto &entry = widget->item(i);
+        const std::string &text = entry->text().toStdString();
+        if (!data.contains(text))
+            data += text;
+    }
+    return data.toStdVector();
+}
+
+inline void saveCheckbox(QCheckBox *widget, const bool &value)
+{
+    widget->setChecked(value);
+}
+
+inline void saveCheckbox(QRadioButton *widget, const bool &value)
+{
+    widget->setChecked(value);
+}
+
+inline void saveCheckbox(QAction *widget, const bool &value)
+{
+    widget->setChecked(value);
+}
+
+inline void saveCheckbox(QGroupBox *widget, const bool &value)
+{
+    widget->setChecked(value);
+}
+
+inline void saveMeshesOptLevel(const Ui::MainWindow &ui, const int &value)
+{
+    switch (value)
+    {
+        case 0: ui.meshesGroupBox->setChecked(false); return;
+        case 1: ui.meshesNecessaryOptimizationRadioButton->setChecked(true); return;
+        case 2: ui.meshesMediumOptimizationRadioButton->setChecked(true); return;
+        case 3: ui.meshesFullOptimizationRadioButton->setChecked(true); return;
     }
 }
 
-template<>
-inline void saveUiData(QWidget *widget, const bool &value, const void *context)
+inline void saveTab(QWidget *widget, const bool &value)
 {
     widget->setEnabled(value);
 }
 
-template<>
-inline void saveUiData(QSpinBox *widget, const int &value, const void *context)
+inline void saveValue(QSpinBox *widget, const int &value)
 {
     widget->setValue(value);
 }
 
-template<>
-inline void saveUiData(QDoubleSpinBox *widget, const double &value, const void *context)
+inline void saveValueGigabyte(QDoubleSpinBox *widget, const double &value)
 {
-    double div = context ? *static_cast<const double *>(context) : 1.0;
-    widget->setValue(value / div);
+    widget->setValue(value / GigaByte);
 }
 
-template<>
-inline void saveUiData(QLineEdit *widget, const std::string &value, const void *context)
+inline void saveText(QLineEdit *widget, const std::string &value)
 {
     widget->setText(QString::fromStdString(value));
 }
 
+inline void saveText(QPlainTextEdit *widget, const std::vector<std::string> &value)
+{
+    QString out;
+    for (const auto &str : value)
+        out += QString::fromStdString(str) + '\n';
+    widget->setPlainText(out);
+}
+
 template<typename Type>
-inline void saveUiData(QComboBox *widget, const Type &value, const void *context)
+inline void saveValue(QComboBox *widget, const Type &value)
 {
     for (int i = 0; i < widget->count(); ++i)
     {
-        auto lh = widget->itemData(i).value<Type>();
-        auto rh = value;
         if (widget->itemData(i).value<Type>() == value)
         {
             widget->setCurrentIndex(i);
@@ -194,15 +190,25 @@ inline void saveUiData(QComboBox *widget, const Type &value, const void *context
 }
 
 template<typename Type>
-inline void saveUiData(QListWidget *widget, const std::vector<Type> &value, const void *context)
+inline void saveList(QListWidget *widget, const std::vector<Type> &value)
 {
     widget->clear();
     for (const auto &subValue : value)
-        widget->addItem(subValue);
+    {
+        auto item = new QListWidgetItem;
+        item->setData(subValue);
+        widget->addItem(item);
+    }
 }
 
-template<>
-inline void saveUiData(QListWidget *widget, const std::vector<DXGI_FORMAT> &value, const void *context)
+inline void saveList(QListWidget *widget, const std::vector<std::string> &value)
+{
+    widget->clear();
+    for (const auto &subValue : value)
+        widget->addItem(QString::fromStdString(subValue));
+}
+
+inline void saveList(QListWidget *widget, const std::vector<DXGI_FORMAT> &value)
 {
     widget->clear();
     for (const DXGI_FORMAT &format : value)
@@ -212,6 +218,7 @@ inline void saveUiData(QListWidget *widget, const std::vector<DXGI_FORMAT> &valu
         widget->addItem(item);
     }
 }
+} // namespace
 
 using uiReadMW = void (*)(const Ui::MainWindow &ui, JSON &json);
 using uiSaveMW = void (*)(Ui::MainWindow &ui, const JSON &json);
@@ -234,18 +241,18 @@ private:
 
 public:
     Setting(const QString &key, uiReadMW readMW, uiSaveMW saveMW)
-        : jsonKey(key)
+        : _targetUI(TargetUI::mainUi)
         , _readMW(readMW)
         , _saveMW(saveMW)
-        , _targetUI(TargetUI::mainUi)
+        , jsonKey(key)
     {
     }
 
     Setting(const QString &key, uiReadBSAFiles readBSA, uiSaveBSAFiles saveBSA)
-        : jsonKey(key)
+        : _targetUI(TargetUI::bsaUi)
         , _readBSA(readBSA)
         , _saveBSA(saveBSA)
-        , _targetUI(TargetUI::bsaUi)
+        , jsonKey(key)
 
     {
     }
@@ -256,7 +263,7 @@ public:
     {
         switch (_targetUI)
         {
-            case TargetUI::bsaUi: _readBSA(bsUi, json);
+            case TargetUI::bsaUi: _readBSA(bsUi, json); break;
             case TargetUI::mainUi: _readMW(ui, json);
         }
     }
@@ -264,7 +271,7 @@ public:
     {
         switch (_targetUI)
         {
-            case TargetUI::bsaUi: _saveBSA(bsUi, json);
+            case TargetUI::bsaUi: _saveBSA(bsUi, json); break;
             case TargetUI::mainUi: _saveMW(ui, json);
         }
     }
@@ -273,32 +280,40 @@ public:
 // Used to register settings into a list
 struct settingBuilder
 {
-    settingBuilder(QVector<const Setting *> &vec, const Setting *setting) { vec << setting; }
+    settingBuilder(QVector<const Setting *> &vec, const Setting *setting) { vec << setting; } // namespace CAO
 };
 
-#define REGISTER_SETTING_CUSTOM(name, key, readFunc, saveFunc) \
+#define REGISTER_SETTING(name, key, readFunc, saveFunc) \
     static const Setting name(key, readFunc, saveFunc); \
     static settingBuilder builder_##name(settingsList, &name);
 
-#define REGISTER_SETTING_WITH_CONTEXT(name, key, uiElement, type, context) \
-    REGISTER_SETTING_CUSTOM( \
+#define REGISTER_SETTING_MW(name, key, uiElement, readFunc, saveFunc) \
+    REGISTER_SETTING( \
         name, \
         key, \
-        [](const Ui::MainWindow &ui, JSON &json) { json.setValue(key, readUiData<type>(uiElement, context)); }, \
-        [](Ui::MainWindow &ui, const JSON &json) { saveUiData(uiElement, json.getValue<type>(key), context); })
-
-#define REGISTER_SETTING(name, key, uiElement, type) REGISTER_SETTING_WITH_CONTEXT(name, key, uiElement, type, nullptr)
-
-#define REGISTER_SETTING_VECTOR(name, key, uiElement, type, context) \
-    REGISTER_SETTING_CUSTOM( \
-        name, \
-        key, \
-        [](const Ui::MainWindow &ui, JSON &json) { json.setValue(key, readUiData<type>(uiElement, context)); }, \
+        [](const Ui::MainWindow &ui, JSON &json) { json.setValue(key, readFunc(uiElement)); }, \
         [](Ui::MainWindow &ui, const JSON &json) { \
-            saveUiData(uiElement, json.getValue<std::vector<type>>(key), context); \
+            saveFunc(uiElement, json.getValue<decltype(readFunc(std::declval<decltype(uiElement)>()))>(key)); \
         })
 
-#define REGISTER_SETTING_CHECKBOX(name, key, uiElement) REGISTER_SETTING(name, key, uiElement, bool)
+#define REGISTER_SETTING_CHECKBOX_MW(name, key, uiElement) \
+    REGISTER_SETTING_MW(name, key, uiElement, readCheckbox, saveCheckbox)
+
+#define REGISTER_SETTING_RADIO_MW(name, key, uiElement, parent) \
+    REGISTER_SETTING( \
+        name, \
+        key, \
+        [](const Ui::MainWindow &ui, JSON &json) { json.setValue(key, readCheckbox(uiElement, parent)); }, \
+        [](Ui::MainWindow &ui, const JSON &json) { saveCheckbox(uiElement, json.getValue<bool>(key)); })
+
+#define REGISTER_SETTING_BSW(name, key, uiElement, readFunc, saveFunc) \
+    REGISTER_SETTING( \
+        name, \
+        key, \
+        [](const Ui::BSAFilesToPack &ui, JSON &json) { json.setValue(key, readFunc(uiElement)); }, \
+        [](Ui::BSAFilesToPack &ui, const JSON &json) { \
+            saveFunc(uiElement, json.getValue<decltype(readFunc(std::declval<decltype(uiElement)>()))>(key)); \
+        })
 
 #define REGISTER_SETTING_NO_UI(name, key) \
     static const Setting name( \
@@ -309,207 +324,246 @@ struct settingBuilder
 // clang-format off
       static QVector<const Setting*> settingsList;
 
-      REGISTER_SETTING_CHECKBOX(bDebugLog,
+      REGISTER_SETTING_CHECKBOX_MW(bDebugLog,
           "General/bDebugLog",
           ui.actionEnable_debug_log)
 
-      REGISTER_SETTING_CHECKBOX(bDryRun,
+      REGISTER_SETTING_CHECKBOX_MW(bDryRun,
           "General/bDryRun",
           ui.dryRunCheckBox)
 
-      REGISTER_SETTING(eMode,
+      REGISTER_SETTING_MW(eMode,
           "General/eMode",
           ui.modeChooserComboBox,
-          OptimizationMode)
+          readValue<OptimizationMode>,
+          saveValue)
 
-      REGISTER_SETTING(sUserPath,
+      REGISTER_SETTING_MW(sUserPath,
           "General/sUserPath",
           ui.userPathTextEdit,
-          std::string)
+          readText,
+          saveText)
 
-      REGISTER_SETTING_CHECKBOX(bBsaExtract,
+      REGISTER_SETTING_CHECKBOX_MW(bBsaExtract,
           "BSA/bBsaExtract",
           ui.bsaExtractCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bBsaCreate,
+      REGISTER_SETTING_CHECKBOX_MW(bBsaCreate,
           "BSA/bBsaCreate",
           ui.bsaCreateCheckbox)
 
-      REGISTER_SETTING_CHECKBOX(bBsaDeleteBackup,
+      REGISTER_SETTING_CHECKBOX_MW(bBsaDeleteBackup,
           "BSA/bBsaDeleteBackup",
           ui.bsaDeleteBackupsCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bBsaLeastBsaPossible,
+      REGISTER_SETTING_CHECKBOX_MW(bBsaLeastBsaPossible,
           "BSA/bBsaLeastBsaPossible",
           ui.bsaLeastBsasCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bBsaCreateDummies,
+      REGISTER_SETTING_CHECKBOX_MW(bBsaCreateDummies,
           "BSA/bBsaCreateDummies",
           ui.bsaCreateDummiesCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bTexturesNecessary,
+      REGISTER_SETTING_CHECKBOX_MW(bTexturesNecessary,
           "Textures/bTexturesNecessary",
           ui.texturesNecessaryOptimizationCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bTexturesCompress,
+      REGISTER_SETTING_CHECKBOX_MW(bTexturesCompress,
           "Textures/bTexturesCompress",
           ui.texturesCompressCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bTexturesMipmaps,
+      REGISTER_SETTING_CHECKBOX_MW(bTexturesMipmaps,
           "Textures/Textures/Mipmaps",
           ui.texturesMipmapCheckBox)
 
-      REGISTER_SETTING_WITH_CONTEXT(bTexturesResizeSize,
+      REGISTER_SETTING_RADIO_MW(bTexturesResizeSize,
           "Textures/Resizing/BySize/Enabled",
           ui.texturesResizingBySizeRadioButton,
-          bool,
           ui.texturesResizingGroupBox)
+          
 
-      REGISTER_SETTING(iTexturesTargetHeight,
+      REGISTER_SETTING_MW(iTexturesTargetHeight,
           "Textures/Resizing/BySize/Height",
           ui.texturesResizingBySizeHeight,
-          int)
+          readValue,
+          saveValue)
 
-      REGISTER_SETTING(iTexturesTargetWidth,
+      REGISTER_SETTING_MW(iTexturesTargetWidth,
           "Textures/Resizing/BySize/Width",
-          ui.texturesResizingBySizeWidth,
-          int)
+          ui.texturesResizingBySizeHeight,
+          readValue,
+          saveValue)
 
-      REGISTER_SETTING_WITH_CONTEXT(bTexturesResizeRatio,
+      REGISTER_SETTING_RADIO_MW(bTexturesResizeRatio,
           "Textures/Resizing/ByRatio/Enabled",
           ui.texturesResizingByRatioRadioButton,
-          bool,
           ui.texturesResizingGroupBox)
 
-      REGISTER_SETTING(iTexturesTargetWidthRatio,
+      REGISTER_SETTING_MW(iTexturesTargetWidthRatio,
           "Textures/Resizing/ByRatio/Width",
           ui.texturesResizingByRatioWidth,
-          int)
+          readValue,
+          saveValue)
 
-      REGISTER_SETTING(iTexturesTargetHeightRatio,
+      REGISTER_SETTING_MW(iTexturesTargetHeightRatio,
           "Textures/Resizing/ByRatio/Height",
           ui.texturesResizingByRatioHeight,
-          int)
+          readValue,
+          saveValue)
 
-      REGISTER_SETTING(iMeshesOptimizationLevel, 
+      REGISTER_SETTING_MW(iMeshesOptimizationLevel, 
           "Meshes/iMeshesOptimizationLevel",
-          ui.meshesGroupBox,
-          int)
+          ui,
+          readMeshesOptLevel,
+          saveMeshesOptLevel)
 
-      REGISTER_SETTING_CHECKBOX(bAnimationsOptimization,
+      REGISTER_SETTING_CHECKBOX_MW(bAnimationsOptimization,
           "Animations/bAnimationsOptimization",
           ui.animationsNecessaryOptimizationCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bMeshesHeadparts,
+      REGISTER_SETTING_CHECKBOX_MW(bMeshesHeadparts,
           "Meshes/bMeshesHeadparts",
           ui.meshesHeadpartsCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bMeshesResave,
+      REGISTER_SETTING_CHECKBOX_MW(bMeshesResave,
           "Meshes/bMeshesResave",
           ui.meshesResaveCheckBox)
 
-      REGISTER_SETTING(bBSATabEnabled,
+      REGISTER_SETTING_MW(bBSATabEnabled,
           "Advanced/BSA/bBSATabEnabled",
           ui.bsaTab,
-          bool)
+          readTab,
+          saveTab)
 
-      REGISTER_SETTING(sBSAExtension,
+      REGISTER_SETTING_MW(sBSAExtension,
           "Advanced/BSA/sBSAExtension",
           ui.bsaExtension,
-          std::string)
+          readText,
+          saveText)
 
-      REGISTER_SETTING(eBSAFormat,
+      REGISTER_SETTING_MW(eBSAFormat,
           "Advanced/BSA/eBSAFormat",
           ui.bsaFormat,
-          bsa_archive_type_e)
+          readValue<bsa_archive_type_t>,
+          saveValue)
 
-      REGISTER_SETTING_WITH_CONTEXT(iBSAMaxSize,
+      REGISTER_SETTING_MW(iBSAMaxSize,
           "Advanced/BSA/iBSAMaxSize",
           ui.bsaMaximumSize,
-          double,
-          &::GigaByte)
+          readGigaByteValue,
+          saveValueGigabyte)
 
-      REGISTER_SETTING(sBSASuffix,
+      REGISTER_SETTING_MW(sBSASuffix,
           "Advanced/BSA/sBSASuffix",
           ui.bsaSuffix,
-          std::string)
+          readText,
+          saveText)
 
-      REGISTER_SETTING(bBSATexturesEnabled,
+      REGISTER_SETTING_CHECKBOX_MW(bBSATexturesEnabled,
           "Advanced/BSA/bBSATexturesEnabled",
-          ui.bsaTexturesAdvancedGroupBox,
-          bool)
+          ui.bsaTexturesAdvancedGroupBox)
 
-      REGISTER_SETTING(eBSATexturesFormat,
+      REGISTER_SETTING_MW(eBSATexturesFormat,
           "Advanced/BSA/eBSATexturesFormat",
           ui.bsaTexturesFormat,
-          bsa_archive_type_e)
+          readValue<bsa_archive_type_t>,
+          saveValue)
 
-      REGISTER_SETTING_WITH_CONTEXT(iBSATexturesMaxSize,
+      REGISTER_SETTING_MW(iBSATexturesMaxSize,
           "Advanced/BSA/iBSATexturesMaxSize",
           ui.bsaTexturesMaximumSize,
-          double,
-          &::GigaByte)
+          readGigaByteValue,
+          saveValueGigabyte)
 
-      REGISTER_SETTING(sBSATexturesSuffix,
+      REGISTER_SETTING_MW(sBSATexturesSuffix,
           "Advanced/BSA/sBSATexturesSuffix",
           ui.bsaTexturesSuffix,
-          std::string)
+          readText,
+          saveText)
 
-      REGISTER_SETTING(bTexturesTabEnabled,
+      REGISTER_SETTING_BSW(slBSAStandardExt,
+          "Advanced/BSA/slBSAStandardExt",      
+          ui.StandardFilesListWidget,
+          readList,
+          saveList)
+
+      REGISTER_SETTING_BSW(slBSATexturesExt,
+          "Advanced/BSA/slBSATexturesExt",
+          ui.TexturesFilesListWidget,
+          readList,
+          saveList)
+
+      REGISTER_SETTING_BSW(slBSAUncompressableExt,
+          "Advanced/BSA/slBSAUncompressableExt",
+          ui.UncompressableFilesListWidget,
+          readList,
+          saveList)
+
+      REGISTER_SETTING_MW(bTexturesTabEnabled,
           "Advanced/Textures/bTexturesTabEnabled",
           ui.texturesTab,
-          bool)
+          readTab,
+          saveTab)
 
-      REGISTER_SETTING(eTexturesFormat,
+      REGISTER_SETTING_MW(eTexturesFormat,
           "Advanced/Textures/eTexturesFormat",
           ui.texturesOutputFormat,
-          DXGI_FORMAT)
+          readValue<DXGI_FORMAT>,
+          saveValue)
 
-      REGISTER_SETTING_CHECKBOX(bTexturesTGAConvertEnabled,
+      REGISTER_SETTING_CHECKBOX_MW(bTexturesTGAConvertEnabled,
           "Advanced/Textures/bTexturesTGAConvertEnabled",
           ui.texturesTgaConversionCheckBox)
 
-      REGISTER_SETTING_CHECKBOX(bTexturesInterfaceConvert,
+      REGISTER_SETTING_CHECKBOX_MW(bTexturesInterfaceConvert,
           "Advanced/Textures/bTexturesInterfaceConvert",
           ui.texturesCompressInterfaceCheckBox)
 
-      REGISTER_SETTING_VECTOR(slTexturesUnwantedFormats,
+      REGISTER_SETTING_MW(slTexturesUnwantedFormats,
           "Advanced/Textures/slTexturesUnwantedFormats",
           ui.texturesUnwantedFormatsList,
-          DXGI_FORMAT,
-          nullptr)
+          readList<DXGI_FORMAT>,
+          saveList)
 
-      REGISTER_SETTING(bMeshesTabEnabled,
+      REGISTER_SETTING_MW(bMeshesTabEnabled,
           "Advanced/Meshes/bMeshesTabEnabled",
           ui.meshesTab,
-          bool)
+          readTab,
+          saveTab)
 
-      REGISTER_SETTING(eMeshesFileVersion,
+      REGISTER_SETTING_MW(eMeshesFileVersion,
           "Advanced/Meshes/eMeshesFileVersion",
           ui.meshesVersion,
-          NiFileVersion)
+          readValue<NiFileVersion>,
+          saveValue)
 
-      REGISTER_SETTING(iMeshesStream,
+      REGISTER_SETTING_MW(iMeshesStream,
           "Advanced/Meshes/iMeshesStream",
           ui.meshesStream,
-          int)
+          readValue<int>,
+          saveValue)
 
-      REGISTER_SETTING(iMeshesUser,
+      REGISTER_SETTING_MW(iMeshesUser,
           "Advanced/Meshes/iMeshesUser",
           ui.meshesUser,
-          int)
+          readValue<int>,
+          saveValue)
 
-      REGISTER_SETTING(bAnimationsTabEnabled,
+      REGISTER_SETTING_MW(bAnimationsTabEnabled,
           "Advanced/Animations/bAnimationsTabEnabled",
           ui.AnimationsTab,
-          bool)
+          readTab,
+          saveTab)
 
       REGISTER_SETTING_NO_UI(eAnimationsFormat,
           "Advanced/Animations/eAnimationsFormat")
 
 // clang-format on
 #undef REGISTER_SETTING
+#undef REGISTER_SETTING_MW
+#undef REGISTER_SETTING_CHECKBOX_MW
+#undef REGISTER_SETTING_RADIO_MW
+#undef REGISTER_SETTING_BSW
 #undef REGISTER_SETTING_NO_UI
-#undef REGISTER_SETTING_CHECKBOX
 
       } // namespace CAO

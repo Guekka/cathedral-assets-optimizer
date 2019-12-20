@@ -4,12 +4,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <QWidget>
+#include "ListDialog.hpp"
+#include "pch.hpp"
 
 namespace Ui {
 class BSAFilesToPack;
 }
 
+namespace CAO {
 class BSAFilesToPackWidget : public QWidget
 {
 public:
@@ -19,5 +21,25 @@ public:
 
 private:
     Ui::BSAFilesToPack *ui;
-};
+    ListDialog *standardList;
+    ListDialog *uncompressableList;
+    ListDialog *textureList;
 
+    /*!
+    \brief List of default textures assets (dds)
+    */
+    const QStringList texturesAssets{"dds"};
+    /*!
+    \brief List of default standard assets. Includes uncompressable assets but does not include textures assets 
+    */
+    const QStringList standardAssets{"png",  "nif", "seq", "pex",       "psc",       "lod",     "fuz", "swf", "hkx",
+                                     "tri",  "btr", "bto", "btt",       "lip",       "txt",     "lst", "gid", "bgsm",
+                                     "bgem", "xml", "gfx", "dlstrings", "ilstrings", "strings", "tga"};
+    /*!
+    \brief List of default uncompressable assets (sounds)
+    */
+    const QStringList uncompressableAssets{"wav", "xwm"};
+
+    const QStringList allAssets = texturesAssets + standardAssets + uncompressableAssets;
+};
+} // namespace CAO

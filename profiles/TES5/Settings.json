@@ -13,7 +13,41 @@
             "iBSATexturesMaxSize": 0.0,
             "sBSAExtension": ".bsa",
             "sBSASuffix": ".bsa",
-            "sBSATexturesSuffix": ".bsa"
+            "sBSATexturesSuffix": ".bsa",
+            "slBSAStandardExt": [
+                "bgem",
+                "bgsm",
+                "bto",
+                "btr",
+                "btt",
+                "dlstrings",
+                "fuz",
+                "gfx",
+                "gid",
+                "hkx",
+                "ilstrings",
+                "lip",
+                "lod",
+                "lst",
+                "nif",
+                "pex",
+                "png",
+                "psc",
+                "seq",
+                "strings",
+                "swf",
+                "tga",
+                "tri",
+                "txt",
+                "xml"
+            ],
+            "slBSATexturesExt": [
+                "dds"
+            ],
+            "slBSAUncompressableExt": [
+                "wav",
+                "xwm"
+            ]
         },
         "Meshes": {
             "bMeshesTabEnabled": true,

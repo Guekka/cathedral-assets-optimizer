@@ -7,6 +7,7 @@
 #include <Windows.h>
 
 /*---CORE---------------*/
+#include "QListWidget"
 #include <QCommandLineParser>
 #include <QCompleter>
 #include <QCoreApplication>

@@ -131,8 +131,7 @@ MainWindow::MainWindow()
     connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
         const QString &dir = QFileDialog::getExistingDirectory(this,
                                                                tr("Open Directory"),
-                                                               _settings.getValue<QString>(
-                                                                   sUserPath),
+                                                               _settings.getValue<QString>(sUserPath),
                                                                QFileDialog::ShowDirsOnly
                                                                    | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
@@ -146,9 +145,20 @@ MainWindow::MainWindow()
 
     bsaFilesToPackDialog = new BSAFilesToPackWidget(this);
     bsaFilesToPackDialog->hide();
-    connect(_ui->bsaFilesToPackButton, &QPushButton::pressed, this, [this] { bsaFilesToPackDialog->show(); });
+    connect(_ui->bsaFilesToPackButton, &QPushButton::pressed, this, [this] {
+        bsaFilesToPackDialog->show();
+        _settingsChanged = true;
+    });
 
-    texturesFormatDialog = new TexturesFormatSelectDialog(this);
+    texturesFormatDialog = new ListDialog(this);
+    for (const auto &value : Detail::DxgiFormats)
+    {
+        auto item = new QListWidgetItem(value.name);
+        item->setData(Qt::UserRole, value.format);
+        item->setCheckState(Qt::Unchecked);
+        texturesFormatDialog->addItem(item);
+    }
+    texturesFormatDialog->setUserAddItemAllowed(false);
 
     connect(_ui->texturesUnwantedFormatsEditButton, &QPushButton::pressed, this, [&] {
         QStringList unwantedFormats;
@@ -161,8 +171,8 @@ MainWindow::MainWindow()
     });
 
     connect(texturesFormatDialog, &QDialog::finished, this, [&] {
-        for (const auto &itemInList : texturesFormatDialog->getChoices()) {
-            auto *item = new QListWidgetItem(itemInList);
+        for (const auto &item : texturesFormatDialog->getChoices())
+        {
             item->setFlags(item->flags() & (~Qt::ItemIsUserCheckable) & (~Qt::Checked));
             _ui->texturesUnwantedFormatsList->addItem(item);
             _settingsChanged = true;
@@ -287,14 +297,17 @@ void MainWindow::loadUi()
     for (QGroupBox *widget : this->findChildren<QGroupBox *>())
     {
         if (widget->findChildren<QRadioButton *>().size())
-            continue; //We do not want to disable box with radio buttons
+            continue; //We do not want to disable boxes with radio buttons
 
-        bool boxesAreChecked = false;
-        for (const auto box : widget->findChildren<QCheckBox *>())
-            boxesAreChecked |= box->isChecked();
+        const auto &buttonList = widget->findChildren<QCheckBox *>();
+        if (!buttonList.size())
+            continue; //We do not want to disable boxes without pushButton
 
-        if (!boxesAreChecked)
-            widget->setChecked(false);
+        const bool &boxesAreUnchecked = std::none_of(buttonList.cbegin(),
+                                                     buttonList.cend(),
+                                                     [](const QCheckBox *button) { return button->isChecked(); });
+
+        widget->setChecked(!boxesAreUnchecked);
     }
 }
 
@@ -443,13 +456,10 @@ void MainWindow::setGameMode(const QString &mode)
     const int &bsaTabIndex = _ui->tabWidget->indexOf(_ui->bsaTab);
     const int &TexturesTabIndex = _ui->tabWidget->indexOf(_ui->texturesTab);
 
-    _ui->tabWidget->setTabEnabled(animTabIndex,
-                                  _settings.getValue<bool>(bAnimationsTabEnabled));
-    _ui->tabWidget->setTabEnabled(meshesTabIndex,
-                                  _settings.getValue<bool>(bMeshesTabEnabled));
+    _ui->tabWidget->setTabEnabled(animTabIndex, _settings.getValue<bool>(bAnimationsTabEnabled));
+    _ui->tabWidget->setTabEnabled(meshesTabIndex, _settings.getValue<bool>(bMeshesTabEnabled));
     _ui->tabWidget->setTabEnabled(bsaTabIndex, _settings.getValue<bool>(bBSATabEnabled));
-    _ui->tabWidget->setTabEnabled(TexturesTabIndex,
-                                  _settings.getValue<bool>(bTexturesTabEnabled));
+    _ui->tabWidget->setTabEnabled(TexturesTabIndex, _settings.getValue<bool>(bTexturesTabEnabled));
 
     setAdvancedSettingsEnabled(_ui->advancedSettingsCheckbox->isChecked());
 }

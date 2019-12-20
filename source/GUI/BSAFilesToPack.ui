@@ -13,41 +13,62 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="StandardFilesLabel">
-     <property name="text">
-      <string>Standard</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPlainTextEdit" name="StandardFilesEdit"/>
-   </item>
-   <item alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="TexturesFilesLabel">
-     <property name="text">
-      <string>Textures</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPlainTextEdit" name="TexturesFilesEdit"/>
-   </item>
-   <item alignment="Qt::AlignHCenter">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="4" column="0" colspan="2">
     <widget class="QLabel" name="UncompressableFilesLabel">
      <property name="text">
       <string>Cannot be compressed</string>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QPlainTextEdit" name="UncompressableFilesEdit"/>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton">
+   <item row="6" column="0" colspan="2">
+    <widget class="QPushButton" name="closeButton">
      <property name="text">
       <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QListWidget" name="TexturesFilesListWidget"/>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="TexturesFilesLabel">
+     <property name="text">
+      <string>Textures</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QListWidget" name="StandardFilesListWidget"/>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="StandardFilesLabel">
+     <property name="text">
+      <string>Standard</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QListWidget" name="UncompressableFilesListWidget"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="StandardFilesEditButton">
+     <property name="text">
+      <string>Edit</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QPushButton" name="TexturesFilesEditButton">
+     <property name="text">
+      <string>Edit</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QPushButton" name="UncompressableFilesEditButton">
+     <property name="text">
+      <string>Edit</string>
      </property>
     </widget>
    </item>

@@ -5,26 +5,27 @@
 #pragma once
 
 #include "pch.hpp"
-#include <QDialog>
-#include <QListWidgetItem>
 
 namespace Ui {
-class TexturesFormatSelectDialog;
+class ListDialog;
 }
 
 namespace CAO {
-class TexturesFormatSelectDialog : public QDialog
+class ListDialog : public QDialog
 {
 public:
-    explicit TexturesFormatSelectDialog(QWidget *parent = nullptr);
-    ~TexturesFormatSelectDialog();
+    explicit ListDialog(QWidget *parent = nullptr);
+    ~ListDialog();
 
+    void addItem(QListWidgetItem *item);
+    void setUserAddItemAllowed(bool allowed);
     void search(const QString &text);
-    QVector<QListWidgetItem> getChoices();
+    QVector<QListWidgetItem *> getChoices();
     void setCheckedItems(const QString &text);
     void setCheckedItems(const QStringList &textList);
 
-private:
-    ::Ui::TexturesFormatSelectDialog *_ui;
+protected:
+    void addItem();
+    Ui::ListDialog *_ui;
 };
 } // namespace CAO

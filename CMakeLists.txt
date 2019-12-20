@@ -126,12 +126,12 @@ if(GUI)
         source/GUI/BSAFilesToPack.cpp
         source/GUI/BSAFilesToPack.hpp
         source/GUI/BSAFilesToPack.ui
+        source/GUI/ListDialog.cpp
+        source/GUI/ListDialog.hpp
+        source/GUI/ListDialog.ui
         source/GUI/MainWindow.cpp
         source/GUI/MainWindow.hpp
-        source/GUI/MainWindow.ui
-        source/GUI/TexturesFormatSelectDialog.cpp
-        source/GUI/TexturesFormatSelectDialog.hpp
-        source/GUI/TexturesFormatSelectDialog.ui)
+        source/GUI/MainWindow.ui)
 endif()
 
 

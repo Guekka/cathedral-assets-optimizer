@@ -25,9 +25,18 @@ public:
         return QString::fromStdString(getValue<std::string>(key));
     }
 
+    template<>
+    QStringList getValue(const QString &key) const
+    {
+        QStringList list;
+        for (const auto &str : getValue<std::vector<std::string>>(key))
+            list << QString::fromStdString(str);
+        return list;
+    }
+
     template<class T>
     void setValue(const QString &key, const T &value)
-    {
+    {        
         splitKey(key) = value;
     }
 

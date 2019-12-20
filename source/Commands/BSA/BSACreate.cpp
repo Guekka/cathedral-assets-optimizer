@@ -5,7 +5,6 @@
 
 #include "BSACreate.hpp"
 #include "Commands/BSA/Utils/BSACallback.hpp"
-#include "Commands/BSA/Utils/BSASplit.hpp"
 
 namespace CAO {
 CommandResult BSACreate::process(File &file, const Settings &settings)

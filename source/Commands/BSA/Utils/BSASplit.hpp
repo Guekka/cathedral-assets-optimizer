@@ -18,5 +18,6 @@ protected:
     static bool isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo);
     static QStringList filesToNotPack;
     static void readFilesToNotPack();
+    static std::once_flag onceFlag;
 };
 } // namespace CAO

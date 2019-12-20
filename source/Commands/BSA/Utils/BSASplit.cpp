@@ -7,9 +7,12 @@
 
 namespace CAO {
 QStringList BSASplit::filesToNotPack;
+std::once_flag BSASplit::onceFlag;
 
 QVector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
 {
+    std::call_once(onceFlag, [] { readFilesToNotPack(); });
+
     QVector<BSA> bsas;
     bsas << BSA::getBSA(StandardBsa, settings) << BSA::getBSA(UncompressableBsa, settings)
          << BSA::getBSA(TexturesBsa, settings);
@@ -17,6 +20,11 @@ QVector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
     auto *standardBsa = &bsas[0];
     auto *uncompressableBsa = &bsas[1];
     auto *texturesBsa = &bsas[2];
+
+    const auto &standardAssets = settings.getValue<QStringList>(slBSAStandardExt);
+    const auto &texturesAssets = settings.getValue<QStringList>(slBSATexturesExt);
+    const auto &uncompressableAssets = settings.getValue<QStringList>(slBSAUncompressableExt);
+    const auto &allAssets = standardAssets + texturesAssets + uncompressableAssets;
 
     QDirIterator it(dir, QDirIterator::Subdirectories);
     while (it.hasNext())
