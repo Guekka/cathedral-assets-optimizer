@@ -273,6 +273,20 @@ void MainWindow::saveUi()
                 box->setChecked(false);
     }
 
+    for (int i = 0; i < _ui->tabWidget->count(); ++i)
+    {
+        const QWidget *currentTab = _ui->tabWidget->widget(i);
+        if (!currentTab->isEnabled())
+        {
+            for (auto &box : currentTab->findChildren<QCheckBox *>())
+                box->setChecked(false);
+            for (auto &box : currentTab->findChildren<QRadioButton *>())
+                box->setChecked(false);
+            for (auto &box : currentTab->findChildren<QGroupBox *>())
+                box->setChecked(false);
+        }
+    }
+
     _settings.readFromUi(*_ui, bsaFilesToPackDialog->getUi());
     _settings.saveToJSON(Profiles::settingsPath());
 
