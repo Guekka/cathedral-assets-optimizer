@@ -1,0 +1,110 @@
+{
+    "Advanced": {
+        "Animations": {
+            "bAnimationsTabEnabled": false,
+            "eAnimationsFormat": 2
+        },
+        "BSA": {
+            "bBSATabEnabled": true,
+            "bBSATexturesEnabled": false,
+            "eBSAFormat": 2,
+            "eBSATexturesFormat": 2,
+            "iBSAMaxSize": 2104533975.04,
+            "iBSATexturesMaxSize": 0.0,
+            "sBSAExtension": ".bsa",
+            "sBSASuffix": ".bsa",
+            "sBSATexturesSuffix": ".bsa",
+            "slBSAStandardExt": [
+                "bgem",
+                "bgsm",
+                "bto",
+                "btr",
+                "btt",
+                "dlstrings",
+                "fuz",
+                "gfx",
+                "gid",
+                "hkx",
+                "ilstrings",
+                "lip",
+                "lod",
+                "lst",
+                "nif",
+                "pex",
+                "png",
+                "psc",
+                "seq",
+                "strings",
+                "swf",
+                "tga",
+                "tri",
+                "txt",
+                "xml"
+            ],
+            "slBSATexturesExt": [
+                "dds"
+            ],
+            "slBSAUncompressableExt": [
+                "wav",
+                "xwm"
+            ]
+        },
+        "Meshes": {
+            "bMeshesTabEnabled": false,
+            "eMeshesFileVersion": 335675399,
+            "iMeshesStream": 83,
+            "iMeshesUser": 12
+        },
+        "Textures": {
+            "bTexturesInterfaceConvert": false,
+            "bTexturesTGAConvertEnabled": false,
+            "bTexturesTabEnabled": true,
+            "eTexturesFormat": 77,
+            "slTexturesUnwantedFormats": [
+                98
+            ]
+        }
+    },
+    "Animations": {
+        "bAnimationsOptimization": false
+    },
+    "BSA": {
+        "bBsaCreate": false,
+        "bBsaCreateDummies": false,
+        "bBsaDeleteBackup": false,
+        "bBsaExtract": false,
+        "bBsaLeastBsaPossible": false,
+        "bBsaProcessContent": false
+    },
+    "General": {
+        "bDebugLog": false,
+        "bDryRun": false,
+        "eMode": 0,
+        "sUserPath": ""
+    },
+    "Meshes": {
+        "bMeshesHeadparts": false,
+        "bMeshesResave": false,
+        "iMeshesOptimizationLevel": 0
+    },
+    "Textures": {
+        "Resizing": {
+            "ByRatio": {
+                "Enabled": false,
+                "Height": 2,
+                "Width": 2
+            },
+            "BySize": {
+                "Enabled": false,
+                "Height": 4,
+                "Width": 4
+            }
+        },
+        "Textures": {
+            "Mipmaps": false
+        },
+        "TexturesMipmaps": false,
+        "bTexturesCompress": false,
+        "bTexturesNecessary": true
+    }
+}
