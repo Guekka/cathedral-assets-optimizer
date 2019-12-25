@@ -153,6 +153,9 @@ macro(cao_include_and_link file)
     endif()
 
 
+    #Strictly follow the standard
+    target_compile_options(${file} PRIVATE "/permissive")
+
     #Output directory
     set_target_properties(${file}
         PROPERTIES
