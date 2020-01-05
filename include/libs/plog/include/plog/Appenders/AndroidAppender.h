@@ -16,7 +16,7 @@ namespace plog
         {
             std::string str = Formatter::format(record);
 
-            __android_PLOG_print(toPriority(record.getSeverity()), m_tag, "%s", str.c_str());
+            __android_log_print(toPriority(record.getSeverity()), m_tag, "%s", str.c_str());
         }
 
     private:
@@ -25,19 +25,19 @@ namespace plog
             switch (severity)
             {
             case fatal:
-                return ANDROID_PLOG_FATAL;
+                return ANDROID_LOG_FATAL;
             case error:
-                return ANDROID_PLOG_ERROR;
+                return ANDROID_LOG_ERROR;
             case warning:
-                return ANDROID_PLOG_WARN;
+                return ANDROID_LOG_WARN;
             case info:
-                return ANDROID_PLOG_INFO;
+                return ANDROID_LOG_INFO;
             case debug:
-                return ANDROID_PLOG_DEBUG;
+                return ANDROID_LOG_DEBUG;
             case verbose:
-                return ANDROID_PLOG_VERBOSE;
+                return ANDROID_LOG_VERBOSE;
             default:
-                return ANDROID_PLOG_UNKNOWN;
+                return ANDROID_LOG_UNKNOWN;
             }
         }
 
