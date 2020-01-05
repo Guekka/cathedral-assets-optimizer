@@ -17,45 +17,37 @@ CommandResult BSACreate::process(File &file, const Settings &settings)
 
     for (auto &bsa : bsas)
     {
-        BSA::nameBSA({&bsa}, bsaFolder->path(), settings);
-
-        const auto rootPath = new QString(bsaFolder->path());
+        bsa.name(bsaFolder->path(), settings);
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
             return _resultFactory.getFailedResult(1, "Failed to create BSA: a BSA already exists.");
 
-        Qlibbsarch::BSArchiveAuto archive(*rootPath);
-        archive.setShareData(true);
-        archive.setCompressed(true);
-        archive.setDDSCallback(&BSACallback, rootPath);
-
-        //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
-        for (const auto &file : bsa.files)
-        {
-            if (!canBeCompressedFile(file))
-            {
-                archive.setCompressed(false);
-                break;
-            }
-        }
-
-        if (bsa.files.isEmpty())
-            return CommandResult{0, "", false};
+        libbsarch::bs_archive_auto archive(bsa.format);
+        archive.set_share_data(true);
+        archive.set_compressed(true);
+        const libbsarch::convertible_string &rootPath = bsaFolder->path();
+        archive.set_dds_callback(&BSACallback, rootPath);
 
         try
         {
-            archive.addFileFromDiskRoot(bsa.files);
-            archive.create(bsa.path, bsa.format);
-            archive.save();
+            //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
+            //Then creating the archive
+            for (const auto &fileInBSA : bsa.files)
+            {
+                if (!canBeCompressedFile(fileInBSA))
+                    archive.set_compressed(false);
+
+                archive.add_file_from_disk(libbsarch::disk_blob(rootPath, fileInBSA));
+            }
+            archive.save_to_disk(libbsarch::convertible_string(bsa.path));
         }
         catch (const std::exception &e)
         {
             return _resultFactory.getFailedResult(3, e.what());
         }
 
-        for (const auto &file : bsa.files)
-            QFile::remove(file);
+        std::for_each(bsa.files.cbegin(), bsa.files.cend(), [](const QString &filePath) { QFile::remove(filePath); });
     }
     return _resultFactory.getSuccessfulResult();
 }

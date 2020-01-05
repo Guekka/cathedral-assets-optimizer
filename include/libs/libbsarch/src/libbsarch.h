@@ -1,10 +1,8 @@
 #pragma once
 
-#include <stdint.h>
-
+#include "dds.h"
 #include <dxgiformat.h>
-
-#include "DDS.h"
+#include <stdint.h>
 
 #ifdef BSARCH_DLL_EXPORT
 #define BSARCH_DLL_API(ReturnType) extern "C" __declspec(dllexport) ReturnType __stdcall
@@ -95,10 +93,7 @@ BSARCH_DLL_API(bsa_result_message_t) bsa_entry_list_free(bsa_entry_list_t entry_
 BSARCH_DLL_API(uint32_t) bsa_entry_list_count(bsa_entry_list_t entry_list);
 BSARCH_DLL_API(bsa_result_message_t) bsa_entry_list_add(bsa_entry_list_t entry_list, const wchar_t *entry_string);
 BSARCH_DLL_API(uint32_t)
-bsa_entry_list_get(bsa_entry_list_t entry_list,
-                   uint32_t index,
-                   uint32_t string_buffer_size,
-                   const wchar_t *string_buffer);
+bsa_entry_list_get(bsa_entry_list_t entry_list, uint32_t index, uint32_t string_buffer_size, wchar_t *string_buffer);
 
 BSARCH_DLL_API(bsa_archive_t) bsa_create();
 BSARCH_DLL_API(bsa_result_message_t) bsa_free(bsa_archive_t archive);
@@ -106,7 +101,7 @@ BSARCH_DLL_API(bsa_result_message_t) bsa_load_from_file(bsa_archive_t archive, c
 BSARCH_DLL_API(bsa_result_message_t)
 bsa_create_archive(bsa_archive_t archive,
                    const wchar_t *file_path,
-                   bsa_archive_type_t archive_type,
+                   bsa_archive_type_t _archivetype,
                    bsa_entry_list_t entry_list);
 BSARCH_DLL_API(bsa_result_message_t) bsa_save(bsa_archive_t archive);
 BSARCH_DLL_API(bsa_result_message_t)
@@ -133,11 +128,11 @@ bsa_resolve_hash(bsa_archive_t archive, uint64_t hash, bsa_entry_list_t entry_re
 BSARCH_DLL_API(bsa_result_message_t) bsa_close(bsa_archive_t archive);
 
 BSARCH_DLL_API(uint32_t)
-bsa_filename_get(bsa_archive_t archive, uint32_t string_buffer_size, const wchar_t *string_buffer);
+bsa_filename_get(bsa_archive_t archive, uint32_t string_buffer_size, wchar_t *string_buffer);
 BSARCH_DLL_API(bsa_archive_type_t) bsa_archive_type_get(bsa_archive_t archive);
 BSARCH_DLL_API(uint32_t) bsa_version_get(bsa_archive_t archive);
 BSARCH_DLL_API(uint32_t)
-bsa_format_name_get(bsa_archive_t archive, uint32_t string_buffer_size, const wchar_t *string_buffer);
+bsa_format_name_get(bsa_archive_t archive, uint32_t string_buffer_size, wchar_t *string_buffer);
 BSARCH_DLL_API(uint32_t) bsa_file_count_get(bsa_archive_t archive);
 BSARCH_DLL_API(uint32_t) bsa_archive_flags_get(bsa_archive_t archive);
 BSARCH_DLL_API(void) bsa_archive_flags_set(bsa_archive_t archive, uint32_t flags);

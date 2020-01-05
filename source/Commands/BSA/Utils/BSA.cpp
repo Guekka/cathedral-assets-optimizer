@@ -32,36 +32,36 @@ BSA BSA::getBSA(const BSAType &type, const Settings &settings)
     return bsa;
 }
 
-void BSA::nameBSA(std::initializer_list<BSA *> bsaList, const QString &folder, const Settings &settings)
+void BSA::name(const QString &folder, const Settings &settings)
 {
     const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
     const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
-    for (auto bsa : bsaList)
-    {
-        const QString &suffix = bsa->type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
-        bsa->path = folder + "/" + PluginsOperations::findPlugin(folder, bsa->type, settings) + suffix;
-        PLOG_VERBOSE << "Named " << bsa->type << bsa->path;
-    }
+    const QString &suffix = type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
+    path = folder + "/" + PluginsOperations::findPlugin(folder, type, settings) + suffix;
+    PLOG_VERBOSE << "Named " << type << path;
 }
 
-size_t BSA::mergeBSAs(QVector<BSA> &list)
+size_t BSA::mergeBSAs(std::vector<BSA> &list)
 {
     size_t counter = 0;
-    for (int j = 0; j < list.size(); ++j)
+    for (auto leftBSA = list.begin(); leftBSA != list.end(); ++leftBSA)
     {
-        for (int k = 0; k < list.size(); ++k)
+        for (auto rightBSA = list.begin(); rightBSA != list.end(); ++rightBSA)
         {
-            if (j == k)
+            if (leftBSA == rightBSA)
                 continue;
 
-            if (list.at(j).filesSize + list.at(k).filesSize < list.at(j).maxSize
-                && (list.at(j).type == list.at(k).type || list.at(j).type == StandardBsa))
-            {
-                list[j] += list[k];
-                list[k].files.clear();
-                PLOG_VERBOSE << "Merged " << list.at(k).type << " into " << list.at(j).type;
-                ++counter;
-            }
+            if (leftBSA->filesSize + rightBSA->filesSize > leftBSA->maxSize)
+                continue; //These BSAs contain too much files to be merged
+
+            if (leftBSA->type != rightBSA->type  //We can only merge BSAs of the same type
+                && leftBSA->type != StandardBsa) //But everything can be merged into a standard BSA
+                continue;
+
+            *leftBSA += *rightBSA;
+            rightBSA->files.clear(); //Marking for deletion
+            PLOG_VERBOSE << "Merged " << rightBSA->type << " into " << leftBSA->type;
+            ++counter;
         }
     }
 

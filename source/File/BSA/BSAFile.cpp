@@ -14,7 +14,7 @@ int BSAFile::loadFromDisk(const QString &filePath)
 {
     reset();
     auto bsaFile = static_cast<BSAFileResource *>(&*_file);
-    bsaFile->open(filePath);
+    bsaFile->load_from_disk(filePath);
     _filename = filePath;
     _optimizedCurrentFile = false;
 
@@ -24,7 +24,7 @@ int BSAFile::loadFromDisk(const QString &filePath)
 int BSAFile::saveToDisk(const QString &filePath) const
 {
     auto bsaFile = static_cast<BSAFileResource *>(&*_file);
-    bsaFile->save();
+    bsaFile->save_to_disk(filePath);
 
     if (filePath != _filename)
     {

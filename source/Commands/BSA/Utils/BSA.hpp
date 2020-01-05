@@ -32,16 +32,16 @@ struct BSA
 
     /*!
      * \brief Finds a name for a BSA
-     * \param bsa The BSA to name
      * \param folder The folder in which the BSA will be
+     * \param settings CAO Settings
      */
-    static void nameBSA(std::initializer_list<BSA *> bsaList, const QString &folder, const Settings &settings);
+    void name(const QString &folder, const Settings &settings);
     /*!
      * \brief Merges BSAs when possible, according to their max size
      * \param list The list of BSAs to merge
      * \return The number of merges done
      */
-    static size_t mergeBSAs(QVector<BSA> &list);
+    static size_t mergeBSAs(std::vector<BSA> &list);
 };
 } // namespace CAO
 

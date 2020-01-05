@@ -4,7 +4,7 @@ include_guard(GLOBAL)
 project(Cathedral_Assets_Optimizer VERSION 6.0.0 LANGUAGES CXX)
 
 #Set to false to create a CLI version instead (untested)
-option(GUI "Create GUI version of CAO" true)
+option(GUI "Create GUI version of CAO" ON)
 
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)
@@ -139,7 +139,7 @@ endif()
 macro(cao_include_and_link file)
     target_link_libraries(${file}
         Qt5::Core Qt5::Widgets
-        hkxcmd plog nif directxtex Qlibbsarch nlohmann_json::nlohmann_json)
+        hkxcmd plog nif directxtex libbsarch_OOP nlohmann_json::nlohmann_json)
 
     #Include source, C++17
     target_include_directories(${file} PUBLIC "include")

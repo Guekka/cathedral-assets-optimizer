@@ -6,16 +6,11 @@
 #include "FilesystemOperations.hpp"
 
 namespace CAO {
-QStringList BSASplit::filesToNotPack;
-std::once_flag BSASplit::onceFlag;
-
-QVector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
+std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
 {
-    std::call_once(onceFlag, [] { readFilesToNotPack(); });
-
-    QVector<BSA> bsas;
-    bsas << BSA::getBSA(StandardBsa, settings) << BSA::getBSA(UncompressableBsa, settings)
-         << BSA::getBSA(TexturesBsa, settings);
+    std::vector<BSA> bsas{BSA::getBSA(StandardBsa, settings),
+                          BSA::getBSA(UncompressableBsa, settings),
+                          BSA::getBSA(TexturesBsa, settings)};
 
     auto *standardBsa = &bsas[0];
     auto *uncompressableBsa = &bsas[1];
@@ -47,8 +42,8 @@ QVector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
 
         if ((*pBsa)->filesSize >= (*pBsa)->maxSize)
         {
-            bsas << BSA::getBSA((*pBsa)->type, settings);
-            *pBsa = &bsas.last();
+            bsas.emplace_back(BSA::getBSA((*pBsa)->type, settings));
+            *pBsa = &bsas.back();
         }
     }
 
@@ -64,7 +59,7 @@ bool BSASplit::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo)
     if (fileinfo.isDir())
         return true;
 
-    for (const auto &fileToNotPack : filesToNotPack)
+    for (const auto &fileToNotPack : filesToNotPack())
     {
         if (fileinfo.absoluteFilePath().contains(fileToNotPack, Qt::CaseInsensitive))
             return true;
@@ -77,18 +72,24 @@ bool BSASplit::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo)
     return false;
 }
 
-void BSASplit::readFilesToNotPack()
+const QStringList &BSASplit::filesToNotPack()
 {
-    QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
+    static QStringList filesToNotPack;
 
-    filesToNotPack = FilesystemOperations::readFile(filesToNotPackFile,
-                                                    [](QString &line) { line = QDir::fromNativeSeparators(line); });
-    if (filesToNotPack.isEmpty())
-    {
-        PLOG_ERROR << "FilesToNotPack.txt not found. This can cause a number of issues. For example, for Skyrim, "
-                      "animations will be packed to BSA, preventing them from being detected "
-                      "by FNIS and Nemesis.";
-    }
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, []() {
+        QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
+        filesToNotPack = FilesystemOperations::readFile(filesToNotPackFile,
+                                                        [](QString &line) { line = QDir::fromNativeSeparators(line); });
+
+        if (filesToNotPack.isEmpty())
+        {
+            PLOG_ERROR << "FilesToNotPack.txt not found. This can cause a number of issues. For example, for Skyrim, "
+                          "animations will be packed to BSA, preventing them from being detected "
+                          "by FNIS and Nemesis.";
+        }
+    });
+    return filesToNotPack;
 }
 
 } // namespace CAO

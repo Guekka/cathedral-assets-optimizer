@@ -9,15 +9,9 @@
 #include "Settings/Settings.hpp"
 
 namespace CAO {
-class BSASplit
-{
-public:
-    static QVector<BSA> splitBSA(const QDir &dir, const Settings &settings);
-
-protected:
-    static bool isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo);
-    static QStringList filesToNotPack;
-    static void readFilesToNotPack();
-    static std::once_flag onceFlag;
-};
+namespace BSASplit {
+std::vector<BSA> splitBSA(const QDir &dir, const Settings &settings);
+bool isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo);
+const QStringList &filesToNotPack();
+}; // namespace BSASplit
 } // namespace CAO

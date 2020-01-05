@@ -28,7 +28,7 @@ class BSAFolderResource : public Resource, public QDir
 {
 };
 
-class BSAFileResource : public Resource, public Qlibbsarch::BSArchiveAuto
+class BSAFileResource : public Resource, public libbsarch::bs_archive_auto
 {
 };
 
@@ -37,6 +37,9 @@ struct AnimationResource : public Resource
     hkVariant root;
     hkResource *resource;
     hkPackFormat pkFormat;
+
+    QString qstr;
+    std::string str;
 };
 
 } // namespace CAO
