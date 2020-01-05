@@ -149,9 +149,9 @@ void HK_CALL CustomRegisterPatches(hkVersionPatchManager &man)
     hkTypeInfoRegistry::getInstance().registerTypeInfo(&XXX##TypeInfo);
 
 #define REGISTER_CLASS_W_SIG(XXX, YYY) \
-    REGISTER_CLASS(##XXX); \
+    REGISTER_CLASS(XXX); \
     std::cout << "Class Registered: '" << #XXX << '\n'; \
-    ASSERT_SIGNATURE(##XXX, ##YYY);
+    ASSERT_SIGNATURE(XXX, YYY);
 
 void HK_CALL ValidateClassSignatures()
 {
@@ -165,7 +165,7 @@ void HK_CALL ValidateClassSignatures()
 
 void HK_CALL CustomRegisterDefaultClasses()
 {
-#define HKCLASS_VERIFY(XXX, YYY) REGISTER_CLASS_W_SIG(##XXX, ##YYY)
+#define HKCLASS_VERIFY(XXX, YYY) REGISTER_CLASS_W_SIG(XXX, YYY)
 #include <hkxverify.inl>
 #undef HKCLASS_VERIFY
 }
@@ -178,7 +178,7 @@ namespace hkHavok660r1Classes
 void HK_CALL CustomRegisterOverrideClasses(hkDynamicClassNameRegistry &registry)
 {
     const hkStaticClassNameRegistry **regList = hkVersionRegistry::StaticLinkedClassRegistries;
-    for (const hkStaticClassNameRegistry **itr = regList; *itr != NULL; ++itr)
+    for (const hkStaticClassNameRegistry **itr = regList; *itr != nullptr; ++itr)
     {
         const hkStaticClassNameRegistry *oldRegistry = (*itr);
         if (const hkClass *hclass = oldRegistry->getClassByName("hkClassEnum"))
