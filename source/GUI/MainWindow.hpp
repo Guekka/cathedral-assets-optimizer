@@ -56,7 +56,9 @@ private:
 
     int _progressBarValue{};
 
+    Profiles _profiles;
     Settings _settings;
+
     std::unique_ptr<Manager> _caoProcess;
     bool _settingsChanged;
     bool _alwaysSaveSettings = false;

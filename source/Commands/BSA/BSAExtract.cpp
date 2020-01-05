@@ -7,7 +7,7 @@
 #include "FilesystemOperations.hpp"
 
 namespace CAO {
-CommandResult BSAExtract::process(File &file, const Settings &settings)
+CommandResult BSAExtract::process(File& file)
 {
     //TODO We are creating a new BSArchiveAuto while the file is already one
     auto bsafile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
@@ -15,7 +15,7 @@ CommandResult BSAExtract::process(File &file, const Settings &settings)
         return _resultFactory.getCannotCastFileResult();
 
     auto bsaPath = file.getName();
-    if (!settings.getValue<bool>(bBsaDeleteBackup))
+    if (!file.settings().getValue<bool>(bBsaDeleteBackup))
         bsaPath = FilesystemOperations::backupFile(bsaPath);
 
     libbsarch::convertible_string rootPath = QFileInfo(bsaPath).path();
@@ -39,9 +39,9 @@ CommandResult BSAExtract::process(File &file, const Settings &settings)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool BSAExtract::isApplicable(File &file, const Settings &settings)
+bool BSAExtract::isApplicable(File& file)
 {
-    if (!settings.getValue<bool>(bBsaExtract))
+    if (!file.settings().getValue<bool>(bBsaExtract))
         return false;
 
     auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());

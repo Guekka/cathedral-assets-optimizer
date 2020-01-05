@@ -4,36 +4,39 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Settings/Settings.hpp"
+
 #include "pch.hpp"
 #ifdef GUI
 #include "ui_mainWindow.h"
 #endif
 
 namespace CAO {
-constexpr double GigaByte = 1024 * 1024 * 1024;
-
 class Profiles final : public QObject
 {
 public:
-    [[nodiscard]] static bool exists(const QString &profile);
+    Profiles();
+
+    bool exists(const QString &profile);
     void loadProfile(const QString &newProfile);
-    [[nodiscard]] static QStringList list();
-    static void create(const QString &name, const QString &baseProfile);
-    [[nodiscard]] static QFile getFile(const QString &filename);
+    QStringList list();
+    void create(const QString &name, const QString &baseProfile);
+    QFile getFile(const QString &filename);
+    bool isBaseProfile() { return _isBaseProfile; }
+    QString logPath() const { return _logPath; }
+    QString settingsPath() const { return _settingsPath; }
+    QSettings *commonSettings() const { return _commonSettings; }
+    static const QString &currentProfile() { return _currentProfile; }
+    void setCurrentProfile(const QString &newProfile) { loadProfile(newProfile); }
+    const Settings &getSettings(const QString &filePath) const;
+    Settings &getDefaultSettings();
 
-    //static getters
-    [[nodiscard]] static bool isBaseProfile() { return getInstance()._isBaseProfile; }
+    void saveToJSON(const QString &filepath) const;
 
-    [[nodiscard]] static QString logPath() { return getInstance()._logPath; }
-    [[nodiscard]] static QString settingsPath() { return getInstance()._settingsPath; }
-
-    [[nodiscard]] static QSettings *commonSettings() { return getInstance()._commonSettings; }
-
-    [[nodiscard]] static Profiles &getInstance();
-    [[nodiscard]] static QString currentProfile() { return getInstance()._currentProfile; }
-
-    //static setter
-    static void setCurrentProfile(const QString &newProfile) { getInstance().loadProfile(newProfile); }
+#ifdef GUI
+    void saveToUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi);
+    void readFromUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi);
+#endif
 
 private:
     size_t findProfiles(const QDir &dir);
@@ -42,16 +45,14 @@ private:
     QString _settingsPath;
 
     QDir _profileDir;
-    QString _currentProfile;
+    static QString _currentProfile;
     QStringList _profiles;
 
     QSettings *_commonSettings;
 
     bool _isBaseProfile;
 
-    static Profiles *_instance;
-
-    Profiles();
-    void init();
+    std::multimap<int, std::pair<QRegularExpression, Settings>> settingsPatterns_;
+    void listPatterns();
 };
 } // namespace CAO

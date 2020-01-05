@@ -37,7 +37,7 @@ void BSA::name(const QString &folder, const Settings &settings)
     const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
     const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
     const QString &suffix = type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
-    path = folder + "/" + PluginsOperations::findPlugin(folder, type, settings) + suffix;
+    path = folder + "/" + PluginsOperations::findPlugin(folder, settings) + suffix;
     PLOG_VERBOSE << "Named " << type << path;
 }
 

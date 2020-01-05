@@ -4,6 +4,7 @@
 // Add C++ includes here
 
 //Win7 compatibility
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 /*---CORE---------------*/
@@ -65,7 +66,7 @@
 #include "include/libs/NIF/NifFile.h"
 #include "include/libs/hkxcmd/hkfutils.h"
 #include "include/libs/json/single_include/nlohmann/json.hpp"
-#include "include/libs/libbsarch/BSArchiveAuto.h"
+#include "include/libs/libbsarch/src/bs_archive_auto.hpp"
 /*----------------------*/
 
 #endif

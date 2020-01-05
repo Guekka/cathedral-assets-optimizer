@@ -31,10 +31,10 @@ public:
         VeryHigh
     };
 
-    virtual CommandResult process(File &file, const Settings &settings) = 0;
+    virtual CommandResult process(File &file) = 0;
 
-    virtual bool isApplicable(File &file, const Settings &settings) = 0;
-    CommandResult processIfApplicable(File &file, const Settings &settings);
+    virtual bool isApplicable(File &file) = 0;
+    CommandResult processIfApplicable(File &file);
 
     Priority priority() { return _priority; }
     CommandType type() { return _type; }

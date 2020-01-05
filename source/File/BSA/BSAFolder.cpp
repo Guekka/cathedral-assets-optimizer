@@ -15,6 +15,7 @@ int BSAFolder::loadFromDisk(const QString &filePath)
     auto dir = static_cast<BSAFolderResource *>(&*_file);
     dir->setPath(filePath);
     _filename = filePath;
+    matchSettings();
     return 0;
 }
 

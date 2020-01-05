@@ -8,6 +8,8 @@
 namespace CAO {
 MainWindow::MainWindow()
     : _ui(new ::Ui::MainWindow)
+    , _profiles(Profiles())
+    , _settings(_profiles.getDefaultSettings())
 {
     _ui->setupUi(this);
     setAcceptDrops(true);
@@ -192,8 +194,8 @@ MainWindow::MainWindow()
             this->saveUi();
         });
 
-        connect(_ui->actionOpen_log_file, &QAction::triggered, this, [] {
-            QDesktopServices::openUrl(QUrl("file:///" + Profiles::logPath(), QUrl::TolerantMode));
+        connect(_ui->actionOpen_log_file, &QAction::triggered, this, [this] {
+            QDesktopServices::openUrl(QUrl("file:///" + _profiles.logPath(), QUrl::TolerantMode));
         });
 
         connect(_ui->actionAbout, &QAction::triggered, this, [&] {
@@ -221,24 +223,24 @@ MainWindow::MainWindow()
     }
 
     //Loading remembered settings
-    _settings.readFromUi(*_ui, bsaFilesToPackDialog->getUi());
+    _profiles.readFromUi(*_ui, bsaFilesToPackDialog->getUi());
     _settingsChanged = false;
-    setGameMode(Profiles::currentProfile());
+    setGameMode(_profiles.currentProfile());
     firstStart();
     _settingsChanged = false;
 }
 
 void MainWindow::saveUi()
 {
-    Profiles::commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
-    Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
-    Profiles::commonSettings()->setValue("alwaysSaveSettings", _alwaysSaveSettings);
-    Profiles::commonSettings()->setValue("showTutorial", _showTutorials);
+    _profiles.commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
+    _profiles.commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
+    _profiles.commonSettings()->setValue("alwaysSaveSettings", _alwaysSaveSettings);
+    _profiles.commonSettings()->setValue("showTutorial", _showTutorials);
 
     if (!_settingsChanged)
     {
         //Restoring previous settings in case an unregistered change happened
-        _settings.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
+        _profiles.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
         return;
     }
 
@@ -254,7 +256,7 @@ void MainWindow::saveUi()
 
         if (box.result() == QMessageBox::No)
         {
-            _settings.saveToUi(*_ui, bsaFilesToPackDialog->getUi()); //Restoring previous settings
+            _profiles.saveToUi(*_ui, bsaFilesToPackDialog->getUi()); //Restoring previous settings
             return;
         }
 
@@ -287,23 +289,22 @@ void MainWindow::saveUi()
         }
     }
 
-    _settings.readFromUi(*_ui, bsaFilesToPackDialog->getUi());
-    _settings.saveToJSON(Profiles::settingsPath());
+    _profiles.readFromUi(*_ui, bsaFilesToPackDialog->getUi());
+    _profiles.saveToJSON(_profiles.settingsPath());
 
     _settingsChanged = false;
 }
 
 void MainWindow::loadUi()
 {
-    setDarkTheme(Profiles::commonSettings()->value("bDarkMode").toBool());
-    _ui->advancedSettingsCheckbox->setChecked(Profiles::commonSettings()->value("bShowAdvancedSettings").toBool());
-    _ui->presets->setCurrentIndex(_ui->presets->findText(Profiles::commonSettings()->value("profile").toString()));
-    _alwaysSaveSettings = Profiles::commonSettings()->value("alwaysSaveSettings").toBool();
-    _showTutorials = Profiles::commonSettings()->value("showTutorial").toBool();
+    setDarkTheme(_profiles.commonSettings()->value("bDarkMode").toBool());
+    _ui->advancedSettingsCheckbox->setChecked(_profiles.commonSettings()->value("bShowAdvancedSettings").toBool());
+    _ui->presets->setCurrentIndex(_ui->presets->findText(_profiles.commonSettings()->value("profile").toString()));
+    _alwaysSaveSettings = _profiles.commonSettings()->value("alwaysSaveSettings").toBool();
+    _showTutorials = _profiles.commonSettings()->value("showTutorial").toBool();
     _ui->actionShow_tutorials->setChecked(_showTutorials);
 
-    _settings.readFromJSON(Profiles::settingsPath());
-    _settings.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
+    _profiles.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
 
     _settingsChanged = false;
 
@@ -345,7 +346,7 @@ void MainWindow::readProgress(const QString &text, const int &max, const int &va
 void MainWindow::refreshProfiles()
 {
     _ui->presets->clear();
-    _ui->presets->addItems(Profiles::list());
+    _ui->presets->addItems(_profiles.list());
 }
 
 void MainWindow::createProfile()
@@ -376,7 +377,7 @@ void MainWindow::createProfile()
     if (!ok)
         return;
 
-    Profiles::create(text, baseProfile);
+    _profiles.create(text, baseProfile);
     refreshProfiles();
     _ui->presets->setCurrentIndex(_ui->presets->findText(text));
     setGameMode(text);
@@ -442,7 +443,7 @@ void MainWindow::updateLog() const
 {
     _ui->logTextEdit->clear();
 
-    QFile log(Profiles::logPath());
+    QFile log(_profiles.logPath());
     if (log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);
@@ -460,9 +461,8 @@ void MainWindow::setGameMode(const QString &mode)
     resetUi();
 
     //Actually setting the window mode
-    Profiles::setCurrentProfile(mode);
-    _settings.readFromJSON(Profiles::settingsPath());
-    _settings.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
+    _profiles.setCurrentProfile(mode);
+    _profiles.saveToUi(*_ui, bsaFilesToPackDialog->getUi());
     loadUi();
 
     const int &animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
@@ -486,7 +486,7 @@ void MainWindow::setAdvancedSettingsEnabled(const bool &value)
                                     _ui->texturesAdvancedGroupBox,
                                     _ui->animationsAdvancedGroupBox};
 
-    const bool readOnly = Profiles::isBaseProfile();
+    const bool readOnly = _profiles.isBaseProfile();
     for (auto &window : advancedSettings)
     {
         window->setVisible(value);
@@ -526,7 +526,7 @@ void MainWindow::showTutorialWindow(const QString &title, const QString &text)
 
 void MainWindow::firstStart()
 {
-    if (!Profiles::commonSettings()->value("notFirstStart").toBool())
+    if (!_profiles.commonSettings()->value("notFirstStart").toBool())
     {
         QMessageBox(
             QMessageBox::Information,
@@ -535,7 +535,7 @@ void MainWindow::firstStart()
                "do. If you need help, you can also join us on Discord. A dark theme is also available."))
             .exec();
 
-        Profiles::commonSettings()->setValue("notFirstStart", true);
+        _profiles.commonSettings()->setValue("notFirstStart", true);
     }
 }
 

@@ -75,7 +75,7 @@ bool MainOptimizer::processStandardFile(File &file, const QString &path, const C
 
 bool MainOptimizer::runCommand(CommandPtr command, File &file)
 {
-    const auto &result = command->processIfApplicable(file, _optOptions);
+    const auto &result = command->processIfApplicable(file);
     if (result.processedFile)
     {
         PLOG_VERBOSE << QString("Successfully applied module '%1' while processing '%2'")

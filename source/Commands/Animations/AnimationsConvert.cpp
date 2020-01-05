@@ -12,26 +12,26 @@ AnimationsConvert::AnimationsConvert()
     _priority = Medium;
 }
 
-CommandResult AnimationsConvert::process(File &file, const Settings &settings)
+CommandResult AnimationsConvert::process(File& file)
 {
     auto havok = dynamic_cast<AnimationResource *>(&file.getFile(true));
     if (!havok)
         return _resultFactory.getCannotCastFileResult();
 
-    havok->pkFormat = settings.getValue<hkPackFormat>(eAnimationsFormat);
+    havok->pkFormat = file.settings().getValue<hkPackFormat>(eAnimationsFormat);
     return _resultFactory.getSuccessfulResult();
 }
 
-bool AnimationsConvert::isApplicable(File &file, const Settings &settings)
+bool AnimationsConvert::isApplicable(File& file)
 {
-    if (!settings.getValue<bool>(bAnimationsOptimization))
+    if (!file.settings().getValue<bool>(bAnimationsOptimization))
         return false;
 
     auto havok = dynamic_cast<const AnimationResource *>(&file.getFile());
     if (!havok)
         return false;
 
-    if (havok->pkFormat == settings.getValue<hkPackFormat>(eAnimationsFormat))
+    if (havok->pkFormat == file.settings().getValue<hkPackFormat>(eAnimationsFormat))
         return false;
 
     return true;

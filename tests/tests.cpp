@@ -93,7 +93,7 @@ SCENARIO("Converting a texture")
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, sets);
+            auto isApplicable = convert.isApplicable(*file);
             CHECK(isApplicable == true);
         }
     }
@@ -104,7 +104,7 @@ SCENARIO("Converting a texture")
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, sets);
+            auto isApplicable = convert.isApplicable(*file);
             CHECK(isApplicable == false);
         }
     }
@@ -115,7 +115,7 @@ SCENARIO("Converting a texture")
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, sets);
+            auto isApplicable = convert.isApplicable(*file);
             CHECK(isApplicable == false);
         }
     }
@@ -126,7 +126,7 @@ SCENARIO("Converting a texture")
 
         WHEN("The file is scanned")
         {
-            auto isApplicable = convert.isApplicable(*file, sets);
+            auto isApplicable = convert.isApplicable(*file);
             CHECK(isApplicable == true);
         }
     }
@@ -139,8 +139,8 @@ SCENARIO("Converting a texture")
 
       WHEN("The file is scanned")
       {
-        auto isApplicable = convert.isApplicable(*file, sets);
-        CHECK(isApplicable == false);
+          auto isApplicable = convert.isApplicable(*file);
+          CHECK(isApplicable == false);
       }
     }
 }

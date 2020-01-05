@@ -50,6 +50,8 @@ int TextureFile::loadFromDisk(const QString &filePath)
     image->origFormat = _info.format;
 
     _filename = filePath;
+    matchSettings();
+
     return 0;
 }
 
@@ -58,6 +60,7 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
     reset();
     PLOG_VERBOSE << "Loading from memory " << fileName;
     _filename = fileName;
+    matchSettings();
 
     auto image = static_cast<TextureResource *>(&*_file);
     if (FAILED(LoadFromDDSMemory(pSource, size, DirectX::DDS_FLAGS_NONE, &_info, *image)))

@@ -4,26 +4,23 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Commands/Plugins/PluginsOperations.hpp"
+#include "Settings/Profiles.hpp"
 
 namespace CAO {
 void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Settings &settings)
 {
     PLOG_VERBOSE << "Creating enough dummy plugins to load BSAs";
 
-    const auto &bsaExt = settings.getValue<QString>(sBSAExtension);
-    const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
-    const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
-
     for (QString bsaName : listBSAsNames(QDirIterator(folderPath, QDirIterator::Subdirectories), settings))
     {
         if (checkIfBsaHasPlugin(bsaName, settings))
             continue;
 
-        Profiles::getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
+        Profiles().getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
     }
 }
 
-QString PluginsOperations::findPlugin(const QDir &folderPath, const BSAType &bsaType, const Settings &settings)
+QString PluginsOperations::findPlugin(const QDir &folderPath, const Settings &settings)
 {
     const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
     const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);

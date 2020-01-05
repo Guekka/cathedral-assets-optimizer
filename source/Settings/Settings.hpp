@@ -5,8 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Settings/Profiles.hpp"
 #include "SettingsList.hpp"
+#include "pch.hpp"
 
 #ifdef GUI
 #include "ui_BSAFilesToPack.h"
@@ -18,7 +18,8 @@ class Settings final
 {
     Q_GADGET
 public:
-    void parseArguments(const QStringList &args);
+    Settings() = default;
+    Settings(nlohmann::json j);
 
     template<typename T>
     T getValue(const Setting &set) const
@@ -32,19 +33,17 @@ public:
         _json.setValue(set.jsonKey, value);
     }
 
-    void saveToJSON(const QString &filepath) const;
-    void readFromJSON(const QString &filepath);
-#ifdef GUI
-    void saveToUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi);
-    void readFromUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi);
-#endif
+    void parseArguments(const QStringList &args);
 
     /*!
    * \brief Checks if the current settings are allowed
    */
     QString isValid() const;
 
-protected:
+    const JSON &getJSON() const { return _json; }
+    JSON &getJSON() { return _json; }
+
+private:
     JSON _json;
 };
 } // namespace CAO

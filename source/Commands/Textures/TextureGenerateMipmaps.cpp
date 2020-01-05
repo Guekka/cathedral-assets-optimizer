@@ -5,7 +5,7 @@
 #include "TextureGenerateMipmaps.hpp"
 
 namespace CAO {
-CommandResult TextureGenerateMipmaps::process(File &file, const Settings &settings)
+CommandResult TextureGenerateMipmaps::process(File& file)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)
@@ -52,9 +52,9 @@ CommandResult TextureGenerateMipmaps::process(File &file, const Settings &settin
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureGenerateMipmaps::isApplicable(File &file, const Settings &settings)
+bool TextureGenerateMipmaps::isApplicable(File& file)
 {
-    if (!settings.getValue<bool>(bTexturesMipmaps))
+    if (!file.settings().getValue<bool>(bTexturesMipmaps))
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -68,7 +68,7 @@ bool TextureGenerateMipmaps::isApplicable(File &file, const Settings &settings)
     const auto &info = texFile->GetMetadata();
     const bool &interfaceForbidden = false
                                      || (file.getName().contains("interface", Qt::CaseInsensitive)
-                                         && !settings.getValue<bool>(
+                                         && !file.settings().getValue<bool>(
                                              bTexturesInterfaceConvert));
 
     const bool &compatible = info.width >= 4 && info.height >= 4;

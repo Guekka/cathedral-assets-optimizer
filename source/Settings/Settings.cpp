@@ -4,32 +4,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Settings.hpp"
+#include "Settings/Profiles.hpp"
 
 namespace CAO {
 
-void Settings::saveToJSON(const QString &filepath) const
+Settings::Settings(nlohmann::json j)
+    : _json(j)
 {
-    _json.saveToJSON(filepath);
 }
-
-void Settings::readFromJSON(const QString &filepath)
-{
-    _json.readFromJSON(filepath);
-}
-
-#ifdef GUI
-void Settings::readFromUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi)
-{
-    for (const Setting *set : settingsList)
-        set->readFromUI(ui, bsUi, _json);
-}
-
-void Settings::saveToUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi)
-{
-    for (const Setting *set : settingsList)
-        set->saveToUI(ui, bsUi, _json);
-}
-#endif
 
 void Settings::parseArguments(const QStringList &args)
 {
@@ -87,7 +69,7 @@ void Settings::parseArguments(const QStringList &args)
         throw std::runtime_error("Invalid argument for mode");
 
     const QString &readGame = parser.positionalArguments().at(2);
-    Profiles::setCurrentProfile(readGame);
+    Profiles().setCurrentProfile(readGame);
 
     //BSA
     setValue(bBsaExtract, parser.isSet("be"));
@@ -125,18 +107,17 @@ void Settings::parseArguments(const QStringList &args)
 
 QString Settings::isValid() const
 {
-    if (!QDir(getValue<QString>(sUserPath)).exists() || getValue<QString>(sUserPath).size() < 5) {
+    if (!QDir(getValue<QString>(sUserPath)).exists() || getValue<QString>(sUserPath).size() < 5)
+    {
         return QString("This path does not exist or is shorter than 5 characters. Path: '%1'")
             .arg(getValue<QString>(sUserPath));
     }
 
     const auto &meshOptLevel = getValue<uint>(iMeshesOptimizationLevel);
     if (meshOptLevel > 3)
-        return ("This meshes optimization level does not exist. Level: "
-                + QString::number(meshOptLevel));
+        return ("This meshes optimization level does not exist. Level: " + QString::number(meshOptLevel));
 
-    if (getValue<uint>(iTexturesTargetWidth) % 2 != 0
-        || getValue<uint>(iTexturesTargetHeight) % 2 != 0)
+    if (getValue<uint>(iTexturesTargetWidth) % 2 != 0 || getValue<uint>(iTexturesTargetHeight) % 2 != 0)
         return ("Textures target size has to be a power of two");
 
     return QString();

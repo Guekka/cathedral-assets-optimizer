@@ -4,8 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "File/File.hpp"
+#include "Settings/Profiles.hpp"
 
 namespace CAO {
+
 int File::loadFromMemory(const void *pSource, const size_t &size, const QString &fileName)
 {
     [[maybe_unused]] auto &a = pSource;
@@ -20,5 +22,10 @@ int File::saveToMemory(const void *pSource, const size_t &size, const QString &f
     [[maybe_unused]] auto &b = size;
     [[maybe_unused]] auto &c = fileName;
     return 1;
+}
+
+void File::matchSettings()
+{
+    settings_ = &Profiles().getSettings(_filename);
 }
 } // namespace CAO

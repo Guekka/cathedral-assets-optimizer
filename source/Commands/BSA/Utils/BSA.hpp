@@ -33,7 +33,7 @@ struct BSA
     /*!
      * \brief Finds a name for a BSA
      * \param folder The folder in which the BSA will be
-     * \param settings CAO Settings
+     * \param file.settings() CAO Settings
      */
     void name(const QString &folder, const Settings &settings);
     /*!
@@ -48,10 +48,9 @@ struct BSA
 namespace plog {
 inline Record &operator<<(Record &record, const CAO::BSA &bsa)
 {
-    return record << "BSA Structure:\nPath: " + bsa.path + " \nUncompressed files size: "
-                  << (bsa.filesSize / CAO::GigaByte) << "Gb\nMax size: " << bsa.maxSize / CAO::GigaByte
-                  << "Gb\nType: " << bsa.type << "\nFormat: " << bsa.format
-                  << "\nNumber of files: " << bsa.files.size();
+    return record << "BSA Structure:\nPath: " + bsa.path + " \nUncompressed files size: " << (bsa.filesSize / GigaByte)
+                  << "Gb\nMax size: " << bsa.maxSize / GigaByte << "Gb\nType: " << bsa.type
+                  << "\nFormat: " << bsa.format << "\nNumber of files: " << bsa.files.size();
 }
 
 inline Record &operator<<(Record &record, const CAO::BSAType &type)

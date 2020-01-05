@@ -12,6 +12,7 @@ Manager::Manager(Settings &opt)
 }
 
 Manager::Manager(const QStringList &args)
+    : _settings(Profiles().getDefaultSettings())
 {
     //Parsing args
     _settings.parseArguments(args);
@@ -21,7 +22,7 @@ Manager::Manager(const QStringList &args)
 void Manager::init()
 {
     //Preparing logging
-    initCustomLogger(Profiles::logPath(), _settings.getValue<bool>(bDebugLog));
+    initCustomLogger(Profiles().logPath(), _settings.getValue<bool>(bDebugLog));
 
     PLOG_VERBOSE << "Checking settings...";
     const QString error = _settings.isValid();
@@ -116,7 +117,7 @@ void Manager::listFiles()
 
 void Manager::readIgnoredMods()
 {
-    QFile &&ignoredModsFile = Profiles::getFile("ignoredMods.txt");
+    QFile &&ignoredModsFile = Profiles().getFile("ignoredMods.txt");
     _ignoredMods = FilesystemOperations::readFile(ignoredModsFile);
 
     if (_ignoredMods.isEmpty())

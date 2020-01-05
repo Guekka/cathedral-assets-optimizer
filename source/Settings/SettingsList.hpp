@@ -245,8 +245,7 @@ public:
         , _readMW(readMW)
         , _saveMW(saveMW)
         , jsonKey(key)
-    {
-    }
+    {}
 
     Setting(const QString &key, uiReadBSAFiles readBSA, uiSaveBSAFiles saveBSA)
         : _targetUI(TargetUI::bsaUi)
@@ -254,8 +253,7 @@ public:
         , _saveBSA(saveBSA)
         , jsonKey(key)
 
-    {
-    }
+    {}
 
     QString jsonKey;
 
@@ -318,8 +316,8 @@ struct settingBuilder
 #define REGISTER_SETTING_NO_UI(name, key) \
     static const Setting name( \
         key, \
-        [](const Ui::MainWindow &ui, JSON &json) { return; }, \
-        [](Ui::MainWindow &ui, const JSON &json) { return; });
+        []([[maybe_unused]] const Ui::MainWindow &ui, [[maybe_unused]] JSON &json) { return; }, \
+        []([[maybe_unused]] Ui::MainWindow &ui, [[maybe_unused]] const JSON &json) { return; });
 
 // clang-format off
       static QVector<const Setting*> settingsList;
@@ -373,7 +371,7 @@ struct settingBuilder
           ui.texturesCompressCheckBox)
 
       REGISTER_SETTING_CHECKBOX_MW(bTexturesMipmaps,
-          "Textures/Textures/Mipmaps",
+          "Textures/bTexturesMipmaps",
           ui.texturesMipmapCheckBox)
 
       REGISTER_SETTING_RADIO_MW(bTexturesResizeSize,
@@ -558,7 +556,7 @@ struct settingBuilder
       REGISTER_SETTING_NO_UI(eAnimationsFormat,
           "Advanced/Animations/eAnimationsFormat")
 
-// clang-format on
+      // clang-format on
 #undef REGISTER_SETTING
 #undef REGISTER_SETTING_MW
 #undef REGISTER_SETTING_CHECKBOX_MW

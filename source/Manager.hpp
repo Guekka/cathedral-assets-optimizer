@@ -60,7 +60,7 @@ private:
     /*!
    * \brief The optimization settings, that will be given to the MainOptimizer
    */
-    Settings _settings;
+    Settings &_settings;
     /*!
     * \brief The list of directories to process
     */

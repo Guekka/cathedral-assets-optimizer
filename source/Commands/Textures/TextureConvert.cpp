@@ -5,13 +5,13 @@
 #include "TextureConvert.hpp"
 
 namespace CAO {
-CommandResult TextureConvert::process(File &file, const Settings &settings)
+CommandResult TextureConvert::process(File& file)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
-    const auto &outputFormat = settings.getValue<DXGI_FORMAT>(eTexturesFormat);
+    const auto &outputFormat = file.settings().getValue<DXGI_FORMAT>(eTexturesFormat);
     auto timage = new TextureResource;
 
     if (DirectX::IsCompressed(outputFormat))
@@ -29,7 +29,7 @@ CommandResult TextureConvert::process(File &file, const Settings &settings)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureConvert::isApplicable(File &file, const Settings &settings)
+bool TextureConvert::isApplicable(File& file)
 {
     auto texResource = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texResource)
@@ -41,16 +41,16 @@ bool TextureConvert::isApplicable(File &file, const Settings &settings)
         return false; //Cannot process compressed file
 
     //If the target format is the same as the current format, no conversion is needed
-    if (settings.getValue<DXGI_FORMAT>(eTexturesFormat) == currentFormat)
+    if (file.settings().getValue<DXGI_FORMAT>(eTexturesFormat) == currentFormat)
         return false;
 
     const bool sameFormatAsOrig = currentFormat == origFormat;
 
     //Compatible but compressing in order to improve performance
-    const bool userWantsConvert = settings.getValue<bool>(bTexturesCompress)
+    const bool userWantsConvert = file.settings().getValue<bool>(bTexturesCompress)
                                   && sameFormatAsOrig; //If true, the file was not compressed originally
 
-    const bool necessary = needsConvert(*texResource, settings);
+    const bool necessary = needsConvert(*texResource, file.settings());
 
     //If the file was optimized, it was previously in a different format, and thus needs a conversion
     const bool optimizedFile = file.optimizedCurrentFile();
@@ -62,14 +62,12 @@ bool TextureConvert::needsConvert(const TextureResource &res, const Settings &se
 {
     //Checking incompatibility with file format
     const DXGI_FORMAT &origFormat = res.origFormat;
-    const auto &unwantedFormats = settings.getValue<std::vector<DXGI_FORMAT>>(
-        slTexturesUnwantedFormats);
+    const auto &unwantedFormats = settings.getValue<std::vector<DXGI_FORMAT>>(slTexturesUnwantedFormats);
     const bool isIncompatible = QVector<DXGI_FORMAT>::fromStdVector(unwantedFormats).contains(origFormat);
 
     //Truely incompatible
     const bool needsConvert = (settings.getValue<bool>(bTexturesNecessary) && isIncompatible)
-                              || (res.isTGA
-                                  && settings.getValue<bool>(bTexturesTGAConvertEnabled));
+                              || (res.isTGA && settings.getValue<bool>(bTexturesTGAConvertEnabled));
 
     return needsConvert;
 }

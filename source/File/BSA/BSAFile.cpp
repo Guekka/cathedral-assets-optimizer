@@ -16,6 +16,7 @@ int BSAFile::loadFromDisk(const QString &filePath)
     auto bsaFile = static_cast<BSAFileResource *>(&*_file);
     bsaFile->load_from_disk(filePath);
     _filename = filePath;
+    matchSettings();
     _optimizedCurrentFile = false;
 
     return 0;

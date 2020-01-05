@@ -7,16 +7,16 @@
 namespace CAO {
 QStringList MeshConvert::headpartList;
 
-CommandResult MeshConvert::process(File &file, const Settings &settings)
+CommandResult MeshConvert::process(File &file)
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
     if (!nif)
         return _resultFactory.getCannotCastFileResult();
 
     NiVersion niVersion;
-    niVersion.SetUser(settings.getValue<int>(iMeshesUser));
-    niVersion.SetFile(settings.getValue<NiFileVersion>(eMeshesFileVersion));
-    niVersion.SetStream(settings.getValue<int>(iMeshesStream));
+    niVersion.SetUser(file.settings().getValue<int>(iMeshesUser));
+    niVersion.SetFile(file.settings().getValue<NiFileVersion>(eMeshesFileVersion));
+    niVersion.SetStream(file.settings().getValue<int>(iMeshesStream));
 
     OptOptions optOptions;
     optOptions.targetVersion = niVersion;
@@ -27,9 +27,9 @@ CommandResult MeshConvert::process(File &file, const Settings &settings)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool MeshConvert::isApplicable(File &file, const Settings &settings)
+bool MeshConvert::isApplicable(File &file)
 {
-    const int &optLevel = settings.getValue<int>(iMeshesOptimizationLevel);
+    const int &optLevel = file.settings().getValue<int>(iMeshesOptimizationLevel);
     if (optLevel == 0)
         return false;
 
@@ -38,12 +38,11 @@ bool MeshConvert::isApplicable(File &file, const Settings &settings)
         return false;
 
     //Listing headparts
-    std::call_once(_onceHeadpartsFlag, [this, &settings] { this->listHeadparts(settings); });
+    std::call_once(_onceHeadpartsFlag, [this, &file] { this->listHeadparts(file.settings()); });
 
     MeshResource nif = *meshFile;
 
-    const bool headpart = isHeadpart(file.getName())
-                          && settings.getValue<bool>(bMeshesHeadparts);
+    const bool headpart = isHeadpart(file.getName()) && file.settings().getValue<bool>(bMeshesHeadparts);
 
     for (const auto &shape : nif.GetShapes())
     {
@@ -66,7 +65,7 @@ bool MeshConvert::isApplicable(File &file, const Settings &settings)
         }
     }
 
-    return headpart || settings.getValue<bool>(bMeshesResave) || optLevel >= 2;
+    return headpart || file.settings().getValue<bool>(bMeshesResave) || optLevel >= 2;
 }
 
 bool MeshConvert::isHeadpart(const QString &filepath)
@@ -78,7 +77,7 @@ bool MeshConvert::isHeadpart(const QString &filepath)
 
 void MeshConvert::listHeadparts(const Settings &settings)
 {
-    QFile &&customHeadpartsFile = Profiles::getFile("customHeadparts.txt");
+    QFile &&customHeadpartsFile = Profiles().getFile("customHeadparts.txt");
     headpartList = FilesystemOperations::readFile(customHeadpartsFile,
                                                   [](QString &string) { return QDir::cleanPath(string); });
 
@@ -88,8 +87,7 @@ void MeshConvert::listHeadparts(const Settings &settings)
                       "won't be detected.";
     }
 
-    const bool severalMods = settings.getValue<OptimizationMode>(eMode)
-                             == SeveralMods;
+    const bool severalMods = settings.getValue<OptimizationMode>(eMode) == SeveralMods;
     const auto flags = severalMods ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
 
     QDirIterator it(settings.getValue<QString>(sUserPath), flags);

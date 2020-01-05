@@ -68,6 +68,7 @@ int AnimationFile::loadFromDisk(const QString &filePath)
         havok->pkFormat = GetFormatFromLayout(formatDetails.m_layoutRules);
 
         _filename = filePath;
+        matchSettings();
 
         return 0;
     }

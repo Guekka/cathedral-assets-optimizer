@@ -18,6 +18,7 @@ int MeshFile::loadFromDisk(const QString &filePath)
     auto meshFile = static_cast<MeshResource *>(&*_file);
     _optimizedCurrentFile = false;
     _filename = filePath;
+    matchSettings();
     return meshFile->Load(filePath.toStdString());
 }
 

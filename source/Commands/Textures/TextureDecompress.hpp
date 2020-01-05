@@ -18,9 +18,9 @@ public:
         _name = "Decompress Texture";
     }
 
-    CommandResult process(File &file, const Settings &settings) override;
+    CommandResult process(File& file) override;
 
-    bool isApplicable(File &file, const Settings &settings) override;
+    bool isApplicable(File& file) override;
 };
 REGISTER_COMMAND(TextureDecompress)
 } // namespace CAO

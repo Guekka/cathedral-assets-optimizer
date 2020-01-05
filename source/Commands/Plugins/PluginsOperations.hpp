@@ -58,7 +58,7 @@ namespace PluginsOperations {
 * \param bsaType The type of BSA to load.
 * \return a QString containing the name of the plugin without the extension. If no plugin is found, it will return the name of the directory.
 */
-QString findPlugin(const QDir &folderPath, const BSAType &bsaType, const Settings &settings);
+QString findPlugin(const QDir &folderPath, const Settings &settings);
 /*!
 * \brief Create enough plugins to load all BSAs
 * \param folderPath The folder to create plugins into

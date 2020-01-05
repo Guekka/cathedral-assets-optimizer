@@ -20,8 +20,8 @@ public:
         _type = CommandType::BSA;
     }
 
-    CommandResult process(File &file, const Settings &settings) override;
-    bool isApplicable(File &file, const Settings &settings) override;
+    CommandResult process(File& file) override;
+    bool isApplicable(File& file) override;
 
 protected:
     bool canBeCompressedFile(const QString &filename);

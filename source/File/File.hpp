@@ -5,6 +5,7 @@
 #pragma once
 
 #include "File/Resources.hpp"
+#include "Settings/Settings.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -31,8 +32,9 @@ public:
     }
 
     virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
-
     virtual void reset() = 0;
+
+    const Settings &settings() { return *settings_; }
 
     virtual ~File() = default;
 
@@ -60,6 +62,9 @@ protected:
         _file.reset(new T);
         _optimizedCurrentFile = false;
     }
+
+    void matchSettings();
+    const Settings *settings_;
 };
 
 } // namespace CAO

@@ -5,7 +5,7 @@
 #include "TextureDecompress.hpp"
 
 namespace CAO {
-CommandResult TextureDecompress::process(File &file, const Settings &settings)
+CommandResult TextureDecompress::process(File& file)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)
@@ -25,7 +25,7 @@ CommandResult TextureDecompress::process(File &file, const Settings &settings)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureDecompress::isApplicable(File &file, const Settings &settings)
+bool TextureDecompress::isApplicable(File& file)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)

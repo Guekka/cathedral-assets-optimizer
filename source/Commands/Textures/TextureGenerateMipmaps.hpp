@@ -19,8 +19,8 @@ public:
         _name = "Generate Mipmaps for Texture";
     }
 
-    CommandResult process(File &file, const Settings &settings) override;
-    bool isApplicable(File &file, const Settings &settings) override;
+    CommandResult process(File& file) override;
+    bool isApplicable(File& file) override;
 
 protected:
     size_t calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const;

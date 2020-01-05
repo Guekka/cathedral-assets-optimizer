@@ -5,7 +5,7 @@
 #include "TextureResize.hpp"
 
 namespace CAO {
-CommandResult TextureResize::process(File &file, const Settings &settings)
+CommandResult TextureResize::process(File& file)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)
@@ -18,7 +18,7 @@ CommandResult TextureResize::process(File &file, const Settings &settings)
     if (!img)
         return _resultFactory.getFailedResult(1, "Failed to get images from file");
 
-    const auto &tinfo = calculateTargetDimensions(info, settings);
+    const auto &tinfo = calculateTargetDimensions(info, file.settings());
 
     const DWORD &filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
     const HRESULT &hr = Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
@@ -29,10 +29,9 @@ CommandResult TextureResize::process(File &file, const Settings &settings)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureResize::isApplicable(File &file, const Settings &settings)
+bool TextureResize::isApplicable(File& file)
 {
-    if (!settings.getValue<bool>(bTexturesResizeRatio)
-        || !settings.getValue<bool>(bTexturesResizeSize))
+    if (!file.settings().getValue<bool>(bTexturesResizeRatio) || !file.settings().getValue<bool>(bTexturesResizeSize))
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -44,13 +43,12 @@ bool TextureResize::isApplicable(File &file, const Settings &settings)
         return false; //Cannot process compressed file
 
     const auto &info = texFile->GetMetadata();
-    const auto &tinfo = calculateTargetDimensions(info, settings);
+    const auto &tinfo = calculateTargetDimensions(info, file.settings());
 
     return info.width != tinfo.width || info.height != tinfo.height;
 }
 
-DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::TexMetadata &info,
-                                                              const Settings &settings)
+DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::TexMetadata &info, const Settings &settings)
 {
     //Calculating target width and height
     DirectX::TexMetadata tinfo = info;

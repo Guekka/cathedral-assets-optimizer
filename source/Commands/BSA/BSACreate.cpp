@@ -7,17 +7,17 @@
 #include "Commands/BSA/Utils/BSACallback.hpp"
 
 namespace CAO {
-CommandResult BSACreate::process(File &file, const Settings &settings)
+CommandResult BSACreate::process(File &file)
 {
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsas = BSASplit::splitBSA(*bsaFolder, settings);
+    auto bsas = BSASplit::splitBSA(*bsaFolder, file.settings());
 
     for (auto &bsa : bsas)
     {
-        bsa.name(bsaFolder->path(), settings);
+        bsa.name(bsaFolder->path(), file.settings());
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
@@ -52,9 +52,9 @@ CommandResult BSACreate::process(File &file, const Settings &settings)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool BSACreate::isApplicable(File &file, const Settings &settings)
+bool BSACreate::isApplicable(File &file)
 {
-    if (!settings.getValue<bool>(bBsaCreate))
+    if (!file.settings().getValue<bool>(bBsaCreate))
         return false;
 
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());

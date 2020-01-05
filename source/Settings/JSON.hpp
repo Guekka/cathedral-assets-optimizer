@@ -12,6 +12,7 @@ class JSON final
 {
 public:
     JSON();
+    JSON(nlohmann::json &j);
 
     template<class T>
     T getValue(const QString &key) const
@@ -50,6 +51,8 @@ public:
     void saveToJSON(const QString &filepath) const;
 
     nlohmann::json &getInternalJSON() { return _json; }
+    const nlohmann::json &getInternalJSON() const { return _json; }
+    void setInternalJSON(nlohmann::json &j) { _json = j; }
 
 private:
     mutable nlohmann::json
