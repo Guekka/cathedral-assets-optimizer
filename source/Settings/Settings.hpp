@@ -33,8 +33,6 @@ public:
         _json.setValue(set.jsonKey, value);
     }
 
-    void parseArguments(const QStringList &args);
-
     /*!
    * \brief Checks if the current settings are allowed
    */

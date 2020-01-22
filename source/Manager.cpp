@@ -11,14 +11,6 @@ Manager::Manager(Settings &opt)
     init();
 }
 
-Manager::Manager(const QStringList &args)
-    : _settings(Profiles().getDefaultSettings())
-{
-    //Parsing args
-    _settings.parseArguments(args);
-    init();
-}
-
 void Manager::init()
 {
     //Preparing logging
