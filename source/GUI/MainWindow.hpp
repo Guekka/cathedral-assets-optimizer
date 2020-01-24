@@ -6,7 +6,6 @@
 
 #include "BSAFilesToPack.hpp"
 #include "ListDialog.hpp"
-#include "Manager.hpp"
 #include "pch.hpp"
 #include "ui_mainWindow.h"
 
@@ -14,6 +13,9 @@ namespace Ui {
 class MainWindow;
 }
 namespace CAO {
+class Manager;
+class Settings;
+class Profiles;
 
 class MainWindow final : public QMainWindow
 {
@@ -23,8 +25,14 @@ public:
     MainWindow();
     ~MainWindow();
 
+    Ui::MainWindow &mainUI() { return *_ui; }
+    Ui::BSAFilesToPack &bsaUI() { return bsaFilesToPackDialog->getUi(); }
+
+    const Ui::MainWindow &mainUI() const { return *_ui; }
+    const Ui::BSAFilesToPack &bsaUI() const { return bsaFilesToPackDialog->getUi(); }
+
 private:
-    ::Ui::MainWindow *_ui;
+    Ui::MainWindow *_ui;
 
     bool _bLockVariables = false;
 
@@ -56,8 +64,7 @@ private:
 
     int _progressBarValue{};
 
-    Profiles _profiles;
-    Settings _settings;
+    std::unique_ptr<Profiles> _profiles;
 
     std::unique_ptr<Manager> _caoProcess;
     bool _settingsChanged;

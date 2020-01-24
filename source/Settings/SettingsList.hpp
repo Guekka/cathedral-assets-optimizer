@@ -6,6 +6,7 @@
 
 #include "BaseTypes.hpp"
 #include "JSON.hpp"
+#include "UISync.hpp"
 #include "ui_BSAFilesToPack.h"
 #include "ui_mainWindow.h"
 
@@ -14,211 +15,6 @@
  */
 
 namespace CAO {
-
-namespace {
-//Here we are implementing functions for reading different UI widgets
-
-inline bool readCheckbox(const QCheckBox *widget)
-{
-    return widget->isChecked();
-}
-
-inline bool readCheckbox(const QAction *widget)
-{
-    return widget->isChecked();
-}
-
-inline bool readCheckbox(const QRadioButton *widget, const QGroupBox *parent)
-{
-    if (!parent->isChecked())
-        return false;
-    return widget->isChecked();
-}
-
-inline bool readCheckbox(const QGroupBox *widget)
-{
-    return widget->isChecked();
-}
-
-inline int readMeshesOptLevel(const Ui::MainWindow &ui)
-{
-    if (!ui.meshesGroupBox->isChecked())
-        return 0;
-    if (ui.meshesNecessaryOptimizationRadioButton->isChecked())
-        return 1;
-    if (ui.meshesMediumOptimizationRadioButton->isChecked())
-        return 2;
-    if (ui.meshesFullOptimizationRadioButton->isChecked())
-        return 3;
-    return 0;
-}
-
-inline bool readTab(const QWidget *widget)
-{
-    return widget->isEnabled();
-}
-
-inline int readValue(const QSpinBox *widget)
-{
-    return widget->value();
-}
-
-inline double readGigaByteValue(const QDoubleSpinBox *widget)
-{
-    return widget->value() * GigaByte;
-}
-
-inline std::string readText(const QLineEdit *widget)
-{
-    return widget->text().toStdString();
-}
-
-inline std::vector<std::string> readText(const QPlainTextEdit *widget)
-{
-    auto list = widget->toPlainText().split('\n').toVector();
-    std::vector<std::string> out;
-    out.resize(static_cast<size_t>(list.size()));
-    std::transform(list.begin(), list.end(), std::back_inserter(out), [](const QString &string) {
-        return string.toStdString();
-    });
-    return out;
-}
-
-template<typename returnValue>
-inline returnValue readValue(const QComboBox *widget)
-{
-    return widget->currentData().value<returnValue>();
-}
-
-template<typename Type>
-inline std::vector<Type> readList(const QListWidget *widget)
-{
-    QVector<Type> data;
-    for (int i = 0; i < widget->count(); ++i)
-    {
-        const auto &entry = widget->item(i);
-        const auto &value = entry->data(Qt::UserRole).value<Type>();
-        if (!data.contains(value))
-            data += value;
-    }
-    return data.toStdVector();
-}
-
-inline std::vector<std::string> readList(const QListWidget *widget)
-{
-    QVector<std::string> data;
-    for (int i = 0; i < widget->count(); ++i)
-    {
-        const auto &entry = widget->item(i);
-        const std::string &text = entry->text().toStdString();
-        if (!data.contains(text))
-            data += text;
-    }
-    return data.toStdVector();
-}
-
-inline void saveCheckbox(QCheckBox *widget, const bool &value)
-{
-    widget->setChecked(value);
-}
-
-inline void saveCheckbox(QRadioButton *widget, const bool &value)
-{
-    widget->setChecked(value);
-}
-
-inline void saveCheckbox(QAction *widget, const bool &value)
-{
-    widget->setChecked(value);
-}
-
-inline void saveCheckbox(QGroupBox *widget, const bool &value)
-{
-    widget->setChecked(value);
-}
-
-inline void saveMeshesOptLevel(const Ui::MainWindow &ui, const int &value)
-{
-    switch (value)
-    {
-        case 0: ui.meshesGroupBox->setChecked(false); return;
-        case 1: ui.meshesNecessaryOptimizationRadioButton->setChecked(true); return;
-        case 2: ui.meshesMediumOptimizationRadioButton->setChecked(true); return;
-        case 3: ui.meshesFullOptimizationRadioButton->setChecked(true); return;
-    }
-}
-
-inline void saveTab(QWidget *widget, const bool &value)
-{
-    widget->setEnabled(value);
-}
-
-inline void saveValue(QSpinBox *widget, const int &value)
-{
-    widget->setValue(value);
-}
-
-inline void saveValueGigabyte(QDoubleSpinBox *widget, const double &value)
-{
-    widget->setValue(value / GigaByte);
-}
-
-inline void saveText(QLineEdit *widget, const std::string &value)
-{
-    widget->setText(QString::fromStdString(value));
-}
-
-inline void saveText(QPlainTextEdit *widget, const std::vector<std::string> &value)
-{
-    QString out;
-    for (const auto &str : value)
-        out += QString::fromStdString(str) + '\n';
-    widget->setPlainText(out);
-}
-
-template<typename Type>
-inline void saveValue(QComboBox *widget, const Type &value)
-{
-    for (int i = 0; i < widget->count(); ++i)
-    {
-        if (widget->itemData(i).value<Type>() == value)
-        {
-            widget->setCurrentIndex(i);
-            return;
-        }
-    }
-}
-
-template<typename Type>
-inline void saveList(QListWidget *widget, const std::vector<Type> &value)
-{
-    widget->clear();
-    for (const auto &subValue : value)
-    {
-        auto item = new QListWidgetItem;
-        item->setData(subValue);
-        widget->addItem(item);
-    }
-}
-
-inline void saveList(QListWidget *widget, const std::vector<std::string> &value)
-{
-    widget->clear();
-    for (const auto &subValue : value)
-        widget->addItem(QString::fromStdString(subValue));
-}
-
-inline void saveList(QListWidget *widget, const std::vector<DXGI_FORMAT> &value)
-{
-    widget->clear();
-    for (const DXGI_FORMAT &format : value)
-    {
-        auto item = new QListWidgetItem(dxgiFormatToString(format));
-        item->setData(Qt::UserRole, format);
-        widget->addItem(item);
-    }
-}
-} // namespace
 
 using uiReadMW = void (*)(const Ui::MainWindow &ui, JSON &json);
 using uiSaveMW = void (*)(Ui::MainWindow &ui, const JSON &json);
@@ -283,15 +79,19 @@ struct settingBuilder
 
 #define REGISTER_SETTING(name, key, readFunc, saveFunc) \
     static const Setting name(key, readFunc, saveFunc); \
-    static settingBuilder builder_##name(settingsList, &name);
+    static SettingBuilder builder_##name(settingsList, &name);
 
 #define REGISTER_SETTING_MW(name, key, uiElement, readFunc, saveFunc) \
     REGISTER_SETTING( \
         name, \
         key, \
-        [](const Ui::MainWindow &ui, JSON &json) { json.setValue(key, readFunc(uiElement)); }, \
+        [](const Ui::MainWindow &ui, JSON &json) { \
+            json.setValue(key, UISync::readFunc(uiElement)); \
+        }, \
         [](Ui::MainWindow &ui, const JSON &json) { \
-            saveFunc(uiElement, json.getValue<decltype(readFunc(std::declval<decltype(uiElement)>()))>(key)); \
+            UISync::saveFunc(uiElement, \
+                             json.getValue<decltype( \
+                                 UISync::readFunc(std::declval<decltype(uiElement)>()))>(key)); \
         })
 
 #define REGISTER_SETTING_CHECKBOX_MW(name, key, uiElement) \
@@ -301,16 +101,24 @@ struct settingBuilder
     REGISTER_SETTING( \
         name, \
         key, \
-        [](const Ui::MainWindow &ui, JSON &json) { json.setValue(key, readCheckbox(uiElement, parent)); }, \
-        [](Ui::MainWindow &ui, const JSON &json) { saveCheckbox(uiElement, json.getValue<bool>(key)); })
+        [](const Ui::MainWindow &ui, JSON &json) { \
+            json.setValue(key, UISync::readCheckbox(uiElement, parent)); \
+        }, \
+        [](Ui::MainWindow &ui, const JSON &json) { \
+            UISync::saveCheckbox(uiElement, json.getValue<bool>(key)); \
+        })
 
 #define REGISTER_SETTING_BSW(name, key, uiElement, readFunc, saveFunc) \
     REGISTER_SETTING( \
         name, \
         key, \
-        [](const Ui::BSAFilesToPack &ui, JSON &json) { json.setValue(key, readFunc(uiElement)); }, \
+        [](const Ui::BSAFilesToPack &ui, JSON &json) { \
+            json.setValue(key, UISync::readFunc(uiElement)); \
+        }, \
         [](Ui::BSAFilesToPack &ui, const JSON &json) { \
-            saveFunc(uiElement, json.getValue<decltype(readFunc(std::declval<decltype(uiElement)>()))>(key)); \
+            UISync::saveFunc(uiElement, \
+                             json.getValue<decltype( \
+                                 UISync::readFunc(std::declval<decltype(uiElement)>()))>(key)); \
         })
 
 #define REGISTER_SETTING_NO_UI(name, key) \
@@ -408,12 +216,16 @@ struct settingBuilder
           ui.texturesResizingByRatioHeight,
           readValue,
           saveValue)
-
+/*FIXME
       REGISTER_SETTING_MW(iMeshesOptimizationLevel, 
           "Meshes/iMeshesOptimizationLevel",
           ui,
           readMeshesOptLevel,
           saveMeshesOptLevel)
+*/
+
+REGISTER_SETTING_NO_UI(iMeshesOptimizationLevel, "Meshes/iMeshesOptimizationLevel")
+
 
       REGISTER_SETTING_CHECKBOX_MW(bAnimationsOptimization,
           "Animations/bAnimationsOptimization",
@@ -482,19 +294,19 @@ struct settingBuilder
       REGISTER_SETTING_BSW(slBSAStandardExt,
           "Advanced/BSA/slBSAStandardExt",      
           ui.StandardFilesListWidget,
-          readList,
+          readList<std::string>,
           saveList)
 
       REGISTER_SETTING_BSW(slBSATexturesExt,
           "Advanced/BSA/slBSATexturesExt",
           ui.TexturesFilesListWidget,
-          readList,
+          readList<std::string>,
           saveList)
 
       REGISTER_SETTING_BSW(slBSAUncompressableExt,
           "Advanced/BSA/slBSAUncompressableExt",
           ui.UncompressableFilesListWidget,
-          readList,
+          readList<std::string>,
           saveList)
 
       REGISTER_SETTING_MW(bTexturesTabEnabled,
@@ -556,7 +368,7 @@ struct settingBuilder
       REGISTER_SETTING_NO_UI(eAnimationsFormat,
           "Advanced/Animations/eAnimationsFormat")
 
-      // clang-format on
+// clang-format on
 #undef REGISTER_SETTING
 #undef REGISTER_SETTING_MW
 #undef REGISTER_SETTING_CHECKBOX_MW
@@ -564,4 +376,4 @@ struct settingBuilder
 #undef REGISTER_SETTING_BSW
 #undef REGISTER_SETTING_NO_UI
 
-      } // namespace CAO
+} // namespace CAO
