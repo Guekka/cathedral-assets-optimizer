@@ -11,7 +11,7 @@ CommandResult TextureConvert::process(File& file)
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
-    const auto &outputFormat = file.settings().getValue<DXGI_FORMAT>(eTexturesFormat);
+    const auto &outputFormat = file.settings().eTexturesFormat();
     auto timage = new TextureResource;
 
     if (DirectX::IsCompressed(outputFormat))
@@ -41,13 +41,13 @@ bool TextureConvert::isApplicable(File& file)
         return false; //Cannot process compressed file
 
     //If the target format is the same as the current format, no conversion is needed
-    if (file.settings().getValue<DXGI_FORMAT>(eTexturesFormat) == currentFormat)
+    if (file.settings().eTexturesFormat() == currentFormat)
         return false;
 
     const bool sameFormatAsOrig = currentFormat == origFormat;
 
     //Compatible but compressing in order to improve performance
-    const bool userWantsConvert = file.settings().getValue<bool>(bTexturesCompress)
+    const bool userWantsConvert = file.settings().bTexturesCompress()
                                   && sameFormatAsOrig; //If true, the file was not compressed originally
 
     const bool necessary = needsConvert(*texResource, file.settings());
@@ -62,12 +62,12 @@ bool TextureConvert::needsConvert(const TextureResource &res, const Settings &se
 {
     //Checking incompatibility with file format
     const DXGI_FORMAT &origFormat = res.origFormat;
-    const auto &unwantedFormats = settings.getValue<std::vector<DXGI_FORMAT>>(slTexturesUnwantedFormats);
+    const auto &unwantedFormats = settings.slTexturesUnwantedFormats();
     const bool isIncompatible = QVector<DXGI_FORMAT>::fromStdVector(unwantedFormats).contains(origFormat);
 
     //Truely incompatible
-    const bool needsConvert = (settings.getValue<bool>(bTexturesNecessary) && isIncompatible)
-                              || (res.isTGA && settings.getValue<bool>(bTexturesTGAConvertEnabled));
+    const bool needsConvert = (settings.bTexturesNecessary() && isIncompatible)
+                              || (res.isTGA && settings.bTexturesTGAConvertEnabled());
 
     return needsConvert;
 }

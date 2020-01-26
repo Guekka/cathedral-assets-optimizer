@@ -164,16 +164,16 @@ void Profiles::saveToJSON(const QString &filepath) const
 }
 
 #ifdef GUI
-void Profiles::readFromUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi)
+void Profiles::readFromUi(const MainWindow &window)
 {
-    for (const Setting *set : settingsList)
-        set->readFromUI(ui, bsUi, getDefaultSettings().getJSON());
+    for (const auto &set : Settings::SettingList::get())
+        set.read(window, getDefaultSettings().getJSON());
 }
 
-void Profiles::saveToUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi)
+void Profiles::saveToUi(MainWindow &window)
 {
-    for (const Setting *set : settingsList)
-        set->saveToUI(ui, bsUi, getDefaultSettings().getJSON());
+    for (const auto &set : Settings::SettingList::get())
+        set.save(window, getDefaultSettings().getJSON());
 }
 #endif
 

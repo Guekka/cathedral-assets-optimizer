@@ -14,9 +14,9 @@ CommandResult MeshConvert::process(File &file)
         return _resultFactory.getCannotCastFileResult();
 
     NiVersion niVersion;
-    niVersion.SetUser(file.settings().getValue<int>(iMeshesUser));
-    niVersion.SetFile(file.settings().getValue<NiFileVersion>(eMeshesFileVersion));
-    niVersion.SetStream(file.settings().getValue<int>(iMeshesStream));
+    niVersion.SetUser(file.settings().iMeshesUser());
+    niVersion.SetFile(file.settings().eMeshesFileVersion());
+    niVersion.SetStream(file.settings().iMeshesStream());
 
     OptOptions optOptions;
     optOptions.targetVersion = niVersion;
@@ -29,7 +29,7 @@ CommandResult MeshConvert::process(File &file)
 
 bool MeshConvert::isApplicable(File &file)
 {
-    const int &optLevel = file.settings().getValue<int>(iMeshesOptimizationLevel);
+    const int &optLevel = file.settings().iMeshesOptimizationLevel();
     if (optLevel == 0)
         return false;
 
@@ -42,7 +42,7 @@ bool MeshConvert::isApplicable(File &file)
 
     MeshResource nif = *meshFile;
 
-    const bool headpart = isHeadpart(file.getName()) && file.settings().getValue<bool>(bMeshesHeadparts);
+    const bool headpart = isHeadpart(file.getName()) && file.settings().bMeshesHeadparts();
 
     for (const auto &shape : nif.GetShapes())
     {
@@ -65,7 +65,7 @@ bool MeshConvert::isApplicable(File &file)
         }
     }
 
-    return headpart || file.settings().getValue<bool>(bMeshesResave) || optLevel >= 2;
+    return headpart || file.settings().bMeshesResave() || optLevel >= 2;
 }
 
 bool MeshConvert::isHeadpart(const QString &filepath)
@@ -87,10 +87,10 @@ void MeshConvert::listHeadparts(const Settings &settings)
                       "won't be detected.";
     }
 
-    const bool severalMods = settings.getValue<OptimizationMode>(eMode) == SeveralMods;
+    const bool severalMods = settings.eMode() == SeveralMods;
     const auto flags = severalMods ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
 
-    QDirIterator it(settings.getValue<QString>(sUserPath), flags);
+    QDirIterator it(settings.sUserPath(), flags);
     for (const auto &plugin : FilesystemOperations::listPlugins(it))
         headpartList += PluginsOperations::listHeadparts(plugin);
 

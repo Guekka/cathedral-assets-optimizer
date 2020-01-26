@@ -50,20 +50,14 @@ double CAO::UISync::readGigaByteValue(const QDoubleSpinBox *widget)
     return widget->value() * GigaByte;
 }
 
-std::string CAO::UISync::readText(const QLineEdit *widget)
+QString CAO::UISync::readText(const QLineEdit *widget)
 {
-    return widget->text().toStdString();
+    return widget->text();
 }
 
-std::vector<std::string> CAO::UISync::readText(const QPlainTextEdit *widget)
+QStringList CAO::UISync::readText(const QPlainTextEdit *widget)
 {
-    auto list = widget->toPlainText().split('\n').toVector();
-    std::vector<std::string> out;
-    out.resize(static_cast<size_t>(list.size()));
-    std::transform(list.begin(), list.end(), std::back_inserter(out), [](const QString &string) {
-        return string.toStdString();
-    });
-    return out;
+    return widget->toPlainText().split('\n');
 }
 
 void CAO::UISync::saveCheckbox(QCheckBox *widget, const bool &value)

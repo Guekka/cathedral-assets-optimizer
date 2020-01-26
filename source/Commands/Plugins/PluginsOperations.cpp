@@ -22,8 +22,8 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Settin
 
 QString PluginsOperations::findPlugin(const QDir &folderPath, const Settings &settings)
 {
-    const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
-    const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
+    const auto &bsaSuffix = settings.sBSASuffix();
+    const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
 
     QStringList espNames;
     QDirIterator it(folderPath);
@@ -61,8 +61,8 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const Settings &se
 bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const Settings &settings)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
-    const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
-    const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
+    const auto &bsaSuffix = settings.sBSASuffix();
+    const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
     bsaName.remove(bsaSuffix);
     bsaName.remove(bsaTexSuffix);
 
@@ -76,8 +76,8 @@ bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const Settin
 
 QStringList PluginsOperations::listBSAsNames(QDirIterator it, const Settings &settings)
 {
-    const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
-    const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
+    const auto &bsaSuffix = settings.sBSASuffix();
+    const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
 
     QStringList bsas;
     while (it.hasNext())

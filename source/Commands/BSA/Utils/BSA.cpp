@@ -15,18 +15,18 @@ BSA BSA::getBSA(const BSAType &type, const Settings &settings)
     {
         case StandardBsa:
             bsa.type = BSAType::StandardBsa;
-            bsa.maxSize = settings.getValue<double>(iBSAMaxSize);
-            bsa.format = settings.getValue<bsa_archive_type_t>(eBSAFormat);
+            bsa.maxSize = settings.iBSAMaxSize();
+            bsa.format = settings.eBSAFormat();
             break;
         case TexturesBsa:
             bsa.type = BSAType::TexturesBsa;
-            bsa.maxSize = settings.getValue<double>(iBSATexturesMaxSize);
-            bsa.format = settings.getValue<bsa_archive_type_t>(eBSATexturesFormat);
+            bsa.maxSize = settings.iBSATexturesMaxSize();
+            bsa.format = settings.eBSATexturesFormat();
             break;
         case UncompressableBsa:
             bsa.type = BSAType::UncompressableBsa;
-            bsa.maxSize = settings.getValue<double>(iBSAMaxSize);
-            bsa.format = settings.getValue<bsa_archive_type_t>(eBSAFormat);
+            bsa.maxSize = settings.iBSAMaxSize();
+            bsa.format = settings.eBSAFormat();
             break;
     }
     return bsa;
@@ -34,8 +34,8 @@ BSA BSA::getBSA(const BSAType &type, const Settings &settings)
 
 void BSA::name(const QString &folder, const Settings &settings)
 {
-    const auto &bsaSuffix = settings.getValue<QString>(sBSASuffix);
-    const auto &bsaTexSuffix = settings.getValue<QString>(sBSATexturesSuffix);
+    const auto &bsaSuffix = settings.sBSASuffix();
+    const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
     const QString &suffix = type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
     path = folder + "/" + PluginsOperations::findPlugin(folder, settings) + suffix;
     PLOG_VERBOSE << "Named " << type << path;

@@ -31,7 +31,7 @@ CommandResult TextureResize::process(File& file)
 
 bool TextureResize::isApplicable(File& file)
 {
-    if (!file.settings().getValue<bool>(bTexturesResizeRatio) || !file.settings().getValue<bool>(bTexturesResizeSize))
+    if (!file.settings().bTexturesResizeRatio() || !file.settings().bTexturesResizeSize())
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -52,15 +52,15 @@ DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::Tex
 {
     //Calculating target width and height
     DirectX::TexMetadata tinfo = info;
-    if (settings.getValue<bool>(bTexturesResizeRatio))
+    if (settings.bTexturesResizeRatio())
     {
-        tinfo.width = info.width / settings.getValue<int>(iTexturesTargetWidthRatio);
-        tinfo.height = info.height / settings.getValue<int>(iTexturesTargetHeightRatio);
+        tinfo.width = info.width / settings.iTexturesTargetWidthRatio();
+        tinfo.height = info.height / settings.iTexturesTargetHeightRatio();
     }
-    else if (settings.getValue<bool>(bTexturesResizeSize))
+    else if (settings.bTexturesResizeSize())
     {
-        while (tinfo.width > settings.getValue<int>(iTexturesTargetWidth)
-               && tinfo.height > settings.getValue<int>(iTexturesTargetHeight))
+        while (tinfo.width > settings.iTexturesTargetWidth()
+               && tinfo.height > settings.iTexturesTargetHeight())
         {
             tinfo.width = info.width / 2;
             tinfo.height = info.height / 2;

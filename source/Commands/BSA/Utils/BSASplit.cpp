@@ -17,9 +17,9 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
     auto *uncompressableBsa = &bsas[1];
     auto *texturesBsa = &bsas[2];
 
-    const auto &standardAssets = settings.getValue<QStringList>(slBSAStandardExt);
-    const auto &texturesAssets = settings.getValue<QStringList>(slBSATexturesExt);
-    const auto &uncompressableAssets = settings.getValue<QStringList>(slBSAUncompressableExt);
+    const auto &standardAssets = settings.slBSAStandardExt();
+    const auto &texturesAssets = settings.slBSATexturesExt();
+    const auto &uncompressableAssets = settings.slBSAUncompressableExt();
     const auto &allAssets = standardAssets + texturesAssets + uncompressableAssets;
 
     QDirIterator it(dir, QDirIterator::Subdirectories);
@@ -31,7 +31,7 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
             continue;
 
         const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
-                               && settings.getValue<bool>(bBSATexturesEnabled);
+                               && settings.bBSATexturesEnabled();
         const bool isUncompressable = uncompressableAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive);
 
         BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
@@ -49,7 +49,7 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
     }
 
     //Merging BSAs that can be merged
-    if (settings.getValue<bool>(bBsaLeastBsaPossible))
+    if (settings.bBsaLeastBsaPossible())
         BSA::mergeBSAs(bsas);
 
     return bsas;

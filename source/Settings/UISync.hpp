@@ -48,8 +48,8 @@ public:
     static int readValue(const QSpinBox *widget);
     static double readGigaByteValue(const QDoubleSpinBox *widget);
 
-    static std::string readText(const QLineEdit *widget);
-    static std::vector<std::string> readText(const QPlainTextEdit *widget);
+    static QString readText(const QLineEdit *widget);
+    static QStringList readText(const QPlainTextEdit *widget);
 
     template<typename returnValue>
     static returnValue readValue(const QComboBox *widget)
@@ -57,14 +57,15 @@ public:
         return widget->currentData().value<returnValue>();
     }
 
-    template<typename Type>
-    static std::vector<Type> readList(const QListWidget *widget)
+    //SFINAE for container only
+    template<typename Container, typename StoredType = typename Container::value_type>
+    static Container readList(const QListWidget *widget)
     {
-        QVector<Type> data;
+        QVector<StoredType> data;
         for (int i = 0; i < widget->count(); ++i)
         {
             const auto &entry = widget->item(i);
-            const auto &value = entry->data(Qt::UserRole).value<Type>();
+            const auto &value = entry->data(Qt::UserRole).value<StoredType>();
             if (!data.contains(value))
                 data += value;
         }
@@ -72,17 +73,23 @@ public:
     }
 
     template<>
-    static std::vector<std::string> readList(const QListWidget *widget)
+    static QStringList readList(const QListWidget *widget)
     {
-        QVector<std::string> data;
+        QStringList data;
         for (int i = 0; i < widget->count(); ++i)
         {
             const auto &entry = widget->item(i);
-            const std::string &text = entry->text().toStdString();
+            const QString &text = entry->text();
             if (!data.contains(text))
-                data += text;
+                data.push_back(text);
         }
-        return data.toStdVector();
+        return data;
+    }
+
+    template<typename T>
+    static T nullReadFunc([[maybe_unused]] T value)
+    {
+        return value;
     }
 
     static void saveCheckbox(QCheckBox *widget, const bool &value);
@@ -96,16 +103,10 @@ public:
     static void saveValue(QSpinBox *widget, const int &value) { widget->setValue(value); }
     static void saveValueGigabyte(QDoubleSpinBox *widget, const double &value) { widget->setValue(value / GigaByte); }
 
-    static void saveText(QLineEdit *widget, const std::string &value)
+    static void saveText(QLineEdit *widget, const QString &value) { widget->setText(value); }
+    static void saveText(QPlainTextEdit *widget, const QStringList &value)
     {
-        widget->setText(QString::fromStdString(value));
-    }
-    static void saveText(QPlainTextEdit *widget, const std::vector<std::string> &value)
-    {
-        QString out;
-        for (const auto &str : value)
-            out += QString::fromStdString(str) + '\n';
-        widget->setPlainText(out);
+        widget->setPlainText(value.join('\n'));
     }
 
     template<typename Type>
@@ -122,7 +123,7 @@ public:
     }
 
     template<typename Type>
-    static void saveList(QListWidget *widget, const std::vector<Type> &value)
+    static void saveList(QListWidget *widget, const Type &value)
     {
         widget->clear();
         for (const auto &subValue : value)
@@ -134,11 +135,11 @@ public:
     }
 
     template<>
-    static void saveList(QListWidget *widget, const std::vector<std::string> &value)
+    static void saveList(QListWidget *widget, const QStringList &value)
     {
         widget->clear();
         for (const auto &subValue : value)
-            widget->addItem(QString::fromStdString(subValue));
+            widget->addItem(subValue);
     }
 
     template<>
@@ -152,6 +153,8 @@ public:
             widget->addItem(item);
         }
     }
+
+    static void nullSaveFunc([[maybe_unused]] std::any b, [[maybe_unused]] std::any a) {}
 };
 
 } // namespace CAO

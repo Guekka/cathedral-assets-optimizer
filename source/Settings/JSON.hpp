@@ -47,6 +47,18 @@ public:
         setValue(key, value.toStdString());
     }
 
+    template<>
+    void setValue(const QString &key, const QStringList &value)
+    {
+        auto qstringVec = value.toVector().toStdVector();
+        std::vector<std::string> stringVec(qstringVec.size());
+        std::transform(qstringVec.begin(),
+                       qstringVec.end(),
+                       std::back_inserter(stringVec),
+                       [](const QString &str) { return str.toStdString(); });
+        setValue(key, stringVec);
+    }
+
     void readFromJSON(const QString &filepath);
     void saveToJSON(const QString &filepath) const;
 

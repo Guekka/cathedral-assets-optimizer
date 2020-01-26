@@ -15,17 +15,16 @@ Settings::Settings(nlohmann::json j)
 
 QString Settings::isValid() const
 {
-    if (!QDir(getValue<QString>(sUserPath)).exists() || getValue<QString>(sUserPath).size() < 5)
-    {
+    if (!QDir(sUserPath()).exists() || sUserPath().size() < 5) {
         return QString("This path does not exist or is shorter than 5 characters. Path: '%1'")
-            .arg(getValue<QString>(sUserPath));
+            .arg(sUserPath());
     }
 
-    const auto &meshOptLevel = getValue<uint>(iMeshesOptimizationLevel);
-    if (meshOptLevel > 3)
-        return ("This meshes optimization level does not exist. Level: " + QString::number(meshOptLevel));
+    if (iMeshesOptimizationLevel() > 3)
+        return ("This meshes optimization level does not exist. Level: "
+                + QString::number(iMeshesOptimizationLevel()));
 
-    if (getValue<uint>(iTexturesTargetWidth) % 2 != 0 || getValue<uint>(iTexturesTargetHeight) % 2 != 0)
+    if (iTexturesTargetWidth() % 2 != 0 || iTexturesTargetHeight() % 2 != 0)
         return ("Textures target size has to be a power of two");
 
     return QString();

@@ -52,6 +52,6 @@ bool MeshRenameReferencedTextures::isApplicable(File& file)
     if (!meshFile)
         return false;
 
-    return file.settings().getValue<bool>(bTexturesTGAConvertEnabled);
+    return file.settings().bTexturesTGAConvertEnabled();
 }
 } // namespace CAO

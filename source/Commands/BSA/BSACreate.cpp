@@ -54,7 +54,7 @@ CommandResult BSACreate::process(File &file)
 
 bool BSACreate::isApplicable(File &file)
 {
-    if (!file.settings().getValue<bool>(bBsaCreate))
+    if (!file.settings().bBsaCreate())
         return false;
 
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());

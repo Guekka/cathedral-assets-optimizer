@@ -14,7 +14,7 @@ Manager::Manager(Settings &opt)
 void Manager::init()
 {
     //Preparing logging
-    initCustomLogger(Profiles().logPath(), _settings.getValue<bool>(bDebugLog));
+    initCustomLogger(Profiles().logPath(), _settings.bDebugLog());
 
     PLOG_VERBOSE << "Checking settings...";
     const QString error = _settings.isValid();
@@ -35,9 +35,9 @@ void Manager::listDirectories()
 {
     _modsToProcess.clear();
 
-    const auto &userPath = _settings.getValue<QString>(sUserPath);
+    const auto &userPath = _settings.sUserPath();
 
-    if (_settings.getValue<OptimizationMode>(eMode) == SingleMod)
+    if (_settings.eMode() == SingleMod)
         _modsToProcess << userPath;
 
     else
@@ -75,27 +75,25 @@ void Manager::listFiles()
             if (it.fileInfo().size() == 0)
                 continue;
 
-            auto getBool = [this](const Setting &key) { return _settings.getValue<bool>(key); };
-
-            const bool processMeshes = getBool(bMeshesResave)
-                                       || _settings.getValue<uint>(iMeshesOptimizationLevel);
+            const bool processMeshes = _settings.bMeshesResave()
+                                       || _settings.iMeshesOptimizationLevel();
             const bool mesh = filename.endsWith(".nif", Qt::CaseInsensitive) && processMeshes;
 
-            const bool processTextures = getBool(bTexturesMipmaps) || getBool(bTexturesCompress)
-                                         || getBool(bTexturesNecessary)
-                                         || getBool(bTexturesResizeSize)
-                                         || getBool(bTexturesResizeRatio);
+            const bool processTextures = _settings.bTexturesMipmaps()
+                                         || _settings.bTexturesCompress()
+                                         || _settings.bTexturesNecessary()
+                                         || _settings.bTexturesResizeSize()
+                                         || _settings.bTexturesResizeRatio();
 
             const bool texture = (filename.endsWith(".dds", Qt::CaseInsensitive)
                                   || filename.endsWith(".tga", Qt::CaseInsensitive))
                                  && processTextures;
 
-            const bool animation = getBool(bAnimationsOptimization)
+            const bool animation = _settings.bAnimationsOptimization()
                                    && filename.endsWith(".hkx", Qt::CaseInsensitive);
 
-            const bool bsa = getBool(bBsaExtract)
-                             && filename.endsWith(_settings.getValue<QString>(sBSAExtension),
-                                                  Qt::CaseInsensitive);
+            const bool bsa = _settings.bBsaExtract()
+                             && filename.endsWith(_settings.sBSAExtension(), Qt::CaseInsensitive);
 
             QStringList &list = bsa ? BSAs : _files;
             if (!mesh && !texture && !animation && !bsa)
@@ -122,7 +120,7 @@ void Manager::readIgnoredMods()
 void Manager::runOptimization()
 {
     PLOG_DEBUG << "Game: " << Profiles::currentProfile();
-    PLOG_INFO << "Processing: " + _settings.getValue<QString>(sUserPath);
+    PLOG_INFO << "Processing: " + _settings.sUserPath();
     PLOG_INFO << "Beginning...";
 
     MainOptimizer optimizer(_settings);
@@ -160,7 +158,7 @@ void Manager::runOptimization()
     }
 
     //Packing BSAs
-    if (_settings.getValue<bool>(bBsaCreate)) {
+    if (_settings.bBsaCreate()) {
         _numberCompletedFiles = 0;
         printProgress(_modsToProcess.size(), "Packing BSAs");
         for (const auto &folder : _modsToProcess)
@@ -171,7 +169,7 @@ void Manager::runOptimization()
         }
     }
 
-    FilesystemOperations::deleteEmptyDirectories(_settings.getValue<QString>(sUserPath));
+    FilesystemOperations::deleteEmptyDirectories(_settings.sUserPath());
     PLOG_INFO << "Process completed<br><br><br>";
     emit end();
 }

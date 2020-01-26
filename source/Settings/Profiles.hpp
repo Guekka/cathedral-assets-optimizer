@@ -34,8 +34,8 @@ public:
     void saveToJSON(const QString &filepath) const;
 
 #ifdef GUI
-    void saveToUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi);
-    void readFromUi(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi);
+    void saveToUi(MainWindow &window);
+    void readFromUi(const MainWindow &window);
 #endif
 
 private:
