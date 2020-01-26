@@ -126,7 +126,6 @@ set(SOURCES
     source/Settings/Settings.hpp
     source/Settings/Profiles.cpp
     source/Settings/Profiles.hpp
-    source/Settings/SettingsList.hpp
     source/Settings/UISync.cpp
     source/Settings/UISync.hpp
     )

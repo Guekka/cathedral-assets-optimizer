@@ -6,8 +6,10 @@
 #pragma once
 
 #include "GUI/MainWindow.hpp"
-#include "SettingsList.hpp"
+#include "JSON.hpp"
+#include "UISync.hpp"
 #include "pch.hpp"
+#include "ui_BSAFilesToPack.h"
 
 namespace CAO {
 class Settings final
