@@ -24,13 +24,13 @@ public:
     template<typename T>
     T getValue(const Setting &set) const
     {
-        return _json.getValue<T>(set.jsonKey);
+        return json_.getValue<T>(set.jsonKey);
     }
 
     template<typename T>
     void setValue(const Setting &set, const T &value)
     {
-        _json.setValue(set.jsonKey, value);
+        json_.setValue(set.jsonKey, value);
     }
 
     /*!
@@ -38,10 +38,10 @@ public:
    */
     QString isValid() const;
 
-    const JSON &getJSON() const { return _json; }
-    JSON &getJSON() { return _json; }
+    const JSON &getJSON() const { return json_; }
+    JSON &getJSON() { return json_; }
 
 private:
-    JSON _json;
+    JSON json_;
 };
 } // namespace CAO

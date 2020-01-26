@@ -9,7 +9,7 @@
 namespace CAO {
 
 Settings::Settings(nlohmann::json j)
-    : _json(j)
+    : json_(j)
 {
 }
 
