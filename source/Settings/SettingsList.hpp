@@ -5,11 +5,11 @@
 #pragma once
 
 #include "BaseTypes.hpp"
+#include "GUI/MainWindow.hpp"
 #include "JSON.hpp"
 #include "UISync.hpp"
 #include "ui_BSAFilesToPack.h"
 #include "ui_mainWindow.h"
-
 /*
  * Beware that the code in this file is quite messy
  */
@@ -24,11 +24,7 @@ using uiSaveBSAFiles = void (*)(Ui::BSAFilesToPack &ui, const JSON &json);
 class Setting
 {
 private:
-    enum class TargetUI
-    {
-        bsaUi,
-        mainUi
-    } _targetUI;
+    enum class TargetUI { bsaUi, mainUi } _targetUI;
 
     uiReadMW _readMW;
     uiReadBSAFiles _readBSA;
@@ -55,26 +51,63 @@ public:
 
     void readFromUI(const Ui::MainWindow &ui, const Ui::BSAFilesToPack &bsUi, JSON &json) const
     {
-        switch (_targetUI)
-        {
-            case TargetUI::bsaUi: _readBSA(bsUi, json); break;
-            case TargetUI::mainUi: _readMW(ui, json);
+        switch (_targetUI) {
+        case TargetUI::bsaUi:
+            _readBSA(bsUi, json);
+            break;
+        case TargetUI::mainUi:
+            _readMW(ui, json);
         }
     }
     void saveToUI(Ui::MainWindow &ui, Ui::BSAFilesToPack &bsUi, const JSON &json) const
     {
-        switch (_targetUI)
-        {
-            case TargetUI::bsaUi: _saveBSA(bsUi, json); break;
-            case TargetUI::mainUi: _saveMW(ui, json);
+        switch (_targetUI) {
+        case TargetUI::bsaUi:
+            _saveBSA(bsUi, json);
+            break;
+        case TargetUI::mainUi:
+            _saveMW(ui, json);
         }
     }
 };
 
 // Used to register settings into a list
-struct settingBuilder
+struct SettingBuilder
 {
-    settingBuilder(QVector<const Setting *> &vec, const Setting *setting) { vec << setting; } // namespace CAO
+    SettingBuilder(QVector<const Setting *> &vec, const Setting *setting)
+    {
+        vec << setting;
+    } // namespace CAO
+};
+
+#define UI_READ_FUNCTION(widget, function, key) \
+    [](const MainWindow &window, JSON &json) { json.setValue(key, function(widget)); }
+
+#define UI_SAVE_FUNCTION(widget, function, type, key) \
+    [](MainWindow &window, const JSON &json) { function(widget, json.getValue<type>(key)); }
+
+#define REGISTER_SETTING(type, name, key, widget, readFunc, saveFunc) \
+    type name() { return json_.getValue<type>(key); } \
+    UISync::uiRead readUI_##name = UI_READ_FUNCTION(widget, readFunc, key); \
+    UISync::uiSave saveUI_##name = UI_SAVE_FUNCTION(widget, saveFunc, type, key); \
+    SettingList builder_##name{UISync{key, readUI_##name, saveUI_##name}};
+
+#define REGISTER_SETTING_NO_UI(name, key) \
+    static const Setting name( \
+        key, \
+        []([[maybe_unused]] const Ui::MainWindow &ui, [[maybe_unused]] JSON &json) { return; }, \
+        []([[maybe_unused]] Ui::MainWindow &ui, [[maybe_unused]] const JSON &json) { return; })
+
+// Used to register settings into a list
+struct SettingList
+{
+    //Not a real constructor. It is only used to provide a way to add a UISync to the list
+    SettingList(UISync sync) { list_.emplace_back(sync); }
+
+    static auto get() { return list_; }
+
+private:
+    static inline std::vector<UISync> list_{50};
 };
 
 #define REGISTER_SETTING(name, key, readFunc, saveFunc) \

@@ -16,17 +16,25 @@ class JSON;
 class UISync final
 {
 public:
+    QString key_; //Necessary to provide equality operator
+
     //Actual class content
     using uiRead = std::function<void(const MainWindow &window, JSON &json)>;
     using uiSave = std::function<void(MainWindow &window, const JSON &json)>;
 
-    UISync(uiRead r, uiSave s)
-        : uiRead_(r)
-        , uiSave_(s)
+    UISync(QString key, uiRead r, uiSave s)
+        : key_(std::move(key))
+        , read(std::move(r))
+        , save(std::move(s))
     {}
 
-    const uiRead uiRead_;
-    const uiSave uiSave_;
+    UISync() = default;
+
+    const uiRead read;
+    const uiSave save;
+
+    bool operator==(const UISync &rh) const { return rh.key_ == this->key_; }
+    bool operator!=(const UISync &rh) const { return !(*this == rh); }
 
     //All the functions to read and save the UI are declared below
     static bool readCheckbox(const QCheckBox *widget);
