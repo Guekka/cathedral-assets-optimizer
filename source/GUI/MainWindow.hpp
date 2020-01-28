@@ -14,7 +14,8 @@ class MainWindow;
 }
 namespace CAO {
 class Manager;
-class Settings;
+class GeneralSettings;
+class Profile;
 class Profiles;
 
 class MainWindow final : public QMainWindow
@@ -45,7 +46,7 @@ private:
 
     void resetUi() const;
 
-    void setGameMode(const QString &mode);
+    void setProfile(const Profile &profile);
 
     void showTutorialWindow(const QString &title, const QString &text);
 

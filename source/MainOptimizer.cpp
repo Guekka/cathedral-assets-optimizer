@@ -8,18 +8,17 @@
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
-MainOptimizer::MainOptimizer(const Settings &optOptions)
-    : _optOptions(optOptions)
+MainOptimizer::MainOptimizer(const Profile &profile)
+    : profile_(profile)
 {}
 
 void MainOptimizer::process(const QString &path)
 {
-    if (path.endsWith(".dds", Qt::CaseInsensitive)
-        || (path.endsWith(".tga") && _optOptions.bTexturesTGAConvertEnabled()))
+    if (path.endsWith(".dds", Qt::CaseInsensitive) || (path.endsWith(".tga")))
         processStandardFile(_textureFile, path, Command::CommandType::Texture);
     else if (path.endsWith(".nif", Qt::CaseInsensitive))
         processStandardFile(_meshFile, path, Command::CommandType::Mesh);
-    else if (path.endsWith(_optOptions.sBSASuffix(), Qt::CaseInsensitive))
+    else if (path.endsWith(profile_.getGeneralSettings().sBSASuffix(), Qt::CaseInsensitive))
         processBsa(path);
     else if (path.endsWith(".hkx", Qt::CaseInsensitive))
         processStandardFile(_animFile, path, Command::CommandType::Animation);
@@ -27,7 +26,7 @@ void MainOptimizer::process(const QString &path)
 
 void MainOptimizer::processBsa(const QString &file)
 {
-    if (_optOptions.bDryRun())
+    if (profile_.getGeneralSettings().bDryRun())
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
     PLOG_INFO << "Extracting BSA: " + file;
@@ -50,8 +49,8 @@ void MainOptimizer::packBsa(const QString &folder)
     if (!runCommand(command, bsa))
         return;
 
-    if (_optOptions.bBsaCreateDummies())
-        PluginsOperations::makeDummyPlugins(folder, _optOptions);
+    if (profile_.getGeneralSettings().bBsaCreateDummies())
+        PluginsOperations::makeDummyPlugins(folder, profile_.getGeneralSettings());
 }
 
 bool MainOptimizer::processStandardFile(File &file, const QString &path, const Command::CommandType &type)

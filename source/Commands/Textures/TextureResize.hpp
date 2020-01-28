@@ -23,7 +23,7 @@ public:
     bool isApplicable(File& file) override;
 
 protected:
-    DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info, const Settings &settings);
+    DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info, const PatternSettings &settings);
 };
 REGISTER_COMMAND(TextureResize)
 } // namespace CAO

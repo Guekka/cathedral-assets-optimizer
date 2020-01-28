@@ -17,7 +17,7 @@ enum BSAType
 
 struct BSA
 {
-    static BSA getBSA(const BSAType &type, const Settings &settings);
+    static BSA getBSA(const BSAType &type, const GeneralSettings &settings);
 
     QString path;
     qint64 filesSize = 0;
@@ -35,7 +35,7 @@ struct BSA
      * \param folder The folder in which the BSA will be
      * \param file.settings() CAO Settings
      */
-    void name(const QString &folder, const Settings &settings);
+    void name(const QString &folder, const GeneralSettings &settings);
     /*!
      * \brief Merges BSAs when possible, according to their max size
      * \param list The list of BSAs to merge

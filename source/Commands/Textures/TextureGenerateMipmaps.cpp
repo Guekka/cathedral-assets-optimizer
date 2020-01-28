@@ -54,7 +54,7 @@ CommandResult TextureGenerateMipmaps::process(File& file)
 
 bool TextureGenerateMipmaps::isApplicable(File& file)
 {
-    if (!file.settings().bTexturesMipmaps())
+    if (!file.patternSettings().bTexturesMipmaps())
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -68,7 +68,7 @@ bool TextureGenerateMipmaps::isApplicable(File& file)
     const auto &info = texFile->GetMetadata();
     const bool &interfaceForbidden = false
                                      || (file.getName().contains("interface", Qt::CaseInsensitive)
-                                         && !file.settings().bTexturesInterfaceConvert());
+                                         && !file.generalSettings().bTexturesInterfaceConvert());
 
     const bool &compatible = info.width >= 4 && info.height >= 4;
     const bool &optimalMipMaps = info.mipLevels == calculateOptimalMipMapsNumber(info);

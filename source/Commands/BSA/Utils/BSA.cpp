@@ -7,7 +7,7 @@
 #include "Commands/Plugins/PluginsOperations.hpp"
 
 namespace CAO {
-BSA BSA::getBSA(const BSAType &type, const Settings &settings)
+BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
 {
     BSA bsa;
 
@@ -32,7 +32,7 @@ BSA BSA::getBSA(const BSAType &type, const Settings &settings)
     return bsa;
 }
 
-void BSA::name(const QString &folder, const Settings &settings)
+void BSA::name(const QString &folder, const GeneralSettings &settings)
 {
     const auto &bsaSuffix = settings.sBSASuffix();
     const auto &bsaTexSuffix = settings.sBSATexturesSuffix();

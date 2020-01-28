@@ -31,7 +31,7 @@ protected:
                                DirectX::ScratchImage &timage,
                                const DXGI_FORMAT &format);
 
-    bool needsConvert(const TextureResource &res, const Settings &settings);
+    bool needsConvert(const TextureResource &res, const File &file);
 };
 REGISTER_COMMAND(TextureConvert)
 } // namespace CAO

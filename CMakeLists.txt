@@ -124,6 +124,8 @@ set(SOURCES
     source/Settings/JSON.hpp
     source/Settings/Settings.cpp
     source/Settings/Settings.hpp
+    source/Settings/PatternMap.cpp
+    source/Settings/PatternMap.hpp
     source/Settings/Profiles.cpp
     source/Settings/Profiles.hpp
     source/Settings/UISync.cpp

@@ -58,24 +58,24 @@ namespace PluginsOperations {
 * \param bsaType The type of BSA to load.
 * \return a QString containing the name of the plugin without the extension. If no plugin is found, it will return the name of the directory.
 */
-QString findPlugin(const QDir &folderPath, const Settings &settings);
+QString findPlugin(const QDir &folderPath, const GeneralSettings &settings);
 /*!
 * \brief Create enough plugins to load all BSAs
 * \param folderPath The folder to create plugins into
 */
-void makeDummyPlugins(const QString &folderPath, const Settings &settings);
+void makeDummyPlugins(const QString &folderPath, const GeneralSettings &settings);
 /*!
 * \brief Check if a bsa already has a plugin to load it
 * \param bsaPath The path of the bsa to check
 */
-bool checkIfBsaHasPlugin(const QString &bsaPath, const Settings &settings);
+bool checkIfBsaHasPlugin(const QString &bsaPath, const GeneralSettings &settings);
 
 /*!
  * \brief Find all the BSAs names in a directory
  * \param it An iterator to the dir to scan
  * \return A list containing the names of the BSAs found
  */
-QStringList listBSAsNames(QDirIterator it, const Settings &settings);
+QStringList listBSAsNames(QDirIterator it, const GeneralSettings &settings);
 /*!
 * \brief List all the headparts in a plugin file
 * \param filepath The path of the plugin to scan

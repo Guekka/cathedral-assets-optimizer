@@ -9,8 +9,6 @@
 #endif
 #include "Manager.hpp"
 
-using namespace CAO;
-
 int main(int argc, char *argv[])
 {
 #ifdef GUI
@@ -31,7 +29,7 @@ int main(int argc, char *argv[])
     QCoreApplication::installTranslator(&AssetsOptTranslator);
 
 #ifdef GUI
-    MainWindow *window = new MainWindow;
+    auto window = std::make_unique<CAO::MainWindow>();
 #else
     Manager *manager = new Manager(QCoreApplication::arguments());
 #endif

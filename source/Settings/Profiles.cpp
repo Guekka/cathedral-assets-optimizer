@@ -2,179 +2,169 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "Settings/Profiles.hpp"
 #include "Manager.hpp"
-#include <filesystem>
 
 namespace CAO {
+
+Profile::Profile(QDir profileDir)
+    : profileDir_(std::move(profileDir))
+{
+    //TODO might want to separate patterns and general settings into different files
+
+    //Log path
+    const QString &dateTime = QDateTime::currentDateTime().toString("yy.MM.dd.hh.mm");
+    const QString &absolutePath = profileDir_.absoluteFilePath("logs/" + dateTime + ".html");
+    logPath_ = QDir::toNativeSeparators(absolutePath);
+
+    JSON generalJson;
+    const QString &filepath = profileDir_.absoluteFilePath("Settings.json");
+    generalJson.readFromJSON(filepath);
+
+    nlohmann::json j = generalJson.getInternalJSON();
+    generalSettings_ = {j};
+
+    patternSettings_.listPatterns(j["Patterns"]);
+}
+
+QFile Profile::getFile(const QString &filename) const
+{
+    if (!profileDir_.exists(filename))
+        return QFile();
+    return QFile(profileDir_.absoluteFilePath(filename));
+}
+
+bool Profile::isBaseProfile() const
+{
+    return profileDir_.exists("isBase");
+}
+
+QDir Profile::profileDirectory() const
+{
+    return profileDir_;
+}
+
+QString Profile::logPath() const
+{
+    return logPath_;
+}
+
+QString Profile::settingsPath() const
+{
+    return profileDir_.absoluteFilePath("Settings.json");
+}
+
+PatternSettings &Profile::getSettings(const QString &filePath)
+{
+    return patternSettings_.getSettings(filePath);
+}
+
+const PatternSettings &Profile::getSettings(const QString &filePath) const
+{
+    return patternSettings_.getSettings(filePath);
+}
+
+GeneralSettings &Profile::getGeneralSettings()
+{
+    return generalSettings_;
+}
+
+const GeneralSettings &Profile::getGeneralSettings() const
+{
+    return generalSettings_;
+}
+
+void Profile::saveToJSON()
+{
+    nlohmann::json json = getGeneralSettings().getJSON().getInternalJSON();
+    json["Patterns"] = patternSettings_.getUnifiedJSON();
+    JSON(json).saveToJSON(settingsPath());
+}
+
+#ifdef GUI
+void Profile::readFromUi(const MainWindow &window)
+{
+    generalSettings_.readFromUi(window);
+    patternSettings_.readFromUi(window);
+}
+
+void Profile::saveToUi(MainWindow &window)
+{
+    generalSettings_.saveToUi(window);
+    patternSettings_.saveToUi(window);
+}
+#endif
+
+/* Profiles class */
 const QString defaultProfile = "SSE";
-QString Profiles::_currentProfile;
 
 Profiles::Profiles()
+    : rootProfileDir_("profiles")
+    , _commonSettings(rootProfileDir_.filePath("common.ini"), QSettings::IniFormat)
 {
-    _commonSettings = new QSettings("profiles/common.ini", QSettings::IniFormat, this);
-    findProfiles(QDir("profiles"));
-    const QString &profile = _commonSettings->value("profile").toString();
-    loadProfile(profile);
-}
-
-size_t Profiles::findProfiles(const QDir &dir)
-{
-    _profileDir = dir;
-    size_t counter = 0;
-    _profiles.clear();
-    for (const auto &subDir : _profileDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-    {
-        const QString &ini = dir.absoluteFilePath(subDir + "/Settings.json");
-        if (QFile::exists(ini))
-        {
-            _profiles << subDir;
-            ++counter;
-        }
-    }
-    PLOG_VERBOSE << "Profiles found: " << _profiles.join('\n');
-    return counter;
-}
-
-void Profiles::loadProfile(const QString &newProfile)
-{
-    _currentProfile = exists(newProfile) ? newProfile : defaultProfile;
-    _commonSettings->setValue("profile", _currentProfile);
-
-    _logPath = QDir::toNativeSeparators(
-        QString("%1/logs/%2/%3.html")
-            .arg(QDir::currentPath(), _currentProfile, QDateTime::currentDateTime().toString("yy.MM.dd.hh.mm")));
-    const QString &folder = _profileDir.absoluteFilePath(_currentProfile);
-
-    _isBaseProfile = QFile::exists(folder + "/isBase");
-    _settingsPath = folder + "/Settings.json";
-    listPatterns();
-}
-
-bool Profiles::exists(const QString &profile)
-{
-    findProfiles(QDir("profiles"));
-    return _profiles.contains(profile) && !profile.isEmpty();
-}
-
-QStringList Profiles::list()
-{
-    return _profiles;
+    update(true);
 }
 
 void Profiles::create(const QString &name, const QString &baseProfile)
 {
-    const QString &baseFolder = _profileDir.absoluteFilePath(exists(baseProfile) ? baseProfile : defaultProfile);
-    const QString &newFolder = _profileDir.absoluteFilePath(name);
+    const QString &baseFolder = rootProfileDir_.absoluteFilePath(
+        exists(baseProfile) ? baseProfile : defaultProfile);
+    const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     FilesystemOperations::copyDir(baseFolder, newFolder, false);
     QFile::remove(newFolder + "/isBase");
-    findProfiles(_profileDir);
+    update();
 }
 
-QFile Profiles::getFile(const QString &filename)
+Profile &Profiles::setCurrent(const QString &profile)
 {
-    const QDir &currentProfileDir(_profileDir.absoluteFilePath(currentProfile()));
-    const QDir &defaultProfileDir(_profileDir.absoluteFilePath(defaultProfile));
+    if (!profiles_.count(profile))
+        throw std::runtime_error("Trying to load a profile that does not exist.");
 
-    if (currentProfileDir.exists(filename))
-        return QFile(currentProfileDir.filePath(filename));
-    else if (defaultProfileDir.exists(filename))
-        return QFile(defaultProfileDir.filePath(filename));
-    else
-        return QFile();
+    _commonSettings.setValue("profile", profile);
+    return profiles_.at(profile);
+}
+Profile &Profiles::getCurrent()
+{
+    //Current profile
+    const QString &profile = currentProfileName(); //Safety check
+    return setCurrent(profile.isEmpty() ? defaultProfile : profile);
 }
 
-void Profiles::listPatterns()
+QString Profiles::currentProfileName()
 {
-    JSON customJson;
-    customJson.readFromJSON(_settingsPath);
-    auto json = customJson.getInternalJSON().at("Patterns");
-    settingsPatterns_.clear();
+    return _commonSettings.value("profile").toString();
+}
 
-    //Retrieving all the patterns and converting them to regexes
-    for (auto it = json.begin(); it != json.end(); ++it)
-    {
-        const int priority = (*it).value<int>("Priority", 0);
-        QString regexString;
-        if (it->contains("Pattern"))
-        {
-            const QString &patternString = QString::fromStdString(it->at("Pattern").get<std::string>());
-            regexString = QRegularExpression::wildcardToRegularExpression(patternString);
-        }
-        else if (it->contains("Regex"))
-            regexString = QString::fromStdString(it->at("Regex").get<std::string>());
-        else
-            continue; //Current JSON is not valid
+Profile &Profiles::get(const QString &profile)
+{
+    return profiles_.at(profile);
+}
 
-        //We only know that the first profile will contain all the settings. The others might be incomplete
-        if (!settingsPatterns_.empty())
-        {
-            const Settings &defaultSets = settingsPatterns_.begin()->second.second;
-            const auto &defaultJson = defaultSets.getJSON().getInternalJSON();
-            auto patchedJson = defaultJson;
-            patchedJson.merge_patch(*it);
-            *it = patchedJson;
-        }
+bool Profiles::exists(const QString &profile)
+{
+    return list().contains(profile) && !profile.isEmpty();
+}
 
-        QRegularExpression regex(regexString);
-        regex.optimize();
-        const std::pair<int, std::pair<QRegularExpression, Settings>> pair(priority, {regex, Settings(*it)});
-        settingsPatterns_.insert(pair);
+QStringList Profiles::list()
+{
+    QStringList list;
+    for (const auto &[key, value] : profiles_)
+        list.push_back(key);
+    return list;
+}
+
+void Profiles::update(bool fullRefresh)
+{
+    if (fullRefresh)
+        profiles_.clear();
+
+    const auto &dirList = rootProfileDir_.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const auto &subDir : dirList) {
+        const QString &settings = rootProfileDir_.absoluteFilePath(subDir + "/Settings.json");
+        if (QFile::exists(settings))
+            if (!profiles_.count(subDir))
+                profiles_.emplace(subDir, Profile(subDir));
     }
 }
-
-const Settings &Profiles::getSettings(const QString &filePath) const
-{
-    const Settings *result = &settingsPatterns_.begin()->second.second;
-    for (auto it = settingsPatterns_.cend(); it != settingsPatterns_.cbegin(); --it)
-    {
-        const auto &regex = it->second.first;
-        const auto &match = regex.match(filePath);
-        if (match.hasMatch())
-        {
-            result = &it->second.second;
-            break;
-        }
-    }
-
-    return *result;
-}
-
-Settings &Profiles::getDefaultSettings()
-{
-    if (settingsPatterns_.empty())
-        listPatterns();
-
-    return settingsPatterns_.begin()->second.second;
-}
-
-void Profiles::saveToJSON(const QString &filepath) const
-{
-    nlohmann::json json;
-    std::vector<nlohmann::json> vector;
-    vector.reserve(settingsPatterns_.size());
-
-    std::transform(settingsPatterns_.cbegin(),
-                   settingsPatterns_.cend(),
-                   std::back_inserter(vector),
-                   [](const auto &pair) { return pair.second.second.getJSON().getInternalJSON(); });
-
-    json["Patterns"] = vector;
-    std::fstream(std::filesystem::u8path(filepath.toStdString()), std::fstream::out) << std::setw(4) << json;
-}
-
-#ifdef GUI
-void Profiles::readFromUi(const MainWindow &window)
-{
-    for (const auto &set : Settings::SettingList::get())
-        set.read(window, getDefaultSettings().getJSON());
-}
-
-void Profiles::saveToUi(MainWindow &window)
-{
-    for (const auto &set : Settings::SettingList::get())
-        set.save(window, getDefaultSettings().getJSON());
-}
-#endif
-
 } // namespace CAO

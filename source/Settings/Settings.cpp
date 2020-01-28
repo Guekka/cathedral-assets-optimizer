@@ -8,24 +8,29 @@
 
 namespace CAO {
 
-Settings::Settings(nlohmann::json j)
-    : json_(j)
+std::optional<QString> PatternSettings::isValid()
 {
-}
-
-QString Settings::isValid() const
-{
-    if (!QDir(sUserPath()).exists() || sUserPath().size() < 5) {
-        return QString("This path does not exist or is shorter than 5 characters. Path: '%1'")
-            .arg(sUserPath());
-    }
-
     if (iMeshesOptimizationLevel() > 3)
         return ("This meshes optimization level does not exist. Level: "
                 + QString::number(iMeshesOptimizationLevel()));
 
     if (iTexturesTargetWidth() % 2 != 0 || iTexturesTargetHeight() % 2 != 0)
         return ("Textures target size has to be a power of two");
+
+    return std::nullopt;
+}
+
+GeneralSettings::GeneralSettings(nlohmann::json j)
+    : Settings(j)
+{
+}
+
+QString GeneralSettings::isValid() const
+{
+    if (!QDir(sUserPath()).exists() || sUserPath().size() < 5) {
+        return QString("This path does not exist or is shorter than 5 characters. Path: '%1'")
+            .arg(sUserPath());
+    }
 
     return QString();
 }

@@ -9,7 +9,7 @@ JSON::JSON()
     : _json(nlohmann::json::value_t::object)
 {}
 
-JSON::JSON(nlohmann::json &j)
+JSON::JSON(const nlohmann::json &j)
     : _json(j)
 {}
 

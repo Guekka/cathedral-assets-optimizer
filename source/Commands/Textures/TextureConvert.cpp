@@ -11,7 +11,7 @@ CommandResult TextureConvert::process(File& file)
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
-    const auto &outputFormat = file.settings().eTexturesFormat();
+    const auto &outputFormat = file.patternSettings().eTexturesFormat();
     auto timage = new TextureResource;
 
     if (DirectX::IsCompressed(outputFormat))
@@ -41,16 +41,17 @@ bool TextureConvert::isApplicable(File& file)
         return false; //Cannot process compressed file
 
     //If the target format is the same as the current format, no conversion is needed
-    if (file.settings().eTexturesFormat() == currentFormat)
+    if (file.patternSettings().eTexturesFormat() == currentFormat)
         return false;
 
     const bool sameFormatAsOrig = currentFormat == origFormat;
 
     //Compatible but compressing in order to improve performance
-    const bool userWantsConvert = file.settings().bTexturesCompress()
-                                  && sameFormatAsOrig; //If true, the file was not compressed originally
+    const bool userWantsConvert
+        = file.patternSettings().bTexturesCompress()
+          && sameFormatAsOrig; //If true, the file was not compressed originally
 
-    const bool necessary = needsConvert(*texResource, file.settings());
+    const bool necessary = needsConvert(*texResource, file);
 
     //If the file was optimized, it was previously in a different format, and thus needs a conversion
     const bool optimizedFile = file.optimizedCurrentFile();
@@ -58,16 +59,16 @@ bool TextureConvert::isApplicable(File& file)
     return necessary || userWantsConvert || optimizedFile;
 }
 
-bool TextureConvert::needsConvert(const TextureResource &res, const Settings &settings)
+bool TextureConvert::needsConvert(const TextureResource &res, const File &file)
 {
     //Checking incompatibility with file format
     const DXGI_FORMAT &origFormat = res.origFormat;
-    const auto &unwantedFormats = settings.slTexturesUnwantedFormats();
+    const auto &unwantedFormats = file.generalSettings().slTexturesUnwantedFormats();
     const bool isIncompatible = QVector<DXGI_FORMAT>::fromStdVector(unwantedFormats).contains(origFormat);
 
     //Truely incompatible
-    const bool needsConvert = (settings.bTexturesNecessary() && isIncompatible)
-                              || (res.isTGA && settings.bTexturesTGAConvertEnabled());
+    const bool needsConvert = (file.patternSettings().bTexturesNecessary() && isIncompatible)
+                              || (res.isTGA && file.generalSettings().bTexturesTGAConvertEnabled());
 
     return needsConvert;
 }

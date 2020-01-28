@@ -34,7 +34,8 @@ public:
     virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
     virtual void reset() = 0;
 
-    const Settings &settings() { return *settings_; }
+    const GeneralSettings &generalSettings() const;
+    const PatternSettings &patternSettings() const;
 
     virtual ~File() = default;
 
@@ -61,10 +62,11 @@ protected:
         _filename.clear();
         _file.reset(new T);
         _optimizedCurrentFile = false;
+        matchSettings();
     }
 
     void matchSettings();
-    const Settings *settings_;
+    GeneralSettings *generalSettings_;
+    PatternSettings *patternSettings_;
 };
-
 } // namespace CAO

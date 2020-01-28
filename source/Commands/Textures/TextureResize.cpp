@@ -18,7 +18,7 @@ CommandResult TextureResize::process(File& file)
     if (!img)
         return _resultFactory.getFailedResult(1, "Failed to get images from file");
 
-    const auto &tinfo = calculateTargetDimensions(info, file.settings());
+    const auto &tinfo = calculateTargetDimensions(info, file.patternSettings());
 
     const DWORD &filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
     const HRESULT &hr = Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
@@ -31,7 +31,8 @@ CommandResult TextureResize::process(File& file)
 
 bool TextureResize::isApplicable(File& file)
 {
-    if (!file.settings().bTexturesResizeRatio() || !file.settings().bTexturesResizeSize())
+    if (!file.patternSettings().bTexturesResizeRatio()
+        || !file.patternSettings().bTexturesResizeSize())
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -43,18 +44,19 @@ bool TextureResize::isApplicable(File& file)
         return false; //Cannot process compressed file
 
     const auto &info = texFile->GetMetadata();
-    const auto &tinfo = calculateTargetDimensions(info, file.settings());
+    const auto &tinfo = calculateTargetDimensions(info, file.patternSettings());
 
     return info.width != tinfo.width || info.height != tinfo.height;
 }
 
-DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::TexMetadata &info, const Settings &settings)
+DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::TexMetadata &info,
+                                                              const PatternSettings &settings)
 {
     //Calculating target width and height
     DirectX::TexMetadata tinfo = info;
     if (settings.bTexturesResizeRatio())
     {
-        tinfo.width = info.width / settings.iTexturesTargetWidthRatio();
+        tinfo.width = info.width / settings.iTexturesTargetWidthRatio(); //TODO implicit conversion
         tinfo.height = info.height / settings.iTexturesTargetHeightRatio();
     }
     else if (settings.bTexturesResizeSize())

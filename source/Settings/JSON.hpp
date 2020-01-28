@@ -12,7 +12,7 @@ class JSON final
 {
 public:
     JSON();
-    JSON(nlohmann::json &j);
+    JSON(const nlohmann::json &j);
 
     template<class T>
     T getValue(const QString &key) const

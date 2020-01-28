@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "Manager.hpp"
 namespace CAO {
-Manager::Manager(Settings &opt)
-    : _settings(opt)
+Manager::Manager(const Profile &profile)
+    : _profile(profile)
 
 {
     init();
@@ -14,10 +14,10 @@ Manager::Manager(Settings &opt)
 void Manager::init()
 {
     //Preparing logging
-    initCustomLogger(Profiles().logPath(), _settings.bDebugLog());
+    initCustomLogger(_profile.logPath(), _profile.getGeneralSettings().bDebugLog());
 
     PLOG_VERBOSE << "Checking settings...";
-    const QString error = _settings.isValid();
+    const QString error = _profile.getGeneralSettings().isValid();
     if (!error.isEmpty())
     {
         PLOG_FATAL << error;
@@ -35,14 +35,13 @@ void Manager::listDirectories()
 {
     _modsToProcess.clear();
 
-    const auto &userPath = _settings.sUserPath();
-
-    if (_settings.eMode() == SingleMod)
-        _modsToProcess << userPath;
+    const auto &settings = _profile.getGeneralSettings();
+    if (settings.eMode() == SingleMod)
+        _modsToProcess << settings.sUserPath();
 
     else
     {
-        const QDir dir(userPath);
+        const QDir dir(settings.sUserPath());
         for (auto subDir : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
             if (!subDir.contains("separator")
                 && !_ignoredMods.contains(subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
@@ -75,25 +74,28 @@ void Manager::listFiles()
             if (it.fileInfo().size() == 0)
                 continue;
 
-            const bool processMeshes = _settings.bMeshesResave()
-                                       || _settings.iMeshesOptimizationLevel();
+            const auto &settings = _profile.getSettings(filename);
+
+            const bool processMeshes = settings.bMeshesResave()
+                                       || settings.iMeshesOptimizationLevel();
             const bool mesh = filename.endsWith(".nif", Qt::CaseInsensitive) && processMeshes;
 
-            const bool processTextures = _settings.bTexturesMipmaps()
-                                         || _settings.bTexturesCompress()
-                                         || _settings.bTexturesNecessary()
-                                         || _settings.bTexturesResizeSize()
-                                         || _settings.bTexturesResizeRatio();
+            const bool processTextures = settings.bTexturesMipmaps() || settings.bTexturesCompress()
+                                         || settings.bTexturesNecessary()
+                                         || settings.bTexturesResizeSize()
+                                         || settings.bTexturesResizeRatio();
 
             const bool texture = (filename.endsWith(".dds", Qt::CaseInsensitive)
                                   || filename.endsWith(".tga", Qt::CaseInsensitive))
                                  && processTextures;
 
-            const bool animation = _settings.bAnimationsOptimization()
+            const bool animation = settings.bAnimationsOptimization()
                                    && filename.endsWith(".hkx", Qt::CaseInsensitive);
 
-            const bool bsa = _settings.bBsaExtract()
-                             && filename.endsWith(_settings.sBSAExtension(), Qt::CaseInsensitive);
+            const auto &generalSettings = _profile.getGeneralSettings();
+            const bool bsa = generalSettings.bBsaExtract()
+                             && filename.endsWith(generalSettings.sBSAExtension(),
+                                                  Qt::CaseInsensitive);
 
             QStringList &list = bsa ? BSAs : _files;
             if (!mesh && !texture && !animation && !bsa)
@@ -107,7 +109,7 @@ void Manager::listFiles()
 
 void Manager::readIgnoredMods()
 {
-    QFile &&ignoredModsFile = Profiles().getFile("ignoredMods.txt");
+    QFile &&ignoredModsFile = _profile.getFile("ignoredMods.txt");
     _ignoredMods = FilesystemOperations::readFile(ignoredModsFile);
 
     if (_ignoredMods.isEmpty())
@@ -119,11 +121,11 @@ void Manager::readIgnoredMods()
 
 void Manager::runOptimization()
 {
-    PLOG_DEBUG << "Game: " << Profiles::currentProfile();
-    PLOG_INFO << "Processing: " + _settings.sUserPath();
+    PLOG_DEBUG << "Profile directory: " << Profiles().getCurrent().profileDirectory().path();
+    PLOG_INFO << "Processing: " + _profile.getGeneralSettings().sUserPath();
     PLOG_INFO << "Beginning...";
 
-    MainOptimizer optimizer(_settings);
+    MainOptimizer optimizer(_profile);
 
     //Extracting BSAs
     for (const auto &file : BSAs)
@@ -158,7 +160,7 @@ void Manager::runOptimization()
     }
 
     //Packing BSAs
-    if (_settings.bBsaCreate()) {
+    if (_profile.getGeneralSettings().bBsaCreate()) {
         _numberCompletedFiles = 0;
         printProgress(_modsToProcess.size(), "Packing BSAs");
         for (const auto &folder : _modsToProcess)
@@ -169,7 +171,7 @@ void Manager::runOptimization()
         }
     }
 
-    FilesystemOperations::deleteEmptyDirectories(_settings.sUserPath());
+    FilesystemOperations::deleteEmptyDirectories(_profile.getGeneralSettings().sUserPath());
     PLOG_INFO << "Process completed<br><br><br>";
     emit end();
 }

@@ -19,9 +19,8 @@ int BSAFolder::loadFromDisk(const QString &filePath)
     return 0;
 }
 
-int BSAFolder::saveToDisk(const QString &filePath) const
+int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath) const
 {
-    [[maybe_unused]] auto &a = filePath;
     return 1;
 }
 

@@ -25,7 +25,7 @@ public:
 
 protected:
     bool isHeadpart(const QString &filepath);
-    void listHeadparts(const Settings &settings);
+    void listHeadparts(const GeneralSettings &settings);
 
     static QStringList headpartList;
 

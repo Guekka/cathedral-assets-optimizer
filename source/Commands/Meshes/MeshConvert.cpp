@@ -14,9 +14,9 @@ CommandResult MeshConvert::process(File &file)
         return _resultFactory.getCannotCastFileResult();
 
     NiVersion niVersion;
-    niVersion.SetUser(file.settings().iMeshesUser());
-    niVersion.SetFile(file.settings().eMeshesFileVersion());
-    niVersion.SetStream(file.settings().iMeshesStream());
+    niVersion.SetUser(file.generalSettings().iMeshesUser());
+    niVersion.SetFile(file.generalSettings().eMeshesFileVersion());
+    niVersion.SetStream(file.generalSettings().iMeshesStream());
 
     OptOptions optOptions;
     optOptions.targetVersion = niVersion;
@@ -29,7 +29,7 @@ CommandResult MeshConvert::process(File &file)
 
 bool MeshConvert::isApplicable(File &file)
 {
-    const int &optLevel = file.settings().iMeshesOptimizationLevel();
+    const int &optLevel = file.patternSettings().iMeshesOptimizationLevel();
     if (optLevel == 0)
         return false;
 
@@ -38,11 +38,11 @@ bool MeshConvert::isApplicable(File &file)
         return false;
 
     //Listing headparts
-    std::call_once(_onceHeadpartsFlag, [this, &file] { this->listHeadparts(file.settings()); });
+    std::call_once(_onceHeadpartsFlag, [this, &file] { this->listHeadparts(file.generalSettings()); });
 
     MeshResource nif = *meshFile;
 
-    const bool headpart = isHeadpart(file.getName()) && file.settings().bMeshesHeadparts();
+    const bool headpart = isHeadpart(file.getName()) && file.patternSettings().bMeshesHeadparts();
 
     for (const auto &shape : nif.GetShapes())
     {
@@ -65,7 +65,7 @@ bool MeshConvert::isApplicable(File &file)
         }
     }
 
-    return headpart || file.settings().bMeshesResave() || optLevel >= 2;
+    return headpart || file.patternSettings().bMeshesResave() || optLevel >= 2;
 }
 
 bool MeshConvert::isHeadpart(const QString &filepath)
@@ -75,9 +75,9 @@ bool MeshConvert::isHeadpart(const QString &filepath)
     return headpartList.contains(relativeFilePath, Qt::CaseInsensitive);
 }
 
-void MeshConvert::listHeadparts(const Settings &settings)
+void MeshConvert::listHeadparts(const GeneralSettings &settings)
 {
-    QFile &&customHeadpartsFile = Profiles().getFile("customHeadparts.txt");
+    QFile &&customHeadpartsFile = Profiles().getCurrent().getFile("customHeadparts.txt");
     headpartList = FilesystemOperations::readFile(customHeadpartsFile,
                                                   [](QString &string) { return QDir::cleanPath(string); });
 

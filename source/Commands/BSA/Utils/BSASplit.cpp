@@ -7,7 +7,7 @@
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
-std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const Settings &settings)
+std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &settings)
 {
     std::vector<BSA> bsas{BSA::getBSA(StandardBsa, settings),
                           BSA::getBSA(UncompressableBsa, settings),
@@ -79,7 +79,7 @@ const QStringList &BSASplit::filesToNotPack()
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, []() {
-        QFile &&filesToNotPackFile = Profiles().getFile("FilesToNotPack.txt");
+        QFile &&filesToNotPackFile = Profiles().getCurrent().getFile("FilesToNotPack.txt");
         filesToNotPack = FilesystemOperations::readFile(filesToNotPackFile,
                                                         [](QString &line) { line = QDir::fromNativeSeparators(line); });
 

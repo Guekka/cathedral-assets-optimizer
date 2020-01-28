@@ -16,7 +16,7 @@ public:
     /*!
    * \brief Constructor that will perform a number of functions
    */
-    explicit Manager(Settings &opt);
+    explicit Manager(const Profile &profile);
     /*!
    * \brief Constructor that will perform a number of functions and read settings from CLI
    */
@@ -60,7 +60,7 @@ private:
     /*!
    * \brief The optimization settings, that will be given to the MainOptimizer
    */
-    Settings &_settings;
+    Profile _profile;
     /*!
     * \brief The list of directories to process
     */

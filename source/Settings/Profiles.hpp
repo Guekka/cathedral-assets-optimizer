@@ -4,55 +4,84 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Settings/Settings.hpp"
+#include "Settings/PatternMap.hpp"
 
 #include "pch.hpp"
-#ifdef GUI
-#include "ui_mainWindow.h"
-#endif
+class MainWindow;
+
+//Required to use QString as key to map
+namespace std {
+template<>
+struct hash<QString>
+{
+    std::size_t operator()(const QString &s) const noexcept
+    {
+        return static_cast<size_t>(qHash(s));
+    }
+};
+} // namespace std
 
 namespace CAO {
-class Profiles final : public QObject
+
+class Profile final
 {
 public:
-    Profiles();
+    Profile(QDir profileDir);
 
-    bool exists(const QString &profile);
-    void loadProfile(const QString &newProfile);
-    QStringList list();
-    void create(const QString &name, const QString &baseProfile);
-    QFile getFile(const QString &filename);
-    bool isBaseProfile() { return _isBaseProfile; }
-    QString logPath() const { return _logPath; }
-    QString settingsPath() const { return _settingsPath; }
-    QSettings *commonSettings() const { return _commonSettings; }
-    static const QString &currentProfile() { return _currentProfile; }
-    void setCurrentProfile(const QString &newProfile) { loadProfile(newProfile); }
-    const Settings &getSettings(const QString &filePath) const;
-    Settings &getDefaultSettings();
+    QFile getFile(const QString &filename) const;
 
-    void saveToJSON(const QString &filepath) const;
+    /* Getters */
+    bool isBaseProfile() const;
+    QDir profileDirectory() const;
+    QString logPath() const;
+    QString settingsPath() const;
 
-#ifdef GUI
+    /* Settings */
+    PatternSettings &getSettings(const QString &filePath);
+    const PatternSettings &getSettings(const QString &filePath) const;
+    GeneralSettings &getGeneralSettings();
+    const GeneralSettings &getGeneralSettings() const;
+
+    void saveToJSON();
+
     void saveToUi(MainWindow &window);
     void readFromUi(const MainWindow &window);
-#endif
 
 private:
-    size_t findProfiles(const QDir &dir);
+    GeneralSettings generalSettings_;
+    PatternMap patternSettings_;
 
-    QString _logPath;
-    QString _settingsPath;
+    QDir profileDir_;
+    QString logPath_;
+};
 
-    QDir _profileDir;
-    static QString _currentProfile;
-    QStringList _profiles;
+class Profiles
+{
+public:
+    /* Constructor */
+    Profiles();
 
-    QSettings *_commonSettings;
+    /* Profiles operations */
+    void create(const QString &name, const QString &baseProfile);
+    //Also sets the current profile. Reads the current profile from INI
+    Profile &setCurrent(const QString &profile);
+    //!Current profile
+    Profile &getCurrent();
 
-    bool _isBaseProfile;
+    QString currentProfileName();
 
-    std::multimap<int, std::pair<QRegularExpression, Settings>> settingsPatterns_;
-    void listPatterns();
+    Profile &get(const QString &profile);
+
+    QStringList list();
+    bool exists(const QString &profile);
+
+    void update(bool fullRefresh = false);
+
+    QSettings &commonSettings() { return _commonSettings; }
+
+private:
+    std::unordered_map<QString, Profile> profiles_;
+    QDir rootProfileDir_;
+    QSettings _commonSettings;
 };
 } // namespace CAO

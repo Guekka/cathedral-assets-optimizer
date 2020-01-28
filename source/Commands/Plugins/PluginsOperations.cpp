@@ -7,7 +7,7 @@
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
-void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Settings &settings)
+void PluginsOperations::makeDummyPlugins(const QString &folderPath, const GeneralSettings &settings)
 {
     PLOG_VERBOSE << "Creating enough dummy plugins to load BSAs";
 
@@ -16,11 +16,11 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Settin
         if (checkIfBsaHasPlugin(bsaName, settings))
             continue;
 
-        Profiles().getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
+        Profiles().getCurrent().getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
     }
 }
 
-QString PluginsOperations::findPlugin(const QDir &folderPath, const Settings &settings)
+QString PluginsOperations::findPlugin(const QDir &folderPath, const GeneralSettings &settings)
 {
     const auto &bsaSuffix = settings.sBSASuffix();
     const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
@@ -58,7 +58,7 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const Settings &se
     return ""; //This will never be executed, but necessary or the compiler will warn
 }
 
-bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const Settings &settings)
+bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const GeneralSettings &settings)
 {
     QString bsaName = QFileInfo(bsaPath).fileName();
     const auto &bsaSuffix = settings.sBSASuffix();
@@ -74,7 +74,7 @@ bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const Settin
     return false;
 }
 
-QStringList PluginsOperations::listBSAsNames(QDirIterator it, const Settings &settings)
+QStringList PluginsOperations::listBSAsNames(QDirIterator it, const GeneralSettings &settings)
 {
     const auto &bsaSuffix = settings.sBSASuffix();
     const auto &bsaTexSuffix = settings.sBSATexturesSuffix();

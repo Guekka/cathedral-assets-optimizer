@@ -24,8 +24,22 @@ int File::saveToMemory(const void *pSource, const size_t &size, const QString &f
     return 1;
 }
 
+const GeneralSettings &File::generalSettings() const
+{
+    assert(generalSettings_);
+    return *generalSettings_;
+}
+
+const PatternSettings &CAO::File::patternSettings() const
+{
+    assert(patternSettings_);
+    return *patternSettings_;
+}
+
 void File::matchSettings()
 {
-    settings_ = &Profiles().getSettings(_filename);
+    generalSettings_ = &Profiles().getCurrent().getGeneralSettings();
+    patternSettings_ = &Profiles().getCurrent().getSettings(_filename);
 }
+
 } // namespace CAO

@@ -18,20 +18,20 @@ CommandResult AnimationsConvert::process(File& file)
     if (!havok)
         return _resultFactory.getCannotCastFileResult();
 
-    havok->pkFormat = file.settings().eAnimationsFormat();
+    havok->pkFormat = file.generalSettings().eAnimationsFormat();
     return _resultFactory.getSuccessfulResult();
 }
 
 bool AnimationsConvert::isApplicable(File& file)
 {
-    if (!file.settings().bAnimationsOptimization())
+    if (!file.patternSettings().bAnimationsOptimization())
         return false;
 
     auto havok = dynamic_cast<const AnimationResource *>(&file.getFile());
     if (!havok)
         return false;
 
-    if (havok->pkFormat == file.settings().eAnimationsFormat())
+    if (havok->pkFormat == file.generalSettings().eAnimationsFormat())
         return false;
 
     return true;

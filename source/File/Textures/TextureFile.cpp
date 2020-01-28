@@ -19,8 +19,6 @@ TextureFile::TextureFile()
 int TextureFile::loadFromDisk(const QString &filePath)
 {
     reset();
-    PLOG_VERBOSE << "Loading from disk " << filePath;
-
     wchar_t wFilePath[1024];
     QDir::toNativeSeparators(filePath).toWCharArray(wFilePath);
     wFilePath[filePath.length()] = '\0';
@@ -58,7 +56,6 @@ int TextureFile::loadFromDisk(const QString &filePath)
 int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const QString &fileName)
 {
     reset();
-    PLOG_VERBOSE << "Loading from memory " << fileName;
     _filename = fileName;
     matchSettings();
 

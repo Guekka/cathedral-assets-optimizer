@@ -13,11 +13,11 @@ CommandResult BSACreate::process(File &file)
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsas = BSASplit::splitBSA(*bsaFolder, file.settings());
+    auto bsas = BSASplit::splitBSA(*bsaFolder, file.generalSettings());
 
     for (auto &bsa : bsas)
     {
-        bsa.name(bsaFolder->path(), file.settings());
+        bsa.name(bsaFolder->path(), file.generalSettings());
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
@@ -54,7 +54,7 @@ CommandResult BSACreate::process(File &file)
 
 bool BSACreate::isApplicable(File &file)
 {
-    if (!file.settings().bBsaCreate())
+    if (!file.generalSettings().bBsaCreate())
         return false;
 
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
