@@ -18,8 +18,7 @@ void Manager::init()
 
     PLOG_VERBOSE << "Checking settings...";
     const QString error = _profile.getGeneralSettings().isValid();
-    if (!error.isEmpty())
-    {
+    if (!error.isEmpty()) {
         PLOG_FATAL << error;
         throw std::runtime_error("Options are not valid." + error.toStdString());
     }
@@ -39,12 +38,12 @@ void Manager::listDirectories()
     if (settings.eMode() == SingleMod)
         _modsToProcess << settings.sUserPath();
 
-    else
-    {
+    else {
         const QDir dir(settings.sUserPath());
         for (auto subDir : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
             if (!subDir.contains("separator")
-                && !_ignoredMods.contains(subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
+                && !_ignoredMods.contains(
+                    subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
                 _modsToProcess << dir.filePath(subDir);
     }
 }
@@ -52,7 +51,8 @@ void Manager::listDirectories()
 void Manager::printProgress(const int &total, const QString &text = "Processing files")
 {
 #ifndef GUI
-    QTextStream(stdout) << "PROGRESS:|" << text << " - %v/%m - %p%|" << _numberCompletedFiles << '|' << total << endl;
+    QTextStream(stdout) << "PROGRESS:|" << text << " - %v/%m - %p%|" << _numberCompletedFiles << '|'
+                        << total << endl;
 #else
     emit progressBarTextChanged(text + "- %v/%m - %p%", total, _numberCompletedFiles);
 #endif
@@ -64,11 +64,9 @@ void Manager::listFiles()
     _files.clear();
     BSAs.clear();
 
-    for (auto &subDir : _modsToProcess)
-    {
+    for (auto &subDir : _modsToProcess) {
         QDirIterator it(subDir, QDirIterator::Subdirectories);
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             const QString &filename = it.next();
 
             if (it.fileInfo().size() == 0)
@@ -92,13 +90,11 @@ void Manager::listFiles()
             const bool animation = settings.bAnimationsOptimization()
                                    && filename.endsWith(".hkx", Qt::CaseInsensitive);
 
-            const auto &generalSettings = _profile.getGeneralSettings();
-            const bool bsa = generalSettings.bBsaExtract()
-                             && filename.endsWith(generalSettings.sBSAExtension(),
-                                                  Qt::CaseInsensitive);
+            const bool isBsa = filename.endsWith(_profile.getGeneralSettings().sBSAExtension(),
+                                                 Qt::CaseInsensitive);
 
-            QStringList &list = bsa ? BSAs : _files;
-            if (!mesh && !texture && !animation && !bsa)
+            QStringList &list = isBsa ? BSAs : _files;
+            if (!mesh && !texture && !animation && !isBsa)
                 continue;
 
             list << filename;
@@ -112,9 +108,9 @@ void Manager::readIgnoredMods()
     QFile &&ignoredModsFile = _profile.getFile("ignoredMods.txt");
     _ignoredMods = FilesystemOperations::readFile(ignoredModsFile);
 
-    if (_ignoredMods.isEmpty())
-    {
-        PLOG_WARNING << "ignoredMods.txt not found. All mods will be processed, including tools such as Nemesis or "
+    if (_ignoredMods.isEmpty()) {
+        PLOG_WARNING << "ignoredMods.txt not found. All mods will be processed, including tools "
+                        "such as Nemesis or "
                         "Bodyslide studio.";
     }
 }
@@ -128,8 +124,7 @@ void Manager::runOptimization()
     MainOptimizer optimizer(_profile);
 
     //Extracting BSAs
-    for (const auto &file : BSAs)
-    {
+    for (const auto &file : BSAs) {
         optimizer.process(file);
         ++_numberCompletedFiles;
         printProgress(BSAs.size(), "Extracting BSAs");
@@ -142,33 +137,24 @@ void Manager::runOptimization()
     //Using time in order to prevent printing progress too often
     QDateTime time1 = QDateTime::currentDateTime();
     QDateTime time2;
-    for (const auto &file : _files)
-    {
+    for (const auto &file : _files) {
         optimizer.process(file);
         ++_numberCompletedFiles;
-        if (_numberCompletedFiles % 100 == 0)
+        time2 = QDateTime::currentDateTime();
+        if (time2 > time1.addMSecs(3000)) {
             printProgress(_numberFiles);
-        if (_numberCompletedFiles % 10 == 0)
-        {
-            time2 = QDateTime::currentDateTime();
-            if (time2 > time1.addMSecs(3000))
-            {
-                printProgress(_numberFiles);
-                time1 = time2;
-            }
+            time1 = time2;
         }
     }
 
     //Packing BSAs
-    if (_profile.getGeneralSettings().bBsaCreate()) {
-        _numberCompletedFiles = 0;
-        printProgress(_modsToProcess.size(), "Packing BSAs");
-        for (const auto &folder : _modsToProcess)
-        {
-            optimizer.packBsa(folder);
-            ++_numberCompletedFiles;
-            printProgress(_modsToProcess.size(), "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
-        }
+    _numberCompletedFiles = 0;
+    printProgress(_modsToProcess.size(), "Packing BSAs");
+    for (const auto &folder : _modsToProcess) {
+        optimizer.packBsa(folder);
+        ++_numberCompletedFiles;
+        printProgress(_modsToProcess.size(),
+                      "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
     }
 
     FilesystemOperations::deleteEmptyDirectories(_profile.getGeneralSettings().sUserPath());

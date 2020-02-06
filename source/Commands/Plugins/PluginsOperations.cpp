@@ -40,8 +40,7 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const GeneralSetti
     if (espNames.isEmpty())
         espNames << folderPath.dirName();
 
-    for (size_t i = 0; i >= 0; ++i)
-    {
+    for (size_t i = 0; i < 1000; ++i) {
         for (const auto &esp : espNames)
         {
             const QString &texBsaName = folderPath.filePath(esp + bsaTexSuffix);
@@ -55,7 +54,7 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const GeneralSetti
         espNames.clear();
         espNames << newEspName;
     }
-    return ""; //This will never be executed, but necessary or the compiler will warn
+    throw std::runtime_error("No plugin name found after 1 000 tries.");
 }
 
 bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const GeneralSettings &settings)

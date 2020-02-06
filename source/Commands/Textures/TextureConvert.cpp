@@ -51,7 +51,7 @@ bool TextureConvert::isApplicable(File& file)
         = file.patternSettings().bTexturesCompress()
           && sameFormatAsOrig; //If true, the file was not compressed originally
 
-    const bool necessary = needsConvert(*texResource, file);
+    const bool necessary = needsConvert(file);
 
     //If the file was optimized, it was previously in a different format, and thus needs a conversion
     const bool optimizedFile = file.optimizedCurrentFile();
@@ -59,16 +59,11 @@ bool TextureConvert::isApplicable(File& file)
     return necessary || userWantsConvert || optimizedFile;
 }
 
-bool TextureConvert::needsConvert(const TextureResource &res, const File &file)
+bool TextureConvert::needsConvert(const File &file)
 {
     //Checking incompatibility with file format
-    const DXGI_FORMAT &origFormat = res.origFormat;
-    const auto &unwantedFormats = file.generalSettings().slTexturesUnwantedFormats();
-    const bool isIncompatible = QVector<DXGI_FORMAT>::fromStdVector(unwantedFormats).contains(origFormat);
-
-    //Truely incompatible
-    const bool needsConvert = (file.patternSettings().bTexturesNecessary() && isIncompatible)
-                              || (res.isTGA && file.generalSettings().bTexturesTGAConvertEnabled());
+    const bool isIncompatible = file.patternSettings().bTexturesForceConvert();
+    const bool needsConvert = file.patternSettings().bTexturesNecessary() && isIncompatible;
 
     return needsConvert;
 }

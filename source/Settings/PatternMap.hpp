@@ -19,7 +19,7 @@ public:
     nlohmann::json getUnifiedJSON() const;
 
     void readFromUi(const MainWindow &window);
-    void saveToUi(MainWindow &window);
+    void saveToUi(MainWindow &window) const;
 
     std::multimap<int, Pattern> &get() { return patterns_; }
     const std::multimap<int, Pattern> &get() const { return patterns_; }

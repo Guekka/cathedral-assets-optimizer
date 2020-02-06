@@ -25,8 +25,7 @@ public:
 };
 
 class BSAFolderResource : public Resource, public QDir
-{
-};
+{};
 
 class BSAFileResource : public Resource, public libbsarch::bs_archive_auto
 {

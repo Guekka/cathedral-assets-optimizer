@@ -18,7 +18,7 @@ CommandResult AnimationsConvert::process(File& file)
     if (!havok)
         return _resultFactory.getCannotCastFileResult();
 
-    havok->pkFormat = file.generalSettings().eAnimationsFormat();
+    havok->pkFormat = file.patternSettings().eAnimationsFormat();
     return _resultFactory.getSuccessfulResult();
 }
 
@@ -31,7 +31,7 @@ bool AnimationsConvert::isApplicable(File& file)
     if (!havok)
         return false;
 
-    if (havok->pkFormat == file.generalSettings().eAnimationsFormat())
+    if (havok->pkFormat == file.patternSettings().eAnimationsFormat())
         return false;
 
     return true;

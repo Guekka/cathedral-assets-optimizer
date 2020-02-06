@@ -61,19 +61,14 @@ bool TextureGenerateMipmaps::isApplicable(File& file)
     if (!texFile)
         return false;
 
-    const DXGI_FORMAT &fileFormat = texFile->GetMetadata().format;
-    if (DirectX::IsCompressed(fileFormat))
-        return false; //Cannot process compressed file
-
     const auto &info = texFile->GetMetadata();
-    const bool &interfaceForbidden = false
-                                     || (file.getName().contains("interface", Qt::CaseInsensitive)
-                                         && !file.generalSettings().bTexturesInterfaceConvert());
+    if (DirectX::IsCompressed(info.format))
+        return false; //Cannot process compressed file
 
     const bool &compatible = info.width >= 4 && info.height >= 4;
     const bool &optimalMipMaps = info.mipLevels == calculateOptimalMipMapsNumber(info);
 
-    return compatible && !interfaceForbidden && !optimalMipMaps;
+    return compatible && !optimalMipMaps;
 }
 
 size_t TextureGenerateMipmaps::calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const

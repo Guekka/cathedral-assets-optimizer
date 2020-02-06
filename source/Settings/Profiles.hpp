@@ -34,7 +34,8 @@ public:
     bool isBaseProfile() const;
     QDir profileDirectory() const;
     QString logPath() const;
-    QString settingsPath() const;
+    QString generalSettingsPath() const;
+    QString patternSettingsPath() const;
 
     /* Settings */
     PatternSettings &getSettings(const QString &filePath);
@@ -44,7 +45,7 @@ public:
 
     void saveToJSON();
 
-    void saveToUi(MainWindow &window);
+    void saveToUi(MainWindow &window) const;
     void readFromUi(const MainWindow &window);
 
 private:

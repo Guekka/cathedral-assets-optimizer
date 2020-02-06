@@ -7,7 +7,9 @@
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
-std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &settings)
+std::vector<BSA> BSASplit::splitBSA(const QDir &dir,
+                                    const PatternSettings &settings,
+                                    const GeneralSettings &generalSets)
 {
     std::vector<BSA> bsas{BSA::getBSA(StandardBsa, settings),
                           BSA::getBSA(UncompressableBsa, settings),
@@ -17,25 +19,18 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &sett
     auto *uncompressableBsa = &bsas[1];
     auto *texturesBsa = &bsas[2];
 
-    const auto &standardAssets = settings.slBSAStandardExt();
-    const auto &texturesAssets = settings.slBSATexturesExt();
-    const auto &uncompressableAssets = settings.slBSAUncompressableExt();
-    const auto &allAssets = standardAssets + texturesAssets + uncompressableAssets;
-
     QDirIterator it(dir, QDirIterator::Subdirectories);
     while (it.hasNext())
     {
         it.next();
 
-        if (isIgnoredFile(dir, it.fileInfo()) || !allAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive))
+        if (!isAllowedFile(dir, it.fileInfo()))
             continue;
 
-        const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
-                               && settings.bBSATexturesEnabled();
-        const bool isUncompressable = uncompressableAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive);
+        const auto &patternSettings = Profiles().getCurrent().getSettings(it.filePath());
 
-        BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
-        pBsa = isUncompressable ? &uncompressableBsa : pBsa;
+        BSA **pBsa = patternSettings.bBSAIsTexture() ? &texturesBsa : &standardBsa;
+        pBsa = patternSettings.bBSAIsUncompressible() ? &uncompressableBsa : pBsa;
 
         //adding files and sizes to list
         (*pBsa)->files << it.filePath();
@@ -49,48 +44,26 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &sett
     }
 
     //Merging BSAs that can be merged
-    if (settings.bBsaLeastBsaPossible())
+    if (generalSets.bBSACompact())
         BSA::mergeBSAs(bsas);
 
     return bsas;
 }
 
-bool BSASplit::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo)
+bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
 {
     if (fileinfo.isDir())
-        return true;
-
-    for (const auto &fileToNotPack : filesToNotPack())
-    {
-        if (fileinfo.absoluteFilePath().contains(fileToNotPack, Qt::CaseInsensitive))
-            return true;
-    }
+        return false;
 
     //Removing files at the root directory, those cannot be packed
     if (bsaDir.absoluteFilePath(fileinfo.fileName()) == fileinfo.absoluteFilePath())
-        return true;
+        return false;
 
-    return false;
+    const auto &settings = Profiles().getCurrent().getSettings(fileinfo.filePath());
+
+    return settings.bBSAIsTexture() || settings.bBSAIsStandard() || settings.bBSAIsUncompressible();
 }
 
-const QStringList &BSASplit::filesToNotPack()
-{
-    static QStringList filesToNotPack;
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, []() {
-        QFile &&filesToNotPackFile = Profiles().getCurrent().getFile("FilesToNotPack.txt");
-        filesToNotPack = FilesystemOperations::readFile(filesToNotPackFile,
-                                                        [](QString &line) { line = QDir::fromNativeSeparators(line); });
-
-        if (filesToNotPack.isEmpty())
-        {
-            PLOG_ERROR << "FilesToNotPack.txt not found. This can cause a number of issues. For example, for Skyrim, "
-                          "animations will be packed to BSA, preventing them from being detected "
-                          "by FNIS and Nemesis.";
-        }
-    });
-    return filesToNotPack;
-}
+//TODO Move files to not pack to patterns
 
 } // namespace CAO

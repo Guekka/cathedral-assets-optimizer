@@ -13,7 +13,7 @@ CommandResult BSACreate::process(File &file)
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsas = BSASplit::splitBSA(*bsaFolder, file.generalSettings());
+    auto bsas = BSASplit::splitBSA(*bsaFolder, file.patternSettings(), file.generalSettings());
 
     for (auto &bsa : bsas)
     {
@@ -54,9 +54,6 @@ CommandResult BSACreate::process(File &file)
 
 bool BSACreate::isApplicable(File &file)
 {
-    if (!file.generalSettings().bBsaCreate())
-        return false;
-
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
     if (!bsaFolder)
         return false;

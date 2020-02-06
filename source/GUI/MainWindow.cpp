@@ -224,9 +224,12 @@ MainWindow::MainWindow()
     }
 
     //Loading remembered settings
-    _profiles->getCurrent().readFromUi(*this);
+    auto &currentProfile = _profiles->getCurrent();
+    currentProfile.readFromUi(*this);
+    currentProfile.saveToUi(*this);
+    currentProfile.saveToJSON(); //FIXME TEMP
     _settingsChanged = false;
-    setProfile(_profiles->getCurrent());
+    setProfile(currentProfile);
     firstStart();
     _settingsChanged = false;
 }

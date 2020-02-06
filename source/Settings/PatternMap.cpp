@@ -69,7 +69,7 @@ void PatternMap::readFromUi(const MainWindow &window)
         pattern.second.second.readFromUi(window);
 }
 
-void PatternMap::saveToUi(MainWindow &window)
+void PatternMap::saveToUi(MainWindow &window) const
 {
     for (auto &pattern : patterns_)
         pattern.second.second.saveToUi(window);

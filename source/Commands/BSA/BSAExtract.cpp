@@ -15,7 +15,7 @@ CommandResult BSAExtract::process(File& file)
         return _resultFactory.getCannotCastFileResult();
 
     auto bsaPath = file.getName();
-    if (!file.generalSettings().bBsaDeleteBackup())
+    if (!file.generalSettings().bBSADeleteBackup())
         bsaPath = FilesystemOperations::backupFile(bsaPath);
 
     libbsarch::convertible_string rootPath = QFileInfo(bsaPath).path();
@@ -41,9 +41,6 @@ CommandResult BSAExtract::process(File& file)
 
 bool BSAExtract::isApplicable(File& file)
 {
-    if (!file.generalSettings().bBsaExtract())
-        return false;
-
     auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());
     if (!bsafile)
         return false;

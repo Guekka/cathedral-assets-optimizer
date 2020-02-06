@@ -7,7 +7,7 @@
 #include "Commands/Plugins/PluginsOperations.hpp"
 
 namespace CAO {
-BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
+BSA BSA::getBSA(const BSAType &type, const PatternSettings &settings)
 {
     BSA bsa;
 

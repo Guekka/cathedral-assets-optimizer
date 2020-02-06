@@ -23,6 +23,9 @@ configure_file (
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 include(cotire)
 
+#Include-what-you-use
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

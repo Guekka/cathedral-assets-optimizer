@@ -48,10 +48,7 @@ CommandResult MeshRenameReferencedTextures::process(File& file)
 
 bool MeshRenameReferencedTextures::isApplicable(File& file)
 {
-    auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
-    if (!meshFile)
-        return false;
-
-    return file.generalSettings().bTexturesTGAConvertEnabled();
+    bool isMeshFile = dynamic_cast<const MeshResource *>(&file.getFile());
+    return isMeshFile;
 }
 } // namespace CAO

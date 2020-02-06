@@ -11,21 +11,18 @@ namespace CAO {
 Profile::Profile(QDir profileDir)
     : profileDir_(std::move(profileDir))
 {
-    //TODO might want to separate patterns and general settings into different files
-
     //Log path
     const QString &dateTime = QDateTime::currentDateTime().toString("yy.MM.dd.hh.mm");
     const QString &absolutePath = profileDir_.absoluteFilePath("logs/" + dateTime + ".html");
     logPath_ = QDir::toNativeSeparators(absolutePath);
 
     JSON generalJson;
-    const QString &filepath = profileDir_.absoluteFilePath("Settings.json");
-    generalJson.readFromJSON(filepath);
+    generalJson.readFromJSON(generalSettingsPath());
+    generalSettings_ = {generalJson.getInternalJSON()};
 
-    nlohmann::json j = generalJson.getInternalJSON();
-    generalSettings_ = {j};
-
-    patternSettings_.listPatterns(j["Patterns"]);
+    JSON patternJson;
+    patternJson.readFromJSON(patternSettingsPath());
+    patternSettings_.listPatterns(patternJson.getInternalJSON());
 }
 
 QFile Profile::getFile(const QString &filename) const
@@ -50,9 +47,14 @@ QString Profile::logPath() const
     return logPath_;
 }
 
-QString Profile::settingsPath() const
+QString Profile::generalSettingsPath() const
 {
-    return profileDir_.absoluteFilePath("Settings.json");
+    return profileDir_.absoluteFilePath("GeneralSettings.json");
+}
+
+QString Profile::patternSettingsPath() const
+{
+    return profileDir_.absoluteFilePath("PatternSettings.json");
 }
 
 PatternSettings &Profile::getSettings(const QString &filePath)
@@ -77,9 +79,10 @@ const GeneralSettings &Profile::getGeneralSettings() const
 
 void Profile::saveToJSON()
 {
-    nlohmann::json json = getGeneralSettings().getJSON().getInternalJSON();
-    json["Patterns"] = patternSettings_.getUnifiedJSON();
-    JSON(json).saveToJSON(settingsPath());
+    JSON generalJson = getGeneralSettings().getJSON();
+    nlohmann::json patternJSON = patternSettings_.getUnifiedJSON();
+    generalJson.saveToJSON(generalSettingsPath());
+    JSON(patternJSON).saveToJSON(patternSettingsPath());
 }
 
 #ifdef GUI
@@ -89,7 +92,7 @@ void Profile::readFromUi(const MainWindow &window)
     patternSettings_.readFromUi(window);
 }
 
-void Profile::saveToUi(MainWindow &window)
+void Profile::saveToUi(MainWindow &window) const
 {
     generalSettings_.saveToUi(window);
     patternSettings_.saveToUi(window);
