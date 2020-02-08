@@ -3,47 +3,99 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "PatternMap.hpp"
-
+#include <string>
 namespace CAO {
+
+constexpr auto patternKey = "Pattern";
+constexpr auto regexKey = "Regex";
+constexpr auto priorityKey = "Priority";
+
+std::optional<QRegularExpression> PatternMap::getPatternRegex(const nlohmann::json &json)
+{
+    QString regexString;
+    if (json.contains(patternKey)) {
+        const QString &patternString = QString::fromStdString(
+            json.at(patternKey).get<std::string>());
+        regexString = QRegularExpression::wildcardToRegularExpression(patternString);
+    } else if (json.contains(regexKey))
+        regexString = QString::fromStdString(json.at(regexKey).get<std::string>());
+    else
+        return std::nullopt;
+
+    QRegularExpression regex(regexString);
+    return std::optional(regex);
+}
+
+std::optional<int> PatternMap::getPatternPriority(const nlohmann::json &json)
+{
+    if (!json.contains(priorityKey) || !json[priorityKey].is_number())
+        return std::nullopt;
+
+    return json[priorityKey].get<int>();
+}
+
 void PatternMap::listPatterns(nlohmann::json json)
 {
     patterns_.clear();
     //Retrieving all the patterns and converting them to regexes
-    for (auto it = json.begin(); it != json.end(); ++it) {
-        const int priority = (*it).value<int>("Priority", 0);
-        QString regexString;
-        if (it->contains("Pattern")) {
-            const QString &patternString = QString::fromStdString(
-                it->at("Pattern").get<std::string>());
-            regexString = QRegularExpression::wildcardToRegularExpression(patternString);
-        } else if (it->contains("Regex"))
-            regexString = QString::fromStdString(it->at("Regex").get<std::string>());
-        else
-            continue; //Current JSON is not valid
+    for (auto &value : json) {
+        if (!value.is_object())
+            continue;
+
+        const auto optPriority = getPatternPriority(value);
+        constexpr int defaultPriority = 0;
+        const int priority = optPriority ? *optPriority : defaultPriority;
+
+        const auto optRegex = getPatternRegex(value);
+        const QRegularExpression defaultRegex{QRegularExpression::wildcardToRegularExpression("*")};
+        const QRegularExpression regex = optRegex ? *optRegex : defaultRegex;
 
         //We only know that the first profile will contain all the settings. The others might be incomplete
         if (!patterns_.empty()) {
             const PatternSettings &defaultSets = patterns_.begin()->second.second;
             const auto &defaultJson = defaultSets.getJSON().getInternalJSON();
             auto patchedJson = defaultJson;
-            patchedJson.merge_patch(*it);
-            *it = patchedJson;
+            patchedJson.merge_patch(value);
+            value = patchedJson;
         }
 
-        QRegularExpression regex(regexString);
-        regex.optimize();
-        const std::pair<int, Pattern> pair(priority, {regex, PatternSettings(*it)});
-        patterns_.insert(pair);
-
-        if (patterns_.empty())
-            throw std::runtime_error("There should always be at least one file pattern");
+        addPattern(regex, priority, value);
     }
+    if (patterns_.empty())
+        addPattern(KeyType::Pattern, "*", 0);
+}
+
+void PatternMap::addPattern(PatternMap::KeyType type,
+                            QString name,
+                            int priority,
+                            nlohmann::json json)
+{
+    QRegularExpression regex(name);
+    if (type != KeyType::Regex)
+        regex.setPattern(QRegularExpression::wildcardToRegularExpression(name));
+
+    addPattern(regex, priority, json);
+}
+
+void PatternMap::addPattern(const QRegularExpression &regex, int priority, nlohmann::json json)
+{
+    auto jRegex = getPatternRegex(json);
+    if (!(jRegex && *jRegex == regex))
+        json[regexKey] = regex.pattern().toStdString();
+
+    auto jPriority = getPatternPriority(json);
+    if (!(jPriority && *jPriority == priority))
+        json[priorityKey] = priority;
+
+    const std::pair<int, Pattern> pair(priority, Pattern{regex, json});
+    patterns_.insert(pair);
 }
 
 const PatternSettings &PatternMap::getSettings(const QString &filePath) const
 {
     if (patterns_.empty())
         throw std::runtime_error("No file patterns found for current profile");
+
     const PatternSettings *result = &patterns_.begin()->second.second;
     for (auto it = patterns_.crbegin(); it != patterns_.crend(); ++it) {
         const auto &regex = it->second.first;
@@ -87,4 +139,5 @@ nlohmann::json PatternMap::getUnifiedJSON() const
 
     return nlohmann::json{vector};
 }
+
 } // namespace CAO

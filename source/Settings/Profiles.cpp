@@ -164,10 +164,11 @@ void Profiles::update(bool fullRefresh)
 
     const auto &dirList = rootProfileDir_.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
     for (const auto &subDir : dirList) {
-        const QString &settings = rootProfileDir_.absoluteFilePath(subDir + "/Settings.json");
-        if (QFile::exists(settings))
-            if (!profiles_.count(subDir))
-                profiles_.emplace(subDir, Profile(subDir));
+        const QString &profilePath = rootProfileDir_.absoluteFilePath(subDir);
+        const QString &settingPath = profilePath + "/Settings.json";
+        if (QFile::exists(settingPath) && !profiles_.count(subDir)) {
+            profiles_.emplace(subDir, Profile(profilePath));
+        }
     }
 }
 } // namespace CAO

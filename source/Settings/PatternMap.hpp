@@ -11,8 +11,15 @@ class PatternMap
 {
 public:
     using Pattern = std::pair<QRegularExpression, PatternSettings>;
+    enum class KeyType { Pattern, Regex };
+
+    std::optional<QRegularExpression> getPatternRegex(const nlohmann::json &json);
+    std::optional<int> getPatternPriority(const nlohmann::json &json);
 
     void listPatterns(nlohmann::json json);
+    void addPattern(KeyType type, QString name, int priority, nlohmann::json json = {});
+    void addPattern(const QRegularExpression &regex, int priority, nlohmann::json json = {});
+
     const PatternSettings &getSettings(const QString &filePath) const;
     PatternSettings &getSettings(const QString &filePath);
 
@@ -21,8 +28,8 @@ public:
     void readFromUi(const MainWindow &window);
     void saveToUi(MainWindow &window) const;
 
-    std::multimap<int, Pattern> &get() { return patterns_; }
-    const std::multimap<int, Pattern> &get() const { return patterns_; }
+    auto &get() { return patterns_; }
+    const auto &get() const { return patterns_; }
 
 private:
     std::multimap<int, Pattern> patterns_;

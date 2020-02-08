@@ -17,10 +17,10 @@ nlohmann::json &JSON::splitKey(const QString &key) const
 {
     nlohmann::json *j = &_json;
     const auto &list = key.split("/");
-    for (int i = 0; i < list.size(); ++i)
-    {
-        auto subStr = list[i];
-        j = &(*j)[list[i].toStdString()];
+
+    for (int i = 0; i < list.size(); ++i) {
+        const auto &subStr = list[i].toStdString();
+        j = &(j->operator[](subStr));
         if (j->is_null() && i != (list.size() - 1))
             *j = nlohmann::json::value_t::object;
     }
