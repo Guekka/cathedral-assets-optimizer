@@ -16,13 +16,13 @@ Profile::Profile(QDir profileDir)
     const QString &absolutePath = profileDir_.absoluteFilePath("logs/" + dateTime + ".html");
     logPath_ = QDir::toNativeSeparators(absolutePath);
 
-    JSON generalJson;
-    generalJson.readFromJSON(generalSettingsPath());
-    generalSettings_ = {generalJson.getInternalJSON()};
+    nlohmann::json generalJson;
+    JSON::readFromFile(generalJson, generalSettingsPath());
+    generalSettings_ = {generalJson};
 
-    JSON patternJson;
-    patternJson.readFromJSON(patternSettingsPath());
-    patternSettings_.listPatterns(patternJson.getInternalJSON());
+    nlohmann::json patternJson;
+    JSON::readFromFile(patternJson, patternSettingsPath());
+    patternSettings_.listPatterns(patternJson);
 }
 
 QFile Profile::getFile(const QString &filename) const
@@ -79,10 +79,10 @@ const GeneralSettings &Profile::getGeneralSettings() const
 
 void Profile::saveToJSON()
 {
-    JSON generalJson = getGeneralSettings().getJSON();
+    nlohmann::json generalJson = getGeneralSettings().getJSON();
     nlohmann::json patternJSON = patternSettings_.getUnifiedJSON();
-    generalJson.saveToJSON(generalSettingsPath());
-    JSON(patternJSON).saveToJSON(patternSettingsPath());
+    JSON::saveToFile(generalJson, generalSettingsPath());
+    JSON::saveToFile(patternJSON, patternSettingsPath());
 }
 
 #ifdef GUI

@@ -5,43 +5,51 @@
 #include "JSON.hpp"
 
 namespace CAO {
-JSON::JSON()
-    : _json(nlohmann::json::value_t::object)
-{}
+namespace JSON {
 
-JSON::JSON(const nlohmann::json &j)
-    : _json(j)
-{}
-
-nlohmann::json &JSON::splitKey(const QString &key) const
+void saveToFile(const nlohmann::json &json, const QString &filepath)
 {
-    nlohmann::json *j = &_json;
+    std::fstream stream(std::filesystem::u8path(filepath.toStdString()), std::fstream::out);
+    if (!stream.is_open())
+        return;
+
+    stream << json.dump(4);
+}
+
+void readFromFile(nlohmann::json &json, const QString &filepath)
+{
+    std::fstream stream(std::filesystem::u8path(filepath.toStdString()), std::fstream::in);
+    if (!stream.is_open())
+        return;
+
+    stream >> json;
+}
+
+nlohmann::json &splitKey(nlohmann::json &json, const QString &key)
+{
+    nlohmann::json *j = &json;
     const auto &list = key.split("/");
 
     for (int i = 0; i < list.size(); ++i) {
         const auto &subStr = list[i].toStdString();
         j = &(j->operator[](subStr));
         if (j->is_null() && i != (list.size() - 1))
-            *j = nlohmann::json::value_t::object;
+            *j = nlohmann::detail::value_t::object;
     }
     return *j;
 }
 
-void JSON::saveToJSON(const QString &filepath) const
+const nlohmann::json &splitKey(const nlohmann::json &json, const QString &key)
 {
-    std::fstream stream(std::filesystem::u8path(filepath.toStdString()), std::fstream::out);
-    if (!stream.is_open())
-        return;
+    const nlohmann::json *j = &json;
+    const auto &list = key.split("/");
 
-    stream << _json.dump(4);
+    for (int i = 0; i < list.size(); ++i) {
+        const auto &subStr = list[i].toStdString();
+        j = &(j->operator[](subStr));
+    }
+    return *j;
 }
 
-void JSON::readFromJSON(const QString &filepath)
-{
-    std::fstream stream(std::filesystem::u8path(filepath.toStdString()), std::fstream::in);
-    if (!stream.is_open())
-        return;
-
-    stream >> _json;
-}
+} // namespace JSON
 } // namespace CAO

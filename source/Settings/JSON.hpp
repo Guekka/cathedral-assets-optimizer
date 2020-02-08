@@ -7,83 +7,73 @@
 #include "pch.hpp"
 
 namespace CAO {
-class JSON final
+namespace JSON {
+
+void readFromFile(nlohmann::json &json, const QString &filepath);
+void saveToFile(const nlohmann::json &json, const QString &filepath);
+nlohmann::json &splitKey(nlohmann::json &json, const QString &key);
+const nlohmann::json &splitKey(const nlohmann::json &json, const QString &key);
+
+template<typename T>
+inline T getValueSafe(const nlohmann::json &j)
 {
-public:
-    JSON();
-    JSON(const nlohmann::json &j);
+    const nlohmann::json *json = &j;
 
-    template<class T>
-    T getValue(const QString &key) const
-    {
-        return getValueSafe<T>(splitKey(key));
-    }
+    nlohmann::json defaultJ = T();
+    const bool jIsInt = j.is_number_integer() || j.is_number_unsigned();
+    const bool defaultJIsInt = defaultJ.is_number_integer() || defaultJ.is_number_unsigned();
+    const bool areBothInt = jIsInt && defaultJIsInt;
 
-    template<>
-    QString getValue(const QString &key) const
-    {
-        return QString::fromStdString(getValue<std::string>(key));
-    }
+    if (j.type() != defaultJ.type() && !areBothInt)
+        json = &defaultJ;
 
-    template<>
-    QStringList getValue(const QString &key) const
-    {
-        QStringList list;
-        for (const auto &str : getValue<std::vector<std::string>>(key))
-            list << QString::fromStdString(str);
-        return list;
-    }
+    return json->get<T>();
+}
 
-    template<class T>
-    void setValue(const QString &key, const T &value)
-    {        
-        splitKey(key) = value;
-    }
+template<class T>
+inline T getValue(const nlohmann::json &json, const QString &key)
+{
+    return getValueSafe<T>(splitKey(json, key));
+}
 
-    template<>
-    void setValue(const QString &key, const QString &value)
-    {
-        setValue(key, value.toStdString());
-    }
+template<>
+inline QString getValue(const nlohmann::json &json, const QString &key)
+{
+    return QString::fromStdString(getValue<std::string>(json, key));
+}
 
-    template<>
-    void setValue(const QString &key, const QStringList &value)
-    {
-        auto qstringVec = value.toVector().toStdVector();
-        std::vector<std::string> stringVec(qstringVec.size());
-        std::transform(qstringVec.begin(),
-                       qstringVec.end(),
-                       std::back_inserter(stringVec),
-                       [](const QString &str) { return str.toStdString(); });
-        setValue(key, stringVec);
-    }
+template<>
+inline QStringList getValue(const nlohmann::json &json, const QString &key)
+{
+    QStringList list;
+    for (const auto &str : getValue<std::vector<std::string>>(json, key))
+        list << QString::fromStdString(str);
+    return list;
+}
 
-    void readFromJSON(const QString &filepath);
-    void saveToJSON(const QString &filepath) const;
+template<class T>
+inline void setValue(nlohmann::json &json, const QString &key, const T &value)
+{
+    splitKey(json, key) = value;
+}
 
-    nlohmann::json &getInternalJSON() { return _json; }
-    const nlohmann::json &getInternalJSON() const { return _json; }
-    void setInternalJSON(nlohmann::json &j) { _json = j; }
+template<>
+inline void setValue(nlohmann::json &json, const QString &key, const QString &value)
+{
+    setValue(json, key, value.toStdString());
+}
 
-private:
-    mutable nlohmann::json
-        _json; //We cannot provide a const getter without setting this member as mutable
-    nlohmann::json &splitKey(const QString &key) const;
+template<>
+inline void setValue(nlohmann::json &json, const QString &key, const QStringList &value)
+{
+    auto qstringVec = value.toVector().toStdVector();
+    std::vector<std::string> stringVec(qstringVec.size());
+    std::transform(qstringVec.begin(),
+                   qstringVec.end(),
+                   std::back_inserter(stringVec),
+                   [](const QString &str) { return str.toStdString(); });
+    setValue(json, key, stringVec);
+}
 
-    template<typename T>
-    T getValueSafe(const nlohmann::json &j) const
-    {
-        const nlohmann::json *json = &j;
-
-        nlohmann::json defaultJ = T();
-        bool areDifferentNumberTypes = (static_cast<int>(j.type()) + static_cast<int>(defaultJ.type())) == 11;
-        //unsigned number = 6, signed number = 5
-        //They can be converted between them, but their types aren't the same
-        //If the sum is 11, it means that there is one uint and one int
-        if (j.type() != defaultJ.type() && !areDifferentNumberTypes)
-            json = &defaultJ;
-
-        return json->get<T>();
-    }
-};
+}; // namespace JSON
 } // namespace CAO

@@ -15,13 +15,13 @@ namespace CAO {
 
 namespace { //Macros used to register settings
 #define UI_READ_FUNCTION(widget, function, key) \
-    []([[maybe_unused]] const MainWindow &window, [[maybe_unused]] JSON &json) { \
-        json.setValue(key, function(widget)); \
+    []([[maybe_unused]] const MainWindow &window, [[maybe_unused]] nlohmann::json &json) { \
+        JSON::setValue(json, key, function(widget)); \
     }
 
 #define UI_SAVE_FUNCTION(widget, function, type, key) \
-    []([[maybe_unused]] MainWindow &window, [[maybe_unused]] const JSON &json) { \
-        function(widget, json.getValue<type>(key)); \
+    []([[maybe_unused]] MainWindow &window, [[maybe_unused]] const nlohmann::json &json) { \
+        function(widget, JSON::getValue<type>(json, key)); \
     }
 
 #define SETTING_BUILDER(key, name) \
@@ -29,7 +29,7 @@ namespace { //Macros used to register settings
                                uiSyncList_}; //Expects a vector named uiSyncList_
 
 #define SETTING_GETTER(name, type, key) \
-    type name() const { return json_.getValue<type>(key); }
+    type name() const { return JSON::getValue<type>(json_, key); }
 
 #define REGISTER_SETTING(type, name, key, widget, readFunc, saveFunc) \
 public: \
@@ -45,8 +45,8 @@ public: \
     SETTING_GETTER(name, type, key) \
 \
 private: \
-    UISync::uiRead readUI_##name = [](const MainWindow &window, JSON &json) { \
-        json.setValue(key, readFunc(widget1, widget2)); \
+    UISync::uiRead readUI_##name = [](const MainWindow &window, nlohmann::json &json) { \
+        JSON::setValue(json, key, readFunc(widget1, widget2)); \
     }; \
     UISync::uiSave saveUI_##name = UI_SAVE_FUNCTION(widget1, saveFunc, type, key); \
     SETTING_BUILDER(key, name)
@@ -71,12 +71,16 @@ public:
     */
     Settings() = default;
     Settings(const nlohmann::json &j)
-        : json_(JSON(j))
+        : json_(j)
     {}
-    const JSON &getJSON() const { return json_; }
-    JSON &getJSON() { return json_; }
-    void setJSON(JSON &&j) { json_ = std::move(j); }
-    void setJSON(const JSON &j) { json_ = j; }
+    Settings(nlohmann::json &&j)
+        : json_(std::move(j))
+    {}
+
+    const auto &getJSON() const { return json_; }
+    auto &getJSON() { return json_; }
+    void setJSON(nlohmann::json &&j) { json_ = std::move(j); }
+    void setJSON(const nlohmann::json &j) { json_ = j; }
 
     void saveToUi(MainWindow &window) const
     {
@@ -92,7 +96,7 @@ public:
 
 protected:
     std::vector<UISync> uiSyncList_;
-    JSON json_;
+    nlohmann::json json_;
 };
 class PatternSettings final : public Settings
 {

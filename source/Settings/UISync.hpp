@@ -11,7 +11,6 @@
 
 namespace CAO {
 class MainWindow;
-class JSON;
 
 class UISync final
 {
@@ -19,8 +18,8 @@ public:
     QString key_; //Necessary to provide equality operator
 
     //Actual class content
-    using uiRead = std::function<void(const MainWindow &window, JSON &json)>;
-    using uiSave = std::function<void(MainWindow &window, const JSON &json)>;
+    using uiRead = std::function<void(const MainWindow &window, nlohmann::json &json)>;
+    using uiSave = std::function<void(MainWindow &window, const nlohmann::json &json)>;
 
     UISync(QString key, uiRead r, uiSave s)
         : key_(std::move(key))

@@ -53,7 +53,7 @@ void PatternMap::listPatterns(nlohmann::json json)
         //We only know that the first profile will contain all the settings. The others might be incomplete
         if (!patterns_.empty()) {
             const PatternSettings &defaultSets = patterns_.begin()->second.second;
-            const auto &defaultJson = defaultSets.getJSON().getInternalJSON();
+            const auto &defaultJson = defaultSets.getJSON();
             auto patchedJson = defaultJson;
             patchedJson.merge_patch(value);
             value = patchedJson;
@@ -135,7 +135,7 @@ nlohmann::json PatternMap::getUnifiedJSON() const
     std::transform(patterns_.cbegin(),
                    patterns_.cend(),
                    std::back_inserter(vector),
-                   [](const auto &pair) { return pair.second.second.getJSON().getInternalJSON(); });
+                   [](const auto &pair) { return pair.second.second.getJSON(); });
 
     return nlohmann::json{vector};
 }
