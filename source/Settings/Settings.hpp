@@ -73,39 +73,40 @@ public:
     Settings(const nlohmann::json &j)
         : json_(j)
     {}
-    Settings(nlohmann::json &&j)
-        : json_(std::move(j))
-    {}
 
-    const auto &getJSON() const { return json_; }
-    auto &getJSON() { return json_; }
-    void setJSON(nlohmann::json &&j) { json_ = std::move(j); }
-    void setJSON(const nlohmann::json &j) { json_ = j; }
+    virtual ~Settings() = default;
 
-    void saveToUi(MainWindow &window) const
-    {
-        for (const auto &set : uiSyncList_)
-            set.save(window, json_);
-    }
+    virtual nlohmann::json getJSON() const { return json_; }
+    virtual void setJSON(const nlohmann::json &j) { json_ = j; }
 
-    void readFromUi(const MainWindow &window)
-    {
-        for (const auto &set : uiSyncList_)
-            set.read(window, json_);
-    }
+    void saveToUi(MainWindow &window) const;
+    void readFromUi(const MainWindow &window);
 
 protected:
     std::vector<UISync> uiSyncList_;
-    nlohmann::json json_;
+    mutable nlohmann::json json_;
 };
 class PatternSettings final : public Settings
 {
 public:
-    PatternSettings(const nlohmann::json &json)
-        : Settings(json)
-    {}
+    PatternSettings(const nlohmann::json &json);
+    PatternSettings(size_t priority, const std::vector<QRegularExpression> &regex);
+
+    std::vector<QRegularExpression> regexes_;
+    size_t priority_{0};
+
+    nlohmann::json getJSON() const override;
+    void setJSON(const nlohmann::json &j) override;
 
     std::optional<QString> isValid();
+
+    static constexpr auto patternKey = "Pattern";
+    static constexpr auto regexKey = "Regex";
+    static constexpr auto priorityKey = "Priority";
+
+private:
+    std::vector<QRegularExpression> getPatternRegexFromJSON(const nlohmann::json &json);
+    std::optional<size_t> getPatternPriorityFromJSON(const nlohmann::json &json);
 
     REGISTER_SETTING(bool,
                      bBSAExtractFromBSA,

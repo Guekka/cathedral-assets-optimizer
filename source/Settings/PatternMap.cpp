@@ -6,34 +6,6 @@
 #include <string>
 namespace CAO {
 
-constexpr auto patternKey = "Pattern";
-constexpr auto regexKey = "Regex";
-constexpr auto priorityKey = "Priority";
-
-std::optional<QRegularExpression> PatternMap::getPatternRegex(const nlohmann::json &json)
-{
-    QString regexString;
-    if (json.contains(patternKey)) {
-        const QString &patternString = QString::fromStdString(
-            json.at(patternKey).get<std::string>());
-        regexString = QRegularExpression::wildcardToRegularExpression(patternString);
-    } else if (json.contains(regexKey))
-        regexString = QString::fromStdString(json.at(regexKey).get<std::string>());
-    else
-        return std::nullopt;
-
-    QRegularExpression regex(regexString);
-    return std::optional(regex);
-}
-
-std::optional<int> PatternMap::getPatternPriority(const nlohmann::json &json)
-{
-    if (!json.contains(priorityKey) || !json[priorityKey].is_number())
-        return std::nullopt;
-
-    return json[priorityKey].get<int>();
-}
-
 void PatternMap::listPatterns(nlohmann::json json)
 {
     patterns_.clear();
@@ -42,67 +14,41 @@ void PatternMap::listPatterns(nlohmann::json json)
         if (!value.is_object())
             continue;
 
-        const auto optPriority = getPatternPriority(value);
-        constexpr int defaultPriority = 0;
-        const int priority = optPriority ? *optPriority : defaultPriority;
-
-        const auto optRegex = getPatternRegex(value);
-        const QRegularExpression defaultRegex{QRegularExpression::wildcardToRegularExpression("*")};
-        const QRegularExpression regex = optRegex ? *optRegex : defaultRegex;
-
         //We only know that the first profile will contain all the settings. The others might be incomplete
         if (!patterns_.empty()) {
-            const PatternSettings &defaultSets = patterns_.begin()->second.second;
+            const PatternSettings &defaultSets = patterns_.begin()->second;
             const auto &defaultJson = defaultSets.getJSON();
             auto patchedJson = defaultJson;
             patchedJson.merge_patch(value);
             value = patchedJson;
         }
 
-        addPattern(regex, priority, value);
+        addPattern(PatternSettings(value));
     }
     if (patterns_.empty())
-        addPattern(KeyType::Pattern, "*", 0);
+        addPattern(PatternSettings(0, toRegexVector({"*"}, true)));
+
+    cleanPatterns();
 }
 
-void PatternMap::addPattern(PatternMap::KeyType type,
-                            QString name,
-                            int priority,
-                            nlohmann::json json)
+void PatternMap::addPattern(const PatternSettings &pattern)
 {
-    QRegularExpression regex(name);
-    if (type != KeyType::Regex)
-        regex.setPattern(QRegularExpression::wildcardToRegularExpression(name));
-
-    addPattern(regex, priority, json);
-}
-
-void PatternMap::addPattern(const QRegularExpression &regex, int priority, nlohmann::json json)
-{
-    auto jRegex = getPatternRegex(json);
-    if (!(jRegex && *jRegex == regex))
-        json[regexKey] = regex.pattern().toStdString();
-
-    auto jPriority = getPatternPriority(json);
-    if (!(jPriority && *jPriority == priority))
-        json[priorityKey] = priority;
-
-    const std::pair<int, Pattern> pair(priority, Pattern{regex, json});
-    patterns_.insert(pair);
+    patterns_.emplace(pattern.priority_, pattern);
 }
 
 const PatternSettings &PatternMap::getSettings(const QString &filePath) const
 {
-    if (patterns_.empty())
-        throw std::runtime_error("No file patterns found for current profile");
+    assert(!patterns_.empty());
 
-    const PatternSettings *result = &patterns_.begin()->second.second;
+    const PatternSettings *result = &patterns_.begin()->second;
     for (auto it = patterns_.crbegin(); it != patterns_.crend(); ++it) {
-        const auto &regex = it->second.first;
-        const auto &match = regex.match(filePath);
-        if (match.hasMatch()) {
-            result = &it->second.second;
-            break;
+        const auto &regexes = it->second.regexes_;
+        for (const auto &regex : regexes) {
+            const auto &match = regex.match(filePath);
+            if (match.hasMatch()) {
+                result = &it->second;
+                break;
+            }
         }
     }
 
@@ -118,13 +64,62 @@ PatternSettings &PatternMap::getSettings(const QString &filePath)
 void PatternMap::readFromUi(const MainWindow &window)
 {
     for (auto &pattern : patterns_)
-        pattern.second.second.readFromUi(window);
+        pattern.second.readFromUi(window);
 }
 
 void PatternMap::saveToUi(MainWindow &window) const
 {
     for (auto &pattern : patterns_)
-        pattern.second.second.saveToUi(window);
+        pattern.second.saveToUi(window);
+}
+
+nlohmann::json PatternMap::removePatternKeys(nlohmann::json json)
+{
+    json.erase(PatternSettings::patternKey);
+    json.erase(PatternSettings::regexKey);
+    json.erase(PatternSettings::priorityKey);
+    return json;
+}
+
+nlohmann::json PatternMap::mergePattern(const nlohmann::json &json1,
+                                        const nlohmann::json &json2) const
+{
+    auto pKey1 = JSON::getValue<QStringList>(json1, PatternSettings::patternKey);
+    auto pKey2 = JSON::getValue<QStringList>(json2, PatternSettings::patternKey);
+    auto mergedPKeys = pKey1 + pKey2;
+
+    auto rKey1 = JSON::getValue<QStringList>(json1, PatternSettings::regexKey);
+    auto rKey2 = JSON::getValue<QStringList>(json2, PatternSettings::regexKey);
+    auto mergedRKeys = rKey1 + rKey2;
+
+    nlohmann::json merged = json1;
+    JSON::setValue(merged, PatternSettings::patternKey, mergedPKeys);
+    JSON::setValue(merged, PatternSettings::regexKey, mergedRKeys);
+
+    return merged;
+}
+
+void PatternMap::cleanPatterns()
+{
+    //TODO If a JSON is a subset of another, it will not be merged.
+
+    std::unordered_map<nlohmann::json, std::set<PatternSettings *>> JsonToSets;
+
+    for (auto [_, pattern] : patterns_) {
+        auto cleanedJson = removePatternKeys(pattern.getJSON());
+        JsonToSets[cleanedJson].emplace(&pattern);
+    }
+
+    patterns_.clear();
+
+    for (auto &value : JsonToSets) {
+        nlohmann::json merged;
+        for (auto &settings : value.second) {
+            merged = mergePattern(merged, settings->getJSON());
+        }
+        PatternSettings s{merged};
+        patterns_.emplace(s.priority_, std::move(s));
+    }
 }
 
 nlohmann::json PatternMap::getUnifiedJSON() const
@@ -135,7 +130,7 @@ nlohmann::json PatternMap::getUnifiedJSON() const
     std::transform(patterns_.cbegin(),
                    patterns_.cend(),
                    std::back_inserter(vector),
-                   [](const auto &pair) { return pair.second.second.getJSON(); });
+                   [](const auto &pair) { return pair.second.getJSON(); });
 
     return nlohmann::json{vector};
 }

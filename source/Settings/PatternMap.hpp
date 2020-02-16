@@ -5,24 +5,19 @@
 #pragma once
 
 #include "Settings.hpp"
+#include "Utils/QRegexToFromString.hpp"
 
 namespace CAO {
 class PatternMap
 {
 public:
-    using Pattern = std::pair<QRegularExpression, PatternSettings>;
-    enum class KeyType { Pattern, Regex };
-
-    std::optional<QRegularExpression> getPatternRegex(const nlohmann::json &json);
-    std::optional<int> getPatternPriority(const nlohmann::json &json);
-
     void listPatterns(nlohmann::json json);
-    void addPattern(KeyType type, QString name, int priority, nlohmann::json json = {});
-    void addPattern(const QRegularExpression &regex, int priority, nlohmann::json json = {});
+    void addPattern(const PatternSettings &pattern);
 
     const PatternSettings &getSettings(const QString &filePath) const;
     PatternSettings &getSettings(const QString &filePath);
 
+    void cleanPatterns();
     nlohmann::json getUnifiedJSON() const;
 
     void readFromUi(const MainWindow &window);
@@ -32,6 +27,10 @@ public:
     const auto &get() const { return patterns_; }
 
 private:
-    std::multimap<int, Pattern> patterns_;
+    std::map<size_t, PatternSettings> patterns_;
+
+    nlohmann::json removePatternKeys(nlohmann::json json);
+    //! \note It is assumed both patterns share the same keys
+    nlohmann::json mergePattern(const nlohmann::json &json1, const nlohmann::json &json2) const;
 };
 } // namespace CAO

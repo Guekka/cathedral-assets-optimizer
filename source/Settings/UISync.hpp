@@ -29,8 +29,8 @@ public:
 
     UISync() = default;
 
-    const uiRead read;
-    const uiSave save;
+    uiRead read;
+    uiSave save;
 
     bool operator==(const UISync &rh) const { return rh.key_ == this->key_; }
     bool operator!=(const UISync &rh) const { return !(*this == rh); }
