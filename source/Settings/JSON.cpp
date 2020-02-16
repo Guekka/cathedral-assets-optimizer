@@ -51,5 +51,20 @@ const nlohmann::json &splitKey(const nlohmann::json &json, const QString &key)
     return *j;
 }
 
+void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons)
+{
+    master.flatten();
+    for (const auto &[key, value] : master.items())
+        for (auto &json : jsons) {
+            json.flatten();
+            if (value == json[key])
+                json.erase(key);
+        }
+
+    master.unflatten();
+    for (auto &j : jsons)
+        j.unflatten();
+}
+
 } // namespace JSON
 } // namespace CAO

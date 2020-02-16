@@ -11,8 +11,11 @@ namespace JSON {
 
 void readFromFile(nlohmann::json &json, const QString &filepath);
 void saveToFile(const nlohmann::json &json, const QString &filepath);
+
 nlohmann::json &splitKey(nlohmann::json &json, const QString &key);
 const nlohmann::json &splitKey(const nlohmann::json &json, const QString &key);
+
+void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons);
 
 template<typename T>
 inline T getValueSafe(const nlohmann::json &j)
