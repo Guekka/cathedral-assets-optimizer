@@ -46,6 +46,8 @@ const nlohmann::json &splitKey(const nlohmann::json &json, const QString &key)
 
     for (int i = 0; i < list.size(); ++i) {
         const auto &subStr = list[i].toStdString();
+        if (!j->contains(subStr))
+            break;
         j = &(j->operator[](subStr));
     }
     return *j;
