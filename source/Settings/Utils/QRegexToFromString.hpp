@@ -6,6 +6,7 @@
 
 #include "pch.hpp"
 
+namespace CAO {
 inline std::vector<QRegularExpression> toRegexVector(const QStringList &regexStrings,
                                                      bool useWildcard = false)
 {
@@ -32,3 +33,4 @@ inline QStringList toStringList(const std::vector<QRegularExpression> &regexes)
                    [](const QRegularExpression &regex) { return regex.pattern(); });
     return regexStrings;
 }
+} // namespace CAO
