@@ -66,6 +66,8 @@ set(SOURCES
     source/Version.hpp
     source/Version.hpp.in
 
+    source/Utils/TemplateMetaProgramming.hpp
+
     source/Commands/Command.cpp
     source/Commands/Command.hpp
     source/Commands/CommandBook.cpp
@@ -133,6 +135,8 @@ set(SOURCES
     source/Settings/Profiles.hpp
     source/Settings/UISync.cpp
     source/Settings/UISync.hpp
+    source/Settings/Utils/QRegexToFromString.hpp
+    source/Settings/Utils/QValueWrapper.hpp
     )
 
 if(GUI)
