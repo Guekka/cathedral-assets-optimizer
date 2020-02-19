@@ -25,7 +25,7 @@ CommandResult BSACreate::process(File &file)
 
         libbsarch::bs_archive_auto archive(bsa.format);
         archive.set_share_data(true);
-        archive.set_compressed(true);
+        archive.set_compressed(file.patternSettings().bBSACompressArchive());
         const libbsarch::convertible_string &rootPath = bsaFolder->path();
         archive.set_dds_callback(&BSACallback, rootPath);
 

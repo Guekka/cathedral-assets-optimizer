@@ -65,6 +65,7 @@ public:
     REGISTER_SETTING(bool, bBSAExtractFromBSA, "BSA/bBSAExtractFromBSA")
     REGISTER_SETTING(bool, bBSAAddToBSA, "BSA/bBSAAddToBSA")
     REGISTER_SETTING(bool, bBSACreateDummies, "BSA/bBSACreateDummies")
+    REGISTER_SETTING(bool, bBSACompressArchive, "BSA/bBSACompressArchive")
     REGISTER_SETTING(bool, bTexturesNecessary, "Textures/bTexturesNecessary")
     REGISTER_SETTING(bool, bTexturesCompress, "Textures/bTexturesCompress")
     REGISTER_SETTING(bool, bTexturesMipmaps, "Textures/bTexturesMipmaps")
