@@ -61,7 +61,9 @@ bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
 
     const auto &settings = Profiles().getCurrent().getSettings(fileinfo.filePath());
 
-    return settings.bBSAIsTexture() || settings.bBSAIsStandard() || settings.bBSAIsUncompressible();
+    return settings.bBSAAddToBSA()
+           && (settings.bBSAIsTexture() || settings.bBSAIsStandard()
+               || settings.bBSAIsUncompressible());
 }
 
 //TODO Move files to not pack to patterns

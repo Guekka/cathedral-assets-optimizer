@@ -31,12 +31,14 @@ public:
     QValueWrapper(const QValueWrapper &other) { value_ = other.value_; }
     QValueWrapper(QValueWrapper &&other) { value_ = std::move(other.value_); }
 
+    void operator=(const QValueWrapper &other) { value_ = other.value_; }
+
     const Type &operator()() const { return value(); }
     const Type &value() const { return value_; }
     virtual void setValue(const Type &newValue)
     {
         if (value_ != newValue)
-            emit valueChanged(newValue);
+            emit valueChanged();
         value_ = newValue;
     }
 
@@ -55,18 +57,18 @@ public:
     QJSONValueWrapper(const QString &key, nlohmann::json &j)
         : parentType(JSON::getValue<Type>(j, key))
         , key_(key)
-        , json_(j)
+        , json_(&j)
     {}
 
     virtual void setValue(const Type &newValue) override
     {
         parentType::setValue(newValue);
-        JSON::setValue(json_, key_, value());
+        JSON::setValue(*json_, key_, value());
     }
 
 private:
     QString key_;
-    nlohmann::json &json_;
+    nlohmann::json *json_;
 };
 
 } // namespace CAO
