@@ -51,7 +51,7 @@ bool TextureConvert::isApplicable(File& file)
         = file.patternSettings().bTexturesCompress()
           && sameFormatAsOrig; //If true, the file was not compressed originally
 
-    const bool necessary = needsConvert(file);
+    const bool necessary = needsConvert(file, currentFormat);
 
     //If the file was optimized, it was previously in a different format, and thus needs a conversion
     const bool optimizedFile = file.optimizedCurrentFile();
@@ -59,10 +59,12 @@ bool TextureConvert::isApplicable(File& file)
     return necessary || userWantsConvert || optimizedFile;
 }
 
-bool TextureConvert::needsConvert(const File &file)
+bool TextureConvert::needsConvert(const File &file, DXGI_FORMAT format)
 {
     //Checking incompatibility with file format
-    const bool isIncompatible = file.patternSettings().bTexturesForceConvert();
+    const auto &vec = file.patternSettings().slTextureUnwantedFormats();
+    const bool isUnwanted = std::find(vec.begin(), vec.end(), format) != vec.end();
+    const bool isIncompatible = isUnwanted || file.patternSettings().bTexturesForceConvert();
     const bool needsConvert = file.patternSettings().bTexturesNecessary() && isIncompatible;
 
     return needsConvert;
