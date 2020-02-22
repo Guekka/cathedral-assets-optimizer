@@ -29,9 +29,7 @@ public:
         : value_(val){};
 
     QValueWrapper(const QValueWrapper &other) { value_ = other.value_; }
-    QValueWrapper(QValueWrapper &&other) { value_ = std::move(other.value_); }
-
-    void operator=(const QValueWrapper &other) { value_ = other.value_; }
+    QValueWrapper(QValueWrapper &&other) { setValue(std::move(other.value_)); }
 
     const Type &operator()() const { return value(); }
     const Type &value() const { return value_; }
@@ -41,6 +39,9 @@ public:
             emit valueChanged();
         value_ = newValue;
     }
+
+    void operator=(const QValueWrapper &other) { setValue(other.value_); }
+    void operator=(const Type &value) { setValue(value); }
 
 private:
     Type value_;
@@ -65,6 +66,8 @@ public:
         parentType::setValue(newValue);
         JSON::setValue(*json_, key_, value());
     }
+
+    void operator=(const Type &value) { setValue(value); }
 
 private:
     QString key_;

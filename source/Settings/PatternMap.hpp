@@ -27,7 +27,7 @@ public:
     const auto &get() const { return patterns_; }
 
 private:
-    std::map<size_t, PatternSettings> patterns_;
+    std::map<size_t, PatternSettings> patterns_; //TODO several patterns with same priority
 
     nlohmann::json removePatternKeys(nlohmann::json json);
     //! \note It is assumed both patterns share the same keys

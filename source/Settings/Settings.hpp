@@ -108,12 +108,9 @@ public:
     GeneralSettings() = default;
     GeneralSettings(nlohmann::json j);
 
-    /*!
-   * \brief Checks if the current settings are allowed
-   */
+    //! \brief Checks if the current settings are allowed
     QString isValid() const;
 
-public:
     //All the code below is used to register settings
 
     REGISTER_SETTING(bool, bDebugLog, "General/bDebugLog")

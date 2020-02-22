@@ -77,6 +77,16 @@ const GeneralSettings &Profile::getGeneralSettings() const
     return generalSettings_;
 }
 
+PatternMap &Profile::getPatterns()
+{
+    return patternSettings_;
+}
+
+const PatternMap &Profile::getPatterns() const
+{
+    return patternSettings_;
+}
+
 void Profile::saveToJSON()
 {
     nlohmann::json generalJson = getGeneralSettings().getJSON();
@@ -100,10 +110,16 @@ void Profile::saveToUi(MainWindow &window) const
 #endif
 
 /* Profiles class */
-const QString defaultProfile = "SSE";
 
 Profiles::Profiles()
     : rootProfileDir_("profiles")
+    , _commonSettings(rootProfileDir_.filePath("common.ini"), QSettings::IniFormat)
+{
+    update(true);
+}
+
+Profiles::Profiles(QDir dir)
+    : rootProfileDir_(std::move(dir))
     , _commonSettings(rootProfileDir_.filePath("common.ini"), QSettings::IniFormat)
 {
     update(true);
@@ -116,6 +132,13 @@ void Profiles::create(const QString &name, const QString &baseProfile)
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     FilesystemOperations::copyDir(baseFolder, newFolder, false);
     QFile::remove(newFolder + "/isBase");
+    update();
+}
+
+void Profiles::create(const QString &name)
+{
+    const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
+    rootProfileDir_.mkpath(newFolder);
     update();
 }
 

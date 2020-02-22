@@ -42,6 +42,8 @@ public:
     const PatternSettings &getSettings(const QString &filePath) const;
     GeneralSettings &getGeneralSettings();
     const GeneralSettings &getGeneralSettings() const;
+    PatternMap &getPatterns();
+    const PatternMap &getPatterns() const;
 
     void saveToJSON();
 
@@ -59,11 +61,15 @@ private:
 class Profiles
 {
 public:
+    static inline const QString defaultProfile = "SSE";
+
     /* Constructor */
     Profiles();
+    Profiles(QDir dir);
 
     /* Profiles operations */
     void create(const QString &name, const QString &baseProfile);
+    void create(const QString &name);
     //Also sets the current profile. Reads the current profile from INI
     Profile &setCurrent(const QString &profile);
     //!Current profile

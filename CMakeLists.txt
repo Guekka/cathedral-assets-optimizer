@@ -127,6 +127,8 @@ set(SOURCES
     source/Settings/BaseTypes.hpp
     source/Settings/JSON.cpp
     source/Settings/JSON.hpp
+    source/Settings/MigrateProfiles.hpp
+    source/Settings/MigrateProfiles.cpp
     source/Settings/Settings.cpp
     source/Settings/Settings.hpp
     source/Settings/PatternMap.cpp
