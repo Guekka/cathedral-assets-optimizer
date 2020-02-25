@@ -34,7 +34,7 @@ QFile Profile::getFile(const QString &filename) const
 
 bool Profile::isBaseProfile() const
 {
-    return profileDir_.exists("isBase");
+    return profileDir_.exists(isBaseProfileFilename);
 }
 
 QDir Profile::profileDirectory() const
@@ -49,12 +49,12 @@ QString Profile::logPath() const
 
 QString Profile::generalSettingsPath() const
 {
-    return profileDir_.absoluteFilePath("GeneralSettings.json");
+    return profileDir_.absoluteFilePath(generalSettingsFileName);
 }
 
 QString Profile::patternSettingsPath() const
 {
-    return profileDir_.absoluteFilePath("PatternSettings.json");
+    return profileDir_.absoluteFilePath(patternSettingsFileName);
 }
 
 PatternSettings &Profile::getSettings(const QString &filePath)
@@ -113,14 +113,14 @@ void Profile::saveToUi(MainWindow &window) const
 
 Profiles::Profiles()
     : rootProfileDir_("profiles")
-    , _commonSettings(rootProfileDir_.filePath("common.ini"), QSettings::IniFormat)
+    , _commonSettings(rootProfileDir_.filePath(commonSettingsFileName), QSettings::IniFormat)
 {
     update(true);
 }
 
 Profiles::Profiles(QDir dir)
     : rootProfileDir_(std::move(dir))
-    , _commonSettings(rootProfileDir_.filePath("common.ini"), QSettings::IniFormat)
+    , _commonSettings(rootProfileDir_.filePath(commonSettingsFileName), QSettings::IniFormat)
 {
     update(true);
 }
@@ -132,20 +132,21 @@ void Profiles::create(const QString &name, const QString &baseProfile)
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     FilesystemOperations::copyDir(baseFolder, newFolder, false);
     QFile::remove(newFolder + "/isBase");
-    update();
+    profiles_.emplace(name, Profile(newFolder));
 }
 
 void Profiles::create(const QString &name)
 {
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     rootProfileDir_.mkpath(newFolder);
-    update();
+    profiles_.emplace(name, Profile(newFolder));
 }
 
 Profile &Profiles::setCurrent(const QString &profile)
 {
     if (!profiles_.count(profile))
-        throw std::runtime_error("Trying to load a profile that does not exist.");
+        throw std::runtime_error(
+            "Trying to load a profile that does not exist. Please reinstall the application");
 
     _commonSettings.setValue("profile", profile);
     return profiles_.at(profile);
@@ -188,7 +189,7 @@ void Profiles::update(bool fullRefresh)
     const auto &dirList = rootProfileDir_.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
     for (const auto &subDir : dirList) {
         const QString &profilePath = rootProfileDir_.absoluteFilePath(subDir);
-        const QString &settingPath = profilePath + "/Settings.json";
+        const QString &settingPath = profilePath + '/' + Profile::generalSettingsFileName;
         if (QFile::exists(settingPath) && !profiles_.count(subDir)) {
             profiles_.emplace(subDir, Profile(profilePath));
         }

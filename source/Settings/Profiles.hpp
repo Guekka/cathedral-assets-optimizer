@@ -26,6 +26,10 @@ namespace CAO {
 class Profile final
 {
 public:
+    static inline const QString generalSettingsFileName = "GeneralSettings.json";
+    static inline const QString patternSettingsFileName = "PatternSettings.json";
+    static inline const QString isBaseProfileFilename = "isBase";
+
     Profile(QDir profileDir);
 
     QFile getFile(const QString &filename) const;
@@ -61,6 +65,7 @@ private:
 class Profiles
 {
 public:
+    static inline const QString commonSettingsFileName = "common.ini";
     static inline const QString defaultProfile = "SSE";
 
     /* Constructor */
