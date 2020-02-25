@@ -8,7 +8,6 @@
 #include "pch.hpp"
 
 namespace CAO {
-class MainWindow;
 namespace detail {
 class QValueWrapperHelper : public QObject
 {
