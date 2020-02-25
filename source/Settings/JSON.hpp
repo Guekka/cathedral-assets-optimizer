@@ -9,13 +9,14 @@
 namespace CAO {
 namespace JSON {
 
+using json_pointer = nlohmann::json_pointer<nlohmann::json>;
+
 void readFromFile(nlohmann::json &json, const QString &filepath);
 void saveToFile(const nlohmann::json &json, const QString &filepath);
 
-nlohmann::json &splitKey(nlohmann::json &json, const QString &key);
-const nlohmann::json &splitKey(const nlohmann::json &json, const QString &key);
-
 void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons);
+
+json_pointer getPointer(const QString &key);
 
 template<typename T>
 inline T getValueSafe(const nlohmann::json &j)
@@ -34,19 +35,21 @@ inline T getValueSafe(const nlohmann::json &j)
 }
 
 template<class T>
-inline T getValue(const nlohmann::json &json, const QString &key)
+inline T getValue(nlohmann::json json, const QString &key)
 {
-    return getValueSafe<T>(splitKey(json, key));
+    if (json.is_null())
+        return T{};
+    return getValueSafe<T>(std::move(json[getPointer(key)]));
 }
 
 template<>
-inline QString getValue(const nlohmann::json &json, const QString &key)
+inline QString getValue(nlohmann::json json, const QString &key)
 {
     return QString::fromStdString(getValue<std::string>(json, key));
 }
 
 template<>
-inline QStringList getValue(const nlohmann::json &json, const QString &key)
+inline QStringList getValue(nlohmann::json json, const QString &key)
 {
     QStringList list;
     for (const auto &str : getValue<std::vector<std::string>>(json, key))
@@ -57,7 +60,9 @@ inline QStringList getValue(const nlohmann::json &json, const QString &key)
 template<class T>
 inline void setValue(nlohmann::json &json, const QString &key, const T &value)
 {
-    splitKey(json, key) = value;
+    if (!json.is_object())
+        json = {};
+    json[getPointer(key)] = value;
 }
 
 template<>

@@ -25,34 +25,6 @@ void readFromFile(nlohmann::json &json, const QString &filepath)
     stream >> json;
 }
 
-nlohmann::json &splitKey(nlohmann::json &json, const QString &key)
-{
-    nlohmann::json *j = &json;
-    const auto &list = key.split("/");
-
-    for (int i = 0; i < list.size(); ++i) {
-        const auto &subStr = list[i].toStdString();
-        j = &(j->operator[](subStr));
-        if (j->is_null() && i != (list.size() - 1))
-            *j = nlohmann::detail::value_t::object;
-    }
-    return *j;
-}
-
-const nlohmann::json &splitKey(const nlohmann::json &json, const QString &key)
-{
-    const nlohmann::json *j = &json;
-    const auto &list = key.split("/");
-
-    for (int i = 0; i < list.size(); ++i) {
-        const auto &subStr = list[i].toStdString();
-        if (!j->contains(subStr))
-            break;
-        j = &(j->operator[](subStr));
-    }
-    return *j;
-}
-
 void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons)
 {
     master.flatten();
@@ -66,6 +38,16 @@ void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons
     master.unflatten();
     for (auto &j : jsons)
         j.unflatten();
+}
+
+json_pointer getPointer(const QString &key)
+{
+    json_pointer j;
+    if (key.startsWith('/'))
+        j = json_pointer{key.toStdString()};
+    else
+        j = json_pointer{'/' + key.toStdString()};
+    return j;
 }
 
 } // namespace JSON
