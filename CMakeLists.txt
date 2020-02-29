@@ -67,6 +67,7 @@ set(SOURCES
     source/Version.hpp.in
 
     source/Utils/TemplateMetaProgramming.hpp
+    source/Utils/TypeConvert.hpp
 
     source/Commands/Command.cpp
     source/Commands/Command.hpp
@@ -137,7 +138,6 @@ set(SOURCES
     source/Settings/Profiles.hpp
     source/Settings/UISync.cpp
     source/Settings/UISync.hpp
-    source/Settings/Utils/QRegexToFromString.hpp
     source/Settings/Utils/QValueWrapper.hpp
     )
 

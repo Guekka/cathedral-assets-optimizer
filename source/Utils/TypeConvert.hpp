@@ -27,10 +27,31 @@ inline std::vector<QRegularExpression> toRegexVector(const QStringList &regexStr
 inline QStringList toStringList(const std::vector<QRegularExpression> &regexes)
 {
     QStringList regexStrings;
-    std::transform(regexes.begin(),
-                   regexes.end(),
+    std::transform(regexes.cbegin(),
+                   regexes.cend(),
                    std::back_inserter(regexStrings),
                    [](const QRegularExpression &regex) { return regex.pattern(); });
     return regexStrings;
 }
+
+inline QStringList toStringList(const std::vector<std::string> &strings)
+{
+    QStringList stringList;
+    std::transform(strings.cbegin(),
+                   strings.cend(),
+                   std::back_inserter(stringList),
+                   [](const std::string &str) { return QString::fromStdString(str); });
+    return stringList;
+}
+
+inline std::vector<std::string> toStringVector(const QStringList &strings)
+{
+    std::vector<std::string> stringVec(strings.size());
+    std::transform(strings.begin(),
+                   strings.end(),
+                   std::back_inserter(stringVec),
+                   [](const QString &str) { return str.toStdString(); });
+    return stringVec;
+}
+
 } // namespace CAO
