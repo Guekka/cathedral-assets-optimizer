@@ -8,20 +8,79 @@
 
 namespace CAO {
 
+Settings::Settings()
+    : json_(new nlohmann::json)
+{
+}
+
+Settings::Settings(const nlohmann::json &j)
+    : json_(new nlohmann::json(j))
+{
+}
+
+Settings::Settings(const Settings &other)
+    : json_(new nlohmann::json(*other.json_))
+{
+}
+
+Settings::Settings(Settings &&other)
+    : json_(std::move(other.json_))
+{
+}
+
+void Settings::operator=(const Settings &other)
+{
+    *json_ = *other.json_;
+}
+
+void Settings::saveToUi(MainWindow &window) const
+{
+    for (const auto &set : uiSyncList_)
+        set.save(window, *json_);
+}
+
+void Settings::readFromUi(const MainWindow &window)
+{
+    for (const auto &set : uiSyncList_)
+        set.read(window, *json_);
+}
+
 PatternSettings::PatternSettings(const nlohmann::json &json)
     : Settings(json)
 {
-    setJSON(json_);
+    setJSON(json);
 }
 
 PatternSettings::PatternSettings(size_t priority, const std::vector<QRegularExpression> &regex)
     : regexes_(regex)
     , priority_(priority)
-{}
+{
+}
+
+PatternSettings::PatternSettings(const PatternSettings &other)
+    : Settings(*other.json_)
+    , regexes_(other.regexes_)
+    , priority_(other.priority_)
+{
+}
+
+PatternSettings::PatternSettings(PatternSettings &&other)
+    : Settings(std::move(*other.json_))
+    , regexes_(std::move(other.regexes_))
+    , priority_(std::move(other.priority_))
+{
+}
+
+void PatternSettings::operator=(const PatternSettings &other)
+{
+    *json_ = *other.json_;
+    regexes_ = other.regexes_;
+    priority_ = other.priority_;
+}
 
 nlohmann::json PatternSettings::getJSON() const
 {
-    nlohmann::json j = json_;
+    nlohmann::json j = *json_;
     JSON::setValue(j, priorityKey, priority_);
     JSON::setValue(j, regexKey, toStringList(regexes_));
     return j;
@@ -29,27 +88,27 @@ nlohmann::json PatternSettings::getJSON() const
 
 void PatternSettings::setJSON(const nlohmann::json &j)
 {
-    json_ = j;
-    regexes_ = getPatternRegexFromJSON(json_);
-    auto oPriority = getPatternPriorityFromJSON(json_);
+    *json_ = j;
+    regexes_ = getPatternRegexFromJSON(*json_);
+    auto oPriority = getPatternPriorityFromJSON(*json_);
     priority_ = oPriority ? *oPriority : 0;
-    json_.erase(patternKey);
-    json_.erase(regexKey);
-    json_.erase(priorityKey);
+    json_->erase(patternKey);
+    json_->erase(regexKey);
+    json_->erase(priorityKey);
 }
 
 std::vector<QRegularExpression> PatternSettings::getPatternRegexFromJSON(const nlohmann::json &json)
 {
     QStringList regexStrings;
     bool wildcards = false;
-    if (json.contains(PatternSettings::patternKey)) {
+    if (json.contains(PatternSettings::patternKey))
+    {
         regexStrings = JSON::getValue<QStringList>(json, PatternSettings::patternKey);
         wildcards = true;
     }
     if (json.contains(PatternSettings::regexKey))
         regexStrings = JSON::getValue<QStringList>(json, PatternSettings::regexKey);
-    else if (!json.contains(PatternSettings::patternKey)
-             && !json.contains(PatternSettings::regexKey))
+    else if (!json.contains(PatternSettings::patternKey) && !json.contains(PatternSettings::regexKey))
         return std::vector<QRegularExpression>{};
 
     return toRegexVector(regexStrings, wildcards);
@@ -57,8 +116,7 @@ std::vector<QRegularExpression> PatternSettings::getPatternRegexFromJSON(const n
 
 std::optional<size_t> PatternSettings::getPatternPriorityFromJSON(const nlohmann::json &json)
 {
-    if (!json.contains(PatternSettings::priorityKey)
-        || !json[PatternSettings::priorityKey].is_number())
+    if (!json.contains(PatternSettings::priorityKey) || !json[PatternSettings::priorityKey].is_number())
         return std::nullopt;
 
     return json[PatternSettings::priorityKey].get<size_t>();
@@ -81,26 +139,29 @@ GeneralSettings::GeneralSettings(nlohmann::json j)
 {
 }
 
+GeneralSettings::GeneralSettings(const GeneralSettings &other)
+    : Settings(*other.json_)
+{
+}
+
+GeneralSettings::GeneralSettings(GeneralSettings &&other)
+    : Settings(std::move(other))
+{
+}
+
+void GeneralSettings::operator=(const GeneralSettings &other)
+{
+    *json_ = *other.json_;
+}
+
 QString GeneralSettings::isValid() const
 {
-    if (!QDir(sUserPath()).exists() || sUserPath().size() < 5) {
-        return QString("This path does not exist or is shorter than 5 characters. Path: '%1'")
-            .arg(sUserPath());
+    if (!QDir(sUserPath()).exists() || sUserPath().size() < 5)
+    {
+        return QString("This path does not exist or is shorter than 5 characters. Path: '%1'").arg(sUserPath());
     }
 
     return QString();
-}
-
-void Settings::saveToUi(MainWindow &window) const
-{
-    for (const auto &set : uiSyncList_)
-        set.save(window, json_);
-}
-
-void Settings::readFromUi(const MainWindow &window)
-{
-    for (const auto &set : uiSyncList_)
-        set.read(window, json_);
 }
 
 } // namespace CAO

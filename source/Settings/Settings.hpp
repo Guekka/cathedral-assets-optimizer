@@ -13,7 +13,7 @@
 
 namespace CAO {
 
-#define REGISTER_SETTING(type, name, key) QJSONValueWrapper<type> name{key, json_};
+#define REGISTER_SETTING(type, name, key) QJSONValueWrapper<type> name{json_, key};
 
 class Settings
 {
@@ -22,28 +22,34 @@ public:
     //! \brief Checks if the current settings are allowed 
     virtual std::optional<QString> isValid() = 0; 
     */
-    Settings() = default;
-    Settings(const nlohmann::json &j)
-        : json_(j)
-    {}
 
+    Settings();
+    Settings(const nlohmann::json &j);
+    Settings(const Settings &other);
+    Settings(Settings &&other);
     virtual ~Settings() = default;
 
-    virtual nlohmann::json getJSON() const { return json_; }
-    virtual void setJSON(const nlohmann::json &j) { json_ = j; }
+    void operator=(const Settings &other);
+
+    virtual nlohmann::json getJSON() const { return *json_; }
+    virtual void setJSON(const nlohmann::json &j) { *json_ = j; }
 
     void saveToUi(MainWindow &window) const;
     void readFromUi(const MainWindow &window);
 
 protected:
     std::vector<UISync> uiSyncList_;
-    mutable nlohmann::json json_;
+    mutable std::unique_ptr<nlohmann::json> json_;
 };
 class PatternSettings final : public Settings
 {
 public:
     PatternSettings(const nlohmann::json &json);
     PatternSettings(size_t priority, const std::vector<QRegularExpression> &regex);
+    PatternSettings(const PatternSettings &other);
+    PatternSettings(PatternSettings &&other);
+
+    void operator=(const PatternSettings &other);
 
     std::vector<QRegularExpression> regexes_;
     size_t priority_{0};
@@ -103,10 +109,13 @@ public:
 
 class GeneralSettings final : public Settings
 {
-    Q_GADGET
 public:
     GeneralSettings() = default;
     GeneralSettings(nlohmann::json j);
+    GeneralSettings(const GeneralSettings &other);
+    GeneralSettings(GeneralSettings &&other);
+
+    void operator=(const GeneralSettings &other);
 
     //! \brief Checks if the current settings are allowed
     QString isValid() const;

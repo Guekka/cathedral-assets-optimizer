@@ -17,12 +17,13 @@ signals:
     void valueChanged();
 };
 } // namespace detail
-
 template<typename T>
 class QValueWrapper : public detail::QValueWrapperHelper
 {
 public:
     using Type = T;
+
+    QValueWrapper() = default;
 
     QValueWrapper(const Type &val)
         : value_(val){};
@@ -54,11 +55,19 @@ public:
     using parentType = QValueWrapper<T>;
 
     //NOTE The JSON has to outlive the QJSONValueWrapper
-    QJSONValueWrapper(const QString &key, nlohmann::json &j)
-        : parentType(JSON::getValue<Type>(j, key))
-        , key_(key)
-        , json_(&j)
-    {}
+    QJSONValueWrapper(std::unique_ptr<nlohmann::json> &j, std::string key)
+        : json_(j)
+        , key_(std::move(key))
+    {
+        const auto &json = *json_;
+        assert(key.size() > 0);
+        assert(json.is_null() || json.is_object());
+        setValue(JSON::getValue<Type>(json, key_));
+    }
+
+    QJSONValueWrapper(const QJSONValueWrapper &other) = delete;
+    QJSONValueWrapper(QJSONValueWrapper &&other) = delete;
+    void operator=(const QJSONValueWrapper &other) = delete;
 
     virtual void setValue(const Type &newValue) override
     {
@@ -69,8 +78,8 @@ public:
     void operator=(const Type &value) { setValue(value); }
 
 private:
-    QString key_;
-    nlohmann::json *json_;
+    std::unique_ptr<nlohmann::json> &json_;
+    std::string key_;
 };
 
 } // namespace CAO
