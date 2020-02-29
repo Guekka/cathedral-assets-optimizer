@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Settings.hpp"
-#include "Utils/QRegexToFromString.hpp"
+#include "Utils/TypeConvert.hpp"
 
 namespace CAO {
 class PatternMap

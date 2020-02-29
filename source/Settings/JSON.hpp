@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Utils/TypeConvert.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -16,11 +17,14 @@ void saveToFile(const nlohmann::json &json, const QString &filepath);
 
 void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons);
 
-json_pointer getPointer(const QString &key);
+json_pointer getPointer(const std::string &key);
 
 template<typename T>
-inline T getValueSafe(const nlohmann::json &j)
+inline T getValue(nlohmann::json j)
 {
+    if (j.is_null())
+        return T{};
+
     const nlohmann::json *json = &j;
 
     nlohmann::json defaultJ = T();
@@ -34,53 +38,74 @@ inline T getValueSafe(const nlohmann::json &j)
     return json->get<T>();
 }
 
-template<class T>
-inline T getValue(nlohmann::json json, const QString &key)
+template<>
+inline QString getValue(nlohmann::json j)
 {
-    if (json.is_null())
-        return T{};
-    return getValueSafe<T>(std::move(json[getPointer(key)]));
+    return QString::fromStdString(getValue<std::string>(j));
 }
 
 template<>
-inline QString getValue(nlohmann::json json, const QString &key)
+inline QStringList getValue(nlohmann::json j)
+{
+    return toStringList(getValue<std::vector<std::string>>(j));
+}
+
+template<class T>
+inline T getValue(nlohmann::json json, const std::string &key)
+{
+    assert(key.size() > 0);
+    assert(json.is_object() || json.is_null());
+    return getValue<T>(json[getPointer(key)]);
+}
+
+template<>
+inline QString getValue(nlohmann::json json, const std::string &key)
 {
     return QString::fromStdString(getValue<std::string>(json, key));
 }
 
 template<>
-inline QStringList getValue(nlohmann::json json, const QString &key)
+inline QStringList getValue(nlohmann::json json, const std::string &key)
 {
-    QStringList list;
-    for (const auto &str : getValue<std::vector<std::string>>(json, key))
-        list << QString::fromStdString(str);
-    return list;
+    return toStringList(getValue<std::vector<std::string>>(json, key));
 }
 
 template<class T>
-inline void setValue(nlohmann::json &json, const QString &key, const T &value)
+inline void setValue(nlohmann::json &json, const T &value)
 {
-    if (!json.is_object())
-        json = {};
-    json[getPointer(key)] = value;
+    json = value;
 }
 
 template<>
-inline void setValue(nlohmann::json &json, const QString &key, const QString &value)
+inline void setValue(nlohmann::json &json, const QString &value)
+{
+    setValue(json, value.toStdString());
+}
+
+template<>
+inline void setValue(nlohmann::json &json, const QStringList &value)
+{
+    setValue(json, toStringVector(value));
+}
+
+template<class T>
+inline void setValue(nlohmann::json &json, const std::string &key, const T &value)
+{
+    assert(json.is_object() || json.is_null());
+    auto &&pointer = getPointer(key);
+    setValue(json[pointer], value);
+}
+
+template<>
+inline void setValue(nlohmann::json &json, const std::string &key, const QString &value)
 {
     setValue(json, key, value.toStdString());
 }
 
 template<>
-inline void setValue(nlohmann::json &json, const QString &key, const QStringList &value)
+inline void setValue(nlohmann::json &json, const std::string &key, const QStringList &value)
 {
-    auto qstringVec = value.toVector().toStdVector();
-    std::vector<std::string> stringVec(qstringVec.size());
-    std::transform(qstringVec.begin(),
-                   qstringVec.end(),
-                   std::back_inserter(stringVec),
-                   [](const QString &str) { return str.toStdString(); });
-    setValue(json, key, stringVec);
+    setValue(json, key, toStringVector(value));
 }
 
 }; // namespace JSON

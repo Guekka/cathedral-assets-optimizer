@@ -40,13 +40,14 @@ void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons
         j.unflatten();
 }
 
-json_pointer getPointer(const QString &key)
+json_pointer getPointer(const std::string &key)
 {
+    assert(key.length() > 0);
     json_pointer j;
-    if (key.startsWith('/'))
-        j = json_pointer{key.toStdString()};
+    if (key[0] == '/')
+        j = json_pointer{key};
     else
-        j = json_pointer{'/' + key.toStdString()};
+        j = json_pointer{'/' + key};
     return j;
 }
 
