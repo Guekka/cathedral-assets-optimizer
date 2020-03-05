@@ -95,14 +95,14 @@ void bs_archive::load_from_disk(const convertible_string &archive_path)
     libbsarch::checkResult(result);
 }
 
-void bs_archive::create(const convertible_string &archiveName, const bs_archive_entries &entries)
+void bs_archive::create(const convertible_string &archiveName, const bs_archive_entries &entries) const
 {
     create(archiveName, entries, type_);
 }
 
 void bs_archive::create(const convertible_string &archiveName,
                         const bs_archive_entries &entries,
-                        const bsa_archive_type_t type)
+                        const bsa_archive_type_t type) const
 {
     debug_log() << "Creating archive. Archive name: " << archiveName << '\n'
                 << "type: " << type_ << '\n'

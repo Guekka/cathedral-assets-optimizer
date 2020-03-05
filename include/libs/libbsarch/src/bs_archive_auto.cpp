@@ -78,7 +78,7 @@ void bs_archive_auto::save_to_disk(const convertible_string &archive_path)
             case 1:
             {
                 const auto &file_path = std::get<convertible_string>(file.data);
-                const auto &blob = disk_blob(file.path_in_archive, file_path, bool());
+                const auto &blob = disk_blob(file.path_in_archive, file_path, use_relative_path_flag{});
                 bs_archive::add_file_from_disk(blob);
             }
         }

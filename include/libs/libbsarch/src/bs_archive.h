@@ -32,10 +32,10 @@ public:
 
     /* Input-Output */
     virtual void load_from_disk(const convertible_string &archive_path);
-    virtual void create(const convertible_string &archiveName, const bs_archive_entries &entries);
+    virtual void create(const convertible_string &archiveName, const bs_archive_entries &entries) const;
     virtual void create(const convertible_string &archiveName,
                         const bs_archive_entries &entries,
-                        const bsa_archive_type_t type);
+                        const bsa_archive_type_t type) const;
     void save() const;
 
     /* Add to archive */

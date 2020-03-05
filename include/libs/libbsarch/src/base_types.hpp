@@ -27,6 +27,10 @@ struct memory_blob : public bsa_result_buffer_t
     ~memory_blob() { bsa_file_data_free(parent_, *this); }
 };
 
+struct use_relative_path_flag
+{
+};
+
 struct disk_blob
 {
     disk_blob(const convertible_string &root_dir, const convertible_string &absolute_path)
@@ -38,7 +42,7 @@ struct disk_blob
 
     disk_blob(const convertible_string &path_in_archive,
               const convertible_string &absolute_path,
-              [[maybe_unused]] bool decoy_parameter)
+              [[maybe_unused]] use_relative_path_flag)
         : path_in_archive(path_in_archive)
         , path_on_disk(absolute_path)
     {}

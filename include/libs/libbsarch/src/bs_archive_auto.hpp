@@ -14,9 +14,6 @@ namespace libbsarch {
  */
 class bs_archive_auto : public bs_archive
 {
-protected:
-    bs_archive_entries entries_;
-
 public:
     bs_archive_auto() = default;
     bs_archive_auto(const bsa_archive_type_t &type);
@@ -35,5 +32,8 @@ private:
     using bs_archive::create; //Use save_to_disk instead
     using bs_archive::save;   //Use save_to_disk instead
     std::vector<bs_packed_file> files_;
+    mutable bs_archive_entries entries_;
 };
 } // namespace libbsarch
+
+//TODO Submit changes to libbsarch repo
