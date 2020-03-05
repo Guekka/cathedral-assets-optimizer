@@ -50,6 +50,7 @@ public:
     PatternSettings(PatternSettings &&other);
 
     void operator=(const PatternSettings &other);
+    bool operator==(const PatternSettings &other) const;
 
     std::vector<QRegularExpression> regexes_;
     size_t priority_{0};
@@ -138,5 +139,17 @@ public:
     REGISTER_SETTING(bool, bMeshesTabEnabled, "Advanced/Meshes/bMeshesTabEnabled")
     REGISTER_SETTING(bool, bAnimationsTabEnabled, "Advanced/Animations/bAnimationsTabEnabled")
 };
-} // namespace CAO
 #undef REGISTER_SETTING
+} // namespace CAO
+
+namespace std {
+template<>
+struct hash<CAO::PatternSettings>
+{
+    size_t operator()(const CAO::PatternSettings &x) const
+    {
+        auto jHasher = std::hash<nlohmann::json>{};
+        return jHasher(x.getJSON());
+    }
+};
+} // namespace std

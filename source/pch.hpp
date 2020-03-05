@@ -74,6 +74,7 @@
 #include <filesystem>
 #include <fstream>
 #include <optional>
+#include <unordered_set>
 #include <utility>
 /*----------------------*/
 

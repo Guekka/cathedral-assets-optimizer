@@ -59,8 +59,8 @@ public:
         : json_(j)
         , key_(std::move(key))
     {
+        assert(key_.size() > 0);
         const auto &json = *json_;
-        assert(key.size() > 0);
         assert(json.is_null() || json.is_object());
         setValue(JSON::getValue<Type>(json, key_));
     }

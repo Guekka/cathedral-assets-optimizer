@@ -10,12 +10,14 @@ void PatternMap::listPatterns(nlohmann::json json)
 {
     patterns_.clear();
     //Retrieving all the patterns and converting them to regexes
-    for (auto &value : json) {
+    for (auto &value : json)
+    {
         if (!value.is_object())
             continue;
 
         //We only know that the first profile will contain all the settings. The others might be incomplete
-        if (!patterns_.empty()) {
+        if (!patterns_.empty())
+        {
             const PatternSettings &defaultSets = patterns_.begin()->second;
             const auto &defaultJson = defaultSets.getJSON();
             auto patchedJson = defaultJson;
@@ -41,11 +43,14 @@ const PatternSettings &PatternMap::getSettings(const QString &filePath) const
     assert(!patterns_.empty());
 
     const PatternSettings *result = &patterns_.begin()->second;
-    for (auto it = patterns_.crbegin(); it != patterns_.crend(); ++it) {
+    for (auto it = patterns_.crbegin(); it != patterns_.crend(); ++it)
+    {
         const auto &regexes = it->second.regexes_;
-        for (const auto &regex : regexes) {
+        for (const auto &regex : regexes)
+        {
             const auto &match = regex.match(filePath);
-            if (match.hasMatch()) {
+            if (match.hasMatch())
+            {
                 result = &it->second;
                 break;
             }
@@ -57,8 +62,7 @@ const PatternSettings &PatternMap::getSettings(const QString &filePath) const
 
 PatternSettings &PatternMap::getSettings(const QString &filePath)
 {
-    return const_cast<PatternSettings &>(
-        static_cast<const PatternMap *>(this)->getSettings(filePath));
+    return const_cast<PatternSettings &>(static_cast<const PatternMap *>(this)->getSettings(filePath));
 }
 
 void PatternMap::readFromUi(const MainWindow &window)
@@ -81,8 +85,7 @@ nlohmann::json PatternMap::removePatternKeys(nlohmann::json json)
     return json;
 }
 
-nlohmann::json PatternMap::mergePattern(const nlohmann::json &json1,
-                                        const nlohmann::json &json2) const
+nlohmann::json PatternMap::mergePattern(const nlohmann::json &json1, const nlohmann::json &json2) const
 {
     auto pKey1 = JSON::getValue<QStringList>(json1, PatternSettings::patternKey);
     auto pKey2 = JSON::getValue<QStringList>(json2, PatternSettings::patternKey);
@@ -103,19 +106,23 @@ void PatternMap::cleanPatterns()
 {
     //TODO If a JSON is a subset of another, it will not be merged.
 
-    std::unordered_map<nlohmann::json, std::set<PatternSettings *>> JsonToSets;
+    std::unordered_map<nlohmann::json, std::unordered_set<PatternSettings>> JsonToSets;
 
-    for (auto [_, pattern] : patterns_) {
+    for (auto [_, pattern] : patterns_)
+    {
         auto cleanedJson = removePatternKeys(pattern.getJSON());
-        JsonToSets[cleanedJson].emplace(&pattern);
+        JsonToSets[cleanedJson].emplace(pattern);
     }
 
     patterns_.clear();
 
-    for (auto &value : JsonToSets) {
+    for (auto &value : JsonToSets)
+    {
         nlohmann::json merged;
-        for (auto &settings : value.second) {
-            merged = mergePattern(merged, settings->getJSON());
+        for (auto &settings : value.second)
+        {
+            auto json = settings.getJSON();
+            merged = mergePattern(merged, settings.getJSON());
         }
         PatternSettings s{merged};
         patterns_.emplace(s.priority_, std::move(s));
@@ -127,10 +134,9 @@ nlohmann::json PatternMap::getUnifiedJSON() const
     std::vector<nlohmann::json> vector;
     vector.reserve(patterns_.size());
 
-    std::transform(patterns_.cbegin(),
-                   patterns_.cend(),
-                   std::back_inserter(vector),
-                   [](const auto &pair) { return pair.second.getJSON(); });
+    std::transform(patterns_.cbegin(), patterns_.cend(), std::back_inserter(vector), [](const auto &pair) {
+        return pair.second.getJSON();
+    });
 
     return nlohmann::json{vector};
 }

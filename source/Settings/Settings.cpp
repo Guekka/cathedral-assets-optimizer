@@ -78,6 +78,11 @@ void PatternSettings::operator=(const PatternSettings &other)
     priority_ = other.priority_;
 }
 
+bool PatternSettings::operator==(const PatternSettings &other) const
+{
+    return getJSON() == other.getJSON();
+}
+
 nlohmann::json PatternSettings::getJSON() const
 {
     nlohmann::json j = *json_;
