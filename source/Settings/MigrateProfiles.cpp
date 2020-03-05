@@ -8,6 +8,11 @@
 
 namespace CAO {
 
+bool profileVersionIs5(const QDir &profile)
+{
+    return profile.exists("profile.ini");
+}
+
 void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 {
     const QString inFile = oldProfile.absoluteFilePath("profile.ini");
@@ -22,8 +27,7 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 
     profileSettings.beginGroup("BSA");
 
-    gPattern.eBSAFormat = static_cast<bsa_archive_type_t>(
-        profileSettings.value("bsaFormat").toInt());
+    gPattern.eBSAFormat = static_cast<bsa_archive_type_t>(profileSettings.value("bsaFormat").toInt());
     gPattern.iBSAMaxSize = profileSettings.value("maxBsaUncompressedSize").toDouble();
 
     generalSets.sBSAExtension = profileSettings.value("bsaExtension").toString();
@@ -48,8 +52,7 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     profileSettings.endGroup();
     profileSettings.beginGroup("Animations");
     generalSets.bAnimationsTabEnabled = profileSettings.value("animationsEnabled").toBool();
-    gPattern.eAnimationsFormat = static_cast<hkPackFormat>(
-        profileSettings.value("animationFormat").toInt());
+    gPattern.eAnimationsFormat = static_cast<hkPackFormat>(profileSettings.value("animationFormat").toInt());
 
     profileSettings.endGroup();
     profileSettings.beginGroup("Textures");
@@ -66,8 +69,7 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     auto &pSetsTGA = patterns.get().at(1);
     pSetsTGA.bTexturesForceConvert = texturesConvertTga;
 
-    patterns.addPattern(
-        PatternSettings{2, toRegexVector({"*/interface/*.dds", "*/interface/*.tga"}, true)});
+    patterns.addPattern(PatternSettings{2, toRegexVector({"*/interface/*.dds", "*/interface/*.tga"}, true)});
     auto &pSetsInterface = patterns.get().at(2);
     pSetsInterface.bTexturesForceConvert = texturesCompressInterface;
 
@@ -75,20 +77,57 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     std::transform(texturesUnwantedFormats.begin(),
                    texturesUnwantedFormats.end(),
                    std::back_inserter(unwantedFormats),
-                   [](QVariant &variant) { return variant.value<DXGI_FORMAT>(); });
+                   [](const QVariant &variant) { return variant.value<DXGI_FORMAT>(); });
     gPattern.slTextureUnwantedFormats = unwantedFormats;
+}
+
+bool isWhitelisted(const QString &fileName)
+{
+    constexpr std::array<std::string_view, 6> fileWhitelist{"customHeadparts.txt",
+                                                            "customLandscape.txt",
+                                                            "DummyPlugin.esp",
+                                                            "FilesToNotPack.txt",
+                                                            "ignoredMods.txt",
+                                                            "isBase"};
+
+    auto beg = fileWhitelist.cbegin();
+    auto end = fileWhitelist.cend();
+    return std::find(beg, end, fileName.toStdString()) != end;
+}
+
+void copyFiles(const QDir &oldProfile, const QDir &newProfile)
+{
+    QDirIterator it(oldProfile);
+    while (it.hasNext())
+    {
+        it.next();
+        const QString &filename = it.fileName();
+        if (isWhitelisted(filename))
+            QFile::copy(it.filePath(), newProfile.absoluteFilePath(filename));
+    }
 }
 
 void migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot)
 {
     Profiles profiles(newProfileRoot);
-    for (const auto &dir : oldProfileRoot.entryList(QDir::NoDotAndDotDot | QDir::Dirs)) {
-        try {
+    for (const auto &dir : oldProfileRoot.entryList(QDir::NoDotAndDotDot | QDir::Dirs))
+    {
+        try
+        {
+            QDir oldDir{oldProfileRoot.absoluteFilePath(dir)};
+            QDir newDir{newProfileRoot.absoluteFilePath(dir)};
+
+            if (!profileVersionIs5(oldDir))
+                continue;
+
             profiles.create(dir);
             auto &profile = profiles.get(dir);
-            migrate5To6(QDir{dir}, profile);
+            migrate5To6(oldDir, profile);
             profile.saveToJSON();
-        } catch (const std::exception &e) {
+            copyFiles(oldDir, newDir);
+        }
+        catch (const std::exception &e)
+        {
             continue;
         }
     }
