@@ -13,28 +13,20 @@ BSAFile::BSAFile()
 int BSAFile::loadFromDisk(const QString &filePath)
 {
     reset();
-    auto bsaFile = static_cast<BSAFileResource *>(&*_file);
+    auto bsaFile = static_cast<BSAFileResource *>(&getFile(false));
     bsaFile->load_from_disk(filePath);
-    _filename = filePath;
-    matchSettings();
-    _optimizedCurrentFile = false;
-
+    setName(filePath);
     return 0;
 }
 
 int BSAFile::saveToDisk(const QString &filePath) const
 {
-    auto bsaFile = static_cast<BSAFileResource *>(&*_file);
+    auto bsaFile = static_cast<BSAFileResource *>(const_cast<Resource *>((&getFile())));
+    //const_cast makes sense here, since this function has to be const
+    //However, this raises doubts about libbsarch conception
+    //Maybe some things should be improved in this library
+
     bsaFile->save_to_disk(filePath);
-
-    if (filePath != _filename)
-    {
-        if (!QFile::copy(_filename, filePath))
-            return 1;
-    }
-    else
-        return 1;
-
     return 0;
 }
 

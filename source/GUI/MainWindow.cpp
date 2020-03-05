@@ -227,7 +227,6 @@ MainWindow::MainWindow()
     auto &currentProfile = _profiles->getCurrent();
     currentProfile.readFromUi(*this);
     currentProfile.saveToUi(*this);
-    currentProfile.saveToJSON(); //FIXME TEMP
     _settingsChanged = false;
     setProfile(currentProfile);
     firstStart();

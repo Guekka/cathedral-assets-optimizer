@@ -24,7 +24,7 @@ int TextureFile::loadFromDisk(const QString &filePath)
     wFilePath[filePath.length()] = '\0';
 
     //Trying to guess texture type. DDS is more common
-    auto image = static_cast<TextureResource *>(&*_file);
+    auto image = static_cast<TextureResource *>(&getFile(false));
     if (FAILED(LoadFromDDSFile(wFilePath, DirectX::DDS_FLAGS_NONE, &_info, *image)))
     {
         if (FAILED(LoadFromTGAFile(wFilePath, &_info, *image)))
@@ -47,8 +47,7 @@ int TextureFile::loadFromDisk(const QString &filePath)
     }
     image->origFormat = _info.format;
 
-    _filename = filePath;
-    matchSettings();
+    setName(filePath);
 
     return 0;
 }
@@ -56,10 +55,9 @@ int TextureFile::loadFromDisk(const QString &filePath)
 int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const QString &fileName)
 {
     reset();
-    _filename = fileName;
-    matchSettings();
+    setName(fileName);
 
-    auto image = static_cast<TextureResource *>(&*_file);
+    auto image = static_cast<TextureResource *>(&getFile(false));
     if (FAILED(LoadFromDDSMemory(pSource, size, DirectX::DDS_FLAGS_NONE, &_info, *image)))
         if (FAILED(LoadFromTGAMemory(pSource, size, &_info, *image)))
         {
@@ -78,13 +76,13 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
         image->OverrideFormat(_info.format);
     }
 
-    _filename = fileName;
+    setName(fileName);
     return 0;
 }
 
 int TextureFile::saveToDisk(const QString &filePath) const
 {
-    auto image = static_cast<TextureResource *>(&*_file);
+    auto image = static_cast<const TextureResource *>(&getFile());
     const auto img = image->GetImages();
     if (!img)
         return 1;
@@ -101,7 +99,7 @@ int TextureFile::saveToDisk(const QString &filePath) const
 
     const HRESULT hr = SaveToDDSFile(img, nimg, _info, DirectX::DDS_FLAGS_NONE, wFilePath);
     if (SUCCEEDED(hr) && image->isTGA)
-        QFile(_filename).remove();
+        QFile(getName()).remove();
     return FAILED(hr);
 }
 

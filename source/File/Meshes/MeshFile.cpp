@@ -15,16 +15,15 @@ MeshFile::MeshFile()
 int MeshFile::loadFromDisk(const QString &filePath)
 {
     reset();
-    auto meshFile = static_cast<MeshResource *>(&*_file);
-    _optimizedCurrentFile = false;
-    _filename = filePath;
-    matchSettings();
+    auto meshFile = static_cast<MeshResource *>(&getFile(false));
+    setName(filePath);
     return meshFile->Load(filePath.toStdString());
 }
 
 int MeshFile::saveToDisk(const QString &filePath) const
 {
-    auto meshFile = static_cast<MeshResource *>(&*_file);
+    auto meshFile = static_cast<MeshResource *>(const_cast<Resource *>((&getFile())));
+    //Same reasoning for const_cast here than for BSAFile
     return meshFile->Save(filePath.toStdString());
 }
 

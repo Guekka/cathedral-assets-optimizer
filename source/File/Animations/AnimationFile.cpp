@@ -48,7 +48,7 @@ int AnimationFile::loadFromDisk(const QString &filePath)
     reset();
     try
     {
-        auto havok = static_cast<AnimationResource *>(&*_file);
+        auto havok = static_cast<AnimationResource *>(&getFile(false));
 
         hkIstream istream(qPrintable(filePath));
         if (!istream.isOk())
@@ -67,8 +67,8 @@ int AnimationFile::loadFromDisk(const QString &filePath)
         hkSerializeUtil::detectFormat(reader, formatDetails);
         havok->pkFormat = GetFormatFromLayout(formatDetails.m_layoutRules);
 
-        _filename = filePath;
-        matchSettings();
+        setName(filePath);
+        
 
         return 0;
     }
@@ -82,7 +82,7 @@ int AnimationFile::saveToDisk(const QString &filePath) const
 {
     try
     {
-        auto havok = static_cast<AnimationResource *>(&*_file);
+        auto havok = static_cast<const AnimationResource *>(&getFile());
 
         QString outPath = filePath;
         if (QFile::exists(outPath))

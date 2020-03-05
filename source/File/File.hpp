@@ -12,8 +12,8 @@ namespace CAO {
 class File
 {
 public:
-    const QString &getName() const { return _filename; }
-    void setName(const QString &name) { _filename = name; }
+    const QString &getName() const;
+    void setName(const QString &name);
 
     virtual int loadFromDisk(const QString &filePath) = 0;
     virtual int loadFromMemory(const void *pSource, const size_t &size, const QString &fileName);
@@ -21,15 +21,11 @@ public:
     virtual int saveToDisk(const QString &filePath) const = 0;
     virtual int saveToMemory(const void *pSource, const size_t &size, const QString &fileName) const;
 
-    bool optimizedCurrentFile() const { return _optimizedCurrentFile; }
-    void setOptimizedCurrentFile(const bool optimizedFile) { _optimizedCurrentFile |= optimizedFile; }
+    bool optimizedCurrentFile() const;
+    void setOptimizedCurrentFile(const bool optimizedFile);
 
-    const Resource &getFile() { return *_file; }
-    Resource &getFile(const bool modifiedFile)
-    {
-        setOptimizedCurrentFile(modifiedFile);
-        return *_file;
-    }
+    const Resource &getFile() const;
+    Resource &getFile(const bool modifiedFile);
 
     virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
     virtual void reset() = 0;
@@ -40,10 +36,6 @@ public:
     virtual ~File() = default;
 
 protected:
-    QString _filename;
-    std::unique_ptr<Resource> _file;
-    bool _optimizedCurrentFile = false;
-
     template<class T>
     bool setFileHelper(Resource &file, bool optimizedFile)
     {
@@ -62,11 +54,18 @@ protected:
         _filename.clear();
         _file.reset(new T);
         _optimizedCurrentFile = false;
-        matchSettings();
+        generalSettings_ = nullptr;
+        patternSettings_ = nullptr;
     }
 
-    void matchSettings();
+private:
+    QString _filename;
+    std::unique_ptr<Resource> _file;
+    bool _optimizedCurrentFile = false;
+
     GeneralSettings *generalSettings_;
     PatternSettings *patternSettings_;
+
+    void matchSettings();
 };
 } // namespace CAO

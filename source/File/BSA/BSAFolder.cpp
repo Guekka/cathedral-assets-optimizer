@@ -12,10 +12,9 @@ BSAFolder::BSAFolder()
 
 int BSAFolder::loadFromDisk(const QString &filePath)
 {
-    auto dir = static_cast<BSAFolderResource *>(&*_file);
+    auto dir = static_cast<BSAFolderResource *>(&getFile(false));
     dir->setPath(filePath);
-    _filename = filePath;
-    matchSettings();
+    setName(filePath);
     return 0;
 }
 

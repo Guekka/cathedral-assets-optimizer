@@ -8,20 +8,48 @@
 
 namespace CAO {
 
-int File::loadFromMemory(const void *pSource, const size_t &size, const QString &fileName)
+const QString &File::getName() const
 {
-    [[maybe_unused]] auto &a = pSource;
-    [[maybe_unused]] auto &b = size;
-    [[maybe_unused]] auto &c = fileName;
-    return 1;
+    return _filename;
+}
+
+void File::setName(const QString &name)
+{
+    _filename = QDir::cleanPath(name);
+    matchSettings();
 }
 
 int File::saveToMemory(const void *pSource, const size_t &size, const QString &fileName) const
 {
-    [[maybe_unused]] auto &a = pSource;
-    [[maybe_unused]] auto &b = size;
-    [[maybe_unused]] auto &c = fileName;
+    assert(false && "Function 'File::saveToMemory' should never be called");
     return 1;
+}
+
+int File::loadFromMemory(const void *pSource, const size_t &size, const QString &fileName)
+{
+    assert(false && "Function 'File::saveToMemory' should never be called");
+    return 1;
+}
+
+bool File::optimizedCurrentFile() const
+{
+    return _optimizedCurrentFile;
+}
+
+void File::setOptimizedCurrentFile(const bool optimizedFile)
+{
+    _optimizedCurrentFile |= optimizedFile;
+}
+
+const Resource &File::getFile() const
+{
+    return *_file;
+}
+
+Resource &File::getFile(const bool modifiedFile)
+{
+    setOptimizedCurrentFile(modifiedFile);
+    return *_file;
 }
 
 const GeneralSettings &File::generalSettings() const

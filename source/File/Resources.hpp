@@ -36,9 +36,6 @@ struct AnimationResource : public Resource
     hkVariant root;
     hkResource *resource;
     hkPackFormat pkFormat;
-
-    QString qstr;
-    std::string str;
 };
 
 } // namespace CAO
