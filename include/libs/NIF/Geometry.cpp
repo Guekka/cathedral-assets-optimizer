@@ -1266,8 +1266,9 @@ void BSTriShape::CalcTangentSpace() {
 	}
 }
 
-int BSTriShape::CalcDataSizes(NiVersion& version) {
-	vertexSize = 0;
+int BSTriShape::CalcDataSizes(const NiVersion &version)
+{
+    vertexSize = 0;
 	dataSize = 0;
 
 	VertexFlags vf = vertexDesc.GetFlags();

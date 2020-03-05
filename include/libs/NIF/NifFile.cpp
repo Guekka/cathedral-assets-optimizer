@@ -71,8 +71,8 @@ void NifFile::CopyFrom(const NifFile &other)
     size_t nBlocks = other.blocks.size();
     blocks.resize(nBlocks);
 
-    for (int i = 0; i < nBlocks; i++)
-        blocks[i] = std::move(std::unique_ptr<NiObject>(other.blocks[i]->Clone()));
+    for (uint i = 0; i < nBlocks; i++)
+        blocks[i] = std::unique_ptr<NiObject>(other.blocks[i]->Clone());
 
     hdr.SetBlockReference(&blocks);
     LinkGeomData();
@@ -152,7 +152,7 @@ int NifFile::Load(Stream &file, const NifLoadOptions &options)
 
     if (file.is_open())
     {
-        NiStream stream(&file, &hdr.GetVersion());
+        NiStream stream(&file, hdr.GetVersion());
         hdr.Get(stream);
 
         if (!hdr.IsValid())
@@ -161,7 +161,7 @@ int NifFile::Load(Stream &file, const NifLoadOptions &options)
             return 1;
         }
 
-        NiVersion &version = stream.GetVersion();
+        const NiVersion &version = stream.GetVersion();
         if (!(version.File() >= NiVersion::ToFile(20, 2, 0, 7) && (version.User() == 11 || version.User() == 12)))
         {
             Clear();
@@ -172,7 +172,7 @@ int NifFile::Load(Stream &file, const NifLoadOptions &options)
         blocks.resize(nBlocks);
 
         auto &nifactories = NiFactoryRegister::Get();
-        for (int i = 0; i < nBlocks; i++)
+        for (uint i = 0; i < nBlocks; i++)
         {
             NiObject *block = nullptr;
             std::string blockTypeStr = hdr.GetBlockTypeStringById(i);
@@ -189,7 +189,7 @@ int NifFile::Load(Stream &file, const NifLoadOptions &options)
             }
 
             if (block)
-                blocks[i] = std::move(std::unique_ptr<NiObject>(block));
+                blocks[i] = std::unique_ptr<NiObject>(block);
         }
 
         hdr.SetBlockReference(&blocks);
@@ -220,7 +220,7 @@ void NifFile::SetShapeOrder(const std::vector<std::string> &order)
         std::vector<int> oldOrderIds;
         for (auto s : oldOrder)
         {
-            int blockID = GetBlockID(FindBlockByName<NiShape>(s));
+            uint blockID = GetBlockID(FindBlockByName<NiShape>(s));
             if (blockID != 0xFFFFFFFF)
                 oldOrderIds.push_back(blockID);
         }
@@ -232,7 +232,7 @@ void NifFile::SetShapeOrder(const std::vector<std::string> &order)
         delta.clear();
         delta.resize(order.size());
 
-        for (int p = 0; p < oldOrder.size(); p++)
+        for (uint p = 0; p < oldOrder.size(); p++)
             delta[p] = (std::find(order.begin(), order.end(), oldOrder[p]) - order.begin()) - p;
 
         hadoffset = false;
@@ -240,15 +240,15 @@ void NifFile::SetShapeOrder(const std::vector<std::string> &order)
         // thus, we only need to move the "rising" items, the other blocks will naturally end up in the right place.
 
         // find first negative delta, and raise it in list.  The first item can't have a negative delta
-        for (int i = 1; i < delta.size(); i++)
+        for (uint i = 1; i < delta.size(); i++)
         {
             // don't move positive or zero offset items.
             if (delta[i] >= 0)
                 continue;
 
             hadoffset = true;
-            int c = 0 - delta[i];
-            int p = i;
+            uint c = 0 - delta[i];
+            uint p = i;
             while (c > 0)
             {
                 hdr.SwapBlocks(oldOrderIds[p], oldOrderIds[p - 1]);
@@ -261,16 +261,16 @@ void NifFile::SetShapeOrder(const std::vector<std::string> &order)
     } while (hadoffset);
 }
 
-void NifFile::SetSortIndex(const int id, std::vector<std::pair<int, int>> &newIndices, int &newIndex)
+void NifFile::SetSortIndex(const uint id, std::vector<std::pair<int, int>> &newIndices, int &newIndex)
 {
     // Assign new sort index, if not already assigned
-    if (newIndices.size() > id && newIndices[id].first == 0xFFFFFFFF)
+    if (newIndices.size() > id && newIndices[id].first == -1)
         newIndices[id] = std::make_pair(id, ++newIndex);
 }
 
 void NifFile::SortAVObject(NiAVObject *avobj, std::vector<std::pair<int, int>> &newIndices, int &newIndex)
 {
-    int id = 0xFFFFFFFF;
+    uint id = 0xFFFFFFFF;
     for (auto &r : avobj->GetExtraData())
     {
         id = r.GetIndex();
@@ -304,7 +304,7 @@ void NifFile::SortAVObject(NiAVObject *avobj, std::vector<std::pair<int, int>> &
 
 void NifFile::SortShape(NiShape *shape, std::vector<std::pair<int, int>> &newIndices, int &newIndex)
 {
-    int id = shape->GetDataRef();
+    uint id = shape->GetDataRef();
     if (id != 0xFFFFFFFF)
         SetSortIndex(id, newIndices, newIndex);
 
@@ -359,7 +359,7 @@ void NifFile::SortGraph(NiNode *root, std::vector<std::pair<int, int>> &newIndic
     std::vector<int> indices = children.GetIndices();
     children.Clear();
 
-    for (int i = 0; i < hdr.GetNumBlocks(); i++)
+    for (uint i = 0; i < hdr.GetNumBlocks(); i++)
         if (std::find(indices.begin(), indices.end(), i) != indices.end())
             children.AddBlockRef(i);
 
@@ -389,7 +389,7 @@ void NifFile::SortGraph(NiNode *root, std::vector<std::pair<int, int>> &newIndic
             auto peek = children.end() - 1;
 
             // Put shapes at end of children
-            for (int i = children.GetSize() - 1; i >= 0; i--)
+            for (uint i = children.GetSize() - 1; i >= 0; i--)
             {
                 auto shape = hdr.GetBlock<NiShape>(children.GetBlockRef(i));
                 if (shape)
@@ -439,7 +439,7 @@ void NifFile::SortGraph(NiNode *root, std::vector<std::pair<int, int>> &newIndic
         // Update children
         for (auto &child : children)
         {
-            int oldChildId = child.GetIndex();
+            uint oldChildId = child.GetIndex();
             if (oldChildId != 0xFFFFFFFF)
             {
                 // Store new index of block
@@ -478,7 +478,7 @@ void NifFile::PrettySortBlocks()
         return;
 
     std::vector<std::pair<int, int>> newIndices(hdr.GetNumBlocks());
-    for (int i = 0; i < newIndices.size(); i++)
+    for (uint i = 0; i < newIndices.size(); i++)
         newIndices[i] = std::make_pair(0xFFFFFFFF, i);
 
     auto root = GetRootNode();
@@ -512,7 +512,7 @@ int NifFile::AddNode(const std::string &nodeName, const MatTransform &xform)
     newNode->SetName(nodeName);
     newNode->transform = xform;
 
-    int newNodeId = hdr.AddBlock(newNode);
+    uint newNodeId = hdr.AddBlock(newNode);
     if (newNodeId != 0xFFFFFFFF)
         root->GetChildren().AddBlockRef(newNodeId);
 
@@ -550,7 +550,7 @@ void NifFile::SetNodeName(const int blockID, const std::string &newName)
 
 int NifFile::AssignExtraData(NiAVObject *target, NiExtraData *extraData)
 {
-    int extraDataId = hdr.AddBlock(extraData);
+    uint extraDataId = hdr.AddBlock(extraData);
     target->GetExtraData().AddBlockRef(extraDataId);
     return extraDataId;
 }
@@ -599,7 +599,7 @@ int NifFile::GetTextureSlot(NiShader *shader, std::string &outTexFile, int texIn
 {
     outTexFile.clear();
 
-    int textureSetRef = shader->GetTextureSetRef();
+    uint textureSetRef = shader->GetTextureSetRef();
     if (textureSetRef == 0xFFFFFFFF)
     {
         auto effectShader = dynamic_cast<BSEffectShaderProperty *>(shader);
@@ -630,7 +630,7 @@ int NifFile::GetTextureSlot(NiShader *shader, std::string &outTexFile, int texIn
 
 void NifFile::SetTextureSlot(NiShader *shader, std::string &outTexFile, int texIndex)
 {
-    int textureSetRef = shader->GetTextureSetRef();
+    uint textureSetRef = shader->GetTextureSetRef();
     if (textureSetRef == 0xFFFFFFFF)
     {
         auto effectShader = dynamic_cast<BSEffectShaderProperty *>(shader);
@@ -723,18 +723,19 @@ void NifFile::CloneChildren(NiObject *block, NifFile *srcNif)
         srcNif = this;
 
     // Assign new refs and strings, rebind ptrs where possible
-    std::function<void(NiObject *, int, int)> cloneBlock = [&](NiObject *b, int parentOldId, int parentNewId) -> void {
+    std::function<void(NiObject *, int, int)> cloneBlock =
+        [&](NiObject *b, uint parentOldId, int parentNewId) -> void {
         std::set<Ref *> refs;
         b->GetChildRefs(refs);
 
         for (auto &r : refs)
         {
-            int srcId = r->GetIndex();
+            uint srcId = r->GetIndex();
             auto srcChild = srcNif->hdr.GetBlock<NiObject>(srcId);
             if (srcChild)
             {
                 auto destChild = srcChild->Clone();
-                int destId = hdr.AddBlock(destChild);
+                uint destId = hdr.AddBlock(destChild);
                 r->SetIndex(destId);
 
                 std::set<StringRef *> strRefs;
@@ -742,7 +743,7 @@ void NifFile::CloneChildren(NiObject *block, NifFile *srcNif)
 
                 for (auto &str : strRefs)
                 {
-                    int strId = hdr.AddOrFindStringId(str->GetString());
+                    uint strId = hdr.AddOrFindStringId(str->GetString());
                     str->SetIndex(strId);
                 }
 
@@ -752,7 +753,7 @@ void NifFile::CloneChildren(NiObject *block, NifFile *srcNif)
                     destChild->GetPtrs(ptrs);
 
                     for (auto &p : ptrs)
-                        if (p->GetIndex() == parentOldId)
+                        if (static_cast<int64_t>(p->GetIndex()) == static_cast<int64_t>(parentOldId))
                             p->SetIndex(parentNewId);
 
                     cloneBlock(destChild, parentOldId, parentNewId);
@@ -781,7 +782,7 @@ NiShape *NifFile::CloneShape(NiShape *srcShape, const std::string &destShapeName
     auto destShape = static_cast<NiShape *>(srcShape->Clone());
     destShape->SetName(destShapeName);
 
-    int destId = hdr.AddBlock(destShape);
+    uint destId = hdr.AddBlock(destShape);
     if (srcNif == this)
     {
         // Assign copied geometry to the same parent
@@ -891,7 +892,7 @@ NiShape *NifFile::CloneShape(NiShape *srcShape, const std::string &destShapeName
         for (auto &boneName : srcBoneList)
         {
             auto node = FindBlockByName<NiNode>(boneName);
-            int boneID = GetBlockID(node);
+            uint boneID = GetBlockID(node);
             if (node)
                 destBoneCont->GetBones().AddBlockRef(boneID);
         }
@@ -933,7 +934,7 @@ int NifFile::Save(Stream &file, const NifSaveOptions &options)
 
     if (file.is_open())
     {
-        NiStream stream(&file, &hdr.GetVersion());
+        NiStream stream(&file, hdr.GetVersion());
         FinalizeData();
 
         if (options.optimize)
@@ -947,7 +948,7 @@ int NifFile::Save(Stream &file, const NifSaveOptions &options)
 
         // Retrieve block sizes from NiStream while writing
         std::vector<int> blockSizes(hdr.GetNumBlocks());
-        for (int i = 0; i < hdr.GetNumBlocks(); i++)
+        for (uint i = 0; i < hdr.GetNumBlocks(); i++)
         {
             blocks[i]->Put(stream);
             blockSizes[i] = stream.GetBlockSize();
@@ -965,7 +966,7 @@ int NifFile::Save(Stream &file, const NifSaveOptions &options)
         {
             file.seekg(blockSizePos);
 
-            for (int i = 0; i < hdr.GetNumBlocks(); i++)
+            for (uint i = 0; i < hdr.GetNumBlocks(); i++)
                 stream << blockSizes[i];
 
             hdr.ResetBlockSizeStreamPos();
@@ -1175,7 +1176,7 @@ OptResult NifFile::OptimizeFor(OptOptions &options)
                     if (!removeVertexColors && colors.size() > 0)
                     {
                         bsOptShape->SetVertexColors(true);
-                        for (int i = 0; i < bsOptShape->GetNumVertices(); i++)
+                        for (uint i = 0; i < bsOptShape->GetNumVertices(); i++)
                         {
                             auto &vertex = bsOptShape->vertData[i];
 
@@ -1228,11 +1229,11 @@ OptResult NifFile::OptimizeFor(OptOptions &options)
                                 if (triangulated)
                                     result.shapesPartTriangulated.push_back(shapeName);
 
-                                for (int partID = 0; partID < skinPart->numPartitions; partID++)
+                                for (uint partID = 0; partID < skinPart->numPartitions; partID++)
                                 {
                                     NiSkinPartition::PartitionBlock &part = skinPart->partitions[partID];
 
-                                    for (int i = 0; i < part.numVertices; i++)
+                                    for (uint i = 0; i < part.numVertices; i++)
                                     {
                                         const ushort v = part.vertexMap[i];
 
@@ -1261,7 +1262,7 @@ OptResult NifFile::OptimizeFor(OptOptions &options)
                                     }
 
                                     std::vector<Triangle> realTris(part.numTriangles);
-                                    for (int i = 0; i < part.numTriangles; i++)
+                                    for (uint i = 0; i < part.numTriangles; i++)
                                     {
                                         auto &partTri = part.triangles[i];
 
@@ -1433,7 +1434,7 @@ OptResult NifFile::OptimizeFor(OptOptions &options)
                 else
                     bsOptShape = new NiTriShape();
 
-                int dataId = hdr.AddBlock(bsOptShapeData);
+                uint dataId = hdr.AddBlock(bsOptShapeData);
                 bsOptShape->SetDataRef(dataId);
                 bsOptShape->SetGeomData(bsOptShapeData);
                 bsOptShapeData->Create(vertices, &triangles, uvs, normals);
@@ -1468,7 +1469,7 @@ OptResult NifFile::OptimizeFor(OptOptions &options)
                     if (!removeVertexColors && colors && colors->size() > 0)
                     {
                         bsOptShape->SetVertexColors(true);
-                        for (int i = 0; i < bsOptShape->GetNumVertices(); i++)
+                        for (uint i = 0; i < bsOptShape->GetNumVertices(); i++)
                             bsOptShapeData->vertexColors[i] = (*colors)[i];
                     }
 
@@ -1485,12 +1486,12 @@ OptResult NifFile::OptimizeFor(OptOptions &options)
                                 if (triangulated)
                                     result.shapesPartTriangulated.push_back(shapeName);
 
-                                for (int partID = 0; partID < skinPart->numPartitions; partID++)
+                                for (uint partID = 0; partID < skinPart->numPartitions; partID++)
                                 {
                                     NiSkinPartition::PartitionBlock &part = skinPart->partitions[partID];
 
                                     std::vector<Triangle> realTris(part.numTriangles);
-                                    for (int i = 0; i < part.numTriangles; i++)
+                                    for (uint i = 0; i < part.numTriangles; i++)
                                     {
                                         auto &partTri = part.triangles[i];
                                         Triangle tri;
@@ -1583,7 +1584,7 @@ void NifFile::PrepareData()
             auto dynamicShape = dynamic_cast<BSDynamicTriShape *>(bsTriShape);
             if (dynamicShape)
             {
-                for (int i = 0; i < dynamicShape->GetNumVertices(); i++)
+                for (uint i = 0; i < dynamicShape->GetNumVertices(); i++)
                 {
                     dynamicShape->vertData[i].vert.x = dynamicShape->dynamicData[i].x;
                     dynamicShape->vertData[i].vert.y = dynamicShape->dynamicData[i].y;
@@ -1632,7 +1633,7 @@ void NifFile::FinalizeData()
     hdr.UpdateHeaderStrings(hasUnknown);
 }
 
-std::vector<std::string> NifFile::GetShapeNames()
+std::vector<std::string> NifFile::GetShapeNames() const
 {
     std::vector<std::string> outList;
     for (auto &block : blocks)
@@ -1644,7 +1645,7 @@ std::vector<std::string> NifFile::GetShapeNames()
     return outList;
 }
 
-std::vector<NiShape *> NifFile::GetShapes()
+std::vector<NiShape *> NifFile::GetShapes() const
 {
     std::vector<NiShape *> outList;
     for (auto &block : blocks)
@@ -1677,7 +1678,7 @@ bool NifFile::RenameDuplicateShapes()
         std::set<int> uniqueRefs;
         for (auto &child : parent->GetChildren())
         {
-            int childIndex = child.GetIndex();
+            uint childIndex = child.GetIndex();
             auto obj = hdr.GetBlock<NiAVObject>(childIndex);
             if (obj)
             {
@@ -1701,7 +1702,7 @@ bool NifFile::RenameDuplicateShapes()
 
     for (auto &node : nodes)
     {
-        int dupCount = 0;
+        uint dupCount = 0;
 
         for (auto &child : node->GetChildren())
         {
@@ -1917,7 +1918,7 @@ void NifFile::SetShapeBoneIDList(NiShape *shape, std::vector<int> &inList)
     if (!shape)
         return;
 
-    if (shape->GetSkinInstanceRef() == 0xFFFFFFFF)
+    if (shape->GetSkinInstanceRef() == -1)
         return;
 
     BSSkinBoneData *boneData = nullptr;
@@ -1978,7 +1979,9 @@ void NifFile::SetShapeBoneIDList(NiShape *shape, std::vector<int> &inList)
     }
 }
 
-int NifFile::GetShapeBoneWeights(NiShape *shape, const int boneIndex, std::unordered_map<ushort, float> &outWeights)
+int NifFile::GetShapeBoneWeights(NiShape *shape,
+                                 const uint boneIndex,
+                                 std::unordered_map<ushort, float> &outWeights)
 {
     outWeights.clear();
 
@@ -1989,10 +1992,10 @@ int NifFile::GetShapeBoneWeights(NiShape *shape, const int boneIndex, std::unord
     if (bsTriShape)
     {
         outWeights.reserve(bsTriShape->GetNumVertices());
-        for (int vid = 0; vid < bsTriShape->GetNumVertices(); vid++)
+        for (uint vid = 0; vid < bsTriShape->GetNumVertices(); vid++)
         {
             auto &vertex = bsTriShape->vertData[vid];
-            for (int i = 0; i < 4; i++)
+            for (uint i = 0; i < 4; i++)
             {
                 if (vertex.weightBones[i] == boneIndex && vertex.weights[i] != 0.0f)
                     outWeights.emplace(vid, vertex.weights[i]);
@@ -2023,14 +2026,14 @@ bool NifFile::GetShapeBoneTransform(NiShape *shape, const std::string &boneName,
     if (!shape)
         return false;
 
-    int boneIndex = shape->GetBoneID(hdr, boneName);
+    uint boneIndex = shape->GetBoneID(hdr, boneName);
     if (boneName.empty())
         boneIndex = 0xFFFFFFFF;
 
     return GetShapeBoneTransform(shape, boneIndex, outTransform);
 }
 
-bool NifFile::SetShapeBoneTransform(NiShape *shape, const int boneIndex, MatTransform &inTransform)
+bool NifFile::SetShapeBoneTransform(NiShape *shape, const uint boneIndex, MatTransform &inTransform)
 {
     if (!shape)
         return false;
@@ -2069,7 +2072,7 @@ bool NifFile::SetShapeBoneTransform(NiShape *shape, const int boneIndex, MatTran
     return true;
 }
 
-bool NifFile::SetShapeBoneBounds(const std::string &shapeName, const int boneIndex, BoundingSphere &inBounds)
+bool NifFile::SetShapeBoneBounds(const std::string &shapeName, const uint boneIndex, BoundingSphere &inBounds)
 {
     auto shape = FindBlockByName<NiShape>(shapeName);
     if (!shape)
@@ -2102,7 +2105,7 @@ bool NifFile::SetShapeBoneBounds(const std::string &shapeName, const int boneInd
     return true;
 }
 
-bool NifFile::GetShapeBoneTransform(NiShape *shape, const int boneIndex, MatTransform &outTransform)
+bool NifFile::GetShapeBoneTransform(NiShape *shape, const uint boneIndex, MatTransform &outTransform)
 {
     if (!shape)
         return false;
@@ -2147,7 +2150,7 @@ bool NifFile::GetShapeBoneTransform(NiShape *shape, const int boneIndex, MatTran
     return true;
 }
 
-bool NifFile::GetShapeBoneBounds(NiShape *shape, const int boneIndex, BoundingSphere &outBounds)
+bool NifFile::GetShapeBoneBounds(NiShape *shape, const uint boneIndex, BoundingSphere &outBounds)
 {
     if (!shape)
         return false;
@@ -2201,7 +2204,7 @@ void NifFile::UpdateShapeBoneID(const std::string &shapeName, const int oldID, c
 
 // Not implemented for BSTriShape, use SetShapeVertWeights instead
 void NifFile::SetShapeBoneWeights(const std::string &shapeName,
-                                  const int boneIndex,
+                                  const uint boneIndex,
                                   std::unordered_map<ushort, float> &inWeights)
 {
     auto shape = FindBlockByName<NiShape>(shapeName);
@@ -2229,7 +2232,7 @@ void NifFile::SetShapeBoneWeights(const std::string &shapeName,
 }
 
 void NifFile::SetShapeVertWeights(const std::string &shapeName,
-                                  const int vertIndex,
+                                  const uint vertIndex,
                                   std::vector<byte> &boneids,
                                   std::vector<float> &weights)
 {
@@ -2250,12 +2253,12 @@ void NifFile::SetShapeVertWeights(const std::string &shapeName,
 
     // Sum weights to normalize values
     float sum = 0.0f;
-    for (int i = 0; i < weights.size(); i++)
+    for (uint i = 0; i < weights.size(); i++)
         sum += weights[i];
 
-    int num = (weights.size() < 4 ? weights.size() : 4);
+    uint num = (weights.size() < 4 ? weights.size() : 4);
 
-    for (int i = 0; i < num; i++)
+    for (uint i = 0; i < num; i++)
     {
         vertex.weightBones[i] = boneids[i];
         vertex.weights[i] = weights[i] / sum;
@@ -2351,7 +2354,7 @@ void NifFile::SetShapePartitions(NiShape *shape,
 
     skinPart->numPartitions = verts.size();
     skinPart->partitions.resize(verts.size());
-    for (int i = 0; i < skinPart->numPartitions; i++)
+    for (uint i = 0; i < skinPart->numPartitions; i++)
     {
         skinPart->partitions[i].numVertices = verts[i].size();
         if (!verts[i].empty())
@@ -2440,7 +2443,7 @@ void NifFile::SetDefaultPartition(NiShape *shape)
             part.numVertices = verts.size();
 
             std::vector<ushort> vertIndices(part.numVertices);
-            for (int i = 0; i < vertIndices.size(); i++)
+            for (uint i = 0; i < vertIndices.size(); i++)
                 vertIndices[i] = i;
 
             part.vertexMap = vertIndices;
@@ -2608,7 +2611,7 @@ bool NifFile::GetVertsForShape(NiShape *shape, std::vector<Vector3> &outVerts)
         {
             outVerts.resize(bsTriShape->GetNumVertices());
 
-            for (int i = 0; i < bsTriShape->GetNumVertices(); i++)
+            for (uint i = 0; i < bsTriShape->GetNumVertices(); i++)
                 outVerts[i] = bsTriShape->vertData[i].vert;
 
             return true;
@@ -2632,7 +2635,7 @@ void NifFile::SetVertsForShape(NiShape *shape, const std::vector<Vector3> &verts
             if (verts.size() != geomData->vertices.size())
                 return;
 
-            for (int i = 0; i < geomData->vertices.size(); i++)
+            for (uint i = 0; i < geomData->vertices.size(); i++)
                 geomData->vertices[i] = verts[i];
         }
     }
@@ -2644,7 +2647,7 @@ void NifFile::SetVertsForShape(NiShape *shape, const std::vector<Vector3> &verts
             if (verts.size() != bsTriShape->GetNumVertices())
                 return;
 
-            for (int i = 0; i < bsTriShape->GetNumVertices(); i++)
+            for (uint i = 0; i < bsTriShape->GetNumVertices(); i++)
                 bsTriShape->vertData[i].vert = verts[i];
         }
     }
@@ -2677,7 +2680,7 @@ void NifFile::SetUvsForShape(NiShape *shape, const std::vector<Vector2> &uvs)
             if (uvs.size() != bsTriShape->vertData.size())
                 return;
 
-            for (int i = 0; i < bsTriShape->GetNumVertices(); i++)
+            for (uint i = 0; i < bsTriShape->GetNumVertices(); i++)
                 bsTriShape->vertData[i].uv = uvs[i];
         }
     }
@@ -2711,7 +2714,7 @@ void NifFile::SetColorsForShape(const std::string &shapeName, const std::vector<
 
             bsTriShape->SetVertexColors(true);
 
-            for (int i = 0; i < bsTriShape->GetNumVertices(); i++)
+            for (uint i = 0; i < bsTriShape->GetNumVertices(); i++)
             {
                 auto &vertex = bsTriShape->vertData[i];
 
@@ -2742,11 +2745,11 @@ void NifFile::InvertUVsForShape(NiShape *shape, bool invertX, bool invertY)
         if (geomData && !geomData->uvSets.empty())
         {
             if (invertX)
-                for (int i = 0; i < geomData->uvSets[0].size(); ++i)
+                for (uint i = 0; i < geomData->uvSets[0].size(); ++i)
                     geomData->uvSets[0][i].u = 1.0f - geomData->uvSets[0][i].u;
 
             if (invertY)
-                for (int i = 0; i < geomData->uvSets[0].size(); ++i)
+                for (uint i = 0; i < geomData->uvSets[0].size(); ++i)
                     geomData->uvSets[0][i].v = 1.0f - geomData->uvSets[0][i].v;
         }
     }
@@ -2756,11 +2759,11 @@ void NifFile::InvertUVsForShape(NiShape *shape, bool invertX, bool invertY)
         if (bsTriShape)
         {
             if (invertX)
-                for (int i = 0; i < bsTriShape->vertData.size(); ++i)
+                for (uint i = 0; i < bsTriShape->vertData.size(); ++i)
                     bsTriShape->vertData[i].uv.u = 1.0f - bsTriShape->vertData[i].uv.u;
 
             if (invertY)
-                for (int i = 0; i < bsTriShape->vertData.size(); ++i)
+                for (uint i = 0; i < bsTriShape->vertData.size(); ++i)
                     bsTriShape->vertData[i].uv.v = 1.0f - bsTriShape->vertData[i].uv.v;
         }
     }
@@ -2797,7 +2800,7 @@ void NifFile::MirrorShape(NiShape *shape, bool mirrorX, bool mirrorY, bool mirro
         auto geomData = hdr.GetBlock<NiGeometryData>(shape->GetDataRef());
         if (geomData && !geomData->vertices.empty())
         {
-            for (int i = 0; i < geomData->vertices.size(); ++i)
+            for (uint i = 0; i < geomData->vertices.size(); ++i)
                 geomData->vertices[i] = mirrorMat * geomData->vertices[i];
         }
     }
@@ -2806,7 +2809,7 @@ void NifFile::MirrorShape(NiShape *shape, bool mirrorX, bool mirrorY, bool mirro
         auto bsTriShape = dynamic_cast<BSTriShape *>(shape);
         if (bsTriShape)
         {
-            for (int i = 0; i < bsTriShape->vertData.size(); ++i)
+            for (uint i = 0; i < bsTriShape->vertData.size(); ++i)
                 bsTriShape->vertData[i].vert = mirrorMat * bsTriShape->vertData[i].vert;
         }
     }
@@ -2816,7 +2819,7 @@ void NifFile::MirrorShape(NiShape *shape, bool mirrorX, bool mirrorY, bool mirro
         std::vector<Triangle> tris;
         shape->GetTriangles(tris);
 
-        for (int i = 0; i < tris.size(); i++)
+        for (uint i = 0; i < tris.size(); i++)
             std::swap(tris[i].p1, tris[i].p3);
 
         shape->SetTriangles(tris);
@@ -2835,7 +2838,7 @@ void NifFile::SetNormalsForShape(NiShape *shape, const std::vector<Vector3> &nor
         {
             geomData->SetNormals(true);
 
-            for (int i = 0; i < geomData->vertices.size(); i++)
+            for (uint i = 0; i < geomData->vertices.size(); i++)
                 geomData->normals[i] = norms[i];
         }
     }
@@ -2930,7 +2933,7 @@ void NifFile::OffsetShape(NiShape *shape, const Vector3 &offset, std::unordered_
         auto geomData = hdr.GetBlock<NiGeometryData>(shape->GetDataRef());
         if (geomData)
         {
-            for (int i = 0; i < geomData->vertices.size(); i++)
+            for (uint i = 0; i < geomData->vertices.size(); i++)
             {
                 if (mask)
                 {
@@ -2953,7 +2956,7 @@ void NifFile::OffsetShape(NiShape *shape, const Vector3 &offset, std::unordered_
         auto bsTriShape = dynamic_cast<BSTriShape *>(shape);
         if (bsTriShape)
         {
-            for (int i = 0; i < bsTriShape->GetNumVertices(); i++)
+            for (uint i = 0; i < bsTriShape->GetNumVertices(); i++)
             {
                 if (mask)
                 {
@@ -2988,7 +2991,7 @@ void NifFile::ScaleShape(NiShape *shape, const Vector3 &scale, std::unordered_ma
             return;
 
         std::unordered_map<ushort, Vector3> diff;
-        for (int i = 0; i < geomData->vertices.size(); i++)
+        for (uint i = 0; i < geomData->vertices.size(); i++)
         {
             Vector3 target = geomData->vertices[i] - root;
             target.x *= scale.x;
@@ -3016,7 +3019,7 @@ void NifFile::ScaleShape(NiShape *shape, const Vector3 &scale, std::unordered_ma
             return;
 
         std::unordered_map<ushort, Vector3> diff;
-        for (int i = 0; i < bsTriShape->GetNumVertices(); i++)
+        for (uint i = 0; i < bsTriShape->GetNumVertices(); i++)
         {
             Vector3 target = bsTriShape->vertData[i].vert - root;
             target.x *= scale.x;
@@ -3054,7 +3057,7 @@ void NifFile::RotateShape(NiShape *shape, const Vector3 &angle, std::unordered_m
             return;
 
         std::unordered_map<ushort, Vector3> diff;
-        for (int i = 0; i < geomData->vertices.size(); i++)
+        for (uint i = 0; i < geomData->vertices.size(); i++)
         {
             Vector3 target = geomData->vertices[i] - root;
             Matrix4 mat;
@@ -3084,7 +3087,7 @@ void NifFile::RotateShape(NiShape *shape, const Vector3 &angle, std::unordered_m
             return;
 
         std::unordered_map<ushort, Vector3> diff;
-        for (int i = 0; i < bsTriShape->GetNumVertices(); i++)
+        for (uint i = 0; i < bsTriShape->GetNumVertices(); i++)
         {
             Vector3 target = bsTriShape->vertData[i].vert - root;
             Matrix4 mat;
@@ -3111,7 +3114,7 @@ void NifFile::RotateShape(NiShape *shape, const Vector3 &angle, std::unordered_m
 
 NiAlphaProperty *NifFile::GetAlphaProperty(NiShape *shape)
 {
-    int alphaRef = shape->GetAlphaPropertyRef();
+    uint alphaRef = shape->GetAlphaPropertyRef();
     if (alphaRef == 0xFFFFFFFF)
     {
         for (auto &prop : shape->GetProperties())
@@ -3135,7 +3138,7 @@ int NifFile::AssignAlphaProperty(NiShape *shape, NiAlphaProperty *alphaProp)
     NiShader *shader = GetShader(shape);
     if (shader)
     {
-        int alphaRef = hdr.AddBlock(alphaProp);
+        uint alphaRef = hdr.AddBlock(alphaProp);
         if (shader->HasType<BSShaderPPLightingProperty>())
             shape->GetProperties().AddBlockRef(alphaRef);
         else
@@ -3177,19 +3180,19 @@ void NifFile::DeleteShape(NiShape *shape)
     DeleteShader(shape);
     DeleteSkinning(shape);
 
-    for (int i = shape->GetProperties().GetSize() - 1; i >= 0; --i)
+    for (uint i = shape->GetProperties().GetSize() - 1; i >= 0; --i)
         hdr.DeleteBlock(shape->GetProperties().GetBlockRef(i));
 
-    for (int i = shape->GetExtraData().GetSize() - 1; i >= 0; --i)
+    for (uint i = shape->GetExtraData().GetSize() - 1; i >= 0; --i)
         hdr.DeleteBlock(shape->GetExtraData().GetBlockRef(i));
 
-    int shapeID = GetBlockID(shape);
+    uint shapeID = GetBlockID(shape);
     hdr.DeleteBlock(shapeID);
 }
 
 void NifFile::DeleteShader(NiShape *shape)
 {
-    if (shape->GetShaderPropertyRef() != 0xFFFFFFFF)
+    if (shape->GetShaderPropertyRef() != -1)
     {
         auto shader = hdr.GetBlock<NiShader>(shape->GetShaderPropertyRef());
         if (shader)
@@ -3254,7 +3257,7 @@ bool NifFile::DeleteVertsForShape(NiShape *shape, const std::vector<ushort> &ind
     if (!shape)
         return false;
 
-    int skinRef = shape->GetSkinInstanceRef();
+    uint skinRef = shape->GetSkinInstanceRef();
 
     auto geomData = hdr.GetBlock<NiTriBasedGeomData>(shape->GetDataRef());
     if (geomData)
@@ -3326,7 +3329,7 @@ int NifFile::CalcShapeDiff(NiShape *shape,
     if (myData->size() != targetData->size())
         return 3;
 
-    for (int i = 0; i < myData->size(); i++)
+    for (uint i = 0; i < myData->size(); i++)
     {
         auto &target = targetData->at(i);
         auto &src = myData->at(i);
@@ -3362,7 +3365,7 @@ int NifFile::CalcUVDiff(NiShape *shape,
     if (myData->size() != targetData->size())
         return 3;
 
-    for (int i = 0; i < myData->size(); i++)
+    for (uint i = 0; i < myData->size(); i++)
     {
         Vector3 v;
         v.x = (targetData->at(i).u - myData->at(i).u) * scale;
@@ -3412,7 +3415,7 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
     // Make maps of vertices to bones and weights
     std::unordered_map<ushort, std::vector<SkinWeight>> vertBoneWeights;
 
-    int boneIndex = 0;
+    uint boneIndex = 0;
     for (auto &bone : skinData->bones)
     {
         for (auto &bw : bone.vertexWeights)
@@ -3426,14 +3429,14 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
         sort(bw.second.begin(), bw.second.end(), BoneWeightsSort());
 
     // Enforce maximum vertex bone weight count
-    int maxBonesPerVertex = 4;
+    uint maxBonesPerVertex = 4;
 
     for (auto &bw : vertBoneWeights)
         if (bw.second.size() > maxBonesPerVertex)
             bw.second.erase(bw.second.begin() + maxBonesPerVertex, bw.second.end());
 
     std::unordered_map<int, std::vector<int>> vertTris;
-    for (int t = 0; t < tris.size(); t++)
+    for (uint t = 0; t < tris.size(); t++)
     {
         vertTris[tris[t].p1].push_back(t);
         vertTris[tris[t].p2].push_back(t);
@@ -3442,13 +3445,13 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
 
     // Lambda for finding bones that have the tri assigned
     std::set<int> triBones;
-    auto fTriBones = [&triBones, &tris, &vertBoneWeights](const int tri) {
+    auto fTriBones = [&triBones, &tris, &vertBoneWeights](const uint tri) {
         triBones.clear();
 
         if (tri >= 0 && tris.size() > tri)
         {
             ushort *p = &tris[tri].p1;
-            for (int i = 0; i < 3; i++, p++)
+            for (uint i = 0; i < 3; i++, p++)
                 for (auto &tb : vertBoneWeights[*p])
                     triBones.insert(tb.index);
         }
@@ -3456,7 +3459,7 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
 
     std::unordered_map<int, int> triParts;
     triParts.reserve(tris.size());
-    for (int i = 0; i < tris.size(); i++)
+    for (uint i = 0; i < tris.size(); i++)
         triParts.emplace(i, -1);
 
     std::vector<bool> usedTris;
@@ -3465,7 +3468,7 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
     std::vector<bool> usedVerts;
     usedVerts.resize(numVerts);
 
-    int maxBonesPerPartition = std::numeric_limits<int>::max();
+    uint maxBonesPerPartition = std::numeric_limits<int>::max();
     if (hdr.GetVersion().IsFO3())
         maxBonesPerPartition = 18;
     else if (hdr.GetVersion().IsSSE())
@@ -3473,13 +3476,13 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
 
     std::unordered_map<int, std::set<int>> partBones;
     std::vector<NiSkinPartition::PartitionBlock> partitions;
-    for (int partID = 0; partID < skinPart->partitions.size(); partID++)
+    for (uint partID = 0; partID < skinPart->partitions.size(); partID++)
     {
         fill(usedVerts.begin(), usedVerts.end(), false);
 
         auto &partition = skinPart->partitions[partID];
         ushort numTrisInPart = 0;
-        for (int it = 0; it < partition.numTriangles;)
+        for (uint it = 0; it < partition.numTriangles;)
         {
             // Find the actual tri index from the partition tri index
             Triangle tri;
@@ -3506,7 +3509,7 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
                 continue;
             }
 
-            int triIndex = realTri - tris.begin();
+            uint triIndex = realTri - tris.begin();
 
             // Conditional increment in loop
             if (usedTris[triIndex])
@@ -3524,7 +3527,7 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
             }
 
             // How many new bones are in the tri's bone list?
-            int newBoneCount = 0;
+            uint newBoneCount = 0;
             for (auto &tb : triBones)
                 if (partBones[partID].find(tb) == partBones[partID].end())
                     newBoneCount++;
@@ -3596,7 +3599,7 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
 
             while (!vertQueue.empty())
             {
-                int adjVert = vertQueue.front();
+                uint adjVert = vertQueue.front();
                 vertQueue.pop();
 
                 for (auto &adjTri : vertTris[adjVert])
@@ -3645,9 +3648,9 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
         part.numWeightsPerVertex = maxBonesPerVertex;
 
         std::unordered_map<int, int> vertMap;
-        for (int triID = 0; triID < tris.size(); triID++)
+        for (uint triID = 0; triID < tris.size(); triID++)
         {
-            if (triParts[triID] != partID)
+            if (static_cast<int64_t>(triParts[triID]) != static_cast<int64_t>(partID))
                 continue;
 
             Triangle tri = tris[triID];
@@ -3715,7 +3718,7 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
             float *pw = &vw.w1;
 
             float tot = 0.0f;
-            for (int bi = 0; bi < vertBoneWeights[v].size(); bi++)
+            for (uint bi = 0; bi < vertBoneWeights[v].size(); bi++)
             {
                 if (bi == 4)
                     break;
@@ -3726,7 +3729,7 @@ void NifFile::UpdateSkinPartitions(NiShape *shape)
             }
 
             if (tot != 0.0f)
-                for (int bi = 0; bi < 4; bi++)
+                for (uint bi = 0; bi < 4; bi++)
                     pw[bi] /= tot;
 
             part.boneIndices.push_back(b);
@@ -3768,7 +3771,7 @@ bool NifFile::TriangulatePartitions(NiShape *shape)
         return false;
 
     bool triangulated = false;
-    for (int partID = 0; partID < skinPart->partitions.size(); partID++)
+    for (uint partID = 0; partID < skinPart->partitions.size(); partID++)
     {
         // Triangulate partition if stripified
         auto &partition = skinPart->partitions[partID];
@@ -3785,7 +3788,7 @@ bool NifFile::TriangulatePartitions(NiShape *shape)
                 ushort c = strip[1];
                 bool flip = false;
 
-                for (int s = 2; s < strip.size(); s++)
+                for (uint s = 2; s < strip.size(); s++)
                 {
                     a = b;
                     b = c;
@@ -3827,7 +3830,7 @@ void NifFile::UpdatePartitionFlags(NiShape *shape)
         return;
 
     auto partInfo = bsdSkinInst->GetPartitions();
-    for (int i = 0; i < partInfo.size(); i++)
+    for (uint i = 0; i < partInfo.size(); i++)
     {
         PartitionFlags flags = PF_NONE;
 
@@ -3859,16 +3862,16 @@ void NifFile::CreateSkinning(NiShape *shape)
 {
     if (shape->HasType<NiTriShape>())
     {
-        if (shape->GetSkinInstanceRef() == 0xFFFFFFFF)
+        if (shape->GetSkinInstanceRef() == -1)
         {
             auto nifSkinData = new NiSkinData();
-            int skinDataID = hdr.AddBlock(nifSkinData);
+            uint skinDataID = hdr.AddBlock(nifSkinData);
 
             auto nifSkinPartition = new NiSkinPartition();
-            int partID = hdr.AddBlock(nifSkinPartition);
+            uint partID = hdr.AddBlock(nifSkinPartition);
 
             auto nifDismemberInst = new BSDismemberSkinInstance();
-            int dismemberID = hdr.AddBlock(nifDismemberInst);
+            uint dismemberID = hdr.AddBlock(nifDismemberInst);
 
             nifDismemberInst->SetDataRef(skinDataID);
             nifDismemberInst->SetSkinPartitionRef(partID);
@@ -3881,16 +3884,16 @@ void NifFile::CreateSkinning(NiShape *shape)
     }
     else if (shape->HasType<NiTriStrips>())
     {
-        if (shape->GetSkinInstanceRef() == 0xFFFFFFFF)
+        if (shape->GetSkinInstanceRef() == -1)
         {
             auto nifSkinData = new NiSkinData();
-            int skinDataID = hdr.AddBlock(nifSkinData);
+            uint skinDataID = hdr.AddBlock(nifSkinData);
 
             auto nifSkinPartition = new NiSkinPartition();
-            int partID = hdr.AddBlock(nifSkinPartition);
+            uint partID = hdr.AddBlock(nifSkinPartition);
 
             auto nifDismemberInst = new BSDismemberSkinInstance();
-            int skinID = hdr.AddBlock(nifDismemberInst);
+            uint skinID = hdr.AddBlock(nifDismemberInst);
 
             nifDismemberInst->SetDataRef(skinDataID);
             nifDismemberInst->SetSkinPartitionRef(partID);
@@ -3903,16 +3906,16 @@ void NifFile::CreateSkinning(NiShape *shape)
     }
     else if (shape->HasType<BSTriShape>())
     {
-        if (shape->GetSkinInstanceRef() == 0xFFFFFFFF)
+        if (shape->GetSkinInstanceRef() == -1)
         {
-            int skinInstID;
+            uint skinInstID;
             if (hdr.GetVersion().Stream() == 100)
             {
                 auto nifSkinData = new NiSkinData();
-                int skinDataID = hdr.AddBlock(nifSkinData);
+                uint skinDataID = hdr.AddBlock(nifSkinData);
 
                 auto nifSkinPartition = new NiSkinPartition();
-                int partID = hdr.AddBlock(nifSkinPartition);
+                uint partID = hdr.AddBlock(nifSkinPartition);
 
                 auto nifDismemberInst = new BSDismemberSkinInstance();
                 skinInstID = hdr.AddBlock(nifDismemberInst);
@@ -3933,7 +3936,7 @@ void NifFile::CreateSkinning(NiShape *shape)
                 skinInstID = hdr.AddBlock(newSkinInst);
 
                 auto newBoneData = new BSSkinBoneData();
-                int boneDataRef = hdr.AddBlock(newBoneData);
+                uint boneDataRef = hdr.AddBlock(newBoneData);
 
                 newSkinInst->SetTargetRef(GetBlockID(GetRootNode()));
                 newSkinInst->SetDataRef(boneDataRef);

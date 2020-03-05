@@ -11,10 +11,9 @@ static const std::string NIF_NETIMMERSE = "NetImmerse File Format";
 static const std::string NIF_NDS = "NDSNIF....@....@....";
 static const std::string NIF_VERSTRING = ", Version ";
 
-std::string NiVersion::GetVersionInfo() {
-	return vstr +
-		"\nUser Version: " + std::to_string(user) +
-		"\nStream Version: " + std::to_string(stream);
+std::string NiVersion::GetVersionInfo() const
+{
+    return vstr + "\nUser Version: " + std::to_string(user) + "\nStream Version: " + std::to_string(stream);
 }
 
 void NiVersion::SetFile(NiFileVersion fileVer) {
@@ -84,62 +83,67 @@ void NiString::Get(NiStream& stream, const int szSize) {
 	str = buf;
 }
 
-void NiString::Put(NiStream& stream, const int szSize, const bool wantNullOutput) {
-	if (szSize == 1) {
-		byte sz = byte(str.length());
-		str.resize(sz);
+void NiString::Put(NiStream &stream, const int szSize, const bool wantNullOutput)
+{
+    if (szSize == 1)
+    {
+        byte sz(str.length());
+        str.resize(sz);
+
+        if (wantNullOutput)
+            sz += 1;
+
+        stream << sz;
+    }
+    else if (szSize == 2)
+    {
+        ushort sz = ushort(str.length());
+        str.resize(sz);
+
+        if (wantNullOutput)
+            sz += 1;
+
+        stream << sz;
+    }
+    else if (szSize == 4)
+    {
+        uint sz = uint(str.length());
+        str.resize(sz);
 
 		if (wantNullOutput)
 			sz += 1;
 
-		stream << sz;
-	}
-	else if (szSize == 2) {
-		ushort sz = ushort(str.length());
-		str.resize(sz);
+        stream << sz;
+    }
 
-		if (wantNullOutput)
-			sz += 1;
-
-		stream << sz;
-	}
-	else if (szSize == 4) {
-		uint sz = uint(str.length());
-		str.resize(sz);
-
-		if (wantNullOutput)
-			sz += 1;
-
-		stream << sz;
-	}
-
-	stream.write(str.c_str(), str.length());
-	if (wantNullOutput)
+    stream.write(str.c_str(), str.length());
+    if (wantNullOutput)
 		stream << byte(0);
 }
 
-
-void NiHeader::Clear() {
-	numBlockTypes = 0;
-	numStrings = 0;
-	numBlocks = 0;
-	blocks = nullptr;
+void NiHeader::Clear()
+{
+    numBlockTypes = 0;
+    numStrings = 0;
+    numBlocks = 0;
+    blocks = nullptr;
 	blockTypes.clear();
 	blockTypeIndices.clear();
 	blockSizes.clear();
 	strings.clear();
 }
 
-std::string NiHeader::GetCreatorInfo() {
+std::string NiHeader::GetCreatorInfo() const {
 	return creator.GetString();
 }
 
 void NiHeader::SetCreatorInfo(const std::string& creatorInfo) {
-	creator.SetString(creatorInfo);
+    creator.SetString(creatorInfo);
 }
 
-std::string NiHeader::GetExportInfo() {
-	std::string exportInfo = exportInfo1.GetString();
+std::string NiHeader::GetExportInfo() const
+{
+    std::string exportInfo = exportInfo1.GetString();
 
 	if (exportInfo2.GetLength() > 0) {
 		exportInfo.append("\n");
@@ -224,8 +228,8 @@ int NiHeader::AddBlock(NiObject* newBlock) {
 	ushort btID = AddOrFindBlockTypeId(newBlock->GetBlockName());
 	blockTypeIndices.push_back(btID);
 	blockSizes.push_back(0);
-	blocks->push_back(std::move(std::unique_ptr<NiObject>(newBlock)));
-	numBlocks = blocks->size();
+    blocks->push_back(std::unique_ptr<NiObject>(newBlock));
+    numBlocks = blocks->size();
 	return numBlocks - 1;
 }
 
@@ -353,48 +357,53 @@ ushort NiHeader::AddOrFindBlockTypeId(const std::string& blockTypeName) {
 	return typeId;
 }
 
-std::string NiHeader::GetBlockTypeStringById(const int blockId) {
-	if (blockId >= 0 && blockId < numBlocks) {
+std::string NiHeader::GetBlockTypeStringById(const int blockId) const
+{
+    if (blockId >= 0 && blockId < numBlocks) {
 		ushort typeIndex = blockTypeIndices[blockId];
 		if (typeIndex >= 0 && typeIndex < numBlockTypes)
 			return blockTypes[typeIndex].GetString();
 	}
-	
-	return std::string();
+
+    return std::string();
 }
 
-ushort NiHeader::GetBlockTypeIndex(const int blockId) {
-	if (blockId >= 0 && blockId < numBlocks)
+ushort NiHeader::GetBlockTypeIndex(const int blockId) const
+{
+    if (blockId >= 0 && blockId < numBlocks)
 		return blockTypeIndices[blockId];
 
 	return 0xFFFF;
 }
 
-uint NiHeader::GetBlockSize(const uint blockId) {
+uint NiHeader::GetBlockSize(const uint blockId) const {
 	if (blockId >= 0 && blockId < numBlocks)
 		return blockSizes[blockId];
 
 	return 0xFFFFFFFF;
 }
 
-std::streampos NiHeader::GetBlockSizeStreamPos() {
-	return blockSizePos;
+std::streampos NiHeader::GetBlockSizeStreamPos() const
+{
+    return blockSizePos;
 }
 
 void NiHeader::ResetBlockSizeStreamPos() {
 	blockSizePos = std::streampos();
 }
 
-int NiHeader::GetStringCount() {
-	return strings.size();
+int NiHeader::GetStringCount() const
+{
+    return strings.size();
 }
 
-int NiHeader::FindStringId(const std::string& str) {
-	for (int i = 0; i < strings.size(); i++)
-		if (strings[i].GetString().compare(str) == 0)
-			return i;
+int NiHeader::FindStringId(const std::string &str) const
+{
+    for (int i = 0; i < strings.size(); i++)
+        if (strings[i].GetString().compare(str) == 0)
+            return i;
 
-	return 0xFFFFFFFF;
+    return 0xFFFFFFFF;
 }
 
 int NiHeader::AddOrFindStringId(const std::string& str, const bool addEmpty) {
@@ -415,11 +424,12 @@ int NiHeader::AddOrFindStringId(const std::string& str, const bool addEmpty) {
 	return r;
 }
 
-std::string NiHeader::GetStringById(const int id) {
-	if (id >= 0 && id < numStrings)
-		return strings[id].GetString();
+std::string NiHeader::GetStringById(const int id) const
+{
+    if (id >= 0 && id < numStrings)
+        return strings[id].GetString();
 
-	return std::string();
+    return std::string();
 }
 
 void NiHeader::SetStringById(const int id, const std::string& str) {
@@ -446,21 +456,23 @@ void NiHeader::FillStringRefs() {
 
 	for (auto &b : (*blocks)) {
 		std::set<StringRef*> stringRefs;
-		b->GetStringRefs(stringRefs);
+        b->GetStringRefs(stringRefs);
 
-		for (auto &r : stringRefs) {
-			int stringId = r->GetIndex();
+        for (auto &r : stringRefs)
+        {
+            int64_t stringId = r->GetIndex();
 
-			// Check if string index is overflowing
-			if (stringId != 0xFFFFFFFF && stringId >= numStrings) {
-				stringId -= numStrings;
+            // Check if string index is overflowing
+            if (stringId != 0xFFFFFFFF && stringId >= numStrings)
+            {
+                stringId -= numStrings;
 				r->SetIndex(stringId);
-			}
+            }
 
-			std::string str = GetStringById(stringId);
-			r->SetString(str);
-		}
-	}
+            std::string str = GetStringById(stringId);
+            r->SetString(str);
+        }
+    }
 }
 
 void NiHeader::UpdateHeaderStrings(const bool hasUnknown) {
@@ -471,17 +483,18 @@ void NiHeader::UpdateHeaderStrings(const bool hasUnknown) {
 		return;
 
 	for (auto &b : (*blocks)) {
-		std::set<StringRef*> stringRefs;
-		b->GetStringRefs(stringRefs);
+        std::set<StringRef *> stringRefs;
+        b->GetStringRefs(stringRefs);
 
-		for (auto &r : stringRefs) {
-			bool addEmpty = (r->GetIndex() != 0xFFFFFFFF);
-			int stringId = AddOrFindStringId(r->GetString(), addEmpty);
-			r->SetIndex(stringId);
-		}
-	}
+        for (auto &r : stringRefs)
+        {
+            bool addEmpty = (r->GetIndex() != -1);
+            int stringId = AddOrFindStringId(r->GetString(), addEmpty);
+            r->SetIndex(stringId);
+        }
+    }
 
-	UpdateMaxStringLength();
+    UpdateMaxStringLength();
 }
 
 void NiHeader::BlockDeleted(NiObject* o, int blockId) {
@@ -634,15 +647,16 @@ void NiHeader::Get(NiStream& stream) {
 	valid = true;
 }
 
-void NiHeader::Put(NiStream& stream) {
-	std::string ver = version.String();
-	stream.write(ver.data(), ver.size());
+void NiHeader::Put(NiStream &stream)
+{
+    std::string ver = version.String();
+    stream.write(ver.data(), ver.size());
 
-	// Newline to end header string
-	stream << byte(0x0A);
+    // Newline to end header string
+    stream << byte(0x0A);
 
-	bool isNDS = version.NDS() != 0;
-	if (version.File() > V3_1 && !isNDS) {
+    bool isNDS = version.NDS() != 0;
+    if (version.File() > V3_1 && !isNDS) {
 		stream << version.File();
 	}
 	else if (isNDS) {
@@ -706,12 +720,12 @@ void NiHeader::Put(NiStream& stream) {
 	}
 }
 
+NiUnknown::NiUnknown(NiStream &stream, const uint size)
+{
+    data.resize(size);
 
-NiUnknown::NiUnknown(NiStream& stream, const uint size) {
-	data.resize(size);
-
-	blockSize = size;
-	Get(stream);
+    blockSize = size;
+    Get(stream);
 }
 
 NiUnknown::NiUnknown(const uint size) {

@@ -106,7 +106,7 @@ public:
 
     // Explicitly sets the order of shapes to a new one.
     void SetShapeOrder(const std::vector<std::string> &order);
-    void SetSortIndex(const int id, std::vector<std::pair<int, int>> &newIndices, int &newIndex);
+    void SetSortIndex(const uint id, std::vector<std::pair<int, int>> &newIndices, int &newIndex);
     void SortAVObject(NiAVObject *avobj, std::vector<std::pair<int, int>> &newIndices, int &newIndex);
     void SortShape(NiShape *shape, std::vector<std::pair<int, int>> &newIndices, int &newIndex);
     void SortGraph(NiNode *root, std::vector<std::pair<int, int>> &newIndices, int &newIndex);
@@ -130,8 +130,8 @@ public:
     NiShape *CloneShape(NiShape *srcShape, const std::string &destShapeName, NifFile *srcNif = nullptr);
     int CloneNamedNode(const std::string &nodeName, NifFile *srcNif = nullptr);
 
-    std::vector<std::string> GetShapeNames();
-    std::vector<NiShape *> GetShapes();
+    std::vector<std::string> GetShapeNames() const;
+    std::vector<NiShape *> GetShapes() const;
     bool RenameShape(NiShape *shape, const std::string &newName);
     bool RenameDuplicateShapes();
     void TriangulateShape(NiShape *shape);
@@ -148,22 +148,24 @@ public:
     int GetShapeBoneList(NiShape *shape, std::vector<std::string> &outList);
     int GetShapeBoneIDList(NiShape *shape, std::vector<int> &outList);
     void SetShapeBoneIDList(NiShape *shape, std::vector<int> &inList);
-    int GetShapeBoneWeights(NiShape *shape, const int boneIndex, std::unordered_map<ushort, float> &outWeights);
+    int GetShapeBoneWeights(NiShape *shape,
+                            const uint boneIndex,
+                            std::unordered_map<ushort, float> &outWeights);
 
     // Empty std::string for the bone name returns the overall skin transform for the shape.
     bool GetShapeBoneTransform(NiShape *shape, const std::string &boneName, MatTransform &outTransform);
     // 0xFFFFFFFF for the bone index sets the overall skin transform for the shape.
-    bool SetShapeBoneTransform(NiShape *shape, const int boneIndex, MatTransform &inTransform);
-    bool SetShapeBoneBounds(const std::string &shapeName, const int boneIndex, BoundingSphere &inBounds);
+    bool SetShapeBoneTransform(NiShape *shape, const uint boneIndex, MatTransform &inTransform);
+    bool SetShapeBoneBounds(const std::string &shapeName, const uint boneIndex, BoundingSphere &inBounds);
     // 0xFFFFFFFF on the bone index returns the overall skin transform for the shape.
-    bool GetShapeBoneTransform(NiShape *shape, const int boneIndex, MatTransform &outTransform);
-    bool GetShapeBoneBounds(NiShape *shape, const int boneIndex, BoundingSphere &outBounds);
+    bool GetShapeBoneTransform(NiShape *shape, const uint boneIndex, MatTransform &outTransform);
+    bool GetShapeBoneBounds(NiShape *shape, const uint boneIndex, BoundingSphere &outBounds);
     void UpdateShapeBoneID(const std::string &shapeName, const int oldID, const int newID);
     void SetShapeBoneWeights(const std::string &shapeName,
-                             const int boneIndex,
+                             const uint boneIndex,
                              std::unordered_map<ushort, float> &inWeights);
     void SetShapeVertWeights(const std::string &shapeName,
-                             const int vertIndex,
+                             const uint vertIndex,
                              std::vector<byte> &boneids,
                              std::vector<float> &weights);
     void ClearShapeVertWeights(const std::string &shapeName);

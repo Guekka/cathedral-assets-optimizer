@@ -420,9 +420,9 @@ public:
 	void SetNormals(const std::vector<Vector3>& inNorms);
 	void RecalcNormals(const bool smooth = true, const float smoothThres = 60.0f);
 	void CalcTangentSpace();
-	int CalcDataSizes(NiVersion& version);
+    int CalcDataSizes(const NiVersion &version);
 
-	virtual void Create(std::vector<Vector3>* verts, std::vector<Triangle>* tris, std::vector<Vector2>* uvs, std::vector<Vector3>* normals = nullptr);
+    virtual void Create(std::vector<Vector3>* verts, std::vector<Triangle>* tris, std::vector<Vector2>* uvs, std::vector<Vector3>* normals = nullptr);
 };
 
 

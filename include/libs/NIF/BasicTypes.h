@@ -69,43 +69,45 @@ private:
 	uint nds = 0;
 
 public:
-	// Construct a file version enumeration from individual values
-	static NiFileVersion ToFile(byte major, byte minor, byte patch, byte internal) {
-		return NiFileVersion((major << 24) | (minor << 16) | (patch << 8) | internal);
-	}
+    // Construct a file version enumeration from individual values
+    static NiFileVersion ToFile(byte major, byte minor, byte patch, byte internal)
+    {
+        return NiFileVersion((major << 24) | (minor << 16) | (patch << 8) | internal);
+    }
 
-	// Return file version as individual values
-	static std::vector<byte> ToArray(NiFileVersion file) {
-		return { byte(file >> 24), byte(file >> 16), byte(file >> 8), byte(file) };
-	}
+    // Return file version as individual values
+    static std::vector<byte> ToArray(NiFileVersion file)
+    {
+        return {byte(file >> 24), byte(file >> 16), byte(file >> 8), byte(file)};
+    }
 
-	std::string GetVersionInfo();
-	std::string String() { return vstr; }
+    std::string GetVersionInfo() const;
+    std::string String() const { return vstr; }
 
-	NiFileVersion File() { return file; }
-	void SetFile(NiFileVersion fileVer);
+    NiFileVersion File() const { return file; }
+    void SetFile(NiFileVersion fileVer);
 
-	uint User() { return user; }
-	void SetUser(const uint userVer) { user = userVer; }
+    uint User() const { return user; }
+    void SetUser(const uint userVer) { user = userVer; }
 
-	uint Stream() { return stream; }
-	void SetStream(const uint streamVer) { stream = streamVer; }
+    uint Stream() const { return stream; }
+    void SetStream(const uint streamVer) { stream = streamVer; }
 
-	uint NDS() { return nds; }
-	void SetNDS(const uint ndsVer) { nds = ndsVer; }
+    uint NDS() const { return nds; }
+    void SetNDS(const uint ndsVer) { nds = ndsVer; }
 
-	bool IsBethesda() { return (file == V20_2_0_7 && user >= 11) || IsOB(); }
+    bool IsBethesda() const { return (file == V20_2_0_7 && user >= 11) || IsOB(); }
 
-	bool IsOB() {
-		return ((file == V10_1_0_106 || file == V10_2_0_0) && user >= 3 && user < 11)
-			|| (file == V20_0_0_4 && (user == 10 || user == 11))
-			|| (file == V20_0_0_5 && user == 11);
-	}
+    bool IsOB() const
+    {
+        return ((file == V10_1_0_106 || file == V10_2_0_0) && user >= 3 && user < 11)
+               || (file == V20_0_0_4 && (user == 10 || user == 11)) || (file == V20_0_0_5 && user == 11);
+    }
 
-	bool IsFO3() { return file == V20_2_0_7 && stream > 11 && stream < 83; }
-	bool IsSK() { return file == V20_2_0_7 && stream == 83; }
-	bool IsSSE() { return file == V20_2_0_7 && stream == 100; }
-	bool IsFO4() { return file == V20_2_0_7 && stream == 130; }
+    bool IsFO3() const { return file == V20_2_0_7 && stream > 11 && stream < 83; }
+    bool IsSK() const { return file == V20_2_0_7 && stream == 83; }
+    bool IsSSE() const { return file == V20_2_0_7 && stream == 100; }
+    bool IsFO4() const { return file == V20_2_0_7 && stream == 130; }
 };
 
 enum NiEndian : byte {
@@ -117,17 +119,17 @@ class NiStream {
 private:
 	std::iostream* stream = nullptr;
     std::stringstream *sstream = nullptr;
-    NiVersion *version = nullptr;
+    NiVersion version;
     int blockSize = 0;
 
 public:
-    NiStream(std::iostream *stream, NiVersion *version)
+    NiStream(std::iostream *stream, NiVersion version)
     {
         this->stream = stream;
         this->version = version;
     }
 
-    NiStream(std::stringstream *stream, NiVersion *version)
+    NiStream(std::stringstream *stream, NiVersion version)
     {
         this->sstream = stream;
         this->version = version;
@@ -170,7 +172,7 @@ public:
     template<typename T>
     NiStream &operator<<(const T &t)
     {
-        write((const char *) &t, sizeof(T));
+        write(reinterpret_cast<const char *>(&t), sizeof(T));
         return *this;
     }
 
@@ -178,7 +180,7 @@ public:
     template<typename T>
     NiStream &operator>>(T &t)
     {
-        read((char *) &t, sizeof(T));
+        read(reinterpret_cast<char *>(&t), sizeof(T));
         return *this;
     }
 
@@ -186,7 +188,7 @@ public:
 
     int GetBlockSize() { return blockSize; }
 
-    NiVersion &GetVersion() { return *version; }
+    const NiVersion &GetVersion() const { return version; }
 };
 
 class NiString {
@@ -196,11 +198,11 @@ private:
 public:
     NiString() {}
 
-    std::string GetString() { return str; }
+    std::string GetString() const { return str; }
 
     void SetString(const std::string &s) { this->str = s; }
 
-    size_t GetLength() { return str.length(); }
+    size_t GetLength() const { return str.length(); }
 
     void Clear() { str.clear(); }
 
@@ -530,71 +532,62 @@ private:
 	std::vector<uint> groupSizes;
 
 public:
-	NiHeader() {};
+    NiHeader(){};
 
-	static constexpr const char* BlockName = "NiHeader";
-	virtual const char* GetBlockName() { return BlockName; }
+    static constexpr const char *BlockName = "NiHeader";
+    virtual const char *GetBlockName() { return BlockName; }
 
-	void Clear();
+    void Clear();
 
-	bool IsValid() {
-		return valid;
-	}
+    bool IsValid() const { return valid; }
 
-	NiVersion& GetVersion() {
-		return version;
-	};
+    const NiVersion &GetVersion() const { return version; };
 
-	void SetVersion(const NiVersion& ver) {
-		version = ver;
-	}
+    void SetVersion(const NiVersion &ver) { version = ver; }
 
-	std::string GetCreatorInfo();
-	void SetCreatorInfo(const std::string& creatorInfo);
+    std::string GetCreatorInfo() const;
+    void SetCreatorInfo(const std::string &creatorInfo);
 
-	std::string GetExportInfo();
-	void SetExportInfo(const std::string& exportInfo);
+    std::string GetExportInfo() const;
+    void SetExportInfo(const std::string &exportInfo);
 
-	void SetBlockReference(std::vector<std::unique_ptr<NiObject>>* blockRef) {
-		blocks = blockRef;
-	};
+    void SetBlockReference(std::vector<std::unique_ptr<NiObject>> *blockRef) { blocks = blockRef; };
 
-	uint GetNumBlocks() {
-		return numBlocks;
-	}
+    uint GetNumBlocks() const { return numBlocks; }
 
-	template <class T>
-	T* GetBlock(const int blockId) {
-		if (blockId >= 0 && blockId < numBlocks)
-			return dynamic_cast<T*>((*blocks)[blockId].get());
+    template<class T>
+    T *GetBlock(const int blockId) const
+    {
+        if (blockId >= 0 && blockId < numBlocks)
+            return dynamic_cast<T *>((*blocks)[blockId].get());
 
-		return nullptr;
-	}
+        return nullptr;
+    }
 
-	void DeleteBlock(int blockId);
-	void DeleteBlockByType(const std::string& blockTypeStr, const bool orphanedOnly = false);
-	int AddBlock(NiObject* newBlock);
-	int ReplaceBlock(int oldBlockId, NiObject* newBlock);
-	void SetBlockOrder(std::vector<std::pair<int, int>>& newIndices);
+    void DeleteBlock(int blockId);
+    void DeleteBlockByType(const std::string &blockTypeStr, const bool orphanedOnly = false);
+    int AddBlock(NiObject *newBlock);
+    int ReplaceBlock(int oldBlockId, NiObject *newBlock);
+    void SetBlockOrder(std::vector<std::pair<int, int>> &newIndices);
 
-	// Swaps two blocks, updating references in other blocks that may refer to their old indices
-	void SwapBlocks(const int blockIndexLo, const int blockIndexHi);
-	bool IsBlockReferenced(const int blockId);
-	void DeleteUnreferencedBlocks(const int rootId, bool* hadDeletions = nullptr);
+    // Swaps two blocks, updating references in other blocks that may refer to their old indices
+    void SwapBlocks(const int blockIndexLo, const int blockIndexHi);
+    bool IsBlockReferenced(const int blockId);
+    void DeleteUnreferencedBlocks(const int rootId, bool *hadDeletions = nullptr);
 
-	ushort AddOrFindBlockTypeId(const std::string& blockTypeName);
-	std::string GetBlockTypeStringById(const int blockId);
-	ushort GetBlockTypeIndex(const int blockId);
+    ushort AddOrFindBlockTypeId(const std::string &blockTypeName);
+    std::string GetBlockTypeStringById(const int blockId) const;
+    ushort GetBlockTypeIndex(const int blockId) const;
 
-	uint GetBlockSize(const uint blockId);
-	std::streampos GetBlockSizeStreamPos();
-	void ResetBlockSizeStreamPos();
+    uint GetBlockSize(const uint blockId) const;
+    std::streampos GetBlockSizeStreamPos() const;
+    void ResetBlockSizeStreamPos();
 
-	int GetStringCount();
-	int FindStringId(const std::string& str);
-	int AddOrFindStringId(const std::string& str, const bool addEmpty = false);
-	std::string GetStringById(const int id);
-	void SetStringById(const int id, const std::string& str);
+    int GetStringCount() const;
+    int FindStringId(const std::string &str) const;
+    int AddOrFindStringId(const std::string &str, const bool addEmpty = false);
+    std::string GetStringById(const int id) const;
+    void SetStringById(const int id, const std::string& str);
 
 	void ClearStrings();
 	void UpdateMaxStringLength();
