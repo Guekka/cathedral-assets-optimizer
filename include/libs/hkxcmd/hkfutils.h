@@ -27,7 +27,7 @@ extern hkResource* hkSerializeUtilLoad( hkStreamReader* stream
                                 , hkSerializeUtil::LoadOptions options=hkSerializeUtil::LOAD_DEFAULT );
 
 
-extern hkResult hkSerializeUtilSave( hkPackFormat pkFormat, hkVariant &root, hkOstream &stream
+extern hkResult hkSerializeUtilSave(hkPackFormat pkFormat, const hkVariant &root, hkOstream &stream
                                     , hkSerializeUtil::SaveOptionBits flags
                                     , const hkPackfileWriter::Options& packFileOptions );
 extern hkResult hkSerializeLoad(hkStreamReader *reader, hkVariant &root, hkResource *&resource);

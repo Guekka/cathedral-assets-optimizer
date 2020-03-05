@@ -63,10 +63,11 @@ hkResource* hkSerializeUtilLoad( hkStreamReader* stream
     }
 }
 
-
-hkResult hkSerializeUtilSave( hkPackFormat pkFormat, hkVariant &root, hkOstream &stream
-                              , hkSerializeUtil::SaveOptionBits flags
-                              , const hkPackfileWriter::Options& packFileOptions )
+hkResult hkSerializeUtilSave(hkPackFormat pkFormat,
+                             const hkVariant &root,
+                             hkOstream &stream,
+                             hkSerializeUtil::SaveOptionBits flags,
+                             const hkPackfileWriter::Options &packFileOptions)
 {
     hkResult res;
     try
