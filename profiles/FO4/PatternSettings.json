@@ -1,0 +1,205 @@
+[
+    [
+        {
+            "Advanced": {
+                "Animations": {
+                    "eAnimationsFormat": 3
+                },
+                "BSA": {
+                    "bBSAIsStandard": false,
+                    "bBSAIsUncompressible": false,
+                    "bBSATexturesEnabled": true,
+                    "eBSAFormat": 5,
+                    "eBSATexturesFormat": 6,
+                    "iBSAMaxSize": 4187593113.6,
+                    "iBSATexturesMaxSize": 4831838208.0
+                },
+                "BSAbBSAIsTexture": false,
+                "Meshes": {
+                    "eMeshesFileVersion": 335675399,
+                    "iMeshesStream": 130,
+                    "iMeshesUser": 12
+                },
+                "Textures": {
+                    "bTexturesForceConvert": false,
+                    "eTexturesFormat": 98,
+                    "slTextureUnwantedFormats": [
+                        86,
+                        85,
+                        115
+                    ]
+                }
+            },
+            "Animations": {
+                "bAnimationsOptimization": false
+            },
+            "BSA": {
+                "bBSAAddToBSA": false,
+                "bBSACompressArchive": false,
+                "bBSACreateDummies": false,
+                "bBSAExtractFromBSA": false
+            },
+            "Meshes": {
+                "bMeshesHeadparts": false,
+                "bMeshesResave": false,
+                "iMeshesOptimizationLevel": 0
+            },
+            "Priority": 0,
+            "Regex": [
+                "",
+                "",
+                "",
+                "",
+                "\\A(?:)\\z",
+                "\\A(?:)\\z",
+                "\\A(?:)\\z",
+                "[/\\\\]A\\([^/\\\\]:[^"
+            ],
+            "Textures": {
+                "Resizing": {
+                    "ByRatio": {
+                        "Enabled": false,
+                        "Height": 0,
+                        "Width": 0
+                    },
+                    "BySize": {
+                        "Enabled": false,
+                        "Height": 0,
+                        "Width": 0
+                    }
+                },
+                "bTexturesCompress": false,
+                "bTexturesMipmaps": false,
+                "bTexturesNecessary": false
+            }
+        },
+        {
+            "Advanced": {
+                "Animations": {
+                    "eAnimationsFormat": 0
+                },
+                "BSA": {
+                    "bBSAIsStandard": false,
+                    "bBSAIsUncompressible": false,
+                    "bBSATexturesEnabled": false,
+                    "eBSAFormat": 0,
+                    "eBSATexturesFormat": 0,
+                    "iBSAMaxSize": 0.0,
+                    "iBSATexturesMaxSize": 0.0
+                },
+                "BSAbBSAIsTexture": false,
+                "Meshes": {
+                    "eMeshesFileVersion": 0,
+                    "iMeshesStream": 0,
+                    "iMeshesUser": 0
+                },
+                "Textures": {
+                    "bTexturesForceConvert": true,
+                    "eTexturesFormat": 0,
+                    "slTextureUnwantedFormats": []
+                }
+            },
+            "Animations": {
+                "bAnimationsOptimization": false
+            },
+            "BSA": {
+                "bBSAAddToBSA": false,
+                "bBSACompressArchive": false,
+                "bBSACreateDummies": false,
+                "bBSAExtractFromBSA": false
+            },
+            "Meshes": {
+                "bMeshesHeadparts": false,
+                "bMeshesResave": false,
+                "iMeshesOptimizationLevel": 0
+            },
+            "Priority": 1,
+            "Regex": [
+                "",
+                "\\A(?:[^/\\\\]*\\.tga)\\z"
+            ],
+            "Textures": {
+                "Resizing": {
+                    "ByRatio": {
+                        "Enabled": false,
+                        "Height": 0,
+                        "Width": 0
+                    },
+                    "BySize": {
+                        "Enabled": false,
+                        "Height": 0,
+                        "Width": 0
+                    }
+                },
+                "bTexturesCompress": false,
+                "bTexturesMipmaps": false,
+                "bTexturesNecessary": false
+            }
+        },
+        {
+            "Advanced": {
+                "Animations": {
+                    "eAnimationsFormat": 0
+                },
+                "BSA": {
+                    "bBSAIsStandard": false,
+                    "bBSAIsUncompressible": false,
+                    "bBSATexturesEnabled": false,
+                    "eBSAFormat": 0,
+                    "eBSATexturesFormat": 0,
+                    "iBSAMaxSize": 0.0,
+                    "iBSATexturesMaxSize": 0.0
+                },
+                "BSAbBSAIsTexture": false,
+                "Meshes": {
+                    "eMeshesFileVersion": 0,
+                    "iMeshesStream": 0,
+                    "iMeshesUser": 0
+                },
+                "Textures": {
+                    "bTexturesForceConvert": true,
+                    "eTexturesFormat": 0,
+                    "slTextureUnwantedFormats": []
+                }
+            },
+            "Animations": {
+                "bAnimationsOptimization": false
+            },
+            "BSA": {
+                "bBSAAddToBSA": false,
+                "bBSACompressArchive": false,
+                "bBSACreateDummies": false,
+                "bBSAExtractFromBSA": false
+            },
+            "Meshes": {
+                "bMeshesHeadparts": false,
+                "bMeshesResave": false,
+                "iMeshesOptimizationLevel": 0
+            },
+            "Priority": 2,
+            "Regex": [
+                "",
+                "",
+                "\\A(?:[^/\\\\]*[/\\\\]interface[/\\\\][^/\\\\]*\\.dds)\\z",
+                "\\A(?:[^/\\\\]*[/\\\\]interface[/\\\\][^/\\\\]*\\.tga)\\z"
+            ],
+            "Textures": {
+                "Resizing": {
+                    "ByRatio": {
+                        "Enabled": false,
+                        "Height": 0,
+                        "Width": 0
+                    },
+                    "BySize": {
+                        "Enabled": false,
+                        "Height": 0,
+                        "Width": 0
+                    }
+                },
+                "bTexturesCompress": false,
+                "bTexturesMipmaps": false,
+                "bTexturesNecessary": false
+            }
+        }
+    ]
+]

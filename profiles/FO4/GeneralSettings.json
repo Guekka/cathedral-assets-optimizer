@@ -1,0 +1,29 @@
+{
+    "Advanced": {
+        "Animations": {
+            "bAnimationsTabEnabled": false
+        },
+        "BSA": {
+            "bBSATabEnabled": true,
+            "sBSAExtension": ".ba2",
+            "sBSASuffix": " - Main.ba2",
+            "sBSATexturesSuffix": " - Textures.ba2"
+        },
+        "Meshes": {
+            "bMeshesTabEnabled": false
+        },
+        "Textures": {
+            "bTexturesTabEnabled": true
+        }
+    },
+    "BSA": {
+        "bBSACompact": false,
+        "bBSADeleteBackup": false
+    },
+    "General": {
+        "bDebugLog": false,
+        "bDryRun": false,
+        "eMode": 0,
+        "sUserPath": ""
+    }
+}
