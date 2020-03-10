@@ -24,7 +24,9 @@
                     "bTexturesForceConvert": false,
                     "eTexturesFormat": 77,
                     "slTextureUnwantedFormats": [
-                        98
+                        97,
+						98,
+						99
                     ]
                 }
             },

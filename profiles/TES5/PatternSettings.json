@@ -24,7 +24,9 @@
                     "bTexturesForceConvert": false,
                     "eTexturesFormat": 77,
                     "slTextureUnwantedFormats": [
-                        98
+                    97,
+                    98,
+                    99
                     ]
                 }
             },
@@ -44,12 +46,6 @@
             },
             "Priority": 0,
             "Regex": [
-                "",
-                "",
-                "",
-                "",
-                "\\A(?:)\\z",
-                "\\A(?:)\\z",
                 "\\A(?:)\\z",
                 "[/\\\\]A\\([^/\\\\]:[^"
             ],
@@ -85,7 +81,6 @@
                     "iBSAMaxSize": 0.0,
                     "iBSATexturesMaxSize": 0.0
                 },
-                "BSAbBSAIsTexture": false,
                 "Meshes": {
                     "eMeshesFileVersion": 0,
                     "iMeshesStream": 0,
@@ -113,7 +108,6 @@
             },
             "Priority": 1,
             "Regex": [
-                "",
                 "\\A(?:[^/\\\\]*\\.tga)\\z"
             ],
             "Textures": {
@@ -176,8 +170,6 @@
             },
             "Priority": 2,
             "Regex": [
-                "",
-                "",
                 "\\A(?:[^/\\\\]*[/\\\\]interface[/\\\\][^/\\\\]*\\.dds)\\z",
                 "\\A(?:[^/\\\\]*[/\\\\]interface[/\\\\][^/\\\\]*\\.tga)\\z"
             ],
