@@ -174,7 +174,7 @@ macro(cao_include_and_link file)
 
 
     #Strictly follow the standard
-    target_compile_options(${file} PRIVATE "/permissive")
+    target_compile_options(${file} PRIVATE "/permissive-")
 
     #Output directory
     set_target_properties(${file}
