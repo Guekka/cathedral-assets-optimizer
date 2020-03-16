@@ -428,7 +428,7 @@ public:
 
 template <typename T>
 class BlockRefShortArray : public BlockRefArray<T> {
-public:
+public:        
 	virtual void Get(NiStream& stream) override {
 		stream.read((char*)&arraySize, 2);
 		refs.resize(arraySize);
@@ -447,14 +447,20 @@ public:
 	
 	virtual void Put(NiStream& stream, const int forcedSize) override {
 		CleanInvalidRefs();
-		arraySize = forcedSize;
-		refs.resize(forcedSize);
+        arraySize = forcedSize;
+        refs.resize(forcedSize);
 
-		stream.write((char*)&arraySize, 2);
+        stream.write((char *) &arraySize, 2);
 
-		for (auto &r : refs)
-			r.Put(stream);
-	}
+        for (auto &r : refs)
+            r.Put(stream);
+    }
+
+    //TODO Make a PR to push these changes. Dependent class lookup is a MSVC feature
+protected:
+    using BlockRefArray<T>::refs;
+    using BlockRefArray<T>::arraySize;
+    using BlockRefArray<T>::CleanInvalidRefs;
 };
 
 class NiObject {

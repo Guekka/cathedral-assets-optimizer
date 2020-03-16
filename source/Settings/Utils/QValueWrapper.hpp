@@ -72,7 +72,7 @@ public:
     virtual void setValue(const Type &newValue) override
     {
         parentType::setValue(newValue);
-        JSON::setValue(*json_, key_, value());
+        JSON::setValue(*json_, key_, QValueWrapper<T>::value());
     }
 
     void operator=(const Type &value) { setValue(value); }
