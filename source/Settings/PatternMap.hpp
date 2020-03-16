@@ -17,6 +17,9 @@ public:
     const PatternSettings &getSettings(const QString &filePath) const;
     PatternSettings &getSettings(const QString &filePath);
 
+    const PatternSettings &getDefaultSettings() const;
+    PatternSettings &getDefaultSettings();
+
     void cleanPatterns();
     nlohmann::json getUnifiedJSON() const;
 
@@ -29,7 +32,6 @@ public:
 private:
     std::map<size_t, PatternSettings> patterns_; //TODO several patterns with same priority
 
-    nlohmann::json removePatternKeys(nlohmann::json json);
     //! \note It is assumed both patterns share the same keys
     nlohmann::json mergePattern(const nlohmann::json &json1, const nlohmann::json &json2) const;
 };

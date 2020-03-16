@@ -7,51 +7,54 @@
 #include "pch.hpp"
 
 namespace CAO {
-inline std::vector<QRegularExpression> toRegexVector(const QStringList &regexStrings,
-                                                     bool useWildcard = false)
+
+inline QRegularExpression toRegex(const QString &regexString, bool useWildcard)
+{
+    if (useWildcard)
+        return QRegularExpression(QRegularExpression::wildcardToRegularExpression(regexString));
+    else
+        return QRegularExpression(regexString);
+}
+
+inline std::vector<QRegularExpression> toRegexVector(const QStringList &regexStrings, bool useWildcard)
 {
     std::vector<QRegularExpression> regexes;
     std::transform(regexStrings.begin(),
                    regexStrings.end(),
                    std::back_inserter(regexes),
-                   [useWildcard](const QString &str) {
-                       if (useWildcard)
-                           return QRegularExpression(
-                               QRegularExpression::wildcardToRegularExpression(str));
-                       else
-                           return QRegularExpression(str);
-                   });
+                   [useWildcard](const QString &str) { return toRegex(str, useWildcard); });
     return regexes;
 }
 
-inline QStringList toStringList(const std::vector<QRegularExpression> &regexes)
+inline QString toQString(const QRegularExpression &regex)
 {
-    QStringList regexStrings;
-    std::transform(regexes.cbegin(),
-                   regexes.cend(),
-                   std::back_inserter(regexStrings),
-                   [](const QRegularExpression &regex) { return regex.pattern(); });
-    return regexStrings;
+    return regex.pattern();
 }
 
-inline QStringList toStringList(const std::vector<std::string> &strings)
+inline QString toQString(const std::string &str)
+{
+    return QString::fromStdString(str);
+}
+
+inline std::string toString(const QString &str)
+{
+    return str.toStdString();
+}
+
+template<typename Container>
+inline QStringList toStringList(Container &&cont)
 {
     QStringList stringList;
-    std::transform(strings.cbegin(),
-                   strings.cend(),
-                   std::back_inserter(stringList),
-                   [](const std::string &str) { return QString::fromStdString(str); });
+    auto toqs = [](auto &&e) { return toQString(e); };
+    std::transform(cont.cbegin(), cont.cend(), std::back_inserter(stringList), toqs);
     return stringList;
-}
+} // namespace CAO
 
-inline std::vector<std::string> toStringVector(const QStringList &strings)
+template<typename Container>
+inline std::vector<std::string> toStringVector(Container &&cont)
 {
-    std::vector<std::string> stringVec(strings.size());
-    std::transform(strings.begin(),
-                   strings.end(),
-                   std::back_inserter(stringVec),
-                   [](const QString &str) { return str.toStdString(); });
+    std::vector<std::string> stringVec;
+    std::transform(cont.cbegin(), cont.cend(), std::back_inserter(stringVec), toString);
     return stringVec;
 }
-
 } // namespace CAO

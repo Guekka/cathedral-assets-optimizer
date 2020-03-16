@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "PatternMap.hpp"
 #include <string>
-namespace CAO {
 
+namespace CAO {
 void PatternMap::listPatterns(nlohmann::json json)
 {
     patterns_.clear();
@@ -16,11 +16,16 @@ void PatternMap::listPatterns(nlohmann::json json)
             continue;
 
         //We only know that the first profile will contain all the settings. The others might be incomplete
+        //NOTE We might want to use a struct instead of merging the first JSON into the others
+        //Something like
+        //struct Sets
+        //    PatternSettings *defaultSets;
+        //    PatternSettings *sets;
+
         if (!patterns_.empty())
         {
-            const PatternSettings &defaultSets = patterns_.begin()->second;
-            const auto &defaultJson = defaultSets.getJSON();
-            auto patchedJson = defaultJson;
+            const auto &defaultJson = getDefaultSettings().getJSON();
+            auto patchedJson        = defaultJson;
             patchedJson.merge_patch(value);
             value = patchedJson;
         }
@@ -28,7 +33,7 @@ void PatternMap::listPatterns(nlohmann::json json)
         addPattern(PatternSettings(value));
     }
     if (patterns_.empty())
-        addPattern(PatternSettings(0, toRegexVector({"*"}, true)));
+        addPattern(PatternSettings{});
 
     cleanPatterns();
 }
@@ -42,27 +47,31 @@ const PatternSettings &PatternMap::getSettings(const QString &filePath) const
 {
     assert(!patterns_.empty());
 
-    const PatternSettings *result = &patterns_.begin()->second;
+    auto hasMatch = [&filePath](const auto &regex) { return regex.match(filePath).hasMatch(); };
+
     for (auto it = patterns_.crbegin(); it != patterns_.crend(); ++it)
     {
         const auto &regexes = it->second.regexes_;
         for (const auto &regex : regexes)
-        {
-            const auto &match = regex.match(filePath);
-            if (match.hasMatch())
-            {
-                result = &it->second;
-                break;
-            }
-        }
+            if (hasMatch(regex))
+                return it->second;
     }
-
-    return *result;
+    return getDefaultSettings();
 }
 
 PatternSettings &PatternMap::getSettings(const QString &filePath)
 {
     return const_cast<PatternSettings &>(static_cast<const PatternMap *>(this)->getSettings(filePath));
+}
+
+const PatternSettings &PatternMap::getDefaultSettings() const
+{
+    return patterns_.begin()->second;
+}
+
+PatternSettings &PatternMap::getDefaultSettings()
+{
+    return patterns_.begin()->second;
 }
 
 void PatternMap::readFromUi(const MainWindow &window)
@@ -77,22 +86,14 @@ void PatternMap::saveToUi(MainWindow &window) const
         pattern.second.saveToUi(window);
 }
 
-nlohmann::json PatternMap::removePatternKeys(nlohmann::json json)
-{
-    json.erase(PatternSettings::patternKey);
-    json.erase(PatternSettings::regexKey);
-    json.erase(PatternSettings::priorityKey);
-    return json;
-}
-
 nlohmann::json PatternMap::mergePattern(const nlohmann::json &json1, const nlohmann::json &json2) const
 {
-    auto pKey1 = JSON::getValue<QStringList>(json1, PatternSettings::patternKey);
-    auto pKey2 = JSON::getValue<QStringList>(json2, PatternSettings::patternKey);
+    auto pKey1       = JSON::getValue<QStringList>(json1, PatternSettings::patternKey);
+    auto pKey2       = JSON::getValue<QStringList>(json2, PatternSettings::patternKey);
     auto mergedPKeys = pKey1 + pKey2;
 
-    auto rKey1 = JSON::getValue<QStringList>(json1, PatternSettings::regexKey);
-    auto rKey2 = JSON::getValue<QStringList>(json2, PatternSettings::regexKey);
+    auto rKey1       = JSON::getValue<QStringList>(json1, PatternSettings::regexKey);
+    auto rKey2       = JSON::getValue<QStringList>(json2, PatternSettings::regexKey);
     auto mergedRKeys = rKey1 + rKey2;
 
     nlohmann::json merged = json1;
@@ -110,7 +111,7 @@ void PatternMap::cleanPatterns()
 
     for (auto [_, pattern] : patterns_)
     {
-        auto cleanedJson = removePatternKeys(pattern.getJSON());
+        auto cleanedJson = pattern.getJSONWithoutMeta();
         JsonToSets[cleanedJson].emplace(pattern);
     }
 
@@ -122,7 +123,7 @@ void PatternMap::cleanPatterns()
         for (auto &settings : value.second)
         {
             auto json = settings.getJSON();
-            merged = mergePattern(merged, settings.getJSON());
+            merged    = mergePattern(merged, settings.getJSON());
         }
         PatternSettings s{merged};
         patterns_.emplace(s.priority_, std::move(s));

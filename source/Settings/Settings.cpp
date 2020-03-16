@@ -45,6 +45,11 @@ void Settings::readFromUi(const MainWindow &window)
         set.read(window, *json_);
 }
 
+PatternSettings::PatternSettings()
+    : regexes_{toRegex("*", true)}
+{
+}
+
 PatternSettings::PatternSettings(const nlohmann::json &json)
     : Settings(json)
 {
@@ -89,6 +94,11 @@ nlohmann::json PatternSettings::getJSON() const
     JSON::setValue(j, priorityKey, priority_);
     JSON::setValue(j, regexKey, toStringList(regexes_));
     return j;
+}
+
+nlohmann::json PatternSettings::getJSONWithoutMeta() const
+{
+    return *json_;
 }
 
 void PatternSettings::setJSON(const nlohmann::json &j)

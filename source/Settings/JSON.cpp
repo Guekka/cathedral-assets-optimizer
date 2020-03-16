@@ -29,7 +29,8 @@ void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons
 {
     master.flatten();
     for (const auto &[key, value] : master.items())
-        for (auto &json : jsons) {
+        for (auto &json : jsons)
+        {
             json.flatten();
             if (value == json[key])
                 json.erase(key);

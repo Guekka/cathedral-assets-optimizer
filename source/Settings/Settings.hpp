@@ -44,6 +44,7 @@ protected:
 class PatternSettings final : public Settings
 {
 public:
+    PatternSettings();
     PatternSettings(const nlohmann::json &json);
     PatternSettings(size_t priority, const std::vector<QRegularExpression> &regex);
     PatternSettings(const PatternSettings &other);
@@ -56,12 +57,13 @@ public:
     size_t priority_{0};
 
     nlohmann::json getJSON() const override;
+    nlohmann::json getJSONWithoutMeta() const;
     void setJSON(const nlohmann::json &j) override;
 
     std::optional<QString> isValid();
 
-    static constexpr auto patternKey = "Pattern";
-    static constexpr auto regexKey = "Regex";
+    static constexpr auto patternKey  = "Pattern";
+    static constexpr auto regexKey    = "Regex";
     static constexpr auto priorityKey = "Priority";
 
 private:
