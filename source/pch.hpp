@@ -90,6 +90,7 @@
 #include "include/libs/hkxcmd/hkfutils.h"
 #include "include/libs/json/single_include/nlohmann/json.hpp"
 #include "include/libs/libbsarch/src/bs_archive_auto.hpp"
+#include "include/libs/pipes/include/pipes/pipes.hpp"
 /*----------------------*/
 
 #endif

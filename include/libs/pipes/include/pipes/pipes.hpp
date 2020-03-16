@@ -1,0 +1,33 @@
+#ifndef PIPES_HPP
+#define PIPES_HPP
+
+#include "pipes/adjacent.hpp"
+#include "pipes/cartesian_product.hpp"
+#include "pipes/combinations.hpp"
+#include "pipes/dev_null.hpp"
+#include "pipes/do_then.hpp"
+#include "pipes/drop.hpp"
+#include "pipes/drop_while.hpp"
+#include "pipes/filter.hpp"
+#include "pipes/for_each.hpp"
+#include "pipes/fork.hpp"
+#include "pipes/join.hpp"
+#include "pipes/insert.hpp"
+#include "pipes/intersperse.hpp"
+#include "pipes/map_aggregator.hpp"
+#include "pipes/mux.hpp"
+#include "pipes/override.hpp"
+#include "pipes/partition.hpp"
+#include "pipes/push_back.hpp"
+#include "pipes/read_in_stream.hpp"
+#include "pipes/set_aggregator.hpp"
+#include "pipes/stride.hpp"
+#include "pipes/switch.hpp"
+#include "pipes/take.hpp"
+#include "pipes/take_while.hpp"
+#include "pipes/tee.hpp"
+#include "pipes/to_out_stream.hpp"
+#include "pipes/transform.hpp"
+#include "pipes/unzip.hpp"
+
+#endif /* PIPES_HPP */

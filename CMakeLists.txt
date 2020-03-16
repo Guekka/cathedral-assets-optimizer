@@ -52,6 +52,10 @@ add_subdirectory("include/libs/DirectXTex")
 #Json library
 message("Adding json library")
 add_subdirectory("include/libs/json")
+#Pipes library
+message("Adding Pipes library")
+add_subdirectory("include/libs/pipes")
+
 
 set(SOURCES
     source/FilesystemOperations.cpp
@@ -159,7 +163,7 @@ endif()
 macro(cao_include_and_link file)
     target_link_libraries(${file}
         Qt5::Core Qt5::Widgets
-        hkxcmd plog nif directxtex libbsarch_OOP nlohmann_json::nlohmann_json)
+        hkxcmd plog nif directxtex libbsarch_OOP nlohmann_json::nlohmann_json pipes)
 
     #Include source, C++17
     target_include_directories(${file} PUBLIC "include")
