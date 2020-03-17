@@ -76,14 +76,12 @@ PatternSettings &PatternMap::getDefaultSettings()
 
 void PatternMap::readFromUi(const MainWindow &window)
 {
-    for (auto &pattern : patterns_)
-        pattern.second.readFromUi(window);
+    patterns_ >>= pipes::for_each([&window](auto &&pair) { pair.second.readFromUi(window); });
 }
 
 void PatternMap::saveToUi(MainWindow &window) const
 {
-    for (auto &pattern : patterns_)
-        pattern.second.saveToUi(window);
+    patterns_ >>= pipes::for_each([&window](auto &&pair) { pair.second.saveToUi(window); });
 }
 
 nlohmann::json PatternMap::mergePattern(const nlohmann::json &json1, const nlohmann::json &json2) const
@@ -132,12 +130,12 @@ void PatternMap::cleanPatterns()
 
 nlohmann::json PatternMap::getUnifiedJSON() const
 {
-    std::vector<nlohmann::json> vector;
-    vector.reserve(patterns_.size());
+    std::vector<nlohmann::json> vector(patterns_.size());
 
-    std::transform(patterns_.cbegin(), patterns_.cend(), std::back_inserter(vector), [](const auto &pair) {
-        return pair.second.getJSON();
-    });
+    auto getJSON = [](const auto &pair) { return pair.second.getJSON(); };
+    patterns_ >>= pipes::transform(getJSON) >>= pipes::push_back(vector);
+
+    //TODO remove duplicates
 
     return nlohmann::json{vector};
 }

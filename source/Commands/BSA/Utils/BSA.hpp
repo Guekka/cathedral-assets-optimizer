@@ -28,7 +28,7 @@ struct BSA
 
     BSA &operator+(const BSA &other);
     BSA &operator+=(const BSA &other);
-    bool operator==(const BSA &other);
+    bool operator==(const BSA &other) const;
 
     /*!
      * \brief Finds a name for a BSA
@@ -41,7 +41,7 @@ struct BSA
      * \param list The list of BSAs to merge
      * \return The number of merges done
      */
-    static size_t mergeBSAs(std::vector<BSA> &list);
+    static void mergeBSAs(std::vector<BSA> &list);
 };
 } // namespace CAO
 

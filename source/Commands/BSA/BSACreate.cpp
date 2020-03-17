@@ -47,7 +47,7 @@ CommandResult BSACreate::process(File &file)
             return _resultFactory.getFailedResult(3, e.what());
         }
 
-        std::for_each(bsa.files.cbegin(), bsa.files.cend(), [](const QString &filePath) { QFile::remove(filePath); });
+        bsa.files >>= pipes::for_each([](const QString &filePath) { QFile::remove(filePath); });
     }
     return _resultFactory.getSuccessfulResult();
 }

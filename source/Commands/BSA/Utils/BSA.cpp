@@ -14,19 +14,19 @@ BSA BSA::getBSA(const BSAType &type, const PatternSettings &settings)
     switch (type)
     {
         case StandardBsa:
-            bsa.type = BSAType::StandardBsa;
+            bsa.type    = BSAType::StandardBsa;
             bsa.maxSize = settings.iBSAMaxSize();
-            bsa.format = settings.eBSAFormat();
+            bsa.format  = settings.eBSAFormat();
             break;
         case TexturesBsa:
-            bsa.type = BSAType::TexturesBsa;
+            bsa.type    = BSAType::TexturesBsa;
             bsa.maxSize = settings.iBSATexturesMaxSize();
-            bsa.format = settings.eBSATexturesFormat();
+            bsa.format  = settings.eBSATexturesFormat();
             break;
         case UncompressableBsa:
-            bsa.type = BSAType::UncompressableBsa;
+            bsa.type    = BSAType::UncompressableBsa;
             bsa.maxSize = settings.iBSAMaxSize();
-            bsa.format = settings.eBSAFormat();
+            bsa.format  = settings.eBSAFormat();
             break;
     }
     return bsa;
@@ -34,54 +34,51 @@ BSA BSA::getBSA(const BSAType &type, const PatternSettings &settings)
 
 void BSA::name(const QString &folder, const GeneralSettings &settings)
 {
-    const auto &bsaSuffix = settings.sBSASuffix();
+    const auto &bsaSuffix    = settings.sBSASuffix();
     const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
-    const QString &suffix = type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
-    path = folder + "/" + PluginsOperations::findPlugin(folder, settings) + suffix;
+    const QString &suffix    = type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
+    path                     = folder + "/" + PluginsOperations::findPlugin(folder, settings) + suffix;
     PLOG_VERBOSE << "Named " << type << path;
 }
 
-size_t BSA::mergeBSAs(std::vector<BSA> &list)
+void BSA::mergeBSAs(std::vector<BSA> &list)
 {
-    size_t counter = 0;
-    for (auto leftBSA = list.begin(); leftBSA != list.end(); ++leftBSA)
-    {
-        for (auto rightBSA = list.begin(); rightBSA != list.end(); ++rightBSA)
-        {
-            if (leftBSA == rightBSA)
-                continue;
+    //Not merging the same BSAs
+    auto notEqual = [](auto &&val1, auto &&val2) { return !(val1 == val2); };
 
-            if (leftBSA->filesSize + rightBSA->filesSize > leftBSA->maxSize)
-                continue; //These BSAs contain too much files to be merged
+    //BSAs small enough to be merged
+    auto notMaxSize = [](auto &&leftBSA, auto &&rightBSA) {
+        auto total = leftBSA.filesSize + rightBSA.filesSize;
+        return total < leftBSA.maxSize;
+    };
 
-            if (leftBSA->type != rightBSA->type  //We can only merge BSAs of the same type
-                && leftBSA->type != StandardBsa) //But everything can be merged into a standard BSA
-                continue;
+    //We can only merge BSAs of the same type but everything can be merged into a standard BSA
+    auto goodType = [](auto &&leftBSA, auto &&rightBSA) {
+        return leftBSA.type != rightBSA.type && leftBSA.type != StandardBsa;
+    };
 
-            *leftBSA += *rightBSA;
-            rightBSA->files.clear(); //Marking for deletion
-            PLOG_VERBOSE << "Merged " << rightBSA->type << " into " << leftBSA->type;
-            ++counter;
-        }
-    }
+    auto merge = [](BSA leftBSA, BSA rightBSA) {
+        leftBSA += rightBSA;
+        rightBSA.files.clear(); //Marking for deletion
+    };
+
+    using namespace pipes;
+
+    pipes::combinations(list) >>= filter(notEqual) >>= filter(notMaxSize) >>= filter(goodType) >>= for_each(
+        merge);
+    //TODO check that the pipes refactoring worked correctly
 
     //Removing empty BSAs
-    [[maybe_unused]] auto a = std::remove_if(list.begin(), list.end(), [](BSA &bsa) { return bsa.files.isEmpty(); });
-
-    PLOG_VERBOSE << "Merged " << counter << " BSAs";
-    return counter;
+    auto removeIt = std::remove_if(list.begin(), list.end(), [](BSA &bsa) { return bsa.files.isEmpty(); });
+    list.erase(removeIt, list.end());
 }
 
 BSA &BSA::operator+(const BSA &other)
 {
     filesSize += other.filesSize;
     files += other.files;
-    if ((type == TexturesBsa && other.type != TexturesBsa)
-        || (type == UncompressableBsa && other.type != UncompressableBsa))
-    {
+    if (type != other.type)
         type = StandardBsa;
-    }
-
     return *this;
 }
 
@@ -90,7 +87,7 @@ BSA &BSA::operator+=(const BSA &other)
     *this = *this + other;
     return *this;
 }
-bool BSA::operator==(const BSA &other)
+bool BSA::operator==(const BSA &other) const
 {
     return path == other.path && filesSize == other.filesSize && files == other.files
            && qFuzzyCompare(maxSize, other.maxSize) && type == other.type && format == other.format;

@@ -8,17 +8,13 @@ Manager::Manager(const Profile &profile)
     : _profile(profile)
 
 {
-    init();
-}
-
-void Manager::init()
-{
     //Preparing logging
     initCustomLogger(_profile.logPath(), _profile.getGeneralSettings().bDebugLog());
 
     PLOG_VERBOSE << "Checking settings...";
     const QString error = _profile.getGeneralSettings().isValid();
-    if (!error.isEmpty()) {
+    if (!error.isEmpty())
+    {
         PLOG_FATAL << error;
         throw std::runtime_error("Options are not valid." + error.toStdString());
     }
@@ -40,15 +36,14 @@ void Manager::listDirectories()
 
     else {
         const QDir dir(settings.sUserPath());
-        for (auto subDir : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-            if (!subDir.contains("separator")
-                && !_ignoredMods.contains(
-                    subDir, Qt::CaseInsensitive)) //Separators are empty directories used by MO2
-                _modsToProcess << dir.filePath(subDir);
+        auto isNotSeparator = [](auto &&str) { return !str.contains("separator"); };
+        auto isNotIgnored   = [this](auto &&str) { return !_ignoredMods.contains(str, Qt::CaseInsensitive); };
+        dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) >>= pipes::filter(isNotSeparator)
+            >>= pipes::filter(isNotIgnored) >>= pipes::push_back(_modsToProcess);
     }
 }
 
-void Manager::printProgress(const int &total, const QString &text = "Processing files")
+void Manager::printProgress(int total, const QString &text = "Processing files")
 {
 #ifndef GUI
     QTextStream(stdout) << "PROGRESS:|" << text << " - %v/%m - %p%|" << _numberCompletedFiles << '|'
@@ -106,7 +101,7 @@ void Manager::listFiles()
 void Manager::readIgnoredMods()
 {
     QFile &&ignoredModsFile = _profile.getFile("ignoredMods.txt");
-    _ignoredMods = FilesystemOperations::readFile(ignoredModsFile);
+    _ignoredMods = Filesystem::readFile(ignoredModsFile);
 
     if (_ignoredMods.isEmpty()) {
         PLOG_WARNING << "ignoredMods.txt not found. All mods will be processed, including tools "
@@ -133,7 +128,6 @@ void Manager::runOptimization()
     //Listing newly extracted files
     listFiles();
 
-    //Processing animations separately since they cannot be processed in a multithreaded way
     //Using time in order to prevent printing progress too often
     QDateTime time1 = QDateTime::currentDateTime();
     QDateTime time2;
@@ -157,7 +151,7 @@ void Manager::runOptimization()
                       "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
     }
 
-    FilesystemOperations::deleteEmptyDirectories(_profile.getGeneralSettings().sUserPath());
+    Filesystem::deleteEmptyDirectories(_profile.getGeneralSettings().sUserPath());
     PLOG_INFO << "Process completed<br><br><br>";
     emit end();
 }

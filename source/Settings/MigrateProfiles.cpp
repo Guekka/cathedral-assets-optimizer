@@ -74,10 +74,8 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     pSetsInterface.bTexturesForceConvert = texturesCompressInterface;
 
     std::vector<DXGI_FORMAT> unwantedFormats;
-    std::transform(texturesUnwantedFormats.begin(),
-                   texturesUnwantedFormats.end(),
-                   std::back_inserter(unwantedFormats),
-                   [](const QVariant &variant) { return variant.value<DXGI_FORMAT>(); });
+    auto getFormat = [](const QVariant &variant) { return variant.value<DXGI_FORMAT>(); };
+    texturesUnwantedFormats >>= pipes::transform(getFormat) >>= pipes::push_back(unwantedFormats);
     gPattern.slTextureUnwantedFormats = unwantedFormats;
 }
 

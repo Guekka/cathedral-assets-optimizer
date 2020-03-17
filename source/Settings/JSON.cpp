@@ -25,7 +25,7 @@ void readFromFile(nlohmann::json &json, const QString &filepath)
     stream >> json;
 }
 
-void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons)
+void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons) //FIXME, doesn't work
 {
     master.flatten();
     for (const auto &[key, value] : master.items())

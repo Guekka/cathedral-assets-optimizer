@@ -13,10 +13,10 @@ namespace pipes
     class for_each_pipeline : public pipeline_base<for_each_pipeline<Function>>
     {
     public:
-        template<typename T>
-        void onReceive(T&& value)
+        template<typename... Values>
+        void onReceive(Values &&... values)
         {
-            function_(FWD(value));
+            function_(FWD(values)...);
         }
         
         explicit for_each_pipeline(Function function) : function_(function) {}

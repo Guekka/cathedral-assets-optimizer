@@ -79,12 +79,12 @@ void ListDialog::setCheckedItems(const QStringList &textList)
 void ListDialog::setCheckedItems(const QString &text)
 {
     const auto &list = _ui->listWidget->findItems(text, Qt::MatchExactly);
-    for (auto &item : list)
-        item->setCheckState(Qt::Checked);
+    list >>= pipes::for_each([](auto &&item) { item->setCheckState(Qt::Checked); });
     if (list.isEmpty())
     {
-        auto newItem = new QListWidgetItem(text);
+        auto newItem = new QListWidgetItem();
         newItem->setCheckState(Qt::Checked);
+        _ui->listWidget->addItem(text);
     }
 }
 

@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "FilesystemOperations.hpp"
 #include "MainOptimizer.hpp"
+#include "Utils/Filesystem.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -30,13 +30,9 @@ public:
    * \param text The text to display
    * \param total The total number of files to process
    */
-    void printProgress(const int &total, const QString &text);
+    void printProgress(int total, const QString &text);
 
 private:
-    /*!
-     * \brief Initializes the manager
-     */
-    void init();
     /*!
    * \brief List all the directories to process
    */

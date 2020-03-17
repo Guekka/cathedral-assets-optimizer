@@ -130,7 +130,7 @@ void Profiles::create(const QString &name, const QString &baseProfile)
     const QString &baseFolder = rootProfileDir_.absoluteFilePath(
         exists(baseProfile) ? baseProfile : defaultProfile);
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
-    FilesystemOperations::copyDir(baseFolder, newFolder, false);
+    Filesystem::copyDir(baseFolder, newFolder, false);
     QFile::remove(newFolder + "/isBase");
     profiles_.emplace(name, Profile(newFolder));
 }

@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "BSAExtract.hpp"
 #include "Commands/BSA/Utils/BSACallback.hpp"
-#include "FilesystemOperations.hpp"
+#include "Utils/Filesystem.hpp"
 
 namespace CAO {
 CommandResult BSAExtract::process(File& file)
@@ -16,7 +16,7 @@ CommandResult BSAExtract::process(File& file)
 
     auto bsaPath = file.getName();
     if (!file.generalSettings().bBSADeleteBackup())
-        bsaPath = FilesystemOperations::backupFile(bsaPath);
+        bsaPath = Filesystem::backupFile(bsaPath);
 
     libbsarch::convertible_string rootPath = QFileInfo(bsaPath).path();
 

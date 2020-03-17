@@ -78,7 +78,7 @@ bool MeshConvert::isHeadpart(const QString &filepath)
 void MeshConvert::listHeadparts(const GeneralSettings &settings)
 {
     QFile &&customHeadpartsFile = Profiles().getCurrent().getFile("customHeadparts.txt");
-    headpartList = FilesystemOperations::readFile(customHeadpartsFile,
+    headpartList = Filesystem::readFile(customHeadpartsFile,
                                                   [](QString &string) { return QDir::cleanPath(string); });
 
     if (headpartList.isEmpty())
@@ -91,7 +91,7 @@ void MeshConvert::listHeadparts(const GeneralSettings &settings)
     const auto flags = severalMods ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
 
     QDirIterator it(settings.sUserPath(), flags);
-    for (const auto &plugin : FilesystemOperations::listPlugins(it))
+    for (const auto &plugin : Filesystem::listPlugins(it))
         headpartList += PluginsOperations::listHeadparts(plugin);
 
     headpartList.removeDuplicates();

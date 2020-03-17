@@ -19,10 +19,8 @@ inline QRegularExpression toRegex(const QString &regexString, bool useWildcard)
 inline std::vector<QRegularExpression> toRegexVector(const QStringList &regexStrings, bool useWildcard)
 {
     std::vector<QRegularExpression> regexes;
-    std::transform(regexStrings.begin(),
-                   regexStrings.end(),
-                   std::back_inserter(regexes),
-                   [useWildcard](const QString &str) { return toRegex(str, useWildcard); });
+    auto toReg = [useWildcard](const QString &str) { return toRegex(str, useWildcard); };
+    regexStrings >>= pipes::transform(toReg) >>= pipes::push_back(regexes);
     return regexes;
 }
 
@@ -45,16 +43,18 @@ template<typename Container>
 inline QStringList toStringList(Container &&cont)
 {
     QStringList stringList;
+    stringList.reserve(cont.size());
+
     auto toqs = [](auto &&e) { return toQString(e); };
-    std::transform(cont.cbegin(), cont.cend(), std::back_inserter(stringList), toqs);
+    cont >>= pipes::transform(toqs) >>= pipes::push_back(stringList);
     return stringList;
 } // namespace CAO
 
 template<typename Container>
 inline std::vector<std::string> toStringVector(Container &&cont)
 {
-    std::vector<std::string> stringVec;
-    std::transform(cont.cbegin(), cont.cend(), std::back_inserter(stringVec), toString);
+    std::vector<std::string> stringVec(cont.size());
+    cont >>= pipes::transform(toString) >>= pipes::push_back(stringVec);
     return stringVec;
 }
 } // namespace CAO

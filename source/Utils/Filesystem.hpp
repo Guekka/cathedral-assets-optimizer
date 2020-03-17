@@ -9,43 +9,47 @@ namespace CAO {
 /*!
  * \brief Manages filesystem operations : moving files, deleting empty dirs...
  */
-class FilesystemOperations final : public QObject
-{
-    Q_DECLARE_TR_FUNCTIONS(FilesystemOperations)
+namespace Filesystem {
 
-public:
-    /*!
+/*!
   * \brief Delete empty directories in the given directory
   * \param folderPath The path of the folder where empty dirs will be deleted
   */
-    static void deleteEmptyDirectories(const QString &folderPath);
-    /*!
+void deleteEmptyDirectories(const QString &folderPath);
+/*!
    * \brief Compares if two folders have the same file structure. Currently only used for testing.
    * \param folder1 The first folder
    * \param folder2 The second folder
    * \param checkFileSize Whether file sizes will be checked or not
    * \return a bool : true if the folders are identical, false otherwise
    */
-    static bool compareFolders(const QString &folder1, const QString &folder2, const bool &checkFileSize);
-    /*!
+bool compareFolders(const QString &folder1, const QString &folder2);
+/*!
    * \brief Will copy all files from source folder into destination folder.Currently only used for testing.
    * \param source The source directory
    * \param destination The destination directory
    * \param overwriteExisting If enabled, source files will overwrite destination files
    */
-    static void copyDir(const QString &source, const QString &destination, bool overwriteExisting);
+void copyDir(const QDir &source, QDir destination, bool overwriteExisting);
 
-    /*!
+/*!
      * \brief Renames a file in order to add .bak at the end. If an identical bak file exists, it will be deleted. If a different bak file exists, 
      * it will be renamed to .bak.bak etc
      * \param filePath The file to backup
      * \return The new path of the file
      */
-    static QString backupFile(const QString &filePath);
+QString backupFile(const QString &filePath);
 
-    static QStringList readFile(
-        QFile &file, std::function<void(QString &line)> function = [](QString &line) {});
+QStringList readFile(
+    QFile &file, std::function<void(QString &line)> function = [](QString &) {});
 
-    static QStringList listPlugins(QDirIterator &it);
-};
+QStringList listPlugins(QDirIterator &it);
+
+std::fstream openBinaryFile(const QString &filepath);
+
+bool compareFiles(const QString &filepath1, const QString &filepath2);
+
+QByteArray fileChecksum(QFile &&file, QCryptographicHash::Algorithm hashAlgorithm);
+
+}; // namespace Filesystem
 } // namespace CAO
