@@ -58,8 +58,6 @@ add_subdirectory("include/libs/pipes")
 
 
 set(SOURCES
-    source/FilesystemOperations.cpp
-    source/FilesystemOperations.hpp
     source/Logger.hpp
     source/main.cpp
     source/MainOptimizer.cpp
@@ -70,6 +68,8 @@ set(SOURCES
     source/Version.hpp
     source/Version.hpp.in
 
+    source/Utils/Filesystem.cpp
+    source/Utils/Filesystem.hpp
     source/Utils/TemplateMetaProgramming.hpp
     source/Utils/TypeConvert.hpp
 

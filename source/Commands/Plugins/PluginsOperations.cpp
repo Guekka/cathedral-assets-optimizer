@@ -5,6 +5,7 @@
 
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "Settings/Profiles.hpp"
+#include "Utils/Filesystem.hpp"
 
 namespace CAO {
 void PluginsOperations::makeDummyPlugins(const QString &folderPath, const GeneralSettings &settings)
@@ -93,8 +94,7 @@ QStringList PluginsOperations::listBSAsNames(QDirIterator it, const GeneralSetti
 
 QStringList PluginsOperations::listHeadparts(const QString &filepath)
 {
-    std::fstream file;
-    file.open(filepath.toStdString(), std::ios::binary | std::ios::in);
+    auto file = Filesystem::openBinaryFile(filepath);
 
     if (!file.is_open())
         return QStringList();
@@ -148,12 +148,13 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
                 }
 
                 char buffer[1024];
+                assert(pluginFieldHeader.dataSize < 1024);
                 file.read(buffer, pluginFieldHeader.dataSize);
 
-                QString headpart = buffer;
                 // make sure that nif path starts with meshes
+                QString headpart = std::move(buffer);
                 if (!headpart.startsWith("meshes", Qt::CaseInsensitive))
-                    headpart = "meshes/" + headpart;
+                    headpart.prepend("meshes/");
 
                 //Adding headparts to the list
                 headparts << QDir::cleanPath(headpart);
@@ -166,8 +167,7 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
 
 QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
 {
-    std::fstream file;
-    file.open(filepath.toStdString(), std::ios::binary | std::ios::in);
+    auto file = Filesystem::openBinaryFile(filepath);
 
     if (!file.is_open())
         return QStringList();
@@ -233,10 +233,12 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
                          && strncmp(pluginFieldHeader.type, GROUP_TX00, sizeof GROUP_TX00) == 0)
                 {
                     char buffer[1024];
+                    assert(pluginFieldHeader.dataSize < 1024);
                     file.read(buffer, pluginFieldHeader.dataSize);
-                    QString string = QDir::cleanPath(buffer);
+
+                    QString string = QDir::cleanPath(std::move(buffer));
                     if (!string.startsWith("textures/"))
-                        string.insert(0, "textures/");
+                        string.prepend("textures/");
 
                     slTextures.insert(header.record.id, string);
                 }
