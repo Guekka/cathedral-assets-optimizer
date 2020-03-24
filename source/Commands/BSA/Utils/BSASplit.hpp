@@ -10,7 +10,7 @@
 
 namespace CAO {
 namespace BSASplit {
-std::vector<BSA> splitBSA(const QDir &dir, const PatternSettings &settings, const GeneralSettings &generalSets);
+std::vector<BSA> splitBSA(const QDir &dir, const GeneralSettings &generalSets);
 bool isAllowedFile(const QDir &bsaDir, const QFileInfo &settings);
 }; // namespace BSASplit
 } // namespace CAO

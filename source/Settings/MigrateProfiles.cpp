@@ -27,17 +27,17 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 
     profileSettings.beginGroup("BSA");
 
-    gPattern.eBSAFormat = static_cast<bsa_archive_type_t>(profileSettings.value("bsaFormat").toInt());
-    gPattern.iBSAMaxSize = profileSettings.value("maxBsaUncompressedSize").toDouble();
+    generalSets.eBSAFormat  = static_cast<bsa_archive_type_t>(profileSettings.value("bsaFormat").toInt());
+    generalSets.iBSAMaxSize = profileSettings.value("maxBsaUncompressedSize").toDouble();
 
     generalSets.sBSAExtension = profileSettings.value("bsaExtension").toString();
     generalSets.sBSASuffix = profileSettings.value("bsaSuffix").toString();
     generalSets.bBSATabEnabled = profileSettings.value("bsaEnabled").toBool();
 
-    gPattern.eBSATexturesFormat = static_cast<bsa_archive_type_t>(
+    generalSets.eBSATexturesFormat = static_cast<bsa_archive_type_t>(
         profileSettings.value("bsaTexturesFormat").toInt());
-    gPattern.bBSATexturesEnabled = profileSettings.value("hasBsaTextures").toBool();
-    gPattern.iBSATexturesMaxSize = profileSettings.value("maxBsaTexturesSize").toDouble();
+    generalSets.bBSATexturesEnabled = profileSettings.value("hasBsaTextures").toBool();
+    generalSets.iBSATexturesMaxSize = profileSettings.value("maxBsaTexturesSize").toDouble();
 
     generalSets.sBSATexturesSuffix = profileSettings.value("bsaTexturesSuffix").toString();
 

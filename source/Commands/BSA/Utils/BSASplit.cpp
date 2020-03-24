@@ -7,13 +7,11 @@
 #include "Utils/Filesystem.hpp"
 
 namespace CAO {
-std::vector<BSA> BSASplit::splitBSA(const QDir &dir,
-                                    const PatternSettings &settings,
-                                    const GeneralSettings &generalSets)
+std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &generalSets)
 {
-    std::vector<BSA> bsas{BSA::getBSA(StandardBsa, settings),
-                          BSA::getBSA(UncompressableBsa, settings),
-                          BSA::getBSA(TexturesBsa, settings)};
+    std::vector<BSA> bsas{BSA::getBSA(StandardBsa, generalSets),
+                          BSA::getBSA(UncompressableBsa, generalSets),
+                          BSA::getBSA(TexturesBsa, generalSets)};
 
     auto *standardBsa = &bsas[0];
     auto *uncompressableBsa = &bsas[1];
@@ -38,7 +36,7 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir,
 
         if ((*pBsa)->filesSize >= (*pBsa)->maxSize)
         {
-            bsas.emplace_back(BSA::getBSA((*pBsa)->type, settings));
+            bsas.emplace_back(BSA::getBSA((*pBsa)->type, generalSets));
             *pBsa = &bsas.back();
         }
     }

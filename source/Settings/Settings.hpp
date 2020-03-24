@@ -71,18 +71,10 @@ private:
     std::optional<size_t> getPatternPriorityFromJSON(const nlohmann::json &json);
 
 public:
-    REGISTER_SETTING(bool, bBSAExtractFromBSA, "BSA/bBSAExtractFromBSA")
     REGISTER_SETTING(bool, bBSAAddToBSA, "BSA/bBSAAddToBSA")
-    REGISTER_SETTING(bool, bBSACreateDummies, "BSA/bBSACreateDummies")
-    REGISTER_SETTING(bool, bBSACompressArchive, "BSA/bBSACompressArchive")
-    REGISTER_SETTING(bsa_archive_type_t, eBSAFormat, "Advanced/BSA/eBSAFormat")
-    REGISTER_SETTING(bsa_archive_type_t, eBSATexturesFormat, "Advanced/BSA/eBSATexturesFormat")
     REGISTER_SETTING(bool, bBSAIsStandard, "Advanced/BSA/bBSAIsStandard")
     REGISTER_SETTING(bool, bBSAIsTexture, "Advanced/BSAbBSAIsTexture")
     REGISTER_SETTING(bool, bBSAIsUncompressible, "Advanced/BSA/bBSAIsUncompressible")
-    REGISTER_SETTING(double, iBSAMaxSize, "Advanced/BSA/iBSAMaxSize")
-    REGISTER_SETTING(bool, bBSATexturesEnabled, "Advanced/BSA/bBSATexturesEnabled")
-    REGISTER_SETTING(double, iBSATexturesMaxSize, "Advanced/BSA/iBSATexturesMaxSize")
 
     REGISTER_SETTING(bool, bTexturesNecessary, "Textures/bTexturesNecessary")
     REGISTER_SETTING(bool, bTexturesCompress, "Textures/bTexturesCompress")
@@ -124,6 +116,15 @@ public:
     QString isValid() const;
 
     //All the code below is used to register settings
+
+    REGISTER_SETTING(bool, bBSAExtractFromBSA, "BSA/bBSAExtractFromBSA")
+    REGISTER_SETTING(bool, bBSACreateDummies, "BSA/bBSACreateDummies")
+    REGISTER_SETTING(bool, bBSACompressArchive, "BSA/bBSACompressArchive")
+    REGISTER_SETTING(bsa_archive_type_t, eBSAFormat, "Advanced/BSA/eBSAFormat")
+    REGISTER_SETTING(bsa_archive_type_t, eBSATexturesFormat, "Advanced/BSA/eBSATexturesFormat")
+    REGISTER_SETTING(double, iBSAMaxSize, "Advanced/BSA/iBSAMaxSize")
+    REGISTER_SETTING(bool, bBSATexturesEnabled, "Advanced/BSA/bBSATexturesEnabled")
+    REGISTER_SETTING(double, iBSATexturesMaxSize, "Advanced/BSA/iBSATexturesMaxSize")
 
     REGISTER_SETTING(bool, bDebugLog, "General/bDebugLog")
     REGISTER_SETTING(bool, bDryRun, "General/bDryRun")

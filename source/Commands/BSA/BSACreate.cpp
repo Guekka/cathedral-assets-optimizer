@@ -13,7 +13,7 @@ CommandResult BSACreate::process(File &file)
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsas = BSASplit::splitBSA(*bsaFolder, file.patternSettings(), file.generalSettings());
+    auto bsas = BSASplit::splitBSA(*bsaFolder, file.generalSettings());
 
     for (auto &bsa : bsas)
     {
@@ -25,7 +25,7 @@ CommandResult BSACreate::process(File &file)
 
         libbsarch::bs_archive_auto archive(bsa.format);
         archive.set_share_data(true);
-        archive.set_compressed(file.patternSettings().bBSACompressArchive());
+        archive.set_compressed(file.generalSettings().bBSACompressArchive());
         const libbsarch::convertible_string &rootPath = bsaFolder->path();
         archive.set_dds_callback(&BSACallback, rootPath);
 

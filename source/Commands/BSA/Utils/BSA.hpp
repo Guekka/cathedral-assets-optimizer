@@ -17,7 +17,7 @@ enum BSAType
 
 struct BSA
 {
-    static BSA getBSA(const BSAType &type, const PatternSettings &settings);
+    static BSA getBSA(const BSAType &type, const GeneralSettings &settings);
 
     QString path;
     qint64 filesSize = 0;

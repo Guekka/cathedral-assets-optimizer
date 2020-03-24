@@ -49,8 +49,7 @@ void MainOptimizer::packBsa(const QString &folder)
     if (!runCommand(command, bsa))
         return;
 
-    if (profile_.getSettings(folder)
-            .bBSACreateDummies()) //NOTE Is it a good idea to make patterns out of folder name? Will have to think about that
+    if (profile_.getGeneralSettings().bBSACreateDummies())
         PluginsOperations::makeDummyPlugins(folder, profile_.getGeneralSettings());
 }
 
