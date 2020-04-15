@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.15)
+cmake_minimum_required(VERSION 3.16)
 include_guard(GLOBAL)
 
 project(Cathedral_Assets_Optimizer VERSION 6.0.0 LANGUAGES CXX)
@@ -18,13 +18,6 @@ configure_file (
     source/Version.hpp.in
     source/Version.hpp
     )
-
-#Include Cotire
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
-include(cotire)
-
-#Include-what-you-use
-set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -215,6 +208,5 @@ set(TS_FILES
 message("Updating translations files")
 qt5_create_translation(QM_FILES ${TS_FILES} ${SOURCES})
 
-#Cotire (PCH)
-set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "source/pch.hpp")
-cotire(Cathedral_Assets_Optimizer)
+#PCH
+target_precompile_headers(Cathedral_Assets_Optimizer PUBLIC "source/pch.hpp")
