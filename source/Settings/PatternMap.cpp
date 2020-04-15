@@ -130,10 +130,11 @@ void PatternMap::cleanPatterns()
 
 nlohmann::json PatternMap::getUnifiedJSON() const
 {
-    std::vector<nlohmann::json> vector(patterns_.size());
+    std::vector<nlohmann::json> vector;
+    vector.reserve(patterns_.size());
 
-    auto getJSON = [](const auto &pair) { return pair.second.getJSON(); };
-    patterns_ >>= pipes::transform(getJSON) >>= pipes::push_back(vector);
+    auto getJSON = [](const auto &val) { return val.getJSON(); };
+    patterns_ >>= pipes::values{} >>= pipes::transform(getJSON) >>= pipes::push_back(vector);
 
     //TODO remove duplicates
 

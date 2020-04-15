@@ -18,7 +18,7 @@ namespace pipes
         {
             function_(FWD(values)...);
         }
-        
+
         explicit for_each_pipeline(Function function) : function_(function) {}
         
     private:

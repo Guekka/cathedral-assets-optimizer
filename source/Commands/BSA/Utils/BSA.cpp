@@ -69,8 +69,7 @@ void BSA::mergeBSAs(std::vector<BSA> &list)
     //TODO check that the pipes refactoring worked correctly
 
     //Removing empty BSAs
-    auto removeIt = std::remove_if(list.begin(), list.end(), [](BSA &bsa) { return bsa.files.isEmpty(); });
-    list.erase(removeIt, list.end());
+    list >>= filter([](BSA &bsa) { return !bsa.files.isEmpty(); }) >>= replace(list);
 }
 
 BSA &BSA::operator+(const BSA &other)
