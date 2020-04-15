@@ -21,9 +21,9 @@ public:
     explicit MainOptimizer(const OptionsCAO &optOptions);
 
     void process(const QString &file);
-    void packBsa(const QString &folder);
+    void packBsa(const QString& folder);
 
-private:
+  private:
     void addLandscapeTextures();
     void addHeadparts();
 
@@ -32,7 +32,7 @@ private:
     void processTexture(const QString &file, const TexturesOptimizer::TextureType &type);
     void processHkx(const QString &file);
 
-    OptionsCAO _optOptions;
+    const OptionsCAO& _optOptions;
 
     BSAOptimizer _bsaOpt;
     MeshesOptimizer _meshesOpt;

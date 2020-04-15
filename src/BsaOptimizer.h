@@ -38,7 +38,7 @@ public:
    * \brief Packs all the loose files in the directory into BSAs
    * \param folderPath The folder to process
    */
-    void packAll(const QString &folderPath) const;
+    void packAll(const QString &folderPath, bool mergeBsa) const;
 
     static void DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info, void *context);
 

@@ -4,17 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "Manager.h"
 
-Manager::Manager(OptionsCAO &opt)
-    : _options(opt)
+Manager::Manager(const OptionsCAO& opt)
+  : _options(opt)
 
 {
-    init();
-}
-
-Manager::Manager(const QStringList &args)
-{
-    //Parsing args
-    _options.parseArguments(args);
     init();
 }
 
@@ -155,9 +148,11 @@ void Manager::runOptimization()
     if (_options.bBsaCreate)
         for (const auto &folder : _modsToProcess)
         {
-            optimizer.packBsa(folder);
-            ++_numberCompletedFiles;
-            printProgress(_modsToProcess.size(), "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
+          optimizer.packBsa(folder);
+          ++_numberCompletedFiles;
+          printProgress(_modsToProcess.size(),
+                        "Packing BSAs - Folder:  " +
+                          QFileInfo(folder).fileName());
         }
 
     FilesystemOperations::deleteEmptyDirectories(_options.userPath);

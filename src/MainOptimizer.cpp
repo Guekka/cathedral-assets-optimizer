@@ -69,13 +69,15 @@ void MainOptimizer::processBsa(const QString &file) const
     //TODO if(options.bBsaOptimizeAssets)
 }
 
-void MainOptimizer::packBsa(const QString &folder)
+void
+MainOptimizer::packBsa(const QString& folder)
 {
     if (_optOptions.bBsaCreate && QDir(folder).exists())
     {
         PLOG_INFO << "Creating BSA...";
-        _bsaOpt.packAll(folder);
-        PluginsOperations::makeDummyPlugins(folder);
+        _bsaOpt.packAll(folder, _optOptions.bBsaLeastBSA);
+        if (_optOptions.bBsaCreateDummies)
+          PluginsOperations::makeDummyPlugins(folder);
     }
 }
 

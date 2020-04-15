@@ -193,10 +193,14 @@ MainWindow::MainWindow()
         });
 
         connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
-            QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
+          QDesktopServices::openUrl(
+            QUrl("https://discordapp.com/invite/B9abN8d"));
         });
 
-        connect(_ui->actionSave_UI, &QAction::triggered, this, &MainWindow::saveUi);
+        connect(_ui->actionSave_UI, &QAction::triggered, this, [this] {
+          saveUi();
+          loadUi();
+        });
     }
 
     //Loading remembered settings

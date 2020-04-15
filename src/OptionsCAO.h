@@ -41,7 +41,9 @@ public:
     bool bBsaExtract = false;
     bool bBsaCreate = false;
     bool bBsaDeleteBackup = false;
+    bool bBsaLeastBSA = false;
     bool bBsaProcessContent = false;
+    bool bBsaCreateDummies = true;
 
     bool bAnimationsOptimization = false;
 

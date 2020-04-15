@@ -112,7 +112,8 @@ int BSAOptimizer::create(BSA &bsa) const
     return 0;
 }
 
-void BSAOptimizer::packAll(const QString &folderPath) const
+void
+BSAOptimizer::packAll(const QString& folderPath, bool mergeBsa) const
 {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
@@ -150,8 +151,8 @@ void BSAOptimizer::packAll(const QString &folderPath) const
         }
     }
 
-    //Merging BSAs that can be merged
-    BSA::mergeBsas(bsas);
+    // Merging BSAs that can be merged
+    BSA::mergeBsas(bsas, mergeBsa);
 
     for (int i = 0; i < bsas.size(); ++i)
     {
