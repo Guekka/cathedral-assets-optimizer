@@ -12,6 +12,7 @@
 namespace Ui {
 class MainWindow;
 }
+
 namespace CAO {
 class Manager;
 class GeneralSettings;
@@ -32,28 +33,26 @@ public:
     const Ui::MainWindow &mainUI() const { return *_ui; }
     const Ui::BSAFilesToPack &bsaUI() const { return bsaFilesToPackDialog->getUi(); }
 
+    void saveUi();
+    void loadUi();
+
 private:
     Ui::MainWindow *_ui;
 
-    bool _bLockVariables = false;
-
-    void saveUi();
-    void loadUi();
     void refreshProfiles();
     void createProfile();
-
-    void setDarkTheme(const bool &enabled);
 
     void resetUi() const;
 
     void setProfile(const Profile &profile);
 
-    void showTutorialWindow(const QString &title, const QString &text);
-
     void updateLog() const;
     void initProcess();
     void endProcess();
     void readProgress(const QString &text, const int &max, const int &value) const;
+
+    void setDarkTheme(const bool &enabled);
+    void showTutorialWindow(const QString &title, const QString &text);
 
     void setAdvancedSettingsEnabled(const bool &value);
 
@@ -66,11 +65,12 @@ private:
     int _progressBarValue{};
 
     std::unique_ptr<Profiles> _profiles;
-
     std::unique_ptr<Manager> _caoProcess;
-    bool _settingsChanged;
+
+    bool _settingsChanged    = false;
     bool _alwaysSaveSettings = false;
-    bool _showTutorials;
+    bool _showTutorials      = true;
+
     ListDialog *texturesFormatDialog;
     BSAFilesToPackWidget *bsaFilesToPackDialog;
 };

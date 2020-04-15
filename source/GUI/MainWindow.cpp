@@ -14,42 +14,10 @@ MainWindow::MainWindow()
     _ui->setupUi(this);
     setAcceptDrops(true);
 
-    //Connecting all settings changes to a variable
-    {
-        const auto &checkbox = this->findChildren<QCheckBox *>();
-        const auto &radiobutton = this->findChildren<QRadioButton *>();
-        const auto &lineEdit = this->findChildren<QLineEdit *>();
-        const auto &list = this->findChildren<QListWidget *>();
-        const auto &comboBox = this->findChildren<QComboBox *>();
-        const auto &spinBox = this->findChildren<QDoubleSpinBox *>();
-        const auto &groupBox = this->findChildren<QGroupBox *>();
-
-        for (const auto &c : checkbox)
-            connect(c, &QAbstractButton::pressed, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &r : radiobutton)
-            connect(r, &QAbstractButton::pressed, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &l : lineEdit)
-            connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &l : list)
-            connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &c : comboBox)
-            connect(c, QOverload<int>::of(&QComboBox::activated), this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &s : spinBox)
-            connect(s, &QDoubleSpinBox::editingFinished, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &g : groupBox)
-            connect(g, &QGroupBox::toggled, this, [this] { this->_settingsChanged = true; });
-    }
-
-    //Setting data for widgets
-
     //Profiles
     refreshProfiles();
+
+    //Setting data for widgets
     {
         //Mode chooser combo box
         _ui->modeChooserComboBox->setItemData(0, SingleMod);
@@ -235,11 +203,12 @@ MainWindow::MainWindow()
 
 void MainWindow::saveUi()
 {
-    _profiles->commonSettings().setValue("bShowAdvancedSettings",
+    auto& commonSettings = _profiles->commonSettings();
+    commonSettings.setValue("bShowAdvancedSettings",
                                          _ui->advancedSettingsCheckbox->isChecked());
-    _profiles->commonSettings().setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
-    _profiles->commonSettings().setValue("alwaysSaveSettings", _alwaysSaveSettings);
-    _profiles->commonSettings().setValue("showTutorial", _showTutorials);
+    commonSettings.setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
+    commonSettings.setValue("alwaysSaveSettings", _alwaysSaveSettings);
+    commonSettings.setValue("showTutorial", _showTutorials);
 
     if (!_settingsChanged)
     {
@@ -301,12 +270,13 @@ void MainWindow::saveUi()
 
 void MainWindow::loadUi()
 {
-    setDarkTheme(_profiles->commonSettings().value("bDarkMode").toBool());
+    auto& commonSettings = _profiles->commonSettings();
+    setDarkTheme(commonSettings.value("bDarkMode").toBool());
     _ui->advancedSettingsCheckbox->setChecked(
-        _profiles->commonSettings().value("bShowAdvancedSettings").toBool());
+        commonSettings.value("bShowAdvancedSettings").toBool());
     _ui->presets->setCurrentIndex(_ui->presets->findText(_profiles->currentProfileName()));
-    _alwaysSaveSettings = _profiles->commonSettings().value("alwaysSaveSettings").toBool();
-    _showTutorials = _profiles->commonSettings().value("showTutorial").toBool();
+    _alwaysSaveSettings = commonSettings.value("alwaysSaveSettings").toBool();
+    _showTutorials = commonSettings.value("showTutorial").toBool();
     _ui->actionShow_tutorials->setChecked(_showTutorials);
 
     _profiles->getCurrent().saveToUi(*this);
@@ -408,7 +378,6 @@ void MainWindow::initProcess()
 {
     saveUi();
     _ui->processButton->setDisabled(true);
-    _bLockVariables = true;
 
     try
     {
@@ -434,7 +403,6 @@ void MainWindow::initProcess()
 void MainWindow::endProcess()
 {
     _ui->processButton->setDisabled(false);
-    _bLockVariables = false;
 
     if (_caoProcess)
         _caoProcess->disconnect();
