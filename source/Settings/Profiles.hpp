@@ -9,18 +9,6 @@
 #include "pch.hpp"
 class MainWindow;
 
-//Required to use QString as key to map
-namespace std {
-template<>
-struct hash<QString>
-{
-    std::size_t operator()(const QString &s) const noexcept
-    {
-        return static_cast<size_t>(qHash(s));
-    }
-};
-} // namespace std
-
 namespace CAO {
 
 class Profile final
