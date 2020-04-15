@@ -15,7 +15,7 @@ namespace CAO {
 
 #define REGISTER_SETTING(type, name, key) QJSONValueWrapper<type> name{json_, key};
 
-class Settings
+class Settings //TODO: V690 http://www.viva64.com/en/V690 The 'Settings' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
 {
 public:
     /* TODO
@@ -41,7 +41,7 @@ protected:
     std::vector<UISync> uiSyncList_;
     mutable std::unique_ptr<nlohmann::json> json_;
 };
-class PatternSettings final : public Settings
+class PatternSettings final : public Settings //TODO: V690 http://www.viva64.com/en/V690 The 'PatternSettings' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
 {
 public:
     PatternSettings();
@@ -103,7 +103,7 @@ public:
 };
 
 class GeneralSettings final : public Settings
-{
+{ //TODO: V690 http://www.viva64.com/en/V690 The 'GeneralSettings' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
 public:
     GeneralSettings() = default;
     GeneralSettings(nlohmann::json j);

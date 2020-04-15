@@ -13,7 +13,7 @@ CommandResult TextureGenerateMipmaps::process(File& file)
 
     const auto &info = texFile->GetMetadata();
     const size_t &tMips = calculateOptimalMipMapsNumber(info);
-    auto timage = new TextureResource;
+    auto timage = std::make_unique<TextureResource>();
 
     if (info.mipLevels != 1 && info.mipLevels != tMips)
     {

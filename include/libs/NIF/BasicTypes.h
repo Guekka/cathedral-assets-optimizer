@@ -380,7 +380,7 @@ public:
 	}
 
 	virtual void AddBlockRef(const int index) override {
-		refs.push_back(BlockRef<T>(index));
+		refs.emplace_back(BlockRef<T>(index));
 		arraySize++;
 	}
 

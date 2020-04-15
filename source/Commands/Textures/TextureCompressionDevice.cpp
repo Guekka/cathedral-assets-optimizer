@@ -112,6 +112,9 @@ bool TextureCompressionDevice::createDevice(const int adapter, ID3D11Device **pD
         if (fl < D3D_FEATURE_LEVEL_11_0)
         {
             D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS hwopts;
+            if (!pDevice || !(*pDevice))
+                return false;
+
             hr = (*pDevice)->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &hwopts, sizeof(hwopts));
             if (FAILED(hr))
                 memset(&hwopts, 0, sizeof(hwopts));

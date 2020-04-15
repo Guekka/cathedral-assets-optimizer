@@ -18,7 +18,7 @@ signals:
 };
 } // namespace detail
 template<typename T>
-class QValueWrapper : public detail::QValueWrapperHelper
+class QValueWrapper : public detail::QValueWrapperHelper //TODO: V690 http://www.viva64.com/en/V690 The 'QValueWrapper' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
 {
 public:
     using Type = T;

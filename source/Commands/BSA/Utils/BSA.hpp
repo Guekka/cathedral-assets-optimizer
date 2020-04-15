@@ -16,15 +16,15 @@ enum BSAType
 };
 
 struct BSA
-{
+{ //TODO: V802 http://www.viva64.com/en/V802 On 32-bit platform, structure size can be reduced from 40 to 32 bytes by rearranging the fields according to their sizes in decreasing order.
     static BSA getBSA(const BSAType &type, const GeneralSettings &settings);
 
     QString path;
     qint64 filesSize = 0;
-    QStringList files;
+    QStringList files{};
     double maxSize = LONG_MAX;
     BSAType type = StandardBsa;
-    bsa_archive_type_t format;
+    bsa_archive_type_t format{};
 
     BSA &operator+(const BSA &other);
     BSA &operator+=(const BSA &other);

@@ -14,9 +14,10 @@ CommandResult MeshConvert::process(File &file)
         return _resultFactory.getCannotCastFileResult();
 
     NiVersion niVersion;
-    niVersion.SetUser(file.patternSettings().iMeshesUser());
-    niVersion.SetFile(file.patternSettings().eMeshesFileVersion());
-    niVersion.SetStream(file.patternSettings().iMeshesStream());
+    auto& patternSettings = file.patternSettings();
+    niVersion.SetUser(patternSettings.iMeshesUser());
+    niVersion.SetFile(patternSettings.eMeshesFileVersion());
+    niVersion.SetStream(patternSettings.iMeshesStream());
 
     OptOptions optOptions;
     optOptions.targetVersion = niVersion;
@@ -29,7 +30,8 @@ CommandResult MeshConvert::process(File &file)
 
 bool MeshConvert::isApplicable(File &file)
 {
-    const int &optLevel = file.patternSettings().iMeshesOptimizationLevel();
+    auto& patternSettings = file.patternSettings();
+    const int &optLevel = patternSettings.iMeshesOptimizationLevel();
     if (optLevel == 0)
         return false;
 
@@ -42,7 +44,7 @@ bool MeshConvert::isApplicable(File &file)
 
     MeshResource nif = *meshFile;
 
-    const bool headpart = isHeadpart(file.getName()) && file.patternSettings().bMeshesHeadparts();
+    const bool headpart = isHeadpart(file.getName()) && patternSettings.bMeshesHeadparts();
 
     for (const auto &shape : nif.GetShapes())
     {
@@ -65,7 +67,7 @@ bool MeshConvert::isApplicable(File &file)
         }
     }
 
-    return headpart || file.patternSettings().bMeshesResave() || optLevel >= 2;
+    return headpart || patternSettings.bMeshesResave() || optLevel >= 2;
 }
 
 bool MeshConvert::isHeadpart(const QString &filepath)

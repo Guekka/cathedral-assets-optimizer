@@ -44,7 +44,7 @@ bool Filesystem::compareFolders(const QString &folder1, const QString &folder2)
     const QDir dir1(folder1);
     const QDir dir2(folder2);
 
-    while (it1.hasNext() && it1.hasNext())
+    while (it1.hasNext() && it2.hasNext())
     {
         it1.next();
         it2.next();
@@ -135,7 +135,6 @@ bool Filesystem::compareFiles(const QString &filepath1, const QString &filepath2
 QString Filesystem::backupFile(const QString &filePath)
 {
     QFile backupFile(filePath + ".bak");
-    QFile file(filePath);
 
     while (backupFile.exists())
     {

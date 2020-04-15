@@ -24,13 +24,14 @@ bool CAO::UISync::readCheckbox(const QGroupBox *widget)
 
 int CAO::UISync::readMeshesOptLevel(const MainWindow &window)
 {
-    if (!window.mainUI().meshesGroupBox->isChecked())
+    auto& mainUi = window.mainUI();
+    if (!mainUi.meshesGroupBox->isChecked())
         return 0;
-    if (window.mainUI().meshesNecessaryOptimizationRadioButton->isChecked())
+    if (mainUi.meshesNecessaryOptimizationRadioButton->isChecked())
         return 1;
-    if (window.mainUI().meshesMediumOptimizationRadioButton->isChecked())
+    if (mainUi.meshesMediumOptimizationRadioButton->isChecked())
         return 2;
-    if (window.mainUI().meshesFullOptimizationRadioButton->isChecked())
+    if (mainUi.meshesFullOptimizationRadioButton->isChecked())
         return 3;
     return 0;
 }
