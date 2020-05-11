@@ -5,7 +5,7 @@
 #include "TextureResize.hpp"
 
 namespace CAO {
-CommandResult TextureResize::process(File& file)
+CommandResult TextureResize::process(File &file)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file);
     if (!texFile)
@@ -13,7 +13,7 @@ CommandResult TextureResize::process(File& file)
 
     const auto &info = texFile->GetMetadata();
 
-    auto timage = std::make_unique<TextureResource>();
+    auto timage     = std::make_unique<TextureResource>();
     const auto &img = texFile->GetImages();
     if (!img)
         return _resultFactory.getFailedResult(1, "Failed to get images from file");
@@ -29,10 +29,9 @@ CommandResult TextureResize::process(File& file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureResize::isApplicable(File& file)
+bool TextureResize::isApplicable(File &file)
 {
-    if (!file.patternSettings().bTexturesResizeRatio()
-        || !file.patternSettings().bTexturesResizeSize())
+    if (!file.patternSettings().bTexturesResizeRatio() || !file.patternSettings().bTexturesResizeSize())
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -43,7 +42,7 @@ bool TextureResize::isApplicable(File& file)
     if (DirectX::IsCompressed(fileFormat))
         return false; //Cannot process compressed file
 
-    const auto &info = texFile->GetMetadata();
+    const auto &info  = texFile->GetMetadata();
     const auto &tinfo = calculateTargetDimensions(info, file.patternSettings());
 
     return info.width != tinfo.width || info.height != tinfo.height;
@@ -56,7 +55,7 @@ DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::Tex
     DirectX::TexMetadata tinfo = info;
     if (settings.bTexturesResizeRatio())
     {
-        tinfo.width = info.width / settings.iTexturesTargetWidthRatio(); //TODO implicit conversion
+        tinfo.width  = info.width / settings.iTexturesTargetWidthRatio();
         tinfo.height = info.height / settings.iTexturesTargetHeightRatio();
     }
     else if (settings.bTexturesResizeSize())
@@ -64,8 +63,8 @@ DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::Tex
         while (tinfo.width > settings.iTexturesTargetWidth()
                && tinfo.height > settings.iTexturesTargetHeight())
         {
-            tinfo.width = info.width / 2;
-            tinfo.height = info.height / 2;
+            tinfo.width /= 2;
+            tinfo.height /= 2;
         }
     }
     return tinfo;
