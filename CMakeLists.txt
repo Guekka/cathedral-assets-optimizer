@@ -49,7 +49,6 @@ add_subdirectory("include/libs/json")
 message("Adding Pipes library")
 add_subdirectory("include/libs/pipes")
 
-
 set(SOURCES
     source/Logger.hpp
     source/main.cpp
@@ -143,12 +142,21 @@ if(GUI)
         source/GUI/BSAFilesToPack.cpp
         source/GUI/BSAFilesToPack.hpp
         source/GUI/BSAFilesToPack.ui
+
         source/GUI/ListDialog.cpp
         source/GUI/ListDialog.hpp
         source/GUI/ListDialog.ui
+
         source/GUI/MainWindow.cpp
         source/GUI/MainWindow.hpp
-        source/GUI/MainWindow.ui)
+        source/GUI/MainWindow.ui
+
+        source/GUI/AdvancedTexturesWindow.cpp
+        source/GUI/AdvancedTexturesWindow.hpp
+        source/GUI/AdvancedTexturesWindow.ui
+
+        source/GUI/IWindowModule.hpp
+        )
 endif()
 
 
@@ -190,6 +198,7 @@ cao_include_and_link(CAO_LIB)
 add_executable(Cathedral_Assets_Optimizer WIN32 source/main.cpp styles/Cathedral_Assets_Optimizer.rc styles/qdarkstyle/style.qrc)
 target_link_libraries(Cathedral_Assets_Optimizer CAO_LIB)
 cao_include_and_link(Cathedral_Assets_Optimizer)
+target_compile_definitions(Cathedral_Assets_Optimizer PRIVATE DOCTEST_CONFIG_DISABLE) #We don't want tests in the release
 
 #Tests
 add_library(doctest tests/doctest.h)

@@ -4,21 +4,23 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <QWidget>
+#include "GUI/IWindowModule.hpp"
 
 namespace Ui {
 class AdvancedTexturesWindow;
 }
 
-class AdvancedTexturesWindow : public QWidget
+namespace CAO {
+class AdvancedTexturesWindow final : public IWindowModule
 {
     Q_OBJECT
 
 public:
     explicit AdvancedTexturesWindow(QWidget *parent = nullptr);
-    ~AdvancedTexturesWindow();
+    void connectAll(PatternSettings &patternSets, GeneralSettings &generalSets) override;
+    void disconnectAll() override;
 
 private:
-    Ui::AdvancedTexturesWindow *ui;
+    std::unique_ptr<Ui::AdvancedTexturesWindow> ui_;
 };
-
+} // namespace CAO
