@@ -143,8 +143,11 @@ std::optional<QString> PatternSettings::isValid()
         return ("This meshes optimization level does not exist. Level: "
                 + QString::number(iMeshesOptimizationLevel()));
 
-    if (iTexturesTargetWidth() % 2 != 0 || iTexturesTargetHeight() % 2 != 0)
-        return ("Textures target size has to be a power of two");
+    if (iTexturesResizingBySizeWidth() % 2 != 0 || iTexturesResizingBySizeHeight() % 2 != 0)
+        return ("Textures resizing target size has to be a power of two");
+
+    if (iTexturesResizingByRatioWidth() % 2 != 0 || iTexturesResizingByRatioHeight() % 2 != 0)
+        return ("Textures resizing ratio has to be a power of two");
 
     return std::nullopt;
 }

@@ -75,8 +75,7 @@ void Manager::listFiles()
 
             const bool processTextures = settings.bTexturesMipmaps() || settings.bTexturesCompress()
                                          || settings.bTexturesNecessary()
-                                         || settings.bTexturesResizeSize()
-                                         || settings.bTexturesResizeRatio();
+                                         || settings.eTexturesResizingMode() != None;
 
             const bool texture = (filename.endsWith(".dds", Qt::CaseInsensitive)
                                   || filename.endsWith(".tga", Qt::CaseInsensitive))

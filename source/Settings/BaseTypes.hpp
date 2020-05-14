@@ -10,9 +10,16 @@ constexpr double GigaByte = 1000 * 1000 * 1000;
 
 namespace CAO {
 enum OptimizationMode { SingleMod = 0, SeveralMods = 1 };
+enum TextureResizingMode
+{
+    None,
+    ByRatio,
+    BySize
+};
 } // namespace CAO
 
 Q_DECLARE_METATYPE(DXGI_FORMAT)
 Q_DECLARE_METATYPE(NiFileVersion)
 Q_DECLARE_METATYPE(bsa_archive_type_e)
 Q_DECLARE_METATYPE(CAO::OptimizationMode)
+Q_DECLARE_METATYPE(CAO::TextureResizingMode)

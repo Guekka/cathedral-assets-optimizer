@@ -31,7 +31,7 @@ CommandResult TextureResize::process(File &file)
 
 bool TextureResize::isApplicable(File &file)
 {
-    if (!file.patternSettings().bTexturesResizeRatio() || !file.patternSettings().bTexturesResizeSize())
+    if (file.patternSettings().eTexturesResizingMode() == None)
         return false;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file);
@@ -53,15 +53,25 @@ DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::Tex
 {
     //Calculating target width and height
     DirectX::TexMetadata tinfo = info;
-    if (settings.bTexturesResizeRatio())
+    if (settings.eTexturesResizingMode() == ByRatio)
     {
-        tinfo.width  = info.width / settings.iTexturesTargetWidthRatio();
-        tinfo.height = info.height / settings.iTexturesTargetHeightRatio();
+        uint wMultiplier = 1;
+        uint hMultiplier = 1;
+        while (wMultiplier < settings.iTexturesResizingByRatioWidth()
+               && hMultiplier < settings.iTexturesResizingByRatioHeight()
+               && tinfo.width > settings.iTexturesMinimumWidth()
+               && tinfo.height > settings.iTexturesMinimumHeight())
+        {
+            wMultiplier *= 2;
+            hMultiplier *= 2;
+            tinfo.width /= 2;
+            tinfo.height /= 2;
+        }
     }
-    else if (settings.bTexturesResizeSize())
+    else if (settings.eTexturesResizingMode() == BySize)
     {
-        while (tinfo.width > settings.iTexturesTargetWidth()
-               && tinfo.height > settings.iTexturesTargetHeight())
+        while (tinfo.width > settings.iTexturesResizingBySizeWidth()
+               && tinfo.height > settings.iTexturesResizingBySizeHeight())
         {
             tinfo.width /= 2;
             tinfo.height /= 2;

@@ -79,12 +79,19 @@ public:
     REGISTER_SETTING(bool, bTexturesNecessary, "Textures/bTexturesNecessary")
     REGISTER_SETTING(bool, bTexturesCompress, "Textures/bTexturesCompress")
     REGISTER_SETTING(bool, bTexturesMipmaps, "Textures/bTexturesMipmaps")
-    REGISTER_SETTING(bool, bTexturesResizeSize, "Textures/Resizing/BySize/Enabled")
-    REGISTER_SETTING(int, iTexturesTargetHeight, "Textures/Resizing/BySize/Height")
-    REGISTER_SETTING(int, iTexturesTargetWidth, "Textures/Resizing/BySize/Width")
-    REGISTER_SETTING(bool, bTexturesResizeRatio, "Textures/Resizing/ByRatio/Enabled")
-    REGISTER_SETTING(int, iTexturesTargetWidthRatio, "Textures/Resizing/ByRatio/Width")
-    REGISTER_SETTING(int, iTexturesTargetHeightRatio, "Textures/Resizing/ByRatio/Height")
+
+    REGISTER_SETTING(bool, bTexturesResizeMinimum, "Textures/Resizing/ByRatio/Minimum/Enabled")
+    REGISTER_SETTING(int, iTexturesMinimumWidth, "Textures/Resizing/ByRatio/Minimum/Width")
+    REGISTER_SETTING(int, iTexturesMinimumHeight, "Textures/Resizing/ByRatio/Minimum/Height")
+
+    REGISTER_SETTING(TextureResizingMode, eTexturesResizingMode, "Textures/Resizing/Mode")
+
+    REGISTER_SETTING(int, iTexturesResizingBySizeHeight, "Textures/Resizing/BySize/Height")
+    REGISTER_SETTING(int, iTexturesResizingBySizeWidth, "Textures/Resizing/BySize/Width")
+
+    REGISTER_SETTING(int, iTexturesResizingByRatioWidth, "Textures/Resizing/ByRatio/Width")
+    REGISTER_SETTING(int, iTexturesResizingByRatioHeight, "Textures/Resizing/ByRatio/Height")
+
     REGISTER_SETTING(DXGI_FORMAT, eTexturesFormat, "Advanced/Textures/eTexturesFormat")
     REGISTER_SETTING(bool, bTexturesForceConvert, "Advanced/Textures/bTexturesForceConvert")
     REGISTER_SETTING(std::vector<DXGI_FORMAT>,

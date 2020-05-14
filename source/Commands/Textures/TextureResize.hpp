@@ -7,9 +7,10 @@
 #include "Commands/CommandBook.hpp"
 #include "File/Textures/TextureFile.hpp"
 #include "pch.hpp"
+#include "tests/doctest.h"
 
 namespace CAO {
-class TextureResize final : public Command
+class TextureResize : public Command
 {
 public:
     TextureResize()
@@ -20,10 +21,11 @@ public:
     }
 
     CommandResult process(File& file) override;
-    bool isApplicable(File& file) override;
+    bool isApplicable(File &file) override;
 
 protected:
-    DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info, const PatternSettings &settings);
+    DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info,
+                                                   const PatternSettings &settings);
 };
 REGISTER_COMMAND(TextureResize)
 } // namespace CAO
