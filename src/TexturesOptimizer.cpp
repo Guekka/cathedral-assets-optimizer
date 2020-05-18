@@ -165,8 +165,8 @@ TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const
     {
         while (result.tWidth > tWidth.value() && result.tHeight > tHeight.value())
         {
-            result.tWidth = _info.width / 2;
-            result.tHeight = _info.height / 2;
+            result.tWidth /= 2;
+            result.tHeight /= 2;
         }
     }
 
