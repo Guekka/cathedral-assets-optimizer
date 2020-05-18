@@ -9,7 +9,6 @@
 #include "UISync.hpp"
 #include "Utils/QValueWrapper.hpp"
 #include "pch.hpp"
-#include "ui_BSAFilesToPack.h"
 
 namespace CAO {
 

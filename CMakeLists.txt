@@ -160,51 +160,38 @@ if(GUI)
 endif()
 
 
-#Macro used for standard cao settings
-macro(cao_include_and_link file)
-    target_link_libraries(${file}
-        Qt5::Core Qt5::Widgets
-        hkxcmd plog nif directxtex libbsarch_OOP nlohmann_json::nlohmann_json pipes)
-
-    #Include source, C++17
-    target_include_directories(${file} PUBLIC "include")
-    target_include_directories(${file} PUBLIC "source" )
-    target_include_directories(${file} PUBLIC "${CMAKE_BINARY_DIR}/CAO_LIB_autogen/include")
-    target_compile_features(${file} PUBLIC cxx_std_17)
-
-    #Set GUI compile definition
-    if(GUI)
-        target_compile_definitions(${file} PUBLIC GUI)
-    endif()
-
-
-    #Strictly follow the standard
-    target_compile_options(${file} PRIVATE "/permissive-")
-
-    #Output directory
-    set_target_properties(${file}
-        PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        )
-    set_target_properties(${file} PROPERTIES AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/source/GUI")
-endmacro()
-
 #MAIN LIBRARY
 add_library(CAO_LIB STATIC ${SOURCES})
-cao_include_and_link(CAO_LIB)
+
+target_link_libraries(CAO_LIB PUBLIC
+    Qt5::Core Qt5::Widgets
+    hkxcmd plog nif directxtex libbsarch_OOP nlohmann_json::nlohmann_json pipes)
+
+#Include source, C++17
+target_include_directories(CAO_LIB PUBLIC "include")
+target_include_directories(CAO_LIB PUBLIC "source" )
+target_compile_features(CAO_LIB PUBLIC cxx_std_17)
+
+#Set GUI compile definition
+if(GUI)
+    target_compile_definitions(CAO_LIB PUBLIC GUI)
+endif()
+
+#Strictly follow the standard
+target_compile_options(CAO_LIB PRIVATE "/permissive-")
+
+#AUTOUIC
+set_target_properties(CAO_LIB PROPERTIES AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/source/GUI")
+target_include_directories(CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/CAO_LIB_autogen/include")
 
 #Main exe
 add_executable(Cathedral_Assets_Optimizer WIN32 source/main.cpp styles/Cathedral_Assets_Optimizer.rc styles/qdarkstyle/style.qrc)
 target_link_libraries(Cathedral_Assets_Optimizer CAO_LIB)
-cao_include_and_link(Cathedral_Assets_Optimizer)
-target_compile_definitions(Cathedral_Assets_Optimizer PRIVATE DOCTEST_CONFIG_DISABLE) #We don't want tests in the release
 
 #Tests
 add_library(doctest tests/doctest.h)
 add_executable(CAO_test tests/tests.cpp)
 target_link_libraries(CAO_test CAO_LIB)
-cao_include_and_link(CAO_test)
 
 #Generate translations
 set(TS_FILES
