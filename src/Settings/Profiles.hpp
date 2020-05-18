@@ -5,8 +5,8 @@
 #pragma once
 
 #include "Settings/PatternMap.hpp"
-
 #include "pch.hpp"
+
 class MainWindow;
 
 namespace CAO {
