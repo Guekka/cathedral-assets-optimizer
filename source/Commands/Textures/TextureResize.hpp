@@ -7,7 +7,6 @@
 #include "Commands/CommandBook.hpp"
 #include "File/Textures/TextureFile.hpp"
 #include "pch.hpp"
-#include "tests/doctest.h"
 
 namespace CAO {
 class TextureResize : public Command
