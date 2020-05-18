@@ -17,42 +17,12 @@ signals:
     void valueChanged();
 };
 } // namespace detail
+
 template<typename T>
-class QValueWrapper : public detail::QValueWrapperHelper //TODO: V690 http://www.viva64.com/en/V690 The 'QValueWrapper' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
+class QJSONValueWrapper : public detail::QValueWrapperHelper
 {
 public:
     using Type = T;
-
-    QValueWrapper() = default;
-
-    QValueWrapper(const Type &val)
-        : value_(val){};
-
-    QValueWrapper(const QValueWrapper &other) { value_ = other.value_; }
-    QValueWrapper(QValueWrapper &&other) { setValue(std::move(other.value_)); }
-
-    const Type &operator()() const { return value(); }
-    const Type &value() const { return value_; }
-    virtual void setValue(const Type &newValue)
-    {
-        if (value_ != newValue)
-            emit valueChanged();
-        value_ = newValue;
-    }
-
-    void operator=(const QValueWrapper &other) { setValue(other.value_); }
-    void operator=(const Type &value) { setValue(value); }
-
-private:
-    Type value_;
-};
-
-template<typename T>
-class QJSONValueWrapper : public QValueWrapper<T>
-{
-public:
-    using Type = T;
-    using parentType = QValueWrapper<T>;
 
     //NOTE The JSON has to outlive the QJSONValueWrapper
     QJSONValueWrapper(std::unique_ptr<nlohmann::json> &j, std::string key)
@@ -60,22 +30,26 @@ public:
         , key_(std::move(key))
     {
         assert(key_.size() > 0);
-        const auto &json = *json_;
-        assert(json.is_null() || json.is_object());
-        setValue(JSON::getValue<Type>(json, key_));
+        assert(j->is_null() || j->is_object());
     }
 
     QJSONValueWrapper(const QJSONValueWrapper &other) = delete;
-    QJSONValueWrapper(QJSONValueWrapper &&other) = delete;
+    QJSONValueWrapper(QJSONValueWrapper &&other)      = delete;
     void operator=(const QJSONValueWrapper &other) = delete;
 
-    virtual void setValue(const Type &newValue) override
+    virtual void setValue(const Type &newValue)
     {
-        parentType::setValue(newValue);
-        JSON::setValue(*json_, key_, QValueWrapper<T>::value());
+        if (value() == newValue)
+            return;
+
+        JSON::setValue(*json_, key_, newValue);
+        emit valueChanged();
     }
 
-    void operator=(const Type &value) { setValue(value); }
+    virtual Type value() const { return JSON::getValue<Type>(*json_, key_); }
+
+    Type operator()() const { return value(); }
+    void operator=(const Type &val) { setValue(val); }
 
 private:
     std::unique_ptr<nlohmann::json> &json_;
