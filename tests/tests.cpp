@@ -3,7 +3,6 @@
 #include "Commands/Textures/TextureConvert.hpp"
 #include "File/Textures/TextureFile.hpp"
 #include "Settings/Settings.hpp"
-#include "doctest.h"
 #include "pch.hpp"
 
 using namespace CAO;

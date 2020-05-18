@@ -6,8 +6,8 @@
 /* Custom functions for plog */
 
 #pragma once
-#include "include/libs/plog/include/plog/Log.h"
 #include "pch.hpp"
+#include "plog/Log.h"
 
 namespace plog {
 class CustomDebugFormatter

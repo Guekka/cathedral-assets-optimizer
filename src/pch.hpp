@@ -3,7 +3,8 @@
 #if defined __cplusplus
 // Add C++ includes here
 
-//Win7 compatibility
+#pragma once
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
@@ -84,13 +85,13 @@
 
 /*---CUSTOM FILES-----*/
 #include "Commands/Textures/TextureFormats.hpp"
+#include "DirectXTex/DirectXTex.h"
 #include "Logger.hpp"
-#include "include/libs/DirectXTex/DirectXTex.h"
-#include "include/libs/NIF/NifFile.h"
-#include "include/libs/hkxcmd/hkfutils.h"
-#include "include/libs/json/single_include/nlohmann/json.hpp"
-#include "include/libs/libbsarch/src/bs_archive_auto.hpp"
-#include "include/libs/pipes/include/pipes/pipes.hpp"
+#include "NIF/NifFile.h"
+#include "hkxcmd/hkfutils.h"
+#include "libbsarch/src/bs_archive_auto.hpp"
+#include "pipes/include/pipes/pipes.hpp"
+#include "json/single_include/nlohmann/json.hpp"
 /*----------------------*/
 
 #endif

@@ -14,10 +14,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 #Setting version for C++ files
-configure_file (
-    source/Version.hpp.in
-    source/Version.hpp
-    )
+configure_file (src/Version.hpp.in src/Version.hpp)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -28,134 +25,136 @@ find_package(Qt5 COMPONENTS Core Widgets LinguistTools REQUIRED)
 
 #plog
 message("Adding Plog library")
-add_subdirectory(include/libs/plog)
+add_subdirectory(external/plog)
 add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
 #LibBsarch
 message("Adding Libbsarch library")
-add_subdirectory(include/libs/libbsarch)
+add_subdirectory(external/libbsarch)
 #hkxcmd
 message("Adding hkxcmd library")
-add_subdirectory(include/libs/hkxcmd)
+add_subdirectory(external/hkxcmd)
 #Nif Library
 message("Adding nif library")
-add_subdirectory(include/libs/NIF)
+add_subdirectory(external/NIF)
 #DirectXTex library
 message("Adding DirectXTex library")
-add_subdirectory("include/libs/DirectXTex")
+add_subdirectory("external/DirectXTex")
 #Json library
 message("Adding json library")
-add_subdirectory("include/libs/json")
+add_subdirectory("external/json")
 #Pipes library
 message("Adding Pipes library")
-add_subdirectory("include/libs/pipes")
+add_subdirectory("external/pipes")
+#Doctest
+add_library(doctest "external/doctest.h")
 
 set(SOURCES
-    source/Logger.hpp
-    source/main.cpp
-    source/MainOptimizer.cpp
-    source/MainOptimizer.hpp
-    source/Manager.cpp
-    source/Manager.hpp
-    source/pch.hpp
-    source/Version.hpp
-    source/Version.hpp.in
+    src/Logger.hpp
+    src/main.cpp
+    src/MainOptimizer.cpp
+    src/MainOptimizer.hpp
+    src/Manager.cpp
+    src/Manager.hpp
+    src/pch.hpp
+    src/Version.hpp
+    src/Version.hpp.in
 
-    source/Utils/Filesystem.cpp
-    source/Utils/Filesystem.hpp
-    source/Utils/TemplateMetaProgramming.hpp
-    source/Utils/TypeConvert.hpp
+    src/Utils/Filesystem.cpp
+    src/Utils/Filesystem.hpp
+    src/Utils/TemplateMetaProgramming.hpp
+    src/Utils/TypeConvert.hpp
 
-    source/Commands/Command.cpp
-    source/Commands/Command.hpp
-    source/Commands/CommandBook.cpp
-    source/Commands/CommandBook.hpp
-    source/Commands/CommandResult.cpp
-    source/Commands/CommandResult.hpp
+    src/Commands/Command.cpp
+    src/Commands/Command.hpp
+    src/Commands/CommandBook.cpp
+    src/Commands/CommandBook.hpp
+    src/Commands/CommandResult.cpp
+    src/Commands/CommandResult.hpp
 
-    source/Commands/Animations/AnimationsConvert.cpp
-    source/Commands/Animations/AnimationsConvert.hpp
+    src/Commands/Animations/AnimationsConvert.cpp
+    src/Commands/Animations/AnimationsConvert.hpp
 
-    source/Commands/BSA/BSACreate.cpp
-    source/Commands/BSA/BSACreate.hpp
-    source/Commands/BSA/BSAExtract.cpp
-    source/Commands/BSA/BSAExtract.hpp
-    source/Commands/BSA/Utils/BSA.cpp
-    source/Commands/BSA/Utils/BSA.hpp
-    source/Commands/BSA/Utils/BSACallback.hpp
-    source/Commands/BSA/Utils/BSASplit.cpp
-    source/Commands/BSA/Utils/BSASplit.hpp
+    src/Commands/BSA/BSACreate.cpp
+    src/Commands/BSA/BSACreate.hpp
+    src/Commands/BSA/BSAExtract.cpp
+    src/Commands/BSA/BSAExtract.hpp
+    src/Commands/BSA/Utils/BSA.cpp
+    src/Commands/BSA/Utils/BSA.hpp
+    src/Commands/BSA/Utils/BSACallback.hpp
+    src/Commands/BSA/Utils/BSASplit.cpp
+    src/Commands/BSA/Utils/BSASplit.hpp
 
-    source/Commands/Meshes/Mesh.hpp
-    source/Commands/Meshes/MeshConvert.cpp
-    source/Commands/Meshes/MeshConvert.hpp
-    source/Commands/Meshes/MeshRenameReferencedTextures.cpp
-    source/Commands/Meshes/MeshRenameReferencedTextures.hpp
+    src/Commands/Meshes/Mesh.hpp
+    src/Commands/Meshes/MeshConvert.cpp
+    src/Commands/Meshes/MeshConvert.hpp
+    src/Commands/Meshes/MeshRenameReferencedTextures.cpp
+    src/Commands/Meshes/MeshRenameReferencedTextures.hpp
 
-    source/Commands/Plugins/PluginsOperations.cpp
-    source/Commands/Plugins/PluginsOperations.hpp
+    src/Commands/Plugins/PluginsOperations.cpp
+    src/Commands/Plugins/PluginsOperations.hpp
 
-    source/Commands/Textures/Texture.hpp
-    source/Commands/Textures/TextureCompressionDevice.cpp
-    source/Commands/Textures/TextureCompressionDevice.hpp
-    source/Commands/Textures/TextureConvert.cpp
-    source/Commands/Textures/TextureConvert.hpp
-    source/Commands/Textures/TextureDecompress.cpp
-    source/Commands/Textures/TextureDecompress.hpp
-    source/Commands/Textures/TextureFormats.hpp
-    source/Commands/Textures/TextureGenerateMipmaps.cpp
-    source/Commands/Textures/TextureGenerateMipmaps.hpp
-    source/Commands/Textures/TextureResize.cpp
-    source/Commands/Textures/TextureResize.hpp
+    src/Commands/Textures/Texture.hpp
+    src/Commands/Textures/TextureCompressionDevice.cpp
+    src/Commands/Textures/TextureCompressionDevice.hpp
+    src/Commands/Textures/TextureConvert.cpp
+    src/Commands/Textures/TextureConvert.hpp
+    src/Commands/Textures/TextureDecompress.cpp
+    src/Commands/Textures/TextureDecompress.hpp
+    src/Commands/Textures/TextureFormats.hpp
+    src/Commands/Textures/TextureGenerateMipmaps.cpp
+    src/Commands/Textures/TextureGenerateMipmaps.hpp
+    src/Commands/Textures/TextureResize.cpp
+    src/Commands/Textures/TextureResize.hpp
 
-    source/File/File.cpp
-    source/File/File.hpp
-    source/File/Resources.hpp
-    source/File/Animations/AnimationFile.cpp
-    source/File/Animations/AnimationFile.hpp
-    source/File/BSA/BSAFile.cpp
-    source/File/BSA/BSAFile.hpp
-    source/File/BSA/BSAFolder.cpp
-    source/File/BSA/BSAFolder.hpp
-    source/File/Meshes/MeshFile.cpp
-    source/File/Meshes/MeshFile.hpp
-    source/File/Textures/TextureFile.cpp
-    source/File/Textures/TextureFile.hpp
+    src/File/File.cpp
+    src/File/File.hpp
+    src/File/Resources.hpp
+    src/File/Animations/AnimationFile.cpp
+    src/File/Animations/AnimationFile.hpp
+    src/File/BSA/BSAFile.cpp
+    src/File/BSA/BSAFile.hpp
+    src/File/BSA/BSAFolder.cpp
+    src/File/BSA/BSAFolder.hpp
+    src/File/Meshes/MeshFile.cpp
+    src/File/Meshes/MeshFile.hpp
+    src/File/Textures/TextureFile.cpp
+    src/File/Textures/TextureFile.hpp
 
-    source/Settings/BaseTypes.hpp
-    source/Settings/JSON.cpp
-    source/Settings/JSON.hpp
-    source/Settings/MigrateProfiles.hpp
-    source/Settings/MigrateProfiles.cpp
-    source/Settings/Settings.cpp
-    source/Settings/Settings.hpp
-    source/Settings/PatternMap.cpp
-    source/Settings/PatternMap.hpp
-    source/Settings/Profiles.cpp
-    source/Settings/Profiles.hpp
-    source/Settings/UISync.cpp
-    source/Settings/UISync.hpp
-    source/Settings/Utils/QValueWrapper.hpp
+    src/Settings/BaseTypes.hpp
+    src/Settings/JSON.cpp
+    src/Settings/JSON.hpp
+    src/Settings/MigrateProfiles.hpp
+    src/Settings/MigrateProfiles.cpp
+    src/Settings/Settings.cpp
+    src/Settings/Settings.hpp
+    src/Settings/PatternMap.cpp
+    src/Settings/PatternMap.hpp
+    src/Settings/Profiles.cpp
+    src/Settings/Profiles.hpp
+    src/Settings/UISync.cpp
+    src/Settings/UISync.hpp
+    src/Settings/Utils/QValueWrapper.hpp
     )
 
 if(GUI)
     list(APPEND SOURCES
-        source/GUI/BSAFilesToPack.cpp
-        source/GUI/BSAFilesToPack.hpp
-        source/GUI/BSAFilesToPack.ui
+        src/GUI/BSAFilesToPack.cpp
+        src/GUI/BSAFilesToPack.hpp
+        src/GUI/BSAFilesToPack.ui
 
-        source/GUI/ListDialog.cpp
-        source/GUI/ListDialog.hpp
-        source/GUI/ListDialog.ui
+        src/GUI/ListDialog.cpp
+        src/GUI/ListDialog.hpp
+        src/GUI/ListDialog.ui
 
-        source/GUI/MainWindow.cpp
-        source/GUI/MainWindow.hpp
-        source/GUI/MainWindow.ui
+        src/GUI/MainWindow.cpp
+        src/GUI/MainWindow.hpp
+        src/GUI/MainWindow.ui
 
-        source/GUI/AdvancedTexturesWindow.cpp
-        source/GUI/AdvancedTexturesWindow.hpp
-        source/GUI/AdvancedTexturesWindow.ui
+        src/GUI/AdvancedTexturesWindow.cpp
+        src/GUI/AdvancedTexturesWindow.hpp
+        src/GUI/AdvancedTexturesWindow.ui
 
-        source/GUI/IWindowModule.hpp
+        src/GUI/IWindowModule.hpp
         )
 endif()
 
@@ -168,8 +167,8 @@ target_link_libraries(CAO_LIB PUBLIC
     hkxcmd plog nif directxtex libbsarch_OOP nlohmann_json::nlohmann_json pipes)
 
 #Include source, C++17
-target_include_directories(CAO_LIB PUBLIC "include")
-target_include_directories(CAO_LIB PUBLIC "source" )
+target_include_directories(CAO_LIB PUBLIC "external")
+target_include_directories(CAO_LIB PUBLIC "src" )
 target_compile_features(CAO_LIB PUBLIC cxx_std_17)
 
 #Set GUI compile definition
@@ -181,28 +180,30 @@ endif()
 target_compile_options(CAO_LIB PRIVATE "/permissive-")
 
 #AUTOUIC
-set_target_properties(CAO_LIB PROPERTIES AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/source/GUI")
+set_target_properties(CAO_LIB PROPERTIES AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/src/GUI")
 target_include_directories(CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/CAO_LIB_autogen/include")
 
 #Main exe
-add_executable(Cathedral_Assets_Optimizer WIN32 source/main.cpp styles/Cathedral_Assets_Optimizer.rc styles/qdarkstyle/style.qrc)
+add_executable(Cathedral_Assets_Optimizer WIN32
+    src/main.cpp
+    data/styles/Cathedral_Assets_Optimizer.rc
+    data/styles/qdarkstyle/style.qrc)
 target_link_libraries(Cathedral_Assets_Optimizer CAO_LIB)
 
 #Tests
-add_library(doctest tests/doctest.h)
 add_executable(CAO_test tests/tests.cpp)
 target_link_libraries(CAO_test CAO_LIB)
 
 #Generate translations
 set(TS_FILES
-    source/translations/AssetsOpt_de.ts
-    source/translations/AssetsOpt_en.ts
-    source/translations/AssetsOpt_fr.ts
-    source/translations/AssetsOpt_ja.ts
+    src/translations/AssetsOpt_de.ts
+    src/translations/AssetsOpt_en.ts
+    src/translations/AssetsOpt_fr.ts
+    src/translations/AssetsOpt_ja.ts
     )
 
 message("Updating translations files")
 qt5_create_translation(QM_FILES ${TS_FILES} ${SOURCES})
 
 #PCH
-target_precompile_headers(Cathedral_Assets_Optimizer PUBLIC "source/pch.hpp")
+target_precompile_headers(Cathedral_Assets_Optimizer PUBLIC "src/pch.hpp")

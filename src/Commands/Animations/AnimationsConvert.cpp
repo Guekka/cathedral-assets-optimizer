@@ -2,7 +2,7 @@
   * Stripped down version of this file https://github.com/aerisarn/ck-cmd/blob/master/src/commands/hkx/Convert.cpp
   */
 
-#include "source/Commands/Animations/AnimationsConvert.hpp"
+#include "AnimationsConvert.hpp"
 
 namespace CAO {
 AnimationsConvert::AnimationsConvert()
