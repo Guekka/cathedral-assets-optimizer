@@ -12,6 +12,8 @@ namespace CAO {
 class File
 {
 public:
+    virtual ~File() = default;
+
     const QString &getName() const;
     void setName(const QString &name);
 
@@ -28,12 +30,11 @@ public:
     Resource &getFile(const bool modifiedFile);
 
     virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
-    virtual void reset() = 0;
+    virtual void reset()                                            = 0;
 
     const GeneralSettings &generalSettings() const;
     const PatternSettings &patternSettings() const;
 
-    virtual ~File() = default;
 
 protected:
     template<class T>
@@ -54,8 +55,6 @@ protected:
         _filename.clear();
         _file.reset(new T);
         _optimizedCurrentFile = false;
-        generalSettings_ = nullptr;
-        patternSettings_ = nullptr;
     }
 
 private:
@@ -63,8 +62,8 @@ private:
     std::unique_ptr<Resource> _file;
     bool _optimizedCurrentFile = false;
 
-    GeneralSettings *generalSettings_;
-    PatternSettings *patternSettings_;
+    GeneralSettings generalSettings_;
+    PatternSettings patternSettings_;
 
     void matchSettings();
 };

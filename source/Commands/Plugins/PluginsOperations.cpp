@@ -17,7 +17,7 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Genera
         if (checkIfBsaHasPlugin(bsaName, settings))
             continue;
 
-        Profiles().getCurrent().getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
+        currentProfile().getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
     }
 }
 

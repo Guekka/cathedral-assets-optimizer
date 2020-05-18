@@ -64,7 +64,6 @@ private:
 
     int _progressBarValue{};
 
-    std::unique_ptr<Profiles> _profiles;
     std::unique_ptr<Manager> _caoProcess;
 
     bool _settingsChanged    = false;

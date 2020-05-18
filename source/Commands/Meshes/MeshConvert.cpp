@@ -79,7 +79,7 @@ bool MeshConvert::isHeadpart(const QString &filepath)
 
 void MeshConvert::listHeadparts(const GeneralSettings &settings)
 {
-    QFile &&customHeadpartsFile = Profiles().getCurrent().getFile("customHeadparts.txt");
+    QFile &&customHeadpartsFile = currentProfile().getFile("customHeadparts.txt");
     headpartList = Filesystem::readFile(customHeadpartsFile,
                                                   [](QString &string) { return QDir::cleanPath(string); });
 

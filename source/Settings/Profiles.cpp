@@ -118,11 +118,15 @@ Profiles::Profiles()
     update(true);
 }
 
-Profiles::Profiles(QDir dir)
-    : rootProfileDir_(std::move(dir))
-    , _commonSettings(rootProfileDir_.filePath(commonSettingsFileName), QSettings::IniFormat)
+Profiles &Profiles::getInstance()
 {
-    update(true);
+    static Profiles instance_;
+    return instance_;
+}
+
+void Profiles::setDir(const QDir &dir)
+{
+    rootProfileDir_ = dir;
 }
 
 void Profiles::create(const QString &name, const QString &baseProfile)
@@ -140,6 +144,13 @@ void Profiles::create(const QString &name)
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     rootProfileDir_.mkpath(newFolder);
     profiles_.emplace(name, Profile(newFolder));
+}
+
+void Profiles::create(const Profile &profile, const QString &name)
+{
+    const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
+    rootProfileDir_.mkpath(newFolder);
+    profiles_.emplace(name, profile);
 }
 
 Profile &Profiles::setCurrent(const QString &profile)

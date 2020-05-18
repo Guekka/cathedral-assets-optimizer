@@ -5,14 +5,14 @@
 #include "TextureConvert.hpp"
 
 namespace CAO {
-CommandResult TextureConvert::process(File& file)
+CommandResult TextureConvert::process(File &file)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
     const auto &outputFormat = file.patternSettings().eTexturesFormat();
-    auto timage = new TextureResource;
+    auto timage              = new TextureResource;
 
     if (DirectX::IsCompressed(outputFormat))
     {
@@ -29,13 +29,13 @@ CommandResult TextureConvert::process(File& file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureConvert::isApplicable(File& file)
+bool TextureConvert::isApplicable(File &file)
 {
     auto texResource = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texResource)
         return false;
 
-    const DXGI_FORMAT &origFormat = texResource->origFormat;
+    const DXGI_FORMAT &origFormat    = texResource->origFormat;
     const DXGI_FORMAT &currentFormat = texResource->GetMetadata().format;
     if (DirectX::IsCompressed(currentFormat))
         return false; //Cannot process compressed file
@@ -47,9 +47,8 @@ bool TextureConvert::isApplicable(File& file)
     const bool sameFormatAsOrig = currentFormat == origFormat;
 
     //Compatible but compressing in order to improve performance
-    const bool userWantsConvert
-        = file.patternSettings().bTexturesCompress()
-          && sameFormatAsOrig; //If true, the file was not compressed originally
+    const bool userWantsConvert = file.patternSettings().bTexturesCompress()
+                                  && sameFormatAsOrig; //If true, the file was not compressed originally
 
     const bool necessary = needsConvert(file, currentFormat);
 
@@ -62,10 +61,11 @@ bool TextureConvert::isApplicable(File& file)
 bool TextureConvert::needsConvert(const File &file, DXGI_FORMAT format)
 {
     //Checking incompatibility with file format
-    const auto &vec = file.patternSettings().slTextureUnwantedFormats();
-    const bool isUnwanted = std::find(vec.begin(), vec.end(), format) != vec.end();
-    const bool isIncompatible = isUnwanted || file.patternSettings().bTexturesForceConvert();
-    const bool needsConvert = file.patternSettings().bTexturesNecessary() && isIncompatible;
+    const auto &pSets         = file.patternSettings();
+    const auto &vec           = pSets.slTextureUnwantedFormats();
+    const bool isUnwanted     = std::find(vec.begin(), vec.end(), format) != vec.end();
+    const bool isIncompatible = isUnwanted || pSets.bTexturesForceConvert();
+    const bool needsConvert   = pSets.bTexturesNecessary() && isIncompatible;
 
     return needsConvert;
 }

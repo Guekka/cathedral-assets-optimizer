@@ -107,7 +107,8 @@ void copyFiles(const QDir &oldProfile, const QDir &newProfile)
 
 void migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot)
 {
-    Profiles profiles(newProfileRoot);
+    auto &profiles = Profiles::getInstance();
+    profiles.setDir(newProfileRoot);
     for (const auto &dir : oldProfileRoot.entryList(QDir::NoDotAndDotDot | QDir::Dirs))
     {
         try

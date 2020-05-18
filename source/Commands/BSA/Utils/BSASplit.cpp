@@ -25,7 +25,7 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
         if (!isAllowedFile(dir, it.fileInfo()))
             continue;
 
-        const auto &patternSettings = Profiles().getCurrent().getSettings(it.filePath());
+        const auto &patternSettings = currentProfile().getSettings(it.filePath());
 
         BSA **pBsa = patternSettings.bBSAIsTexture() ? &texturesBsa : &standardBsa;
         pBsa = patternSettings.bBSAIsUncompressible() ? &uncompressableBsa : pBsa;
@@ -57,7 +57,7 @@ bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
     if (bsaDir.absoluteFilePath(fileinfo.fileName()) == fileinfo.absoluteFilePath())
         return false;
 
-    const auto &settings = Profiles().getCurrent().getSettings(fileinfo.filePath());
+    const auto &settings = currentProfile().getSettings(fileinfo.filePath());
 
     return settings.bBSAAddToBSA()
            && (settings.bBSAIsTexture() || settings.bBSAIsStandard()

@@ -11,12 +11,12 @@ class MainWindow;
 
 namespace CAO {
 
-class Profile final
+class Profile
 {
 public:
     static inline const QString generalSettingsFileName = "GeneralSettings.json";
     static inline const QString patternSettingsFileName = "PatternSettings.json";
-    static inline const QString isBaseProfileFilename = "isBase";
+    static inline const QString isBaseProfileFilename   = "isBase";
 
     Profile(QDir profileDir);
 
@@ -54,27 +54,26 @@ class Profiles
 {
 public:
     static inline const QString commonSettingsFileName = "common.ini";
-    static inline const QString defaultProfile = "SSE";
+    static inline const QString defaultProfile         = "SSE";
 
-    /* Constructor */
-    Profiles();
-    Profiles(QDir dir);
+    static Profiles &getInstance();
+
+    void setDir(const QDir &dir);
 
     /* Profiles operations */
     void create(const QString &name, const QString &baseProfile);
     void create(const QString &name);
-    //Also sets the current profile. Reads the current profile from INI
+    void create(const Profile &profile, const QString &name);
     Profile &setCurrent(const QString &profile);
-    //!Current profile
+
+    //Also sets the current profile. Reads the current profile from INI
     Profile &getCurrent();
+    Profile &get(const QString &profile);
 
     QString currentProfileName();
 
-    Profile &get(const QString &profile);
-
     QStringList list();
     bool exists(const QString &profile);
-
     void update(bool fullRefresh = false);
 
     QSettings &commonSettings() { return _commonSettings; }
@@ -83,5 +82,14 @@ private:
     std::unordered_map<QString, Profile> profiles_;
     QDir rootProfileDir_;
     QSettings _commonSettings;
+
+    /* Constructor */
+    Profiles();
 };
+
+static Profile &currentProfile()
+{
+    return Profiles::getInstance().getCurrent();
+}
+
 } // namespace CAO

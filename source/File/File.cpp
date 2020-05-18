@@ -54,20 +54,18 @@ Resource &File::getFile(const bool modifiedFile)
 
 const GeneralSettings &File::generalSettings() const
 {
-    assert(generalSettings_);
-    return *generalSettings_;
+    return generalSettings_;
 }
 
 const PatternSettings &CAO::File::patternSettings() const
 {
-    assert(patternSettings_);
-    return *patternSettings_;
+    return patternSettings_;
 }
 
 void File::matchSettings()
 {
-    generalSettings_ = &Profiles().getCurrent().getGeneralSettings();
-    patternSettings_ = &Profiles().getCurrent().getSettings(_filename);
+    generalSettings_ = currentProfile().getGeneralSettings();
+    patternSettings_ = currentProfile().getSettings(_filename);
 }
 
 } // namespace CAO

@@ -111,7 +111,7 @@ void Manager::readIgnoredMods()
 
 void Manager::runOptimization()
 {
-    PLOG_DEBUG << "Profile directory: " << Profiles().getCurrent().profileDirectory().path();
+    PLOG_DEBUG << "Profile directory: " << currentProfile().profileDirectory().path();
     PLOG_INFO << "Processing: " + _profile.getGeneralSettings().sUserPath();
     PLOG_INFO << "Beginning...";
 
