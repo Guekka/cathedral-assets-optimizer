@@ -25,20 +25,18 @@ void readFromFile(nlohmann::json &json, const QString &filepath)
     stream >> json;
 }
 
-void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons) //FIXME, doesn't work
+void removeDuplicates(const nlohmann::json &master, std::vector<nlohmann::json> &jsons)
 {
-    master.flatten();
-    for (const auto &[key, value] : master.items())
-        for (auto &json : jsons)
-        {
-            json.flatten();
-            if (value == json[key])
-                json.erase(key);
-        }
+    auto flatMaster = master.flatten();
+    jsons           = jsons | rx::transform([](auto &&j) { return j.flatten(); }) | rx::to_vector();
 
-    master.unflatten();
-    for (auto &j : jsons)
-        j.unflatten();
+    for (auto &json : jsons)
+        for (const auto &[key, value] : flatMaster.items())
+            if (json.contains(key) && json[key] == value)
+                json.erase(key);
+
+    jsons = jsons | rx::filter([](auto &&j) { return !j.empty(); })
+            | rx::transform([](auto &&j) { return j.unflatten(); }) | rx::to_vector();
 }
 
 json_pointer getPointer(const std::string &key)

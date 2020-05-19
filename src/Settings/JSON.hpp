@@ -15,7 +15,7 @@ using json_pointer = nlohmann::json_pointer<nlohmann::json>;
 void readFromFile(nlohmann::json &json, const QString &filepath);
 void saveToFile(const nlohmann::json &json, const QString &filepath);
 
-void removeDuplicates(nlohmann::json &master, std::vector<nlohmann::json> &jsons);
+void removeDuplicates(const nlohmann::json &master, std::vector<nlohmann::json> &jsons);
 
 json_pointer getPointer(const std::string &key);
 
