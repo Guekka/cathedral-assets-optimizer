@@ -5,6 +5,7 @@
 
 #include "BSA.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
+#include "Utils/Algorithms.hpp"
 
 namespace CAO {
 BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
@@ -32,6 +33,13 @@ BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
     return bsa;
 }
 
+BSA::BSA(double maxSize, qint64 size, BSAType type)
+    : filesSize(size)
+    , maxSize(maxSize)
+    , type(type)
+{
+}
+
 void BSA::name(const QString &folder, const GeneralSettings &settings)
 {
     const auto &bsaSuffix    = settings.sBSASuffix();
@@ -41,51 +49,60 @@ void BSA::name(const QString &folder, const GeneralSettings &settings)
     PLOG_VERBOSE << "Named " << type << path;
 }
 
-void BSA::mergeBSAs(std::vector<BSA> &list)
+void BSA::mergeBSAs(std::vector<BSA> &list, bool merge)
 {
-    //Not merging the same BSAs
-    auto notEqual = [](auto &&val1, auto &&val2) { return !(val1 == val2); };
+    auto secondBegin = std::partition(list.begin(), list.end(), [](const BSA &val) {
+        return val.type == StandardBsa;
+    });
 
+    auto thirdBegin = std::partition(secondBegin, list.end(), [](const BSA &val) {
+        return val.type == TexturesBsa;
+    });
+
+    auto sortBSADescending = [](auto &&one, auto &&two) { return one.filesSize > two.filesSize; };
     //BSAs small enough to be merged
-    auto notMaxSize = [](auto &&leftBSA, auto &&rightBSA) {
-        auto total = leftBSA.filesSize + rightBSA.filesSize;
-        return total < leftBSA.maxSize;
+    auto notMaxSize = [](auto &&left, auto &&right) {
+        return left.filesSize + right.filesSize < left.maxSize;
     };
 
-    //We can only merge BSAs of the same type but everything can be merged into a standard BSA
-    auto goodType = [](auto &&leftBSA, auto &&rightBSA) {
-        return leftBSA.type != rightBSA.type && leftBSA.type != StandardBsa;
+    auto sortMerge = [&sortBSADescending, &notMaxSize](auto begin, auto end) {
+        std::sort(begin, end, sortBSADescending);
+        return merge_if(begin, end, notMaxSize);
     };
 
-    auto merge = [](BSA leftBSA, BSA rightBSA) {
-        leftBSA += rightBSA;
-        rightBSA.files.clear(); //Marking for deletion
-    };
+    auto firstEnd = sortMerge(list.begin(), secondBegin);
+    auto secondEnd = sortMerge(secondBegin, thirdBegin);
+    auto thirdEnd = sortMerge(thirdBegin, list.end());
 
-    using namespace pipes;
+    std::vector<BSA> result;
+    result.reserve(list.size());
 
-    pipes::combinations(list) >>= filter(notEqual) >>= filter(notMaxSize) >>= filter(goodType) >>= for_each(
-        merge);
-    //TODO check that the pipes refactoring worked correctly
+    std::move(list.begin(), firstEnd, std::back_inserter(result));
+    std::move(secondBegin, secondEnd, std::back_inserter(result));
+    std::move(thirdBegin, thirdEnd, std::back_inserter(result));
 
-    //Removing empty BSAs
-    list >>= filter([](BSA &bsa) { return !bsa.files.isEmpty(); }) >>= replace(list);
+    if (merge)
+        result.erase(sortMerge(result.begin(), result.end()), result.end());
+
+    list = result;
 }
 
-BSA &BSA::operator+(const BSA &other)
+BSA &BSA::operator+=(const BSA &other)
 {
     filesSize += other.filesSize;
-    files += other.files;
+    files + other.files;
     if (type != other.type)
         type = StandardBsa;
     return *this;
 }
 
-BSA &BSA::operator+=(const BSA &other)
+BSA BSA::operator+(const BSA &other) const
 {
-    *this = *this + other;
-    return *this;
+    BSA copy = *this;
+    copy += other;
+    return copy;
 }
+
 bool BSA::operator==(const BSA &other) const
 {
     return path == other.path && filesSize == other.filesSize && files == other.files

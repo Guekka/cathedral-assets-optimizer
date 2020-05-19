@@ -42,8 +42,7 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
     }
 
     //Merging BSAs that can be merged
-    if (generalSets.bBSACompact())
-        BSA::mergeBSAs(bsas);
+    BSA::mergeBSAs(bsas, generalSets.bBSACompact());
 
     return bsas;
 }

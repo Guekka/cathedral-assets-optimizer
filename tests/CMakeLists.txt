@@ -1,6 +1,7 @@
 add_executable(CAO_test
     main.test.cpp
     utils.hpp
+    BSA.test.cpp
     File.test.cpp
     JSON.test.cpp
     TextureConvert.test.cpp
