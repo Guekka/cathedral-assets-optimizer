@@ -45,22 +45,28 @@ struct BSA
 };
 } // namespace CAO
 
-namespace plog {
-inline Record &operator<<(Record &record, const CAO::BSA &bsa)
+inline std::ostream &operator<<(std::ostream &os, const BSA &bsa)
 {
-    return record << "BSA Structure:\nPath: " + bsa.path + " \nUncompressed files size: " << (bsa.filesSize / GigaByte)
-                  << "Gb\nMax size: " << bsa.maxSize / GigaByte << "Gb\nType: " << bsa.type
-                  << "\nFormat: " << bsa.format << "\nNumber of files: " << bsa.files.size();
+    auto str = QString("Path:'%1'\n"
+                       "Size:%2Gb\n"
+                       "Type:%3\n"
+                       "Format:%4\n")
+                   .arg(bsa.path)
+                   .arg(bsa.filesSize / GigaByte)
+                   .arg(bsa.type)
+                   .arg(bsa.format);
+
+    return os << str.toStdString();
 }
 
-inline Record &operator<<(Record &record, const CAO::BSAType &type)
+inline std::ostream &operator<<(std::ostream &os, const BSAType &type)
 {
     switch (type)
     {
-        case CAO::StandardBsa: return record << "Standard BSA";
-        case CAO::UncompressableBsa: return record << "Uncompressable BSA";
-        case CAO::TexturesBsa: return record << "Textures BSA";
+        case CAO::StandardBsa: return os << "Standard BSA";
+        case CAO::UncompressableBsa: return os << "Uncompressible BSA";
+        case CAO::TexturesBsa: return os << "Textures BSA";
     }
-    return record << "Unknown BSA type";
+    return os << "Unknown BSA type";
 }
-} // namespace plog
+} // namespace CAO
