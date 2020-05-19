@@ -43,3 +43,21 @@ static CAO::PatternSettings &getPatternSettings()
 {
     return CAO::currentProfile().getPatterns().getDefaultSettings();
 }
+
+namespace doctest {
+template<typename T>
+struct StringMaker<std::vector<T>>
+{
+    static String convert(const std::vector<T> &in)
+    {
+        std::ostringstream oss;
+
+        oss << "[\n";
+        for (const auto &val : in)
+            oss << val << ", ";
+        oss << "\n]";
+
+        return oss.str().c_str();
+    }
+};
+} // namespace doctest
