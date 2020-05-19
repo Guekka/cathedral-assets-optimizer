@@ -72,7 +72,7 @@ private:
 public:
     REGISTER_SETTING(bool, bBSAAddToBSA, "BSA/bBSAAddToBSA")
     REGISTER_SETTING(bool, bBSAIsStandard, "Advanced/BSA/bBSAIsStandard")
-    REGISTER_SETTING(bool, bBSAIsTexture, "Advanced/BSAbBSAIsTexture")
+    REGISTER_SETTING(bool, bBSAIsTexture, "Advanced/BSA/bBSAIsTexture")
     REGISTER_SETTING(bool, bBSAIsUncompressible, "Advanced/BSA/bBSAIsUncompressible")
 
     REGISTER_SETTING(bool, bTexturesNecessary, "Textures/bTexturesNecessary")
