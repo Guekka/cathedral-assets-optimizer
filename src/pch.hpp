@@ -90,7 +90,8 @@
 #include "NIF/NifFile.h"
 #include "hkxcmd/hkfutils.h"
 #include "libbsarch/src/bs_archive_auto.hpp"
-#include "pipes/include/pipes/pipes.hpp"
+#include "pipes/pipes.hpp"
+#include "rx/ranges.hpp"
 #include "json/single_include/nlohmann/json.hpp"
 /*----------------------*/
 
