@@ -7,7 +7,7 @@
 
 #include "GUI/MainWindow.hpp"
 #include "UISync.hpp"
-#include "Utils/QValueWrapper.hpp"
+#include "Utils/QJSONValueWrapper.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -22,7 +22,7 @@ public:
     virtual std::optional<QString> isValid() = 0; 
     */
 
-    Settings();
+    Settings() = default;
     Settings(const nlohmann::json &j);
     Settings(const Settings &other);
     Settings(Settings &&other);
@@ -30,15 +30,15 @@ public:
 
     void operator=(const Settings &other);
 
-    virtual nlohmann::json getJSON() const { return *json_; }
-    virtual void setJSON(const nlohmann::json &j) { *json_ = j; }
+    virtual nlohmann::json getJSON() const { return json_; }
+    virtual void setJSON(const nlohmann::json &j) { json_ = j; }
 
     void saveToUi(MainWindow &window) const;
     void readFromUi(const MainWindow &window);
 
 protected:
     std::vector<UISync> uiSyncList_;
-    mutable std::unique_ptr<nlohmann::json> json_;
+    mutable nlohmann::json json_;
 };
 class PatternSettings final : public Settings //TODO: V690 http://www.viva64.com/en/V690 The 'PatternSettings' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
 {

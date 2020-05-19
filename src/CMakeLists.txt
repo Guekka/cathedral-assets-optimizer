@@ -83,7 +83,7 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profiles.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/UISync.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/UISync.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Utils/QValueWrapper.hpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Utils/QJSONValueWrapper.hpp)
 
 if(GUI)
     list(APPEND SOURCES

@@ -25,12 +25,12 @@ public:
     using Type = T;
 
     //NOTE The JSON has to outlive the QJSONValueWrapper
-    QJSONValueWrapper(std::unique_ptr<nlohmann::json> &j, std::string key)
+    QJSONValueWrapper(nlohmann::json &j, std::string key)
         : json_(j)
         , key_(std::move(key))
     {
         assert(key_.size() > 0);
-        assert(j->is_null() || j->is_object());
+        assert(j.is_null() || j.is_object());
     }
 
     QJSONValueWrapper(const QJSONValueWrapper &other) = delete;
@@ -42,17 +42,17 @@ public:
         if (value() == newValue)
             return;
 
-        JSON::setValue(*json_, key_, newValue);
+        JSON::setValue(json_, key_, newValue);
         emit valueChanged();
     }
 
-    virtual Type value() const { return JSON::getValue<Type>(*json_, key_); }
+    virtual Type value() const { return JSON::getValue<Type>(json_, key_); }
 
     Type operator()() const { return value(); }
     void operator=(const Type &val) { setValue(val); }
 
 private:
-    std::unique_ptr<nlohmann::json> &json_;
+    nlohmann::json &json_;
     std::string key_;
 };
 

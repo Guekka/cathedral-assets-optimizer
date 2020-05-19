@@ -8,18 +8,13 @@
 
 namespace CAO {
 
-Settings::Settings()
-    : json_(new nlohmann::json)
-{
-}
-
 Settings::Settings(const nlohmann::json &j)
-    : json_(new nlohmann::json(j))
+    : json_(nlohmann::json(j))
 {
 }
 
 Settings::Settings(const Settings &other)
-    : json_(new nlohmann::json(*other.json_))
+    : json_(other.json_)
 {
 }
 
@@ -30,19 +25,19 @@ Settings::Settings(Settings &&other)
 
 void Settings::operator=(const Settings &other)
 {
-    *json_ = *other.json_;
+    json_ = other.json_;
 }
 
 void Settings::saveToUi(MainWindow &window) const
 {
     for (const auto &set : uiSyncList_)
-        set.save(window, *json_);
+        set.save(window, json_);
 }
 
 void Settings::readFromUi(const MainWindow &window)
 {
     for (const auto &set : uiSyncList_)
-        set.read(window, *json_);
+        set.read(window, json_);
 }
 
 PatternSettings::PatternSettings()
@@ -63,14 +58,14 @@ PatternSettings::PatternSettings(size_t priority, const std::vector<QRegularExpr
 }
 
 PatternSettings::PatternSettings(const PatternSettings &other)
-    : Settings(*other.json_)
+    : Settings(other.json_)
     , regexes_(other.regexes_)
     , priority_(other.priority_)
 {
 }
 
 PatternSettings::PatternSettings(PatternSettings &&other)
-    : Settings(std::move(*other.json_))
+    : Settings(std::move(other.json_))
     , regexes_(std::move(other.regexes_))
     , priority_(std::move(other.priority_))
 {
@@ -78,8 +73,8 @@ PatternSettings::PatternSettings(PatternSettings &&other)
 
 void PatternSettings::operator=(const PatternSettings &other)
 {
-    *json_ = *other.json_;
-    regexes_ = other.regexes_;
+    json_     = other.json_;
+    regexes_  = other.regexes_;
     priority_ = other.priority_;
 }
 
@@ -90,7 +85,7 @@ bool PatternSettings::operator==(const PatternSettings &other) const
 
 nlohmann::json PatternSettings::getJSON() const
 {
-    nlohmann::json j = *json_;
+    nlohmann::json j = json_;
     JSON::setValue(j, priorityKey, priority_);
     JSON::setValue(j, regexKey, toStringList(regexes_));
     return j;
@@ -98,18 +93,18 @@ nlohmann::json PatternSettings::getJSON() const
 
 nlohmann::json PatternSettings::getJSONWithoutMeta() const
 {
-    return *json_;
+    return json_;
 }
 
 void PatternSettings::setJSON(const nlohmann::json &j)
 {
-    *json_ = j;
-    regexes_ = getPatternRegexFromJSON(*json_);
-    auto oPriority = getPatternPriorityFromJSON(*json_);
-    priority_ = oPriority ? *oPriority : 0;
-    json_->erase(patternKey);
-    json_->erase(regexKey);
-    json_->erase(priorityKey);
+    json_          = j;
+    regexes_       = getPatternRegexFromJSON(json_);
+    auto oPriority = getPatternPriorityFromJSON(json_);
+    priority_      = oPriority ? *oPriority : 0;
+    json_.erase(patternKey);
+    json_.erase(regexKey);
+    json_.erase(priorityKey);
 }
 
 std::vector<QRegularExpression> PatternSettings::getPatternRegexFromJSON(const nlohmann::json &json)
@@ -119,7 +114,7 @@ std::vector<QRegularExpression> PatternSettings::getPatternRegexFromJSON(const n
     if (json.contains(PatternSettings::patternKey))
     {
         regexStrings = JSON::getValue<QStringList>(json, PatternSettings::patternKey);
-        wildcards = true;
+        wildcards    = true;
     }
     if (json.contains(PatternSettings::regexKey))
         regexStrings = JSON::getValue<QStringList>(json, PatternSettings::regexKey);
@@ -158,7 +153,7 @@ GeneralSettings::GeneralSettings(nlohmann::json j)
 }
 
 GeneralSettings::GeneralSettings(const GeneralSettings &other)
-    : Settings(*other.json_)
+    : Settings(other.json_)
 {
 }
 
@@ -169,7 +164,7 @@ GeneralSettings::GeneralSettings(GeneralSettings &&other)
 
 void GeneralSettings::operator=(const GeneralSettings &other)
 {
-    *json_ = *other.json_;
+    json_ = other.json_;
 }
 
 QString GeneralSettings::isValid() const
