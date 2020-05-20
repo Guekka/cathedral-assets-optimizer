@@ -32,7 +32,8 @@ inline QStringList toStringList(Container &&cont)
 template<typename Container>
 inline std::vector<std::string> toStringVector(Container &&cont)
 {
-    std::vector<std::string> stringVec(cont.size());
+    std::vector<std::string> stringVec;
+    stringVec.reserve(cont.size());
     cont >>= pipes::transform(toString) >>= pipes::push_back(stringVec);
     return stringVec;
 }
