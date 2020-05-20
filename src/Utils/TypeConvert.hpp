@@ -8,27 +8,6 @@
 
 namespace CAO {
 
-inline QRegularExpression toRegex(const QString &regexString, bool useWildcard)
-{
-    if (useWildcard)
-        return QRegularExpression(QRegularExpression::wildcardToRegularExpression(regexString));
-    else
-        return QRegularExpression(regexString);
-}
-
-inline std::vector<QRegularExpression> toRegexVector(const QStringList &regexStrings, bool useWildcard)
-{
-    std::vector<QRegularExpression> regexes;
-    auto toReg = [useWildcard](const QString &str) { return toRegex(str, useWildcard); };
-    regexStrings >>= pipes::transform(toReg) >>= pipes::push_back(regexes);
-    return regexes;
-}
-
-inline QString toQString(const QRegularExpression &regex)
-{
-    return regex.pattern();
-}
-
 inline QString toQString(const std::string &str)
 {
     return QString::fromStdString(str);

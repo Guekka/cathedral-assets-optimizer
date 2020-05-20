@@ -41,7 +41,7 @@ void Settings::readFromUi(const MainWindow &window)
 }
 
 PatternSettings::PatternSettings()
-    : regexes_{toRegex("*", true)}
+    : patterns_{"*"}
 {
 }
 
@@ -51,22 +51,22 @@ PatternSettings::PatternSettings(const nlohmann::json &json)
     setJSON(json);
 }
 
-PatternSettings::PatternSettings(size_t priority, const std::vector<QRegularExpression> &regex)
-    : regexes_(regex)
+PatternSettings::PatternSettings(size_t priority, const std::vector<std::string> &wildcards)
+    : patterns_(wildcards)
     , priority_(priority)
 {
 }
 
 PatternSettings::PatternSettings(const PatternSettings &other)
     : Settings(other.json_)
-    , regexes_(other.regexes_)
+    , patterns_(other.patterns_)
     , priority_(other.priority_)
 {
 }
 
 PatternSettings::PatternSettings(PatternSettings &&other)
     : Settings(std::move(other.json_))
-    , regexes_(std::move(other.regexes_))
+    , patterns_(std::move(other.patterns_))
     , priority_(std::move(other.priority_))
 {
 }
@@ -74,7 +74,7 @@ PatternSettings::PatternSettings(PatternSettings &&other)
 void PatternSettings::operator=(const PatternSettings &other)
 {
     json_     = other.json_;
-    regexes_  = other.regexes_;
+    patterns_ = other.patterns_;
     priority_ = other.priority_;
 }
 
@@ -87,7 +87,7 @@ nlohmann::json PatternSettings::getJSON() const
 {
     nlohmann::json j = json_;
     JSON::setValue(j, priorityKey, priority_);
-    JSON::setValue(j, regexKey, toStringList(regexes_));
+    JSON::setValue(j, patternKey, patterns_);
     return j;
 }
 
@@ -99,29 +99,19 @@ nlohmann::json PatternSettings::getJSONWithoutMeta() const
 void PatternSettings::setJSON(const nlohmann::json &j)
 {
     json_          = j;
-    regexes_       = getPatternRegexFromJSON(json_);
+    patterns_      = getPatternWildcardsFromJSON(json_);
     auto oPriority = getPatternPriorityFromJSON(json_);
     priority_      = oPriority ? *oPriority : 0;
     json_.erase(patternKey);
-    json_.erase(regexKey);
     json_.erase(priorityKey);
 }
 
-std::vector<QRegularExpression> PatternSettings::getPatternRegexFromJSON(const nlohmann::json &json)
+std::vector<std::string> PatternSettings::getPatternWildcardsFromJSON(const nlohmann::json &json)
 {
-    QStringList regexStrings;
-    bool wildcards = false;
     if (json.contains(PatternSettings::patternKey))
-    {
-        regexStrings = JSON::getValue<QStringList>(json, PatternSettings::patternKey);
-        wildcards    = true;
-    }
-    if (json.contains(PatternSettings::regexKey))
-        regexStrings = JSON::getValue<QStringList>(json, PatternSettings::regexKey);
-    else if (!json.contains(PatternSettings::patternKey) && !json.contains(PatternSettings::regexKey))
-        return std::vector<QRegularExpression>{};
-
-    return toRegexVector(regexStrings, wildcards);
+        return JSON::getValue<std::vector<std::string>>(json, PatternSettings::patternKey);
+    else
+        return {};
 }
 
 std::optional<size_t> PatternSettings::getPatternPriorityFromJSON(const nlohmann::json &json)

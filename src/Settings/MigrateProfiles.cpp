@@ -19,7 +19,7 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     QSettings profileSettings(inFile, QSettings::IniFormat);
 
     auto &patterns = outProfile.getPatterns();
-    patterns.addPattern(PatternSettings{0, toRegexVector({"*"}, true)});
+    patterns.addPattern(PatternSettings{0, {"*"}});
     auto &gPattern = patterns.get().at(
         0); //TODO will have to change once several patterns share the same priority
 
@@ -65,11 +65,11 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 
     profileSettings.endGroup();
 
-    patterns.addPattern(PatternSettings{1, toRegexVector({"*.tga"}, true)});
+    patterns.addPattern(PatternSettings{1, {"*.tga"}});
     auto &pSetsTGA = patterns.get().at(1);
     pSetsTGA.bTexturesForceConvert = texturesConvertTga;
 
-    patterns.addPattern(PatternSettings{2, toRegexVector({"*/interface/*.dds", "*/interface/*.tga"}, true)});
+    patterns.addPattern(PatternSettings{2, {"*/interface/*.dds", "*/interface/*.tga"}});
     auto &pSetsInterface = patterns.get().at(2);
     pSetsInterface.bTexturesForceConvert = texturesCompressInterface;
 

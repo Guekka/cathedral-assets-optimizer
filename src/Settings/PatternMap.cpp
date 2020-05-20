@@ -2,25 +2,19 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "PatternMap.hpp"
+#include "Utils/wildcards.hpp"
 #include <string>
 
 namespace CAO {
 void PatternMap::listPatterns(nlohmann::json json)
 {
     patterns_.clear();
-    //Retrieving all the patterns and converting them to regexes
     for (auto &value : json)
     {
         if (!value.is_object())
             continue;
-
-        //We only know that the first profile will contain all the settings. The others might be incomplete
-        //NOTE We might want to use a struct instead of merging the first JSON into the others
-        //Something like
-        //struct Sets
-        //    PatternSettings *defaultSets;
-        //    PatternSettings *sets;
 
         if (!patterns_.empty())
         {
@@ -33,7 +27,7 @@ void PatternMap::listPatterns(nlohmann::json json)
         addPattern(PatternSettings(value));
     }
     if (patterns_.empty())
-        addPattern(PatternSettings{});
+        addPattern(PatternSettings{0, {"*"}});
 
     cleanPatterns();
 }
@@ -47,13 +41,16 @@ const PatternSettings &PatternMap::getSettings(const QString &filePath) const
 {
     assert(!patterns_.empty());
 
-    auto hasMatch = [&filePath](const auto &regex) { return regex.match(filePath).hasMatch(); };
+    auto hasMatch = [&filePath](const auto &wildcard) {
+        using namespace wildcards;
+        return isMatch(filePath.toStdString(), pattern{wildcard}, case_insensitive);
+    };
 
     for (auto it = patterns_.crbegin(); it != patterns_.crend(); ++it)
     {
-        const auto &regexes = it->second.regexes_;
-        for (const auto &regex : regexes)
-            if (hasMatch(regex))
+        const auto &wildcards = it->second.patterns_;
+        for (const auto &wildcard : wildcards)
+            if (hasMatch(wildcard))
                 return it->second;
     }
     return getDefaultSettings();
@@ -90,13 +87,8 @@ nlohmann::json PatternMap::mergePattern(const nlohmann::json &json1, const nlohm
     auto pKey2       = JSON::getValue<QStringList>(json2, PatternSettings::patternKey);
     auto mergedPKeys = pKey1 + pKey2;
 
-    auto rKey1       = JSON::getValue<QStringList>(json1, PatternSettings::regexKey);
-    auto rKey2       = JSON::getValue<QStringList>(json2, PatternSettings::regexKey);
-    auto mergedRKeys = rKey1 + rKey2;
-
     nlohmann::json merged = json1;
     JSON::setValue(merged, PatternSettings::patternKey, mergedPKeys);
-    JSON::setValue(merged, PatternSettings::regexKey, mergedRKeys);
 
     return merged;
 }

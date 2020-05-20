@@ -45,14 +45,14 @@ class PatternSettings final : public Settings //TODO: V690 http://www.viva64.com
 public:
     PatternSettings();
     PatternSettings(const nlohmann::json &json);
-    PatternSettings(size_t priority, const std::vector<QRegularExpression> &regex);
+    PatternSettings(size_t priority, const std::vector<std::string> &regex);
     PatternSettings(const PatternSettings &other);
     PatternSettings(PatternSettings &&other);
 
     void operator=(const PatternSettings &other);
     bool operator==(const PatternSettings &other) const;
 
-    std::vector<QRegularExpression> regexes_;
+    std::vector<std::string> patterns_;
     size_t priority_{0};
 
     nlohmann::json getJSON() const override;
@@ -61,12 +61,11 @@ public:
 
     std::optional<QString> isValid();
 
-    static constexpr auto patternKey  = "Pattern";
-    static constexpr auto regexKey    = "Regex";
+    static constexpr auto patternKey  = "Patterns";
     static constexpr auto priorityKey = "Priority";
 
 private:
-    std::vector<QRegularExpression> getPatternRegexFromJSON(const nlohmann::json &json);
+    std::vector<std::string> getPatternWildcardsFromJSON(const nlohmann::json &json);
     std::optional<size_t> getPatternPriorityFromJSON(const nlohmann::json &json);
 
 public:
