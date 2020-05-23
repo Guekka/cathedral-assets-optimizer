@@ -56,7 +56,7 @@ public:
     size_t priority_{0};
 
     nlohmann::json getJSON() const override;
-    nlohmann::json getJSONWithoutMeta() const;
+    static nlohmann::json removeMeta(const nlohmann::json &j);
     void setJSON(const nlohmann::json &j) override;
 
     std::optional<QString> isValid();

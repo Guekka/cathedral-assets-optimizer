@@ -57,12 +57,7 @@ QString Profile::patternSettingsPath() const
     return profileDir_.absoluteFilePath(patternSettingsFileName);
 }
 
-PatternSettings &Profile::getSettings(const QString &filePath)
-{
-    return patternSettings_.getSettings(filePath);
-}
-
-const PatternSettings &Profile::getSettings(const QString &filePath) const
+PatternSettings Profile::getSettings(const QString &filePath) const
 {
     return patternSettings_.getSettings(filePath);
 }

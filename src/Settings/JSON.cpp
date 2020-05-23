@@ -50,5 +50,13 @@ json_pointer getPointer(const std::string &key)
     return j;
 }
 
+bool contains(const nlohmann::json &master, const nlohmann::json &subset)
+{
+    auto flat = subset.flatten();
+    for (const auto &[key, val] : flat.items())
+        if (!master.contains(key) || master[key] != val)
+            return false;
+    return true;
+}
 } // namespace JSON
 } // namespace CAO

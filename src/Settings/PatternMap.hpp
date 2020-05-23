@@ -11,11 +11,10 @@ namespace CAO {
 class PatternMap
 {
 public:
-    void listPatterns(nlohmann::json json);
-    void addPattern(const PatternSettings &pattern);
+    void listPatterns(const nlohmann::json &json);
+    void addPattern(PatternSettings pattern);
 
-    const PatternSettings &getSettings(const QString &filePath) const;
-    PatternSettings &getSettings(const QString &filePath);
+    PatternSettings getSettings(const QString &filePath) const;
 
     const PatternSettings &getDefaultSettings() const;
     PatternSettings &getDefaultSettings();
@@ -33,6 +32,6 @@ private:
     std::map<size_t, PatternSettings> patterns_; //TODO several patterns with same priority
 
     //! \note It is assumed both patterns share the same keys
-    nlohmann::json mergePattern(const nlohmann::json &json1, const nlohmann::json &json2) const;
+    nlohmann::json mergePattern(const nlohmann::json &main, const nlohmann::json &second) const;
 };
 } // namespace CAO

@@ -31,10 +31,6 @@ public:
     {
         assert(key_.size() > 0);
         assert(j.is_null() || j.is_object());
-
-        //Accessing the element to create it if it doesn't exist
-        if (json_[JSON::getPointer(key_)].is_null())
-            json_[JSON::getPointer(key_)] = Type{};
     }
 
     QJSONValueWrapper(const QJSONValueWrapper &other) = delete;
@@ -43,7 +39,7 @@ public:
 
     virtual void setValue(const Type &newValue)
     {
-        if (value() == newValue)
+        if (!json_[JSON::getPointer(key_)].is_null() && value() == newValue)
             return;
 
         JSON::setValue(json_, key_, newValue);

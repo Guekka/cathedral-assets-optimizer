@@ -4,6 +4,7 @@ add_executable(CAO_test
     BSA.test.cpp
     File.test.cpp
     JSON.test.cpp
+    PatternMap.test.cpp
     TextureConvert.test.cpp
     TextureFile.test.cpp
     TextureResize.test.cpp)

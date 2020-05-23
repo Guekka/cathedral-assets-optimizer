@@ -91,19 +91,19 @@ nlohmann::json PatternSettings::getJSON() const
     return j;
 }
 
-nlohmann::json PatternSettings::getJSONWithoutMeta() const
+nlohmann::json PatternSettings::removeMeta(const nlohmann::json &j)
 {
-    return json_;
+    auto result = j;
+    result.erase(priorityKey);
+    result.erase(patternKey);
+    return result;
 }
 
 void PatternSettings::setJSON(const nlohmann::json &j)
 {
-    json_          = j;
-    patterns_      = getPatternWildcardsFromJSON(json_);
-    auto oPriority = getPatternPriorityFromJSON(json_);
-    priority_      = oPriority ? *oPriority : 0;
-    json_.erase(patternKey);
-    json_.erase(priorityKey);
+    priority_ = getPatternPriorityFromJSON(j).value_or(0);
+    patterns_ = getPatternWildcardsFromJSON(j);
+    json_     = removeMeta(j);
 }
 
 std::vector<std::string> PatternSettings::getPatternWildcardsFromJSON(const nlohmann::json &json)

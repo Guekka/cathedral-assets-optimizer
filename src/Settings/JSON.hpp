@@ -7,6 +7,26 @@
 #include "Utils/TypeConvert.hpp"
 #include "pch.hpp"
 
+//Custom serialization for Qt
+namespace nlohmann {
+template<>
+struct adl_serializer<QString>
+{
+    static void to_json(json &j, const QString &str) { j = str.toStdString(); }
+    static void from_json(const json &j, QString &str) { str = QString::fromStdString(j.get<std::string>()); }
+};
+
+template<>
+struct adl_serializer<QStringList>
+{
+    static void to_json(json &j, const QStringList &strList) { j = CAO::toStringVector(strList); }
+    static void from_json(const json &j, QStringList &strList)
+    {
+        strList = CAO::toStringList(j.get<std::vector<std::string>>());
+    }
+};
+} // namespace nlohmann
+
 namespace CAO {
 namespace JSON {
 
@@ -16,6 +36,8 @@ void readFromFile(nlohmann::json &json, const QString &filepath);
 void saveToFile(const nlohmann::json &json, const QString &filepath);
 
 void removeDuplicates(const nlohmann::json &master, std::vector<nlohmann::json> &jsons);
+
+bool contains(const nlohmann::json &master, const nlohmann::json &subset);
 
 json_pointer getPointer(const std::string &key);
 
@@ -38,18 +60,6 @@ inline T getValue(nlohmann::json j)
     return json->get<T>();
 }
 
-template<>
-inline QString getValue(nlohmann::json j)
-{
-    return QString::fromStdString(getValue<std::string>(j));
-}
-
-template<>
-inline QStringList getValue(nlohmann::json j)
-{
-    return toStringList(getValue<std::vector<std::string>>(j));
-}
-
 template<class T>
 inline T getValue(nlohmann::json json, const std::string &key)
 {
@@ -58,34 +68,10 @@ inline T getValue(nlohmann::json json, const std::string &key)
     return getValue<T>(json[getPointer(key)]);
 }
 
-template<>
-inline QString getValue(nlohmann::json json, const std::string &key)
-{
-    return QString::fromStdString(getValue<std::string>(json, key));
-}
-
-template<>
-inline QStringList getValue(nlohmann::json json, const std::string &key)
-{
-    return toStringList(getValue<std::vector<std::string>>(json, key));
-}
-
 template<class T>
 inline void setValue(nlohmann::json &json, const T &value)
 {
     json = value;
-}
-
-template<>
-inline void setValue(nlohmann::json &json, const QString &value)
-{
-    setValue(json, value.toStdString());
-}
-
-template<>
-inline void setValue(nlohmann::json &json, const QStringList &value)
-{
-    setValue(json, toStringVector(value));
 }
 
 template<class T>
@@ -94,18 +80,6 @@ inline void setValue(nlohmann::json &json, const std::string &key, const T &valu
     assert(json.is_object() || json.is_null());
     auto &&pointer = getPointer(key);
     setValue(json[pointer], value);
-}
-
-template<>
-inline void setValue(nlohmann::json &json, const std::string &key, const QString &value)
-{
-    setValue(json, key, value.toStdString());
-}
-
-template<>
-inline void setValue(nlohmann::json &json, const std::string &key, const QStringList &value)
-{
-    setValue(json, key, toStringVector(value));
 }
 
 }; // namespace JSON

@@ -30,8 +30,7 @@ public:
     QString patternSettingsPath() const;
 
     /* Settings */
-    PatternSettings &getSettings(const QString &filePath);
-    const PatternSettings &getSettings(const QString &filePath) const;
+    PatternSettings getSettings(const QString &filePath) const;
     GeneralSettings &getGeneralSettings();
     const GeneralSettings &getGeneralSettings() const;
     PatternMap &getPatterns();

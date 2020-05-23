@@ -60,4 +60,17 @@ struct StringMaker<std::vector<T>>
         return oss.str().c_str();
     }
 };
+
+template<>
+struct StringMaker<nlohmann::json>
+{
+    static String convert(const nlohmann::json &in)
+    {
+        std::ostringstream oss;
+
+        oss << in.dump(4);
+
+        return oss.str().c_str();
+    }
+};
 } // namespace doctest

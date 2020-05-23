@@ -8,21 +8,14 @@
 #include <string>
 
 namespace CAO {
-void PatternMap::listPatterns(nlohmann::json json)
+void PatternMap::listPatterns(const nlohmann::json &json)
 {
     patterns_.clear();
+
     for (auto &value : json)
     {
         if (!value.is_object())
             continue;
-
-        if (!patterns_.empty())
-        {
-            const auto &defaultJson = getDefaultSettings().getJSON();
-            auto patchedJson        = defaultJson;
-            patchedJson.merge_patch(value);
-            value = patchedJson;
-        }
 
         addPattern(PatternSettings(value));
     }
@@ -32,33 +25,29 @@ void PatternMap::listPatterns(nlohmann::json json)
     cleanPatterns();
 }
 
-void PatternMap::addPattern(const PatternSettings &pattern)
+void PatternMap::addPattern(PatternSettings pattern)
 {
     patterns_.emplace(pattern.priority_, pattern);
 }
 
-const PatternSettings &PatternMap::getSettings(const QString &filePath) const
+PatternSettings PatternMap::getSettings(const QString &filePath) const
 {
     assert(!patterns_.empty());
 
-    auto hasMatch = [&filePath](const auto &wildcard) {
+    auto matchWildcard = [&filePath](const std::string &wildcard) {
         using namespace wildcards;
         return isMatch(filePath.toStdString(), pattern{wildcard}, case_insensitive);
     };
 
-    for (auto it = patterns_.crbegin(); it != patterns_.crend(); ++it)
+    nlohmann::json merged;
+    for (const auto &[_, patternSettings] : patterns_)
     {
-        const auto &wildcards = it->second.patterns_;
-        for (const auto &wildcard : wildcards)
-            if (hasMatch(wildcard))
-                return it->second;
+        const auto &patterns = patternSettings.patterns_;
+        if (std::any_of(patterns.cbegin(), patterns.cend(), matchWildcard))
+            merged.merge_patch(patternSettings.getJSON());
     }
-    return getDefaultSettings();
-}
 
-PatternSettings &PatternMap::getSettings(const QString &filePath)
-{
-    return const_cast<PatternSettings &>(static_cast<const PatternMap *>(this)->getSettings(filePath));
+    return PatternSettings{merged};
 }
 
 const PatternSettings &PatternMap::getDefaultSettings() const
@@ -81,40 +70,56 @@ void PatternMap::saveToUi(MainWindow &window) const
     patterns_ >>= pipes::for_each([&window](auto &&pair) { pair.second.saveToUi(window); });
 }
 
-nlohmann::json PatternMap::mergePattern(const nlohmann::json &json1, const nlohmann::json &json2) const
+nlohmann::json PatternMap::mergePattern(const nlohmann::json &main, const nlohmann::json &second) const
 {
-    auto pKey1       = JSON::getValue<QStringList>(json1, PatternSettings::patternKey);
-    auto pKey2       = JSON::getValue<QStringList>(json2, PatternSettings::patternKey);
-    auto mergedPKeys = pKey1 + pKey2;
+    auto patt1 = JSON::getValue<std::vector<std::string>>(main, PatternSettings::patternKey);
+    auto patt2 = JSON::getValue<std::vector<std::string>>(second, PatternSettings::patternKey);
+    patt1.insert(patt1.end(), patt2.begin(), patt2.end());
+    patt1 = patt1 | rx::sort() | rx::uniq() | rx::to_vector();
 
-    nlohmann::json merged = json1;
-    JSON::setValue(merged, PatternSettings::patternKey, mergedPKeys);
+    size_t prio1 = main.value<size_t>(PatternSettings::priorityKey, UINT_MAX);
+    size_t prio2 = second.value<size_t>(PatternSettings::priorityKey, UINT_MAX);
+
+    auto mergedPriority = std::min(prio1, prio2);
+    if (mergedPriority == UINT_MAX)
+        mergedPriority = 0;
+
+    nlohmann::json merged = main;
+    JSON::setValue(merged, PatternSettings::patternKey, patt1);
+    JSON::setValue(merged, PatternSettings::priorityKey, mergedPriority);
 
     return merged;
 }
 
 void PatternMap::cleanPatterns()
 {
-    //TODO If a JSON is a subset of another, it will not be merged.
-
     std::unordered_map<nlohmann::json, std::unordered_set<PatternSettings>> JsonToSets;
 
     for (auto [_, pattern] : patterns_)
     {
-        auto cleanedJson = pattern.getJSONWithoutMeta();
-        JsonToSets[cleanedJson].emplace(pattern);
+        auto cleanedJson = PatternSettings::removeMeta(pattern.getJSON());
+        auto curKeys     = JsonToSets | rx::transform([](auto &&p) { return p.first; }) | rx::to_vector();
+
+        nlohmann::json key = [&cleanedJson, &curKeys] {
+            for (const auto &cur : curKeys)
+            {
+                if (JSON::contains(cur, cleanedJson))
+                    return cur;
+            }
+            return cleanedJson;
+        }();
+
+        JsonToSets[key].emplace(pattern);
     }
 
     patterns_.clear();
 
     for (auto &value : JsonToSets)
     {
-        nlohmann::json merged;
+        nlohmann::json merged = value.first;
         for (auto &settings : value.second)
-        {
-            auto json = settings.getJSON();
-            merged    = mergePattern(merged, settings.getJSON());
-        }
+            merged = mergePattern(merged, settings.getJSON());
+
         PatternSettings s{merged};
         patterns_.emplace(s.priority_, std::move(s));
     }
@@ -122,15 +127,23 @@ void PatternMap::cleanPatterns()
 
 nlohmann::json PatternMap::getUnifiedJSON() const
 {
-    std::vector<nlohmann::json> vector;
-    vector.reserve(patterns_.size());
+    auto copy = *this;
+    copy.cleanPatterns();
+    auto patterns = std::move(copy.patterns_);
 
-    auto getJSON = [](const auto &val) { return val.getJSON(); };
-    patterns_ >>= pipes::values{} >>= pipes::transform(getJSON) >>= pipes::push_back(vector);
+    auto getJSON = [](const auto &val) { return val.second.getJSON(); };
+    auto jsons   = patterns | rx::transform(getJSON) | rx::to_vector();
 
-    //TODO remove duplicates
+    auto master = *jsons.begin();
+    jsons.erase(jsons.begin());
 
-    return nlohmann::json{vector};
+    JSON::removeDuplicates(master, jsons);
+    jsons.insert(jsons.begin(), master);
+
+    jsons = jsons | rx::filter([](auto &&j) { return !PatternSettings::removeMeta(j).empty(); })
+            | rx::to_vector();
+
+    return jsons;
 }
 
 } // namespace CAO
