@@ -77,6 +77,12 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/MigrateProfiles.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Settings.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/GeneralSettings.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/GeneralSettings.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/PatternSettings.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/PatternSettings.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/FileTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/FileTypes.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/PatternMap.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/PatternMap.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profiles.cpp

@@ -5,6 +5,7 @@
 
 #include "BSA.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
+#include "Settings/GeneralSettings.hpp"
 #include "Utils/Algorithms.hpp"
 
 namespace CAO {

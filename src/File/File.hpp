@@ -5,7 +5,8 @@
 #pragma once
 
 #include "File/Resources.hpp"
-#include "Settings/Settings.hpp"
+#include "Settings/GeneralSettings.hpp"
+#include "Settings/PatternSettings.hpp"
 #include "pch.hpp"
 
 namespace CAO {

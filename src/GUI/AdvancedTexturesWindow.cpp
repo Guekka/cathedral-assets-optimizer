@@ -4,7 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "AdvancedTexturesWindow.hpp"
-#include "Settings/Settings.hpp"
+#include "Settings/GeneralSettings.hpp"
+#include "Settings/PatternSettings.hpp"
 #include "ui_AdvancedTexturesWindow.h"
 
 namespace CAO {
