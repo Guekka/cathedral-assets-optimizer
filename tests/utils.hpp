@@ -9,22 +9,31 @@
 #include "File/Textures/TextureFile.hpp"
 #include "Settings/Profiles.hpp"
 
+static void setSettings(const CAO::PatternSettings &pSets, const CAO::GeneralSettings &gSets)
+{
+    CAO::currentProfile().getPatterns().get()  = {{pSets.priority_, pSets}};
+    CAO::currentProfile().getGeneralSettings() = gSets;
+    CAO::currentProfile().saveToJSON();
+}
+
 static void initSettings()
 {
     const QString &profileName = "TestingProfile";
     CAO::Profiles::getInstance().create(profileName);
-    auto &profile = CAO::Profiles::getInstance().setCurrent(profileName);
+    CAO::Profiles::getInstance().setCurrent(profileName);
 
     //Resetting
-    profile.getGeneralSettings() = {};
-    profile.getPatterns().get()  = {{0, CAO::PatternSettings{}}};
-
-    profile.saveToJSON();
+    setSettings(CAO::PatternSettings{}, CAO::GeneralSettings{});
 }
 
 static std::unique_ptr<CAO::TextureFile> getStandardTextureFile(
-    const bool optimizedFile = true, const DXGI_FORMAT &format = DXGI_FORMAT_A8_UNORM)
+    const CAO::PatternSettings &pSets,
+    const bool optimizedFile          = true,
+    const DXGI_FORMAT &format         = DXGI_FORMAT_A8_UNORM,
+    const CAO::GeneralSettings &gSets = CAO::GeneralSettings{})
 {
+    setSettings(pSets, gSets);
+
     auto textureResource = new CAO::TextureResource;
     auto file            = std::make_unique<CAO::TextureFile>();
     textureResource->Initialize2D(format, 16, 16, 1, 1);
@@ -37,11 +46,6 @@ static std::unique_ptr<CAO::TextureFile> getStandardTextureFile(
     REQUIRE(res->GetImages());
 
     return file;
-}
-
-static CAO::PatternSettings &getPatternSettings()
-{
-    return CAO::currentProfile().getPatterns().getDefaultSettings();
 }
 
 namespace doctest {

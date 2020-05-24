@@ -6,7 +6,7 @@ SCENARIO("Saving and loading a dds file to the disk")
 {
     GIVEN("A valid TextureFile and a valid path")
     {
-        auto file = getStandardTextureFile(false);
+        auto file = getStandardTextureFile(PatternSettings{}, false);
         WHEN("The file is saved to disk")
         {
             const QString filePath = QDir::currentPath() + "/image.dds";

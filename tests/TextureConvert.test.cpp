@@ -13,35 +13,35 @@ SCENARIO("Converting a texture")
 {
     CommandBook book;
     auto &convert                 = *book.getCommand<TextureConvert>();
-    auto &sets                    = getPatternSettings();
+    PatternSettings sets;
     sets.slTextureUnwantedFormats = {DXGI_FORMAT_B5G6R5_UNORM};
 
     GIVEN("An unmodified image using an incompatible format, and settings with "
           "necessary opt enabled")
     {
         sets.bTexturesNecessary = true;
-        auto file               = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
+        auto file               = getStandardTextureFile(sets, false, DXGI_FORMAT_B5G6R5_UNORM);
 
         WHEN("The file is scanned") { CHECK(convert.isApplicable(*file)); }
     }
     GIVEN("An unmodified image using a compatible format, and settings with necessary opt enabled")
     {
         sets.bTexturesNecessary = true;
-        auto file               = getStandardTextureFile(false);
+        auto file               = getStandardTextureFile(sets, false);
 
         WHEN("The file is scanned") { CHECK_FALSE(convert.isApplicable(*file)); }
     }
     GIVEN("An unmodified image using a incompatible format, and settings with necessary opt disabled")
     {
         sets.bTexturesNecessary = false;
-        auto file               = getStandardTextureFile(false, DXGI_FORMAT_B5G6R5_UNORM);
+        auto file               = getStandardTextureFile(sets, false, DXGI_FORMAT_B5G6R5_UNORM);
 
         WHEN("The file is scanned") { CHECK_FALSE(convert.isApplicable(*file)); }
     }
     GIVEN("A modified image using a compatible format, and settings with necessary opt enabled")
     {
         sets.bTexturesNecessary = true;
-        auto file               = getStandardTextureFile(true);
+        auto file               = getStandardTextureFile(sets, true);
 
         WHEN("The file is scanned") { CHECK(convert.isApplicable(*file)); }
     }
@@ -50,7 +50,7 @@ SCENARIO("Converting a texture")
     {
         sets.eTexturesFormat    = DXGI_FORMAT_A8_UNORM;
         sets.bTexturesNecessary = true;
-        auto file               = getStandardTextureFile(true, DXGI_FORMAT_A8_UNORM);
+        auto file               = getStandardTextureFile(sets, true, DXGI_FORMAT_A8_UNORM);
 
         WHEN("The file is scanned") { CHECK_FALSE(convert.isApplicable(*file)); }
     }

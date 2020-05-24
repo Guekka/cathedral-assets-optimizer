@@ -18,11 +18,7 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     const QString inFile = oldProfile.absoluteFilePath("profile.ini");
     QSettings profileSettings(inFile, QSettings::IniFormat);
 
-    auto &patterns = outProfile.getPatterns();
-    patterns.addPattern(PatternSettings{0, {"*"}});
-    auto &gPattern = patterns.get().at(
-        0); //TODO will have to change once several patterns share the same priority
-
+    auto gPattern     = PatternSettings{0, {"*"}};
     auto &generalSets = outProfile.getGeneralSettings();
 
     profileSettings.beginGroup("BSA");
@@ -65,18 +61,21 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 
     profileSettings.endGroup();
 
-    patterns.addPattern(PatternSettings{1, {"*.tga"}});
-    auto &pSetsTGA = patterns.get().at(1);
+    PatternSettings pSetsTGA{1, {"*.tga"}};
     pSetsTGA.bTexturesForceConvert = texturesConvertTga;
 
-    patterns.addPattern(PatternSettings{2, {"*/interface/*.dds", "*/interface/*.tga"}});
-    auto &pSetsInterface = patterns.get().at(2);
+    PatternSettings pSetsInterface{2, {"*/interface/*.dds", "*/interface/*.tga"}};
     pSetsInterface.bTexturesForceConvert = texturesCompressInterface;
 
     std::vector<DXGI_FORMAT> unwantedFormats;
     auto getFormat = [](const QVariant &variant) { return variant.value<DXGI_FORMAT>(); };
     texturesUnwantedFormats >>= pipes::transform(getFormat) >>= pipes::push_back(unwantedFormats);
     gPattern.slTextureUnwantedFormats = unwantedFormats;
+
+    PatternMap &patterns = currentProfile().getPatterns();
+    patterns.addPattern(gPattern);
+    patterns.addPattern(pSetsTGA);
+    patterns.addPattern(pSetsInterface);
 }
 
 bool isWhitelisted(const QString &fileName)

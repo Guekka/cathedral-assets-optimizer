@@ -29,7 +29,7 @@ public:
     const auto &get() const { return patterns_; }
 
 private:
-    std::map<size_t, PatternSettings> patterns_; //TODO several patterns with same priority
+    std::map<size_t, PatternSettings> patterns_;
 
     //! \note It is assumed both patterns share the same keys
     nlohmann::json mergePattern(const nlohmann::json &main, const nlohmann::json &second) const;

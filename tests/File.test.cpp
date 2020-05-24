@@ -18,12 +18,12 @@ SCENARIO("Optimizing a file")
         }
         WHEN("The TextureFile is changed with 'optimizedFile' set to false")
         {
-            auto file2 = getStandardTextureFile(false);
+            auto file2 = getStandardTextureFile(PatternSettings{}, false);
             THEN("optimizedCurrentFile should be false") { CHECK(file2->optimizedCurrentFile() == false); }
         }
         WHEN("The TextureFile is changed with default arguments")
         {
-            auto file3 = getStandardTextureFile();
+            auto file3 = getStandardTextureFile(PatternSettings{});
             THEN("optimizedCurrentFile should be true") { CHECK(file3->optimizedCurrentFile() == true); }
         }
     }
