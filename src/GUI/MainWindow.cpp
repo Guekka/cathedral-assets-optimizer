@@ -380,8 +380,7 @@ void MainWindow::initProcess()
     try
     {
         _caoProcess.reset();
-        _caoProcess = std::make_unique<Manager>(
-            currentProfile()); //TODO MainWindow should not have access to all the profiles
+        _caoProcess = std::make_unique<Manager>(currentProfile());
         connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
         connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
         connect(&*_caoProcess, &Manager::end, this, &MainWindow::endProcess);
