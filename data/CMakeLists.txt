@@ -12,7 +12,7 @@ function (generateTranslations sources)
 endfunction()
 
 function (getResources list)
-    SET(list
+    SET(${list}
         ${CMAKE_CURRENT_SOURCE_DIR}/styles/Cathedral_Assets_Optimizer.rc
         ${CMAKE_CURRENT_SOURCE_DIR}/styles/qdarkstyle/style.qrc
         PARENT_SCOPE)
