@@ -52,11 +52,6 @@ Resource &File::getFile(const bool modifiedFile)
     return *_file;
 }
 
-const GeneralSettings &File::generalSettings() const
-{
-    return generalSettings_;
-}
-
 const PatternSettings &CAO::File::patternSettings() const
 {
     return patternSettings_;
@@ -64,7 +59,6 @@ const PatternSettings &CAO::File::patternSettings() const
 
 void File::matchSettings()
 {
-    generalSettings_ = currentProfile().getGeneralSettings();
     patternSettings_ = currentProfile().getSettings(_filename);
 }
 

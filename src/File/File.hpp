@@ -33,9 +33,7 @@ public:
     virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
     virtual void reset()                                            = 0;
 
-    const GeneralSettings &generalSettings() const;
     const PatternSettings &patternSettings() const;
-
 
 protected:
     template<class T>
@@ -63,7 +61,6 @@ private:
     std::unique_ptr<Resource> _file;
     bool _optimizedCurrentFile = false;
 
-    GeneralSettings generalSettings_;
     PatternSettings patternSettings_;
 
     void matchSettings();

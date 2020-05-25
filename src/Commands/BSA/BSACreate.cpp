@@ -13,11 +13,11 @@ CommandResult BSACreate::process(File &file)
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsas = BSASplit::splitBSA(*bsaFolder, file.generalSettings());
+    auto bsas = BSASplit::splitBSA(*bsaFolder, currentProfile().getGeneralSettings());
 
     for (auto &bsa : bsas)
     {
-        bsa.name(bsaFolder->path(), file.generalSettings());
+        bsa.name(bsaFolder->path(), currentProfile().getGeneralSettings());
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
@@ -25,7 +25,7 @@ CommandResult BSACreate::process(File &file)
 
         libbsarch::bs_archive_auto archive(bsa.format);
         archive.set_share_data(true);
-        archive.set_compressed(file.generalSettings().bBSACompressArchive());
+        archive.set_compressed(currentProfile().getGeneralSettings().bBSACompressArchive());
         const libbsarch::convertible_string &rootPath = bsaFolder->path();
         archive.set_dds_callback(&BSACallback, rootPath);
 
@@ -58,7 +58,7 @@ bool BSACreate::isApplicable(File &file)
     if (!bsaFolder)
         return false;
 
-    return file.generalSettings().bBSACreate();
+    return currentProfile().getGeneralSettings().bBSACreate();
 }
 
 bool BSACreate::canBeCompressedFile(const QString &filename)

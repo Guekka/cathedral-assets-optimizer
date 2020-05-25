@@ -40,7 +40,7 @@ bool MeshConvert::isApplicable(File &file)
         return false;
 
     //Listing headparts
-    std::call_once(_onceHeadpartsFlag, [this, &file] { this->listHeadparts(file.generalSettings()); });
+    std::call_once(_onceHeadpartsFlag, [this] { this->listHeadparts(currentProfile().getGeneralSettings()); });
 
     MeshResource nif = *meshFile;
 
