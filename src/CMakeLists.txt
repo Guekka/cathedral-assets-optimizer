@@ -87,6 +87,8 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/PatternMap.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profiles.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profiles.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/UISync.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/UISync.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Utils/QJSONValueWrapper.hpp)
