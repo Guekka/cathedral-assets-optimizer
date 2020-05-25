@@ -60,16 +60,6 @@ PatternSettings &PatternMap::getDefaultSettings()
     return patterns_.begin()->second;
 }
 
-void PatternMap::readFromUi(const MainWindow &window)
-{
-    patterns_ >>= pipes::for_each([&window](auto &&pair) { pair.second.readFromUi(window); });
-}
-
-void PatternMap::saveToUi(MainWindow &window) const
-{
-    patterns_ >>= pipes::for_each([&window](auto &&pair) { pair.second.saveToUi(window); });
-}
-
 nlohmann::json PatternMap::mergePattern(const nlohmann::json &main, const nlohmann::json &second) const
 {
     auto patt1 = JSON::getValue<std::vector<std::string>>(main, PatternSettings::patternKey);

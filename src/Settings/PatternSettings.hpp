@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "BaseTypes.hpp"
 #include "Settings.hpp"
 
 #define REGISTER_SETTING(type, name, key) QJSONValueWrapper<type> name{json_, key};

@@ -89,8 +89,6 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profiles.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/UISync.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/UISync.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Utils/QJSONValueWrapper.hpp)
 
 if(GUI)
@@ -125,11 +123,6 @@ target_include_directories(CAO_LIB PUBLIC
 
 #C++17
 target_compile_features(CAO_LIB PUBLIC cxx_std_17)
-
-#Set GUI compile definition
-if(GUI)
-    target_compile_definitions(CAO_LIB PUBLIC GUI)
-endif()
 
 #Strictly follow the standard
 target_compile_options(CAO_LIB PRIVATE "/permissive-")

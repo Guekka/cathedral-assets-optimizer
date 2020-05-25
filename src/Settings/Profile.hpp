@@ -45,9 +45,6 @@ public:
 
     void saveToJSON();
 
-    void saveToUi(MainWindow &window) const;
-    void readFromUi(const MainWindow &window);
-
 private:
     FileTypes fileTypes_;
     GeneralSettings generalSettings_;

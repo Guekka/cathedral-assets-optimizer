@@ -6,7 +6,6 @@
 #pragma once
 
 #include "GUI/MainWindow.hpp"
-#include "UISync.hpp"
 #include "Utils/QJSONValueWrapper.hpp"
 #include "pch.hpp"
 
@@ -28,11 +27,7 @@ public:
     virtual nlohmann::json getJSON() const { return json_; }
     virtual void setJSON(const nlohmann::json &j) { json_ = j; }
 
-    void saveToUi(MainWindow &window) const;
-    void readFromUi(const MainWindow &window);
-
 protected:
-    std::vector<UISync> uiSyncList_;
     mutable nlohmann::json json_;
 };
 } // namespace CAO

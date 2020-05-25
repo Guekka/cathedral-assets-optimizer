@@ -28,16 +28,4 @@ void Settings::operator=(const Settings &other)
     json_ = other.json_;
 }
 
-void Settings::saveToUi(MainWindow &window) const
-{
-    for (const auto &set : uiSyncList_)
-        set.save(window, json_);
-}
-
-void Settings::readFromUi(const MainWindow &window)
-{
-    for (const auto &set : uiSyncList_)
-        set.read(window, json_);
-}
-
 } // namespace CAO

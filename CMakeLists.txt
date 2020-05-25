@@ -3,9 +3,6 @@ include_guard(GLOBAL)
 
 project(Cathedral_Assets_Optimizer VERSION 6.0.0 LANGUAGES CXX)
 
-#Set to false to create a CLI version instead
-option(GUI "Create GUI version of CAO" ON)
-
 #Setting version for C++ files
 configure_file (src/Version.hpp.in src/Version.hpp)
 

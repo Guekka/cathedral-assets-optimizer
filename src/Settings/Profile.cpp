@@ -109,18 +109,4 @@ void Profile::saveToJSON()
     nlohmann::json fileTypesJSON = fileTypes_.getJSON();
     JSON::saveToFile(fileTypesJSON, fileTypesPath());
 }
-
-#ifdef GUI
-void Profile::readFromUi(const MainWindow &window)
-{
-    generalSettings_.readFromUi(window);
-    patternSettings_.readFromUi(window);
-}
-
-void Profile::saveToUi(MainWindow &window) const
-{
-    generalSettings_.saveToUi(window);
-    patternSettings_.saveToUi(window);
-}
-#endif
 } // namespace CAO

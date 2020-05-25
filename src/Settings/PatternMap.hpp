@@ -22,9 +22,6 @@ public:
     void cleanPatterns();
     nlohmann::json getUnifiedJSON() const;
 
-    void readFromUi(const MainWindow &window);
-    void saveToUi(MainWindow &window) const;
-
     auto &get() { return patterns_; }
     const auto &get() const { return patterns_; }
 
