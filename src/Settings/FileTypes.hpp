@@ -22,12 +22,9 @@ public:
     REGISTER_SETTING(std::vector<std::string>, slBSATextureFiles, "BSA/slBSATextureFiles")
     REGISTER_SETTING(std::vector<std::string>, slBSAUncompressibleFiles, "BSA/slBSAUncompressibleFiles")
 
-    REGISTER_SETTING(std::vector<std::string>, slTextureFiles, "Textures/slTextureFiles")
+    REGISTER_SETTING(std::vector<std::string>, slMeshesHeadparts, "Meshes/slHeadparts")
 
-    REGISTER_SETTING(std::vector<std::string>, slMeshFiles, "Meshes/slMeshFiles")
-    REGISTER_SETTING(std::vector<std::string>, slHeadparts, "Meshes/slHeadparts")
-
-    REGISTER_SETTING(std::vector<std::string>, slAnimationFiles, "Animations/slAnimationFiles")
+    REGISTER_SETTING(std::vector<std::string>, slTextureLandscapes, "Textures/slLandscape")
 };
 } // namespace CAO
 
