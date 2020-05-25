@@ -4,19 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Version.hpp"
-#ifdef GUI
 #include "GUI/MainWindow.hpp"
-#endif
 #include "Manager.hpp"
 
-int main(int argc, char *argv[])
+void init()
 {
-#ifdef GUI
-    QApplication app(argc, argv);
-#else
-    QCoreApplication app(argc, argv);
-#endif
-
     QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
     QCoreApplication::setApplicationVersion(CAO_VERSION);
 
@@ -27,20 +19,39 @@ int main(int argc, char *argv[])
     QTranslator AssetsOptTranslator;
     AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
     QCoreApplication::installTranslator(&AssetsOptTranslator);
+}
 
-#ifdef GUI
-    auto window = std::make_unique<CAO::MainWindow>();
-#else
-    Manager *manager = new Manager(QCoreApplication::arguments());
-#endif
+int main(int argc, char *argv[])
+{
+    std::unique_ptr<QCoreApplication> app = std::make_unique<QCoreApplication>(argc, argv);
+
+    init();
+
+    QCommandLineParser parser;
+    parser.addPositionalArgument("profile", "The profile to use");
+    parser.addOption({"cli", "Do not run the GUI"});
+    parser.process(*app);
+
+    std::unique_ptr<CAO::MainWindow> window;
+    std::unique_ptr<CAO::Manager> manager;
 
     try
     {
-#ifdef GUI
-        window->show();
-#else
-        manager->runOptimization();
-#endif
+        CAO::Profiles::getInstance().update(true);
+        if (parser.isSet("cli"))
+        {
+            CAO::Profiles::getInstance().setCurrent(parser.positionalArguments().at(0));
+
+            manager = std::make_unique<CAO::Manager>(CAO::currentProfile());
+            manager->runOptimization();
+        }
+        else
+        {
+            app    = nullptr;
+            app    = std::make_unique<QApplication>(argc, argv);
+            window = std::make_unique<CAO::MainWindow>();
+            window->show();
+        }
     }
     catch (const std::exception &e)
     {
@@ -49,9 +60,5 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-#ifdef GUI
-    return QApplication::exec();
-#else
-    return 0;
-#endif
+    return app->exec();
 }
