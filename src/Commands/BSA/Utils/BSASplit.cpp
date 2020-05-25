@@ -4,7 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "BSASplit.hpp"
 #include "Settings/Profiles.hpp"
+#include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
+#include "Utils/wildcards.hpp"
 
 namespace CAO {
 std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &generalSets)
@@ -25,13 +27,19 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
         if (!isAllowedFile(dir, it.fileInfo()))
             continue;
 
-        const auto &patternSettings = currentProfile().getSettings(it.filePath());
+        const std::string &name = it.filePath().toStdString();
+        auto match              = [&name](const std::string &str) {
+            using namespace wildcards;
+            return isMatch(name, pattern{str}, case_insensitive);
+        };
 
-        //FIXME Select the BSA according to the filetype
-        BSA **pBsa = &standardBsa;
-        /*BSA **pBsa = patternSettings.bBSAIsTexture() ? &texturesBsa : &standardBsa;
-        pBsa = patternSettings.bBSAIsUncompressible() ? &uncompressableBsa : pBsa;
-        */
+        const auto &fileTypes       = currentProfile().getFileTypes();
+        const bool isTexture        = any_of(fileTypes.slBSATextureFiles(), match);
+        const bool isUncompressible = any_of(fileTypes.slBSAUncompressibleFiles(), match);
+
+        BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
+        pBsa       = isUncompressible ? &uncompressableBsa : pBsa;
+
         //adding files and sizes to list
         (*pBsa)->files << it.filePath();
         (*pBsa)->filesSize += it.fileInfo().size();
@@ -58,10 +66,16 @@ bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
     if (bsaDir.absoluteFilePath(fileinfo.fileName()) == fileinfo.absoluteFilePath())
         return false;
 
-    const auto &settings = currentProfile().getSettings(fileinfo.filePath());
+    const std::string &name = fileinfo.fileName().toStdString();
+    auto match              = [&name](const std::string &str) {
+        using namespace wildcards;
+        return isMatch(name, pattern{str}, case_insensitive);
+    };
 
-    return true; //TODO check if filetype is whitelisted
+    const auto &types = currentProfile().getFileTypes();
+
+    return any_of(types.slBSAStandardFiles(), match) || any_of(types.slBSATextureFiles(), match)
+           || any_of(types.slBSAUncompressibleFiles(), match);
 }
-
 
 } // namespace CAO

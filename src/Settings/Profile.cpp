@@ -9,7 +9,6 @@ Profile::Profile(QDir profileDir)
     : profileDir_(std::move(profileDir))
 {
     //Log path
-
     const QString &dateTime     = QDateTime::currentDateTime().toString("yy.MM.dd.hh.mm");
     const QString &absolutePath = profileDir_.absoluteFilePath("logs/" + dateTime + ".html");
     logPath_                    = QDir::toNativeSeparators(absolutePath);
@@ -21,6 +20,10 @@ Profile::Profile(QDir profileDir)
     nlohmann::json patternJson;
     JSON::readFromFile(patternJson, patternSettingsPath());
     patternSettings_.listPatterns(patternJson);
+
+    nlohmann::json fileTypes;
+    JSON::readFromFile(fileTypes, fileTypesPath());
+    fileTypes_.setJSON(patternJson);
 }
 
 QFile Profile::getFile(const QString &filename) const
@@ -55,6 +58,11 @@ QString Profile::patternSettingsPath() const
     return profileDir_.absoluteFilePath(patternSettingsFileName);
 }
 
+QString Profile::fileTypesPath() const
+{
+    return profileDir_.absoluteFilePath(fileTypesFilename);
+}
+
 PatternSettings Profile::getSettings(const QString &filePath) const
 {
     return patternSettings_.getSettings(filePath);
@@ -80,12 +88,26 @@ const PatternMap &Profile::getPatterns() const
     return patternSettings_;
 }
 
+FileTypes &Profile::getFileTypes()
+{
+    return fileTypes_;
+}
+
+const FileTypes &Profile::getFileTypes() const
+{
+    return fileTypes_;
+}
+
 void Profile::saveToJSON()
 {
     nlohmann::json generalJson = getGeneralSettings().getJSON();
-    nlohmann::json patternJSON = patternSettings_.getUnifiedJSON();
     JSON::saveToFile(generalJson, generalSettingsPath());
+
+    nlohmann::json patternJSON = patternSettings_.getUnifiedJSON();
     JSON::saveToFile(patternJSON, patternSettingsPath());
+
+    nlohmann::json fileTypesJSON = fileTypes_.getJSON();
+    JSON::saveToFile(fileTypesJSON, fileTypesPath());
 }
 
 #ifdef GUI

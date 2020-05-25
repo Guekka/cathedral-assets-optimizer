@@ -5,6 +5,8 @@
 
 #include "BSACreate.hpp"
 #include "Commands/BSA/Utils/BSACallback.hpp"
+#include "Utils/Algorithms.hpp"
+#include "Utils/wildcards.hpp"
 
 namespace CAO {
 CommandResult BSACreate::process(File &file)
@@ -31,8 +33,6 @@ CommandResult BSACreate::process(File &file)
 
         try
         {
-            //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
-            //Then creating the archive
             for (const auto &fileInBSA : bsa.files)
             {
                 if (!canBeCompressedFile(fileInBSA))
@@ -63,10 +63,15 @@ bool BSACreate::isApplicable(File &file)
 
 bool BSACreate::canBeCompressedFile(const QString &filename)
 {
-    const bool cantBeCompressed = (filename.endsWith(".wav", Qt::CaseInsensitive)
-                                   || filename.endsWith(".xwm", Qt::CaseInsensitive)
-                                   || filename.contains(QRegularExpression("^.+\\.[^.]*strings$")));
-    return !cantBeCompressed;
+    auto name                       = filename.toStdString();
+    const auto &uncompressibleFiles = currentProfile().getFileTypes().slBSAUncompressibleFiles();
+
+    auto match = [&name](const std::string &str) {
+        using namespace wildcards;
+        return isMatch(name, pattern{str}, case_insensitive);
+    };
+
+    return any_of(uncompressibleFiles, match);
 }
 
 } // namespace CAO

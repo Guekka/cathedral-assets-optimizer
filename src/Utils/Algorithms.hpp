@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <type_traits>
 
@@ -47,4 +48,25 @@ template<class Container, class Predicate, class Sum>
 [[nodiscard]] static auto merge_if(Container &&cont, Predicate pred, Sum sum)
 {
     return merge_if(cont.begin(), cont.end(), pred, sum);
+}
+
+template<class It, class ValueType>
+[[nodiscard]] static auto contains(It begin, It end, ValueType value)
+{
+    return std::find(begin, end, value) != end;
+}
+
+template<class Container, class ValueType>
+[[nodiscard]] static auto contains(Container &&cont, ValueType value)
+{
+    return std::find(std::forward<Container>(cont).begin(), std::forward<Container>(cont).end(), value)
+           != std::forward<Container>(cont).end();
+}
+
+template<class Container, class Pred>
+[[nodiscard]] static auto any_of(Container &&cont, Pred &&pred)
+{
+    return std::any_of(std::forward<Container>(cont).begin(),
+                       std::forward<Container>(cont).end(),
+                       std::forward<Pred>(pred));
 }

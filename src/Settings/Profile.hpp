@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Settings/FileTypes.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternMap.hpp"
 #include "pch.hpp"
@@ -14,6 +15,7 @@ class Profile
 public:
     static inline const QString generalSettingsFileName = "GeneralSettings.json";
     static inline const QString patternSettingsFileName = "PatternSettings.json";
+    static inline const QString fileTypesFilename       = "FileTypes.json";
     static inline const QString isBaseProfileFilename   = "isBase";
 
     Profile(QDir profileDir);
@@ -23,16 +25,23 @@ public:
     /* Getters */
     bool isBaseProfile() const;
     QDir profileDirectory() const;
+
     QString logPath() const;
     QString generalSettingsPath() const;
     QString patternSettingsPath() const;
+    QString fileTypesPath() const;
 
     /* Settings */
     PatternSettings getSettings(const QString &filePath) const;
+
     GeneralSettings &getGeneralSettings();
     const GeneralSettings &getGeneralSettings() const;
+
     PatternMap &getPatterns();
     const PatternMap &getPatterns() const;
+
+    FileTypes &getFileTypes();
+    const FileTypes &getFileTypes() const;
 
     void saveToJSON();
 
@@ -40,6 +49,7 @@ public:
     void readFromUi(const MainWindow &window);
 
 private:
+    FileTypes fileTypes_;
     GeneralSettings generalSettings_;
     PatternMap patternSettings_;
 
