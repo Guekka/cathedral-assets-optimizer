@@ -6,6 +6,7 @@
 #include "AdvancedTexturesWindow.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternSettings.hpp"
+#include "Utils.hpp"
 #include "ui_AdvancedTexturesWindow.h"
 
 namespace CAO {
@@ -24,7 +25,7 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSet
     connectWrapper(*ui_->mainMipMaps, patternSets.bTexturesMipmaps);
 
     connect(ui_->mainBox, &QGroupBox::toggled, [this](bool state) {
-        setEnabled(state, ui_->mainNecessary, ui_->mainCompress, ui_->mainMipMaps);
+        CAO::setEnabled(state, ui_->mainNecessary, ui_->mainCompress, ui_->mainMipMaps);
     });
 
     //Resizing
@@ -60,13 +61,13 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSet
     connectWrapper(*ui_->resizingMinimumHeight, patternSets.iTexturesMinimumHeight);
 
     connect(ui_->resizingBox, &QGroupBox::toggled, [this](bool state) {
-        setEnabled(state,
-                   ui_->resizingMode,
-                   ui_->resizingMinimumCheckBox,
-                   ui_->resizingMinimumWidth,
-                   ui_->resizingMinimumHeight,
-                   ui_->resizingWidth,
-                   ui_->resizingHeight);
+        CAO::setEnabled(state,
+                        ui_->resizingMode,
+                        ui_->resizingMinimumCheckBox,
+                        ui_->resizingMinimumWidth,
+                        ui_->resizingMinimumHeight,
+                        ui_->resizingWidth,
+                        ui_->resizingHeight);
     });
 }
 void AdvancedTexturesWindow::disconnectAll() {}

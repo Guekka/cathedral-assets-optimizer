@@ -89,29 +89,32 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profiles.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Utils/QJSONValueWrapper.hpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Utils/QJSONValueWrapper.hpp
 
-if(GUI)
-    list(APPEND SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.ui
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.ui
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.ui
 
         ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.hpp)
-endif()
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.hpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils.hpp
+    )
 
 #Main library
 add_library(CAO_LIB STATIC ${SOURCES})
