@@ -23,9 +23,11 @@ public:
 
     //All the code below is used to register settings
 
+    REGISTER_SETTING(bool, bBSACreate, "BSA/bBSACreate")
     REGISTER_SETTING(bool, bBSAExtractFromBSA, "BSA/bBSAExtractFromBSA")
     REGISTER_SETTING(bool, bBSACreateDummies, "BSA/bBSACreateDummies")
     REGISTER_SETTING(bool, bBSACompressArchive, "BSA/bBSACompressArchive")
+
     REGISTER_SETTING(bsa_archive_type_t, eBSAFormat, "Advanced/BSA/eBSAFormat")
     REGISTER_SETTING(bsa_archive_type_t, eBSATexturesFormat, "Advanced/BSA/eBSATexturesFormat")
     REGISTER_SETTING(double, iBSAMaxSize, "Advanced/BSA/iBSAMaxSize")

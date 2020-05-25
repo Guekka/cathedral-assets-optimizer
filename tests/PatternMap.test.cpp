@@ -40,9 +40,6 @@ TEST_CASE("Listing patterns")
 				"iMeshesStream": 100
 			  }
 			},
-			"BSA": {
-			  "bBSAAddToBSA": true
-			},
 			"Meshes": {
 			  "bMeshesResave": true
 			},
@@ -75,7 +72,6 @@ TEST_CASE("Listing patterns")
 		)"_json;
 
         PatternSettings sets1(0, {"*"});
-        sets1.bBSAAddToBSA  = true;
         sets1.bMeshesResave = true;
         sets1.iMeshesStream = 100;
 
@@ -96,7 +92,6 @@ TEST_CASE("cleanPatterns")
 {
     PatternSettings sets1(0, {"*"});
     sets1.priority_     = 0;
-    sets1.bBSAAddToBSA  = true;
     sets1.bMeshesResave = true;
     sets1.iMeshesStream = 100;
 
@@ -125,7 +120,6 @@ TEST_CASE("Getting json from PatternMap")
 {
     PatternSettings sets1(0, {"*"});
     sets1.priority_     = 0;
-    sets1.bBSAAddToBSA  = true;
     sets1.bMeshesResave = true;
     sets1.iMeshesStream = 100;
 
@@ -147,9 +141,6 @@ TEST_CASE("Getting json from PatternMap")
                 "Meshes": {
                     "iMeshesStream": 100
                 }
-            },
-            "BSA": {
-                "bBSAAddToBSA": true
             },
             "Meshes": {
                 "bMeshesResave": true

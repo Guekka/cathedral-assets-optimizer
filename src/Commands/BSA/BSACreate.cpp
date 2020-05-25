@@ -58,7 +58,7 @@ bool BSACreate::isApplicable(File &file)
     if (!bsaFolder)
         return false;
 
-    return true;
+    return file.generalSettings().bBSACreate();
 }
 
 bool BSACreate::canBeCompressedFile(const QString &filename)

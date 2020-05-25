@@ -27,9 +27,11 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
 
         const auto &patternSettings = currentProfile().getSettings(it.filePath());
 
-        BSA **pBsa = patternSettings.bBSAIsTexture() ? &texturesBsa : &standardBsa;
+        //FIXME Select the BSA according to the filetype
+        BSA **pBsa = &standardBsa;
+        /*BSA **pBsa = patternSettings.bBSAIsTexture() ? &texturesBsa : &standardBsa;
         pBsa = patternSettings.bBSAIsUncompressible() ? &uncompressableBsa : pBsa;
-
+        */
         //adding files and sizes to list
         (*pBsa)->files << it.filePath();
         (*pBsa)->filesSize += it.fileInfo().size();
@@ -58,11 +60,8 @@ bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
 
     const auto &settings = currentProfile().getSettings(fileinfo.filePath());
 
-    return settings.bBSAAddToBSA()
-           && (settings.bBSAIsTexture() || settings.bBSAIsStandard()
-               || settings.bBSAIsUncompressible());
+    return true; //TODO check if filetype is whitelisted
 }
 
-//TODO Move files to not pack to patterns
 
 } // namespace CAO

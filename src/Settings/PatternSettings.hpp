@@ -39,11 +39,6 @@ private:
     std::optional<size_t> getPatternPriorityFromJSON(const nlohmann::json &json);
 
 public:
-    REGISTER_SETTING(bool, bBSAAddToBSA, "BSA/bBSAAddToBSA")
-    REGISTER_SETTING(bool, bBSAIsStandard, "Advanced/BSA/bBSAIsStandard")
-    REGISTER_SETTING(bool, bBSAIsTexture, "Advanced/BSA/bBSAIsTexture")
-    REGISTER_SETTING(bool, bBSAIsUncompressible, "Advanced/BSA/bBSAIsUncompressible")
-
     REGISTER_SETTING(bool, bTexturesNecessary, "Textures/bTexturesNecessary")
     REGISTER_SETTING(bool, bTexturesCompress, "Textures/bTexturesCompress")
     REGISTER_SETTING(bool, bTexturesMipmaps, "Textures/bTexturesMipmaps")
