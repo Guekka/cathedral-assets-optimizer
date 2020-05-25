@@ -11,8 +11,13 @@ CommandResult TextureConvert::process(File &file)
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
-    const auto &outputFormat = file.patternSettings().eTexturesFormat();
-    auto timage              = new TextureResource;
+    auto outputFormat = file.patternSettings().eTexturesFormat();
+
+    //Textures smaller than that cannot be compressed
+    if (texFile->GetMetadata().width < 4 || texFile->GetMetadata().height < 4)
+        outputFormat = DXGI_FORMAT_B8G8R8A8_UNORM; //Standard uncompressed format
+
+    auto timage = new TextureResource;
 
     if (DirectX::IsCompressed(outputFormat))
     {
