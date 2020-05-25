@@ -6,7 +6,7 @@
 
 #include "pch.hpp"
 
-constexpr double GigaByte = 1000 * 1000 * 1000;
+constexpr double GigaByte = 1024 * 1024 * 1024;
 
 namespace CAO {
 enum OptimizationMode { SingleMod = 0, SeveralMods = 1 };
