@@ -19,8 +19,7 @@ public:
 
     void operator=(const GeneralSettings &other);
 
-    //! \brief Checks if the current settings are allowed
-    QString isValid() const;
+    std::optional<QString> isValid() const override;
 
     //All the code below is used to register settings
 

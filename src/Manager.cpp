@@ -12,12 +12,20 @@ Manager::Manager(const Profile &profile)
     initCustomLogger(_profile.logPath(), _profile.getGeneralSettings().bDebugLog());
 
     PLOG_VERBOSE << "Checking settings...";
-    const QString error = _profile.getGeneralSettings().isValid();
-    if (!error.isEmpty())
-    {
-        PLOG_FATAL << error;
-        throw std::runtime_error("Options are not valid." + error.toStdString());
-    }
+
+    auto checkSettings = [](const Settings &sets) {
+        const std::optional<QString> error = sets.isValid();
+        if (!error.has_value())
+        {
+            PLOG_FATAL << error.value();
+            throw std::runtime_error("Options are not valid." + error->toStdString());
+        }
+    };
+
+    checkSettings(_profile.getFileTypes());
+    checkSettings(_profile.getGeneralSettings());
+    _profile.getPatterns().get() | rx::transform([](auto &&p) { return p.second; })
+        | rx::for_each(checkSettings);
 
     readIgnoredMods();
 
@@ -45,12 +53,7 @@ void Manager::listDirectories()
 
 void Manager::printProgress(int total, const QString &text = "Processing files")
 {
-#ifndef GUI
-    QTextStream(stdout) << "PROGRESS:|" << text << " - %v/%m - %p%|" << _numberCompletedFiles << '|'
-                        << total << endl;
-#else
     emit progressBarTextChanged(text + "- %v/%m - %p%", total, _numberCompletedFiles);
-#endif
 }
 
 void Manager::listFiles()

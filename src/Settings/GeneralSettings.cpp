@@ -25,13 +25,14 @@ void GeneralSettings::operator=(const GeneralSettings &other)
     json_ = other.json_;
 }
 
-QString GeneralSettings::isValid() const
+std::optional<QString> GeneralSettings::isValid() const
 {
-    if (!QDir(sUserPath()).exists() || sUserPath().size() < 5)
-    {
-        return QString("This path does not exist or is shorter than 5 characters. Path: '%1'").arg(sUserPath());
-    }
+    if (iBSAMaxSize() < 0 || iBSATexturesMaxSize() < 0)
+        return QString("BSA Max size cannot be negative");
 
-    return QString();
+    if (!QDir(sUserPath()).exists() || sUserPath().size() < 5)
+        return QString("This path does not exist or is shorter than 5 characters. Path: '%1'").arg(sUserPath());
+
+    return std::nullopt;
 }
 } // namespace CAO

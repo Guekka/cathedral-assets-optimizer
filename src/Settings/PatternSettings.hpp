@@ -22,14 +22,14 @@ public:
     void operator=(PatternSettings &&other);
     bool operator==(const PatternSettings &other) const;
 
+    std::optional<QString> isValid() const override;
+
     std::vector<std::string> patterns_;
     size_t priority_{0};
 
+    void setJSON(const nlohmann::json &j) override;
     nlohmann::json getJSON() const override;
     static nlohmann::json removeMeta(const nlohmann::json &j);
-    void setJSON(const nlohmann::json &j) override;
-
-    std::optional<QString> isValid();
 
     static constexpr auto patternKey  = "Patterns";
     static constexpr auto priorityKey = "Priority";

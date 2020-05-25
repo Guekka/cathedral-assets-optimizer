@@ -55,6 +55,26 @@ bool PatternSettings::operator==(const PatternSettings &other) const
     return getJSON() == other.getJSON();
 }
 
+std::optional<QString> PatternSettings::isValid() const
+{
+    auto isPow2 = [](int val) { return val % 2 == 0; };
+
+    if (!isPow2(iTexturesMinimumWidth()) || !isPow2(iTexturesMinimumHeight()))
+        return ("Textures resizing minimum size has to be a power of two");
+
+    if (iTexturesResizingBySizeWidth() % 2 != 0 || iTexturesResizingBySizeHeight() % 2 != 0)
+        return ("Textures resizing target size has to be a power of two");
+
+    if (iTexturesResizingByRatioWidth() % 2 != 0 || iTexturesResizingByRatioHeight() % 2 != 0)
+        return ("Textures resizing ratio has to be a power of two");
+
+    if (iMeshesOptimizationLevel() < 0 || iMeshesOptimizationLevel() > 3)
+        return ("This meshes optimization level does not exist. Level: "
+                + QString::number(iMeshesOptimizationLevel()));
+
+    return std::nullopt;
+}
+
 nlohmann::json PatternSettings::getJSON() const
 {
     nlohmann::json j = json_;
@@ -94,18 +114,4 @@ std::optional<size_t> PatternSettings::getPatternPriorityFromJSON(const nlohmann
     return json[PatternSettings::priorityKey].get<size_t>();
 }
 
-std::optional<QString> PatternSettings::isValid()
-{
-    if (iMeshesOptimizationLevel() > 3)
-        return ("This meshes optimization level does not exist. Level: "
-                + QString::number(iMeshesOptimizationLevel()));
-
-    if (iTexturesResizingBySizeWidth() % 2 != 0 || iTexturesResizingBySizeHeight() % 2 != 0)
-        return ("Textures resizing target size has to be a power of two");
-
-    if (iTexturesResizingByRatioWidth() % 2 != 0 || iTexturesResizingByRatioHeight() % 2 != 0)
-        return ("Textures resizing ratio has to be a power of two");
-
-    return std::nullopt;
-}
 } // namespace CAO

@@ -14,10 +14,8 @@ namespace CAO {
 class Settings //TODO: V690 http://www.viva64.com/en/V690 The 'Settings' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
 {
 public:
-    /* TODO
-    //! \brief Checks if the current settings are allowed 
-    virtual std::optional<QString> isValid() = 0; 
-    */
+    //! \brief Checks if the current settings are allowed
+    virtual std::optional<QString> isValid() const = 0;
 
     Settings() = default;
     Settings(const nlohmann::json &j);
