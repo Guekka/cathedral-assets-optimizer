@@ -37,7 +37,7 @@ public:
     QJSONValueWrapper(QJSONValueWrapper &&other)      = delete;
     void operator=(const QJSONValueWrapper &other) = delete;
 
-    virtual void setValue(const Type &newValue)
+    void setValue(const Type &newValue)
     {
         if (!json_[JSON::getPointer(key_)].is_null() && value() == newValue)
             return;
@@ -46,7 +46,13 @@ public:
         emit valueChanged();
     }
 
-    virtual Type value() const { return JSON::getValue<Type>(json_, key_); }
+    Type value() const { return JSON::getValue<Type>(json_, key_); }
+    Type value_or(const Type &fallback)
+    {
+        if (json_.contains(JSON::getPointer(key_)))
+            return value();
+        return fallback;
+    }
 
     Type operator()() const { return value(); }
     void operator=(const Type &val) { setValue(val); }
