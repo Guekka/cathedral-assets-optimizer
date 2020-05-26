@@ -10,9 +10,11 @@ namespace CAO {
 
 Profiles::Profiles()
     : rootProfileDir_("profiles")
-    , _commonSettings(rootProfileDir_.filePath(commonSettingsFileName), QSettings::IniFormat)
 {
     update(true);
+    nlohmann::json j;
+    JSON::readFromFile(j, commonSettingsPath());
+    commonSettings_.setJSON(j);
 }
 
 Profiles &Profiles::getInstance()
@@ -56,7 +58,7 @@ Profile &Profiles::setCurrent(const QString &profile)
         throw std::runtime_error(
             "Trying to load a profile that does not exist. Please reinstall the application");
 
-    _commonSettings.setValue("profile", profile);
+    commonSettings_.sProfile = profile;
     return profiles_.at(profile);
 }
 Profile &Profiles::getCurrent()
@@ -68,7 +70,7 @@ Profile &Profiles::getCurrent()
 
 QString Profiles::currentProfileName()
 {
-    return _commonSettings.value("profile").toString();
+    return commonSettings_.sProfile();
 }
 
 Profile &Profiles::get(const QString &profile)
@@ -102,5 +104,16 @@ void Profiles::update(bool fullRefresh)
             profiles_.emplace(subDir, Profile(profilePath));
         }
     }
+}
+
+QString Profiles::commonSettingsPath()
+{
+    return rootProfileDir_.filePath(commonSettingsFileName);
+}
+
+void Profiles::saveCommonSettings()
+{
+    nlohmann::json j = commonSettings_.getJSON();
+    JSON::saveToFile(j, commonSettingsPath());
 }
 } // namespace CAO

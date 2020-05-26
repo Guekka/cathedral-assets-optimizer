@@ -71,6 +71,7 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Textures/TextureFile.hpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/BaseTypes.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/CommonSettings.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/JSON.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/JSON.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/MigrateProfiles.hpp

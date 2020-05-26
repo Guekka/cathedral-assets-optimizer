@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Profile.hpp"
+#include "Settings/CommonSettings.hpp"
 #include "pch.hpp"
 
 class MainWindow;
@@ -14,7 +15,7 @@ namespace CAO {
 class Profiles
 {
 public:
-    static inline const QString commonSettingsFileName = "common.ini";
+    static inline const QString commonSettingsFileName = "CommonSettings.json";
     static inline const QString defaultProfile         = "SSE";
 
     static Profiles &getInstance();
@@ -37,12 +38,15 @@ public:
     bool exists(const QString &profile);
     void update(bool fullRefresh = false);
 
-    QSettings &commonSettings() { return _commonSettings; }
+    CommonSettings &commonSettings() { return commonSettings_; }
+    QString commonSettingsPath();
+
+    void saveCommonSettings();
 
 private:
     std::unordered_map<QString, Profile> profiles_;
     QDir rootProfileDir_;
-    QSettings _commonSettings;
+    CommonSettings commonSettings_;
 
     /* Constructor */
     Profiles();
