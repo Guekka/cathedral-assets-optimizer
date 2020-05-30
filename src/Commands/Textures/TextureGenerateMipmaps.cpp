@@ -7,7 +7,7 @@
 namespace CAO {
 CommandResult TextureGenerateMipmaps::process(File& file)
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
@@ -57,7 +57,7 @@ bool TextureGenerateMipmaps::isApplicable(File& file)
     if (!file.patternSettings().bTexturesMipmaps())
         return false;
 
-    auto texFile = dynamic_cast<const TextureResource *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return false;
 

@@ -7,7 +7,7 @@
 namespace CAO {
 CommandResult TextureDecompress::process(File& file)
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
@@ -27,7 +27,7 @@ CommandResult TextureDecompress::process(File& file)
 
 bool TextureDecompress::isApplicable(File& file)
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return false;
 

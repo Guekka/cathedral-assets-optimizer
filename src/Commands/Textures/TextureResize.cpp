@@ -7,7 +7,7 @@
 namespace CAO {
 CommandResult TextureResize::process(File &file)
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
@@ -34,7 +34,7 @@ bool TextureResize::isApplicable(File &file)
     if (file.patternSettings().eTexturesResizingMode() == None)
         return false;
 
-    auto texFile = dynamic_cast<const TextureResource *>(&file);
+    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return false;
 
