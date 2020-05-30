@@ -13,14 +13,14 @@ CommandResult TextureResize::process(File &file)
 
     const auto &info = texFile->GetMetadata();
 
-    auto timage     = std::make_unique<TextureResource>();
+    auto timage     = new TextureResource;
     const auto &img = texFile->GetImages();
     if (!img)
         return _resultFactory.getFailedResult(1, "Failed to get images from file");
 
     const auto &tinfo = calculateTargetDimensions(info, file.patternSettings());
 
-    const DWORD &filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
+    const DWORD &filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
     const HRESULT &hr = Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
     if (FAILED(hr))
         return _resultFactory.getFailedResult(2, "Failed to resize image");
