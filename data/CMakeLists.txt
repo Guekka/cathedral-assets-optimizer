@@ -14,15 +14,19 @@ function (generateTranslations sources qm_files)
         )
 endfunction()
 
+
 function (getResources list)
+    #AUTORCC does not seem to work here
+    qt5_add_resources(cao_qrc ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/styles/qdarkstyle/style.qrc)
+
     SET(${list}
-        ${CMAKE_CURRENT_SOURCE_DIR}/styles/Cathedral_Assets_Optimizer.rc
-        ${CMAKE_CURRENT_SOURCE_DIR}/styles/qdarkstyle/style.qrc
+        ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/styles/Cathedral_Assets_Optimizer.rc
+        ${cao_qrc}
         PARENT_SCOPE)
 endfunction()
 
 function (copyDataToBinaryDir target dir)
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/profiles ${dir}/profiles)
+        ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/profiles ${dir}/profiles)
 endfunction()

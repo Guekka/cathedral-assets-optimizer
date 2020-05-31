@@ -9,6 +9,8 @@
 
 void init()
 {
+    Q_INIT_RESOURCE(style);
+
     QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
     QCoreApplication::setApplicationVersion(CAO_VERSION);
 
