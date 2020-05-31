@@ -16,8 +16,5 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
-#Translations
-generateTranslations(SOURCES)
-
 #PCH
 target_precompile_headers(Cathedral_Assets_Optimizer PUBLIC "src/pch.hpp")

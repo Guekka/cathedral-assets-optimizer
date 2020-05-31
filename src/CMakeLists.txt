@@ -117,8 +117,12 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils.hpp
     )
 
+#Translations
+generateTranslations(${SOURCES} qm_files)
 #Main library
-add_library(CAO_LIB STATIC ${SOURCES})
+add_library(CAO_LIB STATIC ${SOURCES}
+    ${qm_files}
+    )
 
 #Include source
 target_include_directories(CAO_LIB PUBLIC
