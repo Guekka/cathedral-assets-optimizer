@@ -65,4 +65,15 @@ void setData(QComboBox &box, const QString &text, Data &&data)
         throw UiException(QString("UI was different than expected. Element '%1' not found").arg(text));
     box.setItemData(pos, data);
 }
+
+static bool selectText(QComboBox &box, const QString &text)
+{
+    int idx = box.findText(text);
+    if (idx == -1)
+        return false;
+
+    box.setCurrentIndex(idx);
+    return true;
+}
+
 } // namespace CAO

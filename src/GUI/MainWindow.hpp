@@ -4,8 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "BSAFilesToPack.hpp"
-#include "ListDialog.hpp"
+#include "IWindowModule.hpp"
 #include "pch.hpp"
 #include "ui_mainWindow.h"
 
@@ -25,52 +24,62 @@ class MainWindow final : public QMainWindow
 
 public:
     MainWindow();
-    ~MainWindow();
 
-    Ui::MainWindow &mainUI() { return *_ui; }
-    Ui::BSAFilesToPack &bsaUI() { return bsaFilesToPackDialog->getUi(); }
+    Ui::MainWindow &mainUI() { return *ui_; }
+    const Ui::MainWindow &mainUI() const { return *ui_; }
 
-    const Ui::MainWindow &mainUI() const { return *_ui; }
-    const Ui::BSAFilesToPack &bsaUI() const { return bsaFilesToPackDialog->getUi(); }
+    template<typename T>
+    void addModule(const QString &name)
+    {
+        modules_.emplace_back(std::make_unique<T>());
+        ui_->tabWidget->addTab(&*modules_.back(), name);
+    }
 
-    void saveUi();
-    void loadUi();
+    template<typename T>
+    void removeModule()
+    {
+        auto it = std::find_if(modules_.begin(),
+                               modules_.end(),
+                               [](const std::unique_ptr<IWindowModule> &mod) {
+                                   return dynamic_cast<T *>(mod);
+                               });
+        if (it != modules_.end())
+            modules_.erase(it);
+    }
+
+    void connectAll();
+    void disconnectAll();
 
 private:
-    Ui::MainWindow *_ui;
+    std::unique_ptr<Ui::MainWindow> ui_;
 
-    void refreshProfiles();
+    int progressBarValue_{};
+    std::unique_ptr<Manager> caoProcess_;
+    std::vector<std::unique_ptr<IWindowModule>> modules_;
+
     void createProfile();
+    void refreshProfiles();
+    void setProfile(const QString &name);
 
-    void resetUi() const;
-
-    void setProfile(const Profile &profile);
+    void resetUi();
+    void loadUi();
 
     void updateLog() const;
+
     void initProcess();
     void endProcess();
-    void readProgress(const QString &text, const int &max, const int &value) const;
+    void readProgress(const QString &text, const int &max, const int &value);
 
     void setDarkTheme(const bool &enabled);
     void showTutorialWindow(const QString &title, const QString &text);
 
     void setAdvancedSettingsEnabled(const bool &value);
 
-    void closeEvent(QCloseEvent *event);
-    void dragEnterEvent(QDragEnterEvent *e);
-    void dropEvent(QDropEvent *e);
-
     void firstStart();
 
-    int _progressBarValue{};
-
-    std::unique_ptr<Manager> _caoProcess;
-
-    bool _settingsChanged    = false;
-    bool _alwaysSaveSettings = false;
-    bool _showTutorials      = true;
-
-    ListDialog *texturesFormatDialog;
-    BSAFilesToPackWidget *bsaFilesToPackDialog;
+    //Qt override
+    void closeEvent(QCloseEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *e) override;
+    void dropEvent(QDropEvent *e) override;
 };
 } // namespace CAO

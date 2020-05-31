@@ -5,345 +5,180 @@
 
 #include "MainWindow.hpp"
 #include "Manager.hpp"
+#include "Utils.hpp"
 
 namespace CAO {
 MainWindow::MainWindow()
-    : _ui(new ::Ui::MainWindow)
+    : ui_(new ::Ui::MainWindow)
 {
-    _ui->setupUi(this);
+    ui_->setupUi(this);
     setAcceptDrops(true);
 
-    //Profiles
-    refreshProfiles();
+    auto &generalSettings = currentProfile().getGeneralSettings();
 
     //Setting data for widgets
-    {
-        //Mode chooser combo box
-        _ui->modeChooserComboBox->setItemData(0, SingleMod);
-        _ui->modeChooserComboBox->setItemData(1, SeveralMods);
+    ui_->modeChooserComboBox->setItemData(0, SingleMod);
+    ui_->modeChooserComboBox->setItemData(1, SeveralMods);
 
-        //Advanced BSA
-        _ui->bsaFormat->setItemData(0, baTES3);
-        _ui->bsaTexturesFormat->setItemData(0, baTES3);
-        _ui->bsaFormat->setItemData(1, baTES4);
-        _ui->bsaTexturesFormat->setItemData(1, baTES4);
-        _ui->bsaFormat->setItemData(2, baFO3);
-        _ui->bsaTexturesFormat->setItemData(2, baFO3);
-        _ui->bsaFormat->setItemData(3, baSSE);
-        _ui->bsaTexturesFormat->setItemData(3, baSSE);
-        _ui->bsaFormat->setItemData(4, baFO4);
-        _ui->bsaTexturesFormat->setItemData(4, baFO4dds);
+    //Connecting all
+    connect(ui_->newProfilePushButton, &QPushButton::pressed, this, &MainWindow::createProfile);
 
-        //Advanced meshes
-        _ui->meshesUser->setItemData(0, 11);
-        _ui->meshesUser->setItemData(1, 12);
+    connect(ui_->userPathButton, &QPushButton::pressed, this, [&generalSettings, this] {
+        const QString &currentPath = generalSettings.sUserPath.value_or(QDir::currentPath());
 
-        _ui->meshesVersion->setItemData(0, V20_0_0_5);
-        _ui->meshesVersion->setItemData(1, V20_2_0_7);
+        const QString &dir = QFileDialog::getExistingDirectory(this,
+                                                               tr("Open Directory"),
+                                                               currentPath,
+                                                               QFileDialog::ShowDirsOnly
+                                                                   | QFileDialog::DontResolveSymlinks);
 
-        _ui->meshesStream->setItemData(0, 82);
-        _ui->meshesStream->setItemData(1, 83);
-        _ui->meshesStream->setItemData(2, 100);
-        _ui->meshesStream->setItemData(3, 130);
-
-        _ui->texturesOutputFormat->setItemData(0, DXGI_FORMAT_BC7_UNORM);
-        _ui->texturesOutputFormat->setItemData(1, DXGI_FORMAT_BC3_UNORM);
-        _ui->texturesOutputFormat->setItemData(2, DXGI_FORMAT_BC1_UNORM);
-        _ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_R8G8B8A8_UNORM);
-    }
-
-    //Connecting widgets
-    connect(_ui->dryRunCheckBox, &QCheckBox::clicked, this, [&](const bool &checked) {
-        //Disabling BSA settings if dry run is enabled
-        _ui->bsaBaseGroupBox->setDisabled(checked);
-        _ui->bsaExtractCheckBox->setDisabled(checked);
-        _ui->bsaCreateCheckbox->setDisabled(checked);
-        _ui->bsaDeleteBackupsCheckBox->setDisabled(checked);
-
-        _ui->bsaExtractCheckBox->setChecked(false);
-        _ui->bsaCreateCheckbox->setChecked(false);
-        _ui->bsaDeleteBackupsCheckBox->setChecked(false);
+        generalSettings.sUserPath = dir;
     });
 
-    connect(_ui->advancedSettingsCheckbox, &QCheckBox::clicked, this, [&](const bool &enabled) {
-        this->showTutorialWindow(tr("Advanced settings"),
-                                 tr("Advanced settings can only be modified when using custom profiles."));
-        this->setAdvancedSettingsEnabled(enabled);
-    });
-
-    disconnect(_ui->presets, nullptr, nullptr, nullptr); //resetting
-    connect(_ui->presets, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        this->setProfile(Profiles::getInstance().get(_ui->presets->currentText()));
-    });
-
-    connect(_ui->newProfilePushButton, &QPushButton::pressed, this, &MainWindow::createProfile);
-
-    connect(_ui->modeChooserComboBox, QOverload<int>::of(&QComboBox::activated), this, [&] {
-        const bool &severalModsEnabled = (_ui->modeChooserComboBox->currentData() == SeveralMods);
-
-        //Disabling some meshes settings when several mods mode is enabled
-        _ui->meshesMediumOptimizationRadioButton->setDisabled(severalModsEnabled);
-        _ui->meshesFullOptimizationRadioButton->setDisabled(severalModsEnabled);
-        _ui->meshesNecessaryOptimizationRadioButton->setChecked(severalModsEnabled);
-
-        if (severalModsEnabled)
-        {
-            this->showTutorialWindow(
-                tr("Several mods option"),
-                tr("You have selected the several mods option. This process may take a very long time, "
-                   "especially if you process BSA. ")
-                    + '\n' + tr("This process has only been tested on the Mod Organizer mods folder."));
-        }
-        _settingsChanged = true;
-    });
-
-    connect(_ui->userPathButton, &QPushButton::pressed, this, [&] {
-        const QString &dir
-            = QFileDialog::getExistingDirectory(this,
-                                                tr("Open Directory"),
-                                                currentProfile().getGeneralSettings().sUserPath(),
-                                                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        if (!dir.isEmpty())
-            _ui->userPathTextEdit->setText(dir);
-        this->_settingsChanged = true;
-    });
-
-    connect(_ui->userPathTextEdit, &QLineEdit::textChanged, this, [this] { this->_settingsChanged = true; });
-
-    connect(_ui->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
-
-    bsaFilesToPackDialog = new BSAFilesToPackWidget(this);
-    bsaFilesToPackDialog->hide();
-    connect(_ui->bsaFilesToPackButton, &QPushButton::pressed, this, [this] {
-        bsaFilesToPackDialog->show();
-        _settingsChanged = true;
-    });
-
-    texturesFormatDialog = new ListDialog(this);
-    for (const auto &value : Detail::DxgiFormats)
-    {
-        auto item = new QListWidgetItem(value.name);
-        item->setData(Qt::UserRole, value.format);
-        item->setCheckState(Qt::Unchecked);
-        texturesFormatDialog->addItem(item);
-    }
-    texturesFormatDialog->setUserAddItemAllowed(false);
-
-    connect(_ui->texturesUnwantedFormatsEditButton, &QPushButton::pressed, this, [&] {
-        QStringList unwantedFormats;
-        for (int i = 0; i < _ui->texturesUnwantedFormatsList->count(); ++i)
-            unwantedFormats << _ui->texturesUnwantedFormatsList->item(i)->text();
-        _ui->texturesUnwantedFormatsList->clear();
-
-        texturesFormatDialog->setCheckedItems(unwantedFormats);
-        texturesFormatDialog->open();
-    });
-
-    connect(texturesFormatDialog, &QDialog::finished, this, [&] {
-        for (const auto &item : texturesFormatDialog->getChoices())
-        {
-            item->setFlags(item->flags() & (~Qt::ItemIsUserCheckable) & (~Qt::Checked));
-            _ui->texturesUnwantedFormatsList->addItem(item);
-            _settingsChanged = true;
-        }
-    });
+    connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
 
     //Connecting menu buttons
-    {
-        connect(_ui->actionEnableDarkTheme, &QAction::triggered, this, &MainWindow::setDarkTheme);
 
-        connect(_ui->actionShow_tutorials, &QAction::triggered, this, [this](const bool &checked) {
-            this->_showTutorials = checked;
+    connect(ui_->actionOpen_log_file, &QAction::triggered, this, [] {
+        QDesktopServices::openUrl(QUrl("file:///" + currentProfile().logPath(), QUrl::TolerantMode));
+    });
+
+    connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
+        QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
+    });
+
+    connect(ui_->actionDiscord, &QAction::triggered, this, [&] {
+        QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
+    });
+
+    connect(ui_->actionDonate, &QAction::triggered, this, [&] {
+        QDesktopServices::openUrl(QUrl("https://ko-fi.com/guekka"));
+    });
+
+    connect(
+        ui_->actionAbout, &QAction::triggered, this, [&] {
+            constexpr char message[]
+                = "\nMade by G'k\nThis program is distributed in the hope that it will be useful "
+                  "but WITHOUT ANY WARRANTLY. See the Mozilla Public License";
+
+            const QString text = QString("%1 %2 %3")
+                                     .arg(QCoreApplication::applicationName(),
+                                          QCoreApplication::applicationVersion(),
+                                          tr(message));
+
+            QMessageBox::about(this, tr("About"), text);
         });
+    connect(ui_->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
 
-        connect(_ui->actionEnable_debug_log, &QAction::triggered, this, [this] {
-            this->_settingsChanged = true;
-            this->saveUi();
-        });
+    //Profiles
+    setProfile(Profiles::getInstance().currentProfileName());
 
-        connect(_ui->actionOpen_log_file, &QAction::triggered, this, [this] {
-            QDesktopServices::openUrl(QUrl("file:///" + currentProfile().logPath(), QUrl::TolerantMode));
-        });
-
-        connect(_ui->actionAbout, &QAction::triggered, this, [&] {
-            QMessageBox::about(this,
-                               tr("About"),
-                               QCoreApplication::applicationName() + ' ' + QCoreApplication::applicationVersion()
-                                   + tr("\nMade by G'k\nThis program is distributed in the hope that it will be useful "
-                                        "but WITHOUT ANY "
-                                        "WARRANTLY. See the Mozilla Public License"));
-        });
-        connect(_ui->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
-
-        connect(_ui->actionDocumentation, &QAction::triggered, this, [&] {
-            QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
-        });
-
-        connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
-            QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
-        });
-
-        connect(_ui->actionSave_UI, &QAction::triggered, this, [this] {
-            saveUi();
-            loadUi();
-        });
-    }
-
-    //Loading remembered settings
-    auto &curProfile = currentProfile();
-    curProfile.readFromUi(*this);
-    curProfile.saveToUi(*this);
-    _settingsChanged = false;
-    setProfile(curProfile);
     firstStart();
-    _settingsChanged = false;
 }
 
-void MainWindow::saveUi()
+void MainWindow::connectAll()
 {
-    auto &commonSettings = Profiles::getInstance().commonSettings();
-    commonSettings.setValue("bShowAdvancedSettings",
-                                         _ui->advancedSettingsCheckbox->isChecked());
-    commonSettings.setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
-    commonSettings.setValue("alwaysSaveSettings", _alwaysSaveSettings);
-    commonSettings.setValue("showTutorial", _showTutorials);
+    auto &commonSettings  = Profiles::getInstance().commonSettings();
+    auto &generalSettings = currentProfile().getGeneralSettings();
 
-    if (!_settingsChanged)
-    {
-        //Restoring previous settings in case an unregistered change happened
-        currentProfile().saveToUi(*this);
-        return;
-    }
+    connect(ui_->profiles,
+            QOverload<int>::of(&QComboBox::currentIndexChanged),
+            &commonSettings.sProfile,
+            [this, &commonSettings](int idx) { commonSettings.sProfile = ui_->profiles->itemText(idx); });
 
-    if (!_alwaysSaveSettings)
-    {
-        QMessageBox box(QMessageBox::Information,
-                        tr("Save unsaved changes"),
-                        tr("You have unsaved changes. Do you want to save them?"),
-                        QMessageBox::No | QMessageBox::Yes);
+    connect(&commonSettings.sProfile,
+            &detail::QValueWrapperHelper::valueChanged,
+            this,
+            [this, &commonSettings] { selectText(*ui_->profiles, commonSettings.sProfile()); });
 
-        QPushButton *alwaysButton = box.addButton(tr("Always"), QMessageBox::YesRole);
-        box.exec();
+    connect(ui_->modeChooserComboBox,
+            QOverload<int>::of(&QComboBox::currentIndexChanged),
+            &generalSettings.eMode,
+            [&generalSettings, this](int idx) {
+                auto data             = ui_->modeChooserComboBox->itemData(idx);
+                generalSettings.eMode = data.value<OptimizationMode>();
+            });
 
-        if (box.result() == QMessageBox::No)
-        {
-            currentProfile().saveToUi(*this); //Restoring previous settings
-            return;
-        }
+    connect(&generalSettings.eMode, &detail::QValueWrapperHelper::valueChanged, this, [this, &generalSettings] {
+        int idx = ui_->modeChooserComboBox->findData(generalSettings.eMode());
+        ui_->modeChooserComboBox->setCurrentIndex(idx);
+    });
 
-        if (box.clickedButton() == alwaysButton)
-        {
-            _alwaysSaveSettings = true;
-            saveUi();
-        }
-    }
+    connect(ui_->actionEnableDarkTheme,
+            &QAction::triggered,
+            &commonSettings.bDarkMode,
+            [this, &commonSettings](bool state) {
+                commonSettings.bDarkMode = state;
+                setDarkTheme(state);
+            });
 
-    //If a box is unchecked, all sub-checkboxes have to be unchecked
-    for (QGroupBox *widget : this->findChildren<QGroupBox *>())
-    {
-        if (!widget->isChecked() && widget->isCheckable())
-            for (auto &box : widget->findChildren<QCheckBox *>())
-                box->setChecked(false);
-    }
+    connect(&commonSettings.bDarkMode,
+            &decltype(commonSettings.bDarkMode)::valueChanged,
+            this,
+            [this, &generalSettings] {
+                int idx = ui_->modeChooserComboBox->findData(generalSettings.eMode());
+                ui_->modeChooserComboBox->setCurrentIndex(idx);
+            });
 
-    for (int i = 0; i < _ui->tabWidget->count(); ++i)
-    {
-        const QWidget *currentTab = _ui->tabWidget->widget(i);
-        if (!currentTab->isEnabled())
-        {
-            for (auto &box : currentTab->findChildren<QCheckBox *>())
-                box->setChecked(false);
-            for (auto &box : currentTab->findChildren<QRadioButton *>())
-                box->setChecked(false);
-            for (auto &box : currentTab->findChildren<QGroupBox *>())
-                box->setChecked(false);
-        }
-    }
+    connectWrapper(*ui_->actionShow_tutorials,
+                   commonSettings.bShowTutorials,
+                   &QAction::triggered,
+                   &QAction::setChecked);
 
-    currentProfile().readFromUi(*this);
-    currentProfile().saveToJSON();
-
-    _settingsChanged = false;
+    connectWrapper(*ui_->actionShow_tutorials,
+                   commonSettings.bDebugLog,
+                   &QAction::triggered,
+                   &QAction::setChecked);
 }
 
 void MainWindow::loadUi()
 {
     auto &commonSettings = Profiles::getInstance().commonSettings();
-    setDarkTheme(commonSettings.value("bDarkMode").toBool());
-    _ui->advancedSettingsCheckbox->setChecked(
-        commonSettings.value("bShowAdvancedSettings").toBool());
-    _ui->presets->setCurrentIndex(_ui->presets->findText(Profiles::getInstance().currentProfileName()));
-    _alwaysSaveSettings = commonSettings.value("alwaysSaveSettings").toBool();
-    _showTutorials = commonSettings.value("showTutorial").toBool();
-    _ui->actionShow_tutorials->setChecked(_showTutorials);
 
-    currentProfile().saveToUi(*this);
+    setDarkTheme(commonSettings.bDarkMode());
 
-    _settingsChanged = false;
-
-    //Loading settings does not enable groupboxes
-    for (QGroupBox *widget : this->findChildren<QGroupBox *>())
-    {
-        if (widget->findChildren<QRadioButton *>().size())
-            continue; //We do not want to disable boxes with radio buttons
-
-        const auto &buttonList = widget->findChildren<QCheckBox *>();
-        if (!buttonList.size())
-            continue; //We do not want to disable boxes without pushButton
-
-        const bool &boxesAreUnchecked = std::none_of(buttonList.cbegin(),
-                                                     buttonList.cend(),
-                                                     [](const QCheckBox *button) { return button->isChecked(); });
-
-        widget->setChecked(!boxesAreUnchecked);
-    }
+    ui_->profiles->setCurrentIndex(ui_->profiles->findText(Profiles::getInstance().currentProfileName()));
+    ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials());
 }
 
-void MainWindow::resetUi() const
+void MainWindow::resetUi()
 {
-    //Resetting the window
-    for (int i = 0; i < _ui->tabWidget->count(); ++i)
-        _ui->tabWidget->setTabEnabled(i, true);
-
-    _ui->meshesFullOptimizationRadioButton->show();
-    _ui->meshesMediumOptimizationRadioButton->show();
+    ui_->tabWidget->clear();
+    modules_.clear();
 }
 
-void MainWindow::readProgress(const QString &text, const int &max, const int &value) const
+void MainWindow::readProgress(const QString &text, const int &max, const int &value)
 {
-    _ui->progressBar->setFormat(text);
-    _ui->progressBar->setMaximum(max);
-    _ui->progressBar->setValue(value);
+    ui_->progressBar->setFormat(text);
+    ui_->progressBar->setMaximum(max);
+    ui_->progressBar->setValue(value);
 }
 
 void MainWindow::refreshProfiles()
 {
-    _ui->presets->clear();
-    _ui->presets->addItems(Profiles::getInstance().list());
+    ui_->profiles->clear();
+    ui_->profiles->addItems(Profiles::getInstance().list());
 }
 
 void MainWindow::createProfile()
 {
-    showTutorialWindow(tr("New profile"),
-                       tr("You are about to create a new profile. It will create a new directory in 'CAO/profiles'. "
-                          "Please check it out after creation, some files will be created inside it."));
-
     bool ok = false;
-    const QString &text = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
+    const QString &text
+        = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
     if (!ok || text.isEmpty())
         return;
 
     //Choosing base profile
 
     QStringList profilesList;
-    for (int i = 0; i < _ui->presets->count(); ++i)
-        profilesList << _ui->presets->itemText(i);
+    for (int i = 0; i < ui_->profiles->count(); ++i)
+        profilesList << ui_->profiles->itemText(i);
 
     const QString &baseProfile = QInputDialog::getItem(this,
                                                        tr("Base profile"),
                                                        tr("Which profile do you want to use as a base?"),
                                                        profilesList,
-                                                       _ui->presets->currentIndex(),
+                                                       ui_->profiles->currentIndex(),
                                                        false,
                                                        &ok);
 
@@ -351,16 +186,18 @@ void MainWindow::createProfile()
         return;
 
     Profiles::getInstance().create(text, baseProfile);
+    setProfile(text);
+}
+
+void MainWindow::setProfile(const QString &name)
+{
     refreshProfiles();
-    _ui->presets->setCurrentIndex(_ui->presets->findText(text));
-    setProfile(Profiles::getInstance().setCurrent(text));
+    ui_->profiles->setCurrentIndex(ui_->profiles->findText(name));
+    connectAll();
 }
 
 void MainWindow::setDarkTheme(const bool &enabled)
 {
-    _ui->actionEnableDarkTheme->setChecked(enabled);
-    _settingsChanged = true;
-
     if (enabled)
     {
         QFile f(":qdarkstyle/style.qss");
@@ -374,17 +211,17 @@ void MainWindow::setDarkTheme(const bool &enabled)
 
 void MainWindow::initProcess()
 {
-    saveUi();
-    _ui->processButton->setDisabled(true);
+    Profiles::getInstance().saveCommonSettings();
+    ui_->processButton->setDisabled(true);
 
     try
     {
-        _caoProcess.reset();
-        _caoProcess = std::make_unique<Manager>(currentProfile());
-        connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
-        connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
-        connect(&*_caoProcess, &Manager::end, this, &MainWindow::endProcess);
-        QtConcurrent::run(&*_caoProcess, &Manager::runOptimization);
+        caoProcess_.reset();
+        caoProcess_ = std::make_unique<Manager>(currentProfile());
+        connect(&*caoProcess_, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+        connect(&*caoProcess_, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
+        connect(&*caoProcess_, &Manager::end, this, &MainWindow::endProcess);
+        QtConcurrent::run(&*caoProcess_, &Manager::runOptimization);
     }
     catch (const std::exception &e)
     {
@@ -399,76 +236,63 @@ void MainWindow::initProcess()
 
 void MainWindow::endProcess()
 {
-    _ui->processButton->setDisabled(false);
+    ui_->processButton->setDisabled(false);
 
-    if (_caoProcess)
-        _caoProcess->disconnect();
+    if (caoProcess_)
+        caoProcess_->disconnect();
 
-    _ui->progressBar->setMaximum(100);
-    _ui->progressBar->setValue(100);
-    _ui->progressBar->setFormat(tr("Done"));
+    ui_->progressBar->setMaximum(100);
+    ui_->progressBar->setValue(100);
+    ui_->progressBar->setFormat(tr("Done"));
     updateLog();
+
+    Profiles::getInstance().saveCommonSettings();
 }
 
 void MainWindow::updateLog() const
 {
-    _ui->logTextEdit->clear();
+    ui_->logTextEdit->clear();
 
     QFile log(currentProfile().logPath());
     if (log.open(QFile::Text | QFile::ReadOnly))
     {
         QTextStream ts(&log);
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
-        _ui->logTextEdit->appendHtml(ts.readAll());
+        ui_->logTextEdit->appendHtml(ts.readAll());
     }
 }
 
-void MainWindow::setProfile(const Profile &profile)
+
+void MainWindow::showTutorialWindow(const QString &title, const QString &text)
 {
-    if (_settingsChanged)
-        saveUi();
-
-    //Resetting the window
-    resetUi();
-
-    //Actually setting the window mode
-    loadUi();
-
-    const int &animTabIndex = _ui->tabWidget->indexOf(_ui->AnimationsTab);
-    const int &meshesTabIndex = _ui->tabWidget->indexOf(_ui->meshesTab);
-    const int &bsaTabIndex = _ui->tabWidget->indexOf(_ui->bsaTab);
-    const int &TexturesTabIndex = _ui->tabWidget->indexOf(_ui->texturesTab);
-
-    const auto &sets = profile.getGeneralSettings();
-
-    _ui->tabWidget->setTabEnabled(animTabIndex, sets.bAnimationsTabEnabled());
-    _ui->tabWidget->setTabEnabled(meshesTabIndex, sets.bMeshesTabEnabled());
-    _ui->tabWidget->setTabEnabled(bsaTabIndex, sets.bBSATabEnabled());
-    _ui->tabWidget->setTabEnabled(TexturesTabIndex, sets.bTexturesTabEnabled());
-
-    setAdvancedSettingsEnabled(_ui->advancedSettingsCheckbox->isChecked());
+    if (Profiles::getInstance().commonSettings().bShowTutorials())
+        QMessageBox::information(this, title, text);
 }
 
-void MainWindow::setAdvancedSettingsEnabled(const bool &value)
+void MainWindow::firstStart()
 {
-    QWidgetList advancedSettings = {_ui->bsaAdvancedGroupBox,
-                                    _ui->bsaExpertGroupBox,
-                                    _ui->meshesVeryAdvancedGroupBox,
-                                    _ui->texturesAdvancedGroupBox,
-                                    _ui->animationsAdvancedGroupBox};
+    constexpr char welcome[]
+        = "It appears you are running CAO for the first time. All options have tooltips explaining what "
+          "they do. If you need help, you can also <a href=\"https://discordapp.com/invite/B9abN8d\">join us "
+          "on Discord</a>. A dark theme is also available."
+          "\n\nIf you like my work, <a href=\"https://ko-fi.com/guekka\">please consider supporting me</a>. "
+          "Thanks for using CAO!";
 
-    const bool readOnly = currentProfile().isBaseProfile();
-    for (auto &window : advancedSettings)
+    if (Profiles::getInstance().commonSettings().bFirstStart.value_or(true))
     {
-        window->setVisible(value);
-        window->setDisabled(readOnly);
+        QMessageBox box(QMessageBox::Information,
+                        tr("Welcome to %1 %2")
+                            .arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
+                        tr(welcome));
+        box.setTextFormat(Qt::TextFormat::RichText);
+        box.exec();
+
+        Profiles::getInstance().commonSettings().bFirstStart = false;
     }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (_settingsChanged)
-        saveUi();
     endProcess();
     event->accept();
 }
@@ -484,35 +308,6 @@ void MainWindow::dropEvent(QDropEvent *e)
     const QString &fileName = e->mimeData()->urls().at(0).toLocalFile();
     QDir dir;
     if (dir.exists(fileName))
-    {
-        _ui->userPathTextEdit->setText(QDir::cleanPath(fileName));
-        _settingsChanged = true;
-    }
-}
-
-void MainWindow::showTutorialWindow(const QString &title, const QString &text)
-{
-    if (_showTutorials)
-        QMessageBox::information(this, title, text);
-}
-
-void MainWindow::firstStart()
-{
-    if (!Profiles::getInstance().commonSettings().value("notFirstStart").toBool())
-    {
-        QMessageBox(
-            QMessageBox::Information,
-            tr("Welcome to %1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
-            tr("It appears you are running CAO for the first time. All options have tooltips explaining what they "
-               "do. If you need help, you can also join us on Discord. A dark theme is also available."))
-            .exec();
-
-        Profiles::getInstance().commonSettings().setValue("notFirstStart", true);
-    }
-}
-
-MainWindow::~MainWindow()
-{
-    delete _ui;
+        ui_->userPathTextEdit->setText(QDir::cleanPath(fileName));
 }
 } // namespace CAO
