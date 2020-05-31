@@ -104,9 +104,9 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.ui
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/QuickAutoPortWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/QuickAutoPortWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/QuickAutoPortWindow.ui
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
