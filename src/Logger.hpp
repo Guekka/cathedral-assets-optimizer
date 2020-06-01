@@ -103,8 +103,9 @@ public:
     }
 };
 } // namespace plog
+
 namespace CAO {
-inline void initCustomLogger(const QString &logPath, const bool &debugLog)
+inline void initCustomLogger(const QString &logPath, bool debugLog)
 {
     //Cancelling if logger is already ready
     if (plog::get())
@@ -120,9 +121,17 @@ inline void initCustomLogger(const QString &logPath, const bool &debugLog)
     if (!file.open(QFile::ReadWrite | QFile::Append))
         throw std::runtime_error("Cannot open log file: " + logPath.toStdString());
 
+    static plog::RollingFileAppender<plog::CustomDebugFormatter> debugAppender(qPrintable(logPath),
+                                                                               250'000,
+                                                                               1'000);
+
+    static plog::RollingFileAppender<plog::CustomInfoFormatter> infoAppender(qPrintable(logPath),
+                                                                             250'000,
+                                                                             1'000);
+
     if (debugLog)
-        plog::init<plog::CustomDebugFormatter>(plog::Severity::verbose, qPrintable(logPath));
+        plog::init(plog::Severity::verbose, &debugAppender);
     else
-        plog::init<plog::CustomInfoFormatter>(plog::Severity::info, qPrintable(logPath));
+        plog::init(plog::Severity::info, &infoAppender);
 }
 } // namespace CAO
