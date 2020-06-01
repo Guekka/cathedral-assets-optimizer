@@ -100,6 +100,10 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.ui
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.ui
+
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.ui

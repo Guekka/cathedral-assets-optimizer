@@ -16,7 +16,7 @@ class QuickAutoPortWindow : public IWindowModule
     Q_OBJECT
 
 public:
-    explicit QuickAutoPortWindow(QWidget *parent);
+    explicit QuickAutoPortWindow(QWidget *parent = nullptr);
 
     void connectAll(PatternSettings &, GeneralSettings &) override;
     void disconnectAll() override;

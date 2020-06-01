@@ -3,9 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "Version.hpp"
+#include "GUI/LevelSelector.hpp"
 #include "GUI/MainWindow.hpp"
 #include "Manager.hpp"
+#include "Version.hpp"
 
 void init()
 {
@@ -52,7 +53,8 @@ int main(int argc, char *argv[])
             app    = nullptr;
             app    = std::make_unique<QApplication>(argc, argv);
             window = std::make_unique<CAO::MainWindow>();
-            window->show();
+            CAO::LevelSelector selector(*window);
+            selector.exec();
         }
     }
     catch (const std::exception &e)

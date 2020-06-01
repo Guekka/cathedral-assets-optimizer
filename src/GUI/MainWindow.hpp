@@ -28,10 +28,9 @@ public:
     Ui::MainWindow &mainUI() { return *ui_; }
     const Ui::MainWindow &mainUI() const { return *ui_; }
 
-    template<typename T>
-    void addModule(const QString &name)
+    void addModule(std::unique_ptr<IWindowModule> module, const QString &name)
     {
-        modules_.emplace_back(std::make_unique<T>());
+        modules_.emplace_back(std::move(module));
         ui_->tabWidget->addTab(&*modules_.back(), name);
     }
 
@@ -47,10 +46,10 @@ public:
             modules_.erase(it);
     }
 
+private:
     void connectAll();
     void disconnectAll();
 
-private:
     std::unique_ptr<Ui::MainWindow> ui_;
 
     int progressBarValue_{};
