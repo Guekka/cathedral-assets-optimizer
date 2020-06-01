@@ -54,7 +54,10 @@ int main(int argc, char *argv[])
             app    = std::make_unique<QApplication>(argc, argv);
             window = std::make_unique<CAO::MainWindow>();
             CAO::LevelSelector selector(*window);
-            selector.exec();
+            if (selector.exec() == 1)
+                window->show();
+            else
+                return 0;
         }
     }
     catch (const std::exception &e)
