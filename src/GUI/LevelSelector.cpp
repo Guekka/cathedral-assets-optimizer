@@ -14,46 +14,71 @@ LevelSelector::LevelSelector(MainWindow &mw)
 {
     ui_->setupUi(this);
 
-    ui_->label->setText(getHelpText(ui_->levelSlider->value()));
+    GuiMode curMode = toGuiMode(ui_->levelSlider->value());
+
+    ui_->label->setText(getHelpText(curMode));
 
     connect(ui_->levelSlider, &QSlider::valueChanged, this, [this](int val) {
-        ui_->label->setText(getHelpText(val));
+        GuiMode mode = toGuiMode(val);
+        ui_->label->setText(getHelpText(mode));
     });
 
     connect(ui_->buttonBox, &QDialogButtonBox::accepted, this, [&mw, this] {
-        setupWindow(mw, ui_->levelSlider->value());
+        GuiMode mode = toGuiMode(ui_->levelSlider->value());
+        setupWindow(mw, mode);
     });
 }
 
-void LevelSelector::setupWindow(MainWindow &mw, int level)
+void LevelSelector::setupWindow(MainWindow &mw, GuiMode level)
 {
-    if (level == easyLevel)
+    switch (level)
     {
-        mw.addModule(std::make_unique<QuickAutoPortWindow>(), "Quick Auto Port");
+        case GuiMode::QuickAutoPort:
+        {
+            mw.addModule(std::make_unique<QuickAutoPortWindow>(), "Quick Auto Port");
+            break;
+        }
+        case GuiMode::Medium:
+        {
+            throw std::runtime_error("This level has not yet been implemented.");
+        }
+        case GuiMode::Advanced:
+        {
+            throw std::runtime_error("This level has not yet been implemented.");
+        }
+        case GuiMode::Invalid: throw std::runtime_error("This level does not exist.");
     }
-    else if (level == hardLevel)
-    {
-        throw std::runtime_error("This level has not yet been implemented.");
-    }
-    else
-        throw std::runtime_error("This level does not exist.");
 }
 
-QString LevelSelector::getHelpText(int level)
+QString LevelSelector::getHelpText(GuiMode level)
 {
-    if (level == easyLevel)
+    switch (level)
     {
-        return tr("Quick Auto Port\n"
-                  "Quick Auto Port uses default settings for porting a mod from LE to SSE.\n"
-                  "It will work for most of the cases and is the recommended way to port a mod.\n"
-                  "It is safe to apply it on a mod, and it is recommended to apply it to your whole "
-                  "mod list if you experience crashes.");
+        case GuiMode::QuickAutoPort:
+        {
+            return tr("Quick Auto Port\n"
+                      "Quick Auto Port uses default settings for porting a mod from LE to SSE.\n"
+                      "It will work for most of the cases and is the recommended way to port a mod.\n"
+                      "It is safe to apply it on a mod, and it is recommended to apply it to your whole "
+                      "mod list if you experience crashes.");
+        }
+        case GuiMode::Medium:
+        {
+            return tr("Medium mode\n"
+                      "NOT IMPLEMENTED");
+        }
+        case GuiMode::Advanced:
+        {
+            return tr("Advanced mode\n"
+                      "NOT IMPLEMENTED\n"
+                      "The full CAO experience. With profiles and patterns, you can fully customize "
+                      "how CAO will optimize your files.");
+        }
+        case GuiMode::Invalid:
+        {
+            throw std::runtime_error("This level does not exist.");
+        }
     }
-    else if (level == hardLevel)
-    {
-        return tr("Advanced mode\n"
-                  "The full CAO experience. With profiles and patterns, you can fully customize "
-                  "how CAO will optimize your files.");
-    }
+    return tr("Unknown mode");
 }
 } // namespace CAO

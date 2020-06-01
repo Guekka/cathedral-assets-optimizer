@@ -16,6 +16,15 @@ enum TextureResizingMode
     ByRatio,
     BySize
 };
+
+//Leaving place for intermediate levels
+enum class GuiMode
+{
+    Invalid       = 0,
+    QuickAutoPort = 1,
+    Medium        = 5,
+    Advanced      = 10
+};
 } // namespace CAO
 
 Q_DECLARE_METATYPE(DXGI_FORMAT)
@@ -23,3 +32,4 @@ Q_DECLARE_METATYPE(NiFileVersion)
 Q_DECLARE_METATYPE(bsa_archive_type_e)
 Q_DECLARE_METATYPE(CAO::OptimizationMode)
 Q_DECLARE_METATYPE(CAO::TextureResizingMode)
+Q_DECLARE_METATYPE(CAO::GuiMode)

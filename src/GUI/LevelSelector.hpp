@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Settings/BaseTypes.hpp"
 #include "ui_LevelSelector.h"
 #include <QDialog>
 
@@ -21,11 +22,28 @@ public:
     explicit LevelSelector(MainWindow &mw);
 
 private:
-    static constexpr inline int easyLevel = 1;
-    static constexpr inline int hardLevel = 2;
+    //QSlider does not support custom values. Mapping enum to contingent ints
+    static constexpr inline std::array guiModes = {std::pair{1, GuiMode::QuickAutoPort},
+                                                   std::pair{2, GuiMode::Medium},
+                                                   std::pair{3, GuiMode::Advanced}};
 
-    void setupWindow(MainWindow &mw, int level);
-    QString getHelpText(int level);
+    constexpr GuiMode toGuiMode(int mode)
+    {
+        for (const auto &val : guiModes)
+            if (val.first == mode)
+                return val.second;
+        return GuiMode::Invalid;
+    }
+    constexpr int toInt(GuiMode mode)
+    {
+        for (const auto &val : guiModes)
+            if (val.second == mode)
+                return val.first;
+        return 0;
+    }
+
+    void setupWindow(MainWindow &mw, GuiMode level);
+    QString getHelpText(GuiMode level);
 
 private:
     std::unique_ptr<Ui::LevelSelector> ui_;
