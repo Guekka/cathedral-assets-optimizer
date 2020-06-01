@@ -18,9 +18,11 @@ struct cards
 {
     char any;
     char any_repeat;
+    char set_begin;
+    char set_end;
 };
 
-constexpr cards defaultCards{'?', '*'};
+constexpr cards defaultCards{'?', '*', '[', ']'};
 
 constexpr bool case_sensitive = true;
 constexpr bool case_insensitive = false;
@@ -43,6 +45,8 @@ constexpr bool isMatch(std::string_view str,
     auto anyrep_pos_pat = pat_end;
     auto anyrep_pos_str = str_end;
 
+    auto set_pos_pat = pat_end;
+
     while (str_it != str_end)
     {
         char current_pat = 0;
@@ -52,8 +56,34 @@ constexpr bool isMatch(std::string_view str,
             current_pat = case_sensitive ? *pat_it : std::tolower(*pat_it);
             current_str = case_sensitive ? *str_it : std::tolower(*str_it);
         }
-
-        if (pat_it != pat_end && current_pat == current_str)
+        if (pat_it != pat_end && current_pat == cards.set_begin)
+        {
+            set_pos_pat = pat_it;
+            pat_it++;
+        }
+        else if (pat_it != pat_end && current_pat == cards.set_end)
+        {
+            set_pos_pat = pat_end;
+            pat_it++;
+        }
+        else if (set_pos_pat != pat_end)
+        {
+            if (current_pat == current_str)
+            {
+                set_pos_pat = pat_end;
+                pat_it = std::find(pat_it, pat_end, cards.set_end) + 1;
+                str_it++;
+            }
+            else
+            {
+                if (pat_it == pat_end)
+                {
+                    return false;
+                }
+                pat_it++;
+            }
+        }
+        else if (pat_it != pat_end && current_pat == current_str)
         {
             pat_it++;
             str_it++;
