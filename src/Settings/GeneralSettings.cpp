@@ -25,6 +25,11 @@ void GeneralSettings::operator=(const GeneralSettings &other)
     json_ = other.json_;
 }
 
+void GeneralSettings::operator=(GeneralSettings &&other)
+{
+    json_ = std::move(other.json_);
+}
+
 std::optional<QString> GeneralSettings::isValid() const
 {
     if (iBSAMaxSize() < 0 || iBSATexturesMaxSize() < 0)

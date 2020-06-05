@@ -28,4 +28,9 @@ void Settings::operator=(const Settings &other)
     json_ = other.json_;
 }
 
+void Settings::operator=(Settings &&other)
+{
+    json_ = std::move(other.json_);
+}
+
 } // namespace CAO

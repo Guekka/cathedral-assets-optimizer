@@ -11,7 +11,7 @@
 
 namespace CAO {
 class GeneralSettings final : public Settings
-{ //TODO: V690 http://www.viva64.com/en/V690 The 'GeneralSettings' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
+{
 public:
     GeneralSettings() = default;
     GeneralSettings(nlohmann::json j);
@@ -19,6 +19,7 @@ public:
     GeneralSettings(GeneralSettings &&other);
 
     void operator=(const GeneralSettings &other);
+    void operator=(GeneralSettings &&other);
 
     std::optional<QString> isValid() const override;
 

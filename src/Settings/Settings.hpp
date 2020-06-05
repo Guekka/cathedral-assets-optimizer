@@ -10,7 +10,7 @@
 #include "pch.hpp"
 
 namespace CAO {
-class Settings //TODO: V690 http://www.viva64.com/en/V690 The 'Settings' class implements a move constructor, but lacks the move assignment operator. It is dangerous to use such a class.
+class Settings
 {
 public:
     //! \brief Checks if the current settings are allowed
@@ -23,6 +23,7 @@ public:
     virtual ~Settings() = default;
 
     void operator=(const Settings &other);
+    void operator=(Settings &&other);
 
     virtual nlohmann::json getJSON() const { return json_; }
     virtual void setJSON(const nlohmann::json &j) { json_ = j; }
