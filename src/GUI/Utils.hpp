@@ -21,6 +21,10 @@ template<typename UiElement, typename Wrapper, typename UiReadFunc, typename UiS
 void connectWrapper(UiElement &uiEl, Wrapper &wrapper, UiReadFunc &&readFunc, UiSaveFunc &&saveFunc)
 {
     using wrapperType = std::remove_reference_t<decltype(wrapper)>;
+
+    //Init data
+    std::invoke(saveFunc, uiEl, wrapper());
+    //Connect
     QObject::connect(&uiEl, readFunc, &wrapper, &wrapperType::setValue);
     QObject::connect(&wrapper, &wrapperType::valueChanged, &uiEl, [&wrapper, &uiEl, &saveFunc] {
         std::invoke(saveFunc, uiEl, wrapper());
