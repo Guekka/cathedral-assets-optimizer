@@ -11,7 +11,6 @@ PatternSettings::PatternSettings()
 }
 
 PatternSettings::PatternSettings(const nlohmann::json &json)
-    : Settings(json)
 {
     setJSON(json);
 }
@@ -23,31 +22,41 @@ PatternSettings::PatternSettings(size_t priority, const std::vector<std::string>
 }
 
 PatternSettings::PatternSettings(const PatternSettings &other)
-    : Settings(other.json_)
-    , patterns_(other.patterns_)
+    : patterns_(other.patterns_)
     , priority_(other.priority_)
 {
+    json_ = other.json_;
 }
 
 PatternSettings::PatternSettings(PatternSettings &&other)
-    : Settings(std::move(other.json_))
-    , patterns_(std::move(other.patterns_))
+    : patterns_(std::move(other.patterns_))
     , priority_(std::move(other.priority_))
 {
+    json_ = std::move(other.json_);
 }
 
-void PatternSettings::operator=(const PatternSettings &other)
+PatternSettings &PatternSettings::operator=(const PatternSettings &other)
 {
+    if (this == &other)
+        return *this;
+
     json_     = other.json_;
     patterns_ = other.patterns_;
     priority_ = other.priority_;
+
+    return *this;
 }
 
-void PatternSettings::operator=(PatternSettings &&other)
+PatternSettings &PatternSettings::operator=(PatternSettings &&other)
 {
+    if (this == &other)
+        return *this;
+
     json_     = std::move(other.json_);
     patterns_ = std::move(other.patterns_);
-    priority_ = other.priority_;
+    priority_ = std::move(other.priority_);
+
+    return *this;
 }
 
 bool PatternSettings::operator==(const PatternSettings &other) const

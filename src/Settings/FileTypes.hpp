@@ -15,8 +15,12 @@ class FileTypes : public Settings
 public:
     std::optional<QString> isValid() const override;
 
-    FileTypes() {}
-    FileTypes([[maybe_unused]] const FileTypes &other) {}
+    FileTypes() = default;
+    FileTypes(const FileTypes &other);
+    FileTypes(FileTypes &&other);
+
+    FileTypes &operator=(const FileTypes &other);
+    FileTypes &operator=(FileTypes &&other);
 
     REGISTER_SETTING(std::vector<std::string>, slBSAStandardFiles, "BSA/slBSAStandardFiles")
     REGISTER_SETTING(std::vector<std::string>, slBSATextureFiles, "BSA/slBSATextureFiles")
@@ -25,7 +29,7 @@ public:
     REGISTER_SETTING(std::vector<std::string>, slMeshesHeadparts, "Meshes/slHeadparts")
 
     REGISTER_SETTING(std::vector<std::string>, slTextureLandscapes, "Textures/slLandscape")
-};
+}; // namespace CAO
 } // namespace CAO
 
 #undef REGISTER_SETTING

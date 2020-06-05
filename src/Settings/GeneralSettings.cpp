@@ -6,28 +6,34 @@
 
 namespace CAO {
 GeneralSettings::GeneralSettings(nlohmann::json j)
-    : Settings(j)
 {
+    setJSON(std::move(j));
 }
 
 GeneralSettings::GeneralSettings(const GeneralSettings &other)
-    : Settings(other.json_)
-{
-}
-
-GeneralSettings::GeneralSettings(GeneralSettings &&other)
-    : Settings(std::move(other))
-{
-}
-
-void GeneralSettings::operator=(const GeneralSettings &other)
 {
     json_ = other.json_;
 }
 
-void GeneralSettings::operator=(GeneralSettings &&other)
+GeneralSettings::GeneralSettings(GeneralSettings &&other)
 {
     json_ = std::move(other.json_);
+}
+
+GeneralSettings &GeneralSettings::operator=(const GeneralSettings &other)
+{
+    if (this != &other)
+        json_ = other.json_;
+
+    return *this;
+}
+
+GeneralSettings &GeneralSettings::operator=(GeneralSettings &&other)
+{
+    if (this != &other)
+        json_ = std::move(other.json_);
+
+    return *this;
 }
 
 std::optional<QString> GeneralSettings::isValid() const

@@ -1,4 +1,3 @@
-
 /* Copyright (C) 2019 G'k
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,14 +15,13 @@ public:
     //! \brief Checks if the current settings are allowed
     virtual std::optional<QString> isValid() const = 0;
 
-    Settings() = default;
-    Settings(const nlohmann::json &j);
-    Settings(const Settings &other);
-    Settings(Settings &&other);
-    virtual ~Settings() = default;
+    Settings()                 = default;
+    Settings(const Settings &) = delete;
+    Settings(Settings &&)      = delete;
+    virtual ~Settings()        = default;
 
-    void operator=(const Settings &other);
-    void operator=(Settings &&other);
+    Settings &operator=(const Settings &) = delete;
+    Settings &operator=(Settings &&) = delete;
 
     virtual nlohmann::json getJSON() const { return json_; }
     virtual void setJSON(const nlohmann::json &j) { json_ = j; }

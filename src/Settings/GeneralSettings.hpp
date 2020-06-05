@@ -18,12 +18,10 @@ public:
     GeneralSettings(const GeneralSettings &other);
     GeneralSettings(GeneralSettings &&other);
 
-    void operator=(const GeneralSettings &other);
-    void operator=(GeneralSettings &&other);
+    GeneralSettings &operator=(const GeneralSettings &other);
+    GeneralSettings &operator=(GeneralSettings &&other);
 
     std::optional<QString> isValid() const override;
-
-    //All the code below is used to register settings
 
     REGISTER_SETTING(bool, bBSACreate, "BSA/bBSACreate")
     REGISTER_SETTING(bool, bBSAExtractFromBSA, "BSA/bBSAExtractFromBSA")

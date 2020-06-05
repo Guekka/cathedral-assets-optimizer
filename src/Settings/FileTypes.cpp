@@ -23,4 +23,30 @@ std::optional<QString> FileTypes::isValid() const
     return std::nullopt;
 }
 
+FileTypes::FileTypes(const FileTypes &other)
+{
+    json_ = other.json_;
+}
+
+FileTypes::FileTypes(FileTypes &&other)
+{
+    json_ = std::move(other.json_);
+}
+
+FileTypes &FileTypes::operator=(const FileTypes &other)
+{
+    if (this != &other)
+        json_ = other.json_;
+
+    return *this;
+}
+
+FileTypes &FileTypes::operator=(FileTypes &&other)
+{
+    if (this != &other)
+        json_ = std::move(other.json_);
+
+    return *this;
+}
+
 } // namespace CAO

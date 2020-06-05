@@ -19,8 +19,8 @@ public:
     PatternSettings(const PatternSettings &other);
     PatternSettings(PatternSettings &&other);
 
-    void operator=(const PatternSettings &other);
-    void operator=(PatternSettings &&other);
+    PatternSettings &operator=(const PatternSettings &other);
+    PatternSettings &operator=(PatternSettings &&other);
     bool operator==(const PatternSettings &other) const;
 
     std::optional<QString> isValid() const override;

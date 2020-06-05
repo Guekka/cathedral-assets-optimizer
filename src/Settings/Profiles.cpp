@@ -35,21 +35,21 @@ void Profiles::create(const QString &name, const QString &baseProfile)
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     Filesystem::copyDir(baseFolder, newFolder, false);
     QFile::remove(newFolder + "/isBase");
-    profiles_.emplace(name, Profile(newFolder));
+    profiles_.try_emplace(name, Profile(newFolder));
 }
 
 void Profiles::create(const QString &name)
 {
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     rootProfileDir_.mkpath(newFolder);
-    profiles_.emplace(name, Profile(newFolder));
+    profiles_.try_emplace(name, Profile(newFolder));
 }
 
 void Profiles::create(const Profile &profile, const QString &name)
 {
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     rootProfileDir_.mkpath(newFolder);
-    profiles_.emplace(name, profile);
+    profiles_.try_emplace(name, profile);
 }
 
 Profile &Profiles::setCurrent(const QString &profile)
@@ -101,7 +101,7 @@ void Profiles::update(bool fullRefresh)
         const QString &profilePath = rootProfileDir_.absoluteFilePath(subDir);
         const QString &settingPath = profilePath + '/' + Profile::generalSettingsFileName;
         if (QFile::exists(settingPath) && !profiles_.count(subDir)) {
-            profiles_.emplace(subDir, Profile(profilePath));
+            profiles_.try_emplace(subDir, Profile(profilePath));
         }
     }
 }

@@ -7,7 +7,6 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Manager.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Version.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Version.hpp.in
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.hpp
@@ -76,7 +75,6 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/JSON.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/MigrateProfiles.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/MigrateProfiles.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Settings.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/GeneralSettings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/GeneralSettings.hpp
