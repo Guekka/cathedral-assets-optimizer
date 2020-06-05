@@ -16,11 +16,7 @@ public:
     /*!
    * \brief Constructor that will perform a number of functions
    */
-    explicit Manager(const Profile &profile);
-    /*!
-   * \brief Constructor that will perform a number of functions and read settings from CLI
-   */
-    explicit Manager(const QStringList &args);
+    explicit Manager();
     /*!
    * \brief The main process
    */
@@ -53,10 +49,6 @@ private:
    * \brief The number of completed files. Used to determine progress
    */
     int _numberCompletedFiles = 0;
-    /*!
-   * \brief The optimization settings, that will be given to the MainOptimizer
-   */
-    Profile _profile;
     /*!
     * \brief The list of directories to process
     */

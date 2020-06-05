@@ -239,7 +239,7 @@ void MainWindow::initProcess()
     try
     {
         caoProcess_.reset();
-        caoProcess_ = std::make_unique<Manager>(currentProfile());
+        caoProcess_ = std::make_unique<Manager>();
         connect(&*caoProcess_, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
         connect(&*caoProcess_, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
         connect(&*caoProcess_, &Manager::end, this, &MainWindow::endProcess);

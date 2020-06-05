@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         {
             CAO::Profiles::getInstance().setCurrent(parser.positionalArguments().at(0));
 
-            manager = std::make_unique<CAO::Manager>(CAO::currentProfile());
+            manager = std::make_unique<CAO::Manager>();
             manager->runOptimization();
         }
         else

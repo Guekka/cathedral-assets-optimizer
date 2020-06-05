@@ -8,9 +8,7 @@
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
-MainOptimizer::MainOptimizer(const Profile &profile)
-    : profile_(profile)
-{}
+MainOptimizer::MainOptimizer() {}
 
 void MainOptimizer::process(const QString &path)
 {
@@ -18,7 +16,7 @@ void MainOptimizer::process(const QString &path)
         processStandardFile(_textureFile, path, Command::CommandType::Texture);
     else if (path.endsWith(".nif", Qt::CaseInsensitive))
         processStandardFile(_meshFile, path, Command::CommandType::Mesh);
-    else if (path.endsWith(profile_.getGeneralSettings().sBSASuffix(), Qt::CaseInsensitive))
+    else if (path.endsWith(currentProfile().getGeneralSettings().sBSASuffix(), Qt::CaseInsensitive))
         processBsa(path);
     else if (path.endsWith(".hkx", Qt::CaseInsensitive))
         processStandardFile(_animFile, path, Command::CommandType::Animation);
@@ -26,7 +24,7 @@ void MainOptimizer::process(const QString &path)
 
 void MainOptimizer::processBsa(const QString &file)
 {
-    if (profile_.getGeneralSettings().bDryRun())
+    if (currentProfile().getGeneralSettings().bDryRun())
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
     PLOG_INFO << "Extracting BSA: " + file;
@@ -49,8 +47,8 @@ void MainOptimizer::packBsa(const QString &folder)
     if (!runCommand(command, bsa))
         return;
 
-    if (profile_.getGeneralSettings().bBSACreateDummies())
-        PluginsOperations::makeDummyPlugins(folder, profile_.getGeneralSettings());
+    if (currentProfile().getGeneralSettings().bBSACreateDummies())
+        PluginsOperations::makeDummyPlugins(folder, currentProfile().getGeneralSettings());
 }
 
 bool MainOptimizer::processStandardFile(File &file, const QString &path, const Command::CommandType &type)

@@ -22,7 +22,7 @@ class MainOptimizer final : public QObject
     Q_DECLARE_TR_FUNCTIONS(MainOptimizer)
 
 public:
-    explicit MainOptimizer(const Profile &profile);
+    explicit MainOptimizer();
 
     void process(const QString &path);
     void packBsa(const QString &folder);
@@ -35,8 +35,6 @@ protected:
 private:
     void processBsa(const QString &file);
     bool processStandardFile(File &file, const QString &path, const Command::CommandType &type);
-
-    Profile profile_;
 
     BSAFile _bsaFile;
     MeshFile _meshFile;

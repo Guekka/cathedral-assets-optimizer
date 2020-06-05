@@ -4,12 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "Manager.hpp"
 namespace CAO {
-Manager::Manager(const Profile &profile)
-    : _profile(profile)
-
+Manager::Manager()
 {
     //Preparing logging
-    initCustomLogger(_profile.logPath(), _profile.getGeneralSettings().bDebugLog());
+    initCustomLogger(currentProfile().logPath(), currentProfile().getGeneralSettings().bDebugLog());
 
     PLOG_VERBOSE << "Checking settings...";
 
@@ -22,9 +20,9 @@ Manager::Manager(const Profile &profile)
         }
     };
 
-    checkSettings(_profile.getFileTypes());
-    checkSettings(_profile.getGeneralSettings());
-    _profile.getPatterns().get() | rx::transform([](auto &&p) { return p.second; })
+    checkSettings(currentProfile().getFileTypes());
+    checkSettings(currentProfile().getGeneralSettings());
+    currentProfile().getPatterns().get() | rx::transform([](auto &&p) { return p.second; })
         | rx::for_each(checkSettings);
 
     readIgnoredMods();
@@ -38,11 +36,12 @@ void Manager::listDirectories()
 {
     _modsToProcess.clear();
 
-    const auto &settings = _profile.getGeneralSettings();
+    const auto &settings = currentProfile().getGeneralSettings();
     if (settings.eMode() == SingleMod)
         _modsToProcess << settings.sUserPath();
 
-    else {
+    else
+    {
         const QDir dir(settings.sUserPath());
         auto isNotSeparator = [](auto &&str) { return !str.contains("separator"); };
         auto isNotIgnored   = [this](auto &&str) { return !_ignoredMods.contains(str, Qt::CaseInsensitive); };
@@ -62,19 +61,20 @@ void Manager::listFiles()
     _files.clear();
     BSAs.clear();
 
-    for (auto &subDir : _modsToProcess) {
+    for (auto &subDir : _modsToProcess)
+    {
         QDirIterator it(subDir, QDirIterator::Subdirectories);
-        while (it.hasNext()) {
+        while (it.hasNext())
+        {
             const QString &filename = it.next();
 
             if (it.fileInfo().size() == 0)
                 continue;
 
-            const auto &settings = _profile.getSettings(filename);
+            const auto &settings = currentProfile().getSettings(filename);
 
-            const bool processMeshes = settings.bMeshesResave()
-                                       || settings.iMeshesOptimizationLevel();
-            const bool mesh = filename.endsWith(".nif", Qt::CaseInsensitive) && processMeshes;
+            const bool processMeshes = settings.bMeshesResave() || settings.iMeshesOptimizationLevel();
+            const bool mesh          = filename.endsWith(".nif", Qt::CaseInsensitive) && processMeshes;
 
             const bool processTextures = settings.bTexturesMipmaps() || settings.bTexturesCompress()
                                          || settings.bTexturesNecessary()
@@ -87,7 +87,7 @@ void Manager::listFiles()
             const bool animation = settings.bAnimationsOptimization()
                                    && filename.endsWith(".hkx", Qt::CaseInsensitive);
 
-            const bool isBsa = filename.endsWith(_profile.getGeneralSettings().sBSAExtension(),
+            const bool isBsa = filename.endsWith(currentProfile().getGeneralSettings().sBSAExtension(),
                                                  Qt::CaseInsensitive);
 
             QStringList &list = isBsa ? BSAs : _files;
@@ -102,10 +102,11 @@ void Manager::listFiles()
 
 void Manager::readIgnoredMods()
 {
-    QFile &&ignoredModsFile = _profile.getFile("ignoredMods.txt");
-    _ignoredMods = Filesystem::readFile(ignoredModsFile);
+    QFile &&ignoredModsFile = currentProfile().getFile("ignoredMods.txt");
+    _ignoredMods            = Filesystem::readFile(ignoredModsFile);
 
-    if (_ignoredMods.isEmpty()) {
+    if (_ignoredMods.isEmpty())
+    {
         PLOG_WARNING << "ignoredMods.txt not found. All mods will be processed, including tools "
                         "such as Nemesis or "
                         "Bodyslide studio.";
@@ -115,13 +116,14 @@ void Manager::readIgnoredMods()
 void Manager::runOptimization()
 {
     PLOG_DEBUG << "Profile directory: " << currentProfile().profileDirectory().path();
-    PLOG_INFO << "Processing: " + _profile.getGeneralSettings().sUserPath();
+    PLOG_INFO << "Processing: " + currentProfile().getGeneralSettings().sUserPath();
     PLOG_INFO << "Beginning...";
 
-    MainOptimizer optimizer(_profile);
+    MainOptimizer optimizer;
 
     //Extracting BSAs
-    for (const auto &file : BSAs) {
+    for (const auto &file : BSAs)
+    {
         optimizer.process(file);
         ++_numberCompletedFiles;
         printProgress(BSAs.size(), "Extracting BSAs");
@@ -133,11 +135,13 @@ void Manager::runOptimization()
     //Using time in order to prevent printing progress too often
     QDateTime time1 = QDateTime::currentDateTime();
     QDateTime time2;
-    for (const auto &file : _files) {
+    for (const auto &file : _files)
+    {
         optimizer.process(file);
         ++_numberCompletedFiles;
         time2 = QDateTime::currentDateTime();
-        if (time2 > time1.addMSecs(3000)) {
+        if (time2 > time1.addMSecs(3000))
+        {
             printProgress(_numberFiles);
             time1 = time2;
         }
@@ -146,14 +150,14 @@ void Manager::runOptimization()
     //Packing BSAs
     _numberCompletedFiles = 0;
     printProgress(_modsToProcess.size(), "Packing BSAs");
-    for (const auto &folder : _modsToProcess) {
+    for (const auto &folder : _modsToProcess)
+    {
         optimizer.packBsa(folder);
         ++_numberCompletedFiles;
-        printProgress(_modsToProcess.size(),
-                      "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
+        printProgress(_modsToProcess.size(), "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
     }
 
-    Filesystem::deleteEmptyDirectories(_profile.getGeneralSettings().sUserPath());
+    Filesystem::deleteEmptyDirectories(currentProfile().getGeneralSettings().sUserPath());
     PLOG_INFO << "Process completed<br><br><br>";
     emit end();
 }
