@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
 
     try
     {
-        CAO::Profiles::getInstance().update(true);
         if (parser.isSet("cli"))
         {
             CAO::Profiles::getInstance().setCurrent(parser.positionalArguments().at(0));
