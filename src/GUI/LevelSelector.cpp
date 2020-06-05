@@ -35,7 +35,7 @@ void LevelSelector::setupWindow(MainWindow &mw, GuiMode level)
     {
         case GuiMode::QuickAutoPort:
         {
-            mw.addModule(std::make_unique<QuickAutoPortWindow>(), "Quick Auto Port");
+            mw.addModule<QuickAutoPortWindow>("Quick Auto Port");
             break;
         }
         case GuiMode::Medium:

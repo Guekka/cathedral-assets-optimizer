@@ -150,14 +150,14 @@
        <item row="0" column="2">
         <widget class="QComboBox" name="modeChooserComboBox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>100</width>
            <height>38</height>
           </size>
          </property>
@@ -182,14 +182,14 @@
        <item row="0" column="1">
         <widget class="QPushButton" name="processButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>100</width>
            <height>40</height>
           </size>
          </property>
@@ -207,14 +207,14 @@
        <item row="0" column="0">
         <widget class="QPushButton" name="userPathButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>100</width>
            <height>40</height>
           </size>
          </property>

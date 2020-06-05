@@ -28,25 +28,29 @@ public:
     Ui::MainWindow &mainUI() { return *ui_; }
     const Ui::MainWindow &mainUI() const { return *ui_; }
 
-    void addModule(std::unique_ptr<IWindowModule> module, const QString &name)
+    template<typename T>
+    void addModule(const QString &name)
     {
-        modules_.emplace_back(std::move(module));
-        ui_->tabWidget->addTab(&*modules_.back(), name);
+        T *mod = new T;
+        ui_->tabWidget->insertTab(0, mod, name);
+        connectModule(*mod);
     }
 
     template<typename T>
     void removeModule()
     {
-        auto it = std::find_if(modules_.begin(),
-                               modules_.end(),
-                               [](const std::unique_ptr<IWindowModule> &mod) {
-                                   return dynamic_cast<T *>(mod);
-                               });
-        if (it != modules_.end())
-            modules_.erase(it);
+        for (int i = 0; i < ui_->tabWidget->count(); i++)
+            if (dynamic_cast<T *>(ui_->tabWidget->widget(i)))
+            {
+                ui_->tabWidget->removeTab(i);
+                break;
+            }
     }
 
 private:
+    void connectModule(IWindowModule &);
+    void reconnectModules();
+
     void connectAll();
     void disconnectAll();
 
@@ -54,7 +58,6 @@ private:
 
     int progressBarValue_{};
     std::unique_ptr<Manager> caoProcess_;
-    std::vector<std::unique_ptr<IWindowModule>> modules_;
 
     void createProfile();
     void refreshProfiles();

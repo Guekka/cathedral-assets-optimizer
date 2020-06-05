@@ -76,11 +76,26 @@ MainWindow::MainWindow()
     firstStart();
 }
 
+void MainWindow::connectModule(IWindowModule &mod)
+{
+    mod.disconnectAll();
+    mod.connectAll(currentProfile().getPatterns().getDefaultSettings(), currentProfile().getGeneralSettings());
+    //FIXME Change patterns to the current selected pattern
+}
+
+void MainWindow::reconnectModules()
+{
+    for (int i = 0; i < ui_->tabWidget->count(); i++)
+        if (auto mod = dynamic_cast<IWindowModule *>(ui_->tabWidget->widget(i)); mod)
+            connectModule(*mod);
+}
+
 void MainWindow::connectAll()
 {
     auto &commonSettings  = Profiles::getInstance().commonSettings();
     auto &generalSettings = currentProfile().getGeneralSettings();
 
+    selectText(*ui_->profiles, commonSettings.sProfile());
     connect(ui_->profiles,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             &commonSettings.sProfile,
@@ -91,6 +106,8 @@ void MainWindow::connectAll()
             this,
             [this, &commonSettings] { selectText(*ui_->profiles, commonSettings.sProfile()); });
 
+    int idx = ui_->modeChooserComboBox->findData(generalSettings.eMode());
+    ui_->modeChooserComboBox->setCurrentIndex(idx);
     connect(ui_->modeChooserComboBox,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             &generalSettings.eMode,
@@ -104,6 +121,8 @@ void MainWindow::connectAll()
         ui_->modeChooserComboBox->setCurrentIndex(idx);
     });
 
+    ui_->actionEnableDarkTheme->setChecked(commonSettings.bDarkMode());
+    setDarkTheme(commonSettings.bDarkMode());
     connect(ui_->actionEnableDarkTheme,
             &QAction::triggered,
             &commonSettings.bDarkMode,
@@ -115,9 +134,9 @@ void MainWindow::connectAll()
     connect(&commonSettings.bDarkMode,
             &decltype(commonSettings.bDarkMode)::valueChanged,
             this,
-            [this, &generalSettings] {
-                int idx = ui_->modeChooserComboBox->findData(generalSettings.eMode());
-                ui_->modeChooserComboBox->setCurrentIndex(idx);
+            [this, &commonSettings] {
+                ui_->actionEnableDarkTheme->setChecked(commonSettings.bDarkMode());
+                setDarkTheme(commonSettings.bDarkMode());
             });
 
     connectWrapper(*ui_->actionShow_tutorials,
@@ -144,7 +163,6 @@ void MainWindow::loadUi()
 void MainWindow::resetUi()
 {
     ui_->tabWidget->clear();
-    modules_.clear();
 }
 
 void MainWindow::readProgress(const QString &text, const int &max, const int &value)
@@ -192,8 +210,11 @@ void MainWindow::createProfile()
 void MainWindow::setProfile(const QString &name)
 {
     refreshProfiles();
+
     ui_->profiles->setCurrentIndex(ui_->profiles->findText(name));
+
     connectAll();
+    reconnectModules();
 }
 
 void MainWindow::setDarkTheme(const bool &enabled)
@@ -212,6 +233,7 @@ void MainWindow::setDarkTheme(const bool &enabled)
 void MainWindow::initProcess()
 {
     Profiles::getInstance().saveCommonSettings();
+    currentProfile().saveToJSON();
     ui_->processButton->setDisabled(true);
 
     try
@@ -247,6 +269,7 @@ void MainWindow::endProcess()
     updateLog();
 
     Profiles::getInstance().saveCommonSettings();
+    currentProfile().saveToJSON();
 }
 
 void MainWindow::updateLog() const
