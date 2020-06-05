@@ -17,10 +17,29 @@ QuickAutoPortWindow::QuickAutoPortWindow(QWidget *parent)
     ui_->setupUi(this);
 }
 
-void QuickAutoPortWindow::connectAll([[maybe_unused]] PatternSettings &pSets, GeneralSettings &gSets)
+void QuickAutoPortWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
 {
-    connectWrapper(*ui_->createBSAsCheckbox, gSets.bBSACreate);
-    connectWrapper(*ui_->extractBSAsCheckbox, gSets.bBSAExtractFromBSA);
+    gSets.bBSAExtractFromBSA = true;
+
+    ui_->extractBSAsCheckbox->setChecked(!gSets.bBSACreate());
+    ui_->createBSAsCheckbox->setChecked(gSets.bBSACreate());
+
+    connect(ui_->createBSAsCheckbox, &QCheckBox::toggled, this, [this, &gSets](bool checked) {
+        if (!checked)
+            return;
+
+        gSets.bBSACreate = true;
+        ui_->extractBSAsCheckbox->setChecked(false);
+        ui_->createBSAsCheckbox->setChecked(true);
+    });
+    connect(ui_->extractBSAsCheckbox, &QCheckBox::toggled, this, [this, &gSets](bool checked) {
+        if (!checked)
+            return;
+
+        gSets.bBSACreate = false;
+        ui_->extractBSAsCheckbox->setChecked(true);
+        ui_->createBSAsCheckbox->setChecked(false);
+    });
 
     gSets.bBSACreateDummies   = true;
     gSets.bBSACompressArchive = true;
