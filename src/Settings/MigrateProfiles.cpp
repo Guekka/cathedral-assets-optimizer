@@ -28,7 +28,6 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 
     generalSets.sBSAExtension = profileSettings.value("bsaExtension").toString();
     generalSets.sBSASuffix = profileSettings.value("bsaSuffix").toString();
-    generalSets.bBSATabEnabled = profileSettings.value("bsaEnabled").toBool();
 
     generalSets.eBSATexturesFormat = static_cast<bsa_archive_type_t>(
         profileSettings.value("bsaTexturesFormat").toInt());
@@ -40,20 +39,17 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     profileSettings.endGroup();
     profileSettings.beginGroup("Meshes");
 
-    generalSets.bMeshesTabEnabled = profileSettings.value("meshesEnabled").toBool();
     gPattern.eMeshesFileVersion = static_cast<NiFileVersion>(
         profileSettings.value("meshesFileVersion").toInt());
     gPattern.iMeshesStream = profileSettings.value("meshesStream").toUInt();
     gPattern.iMeshesUser = profileSettings.value("meshesUser").toUInt();
     profileSettings.endGroup();
     profileSettings.beginGroup("Animations");
-    generalSets.bAnimationsTabEnabled = profileSettings.value("animationsEnabled").toBool();
     gPattern.eAnimationsFormat = static_cast<hkPackFormat>(profileSettings.value("animationFormat").toInt());
 
     profileSettings.endGroup();
     profileSettings.beginGroup("Textures");
 
-    generalSets.bTexturesTabEnabled = profileSettings.value("texturesEnabled").toBool();
     gPattern.eTexturesFormat = profileSettings.value("texturesFormat").value<DXGI_FORMAT>();
     bool texturesConvertTga = profileSettings.value("texturesConvertTga").toBool();
     auto texturesUnwantedFormats = profileSettings.value("texturesUnwantedFormats").toList();

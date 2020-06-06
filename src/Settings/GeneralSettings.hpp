@@ -44,11 +44,6 @@ public:
     REGISTER_SETTING(QString, sBSAExtension, "Advanced/BSA/sBSAExtension")
     REGISTER_SETTING(QString, sBSASuffix, "Advanced/BSA/sBSASuffix")
     REGISTER_SETTING(QString, sBSATexturesSuffix, "Advanced/BSA/sBSATexturesSuffix")
-
-    REGISTER_SETTING(bool, bBSATabEnabled, "Advanced/BSA/bBSATabEnabled")
-    REGISTER_SETTING(bool, bTexturesTabEnabled, "Advanced/Textures/bTexturesTabEnabled")
-    REGISTER_SETTING(bool, bMeshesTabEnabled, "Advanced/Meshes/bMeshesTabEnabled")
-    REGISTER_SETTING(bool, bAnimationsTabEnabled, "Advanced/Animations/bAnimationsTabEnabled")
 };
 } // namespace CAO
 
