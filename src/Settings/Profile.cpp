@@ -100,13 +100,13 @@ const FileTypes &Profile::getFileTypes() const
 
 void Profile::saveToJSON()
 {
-    nlohmann::json generalJson = getGeneralSettings().getJSON();
+    nlohmann::json generalJson = generalSettings_.getJSON();
     JSON::saveToFile(generalJson, generalSettingsPath());
 
     nlohmann::json patternJSON = patternSettings_.getUnifiedJSON();
     JSON::saveToFile(patternJSON, patternSettingsPath());
 
-    nlohmann::json fileTypesJSON = fileTypes_.getJSON();
+    nlohmann::json fileTypesJSON = fileTypes_.getJSON();    
     JSON::saveToFile(fileTypesJSON, fileTypesPath());
 }
 } // namespace CAO

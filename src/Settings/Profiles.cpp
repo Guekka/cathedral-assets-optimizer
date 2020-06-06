@@ -26,6 +26,7 @@ Profiles &Profiles::getInstance()
 void Profiles::setDir(const QDir &dir)
 {
     rootProfileDir_ = dir;
+    profiles_.clear();
 }
 
 void Profiles::create(const QString &name, const QString &baseProfile)
