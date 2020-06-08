@@ -63,15 +63,8 @@ bool BSACreate::isApplicable(File &file)
 
 bool BSACreate::canBeCompressedFile(const QString &filename)
 {
-    auto name                       = filename.toStdString();
-    const auto &uncompressibleFiles = currentProfile().getFileTypes().slBSAUncompressibleFiles();
-
-    auto match = [&name](const std::string &str) {
-        using namespace wildcards;
-        return isMatch(name, pattern{str}, case_insensitive);
-    };
-
-    return any_of(uncompressibleFiles, match);
+    return currentProfile().getFileTypes().match(currentProfile().getFileTypes().slBSAUncompressibleFiles(),
+                                                 filename);
 }
 
 } // namespace CAO

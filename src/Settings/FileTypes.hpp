@@ -23,6 +23,8 @@ public:
     FileTypes &operator=(const FileTypes &other);
     FileTypes &operator=(FileTypes &&other);
 
+    bool match(const std::vector<std::string> &patterns, const QString &str) const;
+
     REGISTER_SETTING(std::vector<std::string>, slBSAStandardFiles, "/BSA/slStandardFiles")
     REGISTER_SETTING(std::vector<std::string>, slBSATextureFiles, "/BSA/slTextureFiles")
     REGISTER_SETTING(std::vector<std::string>, slBSAUncompressibleFiles, "/BSA/slUncompressibleFiles")

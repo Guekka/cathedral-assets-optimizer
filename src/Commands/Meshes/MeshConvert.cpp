@@ -76,15 +76,8 @@ bool MeshConvert::isApplicable(File &file)
 
 bool MeshConvert::isHeadpart(const QString &filepath)
 {
-    auto name             = filepath.toStdString();
-    const auto &headparts = currentProfile().getFileTypes().slMeshesHeadparts();
-
-    auto match = [&name](const std::string &str) {
-        using namespace wildcards;
-        return isMatch(name, pattern{str}, case_insensitive);
-    };
-
-    return any_of(headparts, match);
+    const auto &ft = currentProfile().getFileTypes();
+    return ft.match(ft.slMeshesHeadparts(), filepath);
 }
 
 void MeshConvert::listHeadparts(const GeneralSettings &settings, FileTypes &filetypes)

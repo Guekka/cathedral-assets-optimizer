@@ -47,17 +47,9 @@ void Manager::listDirectories()
         const QDir dir(settings.sUserPath());
         auto isNotSeparator = [](auto &&str) { return !str.contains("separator"); };
 
-        //TODO factorise the match wildcard code into FileTypes
         auto isNotBlacklist = [](const QString &dirName) {
-            auto name             = dirName.toStdString();
-            const auto &blacklist = currentProfile().getFileTypes().slModsBlacklist();
-
-            auto match = [&name](const std::string &str) {
-                using namespace wildcards;
-                return isMatch(name, pattern{str}, case_insensitive);
-            };
-
-            return any_of(blacklist, match);
+            auto &ft = currentProfile().getFileTypes();
+            return !ft.match(ft.slModsBlacklist(), dirName);
         };
 
         dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)

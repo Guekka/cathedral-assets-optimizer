@@ -2,7 +2,10 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "FileTypes.hpp"
+#include "Utils/Algorithms.hpp"
+#include "Utils/wildcards.hpp"
 
 namespace CAO {
 
@@ -47,6 +50,18 @@ FileTypes &FileTypes::operator=(FileTypes &&other)
         json_ = std::move(other.json_);
 
     return *this;
+}
+
+bool FileTypes::match(const std::vector<std::string> &patterns, const QString &str) const
+{
+    auto name = str.toStdString();
+
+    auto match = [&name](const std::string &str) {
+        using namespace wildcards;
+        return isMatch(name, pattern{str}, case_insensitive);
+    };
+
+    return any_of(patterns, match);
 }
 
 } // namespace CAO

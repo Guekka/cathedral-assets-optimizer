@@ -66,16 +66,14 @@ bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
     if (bsaDir.absoluteFilePath(fileinfo.fileName()) == fileinfo.absoluteFilePath())
         return false;
 
-    const std::string &name = fileinfo.fileName().toStdString();
-    auto match              = [&name](const std::string &str) {
-        using namespace wildcards;
-        return isMatch(name, pattern{str}, case_insensitive);
-    };
+    const auto &ft      = currentProfile().getFileTypes();
+    const QString &path = fileinfo.path();
 
-    const auto &types = currentProfile().getFileTypes();
+    if (ft.match(ft.slBSABlacklist(), path))
+        return false;
 
-    return any_of(types.slBSAStandardFiles(), match) || any_of(types.slBSATextureFiles(), match)
-           || any_of(types.slBSAUncompressibleFiles(), match);
+    return ft.match(ft.slBSATextureFiles(), path) || ft.match(ft.slBSAStandardFiles(), path)
+           || ft.match(ft.slBSAUncompressibleFiles(), path);
 }
 
 } // namespace CAO

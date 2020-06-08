@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "PatternMap.hpp"
+#include "Utils/Algorithms.hpp"
 #include "Utils/wildcards.hpp"
 #include <string>
 
@@ -43,7 +44,7 @@ PatternSettings PatternMap::getSettings(const QString &filePath) const
     for (const auto &[_, patternSettings] : patterns_)
     {
         const auto &patterns = patternSettings.patterns_;
-        if (std::any_of(patterns.cbegin(), patterns.cend(), matchWildcard))
+        if (any_of(patterns, matchWildcard))
             merged.merge_patch(patternSettings.getJSON());
     }
 
