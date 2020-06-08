@@ -14,7 +14,8 @@ class CommonSettings : public Settings
 {
 public:
     CommonSettings(){};
-    CommonSettings([[maybe_unused]] const CommonSettings &other) {}
+    CommonSettings(const CommonSettings &other) { json_ = other.json_; }
+    CommonSettings(CommonSettings &&other) { json_ = std::move(other.json_); }
 
     std::optional<QString> isValid() const override { return std::nullopt; };
 
