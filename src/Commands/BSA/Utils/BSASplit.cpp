@@ -27,15 +27,9 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
         if (!isAllowedFile(dir, it.fileInfo()))
             continue;
 
-        const std::string &name = it.filePath().toStdString();
-        auto match              = [&name](const std::string &str) {
-            using namespace wildcards;
-            return isMatch(name, pattern{str}, case_insensitive);
-        };
-
-        const auto &fileTypes       = currentProfile().getFileTypes();
-        const bool isTexture        = any_of(fileTypes.slBSATextureFiles(), match);
-        const bool isUncompressible = any_of(fileTypes.slBSAUncompressibleFiles(), match);
+        auto &ft                    = currentProfile().getFileTypes();
+        const bool isTexture        = ft.match(ft.slBSATextureFiles(), it.filePath());
+        const bool isUncompressible = ft.match(ft.slBSAUncompressibleFiles(), it.filePath());
 
         BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
         pBsa       = isUncompressible ? &uncompressableBsa : pBsa;
@@ -50,6 +44,9 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
             *pBsa = &bsas.back();
         }
     }
+
+    //Removing empty BSAs
+    bsas = bsas | rx::filter([](const BSA &bsa) { return !bsa.files.empty(); }) | rx::to_vector();
 
     //Merging BSAs that can be merged
     BSA::mergeBSAs(bsas, generalSets.bBSACompact());
@@ -67,7 +64,7 @@ bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
         return false;
 
     const auto &ft      = currentProfile().getFileTypes();
-    const QString &path = fileinfo.path();
+    const QString &path = fileinfo.filePath();
 
     if (ft.match(ft.slBSABlacklist(), path))
         return false;

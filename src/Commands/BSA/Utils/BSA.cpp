@@ -71,7 +71,7 @@ void BSA::mergeBSAs(std::vector<BSA> &list, bool merge)
         return merge_if(begin, end, notMaxSize);
     };
 
-    auto firstEnd = sortMerge(list.begin(), secondBegin);
+    auto firstEnd  = sortMerge(list.begin(), secondBegin);
     auto secondEnd = sortMerge(secondBegin, thirdBegin);
     auto thirdEnd = sortMerge(thirdBegin, list.end());
 
@@ -91,7 +91,7 @@ void BSA::mergeBSAs(std::vector<BSA> &list, bool merge)
 BSA &BSA::operator+=(const BSA &other)
 {
     filesSize += other.filesSize;
-    files + other.files;
+    files += other.files;
     if (type != other.type)
         type = StandardBsa;
     return *this;

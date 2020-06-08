@@ -27,19 +27,17 @@ CommandResult BSACreate::process(File &file)
 
         libbsarch::bs_archive_auto archive(bsa.format);
         archive.set_share_data(true);
-        archive.set_compressed(currentProfile().getGeneralSettings().bBSACompressArchive());
+        bool canBeCompressed = currentProfile().getGeneralSettings().bBSACompressArchive()
+                               && bsa.type != BSAType::UncompressableBsa;
+        archive.set_compressed(canBeCompressed);
         const libbsarch::convertible_string &rootPath = bsaFolder->path();
         archive.set_dds_callback(&BSACallback, rootPath);
 
         try
         {
             for (const auto &fileInBSA : bsa.files)
-            {
-                if (!canBeCompressedFile(fileInBSA))
-                    archive.set_compressed(false);
-
                 archive.add_file_from_disk(libbsarch::disk_blob(rootPath, fileInBSA));
-            }
+
             archive.save_to_disk(libbsarch::convertible_string(bsa.path));
         }
         catch (const std::exception &e)
