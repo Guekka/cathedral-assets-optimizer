@@ -13,17 +13,18 @@ Profile::Profile(QDir profileDir)
     const QString &absolutePath = profileDir_.absoluteFilePath("logs/" + dateTime + ".html");
     logPath_                    = QDir::toNativeSeparators(absolutePath);
 
-    nlohmann::json generalJson;
-    JSON::readFromFile(generalJson, generalSettingsPath());
-    generalSettings_ = {generalJson};
+    auto readJSON = [](Settings &sets, const QString &path) {
+        nlohmann::json json;
+        JSON::readFromFile(json, path);
+        sets.setJSON(json);
+    };
+
+    readJSON(generalSettings_, generalSettingsPath());
+    readJSON(fileTypes_, fileTypesPath());
 
     nlohmann::json patternJson;
     JSON::readFromFile(patternJson, patternSettingsPath());
     patternSettings_.listPatterns(patternJson);
-
-    nlohmann::json fileTypes;
-    JSON::readFromFile(fileTypes, fileTypesPath());
-    fileTypes_.setJSON(patternJson);
 }
 
 QFile Profile::getFile(const QString &filename) const
@@ -100,13 +101,12 @@ const FileTypes &Profile::getFileTypes() const
 
 void Profile::saveToJSON()
 {
-    nlohmann::json generalJson = generalSettings_.getJSON();
-    JSON::saveToFile(generalJson, generalSettingsPath());
+    auto saveJSON = [](const Settings &sets, const QString &path) { JSON::saveToFile(sets.getJSON(), path); };
+
+    saveJSON(generalSettings_, generalSettingsPath());
+    saveJSON(fileTypes_, fileTypesPath());
 
     nlohmann::json patternJSON = patternSettings_.getUnifiedJSON();
     JSON::saveToFile(patternJSON, patternSettingsPath());
-
-    nlohmann::json fileTypesJSON = fileTypes_.getJSON();    
-    JSON::saveToFile(fileTypesJSON, fileTypesPath());
 }
 } // namespace CAO
