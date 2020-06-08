@@ -70,3 +70,10 @@ template<class Container, class Pred>
                        std::forward<Container>(cont).end(),
                        std::forward<Pred>(pred));
 }
+
+template<class Container>
+[[nodiscard]] static auto remove_duplicates(Container &cont)
+{
+    std::sort(std::begin(cont), std::end(cont));
+    cont.erase(std::unique(std::begin(cont), std::end(cont)), std::end(cont));
+}
