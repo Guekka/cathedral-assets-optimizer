@@ -81,7 +81,7 @@ QStringList listBSAsNames(QDirIterator it, const GeneralSettings &settings);
 * \param filepath The path of the plugin to scan
 * \return The list of headparts
 */
-QStringList listHeadparts(const QString &filepath);
+std::vector<std::string> listHeadparts(const QString &filepath);
 /*!
 * \brief List all the landscape textures in a plugin file
 * \param filepath The path of the plugin to scan

@@ -90,10 +90,8 @@ void MeshConvert::listHeadparts(const GeneralSettings &settings, FileTypes &file
     QDirIterator it(settings.sUserPath(), flags);
     for (const auto &plugin : Filesystem::listPlugins(it))
     {
-        //TODO return a string vec from listHeadparts
         auto result       = PluginsOperations::listHeadparts(plugin);
-        auto vectorResult = toStringVector(result);
-        headparts.insert(headparts.end(), vectorResult.begin(), vectorResult.end());
+        headparts.insert(headparts.end(), result.begin(), result.end());
     }
 
     remove_duplicates(headparts);

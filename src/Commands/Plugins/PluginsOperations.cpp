@@ -5,6 +5,7 @@
 
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "Settings/Profiles.hpp"
+#include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
 
 namespace CAO {
@@ -92,17 +93,18 @@ QStringList PluginsOperations::listBSAsNames(QDirIterator it, const GeneralSetti
     return bsas;
 }
 
-QStringList PluginsOperations::listHeadparts(const QString &filepath)
+std::vector<std::string> PluginsOperations::listHeadparts(const QString &filepath)
 {
     auto file = Filesystem::openBinaryFile(filepath);
 
     if (!file.is_open())
-        return QStringList();
+        return {};
 
     PluginRecordHeader header{};
     PluginFieldHeader pluginFieldHeader{};
 
-    QStringList headparts;
+    std::vector<std::string> headparts;
+    headparts.reserve(1000);
 
     const auto readHeaders = [&]() { file.read(reinterpret_cast<char *>(&header), sizeof header); };
 
@@ -112,7 +114,7 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
 
     readHeaders();
     if (strncmp(header.plugin.type, GROUP_TES4, sizeof GROUP_TES4) != 0)
-        return QStringList(); //Not a plugin file
+        return {}; //Not a plugin file
 
     //Skip TES4 record
     file.seekg(header.record.dataSize, std::ios::cur);
@@ -157,7 +159,7 @@ QStringList PluginsOperations::listHeadparts(const QString &filepath)
                     headpart.prepend("meshes/");
 
                 //Adding headparts to the list
-                headparts << QDir::cleanPath(headpart);
+                headparts.emplace_back(QDir::cleanPath(headpart).toStdString());
             }
         }
     } while (strncmp(header.plugin.type, GROUP_GRUP, sizeof GROUP_GRUP) == 0 && file.good());
