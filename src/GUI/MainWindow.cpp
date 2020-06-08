@@ -139,6 +139,17 @@ void MainWindow::connectAll()
                 setDarkTheme(commonSettings.bDarkMode());
             });
 
+    ui_->userPathTextEdit->setText(generalSettings.sUserPath());
+    connect(ui_->userPathTextEdit,
+            &QLineEdit::textEdited,
+            &generalSettings.sUserPath,
+            &decltype(generalSettings.sUserPath)::setValue);
+
+    connect(&generalSettings.sUserPath,
+            &decltype(generalSettings.sUserPath)::valueChanged,
+            ui_->userPathTextEdit,
+            [this, &generalSettings] { ui_->userPathTextEdit->setText(generalSettings.sUserPath()); });
+
     connectWrapper(*ui_->actionShow_tutorials,
                    commonSettings.bShowTutorials,
                    &QAction::triggered,
