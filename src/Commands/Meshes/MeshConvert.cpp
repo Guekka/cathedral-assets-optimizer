@@ -14,10 +14,10 @@ CommandResult MeshConvert::process(File &file)
         return _resultFactory.getCannotCastFileResult();
 
     NiVersion niVersion;
-    auto& patternSettings = file.patternSettings();
-    niVersion.SetUser(patternSettings.iMeshesUser());
-    niVersion.SetFile(patternSettings.eMeshesFileVersion());
-    niVersion.SetStream(patternSettings.iMeshesStream());
+    auto &sets = currentProfile().getGeneralSettings();
+    niVersion.SetUser(sets.iMeshesUser());
+    niVersion.SetFile(sets.eMeshesFileVersion());
+    niVersion.SetStream(sets.iMeshesStream());
 
     OptOptions optOptions;
     optOptions.targetVersion = niVersion;

@@ -39,10 +39,10 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     profileSettings.endGroup();
     profileSettings.beginGroup("Meshes");
 
-    gPattern.eMeshesFileVersion = static_cast<NiFileVersion>(
+    generalSets.eMeshesFileVersion = static_cast<NiFileVersion>(
         profileSettings.value("meshesFileVersion").toInt());
-    gPattern.iMeshesStream = profileSettings.value("meshesStream").toUInt();
-    gPattern.iMeshesUser = profileSettings.value("meshesUser").toUInt();
+    generalSets.iMeshesStream = profileSettings.value("meshesStream").toUInt();
+    generalSets.iMeshesUser   = profileSettings.value("meshesUser").toUInt();
     profileSettings.endGroup();
     profileSettings.beginGroup("Animations");
     gPattern.eAnimationsFormat = static_cast<hkPackFormat>(profileSettings.value("animationFormat").toInt());

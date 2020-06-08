@@ -44,6 +44,9 @@ public:
     REGISTER_SETTING(QString, sBSAExtension, "Advanced/BSA/sBSAExtension")
     REGISTER_SETTING(QString, sBSASuffix, "Advanced/BSA/sBSASuffix")
     REGISTER_SETTING(QString, sBSATexturesSuffix, "Advanced/BSA/sBSATexturesSuffix")
+    REGISTER_SETTING(NiFileVersion, eMeshesFileVersion, "Advanced/Meshes/eMeshesFileVersion")
+    REGISTER_SETTING(uint, iMeshesStream, "Advanced/Meshes/iMeshesStream")
+    REGISTER_SETTING(uint, iMeshesUser, "Advanced/Meshes/iMeshesUser")
 };
 } // namespace CAO
 

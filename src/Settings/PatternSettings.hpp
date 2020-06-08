@@ -65,9 +65,6 @@ public:
     REGISTER_SETTING(int, iMeshesOptimizationLevel, "Meshes/iMeshesOptimizationLevel")
     REGISTER_SETTING(bool, bMeshesHeadparts, "Meshes/bMeshesHeadparts")
     REGISTER_SETTING(bool, bMeshesResave, "Meshes/bMeshesResave")
-    REGISTER_SETTING(NiFileVersion, eMeshesFileVersion, "Advanced/Meshes/eMeshesFileVersion")
-    REGISTER_SETTING(uint, iMeshesStream, "Advanced/Meshes/iMeshesStream")
-    REGISTER_SETTING(uint, iMeshesUser, "Advanced/Meshes/iMeshesUser")
 
     REGISTER_SETTING(bool, bAnimationsOptimization, "Animations/bAnimationsOptimization")
     REGISTER_SETTING(hkPackFormat, eAnimationsFormat, "Advanced/Animations/eAnimationsFormat")

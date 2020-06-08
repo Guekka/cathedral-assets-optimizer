@@ -35,13 +35,9 @@ TEST_CASE("Listing patterns")
         const auto input = R"(
 		[
 		  {
-			"Advanced": {
-			  "Meshes": {
-				"iMeshesStream": 100
-			  }
-			},
 			"Meshes": {
-			  "bMeshesResave": true
+			  "bMeshesResave": true,
+              "iMeshesOptimizationLevel": 3
 			},
 			"Priority": 0,
 			"Patterns": [
@@ -73,7 +69,7 @@ TEST_CASE("Listing patterns")
 
         PatternSettings sets1(0, {"*"});
         sets1.bMeshesResave = true;
-        sets1.iMeshesStream = 100;
+        sets1.iMeshesOptimizationLevel = 3;
 
         PatternSettings sets2(1, {"*.dds"});
         sets2.eTexturesFormat = DXGI_FORMAT_A8_UNORM;
@@ -93,7 +89,7 @@ TEST_CASE("cleanPatterns")
     PatternSettings sets1(0, {"*"});
     sets1.priority_     = 0;
     sets1.bMeshesResave = true;
-    sets1.iMeshesStream = 100;
+    sets1.iMeshesOptimizationLevel = 3;
 
     PatternSettings sets2 = sets1;
     sets2.priority_       = 3;
@@ -121,7 +117,7 @@ TEST_CASE("Getting json from PatternMap")
     PatternSettings sets1(0, {"*"});
     sets1.priority_     = 0;
     sets1.bMeshesResave = true;
-    sets1.iMeshesStream = 100;
+    sets1.iMeshesOptimizationLevel = 3;
 
     //Should be removed
     PatternSettings sets2 = sets1;
@@ -137,13 +133,9 @@ TEST_CASE("Getting json from PatternMap")
     const auto expected = R"(
     [
         {
-            "Advanced": {
-                "Meshes": {
-                    "iMeshesStream": 100
-                }
-            },
             "Meshes": {
-                "bMeshesResave": true
+                "bMeshesResave": true,
+                "iMeshesOptimizationLevel": 3
             },
             "Patterns": [
                 "*",
