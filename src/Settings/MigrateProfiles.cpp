@@ -117,9 +117,25 @@ void addDefaultValues5To6(Profile &outProfile)
 
     if (ft.slBSAStandardFiles().empty())
     {
-        ft.slBSAStandardFiles = {"*.bgem", "*.bgsm", "*.bto", "*.btr", "*.btt", "*.fuz", "*.gid",
-                                 "*.hkx",  "*.lod",  "*.lst", "*.nif", "*.pex", "*.png", "*.psc",
-                                 "*.seq",  "*.swf",  "*.tri", "*.txt", "*.wav", "*.xwm"};
+        ft.slBSAStandardFiles = {
+            "*.bgem",
+            "*.bgsm",
+            "*.bto",
+            "*.btr",
+            "*.btt",
+            "*.gid",
+            "*.hkx",
+            "*.lod",
+            "*.lst",
+            "*.nif",
+            "*.pex",
+            "*.png",
+            "*.psc",
+            "*.seq",
+            "*.swf",
+            "*.tri",
+            "*.txt",
+        };
     }
 
     if (ft.slBSATextureFiles().empty())
