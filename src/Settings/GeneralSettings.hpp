@@ -37,7 +37,6 @@ public:
 
     REGISTER_SETTING(bool, isBaseProfile, "/General/isBaseProfile")
 
-    REGISTER_SETTING(bool, bDebugLog, "/General/bDebugLog")
     REGISTER_SETTING(bool, bDryRun, "/General/bDryRun")
     REGISTER_SETTING(OptimizationMode, eMode, "/General/eMode")
     REGISTER_SETTING(QString, sUserPath, "/General/sUserPath")
