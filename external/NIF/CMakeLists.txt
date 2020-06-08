@@ -18,6 +18,7 @@ add_library(nif STATIC
     Keys.h
     NifFile.cpp
     NifFile.h
+    NifUtil.h
     Nodes.cpp
     Nodes.h
     Objects.cpp
@@ -31,11 +32,9 @@ add_library(nif STATIC
     VertexData.h
     utils/half.hpp
     utils/KDMatcher.h
-    utils/KDMatcher.hpp
     utils/Miniball.hpp
     utils/Object3d.cpp
     utils/Object3d.h
-    utils/Object3d.hpp
     )
 
 target_compile_features(nif PUBLIC cxx_std_17)
