@@ -12,7 +12,7 @@ MainOptimizer::MainOptimizer() {}
 
 void MainOptimizer::process(const QString &path)
 {
-    if (path.endsWith(".dds", Qt::CaseInsensitive) || (path.endsWith(".tga")))
+    if (path.endsWith(".dds", Qt::CaseInsensitive) || (path.endsWith(".tga", Qt::CaseInsensitive)))
         processStandardFile(_textureFile, path, Command::CommandType::Texture);
     else if (path.endsWith(".nif", Qt::CaseInsensitive))
         processStandardFile(_meshFile, path, Command::CommandType::Mesh);
