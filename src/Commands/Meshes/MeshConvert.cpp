@@ -2,11 +2,13 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "MeshConvert.hpp"
+#include "Utils/Algorithms.hpp"
+#include "Utils/TypeConvert.hpp"
+#include "Utils/wildcards.hpp"
 
 namespace CAO {
-QStringList MeshConvert::headpartList;
-
 CommandResult MeshConvert::process(File &file)
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
@@ -40,7 +42,9 @@ bool MeshConvert::isApplicable(File &file)
         return false;
 
     //Listing headparts
-    std::call_once(_onceHeadpartsFlag, [this] { this->listHeadparts(currentProfile().getGeneralSettings()); });
+    std::call_once(_onceHeadpartsFlag, [this] {
+        this->listHeadparts(currentProfile().getGeneralSettings(), currentProfile().getFileTypes());
+    });
 
     MeshResource nif = *meshFile;
 
@@ -72,31 +76,35 @@ bool MeshConvert::isApplicable(File &file)
 
 bool MeshConvert::isHeadpart(const QString &filepath)
 {
-    const QString relativeFilePath = QDir::cleanPath(
-        filepath.mid(filepath.indexOf("/meshes/", Qt::CaseInsensitive) + 1));
-    return headpartList.contains(relativeFilePath, Qt::CaseInsensitive);
+    auto name             = filepath.toStdString();
+    const auto &headparts = currentProfile().getFileTypes().slMeshesHeadparts();
+
+    auto match = [&name](const std::string &str) {
+        using namespace wildcards;
+        return isMatch(name, pattern{str}, case_insensitive);
+    };
+
+    return any_of(headparts, match);
 }
 
-void MeshConvert::listHeadparts(const GeneralSettings &settings)
+void MeshConvert::listHeadparts(const GeneralSettings &settings, FileTypes &filetypes)
 {
-    QFile &&customHeadpartsFile = currentProfile().getFile("customHeadparts.txt");
-    headpartList = Filesystem::readFile(customHeadpartsFile,
-                                                  [](QString &string) { return QDir::cleanPath(string); });
-
-    if (headpartList.isEmpty())
-    {
-        PLOG_ERROR << "customHeadparts.txt not found. This can cause issue when optimizing meshes, as some headparts "
-                      "won't be detected.";
-    }
-
     const bool severalMods = settings.eMode() == SeveralMods;
-    const auto flags = severalMods ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
+    const auto flags       = severalMods ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
+
+    std::vector<std::string> headparts = filetypes.slMeshesHeadparts();
 
     QDirIterator it(settings.sUserPath(), flags);
     for (const auto &plugin : Filesystem::listPlugins(it))
-        headpartList += PluginsOperations::listHeadparts(plugin);
+    {
+        //TODO return a string vec from listHeadparts
+        auto result       = PluginsOperations::listHeadparts(plugin);
+        auto vectorResult = toStringVector(result);
+        headparts.insert(headparts.end(), vectorResult.begin(), vectorResult.end());
+    }
 
-    headpartList.removeDuplicates();
+    remove_duplicates(headparts);
+    filetypes.slMeshesHeadparts = headparts;
 }
 
 } // namespace CAO

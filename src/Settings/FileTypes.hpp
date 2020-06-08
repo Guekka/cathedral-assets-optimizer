@@ -23,13 +23,17 @@ public:
     FileTypes &operator=(const FileTypes &other);
     FileTypes &operator=(FileTypes &&other);
 
-    REGISTER_SETTING(std::vector<std::string>, slBSAStandardFiles, "/BSA/slBSAStandardFiles")
-    REGISTER_SETTING(std::vector<std::string>, slBSATextureFiles, "/BSA/slBSATextureFiles")
-    REGISTER_SETTING(std::vector<std::string>, slBSAUncompressibleFiles, "/BSA/slBSAUncompressibleFiles")
+    REGISTER_SETTING(std::vector<std::string>, slBSAStandardFiles, "/BSA/slStandardFiles")
+    REGISTER_SETTING(std::vector<std::string>, slBSATextureFiles, "/BSA/slTextureFiles")
+    REGISTER_SETTING(std::vector<std::string>, slBSAUncompressibleFiles, "/BSA/slUncompressibleFiles")
+    REGISTER_SETTING(std::vector<std::string>, slBSABlacklist, "/BSA/slBlacklist")
 
     REGISTER_SETTING(std::vector<std::string>, slMeshesHeadparts, "/Meshes/slHeadparts")
 
     REGISTER_SETTING(std::vector<std::string>, slTextureLandscapes, "/Textures/slLandscape")
+
+    REGISTER_SETTING(std::vector<std::string>, slModsBlacklist, "/Mods/slBlacklist")
+
 }; // namespace CAO
 } // namespace CAO
 

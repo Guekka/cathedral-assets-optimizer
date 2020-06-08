@@ -25,9 +25,7 @@ public:
 
 protected:
     bool isHeadpart(const QString &filepath);
-    void listHeadparts(const GeneralSettings &settings);
-
-    static QStringList headpartList;
+    void listHeadparts(const GeneralSettings &settings, FileTypes &filetypes);
 
     std::once_flag _onceHeadpartsFlag;
 };

@@ -2,7 +2,11 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "Manager.hpp"
+#include "Utils/Algorithms.hpp"
+#include "Utils/wildcards.hpp"
+
 namespace CAO {
 Manager::Manager()
 {
@@ -25,8 +29,6 @@ Manager::Manager()
     currentProfile().getPatterns().get() | rx::transform([](auto &&p) { return p.second; })
         | rx::for_each(checkSettings);
 
-    readIgnoredMods();
-
     PLOG_INFO << "Listing files and directories...";
     listDirectories();
     listFiles();
@@ -44,9 +46,23 @@ void Manager::listDirectories()
     {
         const QDir dir(settings.sUserPath());
         auto isNotSeparator = [](auto &&str) { return !str.contains("separator"); };
-        auto isNotIgnored   = [this](auto &&str) { return !_ignoredMods.contains(str, Qt::CaseInsensitive); };
-        dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) >>= pipes::filter(isNotSeparator)
-            >>= pipes::filter(isNotIgnored) >>= pipes::push_back(_modsToProcess);
+
+        //TODO factorise the match wildcard code into FileTypes
+        auto isNotBlacklist = [](const QString &dirName) {
+            auto name             = dirName.toStdString();
+            const auto &blacklist = currentProfile().getFileTypes().slModsBlacklist();
+
+            auto match = [&name](const std::string &str) {
+                using namespace wildcards;
+                return isMatch(name, pattern{str}, case_insensitive);
+            };
+
+            return any_of(blacklist, match);
+        };
+
+        dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)
+            | rx::filter(isNotSeparator) //TODO add separators to blacklist
+            | rx::filter(isNotBlacklist) | rx::append(_modsToProcess);
     }
 }
 
@@ -97,19 +113,6 @@ void Manager::listFiles()
             list << filename;
             ++_numberFiles;
         }
-    }
-}
-
-void Manager::readIgnoredMods()
-{
-    QFile &&ignoredModsFile = currentProfile().getFile("ignoredMods.txt");
-    _ignoredMods            = Filesystem::readFile(ignoredModsFile);
-
-    if (_ignoredMods.isEmpty())
-    {
-        PLOG_WARNING << "ignoredMods.txt not found. All mods will be processed, including tools "
-                        "such as Nemesis or "
-                        "Bodyslide studio.";
     }
 }
 

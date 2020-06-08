@@ -35,6 +35,8 @@ public:
     REGISTER_SETTING(bool, bBSATexturesEnabled, "/Advanced/BSA/bBSATexturesEnabled")
     REGISTER_SETTING(double, iBSATexturesMaxSize, "/Advanced/BSA/iBSATexturesMaxSize")
 
+    REGISTER_SETTING(bool, isBaseProfile, "/General/isBaseProfile")
+
     REGISTER_SETTING(bool, bDebugLog, "/General/bDebugLog")
     REGISTER_SETTING(bool, bDryRun, "/General/bDryRun")
     REGISTER_SETTING(OptimizationMode, eMode, "/General/eMode")

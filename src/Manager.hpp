@@ -38,10 +38,6 @@ private:
    */
     void listFiles();
     /*!
-   * \brief Read ignoredMods.txt and store it to a list
-   */
-    void readIgnoredMods();
-    /*!
    * \brief The number of all files. Used to determine progress
    */
     int _numberFiles = 0;
