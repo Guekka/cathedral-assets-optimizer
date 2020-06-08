@@ -6,7 +6,8 @@
 
 #include "Settings.hpp"
 
-#define REGISTER_SETTING(type, name, key) QJSONValueWrapper<type> name{json_, key};
+#define REGISTER_SETTING(type, name, key) \
+    QJSONValueWrapper<type> name{json_, nlohmann::json_pointer<nlohmann::json>{key}};
 
 namespace CAO {
 class CommonSettings : public Settings
@@ -17,11 +18,11 @@ public:
 
     std::optional<QString> isValid() const override { return std::nullopt; };
 
-    REGISTER_SETTING(QString, sProfile, "Profile")
-    REGISTER_SETTING(bool, bDarkMode, "DarkMode")
-    REGISTER_SETTING(bool, bShowTutorials, "ShowTutorials")
-    REGISTER_SETTING(bool, bFirstStart, "FirstStart")
-    REGISTER_SETTING(bool, bDebugLog, "DebugLog");
+    REGISTER_SETTING(QString, sProfile, "/Profile")
+    REGISTER_SETTING(bool, bDarkMode, "/DarkMode")
+    REGISTER_SETTING(bool, bShowTutorials, "/ShowTutorials")
+    REGISTER_SETTING(bool, bFirstStart, "/FirstStart")
+    REGISTER_SETTING(bool, bDebugLog, "/DebugLog");
 };
 } // namespace CAO
 

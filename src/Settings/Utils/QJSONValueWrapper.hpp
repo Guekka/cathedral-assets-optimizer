@@ -25,11 +25,10 @@ public:
     using Type = T;
 
     //NOTE The JSON has to outlive the QJSONValueWrapper
-    QJSONValueWrapper(nlohmann::json &j, std::string key)
+    QJSONValueWrapper(nlohmann::json &j, JSON::json_pointer key)
         : json_(j)
         , key_(std::move(key))
     {
-        assert(key_.size() > 0);
         assert(j.is_null() || j.is_object());
     }
 
@@ -39,7 +38,7 @@ public:
 
     void setValue(const Type &newValue)
     {
-        if (!json_[JSON::getPointer(key_)].is_null() && value() == newValue)
+        if (!json_[key_].is_null() && value() == newValue)
             return;
 
         JSON::setValue(json_, key_, newValue);
@@ -49,7 +48,7 @@ public:
     Type value() const { return JSON::getValue<Type>(json_, key_); }
     Type value_or(const Type &fallback)
     {
-        if (json_.contains(JSON::getPointer(key_)))
+        if (json_.contains(key_))
             return value();
         return fallback;
     }
@@ -59,7 +58,7 @@ public:
 
 private:
     nlohmann::json &json_;
-    std::string key_;
+    JSON::json_pointer key_;
 };
 
 } // namespace CAO

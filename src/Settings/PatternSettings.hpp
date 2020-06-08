@@ -7,7 +7,8 @@
 #include "BaseTypes.hpp"
 #include "Settings.hpp"
 
-#define REGISTER_SETTING(type, name, key) QJSONValueWrapper<type> name{json_, key};
+#define REGISTER_SETTING(type, name, key) \
+    QJSONValueWrapper<type> name{json_, nlohmann::json_pointer<nlohmann::json>{key}};
 
 namespace CAO {
 class PatternSettings final : public Settings
@@ -40,34 +41,34 @@ private:
     std::optional<size_t> getPatternPriorityFromJSON(const nlohmann::json &json);
 
 public:
-    REGISTER_SETTING(bool, bTexturesNecessary, "Textures/bTexturesNecessary")
-    REGISTER_SETTING(bool, bTexturesCompress, "Textures/bTexturesCompress")
-    REGISTER_SETTING(bool, bTexturesMipmaps, "Textures/bTexturesMipmaps")
+    REGISTER_SETTING(bool, bTexturesNecessary, "/Textures/bTexturesNecessary")
+    REGISTER_SETTING(bool, bTexturesCompress, "/Textures/bTexturesCompress")
+    REGISTER_SETTING(bool, bTexturesMipmaps, "/Textures/bTexturesMipmaps")
 
-    REGISTER_SETTING(bool, bTexturesResizeMinimum, "Textures/Resizing/ByRatio/Minimum/Enabled")
-    REGISTER_SETTING(int, iTexturesMinimumWidth, "Textures/Resizing/ByRatio/Minimum/Width")
-    REGISTER_SETTING(int, iTexturesMinimumHeight, "Textures/Resizing/ByRatio/Minimum/Height")
+    REGISTER_SETTING(bool, bTexturesResizeMinimum, "/Textures/Resizing/ByRatio/Minimum/Enabled")
+    REGISTER_SETTING(int, iTexturesMinimumWidth, "/Textures/Resizing/ByRatio/Minimum/Width")
+    REGISTER_SETTING(int, iTexturesMinimumHeight, "/Textures/Resizing/ByRatio/Minimum/Height")
 
-    REGISTER_SETTING(TextureResizingMode, eTexturesResizingMode, "Textures/Resizing/Mode")
+    REGISTER_SETTING(TextureResizingMode, eTexturesResizingMode, "/Textures/Resizing/Mode")
 
-    REGISTER_SETTING(int, iTexturesResizingBySizeHeight, "Textures/Resizing/BySize/Height")
-    REGISTER_SETTING(int, iTexturesResizingBySizeWidth, "Textures/Resizing/BySize/Width")
+    REGISTER_SETTING(int, iTexturesResizingBySizeHeight, "/Textures/Resizing/BySize/Height")
+    REGISTER_SETTING(int, iTexturesResizingBySizeWidth, "/Textures/Resizing/BySize/Width")
 
-    REGISTER_SETTING(int, iTexturesResizingByRatioWidth, "Textures/Resizing/ByRatio/Width")
-    REGISTER_SETTING(int, iTexturesResizingByRatioHeight, "Textures/Resizing/ByRatio/Height")
+    REGISTER_SETTING(int, iTexturesResizingByRatioWidth, "/Textures/Resizing/ByRatio/Width")
+    REGISTER_SETTING(int, iTexturesResizingByRatioHeight, "/Textures/Resizing/ByRatio/Height")
 
-    REGISTER_SETTING(DXGI_FORMAT, eTexturesFormat, "Advanced/Textures/eTexturesFormat")
-    REGISTER_SETTING(bool, bTexturesForceConvert, "Advanced/Textures/bTexturesForceConvert")
+    REGISTER_SETTING(DXGI_FORMAT, eTexturesFormat, "/Advanced/Textures/eTexturesFormat")
+    REGISTER_SETTING(bool, bTexturesForceConvert, "/Advanced/Textures/bTexturesForceConvert")
     REGISTER_SETTING(std::vector<DXGI_FORMAT>,
                      slTextureUnwantedFormats,
-                     "Advanced/Textures/slTextureUnwantedFormats")
+                     "/Advanced/Textures/slTextureUnwantedFormats")
 
-    REGISTER_SETTING(int, iMeshesOptimizationLevel, "Meshes/iMeshesOptimizationLevel")
-    REGISTER_SETTING(bool, bMeshesHeadparts, "Meshes/bMeshesHeadparts")
-    REGISTER_SETTING(bool, bMeshesResave, "Meshes/bMeshesResave")
+    REGISTER_SETTING(int, iMeshesOptimizationLevel, "/Meshes/iMeshesOptimizationLevel")
+    REGISTER_SETTING(bool, bMeshesHeadparts, "/Meshes/bMeshesHeadparts")
+    REGISTER_SETTING(bool, bMeshesResave, "/Meshes/bMeshesResave")
 
-    REGISTER_SETTING(bool, bAnimationsOptimization, "Animations/bAnimationsOptimization")
-    REGISTER_SETTING(hkPackFormat, eAnimationsFormat, "Advanced/Animations/eAnimationsFormat")
+    REGISTER_SETTING(bool, bAnimationsOptimization, "/Animations/bAnimationsOptimization")
+    REGISTER_SETTING(hkPackFormat, eAnimationsFormat, "/Advanced/Animations/eAnimationsFormat")
 };
 } // namespace CAO
 

@@ -7,7 +7,8 @@
 #include "Commands/BSA/Utils/BSA.hpp"
 #include "Settings.hpp"
 
-#define REGISTER_SETTING(type, name, key) QJSONValueWrapper<type> name{json_, key};
+#define REGISTER_SETTING(type, name, key) \
+    QJSONValueWrapper<type> name{json_, nlohmann::json_pointer<nlohmann::json>{key}};
 
 namespace CAO {
 class FileTypes : public Settings
@@ -22,13 +23,13 @@ public:
     FileTypes &operator=(const FileTypes &other);
     FileTypes &operator=(FileTypes &&other);
 
-    REGISTER_SETTING(std::vector<std::string>, slBSAStandardFiles, "BSA/slBSAStandardFiles")
-    REGISTER_SETTING(std::vector<std::string>, slBSATextureFiles, "BSA/slBSATextureFiles")
-    REGISTER_SETTING(std::vector<std::string>, slBSAUncompressibleFiles, "BSA/slBSAUncompressibleFiles")
+    REGISTER_SETTING(std::vector<std::string>, slBSAStandardFiles, "/BSA/slBSAStandardFiles")
+    REGISTER_SETTING(std::vector<std::string>, slBSATextureFiles, "/BSA/slBSATextureFiles")
+    REGISTER_SETTING(std::vector<std::string>, slBSAUncompressibleFiles, "/BSA/slBSAUncompressibleFiles")
 
-    REGISTER_SETTING(std::vector<std::string>, slMeshesHeadparts, "Meshes/slHeadparts")
+    REGISTER_SETTING(std::vector<std::string>, slMeshesHeadparts, "/Meshes/slHeadparts")
 
-    REGISTER_SETTING(std::vector<std::string>, slTextureLandscapes, "Textures/slLandscape")
+    REGISTER_SETTING(std::vector<std::string>, slTextureLandscapes, "/Textures/slLandscape")
 }; // namespace CAO
 } // namespace CAO
 
