@@ -5,6 +5,8 @@
 #pragma once
 
 #include "Settings/Profiles.hpp"
+#include "Utils/Algorithms.hpp"
+#include "Utils/Filesystem.hpp"
 
 namespace CAO {
 
@@ -68,35 +70,66 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     texturesUnwantedFormats >>= pipes::transform(getFormat) >>= pipes::push_back(unwantedFormats);
     gPattern.slTextureUnwantedFormats = unwantedFormats;
 
-    PatternMap &patterns = currentProfile().getPatterns();
+    PatternMap &patterns = outProfile.getPatterns();
     patterns.addPattern(gPattern);
     patterns.addPattern(pSetsTGA);
     patterns.addPattern(pSetsInterface);
 }
 
-bool isWhitelisted(const QString &fileName)
+void convertFiles5To6(const QDir &oldProfile, const QDir &newProfile, Profile &outProfile)
 {
-    constexpr std::array<std::string_view, 6> fileWhitelist{"customHeadparts.txt",
-                                                            "customLandscape.txt",
-                                                            "DummyPlugin.esp",
-                                                            "FilesToNotPack.txt",
-                                                            "ignoredMods.txt",
-                                                            "isBase"};
+    auto readFile = [](const QString &path) {
+        QFile file(path);
+        auto list = Filesystem::readFile(file, [](QString &line) { return line.prepend("*/"); });
+        return std::move(list) | rx::transform([](QString val) { return val.toStdString(); })
+               | rx::to_vector();
+    };
 
-    auto beg = fileWhitelist.cbegin();
-    auto end = fileWhitelist.cend();
-    return std::find(beg, end, fileName.toStdString()) != end;
-}
-
-void copyFiles(const QDir &oldProfile, const QDir &newProfile)
-{
     QDirIterator it(oldProfile);
     while (it.hasNext())
     {
         it.next();
         const QString &filename = it.fileName();
-        if (isWhitelisted(filename))
+
+        if (filename == "customHeadparts.txt")
+            outProfile.getFileTypes().slMeshesHeadparts = readFile(it.filePath());
+
+        else if (filename == "customLandscape.txt")
+            outProfile.getFileTypes().slTextureLandscapes = readFile(it.filePath());
+
+        else if (filename == "FilesToNotPack.txt")
+            outProfile.getFileTypes().slBSABlacklist = readFile(it.filePath());
+
+        else if (filename == "ignoredMods.txt")
+            outProfile.getFileTypes().slModsBlacklist = readFile(it.filePath());
+
+        else if (filename == "isBase")
+            outProfile.getGeneralSettings().isBaseProfile = true;
+
+        else if (filename == "DummyPlugin.esp")
             QFile::copy(it.filePath(), newProfile.absoluteFilePath(filename));
+    }
+}
+
+void addDefaultValues5To6(Profile &outProfile)
+{
+    auto &ft = outProfile.getFileTypes();
+
+    if (ft.slBSAStandardFiles().empty())
+    {
+        ft.slBSAStandardFiles = {"*.bgem", "*.bgsm", "*.bto", "*.btr", "*.btt", "*.fuz", "*.gid",
+                                 "*.hkx",  "*.lod",  "*.lst", "*.nif", "*.pex", "*.png", "*.psc",
+                                 "*.seq",  "*.swf",  "*.tri", "*.txt", "*.wav", "*.xwm"};
+    }
+
+    if (ft.slBSATextureFiles().empty())
+    {
+        ft.slBSATextureFiles = {"*.dds"};
+    }
+
+    if (ft.slBSAUncompressibleFiles().empty())
+    {
+        ft.slBSAUncompressibleFiles = {"*.fuz", "*.lip", "*.mp3", "*.ogg", "*.wav", "*.xwm", "*.*script"};
     }
 }
 
@@ -117,8 +150,9 @@ void migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot)
             profiles.create(dir);
             auto &profile = profiles.get(dir);
             migrate5To6(oldDir, profile);
+            convertFiles5To6(oldDir, newDir, profile);
+            addDefaultValues5To6(profile);
             profile.saveToJSON();
-            copyFiles(oldDir, newDir);
         }
         catch (const std::exception &e)
         {
