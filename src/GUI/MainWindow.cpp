@@ -140,6 +140,7 @@ void MainWindow::connectAll()
             });
 
     ui_->userPathTextEdit->setText(generalSettings.sUserPath());
+
     connect(ui_->userPathTextEdit,
             &QLineEdit::textEdited,
             &generalSettings.sUserPath,
@@ -150,15 +151,31 @@ void MainWindow::connectAll()
             ui_->userPathTextEdit,
             [this, &generalSettings] { ui_->userPathTextEdit->setText(generalSettings.sUserPath()); });
 
-    connectWrapper(*ui_->actionShow_tutorials,
-                   commonSettings.bShowTutorials,
-                   &QAction::triggered,
-                   &QAction::setChecked);
+    ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials());
 
-    connectWrapper(*ui_->actionShow_tutorials,
-                   commonSettings.bDebugLog,
-                   &QAction::triggered,
-                   &QAction::setChecked);
+    connect(ui_->actionShow_tutorials,
+            &QAction::triggered,
+            &commonSettings.bShowTutorials,
+            &decltype(commonSettings.bShowTutorials)::setValue);
+
+    connect(&commonSettings.bShowTutorials,
+            &decltype(commonSettings.bShowTutorials)::valueChanged,
+            this,
+            [this, &commonSettings] {
+                ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials());
+            });
+
+    ui_->actionEnable_debug_log->setChecked(commonSettings.bDebugLog());
+
+    connect(ui_->actionEnable_debug_log,
+            &QAction::triggered,
+            &commonSettings.bDebugLog,
+            &decltype(commonSettings.bDebugLog)::setValue);
+
+    connect(&commonSettings.bDebugLog,
+            &decltype(commonSettings.bDebugLog)::valueChanged,
+            this,
+            [this, &commonSettings] { ui_->actionEnable_debug_log->setChecked(commonSettings.bDebugLog()); });
 }
 
 void MainWindow::loadUi()
