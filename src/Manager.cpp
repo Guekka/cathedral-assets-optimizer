@@ -17,7 +17,7 @@ Manager::Manager()
 
     auto checkSettings = [](const Settings &sets) {
         const std::optional<QString> error = sets.isValid();
-        if (!error.has_value())
+        if (error.has_value())
         {
             PLOG_FATAL << error.value();
             throw std::runtime_error("Options are not valid." + error->toStdString());
