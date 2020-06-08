@@ -24,6 +24,20 @@ void init()
     QCoreApplication::installTranslator(&AssetsOptTranslator);
 }
 
+void displayError(bool cli, const std::string &err)
+{
+    if (cli)
+    {
+        std::cerr << err << std::endl;
+    }
+    else
+    {
+        QMessageBox box(QMessageBox::Critical, "Unknown error", QString::fromStdString(err));
+        box.exec();
+    }
+    PLOG_FATAL << err;
+}
+
 int main(int argc, char *argv[])
 {
     std::unique_ptr<QCoreApplication> app = std::make_unique<QCoreApplication>(argc, argv);
@@ -61,8 +75,7 @@ int main(int argc, char *argv[])
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
-        PLOG_FATAL << e.what();
+        displayError(parser.isSet("cli"), e.what());
         return 1;
     }
 
