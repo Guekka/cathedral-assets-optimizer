@@ -20,14 +20,28 @@ void PatternMap::listPatterns(const nlohmann::json &json)
 
         addPattern(PatternSettings(value));
     }
-    if (patterns_.empty())
+
+    bool hasDefault = false;
+    for (const auto &p : patterns_)
+        for (const auto &wc : p.second.patterns_)
+            if (wc == "*")
+            {
+                hasDefault = true;
+                break;
+            }
+
+    if (!hasDefault)
+    {
+        freeSlot(0);
         addPattern(PatternSettings{0, {"*"}});
+    }
 
     cleanPatterns();
 }
 
 void PatternMap::addPattern(PatternSettings pattern)
 {
+    freeSlot(pattern.priority_);
     patterns_.emplace(pattern.priority_, pattern);
 }
 
@@ -35,9 +49,11 @@ PatternSettings PatternMap::getSettings(const QString &filePath) const
 {
     assert(!patterns_.empty());
 
-    auto matchWildcard = [&filePath](const std::string &wildcard) {
+    std::string path = filePath.toStdString();
+
+    auto matchWildcard = [&path](const std::string &wildcard) {
         using namespace wildcards;
-        return isMatch(filePath.toStdString(), pattern{wildcard}, case_insensitive);
+        return isMatch(path, pattern{wildcard}, case_insensitive);
     };
 
     nlohmann::json merged;
@@ -135,6 +151,23 @@ nlohmann::json PatternMap::getUnifiedJSON() const
             | rx::to_vector();
 
     return jsons;
+}
+
+void PatternMap::freeSlot(size_t idx)
+{
+    if (!patterns_.count(idx))
+        return;
+
+    decltype(patterns_) result;
+
+    for (const auto &[key, val] : std::move(patterns_))
+    {
+        if (key < idx)
+            result[key] = val;
+        else
+            result[key + 1] = val;
+    }
+    patterns_ = std::move(result);
 }
 
 } // namespace CAO

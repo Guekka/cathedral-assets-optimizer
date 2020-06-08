@@ -22,6 +22,8 @@ public:
     void cleanPatterns();
     nlohmann::json getUnifiedJSON() const;
 
+    void freeSlot(size_t idx);
+
     auto &get() { return patterns_; }
     const auto &get() const { return patterns_; }
 

@@ -174,3 +174,41 @@ TEST_CASE("Getting json from PatternMap")
 
     CHECK_EQ(map.getUnifiedJSON(), expected);
 }
+
+TEST_CASE("Free slot")
+{
+    SUBCASE("First")
+    {
+        const std::map<size_t, PatternSettings> input{{0, {}}, {1, {}}, {2, {}}};
+        const std::map<size_t, PatternSettings> expected{{1, {}}, {2, {}}, {3, {}}};
+
+        PatternMap map;
+        map.get() = input;
+        map.freeSlot(0);
+
+        CHECK(map.get() == expected);
+    }
+    SUBCASE("Second")
+    {
+        const std::map<size_t, PatternSettings> input{{0, {}}, {2, {}}, {4, {}}};
+        const std::map<size_t, PatternSettings> expected{{1, {}}, {3, {}}, {5, {}}};
+
+        PatternMap map;
+        map.get() = input;
+        map.freeSlot(0);
+
+        CHECK(map.get() == expected);
+    }
+
+    SUBCASE("Third")
+    {
+        const std::map<size_t, PatternSettings> input{{0, {}}, {2, {}}, {4, {}}};
+        const std::map<size_t, PatternSettings> expected{{0, {}}, {3, {}}, {5, {}}};
+
+        PatternMap map;
+        map.get() = input;
+        map.freeSlot(2);
+
+        CHECK(map.get() == expected);
+    }
+}
