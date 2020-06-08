@@ -95,8 +95,10 @@ nlohmann::json PatternSettings::getJSON() const
 nlohmann::json PatternSettings::removeMeta(const nlohmann::json &j)
 {
     auto result = j;
-    result.erase(priorityKey);
-    result.erase(patternKey);
+    if (result.contains(priorityKey))
+        result.erase(priorityKey);
+    if (result.contains(patternKey))
+        result.erase(patternKey);
     return result;
 }
 
