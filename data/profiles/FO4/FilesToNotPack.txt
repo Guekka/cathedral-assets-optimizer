@@ -1,3 +1,0 @@
-# These files won't be packed into a BSA, even if the BSA pack loose files options is enabled
-readme
-Tools/

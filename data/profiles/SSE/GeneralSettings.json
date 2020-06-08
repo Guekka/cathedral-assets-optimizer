@@ -1,29 +1,22 @@
 {
     "Advanced": {
-        "Animations": {
-            "bAnimationsTabEnabled": true
-        },
         "BSA": {
-            "bBSATabEnabled": true,
+            "bBSATexturesEnabled": true,
+            "eBSAFormat": 4,
+            "eBSATexturesFormat": 4,
+            "iBSAMaxSize": 2100000000.0,
+            "iBSATexturesMaxSize": 2544768122.88,
             "sBSAExtension": ".bsa",
             "sBSASuffix": ".bsa",
             "sBSATexturesSuffix": " - Textures.bsa"
         },
         "Meshes": {
-            "bMeshesTabEnabled": true
-        },
-        "Textures": {
-            "bTexturesTabEnabled": true
+            "eMeshesFileVersion": 335675399,
+            "iMeshesStream": 100,
+            "iMeshesUser": 12
         }
     },
-    "BSA": {
-        "bBSACompact": false,
-        "bBSADeleteBackup": false
-    },
     "General": {
-        "bDebugLog": false,
-        "bDryRun": false,
-        "eMode": 0,
-        "sUserPath": ""
+        "isBaseProfile": true
     }
 }
