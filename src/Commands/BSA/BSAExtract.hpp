@@ -11,12 +11,9 @@ namespace CAO {
 class BSAExtract : public Command
 {
 public:
-    BSAExtract()
-    {
-        _name = "BSA Extract";
-        _type = CommandType::BSA;
-        _priority = VeryHigh;
-    }
+    QString name() override { return "BSA Extract"; }
+    CommandType type() override { return CommandType::BSA; };
+    Priority priority() override { return VeryHigh; };
 
     CommandResult process(File& file) override;
     bool isApplicable(File& file) override;

@@ -12,12 +12,9 @@ namespace CAO {
 class TextureGenerateMipmaps final : public Command
 {
 public:
-    TextureGenerateMipmaps()
-    {
-        _type = CommandType::Texture;
-        _priority = Medium;
-        _name = "Generate Mipmaps for Texture";
-    }
+    CommandType type() override { return CommandType::Texture; };
+    Priority priority() override { return Medium; };
+    QString name() override { return "Generate Mipmaps for Texture"; }
 
     CommandResult process(File& file) override;
     bool isApplicable(File& file) override;

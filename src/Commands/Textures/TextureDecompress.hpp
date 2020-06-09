@@ -11,12 +11,9 @@ namespace CAO {
 class TextureDecompress final : public Command
 {
 public:
-    TextureDecompress()
-    {
-        _type = CommandType::Texture;
-        _priority = VeryHigh;
-        _name = "Decompress Texture";
-    }
+    CommandType type() override { return CommandType::Texture; };
+    Priority priority() override { return VeryHigh; };
+    QString name() override { return "Decompress Texture"; }
 
     CommandResult process(File& file) override;
 

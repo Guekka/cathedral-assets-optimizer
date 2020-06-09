@@ -31,21 +31,22 @@ public:
         VeryHigh
     };
 
+    Command()                = default;
+    Command(const Command &) = delete;
+    Command &operator=(const Command &) = delete;
+
+    virtual bool isApplicable(File &file)     = 0;
     virtual CommandResult process(File &file) = 0;
 
-    virtual bool isApplicable(File &file) = 0;
     CommandResult processIfApplicable(File &file);
 
-    Priority priority() { return _priority; }
-    CommandType type() { return _type; }
-    QString name() { return _name; }
+    virtual Priority priority() = 0;
+    virtual CommandType type()  = 0;
+    virtual QString name()      = 0;
 
     virtual ~Command() = default;
 
 protected:
-    QString _name;
-    Priority _priority = Low;
-    CommandType _type = CommandType::Invalid;
     CommandResultFactory _resultFactory;
 };
 } // namespace CAO

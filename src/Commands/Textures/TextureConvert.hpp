@@ -12,12 +12,9 @@ namespace CAO {
 class TextureConvert final : public Command
 {
 public:
-    TextureConvert()
-    {
-        _type = CommandType::Texture;
-        _priority = Low;
-        _name = "Convert Texture";
-    }
+    CommandType type() override { return CommandType::Texture; };
+    Priority priority() override { return Low; };
+    QString name() override { return "Convert Texture"; }
 
     CommandResult process(File& file) override;
     bool isApplicable(File& file) override;

@@ -13,12 +13,9 @@ namespace CAO {
 class BSACreate : public Command
 {
 public:
-    BSACreate()
-    {
-        _name = "BSA Create";
-        _priority = Low;
-        _type = CommandType::BSA;
-    }
+    QString name() override { return "BSA Create"; }
+    Priority priority() override { return Low; };
+    CommandType type() override { return CommandType::BSA; };
 
     CommandResult process(File& file) override;
     bool isApplicable(File& file) override;

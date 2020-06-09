@@ -12,12 +12,9 @@ namespace CAO {
 class TextureResize : public Command
 {
 public:
-    TextureResize()
-    {
-        _type = CommandType::Texture;
-        _priority = High;
-        _name = "Resize Texture";
-    }
+    CommandType type() override { return CommandType::Texture; };
+    Priority priority() override { return High; };
+    QString name() override { return "Resize Texture"; }
 
     CommandResult process(File& file) override;
     bool isApplicable(File &file) override;

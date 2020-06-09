@@ -13,12 +13,9 @@ namespace CAO {
 class MeshConvert : public Command
 {
 public:
-    MeshConvert()
-    {
-        _name = "Convert Mesh";
-        _type = CommandType::Mesh;
-        _priority = Priority::Medium;
-    }
+    QString name() override { return "Convert Mesh"; }
+    CommandType type() override { return CommandType::Mesh; };
+    Priority priority() override { return Priority::Medium; };
 
     CommandResult process(File& file) override;
     bool isApplicable(File& file) override;
@@ -29,7 +26,5 @@ protected:
 
     std::once_flag _onceHeadpartsFlag;
 };
-
-REGISTER_COMMAND(MeshConvert)
 
 } // namespace CAO

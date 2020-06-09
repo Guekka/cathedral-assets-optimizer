@@ -11,12 +11,9 @@ namespace CAO {
 class MeshRenameReferencedTextures : public Command
 {
 public:
-    MeshRenameReferencedTextures()
-    {
-        _name = "Rename referenced textures in Mesh";
-        _type = CommandType::Mesh;
-        _priority = Low;
-    }
+    QString name() override { return "Rename referenced textures in Mesh"; }
+    CommandType type() override { return CommandType::Mesh; };
+    Priority priority() override { return Low; };
 
     CommandResult process(File& file) override;
     bool isApplicable(File& file) override;

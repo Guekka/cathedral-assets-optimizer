@@ -39,10 +39,10 @@ public:
 	 *
 	 * \param command The command to manage
 	 */
-    CommandBookManager(Command *command) { CommandBook::registerCommand(CommandPtr(command)); }
+    CommandBookManager(CommandPtr command) { CommandBook::registerCommand(std::move(command)); }
 
 //! Register a Spell using a CommandBookManager
-#define REGISTER_COMMAND(COMMAND) static CommandBookManager Manager_##COMMAND(new COMMAND);
+#define REGISTER_COMMAND(COMMAND) static CommandBookManager Manager_##COMMAND(std::make_shared<COMMAND>());
 };
 
 } // namespace CAO

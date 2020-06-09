@@ -5,13 +5,6 @@
 #include "AnimationsConvert.hpp"
 
 namespace CAO {
-AnimationsConvert::AnimationsConvert()
-{
-    _name = "Animation Convert";
-    _type = CommandType::Animation;
-    _priority = Medium;
-}
-
 CommandResult AnimationsConvert::process(File& file)
 {
     auto havok = dynamic_cast<AnimationResource *>(&file.getFile(true));

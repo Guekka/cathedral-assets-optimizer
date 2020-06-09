@@ -9,6 +9,8 @@
 #include "Utils/wildcards.hpp"
 
 namespace CAO {
+REGISTER_COMMAND(MeshConvert)
+
 CommandResult MeshConvert::process(File &file)
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
