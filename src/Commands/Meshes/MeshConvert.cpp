@@ -58,16 +58,24 @@ bool MeshConvert::isApplicable(File &file)
             return false;
 
         // Check if shape has strips in the geometry or skin partition
-        if (!shape->HasType<NiTriStrips>())
+        if (shape->HasType<NiTriStrips>())
+            return true;
+        else
         {
             auto skinInst = nif.GetHeader().GetBlock<NiSkinInstance>(shape->GetSkinInstanceRef());
             if (skinInst)
             {
                 auto skinPart = nif.GetHeader().GetBlock<NiSkinPartition>(skinInst->GetSkinPartitionRef());
                 if (skinPart)
+                {
                     for (auto &partition : skinPart->partitions)
+                    {
                         if (partition.numStrips > 0)
-                            return true; //Critical issue
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
         }
     }
