@@ -7,22 +7,16 @@
 
 namespace CAO {
 
-QMap<Command::CommandType, QVector<CommandPtr>> &CommandBook::commands()
-{
-    static QMap<Command::CommandType, QVector<CommandPtr>> _commands = QMap<Command::CommandType, QVector<CommandPtr>>();
-    return _commands;
-}
-
 void CommandBook::registerCommand(CommandPtr command)
 {
-    auto &correspondingVector = commandTypeToVector(command->type());
-    if (correspondingVector.isEmpty())
+    auto &correspondingVector = getCommands(command->type());
+    if (correspondingVector.empty())
     {
-        correspondingVector << command;
+        correspondingVector.emplace_back(std::move(command));
         return;
     }
 
-    for (int i = 0; i < correspondingVector.size(); ++i)
+    for (size_t i = 0; i < correspondingVector.size(); ++i)
     {
         auto &commandInVector = correspondingVector.at(i);
 
@@ -30,29 +24,28 @@ void CommandBook::registerCommand(CommandPtr command)
             return; //Preventing duplicate commands
         if (commandInVector->priority() <= command->priority())
         {
-            correspondingVector.insert(i, command);
+            correspondingVector.insert(correspondingVector.begin() + i, command);
             break;
         }
     }
 }
 
-QVector<CommandPtr> &CommandBook::commandTypeToVector(const Command::CommandType &type)
+std::vector<CommandPtr> &CommandBook::getCommands(const Command::CommandType &type)
 {
-    return commands()[type];
+    return commands_[type];
 }
 
-QVector<CommandPtr> CommandBook::getCommandList(const Command::CommandType &type)
+std::vector<CommandPtr> CommandBook::getCommandList(const Command::CommandType &type)
 {
-    return commandTypeToVector(type);
+    return getCommands(type);
 }
 
 CommandPtr CommandBook::getCommand(const QString &name)
 {
-    for (const auto &vec : commands())
-        for (auto command : vec)
+    for (const auto &[_, vec] : commands_)
+        for (const auto &command : vec)
             if (command->name() == name)
                 return command;
     return nullptr;
 }
-
 } // namespace CAO

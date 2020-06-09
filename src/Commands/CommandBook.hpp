@@ -13,22 +13,23 @@ class CommandBook final
 {
 public:
     static void registerCommand(CommandPtr command);
-    QVector<CommandPtr> getCommandList(const Command::CommandType &type);
+
+    std::vector<CommandPtr> getCommandList(const Command::CommandType &type);
     CommandPtr getCommand(const QString &name);
 
     template<typename T>
     CommandPtr getCommand()
     {
-        for (const auto &vec : commands())
-            for (CommandPtr command : vec)
-                if (dynamic_cast<T *>(&*command))
+        for (const auto &[_, vec] : commands_)
+            for (const auto &command : vec)
+                if (std::dynamic_pointer_cast<std::remove_pointer_t<T>>(command))
                     return command;
         return nullptr;
     }
 
-protected:
-    static QMap<Command::CommandType, QVector<CommandPtr>> &commands();
-    static QVector<CommandPtr> &commandTypeToVector(const Command::CommandType &type);
+private:
+    static inline std::map<Command::CommandType, std::vector<CommandPtr>> commands_;
+    static std::vector<CommandPtr> &getCommands(const Command::CommandType &type);
 };
 
 class CommandBookManager final
@@ -42,7 +43,7 @@ public:
     CommandBookManager(CommandPtr command) { CommandBook::registerCommand(std::move(command)); }
 
 //! Register a Spell using a CommandBookManager
-#define REGISTER_COMMAND(COMMAND) static CommandBookManager Manager_##COMMAND(std::make_shared<COMMAND>());
+#define REGISTER_COMMAND(COMMAND) inline CommandBookManager Manager_##COMMAND(std::make_shared<COMMAND>());
 };
 
 } // namespace CAO
