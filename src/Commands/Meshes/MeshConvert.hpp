@@ -26,5 +26,5 @@ protected:
 
     std::once_flag _onceHeadpartsFlag;
 };
-
+REGISTER_COMMAND(MeshConvert)
 } // namespace CAO

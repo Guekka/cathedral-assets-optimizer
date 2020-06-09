@@ -9,7 +9,6 @@
 #include "Utils/wildcards.hpp"
 
 namespace CAO {
-REGISTER_COMMAND(MeshConvert)
 
 CommandResult MeshConvert::process(File &file)
 {
