@@ -11,7 +11,8 @@
 
 static void setSettings(const CAO::PatternSettings &pSets, const CAO::GeneralSettings &gSets)
 {
-    CAO::currentProfile().getPatterns().get()  = {{pSets.priority_, pSets}};
+    CAO::currentProfile().getPatterns().get().clear();
+    CAO::currentProfile().getPatterns().addPattern(pSets);
     CAO::currentProfile().getGeneralSettings() = gSets;
     CAO::currentProfile().saveToJSON();
 }
@@ -59,6 +60,22 @@ struct StringMaker<std::vector<T>>
         oss << "[\n";
         for (const auto &val : in)
             oss << val << ", ";
+        oss << "\n]";
+
+        return oss.str().c_str();
+    }
+};
+
+template<>
+struct StringMaker<std::vector<CAO::PatternSettings>>
+{
+    static String convert(const std::vector<CAO::PatternSettings> &in)
+    {
+        std::ostringstream oss;
+
+        oss << "[\n";
+        for (const auto &val : in)
+            oss << val.getJSON().dump(4) << "\n;\n";
         oss << "\n]";
 
         return oss.str().c_str();

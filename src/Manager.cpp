@@ -26,8 +26,7 @@ Manager::Manager()
 
     checkSettings(currentProfile().getFileTypes());
     checkSettings(currentProfile().getGeneralSettings());
-    currentProfile().getPatterns().get() | rx::transform([](auto &&p) { return p.second; })
-        | rx::for_each(checkSettings);
+    currentProfile().getPatterns().get() | rx::for_each(checkSettings);
 
     PLOG_INFO << "Listing files and directories...";
     listDirectories();

@@ -22,15 +22,15 @@ public:
     void cleanPatterns();
     nlohmann::json getUnifiedJSON() const;
 
-    void freeSlot(size_t idx);
-
     auto &get() { return patterns_; }
     const auto &get() const { return patterns_; }
 
 private:
-    std::map<size_t, PatternSettings> patterns_;
+    std::vector<PatternSettings> patterns_;
 
     //! \note It is assumed both patterns share the same keys
     nlohmann::json mergePattern(const nlohmann::json &main, const nlohmann::json &second) const;
+
+    void updatePatternsPriority();
 };
 } // namespace CAO

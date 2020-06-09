@@ -27,7 +27,6 @@ TEST_CASE("Listing patterns")
         map.listPatterns(j);
         auto patterns = map.get();
         CHECK_EQ(patterns.size(), 1);
-        CHECK(patterns.find(0) != patterns.end());
         CHECK_EQ(patterns[0], PatternSettings{0, {"*"}});
     }
     SUBCASE("Standard json")
@@ -77,7 +76,7 @@ TEST_CASE("Listing patterns")
         PatternSettings sets3(2, {"*.nif"});
         sets3.bTexturesMipmaps = false;
 
-        const std::map<size_t, PatternSettings> expected{{0, sets1}, {1, sets2}, {2, sets3}};
+        const std::vector<PatternSettings> expected{sets1, sets2, sets3};
         map.listPatterns(input);
 
         CHECK_EQ(map.get(), expected);
@@ -100,7 +99,7 @@ TEST_CASE("cleanPatterns")
     PatternSettings expectedSets1 = sets1;
     PatternSettings expectedSets3 = sets3;
 
-    auto const expected = std::map<size_t, PatternSettings>{{0, expectedSets1}, {1, expectedSets3}};
+    auto const expected = std::vector<PatternSettings>{expectedSets1, expectedSets3};
 
     PatternMap map;
     map.addPattern(sets1);
@@ -173,42 +172,4 @@ TEST_CASE("Getting json from PatternMap")
     map.addPattern(sets4);
 
     CHECK_EQ(map.getUnifiedJSON(), expected);
-}
-
-TEST_CASE("Free slot")
-{
-    SUBCASE("First")
-    {
-        const std::map<size_t, PatternSettings> input{{0, {}}, {1, {}}, {2, {}}};
-        const std::map<size_t, PatternSettings> expected{{1, {}}, {2, {}}, {3, {}}};
-
-        PatternMap map;
-        map.get() = input;
-        map.freeSlot(0);
-
-        CHECK(map.get() == expected);
-    }
-    SUBCASE("Second")
-    {
-        const std::map<size_t, PatternSettings> input{{0, {}}, {2, {}}, {4, {}}};
-        const std::map<size_t, PatternSettings> expected{{1, {}}, {3, {}}, {5, {}}};
-
-        PatternMap map;
-        map.get() = input;
-        map.freeSlot(0);
-
-        CHECK(map.get() == expected);
-    }
-
-    SUBCASE("Third")
-    {
-        const std::map<size_t, PatternSettings> input{{0, {}}, {2, {}}, {4, {}}};
-        const std::map<size_t, PatternSettings> expected{{0, {}}, {3, {}}, {5, {}}};
-
-        PatternMap map;
-        map.get() = input;
-        map.freeSlot(2);
-
-        CHECK(map.get() == expected);
-    }
 }
