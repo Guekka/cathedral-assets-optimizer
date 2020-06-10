@@ -6,6 +6,7 @@
 /* Custom functions for plog */
 
 #pragma once
+#include "Utils/Algorithms.hpp"
 #include "pch.hpp"
 #include "plog/Log.h"
 
@@ -39,19 +40,23 @@ public:
         tm t;
         util::localtime_s(&t, &record.getTime().time);
 
+        util::nstring message = record.getMessage();
+        replaceAll(message, L'\n', L"<br>");
+
         ss << PLOG_NSTR("<br>")
            << color
            //Time
-           << t.tm_year + 1900 << "-" << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mon + 1 << PLOG_NSTR("-")
-           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mday << PLOG_NSTR(" ")
+           << t.tm_year + 1900 << "-" << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mon + 1
+           << PLOG_NSTR("-") << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mday << PLOG_NSTR(" ")
            << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_hour << PLOG_NSTR(":")
-           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_min << PLOG_NSTR(":") << std::setfill(PLOG_NSTR('0'))
-           << std::setw(2) << t.tm_sec << PLOG_NSTR(".") << std::setfill(PLOG_NSTR('0')) << std::setw(3)
-           << record.getTime().millitm << PLOG_NSTR(" ") << std::setfill(PLOG_NSTR(' ')) << std::setw(5)
+           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_min << PLOG_NSTR(":")
+           << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_sec << PLOG_NSTR(".")
+           << std::setfill(PLOG_NSTR('0')) << std::setw(3) << record.getTime().millitm << PLOG_NSTR(" ")
+           << std::setfill(PLOG_NSTR(' ')) << std::setw(5)
            << std::left
            //Actual message
            << severityToString(record.getSeverity()) << PLOG_NSTR('{') << record.getFunc() << PLOG_NSTR('@')
-           << record.getLine() << PLOG_NSTR("} ") << record.getMessage() << PLOG_NSTR("</font>");
+           << record.getLine() << PLOG_NSTR("} ") << message << PLOG_NSTR("</font>");
 
         return ss.str();
     }
