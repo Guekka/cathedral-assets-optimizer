@@ -121,8 +121,8 @@ void MainWindow::connectAll()
         ui_->modeChooserComboBox->setCurrentIndex(idx);
     });
 
-    ui_->actionEnableDarkTheme->setChecked(commonSettings.bDarkMode());
-    setDarkTheme(commonSettings.bDarkMode());
+    ui_->actionEnableDarkTheme->setChecked(commonSettings.bDarkMode.value_or(true));
+    setDarkTheme(commonSettings.bDarkMode.value_or(true));
     connect(ui_->actionEnableDarkTheme,
             &QAction::triggered,
             &commonSettings.bDarkMode,
@@ -151,7 +151,7 @@ void MainWindow::connectAll()
             ui_->userPathTextEdit,
             [this, &generalSettings] { ui_->userPathTextEdit->setText(generalSettings.sUserPath()); });
 
-    ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials());
+    ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials.value_or(true));
 
     connect(ui_->actionShow_tutorials,
             &QAction::triggered,
