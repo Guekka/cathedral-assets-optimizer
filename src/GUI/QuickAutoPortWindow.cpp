@@ -53,6 +53,8 @@ void QuickAutoPortWindow::connectAll(PatternSettings &pSets, GeneralSettings &gS
 
     pSets.eTexturesResizingMode = None;
 
+    pSets.eTexturesFormat = pSets.eTexturesFormat.value_or(DXGI_FORMAT_BC7_UNORM);
+
     pSets.bTexturesForceConvert = false;
 
     pSets.iMeshesOptimizationLevel = 1;
