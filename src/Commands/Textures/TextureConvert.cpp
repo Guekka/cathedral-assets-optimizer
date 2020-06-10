@@ -86,6 +86,7 @@ int TextureConvert::convertWithoutCompression(const DirectX::ScratchImage &image
                                0,
                                DirectX::TEX_THRESHOLD_DEFAULT,
                                timage);
+
     return FAILED(hr);
 }
 

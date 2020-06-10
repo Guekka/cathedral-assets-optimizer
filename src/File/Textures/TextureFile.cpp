@@ -32,7 +32,6 @@ int TextureFile::loadFromDisk(const QString &filePath)
             reset();
             return 1;
         }
-        image->isTGA = true;
     }
 
     if (DirectX::IsTypeless(_info.format))
@@ -89,8 +88,12 @@ int TextureFile::saveToDisk(const QString &filePath) const
     const size_t nimg = image->GetImageCount();
 
     QString newName = filePath;
-    if (image->isTGA)
-        newName = newName.replace(".tga", ".dds");
+    bool isTGA      = false;
+    if (newName.contains(".tga", Qt::CaseInsensitive))
+    {
+        isTGA = true;
+        newName.replace(".tga", ".dds", Qt::CaseInsensitive);
+    }
 
     // Write texture
     wchar_t wFilePath[1024];
@@ -98,7 +101,7 @@ int TextureFile::saveToDisk(const QString &filePath) const
     wFilePath[filePath.length()] = '\0';
 
     const HRESULT hr = SaveToDDSFile(img, nimg, _info, DirectX::DDS_FLAGS_NONE, wFilePath);
-    if (SUCCEEDED(hr) && image->isTGA)
+    if (SUCCEEDED(hr) && isTGA)
         QFile(getName()).remove();
     return FAILED(hr);
 }
