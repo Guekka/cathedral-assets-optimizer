@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "TextureFile.hpp"
+#include "Utils/ScopeGuard.hpp"
 
 namespace CAO {
 
@@ -18,7 +19,11 @@ TextureFile::TextureFile()
 
 int TextureFile::loadFromDisk(const QString &filePath)
 {
+    ScopeGuard guard([this] { this->reset(); });
+
     reset();
+    setName(filePath);
+
     wchar_t wFilePath[1024];
     QDir::toNativeSeparators(filePath).toWCharArray(wFilePath);
     wFilePath[filePath.length()] = '\0';
@@ -26,56 +31,45 @@ int TextureFile::loadFromDisk(const QString &filePath)
     //Trying to guess texture type. DDS is more common
     auto image = static_cast<TextureResource *>(&getFile(false));
     if (FAILED(LoadFromDDSFile(wFilePath, DirectX::DDS_FLAGS_NONE, &_info, *image)))
-    {
         if (FAILED(LoadFromTGAFile(wFilePath, &_info, *image)))
-        {
-            reset();
             return 1;
-        }
-    }
 
     if (DirectX::IsTypeless(_info.format))
     {
         _info.format = DirectX::MakeTypelessUNORM(_info.format);
         if (DirectX::IsTypeless(_info.format))
-        {
-            reset();
             return 2;
-        }
+
         image->OverrideFormat(_info.format);
     }
     image->origFormat = _info.format;
 
-    setName(filePath);
-
+    guard.clear();
     return 0;
 }
 
 int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const QString &fileName)
 {
+    ScopeGuard guard([this] { this->reset(); });
+
     reset();
     setName(fileName);
 
     auto image = static_cast<TextureResource *>(&getFile(false));
     if (FAILED(LoadFromDDSMemory(pSource, size, DirectX::DDS_FLAGS_NONE, &_info, *image)))
         if (FAILED(LoadFromTGAMemory(pSource, size, &_info, *image)))
-        {
-            reset();
             return 1;
-        }
 
     if (DirectX::IsTypeless(_info.format))
     {
         _info.format = DirectX::MakeTypelessUNORM(_info.format);
         if (DirectX::IsTypeless(_info.format))
-        {
-            reset();
             return 2;
-        }
+
         image->OverrideFormat(_info.format);
     }
 
-    setName(fileName);
+    guard.clear();
     return 0;
 }
 

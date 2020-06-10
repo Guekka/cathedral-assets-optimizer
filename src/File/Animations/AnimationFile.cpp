@@ -75,6 +75,7 @@ int AnimationFile::loadFromDisk(const QString &filePath)
     }
     catch (...)
     {
+        reset();
         return 4;
     }
 }
