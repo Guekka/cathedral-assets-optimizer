@@ -53,18 +53,28 @@ void MainOptimizer::packBsa(const QString &folder)
 
 bool MainOptimizer::processStandardFile(File &file, const QString &path, const Command::CommandType &type)
 {
-    if (!loadFile(file, path))
-        return false;
-
-    for (auto command : _commandBook.getCommandList(type))
-        if (!runCommand(command, file))
+    try
+    {
+        if (!loadFile(file, path))
             return false;
 
-    if (!file.optimizedCurrentFile())
-        return false;
+        for (auto command : _commandBook.getCommandList(type))
+            if (!runCommand(command, file))
+                return false;
 
-    if (!saveFile(file, path))
+        if (!file.optimizedCurrentFile())
+            return false;
+
+        if (!saveFile(file, path))
+            return false;
+    }
+    catch (const std::exception &e)
+    {
+        PLOG_ERROR << "An exception was caught while processing '" << path << "'\n"
+                   << "Error message was: '" << e.what() << "'\n"
+                   << "You can probably assume this file is broken";
         return false;
+    }
 
     PLOG_INFO << "Successfully optimized " << path;
     return true;
