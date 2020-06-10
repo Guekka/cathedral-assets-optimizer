@@ -25,7 +25,7 @@ CommandResult TextureResize::process(File &file)
     if (FAILED(hr))
         return _resultFactory.getFailedResult(2, "Failed to resize image");
 
-    file.setFile(*timage);
+    file.setFile(std::unique_ptr<Resource>(std::move(timage)));
     return _resultFactory.getSuccessfulResult();
 }
 

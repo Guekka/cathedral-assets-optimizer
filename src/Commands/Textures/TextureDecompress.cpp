@@ -21,7 +21,7 @@ CommandResult TextureDecompress::process(File& file)
         return _resultFactory.getFailedResult(1, "Failed to decompress");
 
     //This file is "unmodified". Decompressing the file is only done in order to perform other operations.
-    file.setFile(*timage, false);
+    file.setFile(std::unique_ptr<Resource>(std::move(timage)), false);
     return _resultFactory.getSuccessfulResult();
 }
 

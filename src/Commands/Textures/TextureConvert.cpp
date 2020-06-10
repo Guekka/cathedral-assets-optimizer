@@ -17,7 +17,7 @@ CommandResult TextureConvert::process(File &file)
     if (texFile->GetMetadata().width < 4 || texFile->GetMetadata().height < 4)
         outputFormat = DXGI_FORMAT_B8G8R8A8_UNORM; //Standard uncompressed format
 
-    auto timage = new TextureResource;
+    auto timage = std::make_unique<TextureResource>();
 
     if (DirectX::IsCompressed(outputFormat))
     {
@@ -30,7 +30,7 @@ CommandResult TextureConvert::process(File &file)
             return _resultFactory.getFailedResult(result, "Failed to convert without compression");
     }
 
-    file.setFile(*timage);
+    file.setFile(std::unique_ptr<Resource>(std::move(timage)));
     return _resultFactory.getSuccessfulResult();
 }
 

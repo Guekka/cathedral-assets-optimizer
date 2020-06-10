@@ -19,7 +19,7 @@ public:
 
     int loadFromMemory(const void *pSource, const size_t &size, const QString &fileName) override;
 
-    bool setFile(Resource &file, bool optimizedFile = true) override;
+    bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = true) override;
 
     void reset() override;
 private:

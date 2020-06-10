@@ -27,9 +27,9 @@ int MeshFile::saveToDisk(const QString &filePath) const
     return meshFile->Save(filePath.toStdString());
 }
 
-bool MeshFile::setFile(Resource &file, bool optimizedFile)
+bool MeshFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
-    return setFileHelper<MeshResource>(file, optimizedFile);
+    return setFileHelper<MeshResource>(std::move(file), optimizedFile);
 }
 
 void MeshFile::reset()

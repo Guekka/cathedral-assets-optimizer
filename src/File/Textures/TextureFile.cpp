@@ -100,11 +100,11 @@ int TextureFile::saveToDisk(const QString &filePath) const
     return FAILED(hr);
 }
 
-bool TextureFile::setFile(Resource &file, bool optimizedFile)
+bool TextureFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
-    if (!setFileHelper<TextureResource>(file, optimizedFile))
+    if (!setFileHelper<TextureResource>(std::move(file), optimizedFile))
         return false;
-    _info = static_cast<TextureResource *>(&file)->GetMetadata();
+    _info = static_cast<TextureResource *>(&getFile(false))->GetMetadata();
     return true;
 }
 

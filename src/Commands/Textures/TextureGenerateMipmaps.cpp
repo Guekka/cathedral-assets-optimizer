@@ -48,7 +48,7 @@ CommandResult TextureGenerateMipmaps::process(File& file)
     if (FAILED(hr))
         return _resultFactory.getFailedResult(2, "Failed to generate mipmaps");
 
-    file.setFile(*timage2);
+    file.setFile(std::unique_ptr<Resource>(std::move(timage2)));
     return _resultFactory.getSuccessfulResult();
 }
 

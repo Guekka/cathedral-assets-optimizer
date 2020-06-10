@@ -16,7 +16,7 @@ public:
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) const override;
 
-    bool setFile(Resource &file, bool optimizedFile = false) override;
+    bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = false) override;
 
     void reset() override;
 };

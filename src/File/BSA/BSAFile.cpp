@@ -30,9 +30,9 @@ int BSAFile::saveToDisk(const QString &filePath) const
     return 0;
 }
 
-bool BSAFile::setFile(Resource &file, bool optimizedFile)
+bool BSAFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
-    return setFileHelper<BSAFileResource>(file, optimizedFile);
+    return setFileHelper<BSAFileResource>(std::move(file), optimizedFile);
 }
 
 void BSAFile::reset()

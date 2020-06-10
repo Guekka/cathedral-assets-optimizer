@@ -35,11 +35,11 @@ static std::unique_ptr<CAO::TextureFile> getStandardTextureFile(
 {
     setSettings(pSets, gSets);
 
-    auto textureResource = new CAO::TextureResource;
+    auto textureResource = std::make_unique<CAO::TextureResource>();
     auto file            = std::make_unique<CAO::TextureFile>();
     textureResource->Initialize2D(format, 16, 16, 1, 1);
     textureResource->origFormat = format;
-    file->setFile(*textureResource, optimizedFile);
+    file->setFile(std::unique_ptr<CAO::Resource>(std::move(textureResource)), optimizedFile);
     file->setName("TextureTest");
 
     //Checking that the file is valid

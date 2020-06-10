@@ -39,9 +39,9 @@ void AnimationFile::reset()
     resetHelper<AnimationResource>();
 }
 
-bool AnimationFile::setFile(Resource &file, bool optimizedFile)
+bool AnimationFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
-    return setFileHelper<AnimationResource>(file, optimizedFile);
+    return setFileHelper<AnimationResource>(std::move(file), optimizedFile);
 }
 
 int AnimationFile::loadFromDisk(const QString &filePath)

@@ -23,9 +23,9 @@ int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath) const
     return 1;
 }
 
-bool BSAFolder::setFile(Resource &file, bool optimizedFile)
+bool BSAFolder::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
-    return setFileHelper<BSAFolderResource>(file, optimizedFile);
+    return setFileHelper<BSAFolderResource>(std::move(file), optimizedFile);
 }
 
 void BSAFolder::reset()

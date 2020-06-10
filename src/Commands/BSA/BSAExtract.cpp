@@ -32,7 +32,8 @@ CommandResult BSAExtract::process(File& file)
     }
     QString path = file.getName();
 
-    file.setFile(*new BSAFileResource); //Closing the archive. We won't be able to delete the file otherwise
+    file.setFile(
+        std::make_unique<BSAFileResource>()); //Closing the archive. We won't be able to delete the file otherwise
 
     if (!QFile::remove(file.getName())) //We want to remove the original file, not the backup file
         return _resultFactory.getFailedResult(2, "BSA Extract succeeded but failed to delete the extracted BSA");

@@ -30,20 +30,20 @@ public:
     const Resource &getFile() const;
     Resource &getFile(const bool modifiedFile);
 
-    virtual bool setFile(Resource &file, bool optimizedFile = true) = 0;
-    virtual void reset()                                            = 0;
+    virtual bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = true) = 0;
+    virtual void reset()                                                            = 0;
 
     const PatternSettings &patternSettings() const;
 
 protected:
     template<class T>
-    bool setFileHelper(Resource &file, bool optimizedFile)
+    bool setFileHelper(std::unique_ptr<Resource> file, bool optimizedFile)
     {
-        auto convertedFile = dynamic_cast<T *>(&file);
+        auto convertedFile = dynamic_cast<T *>(&*file);
         if (!convertedFile)
             return false;
 
-        _file.reset(&file);
+        _file = std::move(file);
         _optimizedCurrentFile |= optimizedFile;
         return true;
     }
