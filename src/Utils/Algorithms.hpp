@@ -4,8 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Utils/TemplateMetaProgramming.hpp"
 #include <algorithm>
 #include <cassert>
+#include <string>
 #include <type_traits>
 
 //Expects a range sorted in descending order
@@ -78,4 +80,47 @@ template<class Container>
     using namespace std;
     std::sort(begin(cont), end(cont));
     cont.erase(std::unique(begin(cont), end(cont)), end(cont));
+}
+
+template<class String>
+size_t strLength(String &&str)
+{
+    if constexpr (CAO::is_equiv_v<String, const char *>)
+        return strlen(std::forward<String>(str));
+
+    else if constexpr (CAO::is_equiv_v<String, char>)
+        return 1;
+
+    else if constexpr (CAO::is_equiv_v<String, const wchar_t *>)
+        return wcslen(std::forward<String>(str));
+
+    else if constexpr (CAO::is_equiv_v<String, wchar_t>)
+        return 1;
+
+    else
+        return (std::forward<String>(str)).length();
+}
+
+template<class CharT, class From, class To>
+void replaceAll(std::basic_string<CharT> &source, const From &from, const To &to)
+{
+    using String = std::basic_string<CharT>;
+
+    String newString;
+    newString.reserve(source.length());
+
+    typename String::size_type lastPos = 0;
+    typename String::size_type findPos;
+
+    while (String::npos != (findPos = source.find(from, lastPos)))
+    {
+        newString.append(source, lastPos, findPos - lastPos);
+        newString += to;
+        lastPos = findPos + strLength(from);
+    }
+
+    // Care for the rest after last occurrence
+    newString += source.substr(lastPos);
+
+    source.swap(newString);
 }
