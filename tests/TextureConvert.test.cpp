@@ -11,8 +11,7 @@ using namespace CAO;
 
 SCENARIO("Converting a texture")
 {
-    CommandBook book;
-    auto &convert                 = *book.getCommand<TextureConvert>();
+    TextureConvert convert;
     PatternSettings sets;
     sets.slTextureUnwantedFormats = {DXGI_FORMAT_B5G6R5_UNORM};
 
