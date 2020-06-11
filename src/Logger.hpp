@@ -10,6 +10,12 @@
 #include "pch.hpp"
 #include "plog/Log.h"
 
+template<class CharT>
+void replaceAll(std::basic_string<CharT> &source,
+                std::basic_string_view<CharT> from,
+                std::basic_string_view<CharT> to,
+                bool caseSensitive);
+
 namespace plog {
 class CustomDebugFormatter
 {
@@ -40,8 +46,8 @@ public:
         tm t;
         util::localtime_s(&t, &record.getTime().time);
 
-        util::nstring message = record.getMessage();
-        replaceAll(message, L'\n', L"<br>");
+        std::wstring message = record.getMessage();
+        ::replaceAll(message, std::wstring_view(L"\n"), std::wstring_view(L"<br>"), true);
 
         ss << PLOG_NSTR("<br>")
            << color

@@ -8,6 +8,7 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Version.hpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Algorithms.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ScopeGuard.hpp

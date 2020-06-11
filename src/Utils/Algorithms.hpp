@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cassert>
 #include <string>
+#include <string_view>
 #include <type_traits>
 
 //Expects a range sorted in descending order
@@ -83,7 +84,7 @@ template<class Container>
 }
 
 template<class String>
-size_t strLength(String &&str)
+constexpr size_t strLength(String &&str)
 {
     if constexpr (CAO::is_equiv_v<String, const char *>)
         return strlen(std::forward<String>(str));
@@ -101,26 +102,108 @@ size_t strLength(String &&str)
         return (std::forward<String>(str)).length();
 }
 
-template<class CharT, class From, class To>
-void replaceAll(std::basic_string<CharT> &source, const From &from, const To &to)
+template<class CharT>
+size_t strFind(std::basic_string_view<CharT> string,
+               std::basic_string_view<CharT> snippet,
+               bool caseSensitive = true,
+               size_t fromPos     = 0)
+{
+    auto pred = [caseSensitive](char ch1, char ch2) {
+        if (!caseSensitive)
+        {
+            ch1 = std::toupper(ch1);
+            ch2 = std::toupper(ch2);
+        }
+
+        return ch1 == ch2;
+    };
+
+    using namespace std;
+
+    if (cbegin(string) + fromPos > cend(string))
+        return std::string::npos;
+
+    auto it = search(cbegin(string) + fromPos, cend(string), cbegin(snippet), cend(snippet), pred);
+
+    if (it != cend(string))
+        return it - cbegin(string);
+    else
+        return std::string::npos; // not found
+}
+
+template<class CharT>
+void replaceAll(std::basic_string<CharT> &source,
+                std::basic_string_view<CharT> from,
+                std::basic_string_view<CharT> to,
+                bool caseSensitive = true)
 {
     using String = std::basic_string<CharT>;
+    using Size   = typename String::size_type;
 
     String newString;
     newString.reserve(source.length());
 
-    typename String::size_type lastPos = 0;
-    typename String::size_type findPos;
+    Size lastPos = 0;
 
-    while (String::npos != (findPos = source.find(from, lastPos)))
+    Size findPos = strFind(std::basic_string_view<CharT>(source),
+                           std::basic_string_view<CharT>(from),
+                           caseSensitive);
+
+    while (findPos != String::npos)
     {
         newString.append(source, lastPos, findPos - lastPos);
         newString += to;
         lastPos = findPos + strLength(from);
+
+        findPos = strFind(std::basic_string_view<CharT>(source),
+                          std::basic_string_view<CharT>(from),
+                          caseSensitive,
+                          lastPos);
     }
 
     // Care for the rest after last occurrence
     newString += source.substr(lastPos);
 
     source.swap(newString);
+}
+
+template<class CharT>
+bool startsWith(std::basic_string_view<CharT> string,
+                std::basic_string_view<CharT> prefix,
+                bool caseSensitive = true)
+{
+    using namespace std;
+
+    auto pred = [caseSensitive](char ch1, char ch2) {
+        if (!caseSensitive)
+        {
+            ch1 = std::toupper(ch1);
+            ch2 = std::toupper(ch2);
+        }
+
+        return ch1 == ch2;
+    };
+
+    return string.size() >= prefix.size() && std::equal(cbegin(prefix), cend(prefix), cbegin(string), pred);
+}
+
+template<class CharT>
+bool endsWith(std::basic_string_view<CharT> string,
+              std::basic_string_view<CharT> suffix,
+              bool caseSensitive = true)
+{
+    using namespace std;
+
+    auto pred = [caseSensitive](char ch1, char ch2) {
+        if (!caseSensitive)
+        {
+            ch1 = std::toupper(ch1);
+            ch2 = std::toupper(ch2);
+        }
+
+        return ch1 == ch2;
+    };
+
+    return string.size() >= suffix.size()
+           && std::equal(crbegin(suffix), crend(suffix), crbegin(string), pred);
 }

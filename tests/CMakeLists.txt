@@ -1,4 +1,5 @@
 add_executable(CAO_test
+    Algorithms.test.cpp
     main.test.cpp
     utils.hpp
     BSA.test.cpp
