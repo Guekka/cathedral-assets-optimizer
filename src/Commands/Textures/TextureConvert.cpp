@@ -83,7 +83,7 @@ int TextureConvert::convertWithoutCompression(const DirectX::ScratchImage &image
                                image.GetImageCount(),
                                image.GetMetadata(),
                                format,
-                               0,
+                               DirectX::TEX_FILTER_SEPARATE_ALPHA,
                                DirectX::TEX_THRESHOLD_DEFAULT,
                                timage);
 
@@ -112,14 +112,15 @@ int TextureConvert::convertWithCompression(const DirectX::ScratchImage &image,
     }
 
     HRESULT hr;
-    TextureCompressionDevice compressionDevice;
+    static TextureCompressionDevice compressionDevice;
     if (bc6hbc7 && compressionDevice.isValid())
         hr = DirectX::Compress(compressionDevice.getDevice(),
                                img,
                                nimg,
                                image.GetMetadata(),
                                format,
-                               DirectX::TEX_COMPRESS_FLAGS::TEX_COMPRESS_BC7_USE_3SUBSETS,
+                               DirectX::TEX_COMPRESS_FLAGS::TEX_COMPRESS_BC7_USE_3SUBSETS
+                                   | DirectX::TEX_FILTER_SEPARATE_ALPHA,
                                DirectX::TEX_THRESHOLD_DEFAULT,
                                timage);
     else

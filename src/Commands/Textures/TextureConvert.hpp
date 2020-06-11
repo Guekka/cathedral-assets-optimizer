@@ -13,21 +13,21 @@ class TextureConvert final : public Command
 {
 public:
     CommandType type() override { return CommandType::Texture; };
-    Priority priority() override { return Low; };
+    Priority priority() override { return VeryLow; };
     QString name() override { return "Convert Texture"; }
 
     CommandResult process(File& file) override;
-    bool isApplicable(File& file) override;
+    bool isApplicable(File &file) override;
+
+    static int convertWithoutCompression(const DirectX::ScratchImage &image,
+                                         DirectX::ScratchImage &timage,
+                                         const DXGI_FORMAT &format);
+
+    static int convertWithCompression(const DirectX::ScratchImage &image,
+                                      DirectX::ScratchImage &timage,
+                                      const DXGI_FORMAT &format);
 
 protected:
-    int convertWithoutCompression(const DirectX::ScratchImage &image,
-                                  DirectX::ScratchImage &timage,
-                                  const DXGI_FORMAT &format);
-
-    int convertWithCompression(const DirectX::ScratchImage &image,
-                               DirectX::ScratchImage &timage,
-                               const DXGI_FORMAT &format);
-
     bool needsConvert(const File &file, DXGI_FORMAT format);
 };
 REGISTER_COMMAND(TextureConvert)
