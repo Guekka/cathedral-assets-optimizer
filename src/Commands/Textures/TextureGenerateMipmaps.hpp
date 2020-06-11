@@ -13,7 +13,7 @@ class TextureGenerateMipmaps final : public Command
 {
 public:
     CommandType type() override { return CommandType::Texture; };
-    Priority priority() override { return Medium; };
+    Priority priority() override { return Low; };
     QString name() override { return "Generate Mipmaps for Texture"; }
 
     CommandResult process(File& file) override;

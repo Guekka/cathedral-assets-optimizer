@@ -44,6 +44,7 @@ public:
     REGISTER_SETTING(bool, bTexturesNecessary, "/Textures/bTexturesNecessary")
     REGISTER_SETTING(bool, bTexturesCompress, "/Textures/bTexturesCompress")
     REGISTER_SETTING(bool, bTexturesMipmaps, "/Textures/bTexturesMipmaps")
+    REGISTER_SETTING(bool, bTexturesLandscapeAlpha, "/Textures/bTexturesLandscapeAlpha")
 
     REGISTER_SETTING(bool, bTexturesResizeMinimum, "/Textures/Resizing/ByRatio/Minimum/Enabled")
     REGISTER_SETTING(int, iTexturesMinimumWidth, "/Textures/Resizing/ByRatio/Minimum/Width")

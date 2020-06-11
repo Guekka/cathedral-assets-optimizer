@@ -45,6 +45,8 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Plugins/PluginsOperations.hpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/Texture.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureAddAlpha.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureAddAlpha.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureCompressionDevice.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureCompressionDevice.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureConvert.cpp

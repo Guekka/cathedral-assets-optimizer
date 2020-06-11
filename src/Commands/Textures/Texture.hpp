@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Commands/Textures/TextureAddAlpha.hpp"
 #include "Commands/Textures/TextureConvert.hpp"
 #include "Commands/Textures/TextureDecompress.hpp"
 #include "Commands/Textures/TextureGenerateMipmaps.hpp"

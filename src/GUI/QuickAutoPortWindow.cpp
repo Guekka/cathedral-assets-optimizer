@@ -50,6 +50,7 @@ void QuickAutoPortWindow::connectAll(PatternSettings &pSets, GeneralSettings &gS
     pSets.bTexturesNecessary = true;
     pSets.bTexturesCompress  = false;
     pSets.bTexturesMipmaps   = false;
+    pSets.bTexturesLandscapeAlpha = true;
 
     pSets.eTexturesResizingMode = None;
 
