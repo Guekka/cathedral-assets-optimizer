@@ -5,6 +5,7 @@
 
 #include "MeshConvert.hpp"
 #include "Utils/Algorithms.hpp"
+#include "Utils/Filesystem.hpp"
 #include "Utils/TypeConvert.hpp"
 #include "Utils/wildcards.hpp"
 
@@ -99,7 +100,7 @@ void MeshConvert::listHeadparts(const GeneralSettings &settings, FileTypes &file
     QDirIterator it(settings.sUserPath(), flags);
     for (const auto &plugin : Filesystem::listPlugins(it))
     {
-        auto result       = PluginsOperations::listHeadparts(plugin);
+        const auto &result = PluginsOperations::listHeadparts(plugin);
         headparts.insert(headparts.end(), result.begin(), result.end());
     }
 

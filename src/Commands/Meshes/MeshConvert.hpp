@@ -7,7 +7,6 @@
 #include "Commands/CommandBook.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "File/Meshes/MeshFile.hpp"
-#include "Utils/Filesystem.hpp"
 
 namespace CAO {
 class MeshConvert : public Command

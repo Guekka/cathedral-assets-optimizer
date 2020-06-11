@@ -25,7 +25,8 @@ public:
 
     enum Priority
     {
-        Low = 0,
+        VeryLow = 0,
+        Low,
         Medium,
         High,
         VeryHigh
