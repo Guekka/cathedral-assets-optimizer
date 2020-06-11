@@ -87,6 +87,6 @@ std::vector<std::string> listHeadparts(const QString &filepath);
 * \param filepath The path of the plugin to scan
 * \return The list of headparts
 */
-QStringList listLandscapeTextures(const QString &filepath);
+std::vector<std::string> listLandscapeTextures(const QString &filepath);
 } // namespace PluginsOperations
 } // namespace CAO

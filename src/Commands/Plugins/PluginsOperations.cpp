@@ -167,12 +167,12 @@ std::vector<std::string> PluginsOperations::listHeadparts(const QString &filepat
     return headparts;
 }
 
-QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
+std::vector<std::string> PluginsOperations::listLandscapeTextures(const QString &filepath)
 {
     auto file = Filesystem::openBinaryFile(filepath);
 
     if (!file.is_open())
-        return QStringList();
+        return {};
 
     PluginRecordHeader header{};
     PluginFieldHeader pluginFieldHeader{};
@@ -188,14 +188,14 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
 
     readHeaders();
     if (strncmp(header.plugin.type, GROUP_TES4, sizeof GROUP_TES4) != 0)
-        return QStringList(); //Not a plugin file
+        return {}; //Not a plugin file
 
     //Skip TES4 record
     file.seekg(header.record.dataSize, std::ios::cur);
 
     std::vector<uint32_t> firstSet;
-    QMap<uint32_t, QString> slTextures;
-    QStringList finalTextures;
+    std::map<uint32_t, std::string> slTextures;
+    std::vector<std::string> finalTextures;
 
     //Reading all groups
     while (readHeaders() && file.good())
@@ -242,7 +242,7 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
                     if (!string.startsWith("textures/"))
                         string.prepend("textures/");
 
-                    slTextures.insert(header.record.id, string);
+                    slTextures.try_emplace(header.record.id, string.toStdString());
                 }
 
                 //Skip other fields
@@ -255,9 +255,9 @@ QStringList PluginsOperations::listLandscapeTextures(const QString &filepath)
     // go over landscape texture set FormIDs and find matching diffuse textures
     for (const auto &id : firstSet)
     {
-        const auto &idx = slTextures.value(id);
-        if (!idx.isEmpty())
-            finalTextures << idx;
+        auto it = slTextures.find(id);
+        if (it != slTextures.end())
+            finalTextures.emplace_back(it->second);
     }
 
     return finalTextures;
