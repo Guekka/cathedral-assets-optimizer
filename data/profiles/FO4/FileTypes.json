@@ -1,6 +1,6 @@
 {
     "BSA": {
-        "slBlacklist": [
+	    "slBlacklist": [
             "*readme*"
         ],
         "slStandardFiles": [

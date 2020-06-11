@@ -65,6 +65,12 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     PatternSettings pSetsInterface{2, {"*/interface/*.dds", "*/interface/*.tga"}};
     pSetsInterface.bTexturesForceConvert = texturesCompressInterface;
 
+    PatternSettings pSetsLodgen{3, {"*/textures/terrain/lodgen/*"}};
+    pSetsLodgen.bTexturesMipmaps        = false;
+    pSetsLodgen.bTexturesCompress       = false;
+    pSetsLodgen.bTexturesForceConvert   = false;
+    pSetsLodgen.bTexturesLandscapeAlpha = false;
+
     std::vector<DXGI_FORMAT> unwantedFormats;
     auto getFormat = [](const QVariant &variant) { return variant.value<DXGI_FORMAT>(); };
     texturesUnwantedFormats >>= pipes::transform(getFormat) >>= pipes::push_back(unwantedFormats);
@@ -74,13 +80,14 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     patterns.addPattern(gPattern);
     patterns.addPattern(pSetsTGA);
     patterns.addPattern(pSetsInterface);
+    patterns.addPattern(pSetsLodgen);
 }
 
 void convertFiles5To6(const QDir &oldProfile, const QDir &newProfile, Profile &outProfile)
 {
     auto readFile = [](const QString &path) {
         QFile file(path);
-        auto list = Filesystem::readFile(file, [](QString &line) { return line.prepend("*/"); });
+        auto list = Filesystem::readFile(file, [](QString &line) { return line.prepend('*').append('*'); });
         return std::move(list) | rx::transform([](QString val) { return val.toStdString(); })
                | rx::to_vector();
     };

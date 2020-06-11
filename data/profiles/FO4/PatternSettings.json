@@ -2,6 +2,22 @@
     {
         "Advanced": {
             "Textures": {
+                "eTexturesFormat": 98,
+                "slTextureUnwantedFormats": [
+                    86,
+                    85,
+                    115
+                ]
+            }
+        },
+        "Patterns": [
+            "*"
+        ],
+        "Priority": 0
+    },
+    {
+        "Advanced": {
+            "Textures": {
                 "bTexturesForceConvert": true
             }
         },
@@ -11,5 +27,21 @@
             "*/interface/*.tga"
         ],
         "Priority": 1
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": false
+            }
+        },
+        "Patterns": [
+            "*/textures/terrain/lodgen/*"
+        ],
+        "Priority": 2,
+        "Textures": {
+            "bTexturesCompress": false,
+            "bTexturesLandscapeAlpha": false,
+            "bTexturesMipmaps": false
+        }
     }
 ]
