@@ -13,9 +13,10 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Genera
 {
     PLOG_VERBOSE << "Creating enough dummy plugins to load BSAs";
 
-    for (QString bsaName : listBSAsNames(QDirIterator(folderPath, QDirIterator::Subdirectories), settings))
+    QDir dir(folderPath);
+    for (const auto &bsaName : listBSAsNames(QDirIterator(folderPath, QDirIterator::Subdirectories), settings))
     {
-        if (checkIfBsaHasPlugin(bsaName, settings))
+        if (checkIfBsaHasPlugin(dir.absoluteFilePath(bsaName), settings))
             continue;
 
         currentProfile().getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
@@ -61,15 +62,18 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const GeneralSetti
 
 bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const GeneralSettings &settings)
 {
+    QDir bsaDir     = QFileInfo(bsaPath).absoluteDir();
     QString bsaName = QFileInfo(bsaPath).fileName();
-    const auto &bsaSuffix = settings.sBSASuffix();
+
+    const auto &bsaSuffix    = settings.sBSASuffix();
     const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
+
     bsaName.remove(bsaSuffix);
     bsaName.remove(bsaTexSuffix);
 
     const QStringList pluginNames = {bsaName + ".esl", bsaName + ".esm", bsaName + ".esp"};
     for (const auto &name : pluginNames)
-        if (QFile(name).exists())
+        if (bsaDir.exists(name))
             return true;
 
     return false;
@@ -84,10 +88,12 @@ QStringList PluginsOperations::listBSAsNames(QDirIterator it, const GeneralSetti
     while (it.hasNext())
     {
         it.next();
-        const QString bsaName = it.fileName().remove(bsaTexSuffix).remove(bsaSuffix);
-        if (bsaName == it.fileName() || bsaName.isEmpty())
-            continue;
-        bsas << bsaName;
+        QString bsaName = it.fileName();
+        if (bsaName.endsWith(bsaSuffix, Qt::CaseInsensitive)
+            || bsaName.endsWith(bsaTexSuffix, Qt::CaseInsensitive))
+        {
+            bsas.push_back(bsaName.remove(bsaSuffix).remove(bsaTexSuffix));
+        }
     }
     bsas.removeDuplicates();
     return bsas;
