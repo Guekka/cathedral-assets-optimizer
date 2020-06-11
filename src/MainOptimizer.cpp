@@ -14,10 +14,14 @@ void MainOptimizer::process(const QString &path)
 {
     if (path.endsWith(".dds", Qt::CaseInsensitive) || (path.endsWith(".tga", Qt::CaseInsensitive)))
         processStandardFile(_textureFile, path, Command::CommandType::Texture);
-    else if (path.endsWith(".nif", Qt::CaseInsensitive))
+
+    else if (path.endsWith(".nif", Qt::CaseInsensitive) || path.endsWith(".bto", Qt::CaseInsensitive)
+             || path.endsWith(".btr", Qt::CaseInsensitive))
         processStandardFile(_meshFile, path, Command::CommandType::Mesh);
+
     else if (path.endsWith(currentProfile().getGeneralSettings().sBSASuffix(), Qt::CaseInsensitive))
         processBsa(path);
+
     else if (path.endsWith(".hkx", Qt::CaseInsensitive))
         processStandardFile(_animFile, path, Command::CommandType::Animation);
 }

@@ -81,7 +81,10 @@ void Manager::listFiles()
             const auto &settings = currentProfile().getSettings(filename);
 
             const bool processMeshes = settings.bMeshesResave() || settings.iMeshesOptimizationLevel();
-            const bool mesh          = filename.endsWith(".nif", Qt::CaseInsensitive) && processMeshes;
+            const bool mesh          = (filename.endsWith(".nif", Qt::CaseInsensitive)
+                               || filename.endsWith(".bto", Qt::CaseInsensitive)
+                               || filename.endsWith(".btr", Qt::CaseInsensitive))
+                              && processMeshes;
 
             const bool processTextures = settings.bTexturesMipmaps() || settings.bTexturesCompress()
                                          || settings.bTexturesNecessary()
