@@ -5,11 +5,14 @@
 #include "TextureCompressionDevice.hpp"
 
 namespace CAO {
-TextureCompressionDevice::TextureCompressionDevice()
+TextureCompressionDevice::TextureCompressionDevice(int adapterIndex)
 {
-    PLOG_WARNING_IF(!createDevice(0, _pDevice.GetAddressOf()))
-        << "DirectCompute is not available, using BC6H / BC7 CPU codec."
-           " Textures compression will be slower";
+    if (!createDevice(adapterIndex, _pDevice.GetAddressOf()))
+    {
+        PLOG_WARNING << "DirectCompute is not available, using BC6H / BC7 CPU codec."
+                        " Textures compression will be slower";
+        _pDevice = nullptr;
+    }
 }
 
 ID3D11Device *TextureCompressionDevice::getDevice() const
@@ -27,7 +30,7 @@ TextureCompressionDevice::operator bool() const
     return isValid();
 }
 
-bool TextureCompressionDevice::getDXGIFactory(IDXGIFactory1 **pFactory) const
+bool TextureCompressionDevice::getDXGIFactory(IDXGIFactory1 **pFactory)
 {
     if (!pFactory)
         return false;
@@ -53,7 +56,12 @@ bool TextureCompressionDevice::getDXGIFactory(IDXGIFactory1 **pFactory) const
     return SUCCEEDED(sCreateDXGIFactory1(IID_PPV_ARGS(pFactory)));
 }
 
-bool TextureCompressionDevice::createDevice(const int adapter, ID3D11Device **pDevice) const
+QString TextureCompressionDevice::gpuName() const
+{
+    return gpuName_;
+}
+
+bool TextureCompressionDevice::createDevice(uint adapter, ID3D11Device **pDevice)
 {
     if (!pDevice)
         return false;
@@ -83,17 +91,18 @@ bool TextureCompressionDevice::createDevice(const int adapter, ID3D11Device **pD
     const UINT createDeviceFlags = 0;
 
     Microsoft::WRL::ComPtr<IDXGIAdapter> pAdapter;
-    if (adapter >= 0)
+    Microsoft::WRL::ComPtr<IDXGIFactory1> dxgiFactory;
+    if (getDXGIFactory(dxgiFactory.GetAddressOf()))
     {
-        Microsoft::WRL::ComPtr<IDXGIFactory1> dxgiFactory;
-        if (getDXGIFactory(dxgiFactory.GetAddressOf()))
+        auto hr = dxgiFactory->EnumAdapters(adapter, pAdapter.GetAddressOf());
+        if (FAILED(hr) || hr == DXGI_ERROR_NOT_FOUND)
         {
-            if (FAILED(dxgiFactory->EnumAdapters(static_cast<uint>(adapter), pAdapter.GetAddressOf())))
-            {
-                PLOG_ERROR << "ERROR: Invalid GPU adapter index: " << adapter;
-                return false;
-            }
+            PLOG_ERROR << "Invalid GPU adapter index: " << adapter;
+            return false;
         }
+        DXGI_ADAPTER_DESC desc;
+        pAdapter->GetDesc(&desc);
+        gpuName_ = QString::fromWCharArray(desc.Description);
     }
 
     D3D_FEATURE_LEVEL fl;
@@ -115,7 +124,9 @@ bool TextureCompressionDevice::createDevice(const int adapter, ID3D11Device **pD
             if (!pDevice || !(*pDevice))
                 return false;
 
-            hr = (*pDevice)->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &hwopts, sizeof(hwopts));
+            hr = (*pDevice)->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS,
+                                                 &hwopts,
+                                                 sizeof(hwopts));
             if (FAILED(hr))
                 memset(&hwopts, 0, sizeof(hwopts));
 

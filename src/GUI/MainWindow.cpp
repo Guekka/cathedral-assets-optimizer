@@ -5,6 +5,7 @@
 
 #include "MainWindow.hpp"
 #include "Manager.hpp"
+#include "SelectGPUWindow.hpp"
 #include "Utils.hpp"
 
 namespace CAO {
@@ -41,6 +42,18 @@ MainWindow::MainWindow()
 
     connect(ui_->actionOpen_log_file, &QAction::triggered, this, [] {
         QDesktopServices::openUrl(QUrl("file:///" + currentProfile().logPath(), QUrl::TolerantMode));
+    });
+
+    connect(ui_->actionSelect_GPU, &QAction::triggered, this, [] {
+        SelectGPUWindow window;
+        window.setSelectedIndex(Profiles::getInstance().commonSettings().iGPUIndex());
+        window.exec();
+        if (window.result() == QDialog::Accepted)
+        {
+            auto idx = window.getSelectedIndex();
+            if (idx.has_value())
+                Profiles::getInstance().commonSettings().iGPUIndex = idx.value();
+        }
     });
 
     connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {

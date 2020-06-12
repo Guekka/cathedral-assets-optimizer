@@ -17,14 +17,17 @@ public:
     CommonSettings(const CommonSettings &other) { json_ = other.json_; }
     CommonSettings(CommonSettings &&other) { json_ = std::move(other.json_); }
 
-    std::optional<QString> isValid() const override { return std::nullopt; };
+    std::optional<QString> isValid() const override { return std::nullopt; }
 
     REGISTER_SETTING(QString, sProfile, "/Profile")
     REGISTER_SETTING(bool, bDarkMode, "/DarkMode")
     REGISTER_SETTING(bool, bShowTutorials, "/ShowTutorials")
     REGISTER_SETTING(bool, bFirstStart, "/FirstStart")
     REGISTER_SETTING(bool, bDebugLog, "/DebugLog");
+
+    REGISTER_SETTING(int, iGPUIndex, "/GPUIndex")
 };
+
 } // namespace CAO
 
 #undef REGISTER_SETTING

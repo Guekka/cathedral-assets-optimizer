@@ -10,19 +10,20 @@ namespace CAO {
 class TextureCompressionDevice
 {
 public:
-    TextureCompressionDevice();
-    ~TextureCompressionDevice() = default;
+    TextureCompressionDevice(int adapterIndex);
 
     explicit operator bool() const;
     bool isValid() const;
 
     ID3D11Device *getDevice() const;
 
-protected:
-    Microsoft::WRL::ComPtr<ID3D11Device> _pDevice;
+    QString gpuName() const;
 
 private:
-    bool createDevice(int adapter, ID3D11Device **pDevice) const;
-    bool getDXGIFactory(IDXGIFactory1 **pFactory) const;
+    Microsoft::WRL::ComPtr<ID3D11Device> _pDevice;
+    QString gpuName_;
+
+    bool createDevice(uint adapter, ID3D11Device **pDevice);
+    static bool getDXGIFactory(IDXGIFactory1 **pFactory);
 };
 } // namespace CAO

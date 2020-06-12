@@ -282,6 +282,7 @@
     <addaction name="actionEnable_debug_log"/>
     <addaction name="actionShow_tutorials"/>
     <addaction name="actionOpen_log_file"/>
+    <addaction name="actionSelect_GPU"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -362,6 +363,11 @@
   <action name="actionDonate">
    <property name="text">
     <string>Donate</string>
+   </property>
+  </action>
+  <action name="actionSelect_GPU">
+   <property name="text">
+    <string>Select GPU</string>
    </property>
   </action>
  </widget>

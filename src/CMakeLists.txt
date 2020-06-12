@@ -118,6 +118,10 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.ui
+
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.hpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils.hpp

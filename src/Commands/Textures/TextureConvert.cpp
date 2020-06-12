@@ -112,7 +112,7 @@ int TextureConvert::convertWithCompression(const DirectX::ScratchImage &image,
     }
 
     HRESULT hr;
-    static TextureCompressionDevice compressionDevice;
+    static TextureCompressionDevice compressionDevice(Profiles::getInstance().commonSettings().iGPUIndex());
     if (bc6hbc7 && compressionDevice.isValid())
         hr = DirectX::Compress(compressionDevice.getDevice(),
                                img,
