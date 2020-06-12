@@ -102,13 +102,9 @@ constexpr size_t strLength(String &&str)
         return (std::forward<String>(str)).length();
 }
 
-template<class CharT>
-size_t strFind(std::basic_string_view<CharT> string,
-               std::basic_string_view<CharT> snippet,
-               bool caseSensitive = true,
-               size_t fromPos     = 0)
+auto stringCompare(bool caseSensitive = true)
 {
-    auto pred = [caseSensitive](char ch1, char ch2) {
+    return [caseSensitive](char ch1, char ch2) {
         if (!caseSensitive)
         {
             ch1 = std::toupper(ch1);
@@ -117,7 +113,15 @@ size_t strFind(std::basic_string_view<CharT> string,
 
         return ch1 == ch2;
     };
+}
 
+template<class CharT>
+size_t strFind(std::basic_string_view<CharT> string,
+               std::basic_string_view<CharT> snippet,
+               bool caseSensitive = true,
+               size_t fromPos     = 0)
+{
+    auto pred = stringCompare(caseSensitive);
     using namespace std;
 
     if (cbegin(string) + fromPos > cend(string))
@@ -172,18 +176,9 @@ bool startsWith(std::basic_string_view<CharT> string,
                 std::basic_string_view<CharT> prefix,
                 bool caseSensitive = true)
 {
+    auto pred = stringCompare(caseSensitive);
+
     using namespace std;
-
-    auto pred = [caseSensitive](char ch1, char ch2) {
-        if (!caseSensitive)
-        {
-            ch1 = std::toupper(ch1);
-            ch2 = std::toupper(ch2);
-        }
-
-        return ch1 == ch2;
-    };
-
     return string.size() >= prefix.size() && std::equal(cbegin(prefix), cend(prefix), cbegin(string), pred);
 }
 
@@ -192,18 +187,9 @@ bool endsWith(std::basic_string_view<CharT> string,
               std::basic_string_view<CharT> suffix,
               bool caseSensitive = true)
 {
+    auto pred = stringCompare(caseSensitive);
+
     using namespace std;
-
-    auto pred = [caseSensitive](char ch1, char ch2) {
-        if (!caseSensitive)
-        {
-            ch1 = std::toupper(ch1);
-            ch2 = std::toupper(ch2);
-        }
-
-        return ch1 == ch2;
-    };
-
     return string.size() >= suffix.size()
            && std::equal(crbegin(suffix), crend(suffix), crbegin(string), pred);
 }
