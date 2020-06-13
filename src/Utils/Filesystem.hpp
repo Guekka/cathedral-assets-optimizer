@@ -6,16 +6,16 @@
 
 #include "pch.hpp"
 namespace CAO {
+class FileTypes;
 /*!
  * \brief Manages filesystem operations : moving files, deleting empty dirs...
  */
 namespace Filesystem {
-
 /*!
   * \brief Delete empty directories in the given directory
   * \param folderPath The path of the folder where empty dirs will be deleted
   */
-void deleteEmptyDirectories(const QString &folderPath);
+void deleteEmptyDirectories(const QString &folderPath, const FileTypes &filetypes);
 /*!
    * \brief Compares if two folders have the same file structure. Currently only used for testing.
    * \param folder1 The first folder

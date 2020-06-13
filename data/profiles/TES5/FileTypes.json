@@ -525,7 +525,8 @@
         "slBlacklist": [
             "*/Nemesis",
             "*/FNIS",
-            "*/Bodyslide"
+            "*/Bodyslide",
+			"*_separator"
         ]
     },
     "Textures": {

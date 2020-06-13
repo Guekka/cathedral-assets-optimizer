@@ -5,9 +5,10 @@
 
 #include "Utils/Filesystem.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
+#include "Settings/FileTypes.hpp"
 
 namespace CAO {
-void Filesystem::deleteEmptyDirectories(const QString &folderPath)
+void Filesystem::deleteEmptyDirectories(const QString &folderPath, const FileTypes &filetypes)
 {
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     QMap<int, QStringList> dirs;
@@ -18,9 +19,9 @@ void Filesystem::deleteEmptyDirectories(const QString &folderPath)
         int size     = path.size();
 
         const bool alreadyExist = dirs[size].contains(path);
-        const bool isSeparator  = path.contains("separator", Qt::CaseInsensitive);
+        const bool isAllowed    = !filetypes.match(filetypes.slModsBlacklist(), dirIt.filePath());
 
-        if (!alreadyExist && !isSeparator)
+        if (!alreadyExist && isAllowed)
             dirs[size].append(path);
     }
 

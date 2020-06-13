@@ -44,7 +44,6 @@ void Manager::listDirectories()
     else
     {
         const QDir dir(settings.sUserPath());
-        auto isNotSeparator = [](auto &&str) { return !str.contains("separator"); };
 
         auto isNotBlacklist = [](const QString &dirName) {
             auto &ft = currentProfile().getFileTypes();
@@ -52,7 +51,6 @@ void Manager::listDirectories()
         };
 
         dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)
-            | rx::filter(isNotSeparator) //TODO add separators to blacklist
             | rx::filter(isNotBlacklist) | rx::append(_modsToProcess);
     }
 }
@@ -154,7 +152,8 @@ void Manager::runOptimization()
         printProgress(_modsToProcess.size(), "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
     }
 
-    Filesystem::deleteEmptyDirectories(currentProfile().getGeneralSettings().sUserPath());
+    Filesystem::deleteEmptyDirectories(currentProfile().getGeneralSettings().sUserPath(),
+                                       currentProfile().getFileTypes());
     PLOG_INFO << "Process completed<br><br><br>";
     emit end();
 }
