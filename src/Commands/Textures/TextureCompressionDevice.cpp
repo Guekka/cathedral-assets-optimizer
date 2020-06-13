@@ -5,9 +5,9 @@
 #include "TextureCompressionDevice.hpp"
 
 namespace CAO {
-TextureCompressionDevice::TextureCompressionDevice(int adapterIndex)
+TextureCompressionDevice::TextureCompressionDevice(int adapterIndex, bool allowSoftware)
 {
-    if (!createDevice(adapterIndex, _pDevice.GetAddressOf()))
+    if (!createDevice(adapterIndex, _pDevice.GetAddressOf(), allowSoftware))
     {
         PLOG_WARNING << "DirectCompute is not available, using BC6H / BC7 CPU codec."
                         " Textures compression will be slower";
@@ -61,7 +61,7 @@ QString TextureCompressionDevice::gpuName() const
     return gpuName_;
 }
 
-bool TextureCompressionDevice::createDevice(uint adapter, ID3D11Device **pDevice)
+bool TextureCompressionDevice::createDevice(uint adapter, ID3D11Device **pDevice, bool allowSoftware)
 {
     if (!pDevice)
         return false;
@@ -83,6 +83,8 @@ bool TextureCompressionDevice::createDevice(uint adapter, ID3D11Device **pDevice
     }
 
     D3D_FEATURE_LEVEL featureLevels[] = {
+        D3D_FEATURE_LEVEL_12_1,
+        D3D_FEATURE_LEVEL_12_0,
         D3D_FEATURE_LEVEL_11_0,
         D3D_FEATURE_LEVEL_10_1,
         D3D_FEATURE_LEVEL_10_0,
@@ -90,19 +92,31 @@ bool TextureCompressionDevice::createDevice(uint adapter, ID3D11Device **pDevice
 
     const UINT createDeviceFlags = 0;
 
-    Microsoft::WRL::ComPtr<IDXGIAdapter> pAdapter;
+    Microsoft::WRL::ComPtr<IDXGIAdapter1> pAdapter;
     Microsoft::WRL::ComPtr<IDXGIFactory1> dxgiFactory;
     if (getDXGIFactory(dxgiFactory.GetAddressOf()))
     {
-        auto hr = dxgiFactory->EnumAdapters(adapter, pAdapter.GetAddressOf());
+        auto hr = dxgiFactory->EnumAdapters1(adapter, pAdapter.GetAddressOf());
         if (FAILED(hr) || hr == DXGI_ERROR_NOT_FOUND)
         {
             PLOG_ERROR << "Invalid GPU adapter index: " << adapter;
             return false;
         }
-        DXGI_ADAPTER_DESC desc;
-        pAdapter->GetDesc(&desc);
-        gpuName_ = QString::fromWCharArray(desc.Description);
+
+        DXGI_ADAPTER_DESC1 desc = {};
+        if (SUCCEEDED(pAdapter->GetDesc1(&desc)))
+        {
+            if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE && !allowSoftware)
+            {
+                return false;
+            }
+
+            gpuName_ = QString::fromWCharArray(desc.Description);
+        }
+        else
+        {
+            return false;
+        }
     }
 
     D3D_FEATURE_LEVEL fl;
