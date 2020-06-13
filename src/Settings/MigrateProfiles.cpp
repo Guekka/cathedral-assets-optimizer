@@ -155,12 +155,7 @@ void addDefaultValues5To6(Profile &outProfile)
         ft.slBSAUncompressibleFiles = {"*.fuz", "*.lip", "*.mp3", "*.ogg", "*.wav", "*.xwm", "*.*script"};
     }
 
-    auto blacklist = ft.slModsBlacklist();
-    if (!contains(blacklist, "*_separator"))
-    {
-        blacklist.emplace_back("*_separator");
-        ft.slModsBlacklist = blacklist;
-    }
+    ft.slModsBlacklist.insert("*_separator", false);
 }
 
 void migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot)

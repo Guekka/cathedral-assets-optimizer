@@ -15,4 +15,23 @@ using is_equiv = std::is_same<remove_cv_ref<T>, remove_cv_ref<U>>;
 
 template<typename T, typename U>
 constexpr bool is_equiv_v = is_equiv<T, U>::value;
+
+template<class T>
+struct is_vector : public std::false_type
+{
+    using type = T;
+};
+
+template<class T>
+struct is_vector<std::vector<T>> : public std::true_type
+{
+    using type = T;
+};
+
+template<typename T>
+constexpr bool is_vector_v = is_vector<T>::value;
+
+template<typename T>
+using is_vector_t = typename is_vector<T>::type;
+
 } // namespace CAO

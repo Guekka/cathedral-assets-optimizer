@@ -41,6 +41,15 @@ bool contains(const nlohmann::json &master, const nlohmann::json &subset);
 
 json_pointer getPointer(const std::string &key);
 
+template<typename T, typename ValueType = typename T::value_type>
+bool contains(const nlohmann::json &json, const ValueType &val)
+{
+    static_assert(is_vector_v<T>, "Type must be a vector");
+    auto ref = json.get_ref<T>();
+
+    return std::any_of(ref.cbegin(), ref.cend(), [&val](const ValueType &el) { return el == val; });
+}
+
 template<typename T>
 inline T getValue(nlohmann::json j)
 {

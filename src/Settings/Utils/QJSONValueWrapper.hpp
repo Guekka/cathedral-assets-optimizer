@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Settings/JSON.hpp"
+#include "Utils/TemplateMetaProgramming.hpp"
 #include "pch.hpp"
 
 namespace CAO {
@@ -35,6 +36,7 @@ public:
     QJSONValueWrapper(const QJSONValueWrapper &other) = delete;
     QJSONValueWrapper(QJSONValueWrapper &&other)      = delete;
     void operator=(const QJSONValueWrapper &other) = delete;
+    void operator=(QJSONValueWrapper &&other) = delete;
 
     void setValue(const Type &newValue)
     {
@@ -55,6 +57,34 @@ public:
 
     Type operator()() const { return value(); }
     void operator=(const Type &val) { setValue(val); }
+
+    void insert(const Type &val, bool allowDups = true)
+    {
+        static_assert(is_vector_v<Type>, "Type must be a vector");
+
+        nlohmann::json &j = json_[key_];
+
+        if (allowDups)
+            j.insert(j.end(), val.cbegin(), val.cend());
+
+        else
+            for (const auto &el : val)
+                insert(el);
+    }
+
+    template<class ValueType = typename Type::value_type>
+    void insert(const ValueType &val, bool allowDups = true)
+    {
+        static_assert(is_vector_v<Type>, "Type must be a vector");
+
+        nlohmann::json &j = json_[key_];
+
+        if (allowDups)
+            j.push_back(val);
+
+        else if (!JSON::contains(j, val))
+            j.push_back(val);
+    }
 
 private:
     nlohmann::json &json_;
