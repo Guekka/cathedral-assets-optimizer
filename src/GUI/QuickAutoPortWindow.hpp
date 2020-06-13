@@ -19,7 +19,6 @@ public:
     explicit QuickAutoPortWindow(QWidget *parent = nullptr);
 
     void connectAll(PatternSettings &, GeneralSettings &) override;
-    void disconnectAll() override;
 
 private:
     std::unique_ptr<Ui::QuickAutoPortWindow> ui_;

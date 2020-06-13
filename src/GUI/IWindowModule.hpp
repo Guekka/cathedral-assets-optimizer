@@ -22,6 +22,10 @@ public:
     }
 
     virtual void connectAll(PatternSettings &, GeneralSettings &) = 0;
-    virtual void disconnectAll()                                  = 0;
+    virtual void disconnectAll()
+    {
+        for (auto obj : this->findChildren<QObject *>())
+            obj->disconnect();
+    }
 };
 } // namespace CAO

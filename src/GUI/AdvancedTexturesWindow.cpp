@@ -70,6 +70,5 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSet
                         ui_->resizingHeight);
     });
 }
-void AdvancedTexturesWindow::disconnectAll() {}
 
 } // namespace CAO

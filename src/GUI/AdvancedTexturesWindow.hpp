@@ -18,7 +18,6 @@ class AdvancedTexturesWindow final : public IWindowModule
 public:
     explicit AdvancedTexturesWindow(QWidget *parent = nullptr);
     void connectAll(PatternSettings &patternSets, GeneralSettings &generalSets) override;
-    void disconnectAll() override;
 
 private:
     std::unique_ptr<Ui::AdvancedTexturesWindow> ui_;

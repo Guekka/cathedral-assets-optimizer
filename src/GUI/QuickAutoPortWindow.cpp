@@ -61,5 +61,4 @@ void QuickAutoPortWindow::connectAll(PatternSettings &pSets, GeneralSettings &gS
     pSets.iMeshesOptimizationLevel = 1;
 }
 
-void QuickAutoPortWindow::disconnectAll() {}
 } // namespace CAO
