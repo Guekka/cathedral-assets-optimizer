@@ -21,22 +21,18 @@ class MainOptimizer final : public QObject
 public:
     explicit MainOptimizer();
 
-    void process(const QString &path);
+    void process(File &file);
     void packBsa(const QString &folder);
+    void extractBSA(File &file);
 
 protected:
     bool runCommand(CommandPtr command, File &file);
-    bool loadFile(File &file, const QString &path);
-    bool saveFile(File &file, const QString &path);
+    bool loadFile(File &file);
+    bool saveFile(File &file);
 
 private:
     void processBsa(const QString &file);
-    bool processStandardFile(File &file, const QString &path, const Command::CommandType &type);
 
-    BSAFile _bsaFile;
-    MeshFile _meshFile;
-    TextureFile _textureFile;
-    AnimationFile _animFile;
     CommandBook _commandBook;
 };
 } // namespace CAO

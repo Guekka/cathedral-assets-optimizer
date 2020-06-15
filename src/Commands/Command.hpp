@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "CommandType.hpp"
 #include "Commands/CommandResult.hpp"
 #include "File/File.hpp"
 #include "Settings/Profiles.hpp"
@@ -13,16 +14,6 @@ namespace CAO {
 class Command
 {
 public:
-    enum class CommandType
-    {
-        Invalid = -1,
-        Texture,
-        Mesh,
-        BSA,
-        Animation,
-        Plugin
-    };
-
     enum Priority
     {
         VeryLow = 0,

@@ -15,8 +15,21 @@ const QString &File::getName() const
 
 void File::setName(const QString &name)
 {
+    if (name == _filename)
+        return;
+
     _filename = QDir::cleanPath(name);
     matchSettings();
+}
+
+int File::loadFromDisk()
+{
+    return loadFromDisk(_filename);
+}
+
+int File::saveToDisk() const
+{
+    return saveToDisk(_filename);
 }
 
 int File::saveToMemory(const void *pSource, const size_t &size, const QString &fileName) const
@@ -50,6 +63,11 @@ Resource &File::getFile(const bool modifiedFile)
 {
     setOptimizedCurrentFile(modifiedFile);
     return *_file;
+}
+
+void File::reset()
+{
+    resetHelper();
 }
 
 const PatternSettings &CAO::File::patternSettings() const

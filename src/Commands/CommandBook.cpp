@@ -30,12 +30,12 @@ void CommandBook::registerCommand(CommandPtr command)
     }
 }
 
-std::vector<CommandPtr> &CommandBook::getCommands(const Command::CommandType &type)
+std::vector<CommandPtr> &CommandBook::getCommands(const CommandType &type)
 {
     return commands_[type];
 }
 
-std::vector<CommandPtr> CommandBook::getCommandList(const Command::CommandType &type)
+std::vector<CommandPtr> CommandBook::getCommandList(const CommandType &type)
 {
     return getCommands(type);
 }

@@ -10,7 +10,6 @@ namespace CAO {
 
 TextureFile::TextureFile()
 {
-    reset();
     // Initialize COM (needed for WIC)
     const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     if (FAILED(hr))
@@ -21,8 +20,7 @@ int TextureFile::loadFromDisk(const QString &filePath)
 {
     ScopeGuard guard([this] { this->reset(); });
 
-    reset();
-    setName(filePath);
+    loadHelper<TextureResource>(filePath);
 
     wchar_t wFilePath[1024];
     QDir::toNativeSeparators(filePath).toWCharArray(wFilePath);
@@ -34,14 +32,8 @@ int TextureFile::loadFromDisk(const QString &filePath)
         if (FAILED(LoadFromTGAFile(wFilePath, &_info, *image)))
             return 1;
 
-    if (DirectX::IsTypeless(_info.format))
-    {
-        _info.format = DirectX::MakeTypelessUNORM(_info.format);
-        if (DirectX::IsTypeless(_info.format))
-            return 2;
-
-        image->OverrideFormat(_info.format);
-    }
+    if (!makeTypelessUNORM(*image))
+        return 2;
     image->origFormat = _info.format;
 
     guard.clear();
@@ -52,22 +44,16 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
 {
     ScopeGuard guard([this] { this->reset(); });
 
-    reset();
-    setName(fileName);
+    loadHelper<TextureResource>(fileName);
 
     auto image = static_cast<TextureResource *>(&getFile(false));
     if (FAILED(LoadFromDDSMemory(pSource, size, DirectX::DDS_FLAGS_NONE, &_info, *image)))
         if (FAILED(LoadFromTGAMemory(pSource, size, &_info, *image)))
             return 1;
 
-    if (DirectX::IsTypeless(_info.format))
-    {
-        _info.format = DirectX::MakeTypelessUNORM(_info.format);
-        if (DirectX::IsTypeless(_info.format))
-            return 2;
-
-        image->OverrideFormat(_info.format);
-    }
+    if (!makeTypelessUNORM(*image))
+        return 2;
+    image->origFormat = _info.format;
 
     guard.clear();
     return 0;
@@ -75,7 +61,10 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
 
 int TextureFile::saveToDisk(const QString &filePath) const
 {
-    auto image = static_cast<const TextureResource *>(&getFile());
+    if (!isLoaded())
+        return 2;
+
+    auto image     = static_cast<const TextureResource *>(&getFile());
     const auto img = image->GetImages();
     if (!img)
         return 1;
@@ -110,7 +99,19 @@ bool TextureFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 
 void TextureFile::reset()
 {
-    resetHelper<TextureResource>();
+    resetHelper();
     _info = DirectX::TexMetadata();
+}
+
+bool TextureFile::makeTypelessUNORM(TextureResource &image)
+{
+    if (DirectX::IsTypeless(_info.format))
+    {
+        _info.format = DirectX::MakeTypelessUNORM(_info.format);
+        if (DirectX::IsTypeless(_info.format))
+            return 2;
+
+        image.OverrideFormat(_info.format);
+    }
 }
 } // namespace CAO

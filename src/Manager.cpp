@@ -28,84 +28,48 @@ Manager::Manager()
     checkSettings(currentProfile().getGeneralSettings());
     currentProfile().getPatterns().get() | rx::for_each(checkSettings);
 
-    PLOG_INFO << "Listing files and directories...";
+    PLOG_INFO << "Listing directories...";
     listDirectories();
-    listFiles();
 }
 
 void Manager::listDirectories()
 {
-    _modsToProcess.clear();
-
     const auto &settings = currentProfile().getGeneralSettings();
+    mods_.clear();
     if (settings.eMode() == SingleMod)
-        _modsToProcess << settings.sUserPath();
-
+    {
+        mods_.emplace_back(ModFolder{settings.sUserPath(), settings.sBSAExtension()});
+    }
     else
     {
         const QDir dir(settings.sUserPath());
 
-        auto isNotBlacklist = [](const QString &dirName) {
+        auto notBlacklist = [](const QString &dirName) {
             auto &ft = currentProfile().getFileTypes();
             return !ft.match(ft.slModsBlacklist(), dirName);
         };
 
-        dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)
-            | rx::filter(isNotBlacklist) | rx::append(_modsToProcess);
+        mods_ = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) | rx::filter(notBlacklist)
+                | rx::transform([&settings](auto &&path) { return ModFolder(path, settings.sBSAExtension()); })
+                | rx::to_vector();
     }
 }
 
-void Manager::printProgress(int total, const QString &text = "Processing files")
+QString Manager::phaseToString(Manager::OptimizationPhase phase)
 {
-    emit progressBarTextChanged(text + "- %v/%m - %p%", total, _numberCompletedFiles);
-}
-
-void Manager::listFiles()
-{
-    _numberFiles = 0;
-    _files.clear();
-    BSAs.clear();
-
-    for (auto &subDir : _modsToProcess)
+    switch (phase)
     {
-        QDirIterator it(subDir, QDirIterator::Subdirectories);
-        while (it.hasNext())
-        {
-            const QString &filename = it.next();
-
-            if (it.fileInfo().size() == 0)
-                continue;
-
-            const auto &settings = currentProfile().getSettings(filename);
-
-            const bool processMeshes = settings.bMeshesResave() || settings.iMeshesOptimizationLevel();
-            const bool mesh          = (filename.endsWith(".nif", Qt::CaseInsensitive)
-                               || filename.endsWith(".bto", Qt::CaseInsensitive)
-                               || filename.endsWith(".btr", Qt::CaseInsensitive))
-                              && processMeshes;
-
-            const bool processTextures = settings.bTexturesMipmaps() || settings.bTexturesCompress()
-                                         || settings.bTexturesNecessary()
-                                         || settings.eTexturesResizingMode() != None;
-
-            const bool texture = (filename.endsWith(".dds", Qt::CaseInsensitive)
-                                  || filename.endsWith(".tga", Qt::CaseInsensitive))
-                                 && processTextures;
-
-            const bool animation = settings.bAnimationsOptimization()
-                                   && filename.endsWith(".hkx", Qt::CaseInsensitive);
-
-            const bool isBsa = filename.endsWith(currentProfile().getGeneralSettings().sBSAExtension(),
-                                                 Qt::CaseInsensitive);
-
-            QStringList &list = isBsa ? BSAs : _files;
-            if (!mesh && !texture && !animation && !isBsa)
-                continue;
-
-            list << filename;
-            ++_numberFiles;
-        }
+        case BSAExtraction: return "Extracting BSAs";
+        case FileOptimization: return "Processing files";
+        case BSAPacking: return "Packing BSAs";
+        default: return "Unknown phase";
     }
+}
+
+void Manager::emitProgress(const QString &modName, OptimizationPhase phase, int currModIndex)
+{
+    const auto &text = QString("Processing mod: '%1'. %2 - %v/%m - %p%").arg(modName, phaseToString(phase));
+    emit progressBarTextChanged(text, mods_.size(), currModIndex);
 }
 
 void Manager::runOptimization()
@@ -116,45 +80,37 @@ void Manager::runOptimization()
 
     MainOptimizer optimizer;
 
-    //Extracting BSAs
-    for (const auto &file : BSAs)
+    for (uint i = 0; i < mods_.size(); i++)
     {
-        optimizer.process(file);
-        ++_numberCompletedFiles;
-        printProgress(BSAs.size(), "Extracting BSAs");
-    }
+        auto &mod = mods_[i];
+        mod.load();
+        emitProgress(mod.name(), BSAExtraction, i);
+        bool progressEmitted = false;
 
-    //Listing newly extracted files
-    listFiles();
-
-    //Using time in order to prevent printing progress too often
-    QDateTime time1 = QDateTime::currentDateTime();
-    QDateTime time2;
-    for (const auto &file : _files)
-    {
-        optimizer.process(file);
-        ++_numberCompletedFiles;
-        time2 = QDateTime::currentDateTime();
-        if (time2 > time1.addMSecs(3000))
+        while (mod.hasNext())
         {
-            printProgress(_numberFiles);
-            time1 = time2;
+            auto file = mod.consume();
+            if (file->type() == CommandType::BSAFile)
+            {
+                optimizer.extractBSA(*file);
+            }
+            else
+            {
+                if (!progressEmitted)
+                    emitProgress(mod.name(), FileOptimization, i);
+                optimizer.process(*file);
+            }
         }
-    }
 
-    //Packing BSAs
-    _numberCompletedFiles = 0;
-    printProgress(_modsToProcess.size(), "Packing BSAs");
-    for (const auto &folder : _modsToProcess)
-    {
-        optimizer.packBsa(folder);
-        ++_numberCompletedFiles;
-        printProgress(_modsToProcess.size(), "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
+        //Packing BSAs
+        emitProgress(mod.name(), BSAPacking, i);
+        optimizer.packBsa(mod.path());
     }
 
     Filesystem::deleteEmptyDirectories(currentProfile().getGeneralSettings().sUserPath(),
                                        currentProfile().getFileTypes());
-    PLOG_INFO << "Process completed<br><br><br>";
+
+    PLOG_INFO << "Process completed\n\n\n";
     emit end();
 }
 } // namespace CAO

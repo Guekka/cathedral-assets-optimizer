@@ -6,17 +6,11 @@
 #include "File/Meshes/MeshFile.hpp"
 
 namespace CAO {
-
-MeshFile::MeshFile()
-{
-    reset();
-}
-
 int MeshFile::loadFromDisk(const QString &filePath)
 {
-    reset();
+    loadHelper<MeshResource>(filePath);
+
     auto meshFile = static_cast<MeshResource *>(&getFile(false));
-    setName(filePath);
     return meshFile->Load(filePath.toStdString());
 }
 
@@ -31,10 +25,4 @@ bool MeshFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
     return setFileHelper<MeshResource>(std::move(file), optimizedFile);
 }
-
-void MeshFile::reset()
-{
-    resetHelper<MeshResource>();
-}
-
 } // namespace CAO

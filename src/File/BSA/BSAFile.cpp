@@ -5,22 +5,20 @@
 #include "BSAFile.hpp"
 
 namespace CAO {
-BSAFile::BSAFile()
-{
-    reset();
-}
-
 int BSAFile::loadFromDisk(const QString &filePath)
 {
-    reset();
+    loadHelper<BSAFileResource>(filePath);
+
     auto bsaFile = static_cast<BSAFileResource *>(&getFile(false));
     bsaFile->load_from_disk(filePath);
-    setName(filePath);
     return 0;
 }
 
 int BSAFile::saveToDisk(const QString &filePath) const
 {
+    if (!isLoaded())
+        return 2;
+
     auto bsaFile = static_cast<BSAFileResource *>(const_cast<Resource *>((&getFile())));
     //const_cast makes sense here, since this function has to be const
     //However, this raises doubts about libbsarch conception
@@ -33,11 +31,6 @@ int BSAFile::saveToDisk(const QString &filePath) const
 bool BSAFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
     return setFileHelper<BSAFileResource>(std::move(file), optimizedFile);
-}
-
-void BSAFile::reset()
-{
-    resetHelper<BSAFileResource>();
 }
 
 } // namespace CAO

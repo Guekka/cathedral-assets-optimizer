@@ -11,13 +11,11 @@ namespace CAO {
 class MeshFile : public File
 {
 public:
-    MeshFile();
-
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) const override;
 
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = false) override;
 
-    void reset() override;
+    CommandType type() override { return CommandType::Mesh; }
 };
 } // namespace CAO

@@ -15,7 +15,7 @@ class BSACreate : public Command
 public:
     QString name() override { return "BSA Create"; }
     Priority priority() override { return Low; };
-    CommandType type() override { return CommandType::BSA; };
+    CommandType type() override { return CommandType::BSAFolder; };
 
     CommandResult process(File& file) override;
     bool isApplicable(File& file) override;

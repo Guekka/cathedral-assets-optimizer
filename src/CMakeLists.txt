@@ -11,9 +11,12 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Algorithms.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ModFolder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ModFolder.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ScopeGuard.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/TemplateMetaProgramming.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/TypeConvert.hpp
+
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Command.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Command.hpp
@@ -61,6 +64,9 @@ set(SOURCES
 
     ${CMAKE_CURRENT_SOURCE_DIR}/File/File.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/File.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/File/FileFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/File/FileFactory.hpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Resources.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Animations/AnimationFile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Animations/AnimationFile.hpp

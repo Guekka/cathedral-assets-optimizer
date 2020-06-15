@@ -10,32 +10,43 @@
 namespace CAO {
 MainOptimizer::MainOptimizer() {}
 
-void MainOptimizer::process(const QString &path)
+void MainOptimizer::process(File &file)
 {
-    if (path.endsWith(".dds", Qt::CaseInsensitive) || (path.endsWith(".tga", Qt::CaseInsensitive)))
-        processStandardFile(_textureFile, path, Command::CommandType::Texture);
+    auto type = file.type();
+    try
+    {
+        if (!loadFile(file))
+            return;
 
-    else if (path.endsWith(".nif", Qt::CaseInsensitive) || path.endsWith(".bto", Qt::CaseInsensitive)
-             || path.endsWith(".btr", Qt::CaseInsensitive))
-        processStandardFile(_meshFile, path, Command::CommandType::Mesh);
+        for (auto command : _commandBook.getCommandList(type))
+            if (!runCommand(command, file))
+                return;
 
-    else if (path.endsWith(currentProfile().getGeneralSettings().sBSASuffix(), Qt::CaseInsensitive))
-        processBsa(path);
+        if (!file.optimizedCurrentFile())
+            return;
 
-    else if (path.endsWith(".hkx", Qt::CaseInsensitive))
-        processStandardFile(_animFile, path, Command::CommandType::Animation);
+        if (!saveFile(file))
+            return;
+    }
+    catch (const std::exception &e)
+    {
+        PLOG_ERROR << "An exception was caught while processing '" << file.getName() << "'\n"
+                   << "Error message was: '" << e.what() << "'\n"
+                   << "You can probably assume this file is broken";
+        return;
+    }
+
+    PLOG_INFO << "Successfully optimized " << file.getName();
 }
 
-void MainOptimizer::processBsa(const QString &file)
+void MainOptimizer::extractBSA(File &file)
 {
     if (currentProfile().getGeneralSettings().bDryRun())
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
-    PLOG_INFO << "Extracting BSA: " + file;
-    if (!loadFile(_bsaFile, file))
-        return;
+    PLOG_INFO << "Extracting BSA: " + file.getName();
     auto command = _commandBook.getCommand<BSAExtract>();
-    if (!runCommand(command, _bsaFile))
+    if (!runCommand(command, file))
         return;
 
     //TODO if(settings.bBsaOptimizeAssets)
@@ -45,7 +56,7 @@ void MainOptimizer::packBsa(const QString &folder)
 {
     PLOG_INFO << "Creating BSA...";
     BSAFolder bsa;
-    if (!loadFile(bsa, folder))
+    if (!loadFile(bsa))
         return;
     auto command = _commandBook.getCommand<BSACreate>();
     if (!runCommand(command, bsa))
@@ -53,35 +64,6 @@ void MainOptimizer::packBsa(const QString &folder)
 
     if (currentProfile().getGeneralSettings().bBSACreateDummies())
         PluginsOperations::makeDummyPlugins(folder, currentProfile().getGeneralSettings());
-}
-
-bool MainOptimizer::processStandardFile(File &file, const QString &path, const Command::CommandType &type)
-{
-    try
-    {
-        if (!loadFile(file, path))
-            return false;
-
-        for (auto command : _commandBook.getCommandList(type))
-            if (!runCommand(command, file))
-                return false;
-
-        if (!file.optimizedCurrentFile())
-            return false;
-
-        if (!saveFile(file, path))
-            return false;
-    }
-    catch (const std::exception &e)
-    {
-        PLOG_ERROR << "An exception was caught while processing '" << path << "'\n"
-                   << "Error message was: '" << e.what() << "'\n"
-                   << "You can probably assume this file is broken";
-        return false;
-    }
-
-    PLOG_INFO << "Successfully optimized " << path;
-    return true;
 }
 
 bool MainOptimizer::runCommand(CommandPtr command, File &file)
@@ -106,21 +88,21 @@ bool MainOptimizer::runCommand(CommandPtr command, File &file)
     }
 }
 
-bool MainOptimizer::loadFile(File &file, const QString &path)
+bool MainOptimizer::loadFile(File &file)
 {
-    if (file.loadFromDisk(path))
+    if (file.loadFromDisk())
     {
-        PLOG_ERROR << "Cannot load file from disk: " << path;
+        PLOG_ERROR << "Cannot load file from disk: " << file.getName();
         return false;
     }
     return true;
 }
 
-bool MainOptimizer::saveFile(File &file, const QString &path)
+bool MainOptimizer::saveFile(File &file)
 {
-    if (file.saveToDisk(path))
+    if (file.saveToDisk())
     {
-        PLOG_ERROR << "Cannot save file to disk: " << path;
+        PLOG_ERROR << "Cannot save file to disk: " << file.getName();
         return false;
     }
     return true;

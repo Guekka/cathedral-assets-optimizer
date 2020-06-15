@@ -22,7 +22,11 @@ public:
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = true) override;
 
     void reset() override;
+
+    CommandType type() override { return CommandType::Texture; }
+
 private:
     DirectX::TexMetadata _info{};
+    bool makeTypelessUNORM(TextureResource &image);
 };
 } // namespace CAO

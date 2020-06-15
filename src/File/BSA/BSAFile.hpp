@@ -10,13 +10,11 @@ namespace CAO {
 class BSAFile : public File
 {
 public:
-    BSAFile();
-
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) const override;
 
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = false) override;
 
-    void reset() override;
+    CommandType type() override { return CommandType::BSAFile; }
 };
 } // namespace CAO

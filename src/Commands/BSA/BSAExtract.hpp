@@ -12,7 +12,7 @@ class BSAExtract : public Command
 {
 public:
     QString name() override { return "BSA Extract"; }
-    CommandType type() override { return CommandType::BSA; };
+    CommandType type() override { return CommandType::BSAFile; };
     Priority priority() override { return VeryHigh; };
 
     CommandResult process(File& file) override;

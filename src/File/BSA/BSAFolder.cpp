@@ -5,16 +5,11 @@
 #include "BSAFolder.hpp"
 
 namespace CAO {
-BSAFolder::BSAFolder()
-{
-    reset();
-}
-
 int BSAFolder::loadFromDisk(const QString &filePath)
 {
+    loadHelper<BSAFolderResource>(filePath);
     auto dir = static_cast<BSAFolderResource *>(&getFile(false));
     dir->setPath(filePath);
-    setName(filePath);
     return 0;
 }
 
@@ -28,8 +23,4 @@ bool BSAFolder::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
     return setFileHelper<BSAFolderResource>(std::move(file), optimizedFile);
 }
 
-void BSAFolder::reset()
-{
-    resetHelper<BSAFolderResource>();
-}
 } // namespace CAO

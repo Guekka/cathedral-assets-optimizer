@@ -11,8 +11,6 @@ AnimationFile::AnimationFile()
 {
     try
     {
-        reset();
-
         // Need to have memory allocated for the solver. Allocate 1mb for it.
         _memoryRouter = hkMemoryInitUtil::initDefault(hkMallocAllocator::m_defaultMallocAllocator,
                                                       hkMemorySystem::FrameInfo(1024 * 1024));
@@ -34,11 +32,6 @@ AnimationFile::~AnimationFile()
     hkMemoryInitUtil::quit();
 }
 
-void AnimationFile::reset()
-{
-    resetHelper<AnimationResource>();
-}
-
 bool AnimationFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
     return setFileHelper<AnimationResource>(std::move(file), optimizedFile);
@@ -46,7 +39,7 @@ bool AnimationFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 
 int AnimationFile::loadFromDisk(const QString &filePath)
 {
-    reset();
+    loadHelper<AnimationResource>(filePath);
     try
     {
         auto havok = static_cast<AnimationResource *>(&getFile(false));
@@ -82,6 +75,9 @@ int AnimationFile::loadFromDisk(const QString &filePath)
 
 int AnimationFile::saveToDisk(const QString &filePath) const
 {
+    if (!isLoaded())
+        return 5;
+
     try
     {
         auto havok = static_cast<const AnimationResource *>(&getFile());

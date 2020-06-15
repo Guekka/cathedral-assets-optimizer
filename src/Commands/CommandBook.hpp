@@ -14,7 +14,7 @@ class CommandBook final
 public:
     static void registerCommand(CommandPtr command);
 
-    std::vector<CommandPtr> getCommandList(const Command::CommandType &type);
+    std::vector<CommandPtr> getCommandList(const CommandType &type);
     CommandPtr getCommand(const QString &name);
 
     template<typename T>
@@ -28,8 +28,8 @@ public:
     }
 
 private:
-    static inline std::map<Command::CommandType, std::vector<CommandPtr>> commands_;
-    static std::vector<CommandPtr> &getCommands(const Command::CommandType &type);
+    static inline std::map<CommandType, std::vector<CommandPtr>> commands_;
+    static std::vector<CommandPtr> &getCommands(const CommandType &type);
 };
 
 class CommandBookManager final

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "MainOptimizer.hpp"
+#include "ModFolder.hpp"
 #include "Utils/Filesystem.hpp"
 #include "pch.hpp"
 
@@ -12,57 +13,27 @@ namespace CAO {
 class Manager final : public QObject
 {
     Q_OBJECT
+
+    enum OptimizationPhase
+    {
+        BSAExtraction,
+        FileOptimization,
+        BSAPacking
+    };
+
 public:
-    /*!
-   * \brief Constructor that will perform a number of functions
-   */
     explicit Manager();
-    /*!
-   * \brief The main process
-   */
+
     void runOptimization();
-    /*!
-   * \brief Print the progress to stdout
-   * \param text The text to display
-   * \param total The total number of files to process
-   */
-    void printProgress(int total, const QString &text);
+    void emitProgress(const QString &modName, OptimizationPhase phase, int currModIndex);
 
 private:
-    /*!
-   * \brief List all the directories to process
-   */
     void listDirectories();
-    /*!
-   * \brief List all the files in the modsToProcess list and store them. Also add their weights to filesWeight
-   */
-    void listFiles();
-    /*!
-   * \brief The number of all files. Used to determine progress
-   */
-    int _numberFiles = 0;
-    /*!
-   * \brief The number of completed files. Used to determine progress
-   */
-    int _numberCompletedFiles = 0;
-    /*!
-    * \brief The list of directories to process
-    */
-    QStringList _modsToProcess;
-    /*!
-   * \brief Mods on this list won't be processed
-   */
-    QStringList _ignoredMods;
-    /*!
-   * \brief The files to process
-   */
-    QStringList _files;
-    /*!
-   * \brief The BSAs to extract
-   */
-    QStringList BSAs;
+    std::vector<ModFolder> mods_;
+    QString phaseToString(OptimizationPhase phase);
+
 signals:
-    void progressBarTextChanged(QString, int, int);
+    void progressBarTextChanged(QString text, int maximum, int value);
     void end();
 };
 } // namespace CAO
