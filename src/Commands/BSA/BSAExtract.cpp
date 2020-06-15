@@ -30,8 +30,6 @@ CommandResult BSAExtract::process(File& file)
         const QString &error = QString("Failed to extract BSA with error message: '%1'").arg(e.what());
         return _resultFactory.getFailedResult(1, error);
     }
-    QString path = file.getName();
-
     file.setFile(
         std::make_unique<BSAFileResource>()); //Closing the archive. We won't be able to delete the file otherwise
 
@@ -46,6 +44,13 @@ bool BSAExtract::isApplicable(File& file)
     auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());
     if (!bsafile)
         return false;
+
+    if (QFileInfo(file.getName()).size() > maxBSASize)
+    {
+        PLOG_ERROR << QString("BSA '%1' is over 4GB. It cannot be extracted and may be corrupted.")
+                          .arg(file.getName());
+        return false;
+    }
 
     return true;
 }

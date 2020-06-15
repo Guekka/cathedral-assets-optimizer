@@ -16,7 +16,9 @@ public:
     Priority priority() override { return VeryHigh; };
 
     CommandResult process(File& file) override;
-    bool isApplicable(File& file) override;
+    bool isApplicable(File &file) override;
+
+    static constexpr double maxBSASize = 4.0 * GigaByte;
 };
 REGISTER_COMMAND(BSAExtract)
 } // namespace CAO
