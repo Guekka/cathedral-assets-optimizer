@@ -12,7 +12,7 @@
 
 namespace CAO {
 class GeneralSettings final : public Settings
-{
+{  
 public:
     GeneralSettings() = default;
     GeneralSettings(nlohmann::json j);
@@ -24,6 +24,20 @@ public:
 
     std::optional<QString> isValid() const override;
 
+private:
+    static inline const QString forceProcessFolder = "ForceProcess.cao";
+
+    enum class ModManager
+    {
+        Vortex,
+        MO2,
+        Kortex,
+        ManualForced,
+        None
+    };
+    ModManager findManager(const QDir &dir) const;
+
+public:
     REGISTER_SETTING(bool, bBSACreate, "/BSA/bBSACreate")
     REGISTER_SETTING(bool, bBSAExtractFromBSA, "/BSA/bBSAExtractFromBSA")
     REGISTER_SETTING(bool, bBSACreateDummies, "/BSA/bBSACreateDummies")
