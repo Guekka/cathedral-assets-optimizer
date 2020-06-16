@@ -109,9 +109,10 @@ bool TextureFile::makeTypelessUNORM(TextureResource &image)
     {
         _info.format = DirectX::MakeTypelessUNORM(_info.format);
         if (DirectX::IsTypeless(_info.format))
-            return 2;
+            return false;
 
         image.OverrideFormat(_info.format);
     }
+    return true;
 }
 } // namespace CAO
