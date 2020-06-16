@@ -499,3 +499,8 @@ MigrationBackup/
 *.esp
 *.pri
 /q
+
+# Visual Studio
+CMakeSettings.json
+out/*
+src/out/*
