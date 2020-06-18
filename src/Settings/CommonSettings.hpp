@@ -17,6 +17,17 @@ public:
     CommonSettings(const CommonSettings &other) { json_ = other.json_; }
     CommonSettings(CommonSettings &&other) { json_ = std::move(other.json_); }
 
+    CommonSettings &operator=(const CommonSettings &other)
+    {
+        json_ = other.json_;
+        return *this;
+    }
+    CommonSettings &operator=(CommonSettings &&other)
+    {
+        json_ = std::move(other.json_);
+        return *this;
+    }
+
     std::optional<QString> isValid() const override { return std::nullopt; }
 
     REGISTER_SETTING(QString, sProfile, "/Profile")
