@@ -11,7 +11,7 @@ namespace CAO {
 Manager::Manager()
 {
     //Preparing logging
-    initCustomLogger(currentProfile().logPath(), Profiles::getInstance().commonSettings().bDebugLog());
+    initCustomLogger(currentProfile().logPath(), getProfiles().commonSettings().bDebugLog());
 
     PLOG_VERBOSE << "Checking settings...";
 

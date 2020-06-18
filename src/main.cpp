@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     {
         if (parser.isSet("cli"))
         {
-            CAO::Profiles::getInstance().setCurrent(parser.positionalArguments().at(0));
+            CAO::getProfiles().setCurrent(parser.positionalArguments().at(0));
 
             manager = std::make_unique<CAO::Manager>();
             manager->runOptimization();

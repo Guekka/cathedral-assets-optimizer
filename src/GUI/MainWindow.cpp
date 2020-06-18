@@ -46,13 +46,13 @@ MainWindow::MainWindow()
 
     connect(ui_->actionSelect_GPU, &QAction::triggered, this, [] {
         SelectGPUWindow window;
-        window.setSelectedIndex(Profiles::getInstance().commonSettings().iGPUIndex());
+        window.setSelectedIndex(getProfiles().commonSettings().iGPUIndex());
         window.exec();
         if (window.result() == QDialog::Accepted)
         {
             auto idx = window.getSelectedIndex();
             if (idx.has_value())
-                Profiles::getInstance().commonSettings().iGPUIndex = idx.value();
+                getProfiles().commonSettings().iGPUIndex = idx.value();
         }
     });
 
@@ -84,7 +84,7 @@ MainWindow::MainWindow()
     connect(ui_->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
 
     //Profiles
-    setProfile(Profiles::getInstance().currentProfileName());
+    setProfile(getProfiles().currentProfileName());
 
     firstStart();
 }
@@ -105,7 +105,7 @@ void MainWindow::reconnectModules()
 
 void MainWindow::connectAll()
 {
-    auto &commonSettings  = Profiles::getInstance().commonSettings();
+    auto &commonSettings  = getProfiles().commonSettings();
     auto &generalSettings = currentProfile().getGeneralSettings();
 
     selectText(*ui_->profiles, commonSettings.sProfile());
@@ -193,11 +193,11 @@ void MainWindow::connectAll()
 
 void MainWindow::loadUi()
 {
-    auto &commonSettings = Profiles::getInstance().commonSettings();
+    auto &commonSettings = getProfiles().commonSettings();
 
     setDarkTheme(commonSettings.bDarkMode());
 
-    ui_->profiles->setCurrentIndex(ui_->profiles->findText(Profiles::getInstance().currentProfileName()));
+    ui_->profiles->setCurrentIndex(ui_->profiles->findText(getProfiles().currentProfileName()));
     ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials());
 }
 
@@ -216,7 +216,7 @@ void MainWindow::readProgress(const QString &text, const int &max, const int &va
 void MainWindow::refreshProfiles()
 {
     ui_->profiles->clear();
-    ui_->profiles->addItems(Profiles::getInstance().list());
+    ui_->profiles->addItems(getProfiles().list());
 }
 
 void MainWindow::createProfile()
@@ -244,7 +244,7 @@ void MainWindow::createProfile()
     if (!ok)
         return;
 
-    Profiles::getInstance().create(text, baseProfile);
+    getProfiles().create(text, baseProfile);
     setProfile(text);
 }
 
@@ -273,7 +273,7 @@ void MainWindow::setDarkTheme(const bool &enabled)
 
 void MainWindow::initProcess()
 {
-    Profiles::getInstance().saveCommonSettings();
+    getProfiles().saveCommonSettings();
     currentProfile().saveToJSON();
     ui_->processButton->setDisabled(true);
 
@@ -309,7 +309,7 @@ void MainWindow::endProcess()
     ui_->progressBar->setFormat(tr("Done"));
     updateLog();
 
-    Profiles::getInstance().saveCommonSettings();
+    getProfiles().saveCommonSettings();
     currentProfile().saveToJSON();
 }
 
@@ -329,7 +329,7 @@ void MainWindow::updateLog() const
 
 void MainWindow::showTutorialWindow(const QString &title, const QString &text)
 {
-    if (Profiles::getInstance().commonSettings().bShowTutorials())
+    if (getProfiles().commonSettings().bShowTutorials())
         QMessageBox::information(this, title, text);
 }
 
@@ -342,7 +342,7 @@ void MainWindow::firstStart()
           "\n\nIf you like my work, <a href=\"https://ko-fi.com/guekka\">please consider supporting me</a>. "
           "Thanks for using CAO!";
 
-    if (Profiles::getInstance().commonSettings().bFirstStart.value_or(true))
+    if (getProfiles().commonSettings().bFirstStart.value_or(true))
     {
         QMessageBox box(QMessageBox::Information,
                         tr("Welcome to %1 %2")
@@ -351,7 +351,7 @@ void MainWindow::firstStart()
         box.setTextFormat(Qt::TextFormat::RichText);
         box.exec();
 
-        Profiles::getInstance().commonSettings().bFirstStart = false;
+        getProfiles().commonSettings().bFirstStart = false;
     }
 }
 

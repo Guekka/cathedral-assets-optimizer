@@ -160,8 +160,7 @@ void addDefaultValues5To6(Profile &outProfile)
 
 void migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot)
 {
-    auto &profiles = Profiles::getInstance();
-    profiles.setDir(newProfileRoot);
+    Profiles profiles(newProfileRoot);
     for (const auto &dir : oldProfileRoot.entryList(QDir::NoDotAndDotDot | QDir::Dirs))
     {
         try

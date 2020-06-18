@@ -20,8 +20,8 @@ static void setSettings(const CAO::PatternSettings &pSets, const CAO::GeneralSet
 static void initSettings()
 {
     const QString &profileName = "TestingProfile";
-    CAO::Profiles::getInstance().create(profileName);
-    CAO::Profiles::getInstance().setCurrent(profileName);
+    CAO::getProfiles().create(profileName);
+    CAO::getProfiles().setCurrent(profileName);
 
     //Resetting
     setSettings(CAO::PatternSettings{}, CAO::GeneralSettings{});

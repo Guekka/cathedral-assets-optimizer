@@ -9,18 +9,17 @@
 namespace CAO {
 
 Profiles::Profiles()
-    : rootProfileDir_("profiles")
+    : Profiles(QDir("profiles"))
+{
+}
+
+Profiles::Profiles(QDir dir)
+    : rootProfileDir_(std::move(dir))
 {
     update(true);
     nlohmann::json j;
     JSON::readFromFile(j, commonSettingsPath());
     commonSettings_.setJSON(j);
-}
-
-Profiles &Profiles::getInstance()
-{
-    static Profiles instance_;
-    return instance_;
 }
 
 void Profiles::setDir(const QDir &dir)

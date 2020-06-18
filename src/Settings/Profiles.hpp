@@ -18,7 +18,8 @@ public:
     static inline const QString commonSettingsFileName = "CommonSettings.json";
     static inline const QString defaultProfile         = "SSE";
 
-    static Profiles &getInstance();
+    Profiles();
+    Profiles(QDir dir);
 
     void setDir(const QDir &dir);
 
@@ -47,14 +48,17 @@ private:
     std::unordered_map<QString, Profile> profiles_;
     QDir rootProfileDir_;
     CommonSettings commonSettings_;
-
-    /* Constructor */
-    Profiles();
 };
+
+static Profiles &getProfiles()
+{
+    static Profiles p;
+    return p;
+}
 
 static Profile &currentProfile()
 {
-    return Profiles::getInstance().getCurrent();
+    return getProfiles().getCurrent();
 }
 
 } // namespace CAO
