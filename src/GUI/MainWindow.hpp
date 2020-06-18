@@ -47,6 +47,8 @@ public:
             }
     }
 
+    void refreshProfiles();
+
 private:
     void connectModule(IWindowModule &);
     void reconnectModules();
@@ -60,7 +62,6 @@ private:
     std::unique_ptr<Manager> caoProcess_;
 
     void createProfile();
-    void refreshProfiles();
     void setProfile(const QString &name);
 
     void resetUi();
