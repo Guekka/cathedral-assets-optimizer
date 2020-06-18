@@ -32,10 +32,10 @@ target_compile_definitions(libbsarch PRIVATE BSARCH_DLL_EXPORT)
 
 #We only want the lib file. The DLL will be provided by Delphi
 #Removing the generated DLL
-add_custom_command(TARGET libbsarch POST_BUILD
+#[[add_custom_command(TARGET libbsarch POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E remove
     ${CMAKE_CURRENT_BINARY_DIR}/libbsarch.dll)
-
+]]
 ############################################################
 # libbsarch_OOP                                            #
 ############################################################
