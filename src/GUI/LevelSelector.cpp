@@ -57,7 +57,7 @@ QString LevelSelector::getHelpText(GuiMode level)
         case GuiMode::QuickAutoPort:
         {
             return tr("Quick Auto Port\n"
-                      "Quick Auto Port uses default settings for porting a mod from LE to SSE.\n"
+                      "Quick Auto Port uses default settings for porting a mod between LE and SSE.\n"
                       "It will work for most of the cases and is the recommended way to port a mod.\n"
                       "It is safe to apply it on a mod, and it is recommended to apply it to your whole "
                       "mod list if you experience crashes.");
