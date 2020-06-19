@@ -56,6 +56,7 @@ void MainOptimizer::packBsa(const QString &folder)
 {
     PLOG_INFO << "Creating BSA...";
     BSAFolder bsa;
+    bsa.setName(folder);
     if (!loadFile(bsa))
         return;
     auto command = _commandBook.getCommand<BSACreate>();
