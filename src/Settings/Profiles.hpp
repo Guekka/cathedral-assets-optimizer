@@ -17,11 +17,11 @@ class Profiles
 public:
     static inline const QString commonSettingsFileName = "CommonSettings.json";
     static inline const QString defaultProfile         = "SSE";
+    static inline const QString defaultProfileDir        = "profiles";
+    static inline const QString QuickAutoPortProfilesDir = defaultProfileDir + "/__QAP";
 
     Profiles();
     Profiles(QDir dir);
-
-    void setDir(const QDir &dir);
 
     /* Profiles operations */
     void create(const QString &name, const QString &baseProfile);
@@ -50,15 +50,14 @@ private:
     CommonSettings commonSettings_;
 };
 
-static Profiles &getProfiles()
+inline Profiles &getProfiles()
 {
     static Profiles p;
     return p;
 }
 
-static Profile &currentProfile()
+inline Profile &currentProfile()
 {
     return getProfiles().getCurrent();
 }
-
 } // namespace CAO

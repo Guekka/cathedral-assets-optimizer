@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
             app    = nullptr;
             app    = std::make_unique<QApplication>(argc, argv);
             window = std::make_unique<CAO::MainWindow>();
-            CAO::LevelSelector selector(*window);
+            CAO::LevelSelector selector(window);
             if (selector.exec() == 1)
                 window->show();
             else

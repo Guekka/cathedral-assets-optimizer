@@ -5,10 +5,10 @@
 
 #include "LevelSelector.hpp"
 #include "GUI/QuickAutoPortWindow.hpp"
-#include "MainWindow.hpp"
+#include "Settings/Profiles.hpp"
 
 namespace CAO {
-LevelSelector::LevelSelector(MainWindow &mw)
+LevelSelector::LevelSelector(std::unique_ptr<MainWindow> &mw)
     : QDialog(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
     , ui_(new Ui::LevelSelector)
 {
@@ -29,13 +29,16 @@ LevelSelector::LevelSelector(MainWindow &mw)
     });
 }
 
-void LevelSelector::setupWindow(MainWindow &mw, GuiMode level)
+void LevelSelector::setupWindow(std::unique_ptr<MainWindow> &mw, GuiMode level)
 {
     switch (level)
     {
         case GuiMode::QuickAutoPort:
         {
-            mw.addModule<QuickAutoPortWindow>("Quick Auto Port");
+            getProfiles() = Profiles(QDir(Profiles::QuickAutoPortProfilesDir));
+            mw            = std::make_unique<MainWindow>();
+            mw->addModule<QuickAutoPortWindow>("Quick Auto Port");
+            mw->refreshProfiles();
             break;
         }
         case GuiMode::Medium:

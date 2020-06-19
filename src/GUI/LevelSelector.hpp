@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "MainWindow.hpp"
+#include "Manager.hpp"
 #include "Settings/BaseTypes.hpp"
 #include "ui_LevelSelector.h"
 #include <QDialog>
@@ -13,13 +15,12 @@ class LevelSelector;
 }
 
 namespace CAO {
-class MainWindow;
 class LevelSelector : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit LevelSelector(MainWindow &mw);
+    explicit LevelSelector(std::unique_ptr<MainWindow> &mw);
 
 private:
     //QSlider does not support custom values. Mapping enum to contingent ints
@@ -42,7 +43,7 @@ private:
         return 0;
     }
 
-    void setupWindow(MainWindow &mw, GuiMode level);
+    void setupWindow(std::unique_ptr<MainWindow> &mw, GuiMode level);
     QString getHelpText(GuiMode level);
 
 private:

@@ -1,0 +1,60 @@
+[
+    {
+        "Advanced": {
+            "Animations": {
+                "eAnimationsFormat": 2
+            },
+            "Textures": {
+                "eTexturesFormat": 77,
+                "slTextureUnwantedFormats": [
+                    97,
+					98,
+					99
+                ]
+            }
+        },
+        "Patterns": [
+            "*"
+        ],
+        "Priority": 0
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": false
+            }
+        },
+        "Patterns": [
+            "*.tga"
+        ],
+        "Priority": 1
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": true
+            }
+        },
+        "Patterns": [
+            "*/interface/*.dds",
+            "*/interface/*.tga"
+        ],
+        "Priority": 2
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": false
+            }
+        },
+        "Patterns": [
+            "*/textures/terrain/lodgen/*"
+        ],
+        "Priority": 3,
+        "Textures": {
+            "bTexturesCompress": false,
+            "bTexturesLandscapeAlpha": false,
+            "bTexturesMipmaps": false
+        }
+    }
+]

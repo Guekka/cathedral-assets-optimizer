@@ -9,7 +9,7 @@
 namespace CAO {
 
 Profiles::Profiles()
-    : Profiles(QDir("profiles"))
+    : Profiles(QDir(defaultProfileDir))
 {
 }
 
@@ -22,19 +22,12 @@ Profiles::Profiles(QDir dir)
     commonSettings_.setJSON(j);
 }
 
-void Profiles::setDir(const QDir &dir)
-{
-    rootProfileDir_ = dir;
-    profiles_.clear();
-}
-
 void Profiles::create(const QString &name, const QString &baseProfile)
 {
     const QString &baseFolder = rootProfileDir_.absoluteFilePath(
         exists(baseProfile) ? baseProfile : defaultProfile);
     const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
     Filesystem::copyDir(baseFolder, newFolder, false);
-    QFile::remove(newFolder + "/isBase");
     profiles_.try_emplace(name, Profile(newFolder));
 }
 
