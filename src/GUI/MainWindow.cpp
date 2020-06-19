@@ -313,19 +313,21 @@ void MainWindow::endProcess()
     currentProfile().saveToJSON();
 }
 
-void MainWindow::updateLog() const
+void MainWindow::updateLog()
 {
-    ui_->logTextEdit->clear();
-
-    QFile log(currentProfile().logPath());
-    if (log.open(QFile::Text | QFile::ReadOnly))
+    if (!logFile.isOpen())
     {
-        QTextStream ts(&log);
-        ts.setCodec(QTextCodec::codecForName("UTF-8"));
-        ui_->logTextEdit->appendHtml(ts.readAll());
+        logFile.setFileName(currentProfile().logPath());
+        if (!logFile.open(QFile::Text | QFile::ReadOnly))
+        {
+            ui_->logTextEdit->appendPlainText(tr("Unable to open log file."));
+            return;
+        }
     }
-}
 
+    while (!logFile.atEnd())
+        ui_->logTextEdit->appendHtml(logFile.readLine());
+}
 
 void MainWindow::showTutorialWindow(const QString &title, const QString &text)
 {

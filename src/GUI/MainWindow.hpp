@@ -50,16 +50,15 @@ public:
     void refreshProfiles();
 
 private:
+    std::unique_ptr<Ui::MainWindow> ui_;
+    std::unique_ptr<Manager> caoProcess_;
+    QFile logFile;
+
     void connectModule(IWindowModule &);
     void reconnectModules();
 
     void connectAll();
     void disconnectAll();
-
-    std::unique_ptr<Ui::MainWindow> ui_;
-
-    int progressBarValue_{};
-    std::unique_ptr<Manager> caoProcess_;
 
     void createProfile();
     void setProfile(const QString &name);
@@ -67,7 +66,7 @@ private:
     void resetUi();
     void loadUi();
 
-    void updateLog() const;
+    void updateLog();
 
     void initProcess();
     void endProcess();
