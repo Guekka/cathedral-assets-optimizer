@@ -82,7 +82,8 @@ GeneralSettings::ModManager GeneralSettings::findManager(const QDir &dir) const
 
     /* MO2 */
     //Checking 10 dirs should be enough. One of them should be enough actually, but...better be safe
-    auto first10Dirs = QDir(dir).entryList(QDir::NoDotAndDotDot | QDir::Dirs) | rx::take(10);
+    auto first10Dirs = QDir(dir).entryList(QDir::NoDotAndDotDot | QDir::Dirs) | rx::take(10)
+                       | rx::to_vector();
 
     for (const QString &dirName : first10Dirs)
         if (QDir(dirName).exists("meta.ini"))
