@@ -155,7 +155,7 @@ void MainWindow::connectAll()
     ui_->userPathTextEdit->setText(generalSettings.sUserPath());
 
     connect(ui_->userPathTextEdit,
-            &QLineEdit::textEdited,
+            &QLineEdit::textChanged,
             &generalSettings.sUserPath,
             &decltype(generalSettings.sUserPath)::setValue);
 
