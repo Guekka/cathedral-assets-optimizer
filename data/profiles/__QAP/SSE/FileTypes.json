@@ -17,6 +17,9 @@
             "*.bto",
             "*.btr",
             "*.btt",
+            "*.dlodsettings",
+            "*.dtl",
+            "*.egm",
             "*.gid",
             "*.hkx",
             "*.lod",
@@ -36,7 +39,6 @@
         "slUncompressibleFiles": [
             "*.fuz",
             "*.lip",
-            "*.mp3",
             "*.ogg",
             "*.wav",
             "*.xwm",
