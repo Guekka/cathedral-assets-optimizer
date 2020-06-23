@@ -55,7 +55,7 @@ bool TextureConvert::isApplicable(File &file)
     const bool userWantsConvert = file.patternSettings().bTexturesCompress()
                                   && sameFormatAsOrig; //If true, the file was not compressed originally
 
-    const bool necessary = needsConvert(file, currentFormat);
+    const bool necessary = needsConvert(file, texResource->GetMetadata());
 
     //If the file was optimized, it was previously in a different format, and thus needs a conversion
     const bool optimizedFile = file.optimizedCurrentFile();
@@ -63,16 +63,23 @@ bool TextureConvert::isApplicable(File &file)
     return necessary || userWantsConvert || optimizedFile;
 }
 
-bool TextureConvert::needsConvert(const File &file, DXGI_FORMAT format)
+bool TextureConvert::needsConvert(const File &file, const DirectX::TexMetadata &info)
 {
+    auto format = info.format;
     //Checking incompatibility with file format
     const auto &pSets         = file.patternSettings();
     const auto &vec           = pSets.slTextureUnwantedFormats();
     const bool isUnwanted     = std::find(vec.begin(), vec.end(), format) != vec.end();
     const bool isIncompatible = isUnwanted || pSets.bTexturesForceConvert();
-    const bool needsConvert   = pSets.bTexturesNecessary() && isIncompatible;
 
-    return needsConvert;
+    const bool isCubemap    = info.IsCubemap();
+    const bool uncompressed = !DirectX::IsCompressed(format);
+    const bool hasAlpha     = DirectX::HasAlpha(format);
+
+    const bool needsConvertCubemaps = isCubemap && uncompressed && !hasAlpha;
+    const bool needsConvert         = pSets.bTexturesNecessary() && isIncompatible;
+
+    return needsConvert || needsConvertCubemaps;
 }
 
 int TextureConvert::convertWithoutCompression(const DirectX::ScratchImage &image,

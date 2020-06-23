@@ -28,7 +28,7 @@ public:
                                       const DXGI_FORMAT &format);
 
 protected:
-    bool needsConvert(const File &file, DXGI_FORMAT format);
+    bool needsConvert(const File &file, const DirectX::TexMetadata &info);
 };
 REGISTER_COMMAND(TextureConvert)
 } // namespace CAO
