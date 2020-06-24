@@ -25,10 +25,10 @@ CommandResult TextureAddAlpha::process(File &file)
                 .getFailedResult(1, "Failed to convert landscape texture to a format with alpha");
         }
 
-    auto transform = [](DirectX::XMVECTOR *outPixels,
-                        const DirectX::XMVECTOR *inPixels,
-                        size_t width,
-                        [[maybe_unused]] size_t y) {
+    constexpr auto transform = [](DirectX::XMVECTOR *outPixels,
+                                  const DirectX::XMVECTOR *inPixels,
+                                  size_t width,
+                                  [[maybe_unused]] size_t y) {
         const auto black = DirectX::XMVectorSet(0, 0, 0, 0);
         for (size_t j = 0; j < width; ++j)
             outPixels[j] = XMVectorSelect(black, inPixels[j], DirectX::g_XMSelect1110);
@@ -67,26 +67,10 @@ bool TextureAddAlpha::isApplicable(File &file)
     if (!DirectX::HasAlpha(texFile->GetMetadata().format))
         return true;
 
-    bool isFullWhite = true;
+    if (texFile->GetMetadata().GetAlphaMode() == DirectX::TEX_ALPHA_MODE_OPAQUE)
+        return true;
 
-    DirectX::EvaluateImage(texFile->GetImages(),
-                           texFile->GetImageCount(),
-                           texFile->GetMetadata(),
-                           [&isFullWhite](const DirectX::XMVECTOR *pixels, size_t width, size_t y) {
-                               if (!isFullWhite)
-                                   return;
-
-                               for (size_t j = 0; j < width; ++j)
-                               {
-                                   if (DirectX::XMVectorGetByIndex(pixels[j], 3) != 1)
-                                   {
-                                       isFullWhite = false;
-                                       return;
-                                   }
-                               }
-                           });
-
-    return isFullWhite;
+    return texFile->IsAlphaAllOpaque();
 }
 
 bool TextureAddAlpha::isLandscape(const QString &filepath) const
