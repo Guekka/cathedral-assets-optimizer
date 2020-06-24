@@ -30,6 +30,7 @@ public:
     {
         T *mod = new T;
         ui_->tabWidget->insertTab(0, mod, name);
+        ui_->tabWidget->setCurrentIndex(0);
         connectModule(*mod);
     }
 
