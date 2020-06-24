@@ -25,9 +25,6 @@ class MainWindow final : public QMainWindow
 public:
     MainWindow();
 
-    Ui::MainWindow &mainUI() { return *ui_; }
-    const Ui::MainWindow &mainUI() const { return *ui_; }
-
     template<typename T>
     void addModule(const QString &name)
     {
