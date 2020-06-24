@@ -33,6 +33,7 @@ MainWindow::MainWindow()
                                                                QFileDialog::ShowDirsOnly
                                                                    | QFileDialog::DontResolveSymlinks);
 
+        if (!dir.isEmpty())
         generalSettings.sUserPath = dir;
     });
 
