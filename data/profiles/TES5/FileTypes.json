@@ -47,6 +47,7 @@
     },
     "Meshes": {
         "slHeadparts": [
+            "*/meshes/actors/character/facegendata/facegeom/*.nif",
             "*/meshes/actors/character/character assets/beards/humanbeardlong01.nif",
             "*/meshes/actors/character/character assets/beards/humanbeardlong01_1bit.nif",
             "*/meshes/actors/character/character assets/beards/humanbeardlong02.nif",
