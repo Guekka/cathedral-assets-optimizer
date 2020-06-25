@@ -9,6 +9,9 @@ namespace CAO {
 AnimationFile::AnimationFile()
 
 {
+    if (initialized_)
+        return;
+
     try
     {
         // Need to have memory allocated for the solver. Allocate 1mb for it.
@@ -17,19 +20,19 @@ AnimationFile::AnimationFile()
         hkBaseSystem::init(_memoryRouter, errorReport);
 
         LoadDefaultRegistry();
+
+        initialized_ = true;
     }
     catch (const std::exception &e)
     {
-        PLOG_ERROR
-            << QString("An error occured while creating the animations optimizer. Animations won't be optimized.\n%1")
-                   .arg(e.what());
+        PLOG_ERROR << QString("An error occured while creating the animations optimizer. Animations "
+                              "won't be optimized.\n%1")
+                          .arg(e.what());
     }
 }
 
 AnimationFile::~AnimationFile()
 {
-    hkBaseSystem::quit();
-    hkMemoryInitUtil::quit();
 }
 
 bool AnimationFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)

@@ -22,5 +22,6 @@ public:
 
 private:
     hkMemoryRouter *_memoryRouter;
+    static inline bool initialized_ = false;
 };
 } // namespace CAO
