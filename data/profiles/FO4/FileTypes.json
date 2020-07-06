@@ -36,11 +36,11 @@
             "*.xwm",
             "*.*script"
         ]
-    }
+    },
     "Mods": {
         "slBlacklist": [
             "*/Bodyslide",
             "*_separator"
         ]
-    },
+    }
 }
