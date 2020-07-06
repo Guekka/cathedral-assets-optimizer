@@ -55,12 +55,15 @@ BSARCH_DLL_API(bsa_result_message_t) bsa_add_file_from_memory(bsa_archive_t arch
   return { 0 };
 }
 
-BSARCH_DLL_API(bsa_file_record_t) bsa_find_file_record(bsa_archive_t archive, const wchar_t *file_path) {
-  return NULL;
+BSARCH_DLL_API(bsa_file_record_t) bsa_find_file_record(bsa_archive_t archive, const wchar_t *file_path)
+{
+    return NULL;
 }
 
-BSARCH_DLL_API(bsa_result_message_buffer_t) bsa_extract_file_data_by_record(bsa_archive_t archive, bsa_file_record_t file_record) {
-  return { 0 };
+BSARCH_DLL_API(bsa_result_message_buffer_t)
+bsa_extract_file_data_by_record(bsa_archive_t archive, bsa_file_record_t file_record)
+{
+    return {0};
 }
 
 BSARCH_DLL_API(bsa_result_message_buffer_t) bsa_extract_file_data_by_filename(bsa_archive_t archive, const wchar_t *file_path) {

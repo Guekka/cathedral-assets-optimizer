@@ -23,11 +23,18 @@ public:
     DXGI_FORMAT origFormat{};
 };
 
-class BSAFolderResource : public Resource, public QDir
+struct BSAFileResource : public Resource
 {
+    BSAFileResource()
+        : saver(bsa)
+    {
+    }
+
+    libbsarch::bsa bsa;
+    libbsarch::bsa_saver_simple saver;
 };
 
-class BSAFileResource : public Resource, public libbsarch::bs_archive_auto
+struct BSAFolderResource : public Resource, public QDir
 {
 };
 

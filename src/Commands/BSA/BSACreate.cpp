@@ -25,20 +25,25 @@ CommandResult BSACreate::process(File &file)
         if (QFile(bsa.path).exists())
             return _resultFactory.getFailedResult(1, "Failed to create BSA: a BSA already exists.");
 
-        libbsarch::bs_archive_auto archive(bsa.format);
-        archive.set_share_data(true);
+        BSAFileResource archive;
+        archive.bsa.set_share_data(true);
+
+        archive.saver.set_save_type(bsa.format);
+        archive.saver.set_save_path(bsa.path.toStdString());
+
         bool canBeCompressed = currentProfile().getGeneralSettings().bBSACompressArchive()
                                && bsa.type != BSAType::UncompressableBsa;
-        archive.set_compressed(canBeCompressed);
-        const libbsarch::convertible_string &rootPath = bsaFolder->path();
-        archive.set_dds_callback(&BSACallback, rootPath);
+
+        archive.bsa.set_compressed(canBeCompressed);
+        const libbsarch::fs::path &rootPath = bsaFolder->path().toStdString();
+        archive.bsa.set_dds_callback(&BSACallback, rootPath);
 
         try
         {
             for (const auto &fileInBSA : bsa.files)
-                archive.add_file_from_disk(libbsarch::disk_blob(rootPath, fileInBSA));
+                archive.saver.add_file(libbsarch::disk_blob(rootPath, fileInBSA.toStdString()));
 
-            archive.save_to_disk(libbsarch::convertible_string(bsa.path));
+            archive.saver.save();
         }
         catch (const std::exception &e)
         {

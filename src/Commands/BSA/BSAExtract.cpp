@@ -17,21 +17,20 @@ CommandResult BSAExtract::process(File& file)
     if (!currentProfile().getGeneralSettings().bBSADeleteBackup())
         bsaPath = Filesystem::backupFile(bsaPath);
 
-    libbsarch::convertible_string rootPath = QFileInfo(bsaPath).path();
+    libbsarch::fs::path rootPath = QFileInfo(bsaPath).path().toStdString();
 
     try
     {;
-        bsafile->set_dds_callback(&BSACallback, rootPath);
-        bsafile->load_from_disk(bsaPath);
-        bsafile->extract_all(rootPath, false);
+        bsafile->bsa.set_dds_callback(&BSACallback, rootPath);
+        bsafile->bsa.load(bsaPath.toStdString());
+        bsafile->bsa.extract_all_to_disk(rootPath, false);
     }
     catch (const std::exception &e)
     {
         const QString &error = QString("Failed to extract BSA with error message: '%1'").arg(e.what());
         return _resultFactory.getFailedResult(1, error);
     }
-    file.setFile(
-        std::make_unique<BSAFileResource>()); //Closing the archive. We won't be able to delete the file otherwise
+    bsafile->bsa.close();
 
     if (!QFile::remove(file.getName())) //We want to remove the original file, not the backup file
         return _resultFactory.getFailedResult(2, "BSA Extract succeeded but failed to delete the extracted BSA");

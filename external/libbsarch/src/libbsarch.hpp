@@ -1,28 +1,17 @@
 #pragma once
 
 #include "base_types.hpp"
-#include "utils/convertible_ostream.hpp"
-#include "utils/convertible_string.hpp"
+#include "utils/string_convert.hpp"
 
 namespace libbsarch {
-constexpr bool enable_debug_log = false;
 [[maybe_unused]] constexpr int max_string_buffer_size = 1024;
-
-inline convertible_ostream &debug_log()
-{
-    static convertible_ostream ostr;
-    if constexpr (enable_debug_log)
-        return ostr << "[libbsarch] " << __FUNCTION__ << ' ';
-    return ostr;
-}
 
 inline void checkResult(const bsa_result_message_s &result)
 {
     if (result.code == BSA_RESULT_EXCEPTION)
     {
         const std::string &error = to_string(result.text);
-        debug_log() << error;
-        throw std::runtime_error(error);
+        throw exception(error);
     }
 }
 

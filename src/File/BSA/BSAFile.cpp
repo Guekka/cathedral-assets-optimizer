@@ -10,7 +10,7 @@ int BSAFile::loadFromDisk(const QString &filePath)
     loadHelper<BSAFileResource>(filePath);
 
     auto bsaFile = static_cast<BSAFileResource *>(&getFile(false));
-    bsaFile->load_from_disk(filePath);
+    bsaFile->bsa.load(filePath.toStdString());
     return 0;
 }
 
@@ -19,12 +19,9 @@ int BSAFile::saveToDisk(const QString &filePath) const
     if (!isLoaded())
         return 2;
 
-    auto bsaFile = static_cast<BSAFileResource *>(const_cast<Resource *>((&getFile())));
-    //const_cast makes sense here, since this function has to be const
-    //However, this raises doubts about libbsarch conception
-    //Maybe some things should be improved in this library
+    auto bsaFile = static_cast<const BSAFileResource *>(&getFile());
 
-    bsaFile->save_to_disk(filePath);
+    bsaFile->saver.save(filePath.toStdString(), bsaFile->saver.get_save_type());
     return 0;
 }
 

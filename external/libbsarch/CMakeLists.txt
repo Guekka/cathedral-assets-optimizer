@@ -30,12 +30,6 @@ endif()
 
 target_compile_definitions(libbsarch PRIVATE BSARCH_DLL_EXPORT)
 
-#We only want the lib file. The DLL will be provided by Delphi
-#Removing the generated DLL
-#[[add_custom_command(TARGET libbsarch POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E remove
-    ${CMAKE_CURRENT_BINARY_DIR}/libbsarch.dll)
-]]
 ############################################################
 # libbsarch_OOP                                            #
 ############################################################
@@ -43,23 +37,26 @@ target_compile_definitions(libbsarch PRIVATE BSARCH_DLL_EXPORT)
 find_package(Qt5 OPTIONAL_COMPONENTS Core)
 
 add_library(libbsarch_OOP STATIC
-    src/base_types.hpp
-    src/bs_archive_auto.cpp
-    src/bs_archive_auto.hpp
-    src/bs_archive.cpp
-    src/bs_archive.h
-    src/bs_archive_entries.cpp
-    src/bs_archive_entries.h
-    src/dds.h
-
-    src/libbsarch.hpp
     src/libbsarch.h
     src/dds.h
 
-    src/utils/convertible_string.cpp
-    src/utils/convertible_string.hpp
-    src/utils/convertible_ostream.cpp
-    src/utils/convertible_ostream.hpp
+    src/libbsarch.hpp
+
+    src/base_types.cpp
+    src/base_types.hpp
+
+    src/bsa.cpp
+    src/bsa.hpp
+
+    src/bsa_saver.cpp
+    src/bsa_saver.hpp
+
+    src/bsa_entry_list.cpp
+    src/bsa_entry_list.hpp
+
+    src/transform_archive.cpp
+    src/transform_archive.hpp
+
     src/utils/string_convert.cpp
     src/utils/string_convert.hpp
     )
@@ -94,14 +91,21 @@ if(copy_dll_to_binary_dir)
     message("libbsarch: Copying the DLL to ${CMAKE_BINARY_DIR}/libbsarch.dll")
 endif()
 
-#Adding Qt support
-if(Qt5_FOUND)
-    message("libbsarch: Qt5 found, enabling Qt support")
-    target_link_libraries(libbsarch_OOP PUBLIC Qt5::Core)
-    target_compile_definitions(libbsarch PUBLIC "QT")
-    target_compile_definitions(libbsarch_OOP PUBLIC "QT")
-endif()
-
 target_link_libraries(libbsarch_OOP PUBLIC libbsarch)
 target_compile_features(libbsarch_OOP PRIVATE cxx_std_17)
 target_compile_definitions(libbsarch_OOP PRIVATE _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
+
+# Tests
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+    add_executable(libbsarch_tests
+        tests/main.test.cpp
+
+        tests/transform_archive.test.cpp
+        tests/save_and_load.test.cpp
+
+        tests/utils.hpp
+        tests/utils.cpp)
+
+    target_link_libraries(libbsarch_tests PUBLIC libbsarch_OOP)
+    target_compile_features(libbsarch_tests PRIVATE cxx_std_17)
+endif()
