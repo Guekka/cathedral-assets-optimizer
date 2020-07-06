@@ -35,10 +35,10 @@ std::unique_ptr<File> ModFolder::consume()
         res = helper(files_, processedFileCount_);
 
     //If the BSAs were extracted, new files could have appeared
-    if (!BSAExhausted && bsas_.empty())
+    if (!BSAExhausted_ && bsas_.empty())
     {
+        BSAExhausted_ = true;
         load();
-        BSAExhausted = true;
     }
 
     return res;
@@ -78,17 +78,26 @@ void ModFolder::load()
 {
     bsas_.clear();
     files_.clear();
+
+    auto isBSA = [this](const QString &fileName) {
+        return fileName.endsWith(bsaExtension_, Qt::CaseInsensitive);
+    };
+
     QDirIterator it(dir_, QDirIterator::Subdirectories);
     while (it.hasNext())
     {
         it.next();
-        auto &vec = it.fileName().endsWith(bsaExtension_, Qt::CaseInsensitive) ? bsas_ : files_;
+
+        if (isBSA(it.fileName()) && BSAExhausted_)
+            continue; //BSAs were already processed. New ones cannot have appeared. Only the old ones could be listed
+
+        auto &vec = isBSA(it.fileName()) ? bsas_ : files_;
         auto file = makeFile(it.filePath(), bsaExtension_);
 
         if (file)
             vec.emplace_back(std::move(file));
     }
-    BSAExhausted = bsas_.empty();
+    BSAExhausted_ = bsas_.empty();
 }
 
 } // namespace CAO

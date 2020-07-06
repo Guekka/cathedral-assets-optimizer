@@ -38,7 +38,7 @@ private:
     std::vector<std::unique_ptr<File>> bsas_;
     std::vector<std::unique_ptr<File>> files_;
 
-    bool BSAExhausted = false;
+    bool BSAExhausted_ = false;
 
     QString dir_;
     QString bsaExtension_;
