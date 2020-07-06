@@ -11,15 +11,15 @@
 namespace CAO {
 CommandResult BSACreate::process(File &file)
 {
-    auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
+    auto bsaFolder = dynamic_cast<BSAFolderResource *>(&file.getFile(true));
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsas = BSASplit::splitBSA(*bsaFolder, currentProfile().getGeneralSettings());
+    auto bsas = BSASplit::splitBSA(QDir{file.getName()}, currentProfile().getGeneralSettings());
 
     for (auto &bsa : bsas)
     {
-        bsa.name(bsaFolder->path(), currentProfile().getGeneralSettings());
+        bsa.name(file.getName(), currentProfile().getGeneralSettings());
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
@@ -35,22 +35,20 @@ CommandResult BSACreate::process(File &file)
                                && bsa.type != BSAType::UncompressableBsa;
 
         archive.bsa.set_compressed(canBeCompressed);
-        const libbsarch::fs::path &rootPath = bsaFolder->path().toStdString();
+        const libbsarch::fs::path &rootPath = file.getName().toStdString();
         archive.bsa.set_dds_callback(&BSACallback, rootPath);
 
         try
         {
             for (const auto &fileInBSA : bsa.files)
                 archive.saver.add_file(libbsarch::disk_blob(rootPath, fileInBSA.toStdString()));
-
-            archive.saver.save();
         }
         catch (const std::exception &e)
         {
             return _resultFactory.getFailedResult(3, e.what());
         }
 
-        bsa.files >>= pipes::for_each([](const QString &filePath) { QFile::remove(filePath); });
+        bsaFolder->bsas.emplace_back(std::move(archive));
     }
     return _resultFactory.getSuccessfulResult();
 }

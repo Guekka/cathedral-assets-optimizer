@@ -44,6 +44,9 @@ void MainOptimizer::extractBSA(File &file)
     if (currentProfile().getGeneralSettings().bDryRun())
         return; //TODO if "dry run" run dry run on the assets in the BSA
 
+    if (!loadFile(file))
+        return;
+
     PLOG_INFO << "Extracting BSA: " + file.getName();
     auto command = _commandBook.getCommand<BSAExtract>();
     if (!runCommand(command, file))
@@ -57,10 +60,15 @@ void MainOptimizer::packBsa(const QString &folder)
     PLOG_INFO << "Creating BSA...";
     BSAFolder bsa;
     bsa.setName(folder);
+
     if (!loadFile(bsa))
         return;
+
     auto command = _commandBook.getCommand<BSACreate>();
     if (!runCommand(command, bsa))
+        return;
+
+    if (!saveFile(bsa))
         return;
 
     if (currentProfile().getGeneralSettings().bBSACreateDummies())

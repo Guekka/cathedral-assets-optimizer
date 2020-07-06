@@ -30,12 +30,25 @@ struct BSAFileResource : public Resource
     {
     }
 
+    ~BSAFileResource() = default;
+
+    BSAFileResource(const BSAFileResource &) = delete;
+
+    BSAFileResource(BSAFileResource &&other)
+        : bsa(std::move(other.bsa))
+        , saver(bsa)
+    {
+        saver = std::move(other.saver);
+        saver.set_bsa(bsa);
+    }
+
     libbsarch::bsa bsa;
     libbsarch::bsa_saver_simple saver;
 };
 
-struct BSAFolderResource : public Resource, public QDir
+struct BSAFolderResource : public Resource
 {
+    std::vector<BSAFileResource> bsas;
 };
 
 struct AnimationResource : public Resource
