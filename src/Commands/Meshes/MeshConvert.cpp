@@ -11,6 +11,14 @@
 
 namespace CAO {
 
+MeshConvert::MeshConvert()
+{
+    //Listing headparts
+    std::call_once(_onceHeadpartsFlag, [this] {
+        this->listHeadparts(currentProfile().getGeneralSettings(), currentProfile().getFileTypes());
+    });
+}
+
 CommandResult MeshConvert::process(File &file)
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
@@ -43,45 +51,11 @@ bool MeshConvert::isApplicable(File &file)
     if (!meshFile)
         return false;
 
-    //Listing headparts
-    std::call_once(_onceHeadpartsFlag, [this] {
-        this->listHeadparts(currentProfile().getGeneralSettings(), currentProfile().getFileTypes());
-    });
-
-    MeshResource nif = *meshFile;
 
     const bool headpart = isHeadpart(file.getName()) && patternSettings.bMeshesHeadparts();
+    const bool isSSECompatible = meshFile->IsSSECompatible();
 
-    for (const auto &shape : nif.GetShapes())
-    {
-        //Those cannot be converted
-        if (shape->HasType<NiParticles>() || shape->HasType<NiParticleSystem>() || shape->HasType<NiParticlesData>())
-            return false;
-
-        // Check if shape has strips in the geometry or skin partition
-        if (shape->HasType<NiTriStrips>())
-            return true;
-        else
-        {
-            auto skinInst = nif.GetHeader().GetBlock<NiSkinInstance>(shape->GetSkinInstanceRef());
-            if (skinInst)
-            {
-                auto skinPart = nif.GetHeader().GetBlock<NiSkinPartition>(skinInst->GetSkinPartitionRef());
-                if (skinPart)
-                {
-                    for (auto &partition : skinPart->partitions)
-                    {
-                        if (partition.numStrips > 0)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return headpart || patternSettings.bMeshesResave() || optLevel >= 2;
+    return !isSSECompatible || headpart || patternSettings.bMeshesResave() || optLevel >= 2;
 }
 
 bool MeshConvert::isHeadpart(const QString &filepath)

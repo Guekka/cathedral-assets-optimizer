@@ -12,6 +12,8 @@ namespace CAO {
 class MeshConvert : public Command
 {
 public:
+    MeshConvert();
+
     QString name() override { return "Convert Mesh"; }
     CommandType type() override { return CommandType::Mesh; };
     Priority priority() override { return Priority::Medium; };
