@@ -118,7 +118,13 @@ void MainWindow::connectAll()
     connect(&commonSettings.sProfile,
             &detail::QValueWrapperHelper::valueChanged,
             this,
-            [this, &commonSettings] { selectText(*ui_->profiles, commonSettings.sProfile()); });
+            [this, &commonSettings] {
+                auto profile = commonSettings.sProfile();
+                profile      = getProfiles().exists(profile) ? profile : Profiles::defaultProfile;
+
+                selectText(*ui_->profiles, profile);
+                getProfiles().setCurrent(profile);
+            });
 
     int idx = ui_->modeChooserComboBox->findData(generalSettings.eMode());
     ui_->modeChooserComboBox->setCurrentIndex(idx);
