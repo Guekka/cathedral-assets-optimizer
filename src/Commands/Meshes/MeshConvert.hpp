@@ -7,6 +7,7 @@
 #include "Commands/CommandBook.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "File/Meshes/MeshFile.hpp"
+#include "Utils/CallOnce.hpp"
 
 namespace CAO {
 class MeshConvert : public Command
@@ -25,7 +26,7 @@ protected:
     bool isHeadpart(const QString &filepath);
     void listHeadparts(const GeneralSettings &settings, FileTypes &filetypes);
 
-    std::once_flag _onceHeadpartsFlag;
+    CallOnce callOnceHeadparts_;
 };
 REGISTER_COMMAND(MeshConvert)
 } // namespace CAO

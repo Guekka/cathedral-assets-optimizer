@@ -78,6 +78,8 @@ void Manager::runOptimization()
     PLOG_INFO << "Processing: " + currentProfile().getGeneralSettings().sUserPath();
     PLOG_INFO << "Beginning...";
 
+    getProfiles().beginRun();
+
     MainOptimizer optimizer;
 
     for (uint i = 0; i < mods_.size(); i++)

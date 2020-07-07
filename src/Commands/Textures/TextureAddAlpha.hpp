@@ -5,11 +5,14 @@
 #pragma once
 
 #include "Commands/CommandBook.hpp"
+#include "Utils/CallOnce.hpp"
 
 namespace CAO {
 class TextureAddAlpha : public Command
 {
 public:
+    TextureAddAlpha();
+
     bool isApplicable(File &file);
     CommandResult process(File &file);
     Priority priority() { return Medium; }
@@ -20,7 +23,7 @@ protected:
     bool isLandscape(const QString &filepath) const;
     void listLandscapeTextures(const GeneralSettings &settings, FileTypes &filetypes);
 
-    std::once_flag onceLandscapeFlag_;
+    CallOnce callOnceLandscape_;
 };
 REGISTER_COMMAND(TextureAddAlpha)
 } // namespace CAO

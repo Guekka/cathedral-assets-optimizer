@@ -13,8 +13,7 @@ namespace CAO {
 
 MeshConvert::MeshConvert()
 {
-    //Listing headparts
-    std::call_once(_onceHeadpartsFlag, [this] {
+    getProfiles().callOncePerRun(callOnceHeadparts_, [this] {
         this->listHeadparts(currentProfile().getGeneralSettings(), currentProfile().getFileTypes());
     });
 }
@@ -43,7 +42,7 @@ CommandResult MeshConvert::process(File &file)
 bool MeshConvert::isApplicable(File &file)
 {
     auto& patternSettings = file.patternSettings();
-    const int &optLevel = patternSettings.iMeshesOptimizationLevel();
+    int optLevel          = patternSettings.iMeshesOptimizationLevel();
     if (optLevel == 0)
         return false;
 
@@ -51,11 +50,11 @@ bool MeshConvert::isApplicable(File &file)
     if (!meshFile)
         return false;
 
-
     const bool headpart = isHeadpart(file.getName()) && patternSettings.bMeshesHeadparts();
     const bool isSSECompatible = meshFile->IsSSECompatible();
+    const bool resave          = patternSettings.bMeshesResave() || optLevel >= 2;
 
-    return !isSSECompatible || headpart || patternSettings.bMeshesResave() || optLevel >= 2;
+    return !isSSECompatible || headpart || resave;
 }
 
 bool MeshConvert::isHeadpart(const QString &filepath)

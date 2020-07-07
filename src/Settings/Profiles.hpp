@@ -6,6 +6,7 @@
 
 #include "Profile.hpp"
 #include "Settings/CommonSettings.hpp"
+#include "Utils/CallOnce.hpp"
 #include "pch.hpp"
 
 class MainWindow;
@@ -41,13 +42,18 @@ public:
 
     CommonSettings &commonSettings() { return commonSettings_; }
     QString commonSettingsPath();
-
     void saveCommonSettings();
+
+    void beginRun();
+    //Note: this does not store the function, it works like std::call_once. It is not thread safe.
+    bool callOncePerRun(CallOnce &callOnce, std::function<void()> callable);
 
 private:
     std::unordered_map<QString, Profile> profiles_;
     QDir rootProfileDir_;
     CommonSettings commonSettings_;
+
+    std::vector<CallOnce *> callOnceList_;
 };
 
 inline Profiles &getProfiles()

@@ -5,15 +5,20 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/MainOptimizer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Manager.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ModFolder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ModFolder.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Version.hpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Algorithms.hpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utils/CallOnce.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utils/CallOnce.hpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/ModFolder.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/ModFolder.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ScopeGuard.hpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/TemplateMetaProgramming.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/TypeConvert.hpp
 

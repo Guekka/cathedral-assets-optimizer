@@ -10,6 +10,13 @@
 
 namespace CAO {
 
+TextureAddAlpha::TextureAddAlpha()
+{
+    getProfiles().callOncePerRun(callOnceLandscape_, [this] {
+        listLandscapeTextures(currentProfile().getGeneralSettings(), currentProfile().getFileTypes());
+    });
+}
+
 CommandResult TextureAddAlpha::process(File &file)
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());

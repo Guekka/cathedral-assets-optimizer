@@ -109,4 +109,14 @@ void Profiles::saveCommonSettings()
     nlohmann::json j = commonSettings_.getJSON();
     JSON::saveToFile(j, commonSettingsPath());
 }
+
+void Profiles::beginRun()
+{
+    callOnceList_ | rx::for_each([](CallOnce *item) { item->reset(); });
+}
+
+bool Profiles::callOncePerRun(CallOnce &callOnce, std::function<void()> callable)
+{
+    return callOnce.call(callable);
+}
 } // namespace CAO
