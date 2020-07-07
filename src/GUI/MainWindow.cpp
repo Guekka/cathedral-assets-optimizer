@@ -90,6 +90,16 @@ MainWindow::MainWindow()
     firstStart();
 }
 
+std::vector<IWindowModule *> MainWindow::getModules()
+{
+    std::vector<IWindowModule *> modules;
+    for (int i = 0; i < ui_->tabWidget->count(); i++)
+        if (auto mod = dynamic_cast<IWindowModule *>(ui_->tabWidget->widget(i)); mod)
+            modules.emplace_back(mod);
+
+    return modules;
+}
+
 void MainWindow::connectModule(IWindowModule &mod)
 {
     mod.disconnectAll();
@@ -99,9 +109,14 @@ void MainWindow::connectModule(IWindowModule &mod)
 
 void MainWindow::reconnectModules()
 {
-    for (int i = 0; i < ui_->tabWidget->count(); i++)
-        if (auto mod = dynamic_cast<IWindowModule *>(ui_->tabWidget->widget(i)); mod)
-            connectModule(*mod);
+    for (auto *mod : getModules())
+        connectModule(*mod);
+}
+
+void MainWindow::freezeModules(bool state)
+{
+    for (auto *mod : getModules())
+        mod->setDisabled(state);
 }
 
 void MainWindow::connectAll()
@@ -291,6 +306,9 @@ void MainWindow::initProcess()
         connect(&*caoProcess_, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
         connect(&*caoProcess_, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
         connect(&*caoProcess_, &Manager::end, this, &MainWindow::endProcess);
+
+        freezeModules();
+
         QtConcurrent::run(&*caoProcess_, &Manager::runOptimization);
     }
     catch (const std::exception &e)
@@ -314,10 +332,13 @@ void MainWindow::endProcess()
     ui_->progressBar->setMaximum(100);
     ui_->progressBar->setValue(100);
     ui_->progressBar->setFormat(tr("Done"));
+
     updateLog();
 
     getProfiles().saveCommonSettings();
     currentProfile().saveToJSON();
+
+    freezeModules(false);
 }
 
 void MainWindow::updateLog()

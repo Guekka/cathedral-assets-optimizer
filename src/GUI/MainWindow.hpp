@@ -52,8 +52,10 @@ private:
     std::unique_ptr<Manager> caoProcess_;
     QFile logFile;
 
+    std::vector<IWindowModule *> getModules();
     void connectModule(IWindowModule &);
     void reconnectModules();
+    void freezeModules(bool state = true);
 
     void connectAll();
     void disconnectAll();
