@@ -279,18 +279,15 @@
      <string>Tools</string>
     </property>
     <addaction name="actionEnableDarkTheme"/>
-    <addaction name="actionEnable_debug_log"/>
-    <addaction name="actionShow_tutorials"/>
-    <addaction name="actionOpen_log_file"/>
     <addaction name="actionSelect_GPU"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionShow_tutorials"/>
     <addaction name="actionDocumentation"/>
     <addaction name="actionDiscord"/>
-    <addaction name="actionDonate"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
@@ -301,9 +298,24 @@
     <addaction name="actionRedirect_output"/>
     <addaction name="actionSet_output_path"/>
    </widget>
+   <widget class="QMenu" name="menuDonate">
+    <property name="title">
+     <string>Supporting CAO</string>
+    </property>
+    <addaction name="actionDonate"/>
+   </widget>
+   <widget class="QMenu" name="menuLog">
+    <property name="title">
+     <string>Log</string>
+    </property>
+    <addaction name="actionEnable_debug_log"/>
+    <addaction name="actionOpen_log_file"/>
+   </widget>
    <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
    <addaction name="menuOutput"/>
+   <addaction name="menuLog"/>
+   <addaction name="menuDonate"/>
   </widget>
   <action name="actionEnableDarkTheme">
    <property name="checkable">
