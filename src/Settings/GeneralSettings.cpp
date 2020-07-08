@@ -53,16 +53,17 @@ std::optional<QString> GeneralSettings::isValid() const
 
     if (eMode() == SeveralMods && managedBy == ModManager::None)
     {
-        return QString("Several mods mode is enabled, but this path does not seem to be handled by a mod "
+        return QString("'Several mods' mode is enabled, but this path does not seem to be handled by a mod "
                        "manager.\n If you are sure you want to process this folder, please create a file "
                        "named '%1' in this folder. This is a necessary evil to ensure safety for your mods.\n"
                        "Path: '%2'")
             .arg(forceProcessFolder, sUserPath());
     }
 
-    if (eMode() == SingleMod && managedBy != ModManager::None)
+    const bool isSingleModReady = managedBy == ModManager::None || managedBy == ModManager::ManualForced;
+    if (eMode() == SingleMod && !isSingleModReady)
     {
-        return QString("Several mods mode is enabled, but this path seems to be handled by a mod manager. "
+        return QString("'Single mod' mode is enabled, but this path seems to be handled by a mod manager. "
                        "Path: '%1'")
             .arg(sUserPath());
     }
