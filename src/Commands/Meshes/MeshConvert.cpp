@@ -32,7 +32,7 @@ CommandResult MeshConvert::process(File &file)
 
     OptOptions optOptions;
     optOptions.targetVersion = niVersion;
-    optOptions.headParts = isHeadpart(file.getName());
+    optOptions.headParts = isHeadpart(file.getInputFilePath());
 
     nif->OptimizeFor(optOptions);
 
@@ -50,7 +50,7 @@ bool MeshConvert::isApplicable(File &file)
     if (!meshFile)
         return false;
 
-    const bool headpart = isHeadpart(file.getName()) && patternSettings.bMeshesHeadparts();
+    const bool headpart = isHeadpart(file.getInputFilePath()) && patternSettings.bMeshesHeadparts();
     const bool isSSECompatible = meshFile->IsSSECompatible();
     const bool resave          = patternSettings.bMeshesResave() || optLevel >= 2;
 
@@ -70,7 +70,7 @@ void MeshConvert::listHeadparts(const GeneralSettings &settings, FileTypes &file
 
     std::vector<std::string> headparts = filetypes.slMeshesHeadparts();
 
-    QDirIterator it(settings.sUserPath(), flags);
+    QDirIterator it(settings.sInputPath(), flags);
     for (const auto &plugin : Filesystem::listPlugins(it))
     {
         const auto &result = PluginsOperations::listHeadparts(plugin);

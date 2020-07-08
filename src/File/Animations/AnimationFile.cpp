@@ -62,10 +62,7 @@ int AnimationFile::loadFromDisk(const QString &filePath)
 
         hkSerializeUtil::FormatDetails formatDetails;
         hkSerializeUtil::detectFormat(reader, formatDetails);
-        havok->pkFormat = GetFormatFromLayout(formatDetails.m_layoutRules);
-
-        setName(filePath);
-        
+        havok->pkFormat = GetFormatFromLayout(formatDetails.m_layoutRules);      
 
         return 0;
     }
@@ -78,7 +75,7 @@ int AnimationFile::loadFromDisk(const QString &filePath)
 
 int AnimationFile::saveToDisk(const QString &filePath) const
 {
-    if (!isLoaded())
+    if (!saveHelper(filePath))
         return 5;
 
     try

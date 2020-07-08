@@ -71,7 +71,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="userPathTextEdit">
+     <widget class="QLineEdit" name="inputDirTextEdit">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -294,8 +294,16 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
+   <widget class="QMenu" name="menuOutput">
+    <property name="title">
+     <string>Output</string>
+    </property>
+    <addaction name="actionRedirect_output"/>
+    <addaction name="actionSet_output_path"/>
+   </widget>
    <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuOutput"/>
   </widget>
   <action name="actionEnableDarkTheme">
    <property name="checkable">
@@ -368,6 +376,19 @@
   <action name="actionSelect_GPU">
    <property name="text">
     <string>Select GPU</string>
+   </property>
+  </action>
+  <action name="actionRedirect_output">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable output redirection</string>
+   </property>
+  </action>
+  <action name="actionSet_output_path">
+   <property name="text">
+    <string>Set output path</string>
    </property>
   </action>
  </widget>

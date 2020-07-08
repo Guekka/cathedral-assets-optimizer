@@ -68,7 +68,7 @@ bool TextureAddAlpha::isApplicable(File &file)
     if (!file.patternSettings().bTexturesLandscapeAlpha())
         return false;
 
-    if (!isLandscape(file.getName()))
+    if (!isLandscape(file.getInputFilePath()))
         return false;
 
     if (!DirectX::HasAlpha(texFile->GetMetadata().format))
@@ -93,7 +93,7 @@ void TextureAddAlpha::listLandscapeTextures(const GeneralSettings &settings, Fil
 
     std::vector<std::string> landTextures = filetypes.slTextureLandscapes();
 
-    QDirIterator it(settings.sUserPath(), flags);
+    QDirIterator it(settings.sInputPath(), flags);
     for (const auto &plugin : Filesystem::listPlugins(it))
     {
         const auto &result = PluginsOperations::listLandscapeTextures(plugin);

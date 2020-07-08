@@ -12,7 +12,7 @@ namespace CAO {
 class ModFolder
 {
 public:
-    explicit ModFolder(const QString &dir, const QString &bsaExtension);
+    explicit ModFolder(const QString &inDir, const QString &bsaExtension, const QString &outDir);
     ModFolder(const ModFolder &) = delete;
     ModFolder(ModFolder &&)      = default;
 
@@ -31,8 +31,10 @@ public:
     size_t remainingBSACount() const;
     size_t remainingFileCount() const;
 
-    QString path() const;
     QString name() const;
+
+    QString inPath() const;
+    QString outPath() const;
 
 private:
     std::vector<std::unique_ptr<File>> bsas_;
@@ -40,7 +42,9 @@ private:
 
     bool BSAExhausted_ = false;
 
-    QString dir_;
+    QString inDir_;
+    QString outDir_;
+
     QString bsaExtension_;
 
     size_t processedBSACount_  = 0;

@@ -30,13 +30,13 @@ void MainOptimizer::process(File &file)
     }
     catch (const std::exception &e)
     {
-        PLOG_ERROR << "An exception was caught while processing '" << file.getName() << "'\n"
+        PLOG_ERROR << "An exception was caught while processing '" << file.getInputFilePath() << "'\n"
                    << "Error message was: '" << e.what() << "'\n"
                    << "You can probably assume this file is broken";
         return;
     }
 
-    PLOG_INFO << "Successfully optimized " << file.getName();
+    PLOG_INFO << "Successfully optimized " << file.getInputFilePath();
 }
 
 void MainOptimizer::extractBSA(File &file)
@@ -47,7 +47,7 @@ void MainOptimizer::extractBSA(File &file)
     if (!loadFile(file))
         return;
 
-    PLOG_INFO << "Extracting BSA: " + file.getName();
+    PLOG_INFO << "Extracting BSA: " + file.getInputFilePath();
     auto command = _commandBook.getCommand<BSAExtract>();
     if (!runCommand(command, file))
         return;
@@ -59,7 +59,7 @@ void MainOptimizer::packBsa(const QString &folder)
 {
     PLOG_INFO << "Creating BSA...";
     BSAFolder bsa;
-    bsa.setName(folder);
+    bsa.setInputFilePath(folder);
 
     if (!loadFile(bsa))
         return;
@@ -81,13 +81,13 @@ bool MainOptimizer::runCommand(CommandPtr command, File &file)
     if (result.processedFile)
     {
         PLOG_VERBOSE << QString("Successfully applied module '%1' while processing '%2'")
-                            .arg(command->name(), file.getName());
+                            .arg(command->name(), file.getInputFilePath());
         return true;
     }
     else if (result.errorCode)
     {
         PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
-                          .arg(command->name(), file.getName(), result.errorMessage);
+                          .arg(command->name(), file.getInputFilePath(), result.errorMessage);
         return false;
     }
     else
@@ -101,7 +101,7 @@ bool MainOptimizer::loadFile(File &file)
 {
     if (file.loadFromDisk())
     {
-        PLOG_ERROR << "Cannot load file from disk: " << file.getName();
+        PLOG_ERROR << "Cannot load file from disk: " << file.getInputFilePath();
         return false;
     }
     return true;
@@ -111,7 +111,7 @@ bool MainOptimizer::saveFile(File &file)
 {
     if (file.saveToDisk())
     {
-        PLOG_ERROR << "Cannot save file to disk: " << file.getName();
+        PLOG_ERROR << "Cannot save file to disk: " << file.getOutputFilePath();
         return false;
     }
     return true;

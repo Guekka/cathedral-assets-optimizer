@@ -15,11 +15,11 @@ CommandResult BSACreate::process(File &file)
     if (!bsaFolder)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsas = BSASplit::splitBSA(QDir{file.getName()}, currentProfile().getGeneralSettings());
+    auto bsas = BSASplit::splitBSA(QDir{file.getOutputFilePath()}, currentProfile().getGeneralSettings());
 
     for (auto &bsa : bsas)
     {
-        bsa.name(file.getName(), currentProfile().getGeneralSettings());
+        bsa.name(file.getOutputFilePath(), currentProfile().getGeneralSettings());
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
@@ -35,7 +35,7 @@ CommandResult BSACreate::process(File &file)
                                && bsa.type != BSAType::UncompressableBsa;
 
         archive.bsa.set_compressed(canBeCompressed);
-        const libbsarch::fs::path &rootPath = file.getName().toStdString();
+        const libbsarch::fs::path &rootPath = file.getOutputFilePath().toStdString();
         archive.bsa.set_dds_callback(&BSACallback, rootPath);
 
         try

@@ -28,7 +28,7 @@ std::unique_ptr<File> makeFile(const QString &path, const QString &bsaExtension)
         file = std::make_unique<AnimationFile>();
 
     if (file)
-        file->setName(path);
+        file->setInputFilePath(path);
 
     return file;
 }

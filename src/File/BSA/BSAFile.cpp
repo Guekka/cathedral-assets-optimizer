@@ -16,7 +16,7 @@ int BSAFile::loadFromDisk(const QString &filePath)
 
 int BSAFile::saveToDisk(const QString &filePath) const
 {
-    if (!isLoaded())
+    if (!saveHelper(filePath))
         return 2;
 
     auto bsaFile = static_cast<const BSAFileResource *>(&getFile());

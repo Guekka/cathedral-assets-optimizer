@@ -25,7 +25,7 @@ MainWindow::MainWindow()
     connect(ui_->newProfilePushButton, &QPushButton::pressed, this, &MainWindow::createProfile);
 
     connect(ui_->userPathButton, &QPushButton::pressed, this, [&generalSettings, this] {
-        const QString &currentPath = generalSettings.sUserPath.value_or(QDir::currentPath());
+        const QString &currentPath = generalSettings.sInputPath.value_or(QDir::currentPath());
 
         const QString &dir = QFileDialog::getExistingDirectory(this,
                                                                tr("Open Directory"),
@@ -34,7 +34,7 @@ MainWindow::MainWindow()
                                                                    | QFileDialog::DontResolveSymlinks);
 
         if (!dir.isEmpty())
-        generalSettings.sUserPath = dir;
+            generalSettings.sInputPath = dir;
     });
 
     connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
@@ -174,18 +174,45 @@ void MainWindow::connectAll()
                 setDarkTheme(commonSettings.bDarkMode());
             });
 
-    ui_->userPathTextEdit->setText(generalSettings.sUserPath());
+    ui_->inputDirTextEdit->setText(generalSettings.sInputPath());
 
-    connect(ui_->userPathTextEdit,
+    connect(ui_->inputDirTextEdit,
             &QLineEdit::textChanged,
-            &generalSettings.sUserPath,
-            &decltype(generalSettings.sUserPath)::setValue);
+            &generalSettings.sInputPath,
+            &decltype(generalSettings.sInputPath)::setValue);
 
-    connect(&generalSettings.sUserPath,
-            &decltype(generalSettings.sUserPath)::valueChanged,
-            ui_->userPathTextEdit,
-            [this, &generalSettings] { ui_->userPathTextEdit->setText(generalSettings.sUserPath()); });
+    connect(&generalSettings.sInputPath,
+            &decltype(generalSettings.sInputPath)::valueChanged,
+            ui_->inputDirTextEdit,
+            [this, &generalSettings] { ui_->inputDirTextEdit->setText(generalSettings.sInputPath()); });
 
+    ui_->actionRedirect_output->setChecked(generalSettings.bEnableOutputPath());
+
+    connect(ui_->actionRedirect_output,
+            &QAction::triggered,
+            &generalSettings.bEnableOutputPath,
+            &decltype(generalSettings.bEnableOutputPath)::setValue);
+
+    connect(&generalSettings.bEnableOutputPath,
+            &decltype(generalSettings.bEnableOutputPath)::valueChanged,
+            this,
+            [this, &generalSettings] {
+                ui_->actionRedirect_output->setChecked(generalSettings.bEnableOutputPath());
+            });
+
+    connect(ui_->actionSet_output_path, &QAction::triggered, this, [&generalSettings, this] {
+        const QString &inPath      = generalSettings.sInputPath.value_or(QDir::currentPath());
+        const QString &currentPath = generalSettings.sOutputPath.value_or(inPath);
+
+        const QString &dir = QFileDialog::getExistingDirectory(this,
+                                                               tr("Open Directory"),
+                                                               currentPath,
+                                                               QFileDialog::ShowDirsOnly
+                                                                   | QFileDialog::DontResolveSymlinks);
+
+        if (!dir.isEmpty())
+            generalSettings.sOutputPath = dir;
+    });
     ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials.value_or(true));
 
     connect(ui_->actionShow_tutorials,
@@ -402,6 +429,6 @@ void MainWindow::dropEvent(QDropEvent *e)
     const QString &fileName = e->mimeData()->urls().at(0).toLocalFile();
     QDir dir;
     if (dir.exists(fileName))
-        ui_->userPathTextEdit->setText(QDir::cleanPath(fileName));
+        ui_->inputDirTextEdit->setText(QDir::cleanPath(fileName));
 }
 } // namespace CAO

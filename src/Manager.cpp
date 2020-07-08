@@ -34,15 +34,20 @@ Manager::Manager()
 
 void Manager::listDirectories()
 {
-    const auto &settings = currentProfile().getGeneralSettings();
     mods_.clear();
+
+    const auto &settings      = currentProfile().getGeneralSettings();
+    const QString &dateTime   = QDateTime::currentDateTime().toString("yy.MM.dd_hh.mm");
+    const QString &outDirRoot = settings.sOutputPath() + '/' + dateTime;
+
     if (settings.eMode() == SingleMod)
     {
-        mods_.emplace_back(ModFolder{settings.sUserPath(), settings.sBSAExtension()});
+        const QString &outDir = outDirRoot + '/' + QDir(settings.sInputPath()).dirName();
+        mods_.emplace_back(ModFolder{settings.sInputPath(), settings.sBSAExtension(), outDir});
     }
     else
     {
-        const QDir dir(settings.sUserPath());
+        const QDir dir(settings.sInputPath());
 
         auto notBlacklist = [](const QString &dirName) {
             auto &ft = currentProfile().getFileTypes();
@@ -50,7 +55,10 @@ void Manager::listDirectories()
         };
 
         mods_ = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) | rx::filter(notBlacklist)
-                | rx::transform([&settings](auto &&path) { return ModFolder(path, settings.sBSAExtension()); })
+                | rx::transform([&settings, &dir, &outDirRoot](auto &&path) {
+                      const QString &outDir = outDirRoot + '/' + QDir(path).dirName();
+                      return ModFolder(dir.absoluteFilePath(path), settings.sBSAExtension(), outDir);
+                  })
                 | rx::to_vector();
     }
 }
@@ -75,7 +83,7 @@ void Manager::emitProgress(const QString &modName, OptimizationPhase phase, int 
 void Manager::runOptimization()
 {
     PLOG_DEBUG << "Profile directory: " << currentProfile().profileDirectory().path();
-    PLOG_INFO << "Processing: " + currentProfile().getGeneralSettings().sUserPath();
+    PLOG_INFO << "Processing: " + currentProfile().getGeneralSettings().sInputPath();
     PLOG_INFO << "Beginning...";
 
     getProfiles().beginRun();
@@ -106,10 +114,10 @@ void Manager::runOptimization()
 
         //Packing BSAs
         emitProgress(mod.name(), BSAPacking, i);
-        optimizer.packBsa(mod.path());
+        optimizer.packBsa(mod.outPath());
     }
 
-    Filesystem::deleteEmptyDirectories(currentProfile().getGeneralSettings().sUserPath(),
+    Filesystem::deleteEmptyDirectories(currentProfile().getGeneralSettings().sOutputPath(),
                                        currentProfile().getFileTypes());
 
     PLOG_INFO << "Process completed\n\n\n";

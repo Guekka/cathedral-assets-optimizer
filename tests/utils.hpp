@@ -40,7 +40,7 @@ static std::unique_ptr<CAO::TextureFile> getStandardTextureFile(
     textureResource->Initialize2D(format, 16, 16, 1, 1);
     textureResource->origFormat = format;
     file->setFile(std::unique_ptr<CAO::Resource>(std::move(textureResource)), optimizedFile);
-    file->setName("TextureTest");
+    file->setInputFilePath("TextureTest");
 
     //Checking that the file is valid
     auto res = dynamic_cast<const CAO::TextureResource *>(&file->getFile());

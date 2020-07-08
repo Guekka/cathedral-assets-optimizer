@@ -17,9 +17,12 @@ int BSAFolder::loadFromDisk(const QString &filePath)
 
 int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath) const
 {
+    if (!saveHelper(filePath))
+        return 1;
+
     auto dir = dynamic_cast<const BSAFolderResource *>(&getFile());
     if (!dir)
-        return 1;
+        return 2;
 
     try
     {
@@ -29,13 +32,13 @@ int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath) const
     catch (const std::exception &e)
     {
         PLOG_ERROR << e.what();
-        return 2;
+        return 3;
     }
 
     for (const auto &bsa : dir->bsas)
         for (const auto &filePath : bsa.saver.get_file_list())
             if (!QFile::remove(QString::fromStdString(filePath.path_on_disk.string())))
-                return 3;
+                return 4;
 
     return 0;
 }

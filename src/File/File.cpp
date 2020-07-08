@@ -8,28 +8,41 @@
 
 namespace CAO {
 
-const QString &File::getName() const
+void File::setInputFilePath(const QString &filePath)
 {
-    return _filename;
-}
-
-void File::setName(const QString &name)
-{
-    if (name == _filename)
+    if (inputFilePath_ == filePath)
         return;
 
-    _filename = QDir::cleanPath(name);
+    inputFilePath_ = filePath;
     matchSettings();
+}
+
+const QString &File::getInputFilePath() const
+{
+    return inputFilePath_;
+}
+
+void File::setOutputFilePath(const QString &dirPath)
+{
+    outputFilePath_ = dirPath;
+}
+
+const QString &File::getOutputFilePath() const
+{
+    if (outputFilePath_.isEmpty())
+        return inputFilePath_;
+
+    return outputFilePath_;
 }
 
 int File::loadFromDisk()
 {
-    return loadFromDisk(_filename);
+    return loadFromDisk(getInputFilePath());
 }
 
 int File::saveToDisk() const
 {
-    return saveToDisk(_filename);
+    return saveToDisk(getOutputFilePath());
 }
 
 int File::saveToMemory(const void *pSource, const size_t &size, const QString &fileName) const
@@ -46,23 +59,23 @@ int File::loadFromMemory(const void *pSource, const size_t &size, const QString 
 
 bool File::optimizedCurrentFile() const
 {
-    return _optimizedCurrentFile;
+    return optimizedCurrentFile_;
 }
 
 void File::setOptimizedCurrentFile(const bool optimizedFile)
 {
-    _optimizedCurrentFile |= optimizedFile;
+    optimizedCurrentFile_ |= optimizedFile;
 }
 
 const Resource &File::getFile() const
 {
-    return *_file;
+    return *file_;
 }
 
 Resource &File::getFile(const bool modifiedFile)
 {
     setOptimizedCurrentFile(modifiedFile);
-    return *_file;
+    return *file_;
 }
 
 void File::reset()
@@ -77,7 +90,7 @@ const PatternSettings &CAO::File::patternSettings() const
 
 void File::matchSettings()
 {
-    patternSettings_ = currentProfile().getSettings(_filename);
+    patternSettings_ = currentProfile().getSettings(getInputFilePath());
 }
 
 } // namespace CAO

@@ -13,7 +13,7 @@ CommandResult BSAExtract::process(File& file)
     if (!bsafile)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsaPath = file.getName();
+    auto bsaPath = file.getInputFilePath();
     if (!currentProfile().getGeneralSettings().bBSADeleteBackup())
         bsaPath = Filesystem::backupFile(bsaPath);
 
@@ -32,7 +32,7 @@ CommandResult BSAExtract::process(File& file)
     }
     bsafile->bsa.close();
 
-    if (!QFile::remove(file.getName())) //We want to remove the original file, not the backup file
+    if (!QFile::remove(file.getInputFilePath())) //We want to remove the original file, not the backup file
         return _resultFactory.getFailedResult(2, "BSA Extract succeeded but failed to delete the extracted BSA");
 
     return _resultFactory.getSuccessfulResult();
@@ -44,10 +44,10 @@ bool BSAExtract::isApplicable(File& file)
     if (!bsafile)
         return false;
 
-    if (QFileInfo(file.getName()).size() > maxBSASize)
+    if (QFileInfo(file.getInputFilePath()).size() > maxBSASize)
     {
         PLOG_ERROR << QString("BSA '%1' is over 4GB. It cannot be extracted and may be corrupted.")
-                          .arg(file.getName());
+                          .arg(file.getInputFilePath());
         return false;
     }
 

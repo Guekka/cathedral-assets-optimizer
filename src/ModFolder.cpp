@@ -7,8 +7,9 @@
 #include "File/FileFactory.hpp"
 
 namespace CAO {
-ModFolder::ModFolder(const QString &dir, const QString &bsaExtension)
-    : dir_(dir)
+ModFolder::ModFolder(const QString &inDir, const QString &bsaExtension, const QString &outDir)
+    : inDir_(inDir)
+    , outDir_(outDir)
     , bsaExtension_(bsaExtension)
 {
 }
@@ -64,14 +65,19 @@ size_t ModFolder::remainingFileCount() const
     return files_.size();
 }
 
-QString ModFolder::path() const
-{
-    return dir_;
-}
-
 QString ModFolder::name() const
 {
-    return QDir(dir_).dirName();
+    return QDir(inDir_).dirName();
+}
+
+QString ModFolder::inPath() const
+{
+    return inDir_;
+}
+
+QString ModFolder::outPath() const
+{
+    return outDir_;
 }
 
 void ModFolder::load()
@@ -83,19 +89,24 @@ void ModFolder::load()
         return fileName.endsWith(bsaExtension_, Qt::CaseInsensitive);
     };
 
-    QDirIterator it(dir_, QDirIterator::Subdirectories);
+    QDirIterator it(inDir_, QDirIterator::Subdirectories);
     while (it.hasNext())
     {
         it.next();
 
         if (isBSA(it.fileName()) && BSAExhausted_)
-            continue; //BSAs were already processed. New ones cannot have appeared. Only the old ones could be listed
+            continue; //BSAs were already processed. New ones cannot have appeared
 
-        auto &vec = isBSA(it.fileName()) ? bsas_ : files_;
         auto file = makeFile(it.filePath(), bsaExtension_);
 
         if (file)
+        {
+            const auto &inputPath = file->getInputFilePath();
+            file->setOutputFilePath(QString{inputPath}.replace(inPath(), outPath()));
+
+            auto &vec = isBSA(it.fileName()) ? bsas_ : files_;
             vec.emplace_back(std::move(file));
+        }
     }
     BSAExhausted_ = bsas_.empty();
 }

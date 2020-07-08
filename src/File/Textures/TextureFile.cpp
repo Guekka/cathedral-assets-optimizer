@@ -61,7 +61,7 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
 
 int TextureFile::saveToDisk(const QString &filePath) const
 {
-    if (!isLoaded())
+    if (!saveHelper(filePath))
         return 2;
 
     auto image     = static_cast<const TextureResource *>(&getFile());
@@ -85,7 +85,7 @@ int TextureFile::saveToDisk(const QString &filePath) const
 
     const HRESULT hr = SaveToDDSFile(img, nimg, _info, DirectX::DDS_FLAGS_NONE, wFilePath);
     if (SUCCEEDED(hr) && isTGA)
-        QFile(getName()).remove();
+        QFile(getInputFilePath()).remove();
     return FAILED(hr);
 }
 

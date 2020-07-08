@@ -16,6 +16,9 @@ int MeshFile::loadFromDisk(const QString &filePath)
 
 int MeshFile::saveToDisk(const QString &filePath) const
 {
+    if (!saveHelper(filePath))
+        return -1;
+
     auto meshFile = static_cast<MeshResource *>(const_cast<Resource *>((&getFile())));
     //Same reasoning for const_cast here than for BSAFile
     return meshFile->Save(filePath.toStdString());

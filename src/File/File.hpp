@@ -17,8 +17,11 @@ class File
 public:
     virtual ~File() = default;
 
-    const QString &getName() const;
-    void setName(const QString &name);
+    void setInputFilePath(const QString &filePath);
+    const QString &getInputFilePath() const;
+
+    void setOutputFilePath(const QString &dirPath);
+    const QString &getOutputFilePath() const;
 
     virtual int loadFromDisk();
     virtual int loadFromDisk(const QString &filePath) = 0;
@@ -34,8 +37,8 @@ public:
 
     const Resource &getFile() const;
     Resource &getFile(const bool modifiedFile);
-
     virtual bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = true) = 0;
+
     virtual void reset();
 
     bool isLoaded() const { return isLoaded_; }
@@ -52,37 +55,54 @@ protected:
         if (!convertedFile)
             return false;
 
-        _file = std::move(file);
-        _optimizedCurrentFile |= optimizedFile;
+        file_ = std::move(file);
+        optimizedCurrentFile_ |= optimizedFile;
         isLoaded_ = true;
         return true;
     }
 
     void resetHelper()
     {
-        isLoaded_ = false;
-        _filename.clear();
-        _optimizedCurrentFile = false;
-        _file.release();
+        isLoaded_             = false;
+        optimizedCurrentFile_ = false;
+
+        inputFilePath_.clear();
+        outputFilePath_.clear();
+
+        file_.release();
     }
 
     template<class T>
     void loadHelper(const QString &filename)
     {
-        isLoaded_ = true;
-        setName(filename);
-        _file.reset(new T);
+        isLoaded_             = true;
+        optimizedCurrentFile_ = false;
+
+        setInputFilePath(filename);
+
+        file_.reset(new T);
+    }
+
+    bool saveHelper(const QString &filename) const
+    {
+        if (!isLoaded())
+            return false;
+
+        auto dir = QFileInfo(filename).dir();
+        return dir.mkpath(dir.path());
     }
 
 private:
-    QString _filename;
-    bool isLoaded_ = false;
+    void matchSettings();
 
-    std::unique_ptr<Resource> _file;
-    bool _optimizedCurrentFile = false;
+    std::unique_ptr<Resource> file_;
+
+    QString inputFilePath_;
+    QString outputFilePath_;
+
+    bool isLoaded_             = false;
+    bool optimizedCurrentFile_ = false;
 
     PatternSettings patternSettings_;
-
-    void matchSettings();
 };
 } // namespace CAO

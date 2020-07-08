@@ -12,7 +12,7 @@
 
 namespace CAO {
 class GeneralSettings final : public Settings
-{  
+{
 public:
     GeneralSettings() = default;
     GeneralSettings(nlohmann::json j);
@@ -53,7 +53,10 @@ public:
 
     REGISTER_SETTING(bool, bDryRun, "/General/bDryRun")
     REGISTER_SETTING(OptimizationMode, eMode, "/General/eMode")
-    REGISTER_SETTING(QString, sUserPath, "/General/sUserPath")
+
+    REGISTER_SETTING(bool, bEnableOutputPath, "/General/bEnableOutputPath")
+    REGISTER_SETTING(QString, sInputPath, "/General/sInputPath")
+    REGISTER_SETTING(QString, sOutputPath, "/General/sOutputPath")
 
     REGISTER_SETTING(bool, bBSACompact, "/BSA/bBSACompact")
     REGISTER_SETTING(bool, bBSADeleteBackup, "/BSA/bBSADeleteBackup")
