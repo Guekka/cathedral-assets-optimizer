@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "LevelSelector.hpp"
+#include "GUI/MediumModeWindow.hpp"
 #include "GUI/QuickAutoPortWindow.hpp"
 #include "Settings/Profiles.hpp"
 
@@ -37,13 +38,14 @@ void LevelSelector::setupWindow(std::unique_ptr<MainWindow> &mw, GuiMode level)
         {
             getProfiles() = Profiles(QDir(Profiles::QuickAutoPortProfilesDir));
             mw            = std::make_unique<MainWindow>();
-            mw->addModule<QuickAutoPortWindow>("Quick Auto Port");
             mw->refreshProfiles();
             break;
         }
         case GuiMode::Medium:
         {
-            throw std::runtime_error("This level has not yet been implemented.");
+            mw = std::make_unique<MainWindow>();
+            mw->addModule<MediumModeWindow>("Intermediate mode");
+            break;
         }
         case GuiMode::Advanced:
         {
@@ -67,7 +69,7 @@ QString LevelSelector::getHelpText(GuiMode level)
         }
         case GuiMode::Medium:
         {
-            return tr("Medium mode\n"
+            return tr("Intermediate mode\n"
                       "NOT IMPLEMENTED");
         }
         case GuiMode::Advanced:

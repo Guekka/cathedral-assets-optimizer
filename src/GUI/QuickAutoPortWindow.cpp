@@ -21,26 +21,6 @@ void QuickAutoPortWindow::connectAll(PatternSettings &pSets, GeneralSettings &gS
 {
     gSets.bBSAExtractFromBSA = true;
 
-    ui_->extractBSAsCheckbox->setChecked(!gSets.bBSACreate());
-    ui_->createBSAsCheckbox->setChecked(gSets.bBSACreate());
-
-    connect(ui_->createBSAsCheckbox, &QCheckBox::toggled, this, [this, &gSets](bool checked) {
-        if (!checked)
-            return;
-
-        gSets.bBSACreate = true;
-        ui_->extractBSAsCheckbox->setChecked(false);
-        ui_->createBSAsCheckbox->setChecked(true);
-    });
-    connect(ui_->extractBSAsCheckbox, &QCheckBox::toggled, this, [this, &gSets](bool checked) {
-        if (!checked)
-            return;
-
-        gSets.bBSACreate = false;
-        ui_->extractBSAsCheckbox->setChecked(true);
-        ui_->createBSAsCheckbox->setChecked(false);
-    });
-
     gSets.bBSACreateDummies   = true;
     gSets.bBSACompressArchive = true;
 

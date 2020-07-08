@@ -125,6 +125,10 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/QuickAutoPortWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/QuickAutoPortWindow.ui
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MediumModeWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MediumModeWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MediumModeWindow.ui
+
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
