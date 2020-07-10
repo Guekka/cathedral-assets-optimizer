@@ -16,11 +16,11 @@ void init()
     QCoreApplication::setApplicationVersion(CAO_VERSION);
 
     QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(), "translations");
+    qtTranslator.load(QLocale(), "qt", "_", "translations");
     QCoreApplication::installTranslator(&qtTranslator);
 
     QTranslator AssetsOptTranslator;
-    AssetsOptTranslator.load("AssetsOpt_" + QLocale::system().name(), "translations");
+    AssetsOptTranslator.load(QLocale(), "AssetsOpt", "_", "translations");
     QCoreApplication::installTranslator(&AssetsOptTranslator);
 }
 
