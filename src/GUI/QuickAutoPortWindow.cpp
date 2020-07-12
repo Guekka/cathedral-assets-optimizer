@@ -17,28 +17,6 @@ QuickAutoPortWindow::QuickAutoPortWindow(QWidget *parent)
     ui_->setupUi(this);
 }
 
-void QuickAutoPortWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
-{
-    gSets.bBSAExtractFromBSA = true;
-
-    gSets.bBSACreateDummies   = true;
-    gSets.bBSACompressArchive = true;
-
-    gSets.bBSACompact      = true;
-    gSets.bBSADeleteBackup = false;
-
-    pSets.bTexturesNecessary = true;
-    pSets.bTexturesCompress  = false;
-    pSets.bTexturesMipmaps   = false;
-    pSets.bTexturesLandscapeAlpha = true;
-
-    pSets.eTexturesResizingMode = None;
-
-    pSets.eTexturesFormat = pSets.eTexturesFormat.value_or(DXGI_FORMAT_BC7_UNORM);
-
-    pSets.bTexturesForceConvert = false;
-
-    pSets.iMeshesOptimizationLevel = 1;
-}
+void QuickAutoPortWindow::connectAll(PatternSettings &, GeneralSettings &) {}
 
 } // namespace CAO
