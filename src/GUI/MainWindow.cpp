@@ -177,7 +177,7 @@ void MainWindow::connectAll()
     ui_->dryRunCheckBox->setChecked(generalSettings.bDryRun());
 
     connect(ui_->dryRunCheckBox,
-            &::QCheckBox::pressed,
+            &QCheckBox::toggled,
             &generalSettings.bDryRun,
             [&generalSettings](bool state) { generalSettings.bDryRun = state; });
 
