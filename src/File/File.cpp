@@ -37,11 +37,14 @@ const QString &File::getOutputFilePath() const
 
 int File::loadFromDisk()
 {
+    if (isLoaded())
+        return 0;
+
     return loadFromDisk(getInputFilePath());
 }
 
 int File::saveToDisk() const
-{
+{   
     return saveToDisk(getOutputFilePath());
 }
 
