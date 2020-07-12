@@ -71,11 +71,8 @@ std::optional<QString> PatternSettings::isValid() const
     if (!isPow2(iTexturesMinimumWidth()) || !isPow2(iTexturesMinimumHeight()))
         return ("Textures resizing minimum size has to be a power of two");
 
-    if (iTexturesResizingBySizeWidth() % 2 != 0 || iTexturesResizingBySizeHeight() % 2 != 0)
-        return ("Textures resizing target size has to be a power of two");
-
-    if (iTexturesResizingByRatioWidth() % 2 != 0 || iTexturesResizingByRatioHeight() % 2 != 0)
-        return ("Textures resizing ratio has to be a power of two");
+    if (iTexturesResizingWidth() % 2 != 0 || iTexturesResizingWidth() % 2 != 0)
+        return ("Textures resizing target has to be a power of two");
 
     if (iMeshesOptimizationLevel() < 0 || iMeshesOptimizationLevel() > 3)
         return ("This meshes optimization level does not exist. Level: "

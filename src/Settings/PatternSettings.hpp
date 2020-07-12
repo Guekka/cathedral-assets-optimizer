@@ -52,11 +52,8 @@ public:
 
     REGISTER_SETTING(TextureResizingMode, eTexturesResizingMode, "/Textures/Resizing/Mode")
 
-    REGISTER_SETTING(int, iTexturesResizingBySizeHeight, "/Textures/Resizing/BySize/Height")
-    REGISTER_SETTING(int, iTexturesResizingBySizeWidth, "/Textures/Resizing/BySize/Width")
-
-    REGISTER_SETTING(int, iTexturesResizingByRatioWidth, "/Textures/Resizing/ByRatio/Width")
-    REGISTER_SETTING(int, iTexturesResizingByRatioHeight, "/Textures/Resizing/ByRatio/Height")
+    REGISTER_SETTING(int, iTexturesResizingHeight, "/Textures/Resizing/Height")
+    REGISTER_SETTING(int, iTexturesResizingWidth, "/Textures/Resizing/Width")
 
     REGISTER_SETTING(DXGI_FORMAT, eTexturesFormat, "/Advanced/Textures/eTexturesFormat")
     REGISTER_SETTING(bool, bTexturesForceConvert, "/Advanced/Textures/bTexturesForceConvert")

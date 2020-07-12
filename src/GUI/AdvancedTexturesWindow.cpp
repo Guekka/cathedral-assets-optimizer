@@ -36,25 +36,12 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSet
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             this,
             [this, &patternSets](int index) {
-                ui_->resizingWidth->disconnect();
-                ui_->resizingHeight->disconnect();
                 patternSets.eTexturesResizingMode = ui_->resizingMode->itemData(index)
                                                         .value<TextureResizingMode>();
-
-                if (patternSets.eTexturesResizingMode() == TextureResizingMode::ByRatio)
-                {
-                    connectWrapper(*ui_->resizingWidth, patternSets.iTexturesResizingByRatioWidth);
-                    connectWrapper(*ui_->resizingHeight, patternSets.iTexturesResizingByRatioHeight);
-                }
-                else if (patternSets.eTexturesResizingMode() == TextureResizingMode::BySize)
-                {
-                    patternSets.eTexturesResizingMode = TextureResizingMode::BySize;
-                    connectWrapper(*ui_->resizingWidth, patternSets.iTexturesResizingBySizeWidth);
-                    connectWrapper(*ui_->resizingHeight, patternSets.iTexturesResizingBySizeHeight);
-                }
-                else
-                    throw UiException("Resizing mode not known");
             });
+
+    connectWrapper(*ui_->resizingWidth, patternSets.iTexturesResizingWidth);
+    connectWrapper(*ui_->resizingHeight, patternSets.iTexturesResizingHeight);
 
     connectWrapper(*ui_->resizingMinimumCheckBox, patternSets.bTexturesResizeMinimum);
     connectWrapper(*ui_->resizingMinimumWidth, patternSets.iTexturesMinimumWidth);

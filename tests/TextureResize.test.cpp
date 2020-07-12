@@ -16,8 +16,8 @@ TEST_CASE_FIXTURE(TextureResize, "Target resizing in ratio way yields good resul
 
     PatternSettings sets;
     sets.eTexturesResizingMode          = ByRatio;
-    sets.iTexturesResizingByRatioWidth  = 8;
-    sets.iTexturesResizingByRatioHeight = 8;
+    sets.iTexturesResizingWidth         = 8;
+    sets.iTexturesResizingHeight        = 8;
 
     auto tinfo = calculateTargetDimensions(info, sets);
 
@@ -33,8 +33,8 @@ TEST_CASE_FIXTURE(TextureResize, "Target resizing in fixed size way yields good 
 
     PatternSettings sets;
     sets.eTexturesResizingMode         = BySize;
-    sets.iTexturesResizingBySizeWidth  = 128;
-    sets.iTexturesResizingBySizeHeight = 128;
+    sets.iTexturesResizingWidth        = 128;
+    sets.iTexturesResizingHeight       = 128;
 
     auto tinfo = calculateTargetDimensions(info, sets);
 

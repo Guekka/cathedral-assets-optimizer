@@ -57,8 +57,8 @@ DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::Tex
     {
         uint wMultiplier = 1;
         uint hMultiplier = 1;
-        while (wMultiplier < settings.iTexturesResizingByRatioWidth()
-               && hMultiplier < settings.iTexturesResizingByRatioHeight()
+        while (wMultiplier < settings.iTexturesResizingWidth()
+               && hMultiplier < settings.iTexturesResizingHeight()
                && tinfo.width > settings.iTexturesMinimumWidth()
                && tinfo.height > settings.iTexturesMinimumHeight())
         {
@@ -70,8 +70,8 @@ DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::Tex
     }
     else if (settings.eTexturesResizingMode() == BySize)
     {
-        while (tinfo.width > settings.iTexturesResizingBySizeWidth()
-               && tinfo.height > settings.iTexturesResizingBySizeHeight())
+        while (tinfo.width > settings.iTexturesResizingWidth()
+               && tinfo.height > settings.iTexturesResizingHeight())
         {
             tinfo.width /= 2;
             tinfo.height /= 2;
