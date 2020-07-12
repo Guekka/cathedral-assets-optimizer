@@ -174,6 +174,18 @@ void MainWindow::connectAll()
                 setDarkTheme(commonSettings.bDarkMode());
             });
 
+    ui_->dryRunCheckBox->setChecked(generalSettings.bDryRun());
+
+    connect(ui_->dryRunCheckBox,
+            &::QCheckBox::pressed,
+            &generalSettings.bDryRun,
+            [&generalSettings](bool state) { generalSettings.bDryRun = state; });
+
+    connect(&generalSettings.bDryRun,
+            &decltype(generalSettings.bDryRun)::valueChanged,
+            this,
+            [this, &generalSettings] { ui_->dryRunCheckBox->setChecked(generalSettings.bDryRun()); });
+
     ui_->inputDirTextEdit->setText(generalSettings.sInputPath());
 
     connect(ui_->inputDirTextEdit,

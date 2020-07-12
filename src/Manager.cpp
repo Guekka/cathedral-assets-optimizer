@@ -108,7 +108,7 @@ void Manager::runOptimization()
             {
                 if (!progressEmitted)
                     emitProgress(mod.name(), FileOptimization, i);
-                optimizer.process(*file);
+                optimizer.process(*file, currentProfile().getGeneralSettings().bDryRun());
             }
         }
 

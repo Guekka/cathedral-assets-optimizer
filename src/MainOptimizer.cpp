@@ -10,24 +10,14 @@
 namespace CAO {
 MainOptimizer::MainOptimizer() {}
 
-void MainOptimizer::process(File &file)
+void MainOptimizer::process(File &file, bool dryRun)
 {
-    auto type = file.type();
     try
     {
         if (!loadFile(file))
             return;
 
-        PLOG_INFO << "Processing: " << file.getInputFilePath() << '\n';
-        for (auto command : _commandBook.getCommandList(type))
-            if (!runCommand(command, file))
-                return;
-
-        if (!file.optimizedCurrentFile())
-            return;
-
-        if (!saveFile(file))
-            return;
+        dryRun ? processDry(file) : processReal(file);
     }
     catch (const std::exception &e)
     {
@@ -38,6 +28,28 @@ void MainOptimizer::process(File &file)
     }
 
     PLOG_INFO << "Successfully optimized " << file.getInputFilePath();
+}
+
+void MainOptimizer::processReal(File &file)
+{
+    PLOG_VERBOSE << "Processing: " << file.getInputFilePath() << '\n';
+    for (auto command : _commandBook.getCommandList(file.type()))
+        if (!runCommand(command, file))
+            return;
+
+    if (!file.optimizedCurrentFile())
+        return;
+
+    if (!saveFile(file))
+        return;
+}
+
+void MainOptimizer::processDry(File &file)
+{
+    PLOG_INFO << "Processing: " << file.getInputFilePath() << '\n';
+    for (auto command : _commandBook.getCommandList(file.type()))
+        if (!dryRunCommand(command, file))
+            return;
 }
 
 void MainOptimizer::extractBSA(File &file)
@@ -82,6 +94,26 @@ bool MainOptimizer::runCommand(CommandPtr command, File &file)
     if (result.processedFile)
     {
         PLOG_VERBOSE << QString("%1: %2").arg(command->name(), "applied");
+        return true;
+    }
+    else if (result.errorCode)
+    {
+        PLOG_VERBOSE << QString("%1: %2 '%3'").arg(command->name(), "error", result.errorMessage);
+        return false;
+    }
+    else
+    {
+        PLOG_VERBOSE << QString("%1: %2").arg(command->name(), "unnecessary");
+        return true;
+    }
+}
+
+bool MainOptimizer::dryRunCommand(CommandPtr command, File &file)
+{
+    const auto &result = command->processIfApplicable(file);
+    if (result.processedFile)
+    {
+        PLOG_INFO << QString("%1: %2").arg(command->name(), "would be applied");
         return true;
     }
     else if (result.errorCode)

@@ -21,12 +21,16 @@ class MainOptimizer final : public QObject
 public:
     explicit MainOptimizer();
 
-    void process(File &file);
+    void process(File &file, bool dryRun = false);
     void packBsa(const QString &folder);
     void extractBSA(File &file);
 
 private:
     bool runCommand(CommandPtr command, File &file);
+    bool dryRunCommand(CommandPtr command, File &file);
+
+    void processReal(File &file);
+    void processDry(File &file);
 
     bool loadFile(File &file);
     bool saveFile(File &file);
