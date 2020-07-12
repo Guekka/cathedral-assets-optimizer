@@ -16,13 +16,23 @@ int BSAFile::loadFromDisk(const QString &filePath)
 
 int BSAFile::saveToDisk(const QString &filePath) const
 {
-    if (!saveHelper(filePath))
+    if (!saveToDiskHelper(filePath))
         return 2;
 
     auto bsaFile = static_cast<const BSAFileResource *>(&getFile());
 
     bsaFile->saver.save(filePath.toStdString(), bsaFile->saver.get_save_type());
     return 0;
+}
+
+int BSAFile::loadFromMemory(const void *pSource, size_t size, const QString &fileName)
+{
+    return 1;
+}
+
+int BSAFile::saveToMemory(std::iostream &ostr) const
+{
+    return 1;
 }
 
 bool BSAFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)

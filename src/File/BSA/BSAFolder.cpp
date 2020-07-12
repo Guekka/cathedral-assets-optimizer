@@ -15,9 +15,19 @@ int BSAFolder::loadFromDisk(const QString &filePath)
     return 0;
 }
 
+int BSAFolder::loadFromMemory(const void *pSource, size_t size, const QString &fileName)
+{
+    return 1;
+}
+
+int BSAFolder::saveToMemory(std::iostream &ostr) const
+{
+    return 1;
+}
+
 int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath) const
 {
-    if (!saveHelper(filePath))
+    if (!saveToDiskHelper(filePath))
         return 1;
 
     auto dir = dynamic_cast<const BSAFolderResource *>(&getFile());

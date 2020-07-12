@@ -29,8 +29,8 @@ public:
     virtual int saveToDisk() const;
     virtual int saveToDisk(const QString &filePath) const = 0;
 
-    virtual int loadFromMemory(const void *pSource, const size_t &size, const QString &fileName);
-    virtual int saveToMemory(const void *pSource, const size_t &size, const QString &fileName) const;
+    virtual int loadFromMemory(const void *pSource, size_t size, const QString &fileName) = 0;
+    virtual int saveToMemory(std::iostream &ostr) const                                   = 0;
 
     bool optimizedCurrentFile() const;
     void setOptimizedCurrentFile(const bool optimizedFile);
@@ -83,7 +83,7 @@ protected:
         file_.reset(new T);
     }
 
-    bool saveHelper(const QString &filename) const
+    [[nodiscard]] bool saveToDiskHelper(const QString &filename) const
     {
         if (!isLoaded())
             return false;
@@ -91,6 +91,8 @@ protected:
         auto dir = QFileInfo(filename).dir();
         return dir.mkpath(dir.path());
     }
+
+    [[nodiscard]] bool saveToMemoryHelper() const { return isLoaded(); }
 
 private:
     void matchSettings();

@@ -13,6 +13,11 @@ public:
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) const override;
 
+    //Required or BSAFile will be an abstract class
+    //This makes me think more and more that BSAFile is not a File and should not derive from it
+    int loadFromMemory(const void *pSource, size_t size, const QString &fileName) override;
+    int saveToMemory(std::iostream &ostr) const override;
+
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = false) override;
 
     CommandType type() override { return CommandType::BSAFile; }

@@ -31,9 +31,6 @@ AnimationFile::AnimationFile()
     }
 }
 
-AnimationFile::~AnimationFile()
-{
-}
 
 bool AnimationFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
@@ -43,11 +40,66 @@ bool AnimationFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 int AnimationFile::loadFromDisk(const QString &filePath)
 {
     loadHelper<AnimationResource>(filePath);
+
+    hkIstream istream(qPrintable(filePath));
+    return commonLoadHelper(istream);
+}
+
+int AnimationFile::saveToDisk(const QString &filePath) const
+{
+    if (!saveToDiskHelper(filePath))
+        return 5;
+
+    //Outputting to a temporarary file
+    QString outPath = filePath;
+    if (QFile::exists(outPath))
+        outPath = outPath.chopped(3) + "out.hkx";
+
+    hkOstream ostream(qPrintable(outPath));
+    commonSaveHelper(ostream);
+
+    if (outPath != filePath && QFile::exists(outPath))
+    {
+        QFile::remove(filePath);
+        if (!QFile::rename(outPath, filePath))
+            return 3;
+    }
+
+    return 0;
+}
+
+int AnimationFile::loadFromMemory(const void *pSource, size_t size, const QString &fileName)
+{
+    loadHelper<AnimationResource>(fileName);
+
+    hkIstream istream(pSource, size);
+    return commonLoadHelper(istream);
+}
+
+int AnimationFile::saveToMemory(std::iostream &ostr) const
+{
+    if (!saveToMemoryHelper())
+        return 1;
+
+    return 1;
+    /*
+    std::vector<char> buffer;
+    buffer.resize(1024 * 1024 * 1024); //1mb
+    hkOstream ostream(buffer.data(), buffer.size());
+
+    if (auto res = commonSaveHelper(ostream); res)
+        return res;
+
+    ostr.write(buffer.data(), buffer.size());
+    return 0;*/
+}
+
+int AnimationFile::commonLoadHelper(hkIstream &istream)
+{
     try
     {
         auto havok = static_cast<AnimationResource *>(&getFile(false));
 
-        hkIstream istream(qPrintable(filePath));
         if (!istream.isOk())
             return 1;
 
@@ -62,7 +114,7 @@ int AnimationFile::loadFromDisk(const QString &filePath)
 
         hkSerializeUtil::FormatDetails formatDetails;
         hkSerializeUtil::detectFormat(reader, formatDetails);
-        havok->pkFormat = GetFormatFromLayout(formatDetails.m_layoutRules);      
+        havok->pkFormat = GetFormatFromLayout(formatDetails.m_layoutRules);
 
         return 0;
     }
@@ -73,20 +125,11 @@ int AnimationFile::loadFromDisk(const QString &filePath)
     }
 }
 
-int AnimationFile::saveToDisk(const QString &filePath) const
+int AnimationFile::commonSaveHelper(hkOstream &ostream) const
 {
-    if (!saveHelper(filePath))
-        return 5;
-
     try
     {
         auto havok = static_cast<const AnimationResource *>(&getFile());
-
-        QString outPath = filePath;
-        if (QFile::exists(outPath))
-            filePath.chopped(3) + "out.hkx";
-
-        hkOstream ostream(qPrintable(outPath));
 
         if (!ostream.isOk())
             return 1;
@@ -108,12 +151,6 @@ int AnimationFile::saveToDisk(const QString &filePath) const
         if (havok->resource)
             havok->resource->removeReference();
 
-        if (outPath != filePath && QFile::exists(outPath))
-        {
-            QFile::remove(filePath);
-            if (!QFile::rename(outPath, filePath))
-                return 3;
-        }
         return 0;
     }
     catch (...)
@@ -121,4 +158,5 @@ int AnimationFile::saveToDisk(const QString &filePath) const
         return 4;
     }
 }
+
 } // namespace CAO

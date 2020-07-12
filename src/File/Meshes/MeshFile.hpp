@@ -14,6 +14,9 @@ public:
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) const override;
 
+    int loadFromMemory(const void *pSource, size_t size, const QString &fileName) override;
+    int saveToMemory(std::iostream &ostr) const override;
+
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = false) override;
 
     CommandType type() override { return CommandType::Mesh; }

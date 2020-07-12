@@ -45,18 +45,6 @@ int File::saveToDisk() const
     return saveToDisk(getOutputFilePath());
 }
 
-int File::saveToMemory(const void *pSource, const size_t &size, const QString &fileName) const
-{
-    assert(false && "Function 'File::saveToMemory' should never be called");
-    return 1;
-}
-
-int File::loadFromMemory(const void *pSource, const size_t &size, const QString &fileName)
-{
-    assert(false && "Function 'File::saveToMemory' should never be called");
-    return 1;
-}
-
 bool File::optimizedCurrentFile() const
 {
     return optimizedCurrentFile_;

@@ -40,7 +40,7 @@ int TextureFile::loadFromDisk(const QString &filePath)
     return 0;
 }
 
-int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const QString &fileName)
+int TextureFile::loadFromMemory(const void *pSource, size_t size, const QString &fileName)
 {
     ScopeGuard guard([this] { this->reset(); });
 
@@ -59,9 +59,32 @@ int TextureFile::loadFromMemory(const void *pSource, const size_t &size, const Q
     return 0;
 }
 
+int TextureFile::saveToMemory(std::iostream &ostr) const
+{
+    if (!saveToMemoryHelper())
+        return 1;
+
+    auto image = static_cast<const TextureResource *>(&getFile());
+
+    const auto img = image->GetImages();
+    if (!img)
+        return 2;
+    const size_t nimg = image->GetImageCount();
+
+    DirectX::Blob blob;
+    if (FAILED(DirectX::SaveToDDSMemory(img, nimg, _info, DirectX::DDS_FLAGS_NONE, blob)))
+        return 3;
+
+    ostr.write(static_cast<char *>(blob.GetBufferPointer()), blob.GetBufferSize());
+    if (!ostr)
+        return 4;
+
+    return 0;
+}
+
 int TextureFile::saveToDisk(const QString &filePath) const
 {
-    if (!saveHelper(filePath))
+    if (!saveToDiskHelper(filePath))
         return 2;
 
     auto image     = static_cast<const TextureResource *>(&getFile());

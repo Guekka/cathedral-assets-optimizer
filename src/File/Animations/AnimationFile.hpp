@@ -11,10 +11,12 @@ class AnimationFile : public File
 {
 public:
     AnimationFile();
-    ~AnimationFile();
 
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) const override;
+
+    int loadFromMemory(const void *pSource, size_t size, const QString &fileName) override;
+    int saveToMemory(std::iostream &ostr) const override;
 
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = true) override;
 
@@ -23,5 +25,8 @@ public:
 private:
     hkMemoryRouter *_memoryRouter;
     static inline bool initialized_ = false;
+
+    int commonLoadHelper(hkIstream &istream);
+    int commonSaveHelper(hkOstream &ostream) const;
 };
 } // namespace CAO
