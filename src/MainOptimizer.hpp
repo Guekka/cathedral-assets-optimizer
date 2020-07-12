@@ -25,12 +25,12 @@ public:
     void packBsa(const QString &folder);
     void extractBSA(File &file);
 
-protected:
+private:
     bool runCommand(CommandPtr command, File &file);
+
     bool loadFile(File &file);
     bool saveFile(File &file);
 
-private:
     void processBsa(const QString &file);
 
     CommandBook _commandBook;

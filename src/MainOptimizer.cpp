@@ -18,6 +18,7 @@ void MainOptimizer::process(File &file)
         if (!loadFile(file))
             return;
 
+        PLOG_INFO << "Processing: " << file.getInputFilePath() << '\n';
         for (auto command : _commandBook.getCommandList(type))
             if (!runCommand(command, file))
                 return;
@@ -80,19 +81,17 @@ bool MainOptimizer::runCommand(CommandPtr command, File &file)
     const auto &result = command->processIfApplicable(file);
     if (result.processedFile)
     {
-        PLOG_VERBOSE << QString("Successfully applied module '%1' while processing '%2'")
-                            .arg(command->name(), file.getInputFilePath());
+        PLOG_VERBOSE << QString("%1: %2").arg(command->name(), "applied");
         return true;
     }
     else if (result.errorCode)
     {
-        PLOG_ERROR << QString("An error happened in module '%1' while processing '%2': '%3'")
-                          .arg(command->name(), file.getInputFilePath(), result.errorMessage);
+        PLOG_VERBOSE << QString("%1: %2 '%3'").arg(command->name(), "error", result.errorMessage);
         return false;
     }
     else
     {
-        PLOG_VERBOSE << QString("Module '%1' was not applied because it was not necessary").arg(command->name());
+        PLOG_VERBOSE << QString("%1: %2").arg(command->name(), "unnecessary");
         return true;
     }
 }
