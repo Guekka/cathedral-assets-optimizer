@@ -42,6 +42,7 @@ public:
     REGISTER_SETTING(bool, bBSAExtractFromBSA, "/BSA/bBSAExtractFromBSA")
     REGISTER_SETTING(bool, bBSACreateDummies, "/BSA/bBSACreateDummies")
     REGISTER_SETTING(bool, bBSACompressArchive, "/BSA/bBSACompressArchive")
+    REGISTER_SETTING(bool, bBSAProcessContent, "/BSA/bBSAProcessContent")
 
     REGISTER_SETTING(bsa_archive_type_t, eBSAFormat, "/Advanced/BSA/eBSAFormat")
     REGISTER_SETTING(bsa_archive_type_t, eBSATexturesFormat, "/Advanced/BSA/eBSATexturesFormat")
