@@ -31,8 +31,9 @@ CommandResult MeshConvert::process(File &file)
     niVersion.SetStream(sets.iMeshesStream());
 
     OptOptions optOptions;
-    optOptions.targetVersion = niVersion;
-    optOptions.headParts = isHeadpart(file.getInputFilePath());
+    optOptions.targetVersion  = niVersion;
+    optOptions.removeParallax = false;
+    optOptions.headParts      = isHeadpart(file.getInputFilePath());
 
     nif->OptimizeFor(optOptions);
 
