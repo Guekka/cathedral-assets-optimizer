@@ -17,13 +17,21 @@ public:
     }
 };
 
-template<typename UiElement, typename Wrapper, typename UiReadFunc, typename UiSaveFunc>
-void connectWrapper(UiElement &uiEl, Wrapper &wrapper, UiReadFunc &&readFunc, UiSaveFunc &&saveFunc)
+template<typename UiElement,
+         typename Wrapper,
+         typename UiReadFunc,
+         typename UiSaveFunc,
+         typename ValueType = typename Wrapper::Type>
+void connectWrapper(UiElement &uiEl,
+                    Wrapper &wrapper,
+                    UiReadFunc &&readFunc,
+                    UiSaveFunc &&saveFunc,
+                    ValueType fallback = ValueType{})
 {
     using wrapperType = std::remove_reference_t<decltype(wrapper)>;
 
     //Init data
-    std::invoke(saveFunc, uiEl, wrapper());
+    std::invoke(std::forward<UiSaveFunc>(saveFunc), uiEl, wrapper.value_or(fallback));
     //Connect
     QObject::connect(&uiEl, std::forward<UiReadFunc>(readFunc), &wrapper, &wrapperType::setValue);
     QObject::connect(&wrapper,
@@ -34,16 +42,28 @@ void connectWrapper(UiElement &uiEl, Wrapper &wrapper, UiReadFunc &&readFunc, Ui
                      });
 }
 
-template<typename Wrapper>
-void connectWrapper(QAbstractButton &uiEl, Wrapper &wrapper)
+template<typename Wrapper, typename ValueType = typename Wrapper::Type>
+void connectWrapper(QAbstractButton &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
-    connectWrapper(uiEl, wrapper, &QAbstractButton::toggled, &QAbstractButton::setChecked);
+    connectWrapper(uiEl, wrapper, &QAbstractButton::toggled, &QAbstractButton::setChecked, fallback);
 }
 
-template<typename Wrapper>
-void connectWrapper(QSpinBox &uiEl, Wrapper &wrapper)
+template<typename Wrapper, typename ValueType = typename Wrapper::Type>
+void connectWrapper(QSpinBox &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
-    connectWrapper(uiEl, wrapper, QOverload<int>::of(&QSpinBox::valueChanged), &QSpinBox::setValue);
+    connectWrapper(uiEl, wrapper, QOverload<int>::of(&QSpinBox::valueChanged), &QSpinBox::setValue, fallback);
+}
+
+template<typename Wrapper, typename ValueType = typename Wrapper::Type>
+void connectWrapper(QLineEdit &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+{
+    connectWrapper(uiEl, wrapper, &QLineEdit::textChanged, &QLineEdit::setText, fallback);
+}
+
+template<typename Wrapper, typename ValueType = typename Wrapper::Type>
+void connectWrapper(QAction &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+{
+    connectWrapper(uiEl, wrapper, &QAction::triggered, &QAction::setChecked, fallback);
 }
 
 template<typename... UiElements>

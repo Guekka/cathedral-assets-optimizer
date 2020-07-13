@@ -15,46 +15,17 @@ MainWindow::MainWindow()
     ui_->setupUi(this);
     setAcceptDrops(true);
 
-    auto &generalSettings = currentProfile().getGeneralSettings();
-
     //Setting data for widgets
-    ui_->modeChooserComboBox->setItemData(0, SingleMod);
-    ui_->modeChooserComboBox->setItemData(1, SeveralMods);
+    setData(*ui_->modeChooserComboBox, "One mod", SingleMod);
+    setData(*ui_->modeChooserComboBox, "Several mods", SeveralMods);
 
-    //Connecting all
+    //Connecting widgets that do not depend on current profile
     connect(ui_->newProfilePushButton, &QPushButton::pressed, this, &MainWindow::createProfile);
-
-    connect(ui_->userPathButton, &QPushButton::pressed, this, [&generalSettings, this] {
-        const QString &currentPath = generalSettings.sInputPath.value_or(QDir::currentPath());
-
-        const QString &dir = QFileDialog::getExistingDirectory(this,
-                                                               tr("Open Directory"),
-                                                               currentPath,
-                                                               QFileDialog::ShowDirsOnly
-                                                                   | QFileDialog::DontResolveSymlinks);
-
-        if (!dir.isEmpty())
-            generalSettings.sInputPath = dir;
-    });
-
     connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
 
-    //Connecting menu buttons
-
+    //Menu buttons
     connect(ui_->actionOpen_log_file, &QAction::triggered, this, [] {
         QDesktopServices::openUrl(QUrl("file:///" + currentProfile().logPath(), QUrl::TolerantMode));
-    });
-
-    connect(ui_->actionSelect_GPU, &QAction::triggered, this, [] {
-        SelectGPUWindow window;
-        window.setSelectedIndex(getProfiles().commonSettings().iGPUIndex());
-        window.exec();
-        if (window.result() == QDialog::Accepted)
-        {
-            auto idx = window.getSelectedIndex();
-            if (idx.has_value())
-                getProfiles().commonSettings().iGPUIndex = idx.value();
-        }
     });
 
     connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
@@ -69,19 +40,19 @@ MainWindow::MainWindow()
         QDesktopServices::openUrl(QUrl("https://ko-fi.com/guekka"));
     });
 
-    connect(
-        ui_->actionAbout, &QAction::triggered, this, [&] {
-            constexpr char message[]
-                = "\nMade by G'k\nThis program is distributed in the hope that it will be useful "
-                  "but WITHOUT ANY WARRANTLY. See the Mozilla Public License";
+    connect(ui_->actionAbout, &QAction::triggered, this, [&] {
+        constexpr char message[]
+            = "\nMade by G'k\nThis program is distributed in the hope that it will be useful "
+              "but WITHOUT ANY WARRANTLY. See the Mozilla Public License";
 
-            const QString text = QString("%1 %2 %3")
-                                     .arg(QCoreApplication::applicationName(),
-                                          QCoreApplication::applicationVersion(),
-                                          tr(message));
+        const QString text = QString("%1 %2 %3")
+                                 .arg(QCoreApplication::applicationName(),
+                                      QCoreApplication::applicationVersion(),
+                                      tr(message));
 
-            QMessageBox::about(this, tr("About"), text);
-        });
+        QMessageBox::about(this, tr("About"), text);
+    });
+
     connect(ui_->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
 
     //Profiles
@@ -124,6 +95,31 @@ void MainWindow::connectAll()
     auto &commonSettings  = getProfiles().commonSettings();
     auto &generalSettings = currentProfile().getGeneralSettings();
 
+    connect(ui_->actionSelect_GPU, &QAction::triggered, this, [] {
+        SelectGPUWindow window;
+        window.setSelectedIndex(getProfiles().commonSettings().iGPUIndex());
+        window.exec();
+        if (window.result() == QDialog::Accepted)
+        {
+            auto idx = window.getSelectedIndex();
+            if (idx.has_value())
+                getProfiles().commonSettings().iGPUIndex = idx.value();
+        }
+    });
+
+    connect(ui_->userPathButton, &QPushButton::pressed, this, [&generalSettings, this] {
+        const QString &currentPath = generalSettings.sInputPath.value_or(QDir::currentPath());
+
+        const QString &dir = QFileDialog::getExistingDirectory(this,
+                                                               tr("Open Directory"),
+                                                               currentPath,
+                                                               QFileDialog::ShowDirsOnly
+                                                                   | QFileDialog::DontResolveSymlinks);
+
+        if (!dir.isEmpty())
+            generalSettings.sInputPath = dir;
+    });
+
     selectText(*ui_->profiles, commonSettings.sProfile());
     connect(ui_->profiles,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -141,8 +137,9 @@ void MainWindow::connectAll()
                 getProfiles().setCurrent(profile);
             });
 
-    int idx = ui_->modeChooserComboBox->findData(generalSettings.eMode());
-    ui_->modeChooserComboBox->setCurrentIndex(idx);
+    const int currentModeIndex = ui_->modeChooserComboBox->findData(generalSettings.eMode());
+    ui_->modeChooserComboBox->setCurrentIndex(currentModeIndex);
+
     connect(ui_->modeChooserComboBox,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             &generalSettings.eMode,
@@ -158,6 +155,7 @@ void MainWindow::connectAll()
 
     ui_->actionEnableDarkTheme->setChecked(commonSettings.bDarkMode.value_or(true));
     setDarkTheme(commonSettings.bDarkMode.value_or(true));
+
     connect(ui_->actionEnableDarkTheme,
             &QAction::triggered,
             &commonSettings.bDarkMode,
@@ -174,43 +172,9 @@ void MainWindow::connectAll()
                 setDarkTheme(commonSettings.bDarkMode());
             });
 
-    ui_->dryRunCheckBox->setChecked(generalSettings.bDryRun());
-
-    connect(ui_->dryRunCheckBox,
-            &QCheckBox::toggled,
-            &generalSettings.bDryRun,
-            [&generalSettings](bool state) { generalSettings.bDryRun = state; });
-
-    connect(&generalSettings.bDryRun,
-            &decltype(generalSettings.bDryRun)::valueChanged,
-            this,
-            [this, &generalSettings] { ui_->dryRunCheckBox->setChecked(generalSettings.bDryRun()); });
-
-    ui_->inputDirTextEdit->setText(generalSettings.sInputPath());
-
-    connect(ui_->inputDirTextEdit,
-            &QLineEdit::textChanged,
-            &generalSettings.sInputPath,
-            &decltype(generalSettings.sInputPath)::setValue);
-
-    connect(&generalSettings.sInputPath,
-            &decltype(generalSettings.sInputPath)::valueChanged,
-            ui_->inputDirTextEdit,
-            [this, &generalSettings] { ui_->inputDirTextEdit->setText(generalSettings.sInputPath()); });
-
-    ui_->actionRedirect_output->setChecked(generalSettings.bEnableOutputPath());
-
-    connect(ui_->actionRedirect_output,
-            &QAction::triggered,
-            &generalSettings.bEnableOutputPath,
-            &decltype(generalSettings.bEnableOutputPath)::setValue);
-
-    connect(&generalSettings.bEnableOutputPath,
-            &decltype(generalSettings.bEnableOutputPath)::valueChanged,
-            this,
-            [this, &generalSettings] {
-                ui_->actionRedirect_output->setChecked(generalSettings.bEnableOutputPath());
-            });
+    connectWrapper(*ui_->dryRunCheckBox, generalSettings.bDryRun);
+    connectWrapper(*ui_->inputDirTextEdit, generalSettings.sInputPath);
+    connectWrapper(*ui_->actionRedirect_output, generalSettings.bEnableOutputPath);
 
     connect(ui_->actionSet_output_path, &QAction::triggered, this, [&generalSettings, this] {
         const QString &inPath      = generalSettings.sInputPath.value_or(QDir::currentPath());
@@ -225,31 +189,9 @@ void MainWindow::connectAll()
         if (!dir.isEmpty())
             generalSettings.sOutputPath = dir;
     });
-    ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials.value_or(true));
 
-    connect(ui_->actionShow_tutorials,
-            &QAction::triggered,
-            &commonSettings.bShowTutorials,
-            &decltype(commonSettings.bShowTutorials)::setValue);
-
-    connect(&commonSettings.bShowTutorials,
-            &decltype(commonSettings.bShowTutorials)::valueChanged,
-            this,
-            [this, &commonSettings] {
-                ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials());
-            });
-
-    ui_->actionEnable_debug_log->setChecked(commonSettings.bDebugLog());
-
-    connect(ui_->actionEnable_debug_log,
-            &QAction::triggered,
-            &commonSettings.bDebugLog,
-            &decltype(commonSettings.bDebugLog)::setValue);
-
-    connect(&commonSettings.bDebugLog,
-            &decltype(commonSettings.bDebugLog)::valueChanged,
-            this,
-            [this, &commonSettings] { ui_->actionEnable_debug_log->setChecked(commonSettings.bDebugLog()); });
+    connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials);
+    connectWrapper(*ui_->actionEnable_debug_log, commonSettings.bDebugLog);
 }
 
 void MainWindow::loadUi()
