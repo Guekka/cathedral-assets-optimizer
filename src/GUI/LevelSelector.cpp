@@ -70,7 +70,8 @@ QString LevelSelector::getHelpText(GuiMode level)
         case GuiMode::Medium:
         {
             return tr("Intermediate mode\n"
-                      "NOT IMPLEMENTED");
+                      "Intermediate mode offers default settings for most use cases, as well as being a bit "
+                      "more customizable than Quick Auto Port.");
         }
         case GuiMode::Advanced:
         {

@@ -16,9 +16,9 @@ class MediumModeWindow : public IWindowModule
 public:
     explicit MediumModeWindow(QWidget *parent = nullptr);
 
-    void connectAll(PatternSettings &, GeneralSettings &) override;
+    void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
 
 private:
-    std::unique_ptr<Ui::MediumModeWindow> ui;
+    std::unique_ptr<Ui::MediumModeWindow> ui_;
 };
 } // namespace CAO
