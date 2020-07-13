@@ -25,10 +25,13 @@ void connectWrapper(UiElement &uiEl, Wrapper &wrapper, UiReadFunc &&readFunc, Ui
     //Init data
     std::invoke(saveFunc, uiEl, wrapper());
     //Connect
-    QObject::connect(&uiEl, readFunc, &wrapper, &wrapperType::setValue);
-    QObject::connect(&wrapper, &wrapperType::valueChanged, &uiEl, [&wrapper, &uiEl, &saveFunc] {
-        std::invoke(saveFunc, uiEl, wrapper());
-    });
+    QObject::connect(&uiEl, std::forward<UiReadFunc>(readFunc), &wrapper, &wrapperType::setValue);
+    QObject::connect(&wrapper,
+                     &wrapperType::valueChanged,
+                     &uiEl,
+                     [&wrapper, &uiEl, saveFunc = std::forward<UiSaveFunc>(saveFunc)] {
+                         std::invoke(saveFunc, uiEl, wrapper());
+                     });
 }
 
 template<typename Wrapper>
