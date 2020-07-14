@@ -98,7 +98,7 @@ bool MainOptimizer::runCommand(CommandPtr command, File &file)
     }
     else if (result.errorCode)
     {
-        PLOG_VERBOSE << QString("%1: %2 '%3'").arg(command->name(), "error", result.errorMessage);
+        PLOG_ERROR << QString("%1: %2 '%3'").arg(command->name(), "error", result.errorMessage);
         return false;
     }
     else
@@ -118,7 +118,7 @@ bool MainOptimizer::dryRunCommand(CommandPtr command, File &file)
     }
     else if (result.errorCode)
     {
-        PLOG_VERBOSE << QString("%1: %2 '%3'").arg(command->name(), "error", result.errorMessage);
+        PLOG_ERROR << QString("%1: %2 '%3'").arg(command->name(), "error", result.errorMessage);
         return false;
     }
     else
