@@ -7,6 +7,7 @@
 #include "Utils/TemplateMetaProgramming.hpp"
 #include <algorithm>
 #include <cassert>
+#include <iterator>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -81,6 +82,20 @@ template<class Container>
     using namespace std;
     std::sort(begin(cont), end(cont));
     cont.erase(std::unique(begin(cont), end(cont)), end(cont));
+}
+
+template<class ContainerIn, class IteratorOut, class Func>
+inline auto transform(const ContainerIn &cont, IteratorOut out, Func &&func)
+{
+    using namespace std;
+    return std::transform(cbegin(cont), cend(cont), out, std::forward<Func>(func));
+}
+
+template<class ContainerIn, class IteratorOut, class Func>
+inline auto move_transform(ContainerIn &cont, IteratorOut out, Func &&func)
+{
+    using namespace std;
+    return std::transform(move_iterator(begin(cont)), move_iterator(end(cont)), out, std::forward<Func>(func));
 }
 
 template<class String>
