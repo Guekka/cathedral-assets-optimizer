@@ -68,10 +68,13 @@ std::optional<QString> GeneralSettings::isValid() const
             .arg(sInputPath());
     }
 
-    const QDir outputDir(sOutputPath());
+    if (bEnableOutputPath())
+    {
+        const QDir outputDir(sOutputPath());
 
-    if (!outputDir.exists() || sOutputPath().size() < 5)
-        return QString("Output path does not exist. Path: '%1'").arg(sOutputPath());
+        if (!outputDir.exists() || sOutputPath().size() < 5)
+            return QString("Output path does not exist. Path: '%1'").arg(sOutputPath());
+    }
 
     return std::nullopt;
 }
