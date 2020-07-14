@@ -20,7 +20,7 @@ int BSAFolder::loadFromMemory(const void *pSource, size_t size, const QString &f
     return 1;
 }
 
-int BSAFolder::saveToMemory(std::iostream &ostr) const
+int BSAFolder::saveToMemory(std::vector<std::byte> &out) const
 {
     return 1;
 }

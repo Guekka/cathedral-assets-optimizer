@@ -16,7 +16,7 @@ public:
     //Required or BSAFile will be an abstract class
     //This makes me think more and more that BSAFile is not a File and should not derive from it
     int loadFromMemory(const void *pSource, size_t size, const QString &fileName) override;
-    int saveToMemory(std::iostream &ostr) const override;
+    int saveToMemory(std::vector<std::byte> &out) const override;
 
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = false) override;
 

@@ -76,7 +76,7 @@ int AnimationFile::loadFromMemory(const void *pSource, size_t size, const QStrin
     return commonLoadHelper(istream);
 }
 
-int AnimationFile::saveToMemory(std::iostream &ostr) const
+int AnimationFile::saveToMemory(std::vector<std::byte> &out) const
 {
     if (!saveToMemoryHelper())
         return 1;

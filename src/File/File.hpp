@@ -30,7 +30,7 @@ public:
     virtual int saveToDisk(const QString &filePath) const = 0;
 
     virtual int loadFromMemory(const void *pSource, size_t size, const QString &fileName) = 0;
-    virtual int saveToMemory(std::iostream &ostr) const                                   = 0;
+    virtual int saveToMemory(std::vector<std::byte> &out) const                           = 0;
 
     bool optimizedCurrentFile() const;
     void setOptimizedCurrentFile(const bool optimizedFile);

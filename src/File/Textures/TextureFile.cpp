@@ -59,7 +59,7 @@ int TextureFile::loadFromMemory(const void *pSource, size_t size, const QString 
     return 0;
 }
 
-int TextureFile::saveToMemory(std::iostream &ostr) const
+int TextureFile::saveToMemory(std::vector<std::byte> &out) const
 {
     if (!saveToMemoryHelper())
         return 1;
@@ -75,9 +75,11 @@ int TextureFile::saveToMemory(std::iostream &ostr) const
     if (FAILED(DirectX::SaveToDDSMemory(img, nimg, _info, DirectX::DDS_FLAGS_NONE, blob)))
         return 3;
 
-    ostr.write(static_cast<char *>(blob.GetBufferPointer()), blob.GetBufferSize());
-    if (!ostr)
-        return 4;
+    std::byte *data = static_cast<std::byte *>(blob.GetBufferPointer());
+    size_t size     = blob.GetBufferSize();
+
+    out.reserve(size);
+    std::move(data, data + size, std::back_inserter(out));
 
     return 0;
 }

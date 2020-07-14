@@ -34,18 +34,28 @@ int MeshFile::loadFromMemory(const void *pSource, size_t size, const QString &fi
     char *ptr = static_cast<char *>(const_cast<void *>(pSource));
 
     auto meshFile = static_cast<MeshResource *>(const_cast<Resource *>((&getFile())));
+
+#define _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING
+    //We don't want to copy the processed memory and there is no alternative to strstream
     std::strstream stream(ptr, size);
+#undef _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING
 
     return meshFile->Load(stream);
 }
 
-int MeshFile::saveToMemory(std::iostream &ostr) const
+int MeshFile::saveToMemory(std::vector<std::byte> &out) const
 {
     if (!saveToMemoryHelper())
         return 1;
 
     auto meshFile = static_cast<MeshResource *>(const_cast<Resource *>((&getFile())));
-    return meshFile->Save(ostr);
+
+    std::stringstream strStream;
+    if (int res = meshFile->Save(strStream); res)
+        return res;
+
+    transform(strStream.str(), out.begin(), [](char byte) { return std::byte(byte); });
+    return 0;
 }
 
 bool MeshFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)

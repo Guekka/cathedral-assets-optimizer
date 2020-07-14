@@ -30,7 +30,7 @@ int BSAFile::loadFromMemory(const void *pSource, size_t size, const QString &fil
     return 1;
 }
 
-int BSAFile::saveToMemory(std::iostream &ostr) const
+int BSAFile::saveToMemory(std::vector<std::byte> &out) const
 {
     return 1;
 }
