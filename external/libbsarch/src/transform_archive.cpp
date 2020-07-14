@@ -10,11 +10,10 @@
 
 namespace libbsarch {
 
-void transform_archive(
-    const fs::path &source_path,
-    const fs::path &target_path,
-    std::function<libbsarch::memory_blob(const fs::path &, libbsarch::memory_blob &&)> callback,
-    bsa_archive_type_t type)
+void transform_archive(const fs::path &source_path,
+                       const fs::path &target_path,
+                       transform_callback callback,
+                       bsa_archive_type_t type)
 {
     bsa source;
     source.load(source_path);
@@ -23,8 +22,8 @@ void transform_archive(
 }
 
 void transform_archive(const bsa &source,
-                       const fs::path target_path,
-                       std::function<memory_blob(const fs::path &, memory_blob &&)> callback,
+                       const fs::path &target_path,
+                       transform_callback callback,
                        bsa_archive_type_t type)
 {
     const auto &files = source.list_files();
@@ -37,13 +36,17 @@ void transform_archive(const bsa &source,
 
     bsa target;
     bsa_saver_complex target_saver(target);
+    /*
+    if (fs::exists(target_path))
+        throw exception("Cannot save transformed archive: file already exists");
+*/
     target_saver.prepare(target_path, std::move(entries), type);
 
     for (const auto &relative_path : files)
     {
-        memory_blob input_blob = source.extract_to_memory(relative_path);
-        auto output_blob = callback(relative_path, std::move(input_blob));
-        target_saver.add_file(relative_path, std::move(output_blob));
+        extracted_data input_blob = source.extract_to_memory(relative_path);
+        auto output = callback(relative_path, std::move(input_blob));
+        target_saver.add_file(relative_path, std::move(output));
     }
     target_saver.save();
 }

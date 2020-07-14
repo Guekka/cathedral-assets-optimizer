@@ -24,7 +24,7 @@ TEST_CASE("Test read")
     for (auto type : standard_types)
     {
         bsa source;
-        source.load(root / (type.str + ".bsa"));
+        source.load(root / (type.str + "- save_and_load - input.bsa"));
         const auto listed_files = source.list_files();
 
         CHECK(std::is_permutation(listed_files.cbegin(), listed_files.cend(), files.cbegin(), files.cend()));

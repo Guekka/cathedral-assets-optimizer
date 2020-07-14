@@ -27,7 +27,7 @@ TEST_CASE("Transform archive")
         //Preparing input archive
         bsa archive;
         bsa_saver_simple saver(archive);
-        REQUIRE_NOTHROW(saver.set_type(type.type));
+        REQUIRE_NOTHROW(saver.set_save_type(type.type));
         REQUIRE_NOTHROW(saver.set_save_path(input_archive_path));
 
         disk_blob file(root_directory(), temp_absolute_file_path);
@@ -40,8 +40,8 @@ TEST_CASE("Transform archive")
         //Transforming it
         transform_archive(input_archive_path,
                           output_archive_path,
-                          []([[maybe_unused]] const fs::path &relative_path, memory_blob &&blob) {
-                              return std::move(blob); // Do nothing
+                          []([[maybe_unused]] const fs::path &relative_path, extracted_data &&blob) {
+                              return to_vector(std::move(blob)); // Do nothing
                           });
 
         //Check that input and output are the same

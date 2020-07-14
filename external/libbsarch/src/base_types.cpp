@@ -15,25 +15,25 @@ exception::exception(const char *message)
     : runtime_error(message)
 {}
 
-memory_blob::memory_blob(uint32_t buffer_size, bsa_buffer_t buffer_data, bsa_archive_t parent)
-    : buffer{buffer_size, buffer_data}
-    , parent_(parent)
-{}
-
-memory_blob::memory_blob(bsa_result_buffer_t buffer_, bsa_archive_t parent)
+extracted_data::extracted_data(bsa_result_buffer_t buffer_, bsa_archive_t parent)
     : buffer(buffer_)
     , parent_(parent)
 {}
 
-memory_blob::~memory_blob()
+extracted_data::~extracted_data()
 {
     if (parent_)
         bsa_file_data_free(parent_, buffer);
 }
 
-void memory_blob::set_parent(bsa_archive_t parent)
+void *extracted_data::get_buffer()
 {
-    parent_ = parent;
+    return buffer.data;
+}
+
+uint32_t extracted_data::get_size() const
+{
+    return buffer.size;
 }
 
 disk_blob::disk_blob(const fs::path &root_dir_, const fs::path &path_on_disk_)

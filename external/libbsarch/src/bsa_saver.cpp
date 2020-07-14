@@ -99,12 +99,12 @@ void bsa_saver_complex::prepare(const fs::path &archive_path, bsa_entry_list ent
     checkResult(result);
 }
 
-void bsa_saver_complex::add_file(const fs::path &path_in_archive, memory_blob &&memory_data)
+void bsa_saver_complex::add_file(const fs::path &path_in_archive, std::vector<std::byte> &&memory_data)
 {
     const auto &result = bsa_add_file_from_memory(bsa_.get().get_unchecked().get(),
                                                   path_in_archive.wstring().c_str(),
-                                                  memory_data.buffer.size,
-                                                  memory_data.buffer.data);
+                                                  memory_data.size(),
+                                                  memory_data.data());
     checkResult(result);
 }
 

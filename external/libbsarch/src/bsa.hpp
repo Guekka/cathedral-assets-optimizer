@@ -36,8 +36,8 @@ public:
     void load(const fs::path &archive_path);
     void close();
 
-    memory_blob extract_to_memory(file_record record) const;
-    memory_blob extract_to_memory(const fs::path &relative_path) const;
+    extracted_data extract_to_memory(file_record record) const;
+    extracted_data extract_to_memory(const fs::path &relative_path) const;
 
     static constexpr bool overwrite_current_files = true;
     static constexpr bool preserve_current_files = false;

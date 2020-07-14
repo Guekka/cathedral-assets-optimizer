@@ -83,18 +83,18 @@ void bsa::close()
     bsa_close(archive_.get());
 }
 
-memory_blob bsa::extract_to_memory(file_record record) const
+extracted_data bsa::extract_to_memory(file_record record) const
 {
     const auto &result = bsa_extract_file_data_by_record(archive_.get(), record.value);
     checkResult(result);
-    return memory_blob(result.buffer, archive_.get());
+    return extracted_data(result.buffer, archive_.get());
 }
 
-memory_blob bsa::extract_to_memory(const fs::path &relative_path) const
+extracted_data bsa::extract_to_memory(const fs::path &relative_path) const
 {
     const auto &result = bsa_extract_file_data_by_filename(archive_.get(), relative_path.wstring().c_str());
     checkResult(result);
-    return memory_blob(result.buffer, archive_.get());
+    return extracted_data(result.buffer, archive_.get());
 }
 
 void bsa::extract_to_disk(const fs::path &relative_path,

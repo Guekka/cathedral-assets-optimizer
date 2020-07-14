@@ -19,27 +19,33 @@ public:
     explicit exception(const char *message);
 };
 
-struct memory_blob
+class extracted_data
 {
-    explicit memory_blob(uint32_t buffer_size, bsa_buffer_t buffer_data, bsa_archive_t parent);
-    explicit memory_blob(bsa_result_buffer_t buffer_, bsa_archive_t parent);
+public:
+    explicit extracted_data(bsa_result_buffer_t buffer_, bsa_archive_t parent);
 
-    memory_blob(const memory_blob &) = delete;
-    memory_blob(memory_blob &&) = default;
+    extracted_data(const extracted_data &) = delete;
+    extracted_data(extracted_data &&) = default;
 
-    memory_blob &operator=(const memory_blob &) = delete;
-    memory_blob &operator=(memory_blob &&) = default;
+    extracted_data &operator=(const extracted_data &) = delete;
+    extracted_data &operator=(extracted_data &&) = default;
 
-    ~memory_blob();
+    ~extracted_data();
 
-    bsa_result_buffer_t buffer;
-    fs::path path_in_archive;
-
-    void set_parent(bsa_archive_t parent);
+    void *get_buffer();
+    uint32_t get_size() const;
 
 private:
+    bsa_result_buffer_t buffer;
     bsa_archive_t parent_;
 };
+
+inline std::vector<std::byte> to_vector(extracted_data &&data)
+{
+    size_t size = data.get_size();
+    auto buffer = static_cast<std::byte *>(data.get_buffer());
+    return std::vector(buffer, buffer + size);
+}
 
 struct disk_blob
 {

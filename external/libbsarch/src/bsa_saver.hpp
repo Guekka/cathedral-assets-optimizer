@@ -61,7 +61,7 @@ public:
 
     void prepare(const fs::path &archive_path, bsa_entry_list entries, bsa_archive_type_t type);
 
-    void add_file(const fs::path &path_in_archive, memory_blob &&memory_data);
+    void add_file(const fs::path &path_in_archive, std::vector<std::byte> &&memory_data);
     void add_file(disk_blob &&blob);
 
     void save() const;
