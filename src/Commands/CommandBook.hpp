@@ -5,31 +5,33 @@
 #pragma once
 
 #include "Commands/Command.hpp"
+#include "Utils/TemplateMetaProgramming.hpp"
 #include "pch.hpp"
 
 namespace CAO {
-using CommandPtr = std::shared_ptr<Command>;
+
 class CommandBook final
 {
 public:
-    static void registerCommand(CommandPtr command);
+    static void registerCommand(std::unique_ptr<Command> command);
 
-    std::vector<CommandPtr> getCommandList(const CommandType &type);
-    CommandPtr getCommand(const QString &name);
+    std::vector<const Command *> getCommands(CommandType type);
+    const Command *getCommand(const QString &name);
 
     template<typename T>
-    CommandPtr getCommand()
+    const Command *getCommand()
     {
-        for (const auto &[_, vec] : commands_)
-            for (const auto &command : vec)
-                if (std::dynamic_pointer_cast<std::remove_pointer_t<T>>(command))
-                    return command;
+        static_assert(std::is_base_of_v<Command, std::remove_pointer_t<T>>, "T must derive from CAO::Command");
+        static_assert(std::is_pointer_v<T>, "T must be a pointer");
+
+        for (const std::unique_ptr<Command> &command : commands_)
+            if (auto ptr = command.get(); dynamic_cast<T>(ptr))
+                return ptr;
         return nullptr;
     }
 
 private:
-    static inline std::map<CommandType, std::vector<CommandPtr>> commands_;
-    static std::vector<CommandPtr> &getCommands(const CommandType &type);
+    static inline std::vector<std::unique_ptr<Command>> commands_;
 };
 
 class CommandBookManager final
@@ -40,10 +42,10 @@ public:
 	 *
 	 * \param command The command to manage
 	 */
-    CommandBookManager(CommandPtr command) { CommandBook::registerCommand(std::move(command)); }
+    CommandBookManager(std::unique_ptr<Command> command) { CommandBook::registerCommand(std::move(command)); }
 
 //! Register a Spell using a CommandBookManager
-#define REGISTER_COMMAND(COMMAND) inline CommandBookManager Manager_##COMMAND(std::make_shared<COMMAND>());
+#define REGISTER_COMMAND(COMMAND) inline CommandBookManager Manager_##COMMAND(std::make_unique<COMMAND>());
 };
 
 } // namespace CAO

@@ -4,48 +4,35 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "CommandBook.hpp"
+#include "Utils/Algorithms.hpp"
 
 namespace CAO {
 
-void CommandBook::registerCommand(CommandPtr command)
+void CommandBook::registerCommand(std::unique_ptr<Command> command)
 {
-    auto &correspondingVector = getCommands(command->type());
-    if (correspondingVector.empty())
-    {
-        correspondingVector.emplace_back(std::move(command));
+    if (contains(commands_, command))
         return;
-    }
 
-    for (size_t i = 0; i < correspondingVector.size(); ++i)
-    {
-        auto &commandInVector = correspondingVector.at(i);
-
-        if (commandInVector->name() == command->name())
-            return; //Preventing duplicate commands
-        if (commandInVector->priority() <= command->priority())
-        {
-            correspondingVector.insert(correspondingVector.begin() + i, command);
-            break;
-        }
-    }
+    insert_sorted(commands_, std::move(command), [](const auto &lhs, const auto &rhs) {
+        return lhs->priority() < rhs->priority();
+    });
 }
 
-std::vector<CommandPtr> &CommandBook::getCommands(const CommandType &type)
+std::vector<const Command *> CommandBook::getCommands(CommandType type)
 {
-    return commands_[type];
+    return commands_ | rx::filter([&type](auto &&c) { return c->type() == type; })
+           | rx::transform([](auto &&c) { return static_cast<const Command *>(c.get()); }) | rx::to_vector();
 }
 
-std::vector<CommandPtr> CommandBook::getCommandList(const CommandType &type)
+const Command *CommandBook::getCommand(const QString &name)
 {
-    return getCommands(type);
-}
+    auto it = std::find_if(commands_.cbegin(), commands_.cend(), [&name](auto &&c) {
+        return c->name() == name;
+    });
 
-CommandPtr CommandBook::getCommand(const QString &name)
-{
-    for (const auto &[_, vec] : commands_)
-        for (const auto &command : vec)
-            if (command->name() == name)
-                return command;
-    return nullptr;
+    if (it == commands_.cend())
+        return nullptr;
+
+    return it->get();
 }
 } // namespace CAO
