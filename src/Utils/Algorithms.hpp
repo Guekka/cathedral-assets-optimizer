@@ -98,6 +98,23 @@ inline auto move_transform(ContainerIn &cont, IteratorOut out, Func &&func)
     return std::transform(move_iterator(begin(cont)), move_iterator(end(cont)), out, std::forward<Func>(func));
 }
 
+template<class Container, class Compare, class ValueType = typename Container::value_type>
+inline auto insert_sorted(Container &cont, ValueType &&value, Compare &&comp)
+{
+    using namespace std;
+    auto it = std::upper_bound(cbegin(cont), cend(cont), value, comp);
+
+    if (it == cend(cont))
+    {
+        cont.emplace_back(std::forward<ValueType>(value));
+        return --cont.end();
+    }
+    else
+    {
+        return cont.emplace(it, std::forward<ValueType>(value));
+    }
+}
+
 template<class String>
 constexpr size_t strLength(String &&str)
 {
