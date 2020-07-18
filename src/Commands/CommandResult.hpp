@@ -19,9 +19,9 @@ struct CommandResult
 class CommandResultFactory
 {
 public:
-    CommandResult getSuccessfulResult();
-    CommandResult getFailedResult(const int &errorCode, const QString &errorMessage);
-    CommandResult getCannotCastFileResult();
+    CommandResult getSuccessfulResult() const;
+    CommandResult getFailedResult(const int &errorCode, const QString &errorMessage) const;
+    CommandResult getCannotCastFileResult() const;
 };
 
 } // namespace CAO

@@ -23,18 +23,22 @@ public:
         VeryHigh
     };
 
-    Command()                = default;
+    Command() = default;
+
     Command(const Command &) = delete;
+    Command(Command &&)      = default;
+
     Command &operator=(const Command &) = delete;
+    Command &operator=(Command &&) = default;
 
-    virtual bool isApplicable(File &file)     = 0;
-    virtual CommandResult process(File &file) = 0;
+    virtual bool isApplicable(File &file) const     = 0;
+    virtual CommandResult process(File &file) const = 0;
 
-    CommandResult processIfApplicable(File &file);
+    CommandResult processIfApplicable(File &file) const;
 
-    virtual Priority priority() = 0;
-    virtual CommandType type()  = 0;
-    virtual QString name()      = 0;
+    virtual Priority priority() const = 0;
+    virtual CommandType type() const  = 0;
+    virtual QString name() const      = 0;
 
     virtual ~Command() = default;
 

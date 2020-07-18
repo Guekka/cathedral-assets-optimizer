@@ -5,7 +5,7 @@
 #include "MeshRenameReferencedTextures.hpp"
 
 namespace CAO {
-CommandResult MeshRenameReferencedTextures::process(File& file)
+CommandResult MeshRenameReferencedTextures::process(File& file) const
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
     if (!nif)
@@ -46,7 +46,7 @@ CommandResult MeshRenameReferencedTextures::process(File& file)
     return result;
 }
 
-bool MeshRenameReferencedTextures::isApplicable(File& file)
+bool MeshRenameReferencedTextures::isApplicable(File& file) const
 {
     bool isMeshFile = dynamic_cast<const MeshResource *>(&file.getFile());
     return isMeshFile;

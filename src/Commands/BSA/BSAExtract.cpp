@@ -7,7 +7,7 @@
 #include "Utils/Filesystem.hpp"
 
 namespace CAO {
-CommandResult BSAExtract::process(File& file)
+CommandResult BSAExtract::process(File& file) const
 {
     auto bsafile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
     if (!bsafile)
@@ -38,7 +38,7 @@ CommandResult BSAExtract::process(File& file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool BSAExtract::isApplicable(File& file)
+bool BSAExtract::isApplicable(File& file) const
 {
     if (!currentProfile().getGeneralSettings().bBSAExtractFromBSA())
         return false;

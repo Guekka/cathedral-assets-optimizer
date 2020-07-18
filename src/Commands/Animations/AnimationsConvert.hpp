@@ -15,12 +15,12 @@ namespace CAO {
 class AnimationsConvert final : public Command
 {
 public:
-    CommandResult process(File& file) override;
-    bool isApplicable(File &file) override;
+    CommandResult process(File &file) const override;
+    bool isApplicable(File &file) const override;
 
-    QString name() override { return "Animation Convert"; }
-    CommandType type() override { return CommandType::Animation; };
-    Priority priority() override { return Medium; };
+    QString name() const override { return "Animation Convert"; }
+    CommandType type() const override { return CommandType::Animation; };
+    Priority priority() const override { return Medium; };
 };
 
 REGISTER_COMMAND(AnimationsConvert)

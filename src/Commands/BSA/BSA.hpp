@@ -6,3 +6,4 @@
 
 #include "Commands/BSA/BSACreate.hpp"
 #include "Commands/BSA/BSAExtract.hpp"
+#include "Commands/BSA/BSATransform.hpp"

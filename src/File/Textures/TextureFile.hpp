@@ -24,7 +24,7 @@ public:
 
     void reset() override;
 
-    CommandType type() override { return CommandType::Texture; }
+    CommandType type() const override { return CommandType::Texture; }
 
 private:
     DirectX::TexMetadata _info{};

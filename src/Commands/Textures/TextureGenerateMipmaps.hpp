@@ -12,12 +12,12 @@ namespace CAO {
 class TextureGenerateMipmaps final : public Command
 {
 public:
-    CommandType type() override { return CommandType::Texture; };
-    Priority priority() override { return Low; };
-    QString name() override { return "Generate Mipmaps for Texture"; }
+    CommandType type() const override { return CommandType::Texture; };
+    Priority priority() const override { return Low; };
+    QString name() const override { return "Generate Mipmaps for Texture"; }
 
-    CommandResult process(File& file) override;
-    bool isApplicable(File& file) override;
+    CommandResult process(File& file) const override;
+    bool isApplicable(File& file) const override;
 
 protected:
     size_t calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const;

@@ -20,7 +20,7 @@ public:
 
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = true) override;
 
-    CommandType type() override { return CommandType::Animation; }
+    CommandType type() const override { return CommandType::Animation; }
 
 private:
     hkMemoryRouter *_memoryRouter;

@@ -6,7 +6,7 @@
 #include "Commands/Command.hpp"
 
 namespace CAO {
-CommandResult Command::processIfApplicable(File &file)
+CommandResult Command::processIfApplicable(File &file) const
 {
     CommandResult result;
     result.processedFile = false;

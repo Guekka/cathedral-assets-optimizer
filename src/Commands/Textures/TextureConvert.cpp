@@ -5,7 +5,7 @@
 #include "TextureConvert.hpp"
 
 namespace CAO {
-CommandResult TextureConvert::process(File &file)
+CommandResult TextureConvert::process(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
@@ -34,7 +34,7 @@ CommandResult TextureConvert::process(File &file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureConvert::isApplicable(File &file)
+bool TextureConvert::isApplicable(File &file) const
 {
     auto texResource = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texResource)

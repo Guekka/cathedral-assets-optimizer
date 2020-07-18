@@ -13,12 +13,12 @@ namespace CAO {
 class BSACreate : public Command
 {
 public:
-    QString name() override { return "BSA Create"; }
-    Priority priority() override { return Low; };
-    CommandType type() override { return CommandType::BSAFolder; };
+    QString name() const override { return "BSA Create"; }
+    Priority priority() const override { return Low; };
+    CommandType type() const override { return CommandType::BSAFolder; };
 
-    CommandResult process(File& file) override;
-    bool isApplicable(File& file) override;
+    CommandResult process(File& file) const override;
+    bool isApplicable(File& file) const override;
 
 protected:
     bool canBeCompressedFile(const QString &filename);

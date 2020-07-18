@@ -15,18 +15,17 @@ class MeshConvert : public Command
 public:
     MeshConvert();
 
-    QString name() override { return "Convert Mesh"; }
-    CommandType type() override { return CommandType::Mesh; };
-    Priority priority() override { return Priority::Medium; };
+    QString name() const override { return "Convert Mesh"; }
+    CommandType type() const override { return CommandType::Mesh; };
+    Priority priority() const override { return Priority::Medium; };
 
-    CommandResult process(File& file) override;
-    bool isApplicable(File& file) override;
+    CommandResult process(File& file) const override;
+    bool isApplicable(File& file) const override;
 
-protected:
-    bool isHeadpart(const QString &filepath);
-    void listHeadparts(const GeneralSettings &settings, FileTypes &filetypes);
+    static bool isHeadpart(const QString &filepath);
+    static void listHeadparts(const GeneralSettings &settings, FileTypes &filetypes);
 
-    CallOnce callOnceHeadparts_;
+    static inline CallOnce callOnceHeadparts_;
 };
 REGISTER_COMMAND(MeshConvert)
 } // namespace CAO

@@ -5,7 +5,7 @@
 #include "AnimationsConvert.hpp"
 
 namespace CAO {
-CommandResult AnimationsConvert::process(File& file)
+CommandResult AnimationsConvert::process(File &file) const
 {
     auto havok = dynamic_cast<AnimationResource *>(&file.getFile(true));
     if (!havok)
@@ -15,7 +15,7 @@ CommandResult AnimationsConvert::process(File& file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool AnimationsConvert::isApplicable(File& file)
+bool AnimationsConvert::isApplicable(File &file) const
 {
     if (!file.patternSettings().bAnimationsOptimization())
         return false;

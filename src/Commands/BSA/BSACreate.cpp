@@ -9,7 +9,7 @@
 #include "Utils/wildcards.hpp"
 
 namespace CAO {
-CommandResult BSACreate::process(File &file)
+CommandResult BSACreate::process(File &file) const
 {
     auto bsaFolder = dynamic_cast<BSAFolderResource *>(&file.getFile(true));
     if (!bsaFolder)
@@ -53,7 +53,7 @@ CommandResult BSACreate::process(File &file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool BSACreate::isApplicable(File &file)
+bool BSACreate::isApplicable(File &file) const
 {
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
     if (!bsaFolder)

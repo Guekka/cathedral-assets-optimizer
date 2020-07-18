@@ -12,16 +12,15 @@ namespace CAO {
 class TextureResize : public Command
 {
 public:
-    CommandType type() override { return CommandType::Texture; };
-    Priority priority() override { return High; };
-    QString name() override { return "Resize Texture"; }
+    CommandType type() const override { return CommandType::Texture; };
+    Priority priority() const override { return High; };
+    QString name() const override { return "Resize Texture"; }
 
-    CommandResult process(File& file) override;
-    bool isApplicable(File &file) override;
+    CommandResult process(File& file) const override;
+    bool isApplicable(File &file) const override;
 
-protected:
-    DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info,
-                                                   const PatternSettings &settings);
+    static DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info,
+                                                          const PatternSettings &settings);
 };
 REGISTER_COMMAND(TextureResize)
 } // namespace CAO

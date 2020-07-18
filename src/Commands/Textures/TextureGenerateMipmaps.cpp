@@ -5,7 +5,7 @@
 #include "TextureGenerateMipmaps.hpp"
 
 namespace CAO {
-CommandResult TextureGenerateMipmaps::process(File& file)
+CommandResult TextureGenerateMipmaps::process(File& file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
@@ -52,7 +52,7 @@ CommandResult TextureGenerateMipmaps::process(File& file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureGenerateMipmaps::isApplicable(File& file)
+bool TextureGenerateMipmaps::isApplicable(File& file) const
 {
     if (!file.patternSettings().bTexturesMipmaps())
         return false;

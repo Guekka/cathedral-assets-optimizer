@@ -12,12 +12,12 @@ namespace CAO {
 class TextureConvert final : public Command
 {
 public:
-    CommandType type() override { return CommandType::Texture; };
-    Priority priority() override { return VeryLow; };
-    QString name() override { return "Convert Texture"; }
+    CommandType type() const override { return CommandType::Texture; };
+    Priority priority() const override { return VeryLow; };
+    QString name() const override { return "Convert Texture"; }
 
-    CommandResult process(File& file) override;
-    bool isApplicable(File &file) override;
+    CommandResult process(File& file) const override;
+    bool isApplicable(File &file) const override;
 
     static int convertWithoutCompression(const DirectX::ScratchImage &image,
                                          DirectX::ScratchImage &timage,
@@ -27,8 +27,7 @@ public:
                                       DirectX::ScratchImage &timage,
                                       const DXGI_FORMAT &format);
 
-protected:
-    bool needsConvert(const File &file, const DirectX::TexMetadata &info);
+    static bool needsConvert(const File &file, const DirectX::TexMetadata &info);
 };
 REGISTER_COMMAND(TextureConvert)
 } // namespace CAO

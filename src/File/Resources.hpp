@@ -44,6 +44,7 @@ struct BSAFileResource : public Resource
 
     libbsarch::bsa bsa;
     libbsarch::bsa_saver_simple saver;
+    std::optional<libbsarch::transform_callback> callback;
 };
 
 struct BSAFolderResource : public Resource

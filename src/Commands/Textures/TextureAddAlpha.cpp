@@ -12,12 +12,12 @@ namespace CAO {
 
 TextureAddAlpha::TextureAddAlpha()
 {
-    getProfiles().callOncePerRun(callOnceLandscape_, [this] {
+    getProfiles().callOncePerRun(callOnceLandscape_, [] {
         listLandscapeTextures(currentProfile().getGeneralSettings(), currentProfile().getFileTypes());
     });
 }
 
-CommandResult TextureAddAlpha::process(File &file)
+CommandResult TextureAddAlpha::process(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
@@ -59,7 +59,7 @@ CommandResult TextureAddAlpha::process(File &file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureAddAlpha::isApplicable(File &file)
+bool TextureAddAlpha::isApplicable(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
@@ -80,7 +80,7 @@ bool TextureAddAlpha::isApplicable(File &file)
     return texFile->IsAlphaAllOpaque();
 }
 
-bool TextureAddAlpha::isLandscape(const QString &filepath) const
+bool TextureAddAlpha::isLandscape(const QString &filepath)
 {
     const auto &ft = currentProfile().getFileTypes();
     return ft.match(ft.slTextureLandscapes(), filepath);

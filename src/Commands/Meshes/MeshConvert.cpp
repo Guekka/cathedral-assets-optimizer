@@ -18,7 +18,7 @@ MeshConvert::MeshConvert()
     });
 }
 
-CommandResult MeshConvert::process(File &file)
+CommandResult MeshConvert::process(File &file) const
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
     if (!nif)
@@ -40,7 +40,7 @@ CommandResult MeshConvert::process(File &file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool MeshConvert::isApplicable(File &file)
+bool MeshConvert::isApplicable(File &file) const
 {
     auto& patternSettings = file.patternSettings();
     int optLevel          = patternSettings.iMeshesOptimizationLevel();

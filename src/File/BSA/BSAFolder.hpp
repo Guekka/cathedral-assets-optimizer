@@ -20,6 +20,6 @@ public:
 
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = false) override;
 
-    CommandType type() override { return CommandType::BSAFolder; }
+    CommandType type() const override { return CommandType::BSAFolder; }
 };
 } // namespace CAO

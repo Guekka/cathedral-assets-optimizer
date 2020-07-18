@@ -43,7 +43,7 @@ public:
 
     bool isLoaded() const { return isLoaded_; }
 
-    virtual CommandType type() = 0;
+    virtual CommandType type() const = 0;
 
     const PatternSettings &patternSettings() const;
 

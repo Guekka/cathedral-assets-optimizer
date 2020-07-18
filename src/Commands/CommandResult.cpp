@@ -5,7 +5,7 @@
 #include "Commands/CommandResult.hpp"
 
 namespace CAO {
-CommandResult CommandResultFactory::getSuccessfulResult()
+CommandResult CommandResultFactory::getSuccessfulResult() const
 {
     CommandResult result;
     result.errorCode = 0;
@@ -14,12 +14,12 @@ CommandResult CommandResultFactory::getSuccessfulResult()
     return result;
 }
 
-CommandResult CommandResultFactory::getFailedResult(const int &errorCode, const QString &errorMessage)
+CommandResult CommandResultFactory::getFailedResult(const int &errorCode, const QString &errorMessage) const
 {
     return CommandResult{errorCode, errorMessage, false};
 }
 
-CommandResult CommandResultFactory::getCannotCastFileResult()
+CommandResult CommandResultFactory::getCannotCastFileResult() const
 {
     CommandResult result;
     result.errorCode = 3;

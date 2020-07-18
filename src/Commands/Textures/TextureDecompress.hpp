@@ -11,13 +11,13 @@ namespace CAO {
 class TextureDecompress final : public Command
 {
 public:
-    CommandType type() override { return CommandType::Texture; };
-    Priority priority() override { return VeryHigh; };
-    QString name() override { return "Decompress Texture"; }
+    CommandType type() const override { return CommandType::Texture; };
+    Priority priority() const override { return VeryHigh; };
+    QString name() const override { return "Decompress Texture"; }
 
-    CommandResult process(File& file) override;
+    CommandResult process(File &file) const override;
 
-    bool isApplicable(File& file) override;
+    bool isApplicable(File &file) const override;
 };
 REGISTER_COMMAND(TextureDecompress)
 } // namespace CAO

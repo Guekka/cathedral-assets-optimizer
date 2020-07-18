@@ -11,12 +11,12 @@ namespace CAO {
 class BSAExtract : public Command
 {
 public:
-    QString name() override { return "BSA Extract"; }
-    CommandType type() override { return CommandType::BSAFile; };
-    Priority priority() override { return VeryHigh; };
+    QString name() const override { return "BSA Extract"; }
+    CommandType type() const override { return CommandType::BSAFile; };
+    Priority priority() const override { return VeryHigh; };
 
-    CommandResult process(File& file) override;
-    bool isApplicable(File &file) override;
+    CommandResult process(File& file) const override;
+    bool isApplicable(File &file) const override;
 
     static constexpr double maxBSASize = 4.0 * GigaByte;
 };

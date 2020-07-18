@@ -19,6 +19,6 @@ public:
 
     bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = false) override;
 
-    CommandType type() override { return CommandType::Mesh; }
+    CommandType type() const override { return CommandType::Mesh; }
 };
 } // namespace CAO

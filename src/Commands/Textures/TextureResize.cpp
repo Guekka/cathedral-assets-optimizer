@@ -5,7 +5,7 @@
 #include "TextureResize.hpp"
 
 namespace CAO {
-CommandResult TextureResize::process(File &file)
+CommandResult TextureResize::process(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
@@ -29,7 +29,7 @@ CommandResult TextureResize::process(File &file)
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureResize::isApplicable(File &file)
+bool TextureResize::isApplicable(File &file) const
 {
     if (file.patternSettings().eTexturesResizingMode() == None)
         return false;
