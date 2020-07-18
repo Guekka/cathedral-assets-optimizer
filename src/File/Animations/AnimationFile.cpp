@@ -56,6 +56,7 @@ int AnimationFile::saveToDisk(const QString &filePath) const
         outPath = outPath.chopped(3) + "out.hkx";
 
     hkOstream ostream(qPrintable(outPath));
+
     commonSaveHelper(ostream);
 
     if (outPath != filePath && QFile::exists(outPath))
@@ -81,17 +82,15 @@ int AnimationFile::saveToMemory(std::vector<std::byte> &out) const
     if (!saveToMemoryHelper())
         return 1;
 
-    return 1;
-    /*
-    std::vector<char> buffer;
-    buffer.resize(1024 * 1024 * 1024); //1mb
-    hkOstream ostream(buffer.data(), buffer.size());
+    hkArray<char, hkContainerHeapAllocator> buffer;
+    buffer.reserve(1024 * 1024 * 1024); //1mb is enough for most cases
+    hkOstream ostream(buffer);
 
     if (auto res = commonSaveHelper(ostream); res)
         return res;
 
-    ostr.write(buffer.data(), buffer.size());
-    return 0;*/
+    out.reserve(buffer.getSize());
+    move_transform(buffer, std::back_inserter(out), [](char &&c) { return std::byte(c); });
 }
 
 int AnimationFile::commonLoadHelper(hkIstream &istream)
