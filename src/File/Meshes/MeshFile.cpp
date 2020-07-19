@@ -31,16 +31,17 @@ int MeshFile::loadFromMemory(const void *pSource, size_t size, const QString &fi
 
     //We know pSource is empty, so it doesn't matter if we cast away constness. Furthermore,
     //NifFile::Load does not change the pointed contents. A simple std::istream& would be enough
-    char *ptr = static_cast<char *>(const_cast<void *>(pSource));
+    auto ptr = static_cast<const char *>(pSource);
 
-    auto meshFile = static_cast<MeshResource *>(const_cast<Resource *>((&getFile())));
+    auto meshFile = static_cast<MeshResource *>((&getFile(false)));
 
-#define _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING
-    //We don't want to copy the processed memory and there is no alternative to strstream
-    std::strstream stream(ptr, size);
-#undef _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING
+    std::string str(ptr, size);
+    std::stringstream stream(std::move(str), std::ios_base::in | std::ios_base::binary);
 
-    return meshFile->Load(stream);
+    int res = meshFile->Load(stream);
+    if (res)
+        reset();
+    return res;
 }
 
 int MeshFile::saveToMemory(std::vector<std::byte> &out) const
@@ -54,7 +55,9 @@ int MeshFile::saveToMemory(std::vector<std::byte> &out) const
     if (int res = meshFile->Save(strStream); res)
         return res;
 
-    transform(strStream.str(), out.begin(), [](char byte) { return std::byte(byte); });
+    const auto &str = strStream.str();
+    out.reserve(str.size());
+    transform(str, std::back_inserter(out), [](char byte) { return std::byte(byte); });
     return 0;
 }
 
