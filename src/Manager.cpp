@@ -9,6 +9,7 @@
 
 namespace CAO {
 Manager::Manager()
+    : creationDate_(QDateTime::currentDateTime().toString("yy.MM.dd_hh.mm"))
 {
     //Preparing logging
     initCustomLogger(currentProfile().logPath(), getProfiles().commonSettings().bDebugLog());
@@ -36,13 +37,11 @@ void Manager::listDirectories()
 {
     mods_.clear();
 
-    const auto &settings      = currentProfile().getGeneralSettings();
-    const QString &dateTime   = QDateTime::currentDateTime().toString("yy.MM.dd_hh.mm");
-    const QString &outDirRoot = settings.sOutputPath() + '/' + dateTime;
+    const auto &settings = currentProfile().getGeneralSettings();
 
     if (settings.eMode() == SingleMod)
     {
-        const QString &outDir = outDirRoot + '/' + QDir(settings.sInputPath()).dirName();
+        const QString &outDir = getOutputRootDirectory(settings.sInputPath());
         mods_.emplace_back(ModFolder{settings.sInputPath(), settings.sBSAExtension(), outDir});
     }
     else
@@ -55,12 +54,22 @@ void Manager::listDirectories()
         };
 
         mods_ = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) | rx::filter(notBlacklist)
-                | rx::transform([&settings, &dir, &outDirRoot](auto &&path) {
-                      const QString &outDir = outDirRoot + '/' + QDir(path).dirName();
-                      return ModFolder(dir.absoluteFilePath(path), settings.sBSAExtension(), outDir);
+                | rx::transform([this, &settings, &dir](auto &&path) {
+                      const QString absoluteInputPath = dir.absoluteFilePath(path);
+                      const QString &outDir           = getOutputRootDirectory(absoluteInputPath);
+                      return ModFolder(absoluteInputPath, settings.sBSAExtension(), outDir);
                   })
                 | rx::to_vector();
     }
+}
+
+QString Manager::getOutputRootDirectory(const QString &inputDirectory)
+{
+    const auto &settings = currentProfile().getGeneralSettings();
+
+    return settings.bEnableOutputPath()
+               ? settings.sOutputPath() + '/' + creationDate_ + '/' + QDir(inputDirectory).dirName()
+               : inputDirectory;
 }
 
 QString Manager::phaseToString(Manager::OptimizationPhase phase)
@@ -95,21 +104,12 @@ void Manager::runOptimization()
         auto &mod = mods_[i];
         mod.load();
         emitProgress(mod.name(), BSAExtraction, i);
-        bool progressEmitted = false;
 
         while (mod.hasNext())
         {
             auto file = mod.consume();
-            if (file->type() == CommandType::BSAFile)
-            {
-                optimizer.extractBSA(*file);
-            }
-            else
-            {
-                if (!progressEmitted)
-                    emitProgress(mod.name(), FileOptimization, i);
-                optimizer.process(*file, currentProfile().getGeneralSettings().bDryRun());
-            }
+            emitProgress(mod.name(), FileOptimization, i);
+            optimizer.process(*file, currentProfile().getGeneralSettings().bDryRun());
         }
 
         //Packing BSAs
@@ -117,8 +117,10 @@ void Manager::runOptimization()
         optimizer.packBsa(mod.outPath());
     }
 
-    Filesystem::deleteEmptyDirectories(currentProfile().getGeneralSettings().sOutputPath(),
-                                       currentProfile().getFileTypes());
+    const auto &sets          = currentProfile().getGeneralSettings();
+    const QString &dirToClean = sets.bEnableOutputPath() ? sets.sOutputPath() : sets.sInputPath();
+
+    Filesystem::deleteEmptyDirectories(dirToClean, currentProfile().getFileTypes());
 
     PLOG_INFO << "Process completed\n\n\n";
     emit end();

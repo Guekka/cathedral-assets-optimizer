@@ -21,21 +21,27 @@ class MainOptimizer final : public QObject
 public:
     explicit MainOptimizer();
 
-    void process(File &file, bool dryRun = false);
+    struct MemoryData
+    {
+        void *pSource               = nullptr;
+        size_t sourceSize           = 0;
+        std::vector<std::byte> *out = nullptr;
+    };
+
+    void process(File &file, bool dryRun = false, MemoryData memoryData = {nullptr, 0, nullptr});
     void packBsa(const QString &folder);
-    void extractBSA(File &file);
 
 private:
-    bool runCommand(CommandPtr command, File &file);
-    bool dryRunCommand(CommandPtr command, File &file);
+    bool runCommand(const Command &command, File &file);
+    bool dryRunCommand(const Command &command, File &file);
 
-    void processReal(File &file);
-    void processDry(File &file);
+    bool processReal(File &file, std::vector<std::byte> *out = nullptr);
+    bool processDry(File &file);
+    bool processBSA(File &file, bool dryRun);
 
-    bool loadFile(File &file);
-    bool saveFile(File &file);
+    bool loadFile(File &file, void *pSource = nullptr, size_t size = 0);
+    bool saveFile(File &file, std::vector<std::byte> *out = nullptr);
 
-    void processBsa(const QString &file);
 
     CommandBook _commandBook;
 };

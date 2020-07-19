@@ -91,6 +91,7 @@ int AnimationFile::saveToMemory(std::vector<std::byte> &out) const
 
     out.reserve(buffer.getSize());
     move_transform(buffer, std::back_inserter(out), [](char &&c) { return std::byte(c); });
+    return 0;
 }
 
 int AnimationFile::commonLoadHelper(hkIstream &istream)

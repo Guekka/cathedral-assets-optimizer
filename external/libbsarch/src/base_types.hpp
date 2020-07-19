@@ -79,10 +79,10 @@ public:
     ~bsa_entry_list_wrapper();
 
     bsa_entry_list_wrapper(const bsa_entry_list_wrapper &) = delete;
-    bsa_entry_list_wrapper(bsa_entry_list_wrapper &&) = default;
+    bsa_entry_list_wrapper(bsa_entry_list_wrapper &&);
 
     bsa_entry_list_wrapper &operator=(const bsa_entry_list_wrapper &) = delete;
-    bsa_entry_list_wrapper &operator=(bsa_entry_list_wrapper &&) = default;
+    bsa_entry_list_wrapper &operator=(bsa_entry_list_wrapper &&);
 
     bsa_entry_list_t get() const;
 

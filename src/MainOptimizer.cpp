@@ -4,20 +4,32 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "MainOptimizer.hpp"
+#include "BSAMemoryCallback.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
 MainOptimizer::MainOptimizer() {}
 
-void MainOptimizer::process(File &file, bool dryRun)
+void MainOptimizer::process(File &file, bool dryRun, MemoryData memoryData)
 {
     try
     {
-        if (!loadFile(file))
+        if (!loadFile(file, memoryData.pSource, memoryData.sourceSize))
+        {
             return;
+        }
 
-        dryRun ? processDry(file) : processReal(file);
+        if (file.type() == CommandType::BSAFile)
+        {
+            if (!processBSA(file, dryRun))
+                return;
+        }
+
+        else if (!(dryRun ? processDry(file) : processReal(file, memoryData.out)))
+        {
+            return;
+        }
     }
     catch (const std::exception &e)
     {
@@ -30,55 +42,77 @@ void MainOptimizer::process(File &file, bool dryRun)
     PLOG_INFO << "Successfully optimized " << file.getInputFilePath();
 }
 
-void MainOptimizer::processReal(File &file)
+bool MainOptimizer::processReal(File &file, std::vector<std::byte> *out)
 {
     PLOG_VERBOSE << "Processing: " << file.getInputFilePath() << '\n';
-    for (auto command : _commandBook.getCommandList(file.type()))
-        if (!runCommand(command, file))
-            return;
+    for (auto &command : _commandBook.getCommands(file.type()))
+        if (!runCommand(*command, file))
+            return false;
 
     if (!file.optimizedCurrentFile())
-        return;
+        return false;
 
-    if (!saveFile(file))
-        return;
+    if (!saveFile(file, out))
+        return false;
+
+    return true;
 }
 
-void MainOptimizer::processDry(File &file)
+bool MainOptimizer::processDry(File &file)
 {
     PLOG_INFO << "Processing: " << file.getInputFilePath() << '\n';
-    for (auto command : _commandBook.getCommandList(file.type()))
-        if (!dryRunCommand(command, file))
-            return;
+    for (auto command : _commandBook.getCommands(file.type()))
+        if (!dryRunCommand(*command, file))
+            return false;
+
+    return true;
 }
 
-void MainOptimizer::extractBSA(File &file)
+bool MainOptimizer::processBSA(File &file, bool dryRun = false)
 {
-    if (currentProfile().getGeneralSettings().bDryRun())
-        return; //TODO if "dry run" run dry run on the assets in the BSA
+    auto bsaFile = dynamic_cast<BSAFileResource *>(&file.getFile(false));
+    if (!bsaFile)
+        return false;
 
-    if (!loadFile(file))
-        return;
+    bsaFile->callback = BSAMemoryCallback(currentProfile().getGeneralSettings().sBSAExtension(),
+                                          *this,
+                                          dryRun);
 
-    PLOG_INFO << "Extracting BSA: " + file.getInputFilePath();
-    auto command = _commandBook.getCommand<BSAExtract>();
-    if (!runCommand(command, file))
-        return;
+    PLOG_VERBOSE << "Processing BSA: " + file.getInputFilePath();
 
-    //TODO if(settings.bBsaOptimizeAssets)
+    for (auto &command : _commandBook.getCommands(file.type()))
+        if (!runCommand(*command, file))
+            return false;
+
+    if (!file.optimizedCurrentFile())
+        return false;
+
+    return true;
 }
 
 void MainOptimizer::packBsa(const QString &folder)
 {
-    PLOG_INFO << "Creating BSA...";
+    assert(!folder.isEmpty());
+
     BSAFolder bsa;
     bsa.setInputFilePath(folder);
 
     if (!loadFile(bsa))
         return;
 
-    auto command = _commandBook.getCommand<BSACreate>();
-    if (!runCommand(command, bsa))
+    auto command = _commandBook.getCommand<BSACreate *>();
+    if (!command)
+    {
+        PLOG_ERROR << "BSA Create command was not registered";
+        return;
+    }
+
+    if (!command->isApplicable(bsa))
+        return;
+
+    PLOG_INFO << "Creating BSA...";
+
+    if (!runCommand(*command, bsa))
         return;
 
     if (!saveFile(bsa))
@@ -88,62 +122,89 @@ void MainOptimizer::packBsa(const QString &folder)
         PluginsOperations::makeDummyPlugins(folder, currentProfile().getGeneralSettings());
 }
 
-bool MainOptimizer::runCommand(CommandPtr command, File &file)
+bool MainOptimizer::runCommand(const Command &command, File &file)
 {
-    const auto &result = command->processIfApplicable(file);
+    const auto &result = command.processIfApplicable(file);
     if (result.processedFile)
     {
-        PLOG_VERBOSE << QString("%1: %2").arg(command->name(), "applied");
+        PLOG_VERBOSE << QString("%1: %2").arg(command.name(), "applied");
         return true;
     }
     else if (result.errorCode)
     {
-        PLOG_ERROR << QString("%1: %2 '%3'").arg(command->name(), "error", result.errorMessage);
+        PLOG_ERROR << QString("%1: %2 '%3'").arg(command.name(), "error", result.errorMessage);
         return false;
     }
     else
     {
-        PLOG_VERBOSE << QString("%1: %2").arg(command->name(), "unnecessary");
+        PLOG_VERBOSE << QString("%1: %2").arg(command.name(), "unnecessary");
         return true;
     }
 }
 
-bool MainOptimizer::dryRunCommand(CommandPtr command, File &file)
+bool MainOptimizer::dryRunCommand(const Command &command, File &file)
 {
-    const auto &result = command->processIfApplicable(file);
+    const auto &result = command.processIfApplicable(file);
     if (result.processedFile)
     {
-        PLOG_INFO << QString("%1: %2").arg(command->name(), "would be applied");
+        PLOG_INFO << QString("%1: %2").arg(command.name(), "would be applied");
         return true;
     }
     else if (result.errorCode)
     {
-        PLOG_ERROR << QString("%1: %2 '%3'").arg(command->name(), "error", result.errorMessage);
+        PLOG_ERROR << QString("%1: %2 '%3'").arg(command.name(), "error", result.errorMessage);
         return false;
     }
     else
     {
-        PLOG_VERBOSE << QString("%1: %2").arg(command->name(), "unnecessary");
+        PLOG_VERBOSE << QString("%1: %2").arg(command.name(), "unnecessary");
         return true;
     }
 }
 
-bool MainOptimizer::loadFile(File &file)
+bool MainOptimizer::loadFile(File &file, void *pSource, size_t size)
 {
-    if (file.loadFromDisk())
+    if (pSource)
     {
-        PLOG_ERROR << "Cannot load file from disk: " << file.getInputFilePath();
-        return false;
+        if (file.loadFromMemory(pSource, size, file.getInputFilePath()))
+        {
+            PLOG_ERROR << "Cannot load file from memory: " << file.getInputFilePath();
+            return false;
+        }
+    }
+    else
+    {
+        if (file.loadFromDisk())
+        {
+            PLOG_ERROR << "Cannot load file from disk: " << file.getInputFilePath();
+            return false;
+        }
     }
     return true;
 }
 
-bool MainOptimizer::saveFile(File &file)
+bool MainOptimizer::saveFile(File &file, std::vector<std::byte> *out)
 {
-    if (file.saveToDisk())
+    auto error = [&file](int errCode) {
+        PLOG_ERROR << QString("Cannot save file to disk: '%1'\nError code: '%2'")
+                          .arg(file.getOutputFilePath(), errCode);
+    };
+
+    if (out)
     {
-        PLOG_ERROR << "Cannot save file to disk: " << file.getOutputFilePath();
-        return false;
+        if (int err = file.saveToMemory(*out); err)
+        {
+            error(err);
+            return false;
+        }
+    }
+    else
+    {
+        if (int err = file.saveToDisk(); err)
+        {
+            error(err);
+            return false;
+        }
     }
     return true;
 }

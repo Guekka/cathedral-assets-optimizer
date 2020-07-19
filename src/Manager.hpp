@@ -29,8 +29,12 @@ public:
 
 private:
     void listDirectories();
-    std::vector<ModFolder> mods_;
+    QString getOutputRootDirectory(const QString &inputDirectory);
+
     QString phaseToString(OptimizationPhase phase);
+
+    std::vector<ModFolder> mods_;
+    const QString creationDate_;
 
 signals:
     void progressBarTextChanged(QString text, int maximum, int value);

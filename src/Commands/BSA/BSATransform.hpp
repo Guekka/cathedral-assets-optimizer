@@ -5,11 +5,19 @@
 
 #pragma once
 
-#include <Command.hpp>
+#include "Commands/CommandBook.hpp"
 
-class BSATransform : public Command
+namespace CAO {
+class BSATransform final : public Command
 {
 public:
-    BSATransform();
+    CommandResult process(File &file) const override;
+    bool isApplicable(File &file) const override;
+
+    Priority priority() const override { return Priority::Medium; }
+    CommandType type() const override { return CommandType::BSAFile; }
+    QString name() const override { return "Process BSA content"; }
 };
 
+REGISTER_COMMAND(BSATransform)
+} // namespace CAO

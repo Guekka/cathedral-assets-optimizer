@@ -55,9 +55,21 @@ bsa_entry_list_wrapper::bsa_entry_list_wrapper()
     data_ = bsa_entry_list_create();
 }
 
+bsa_entry_list_wrapper::bsa_entry_list_wrapper(bsa_entry_list_wrapper &&other)
+{
+    std::swap(data_, other.data_);
+}
+
+bsa_entry_list_wrapper &bsa_entry_list_wrapper::operator=(bsa_entry_list_wrapper &&other)
+{
+    std::swap(data_, other.data_);
+    return *this;
+}
+
 bsa_entry_list_wrapper::~bsa_entry_list_wrapper()
 {
-    bsa_entry_list_free(data_);
+    if (data_)
+        bsa_entry_list_free(data_);
 }
 
 bsa_entry_list_t bsa_entry_list_wrapper::get() const

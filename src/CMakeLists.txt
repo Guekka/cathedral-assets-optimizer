@@ -1,4 +1,5 @@
 set(SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/BSAMemoryCallback.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Logger.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MainOptimizer.cpp
@@ -33,6 +34,7 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Animations/AnimationsConvert.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Animations/AnimationsConvert.hpp
 
+
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSACreate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSACreate.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSAExtract.cpp
@@ -42,6 +44,8 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/Utils/BSACallback.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/Utils/BSASplit.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/Utils/BSASplit.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSATransform.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSATransform.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Meshes/Mesh.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Meshes/MeshConvert.cpp

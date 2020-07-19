@@ -7,6 +7,7 @@
 
 #include "transform_archive.hpp"
 #include "bsa_saver.hpp"
+#include "utils/exception_guard.hpp"
 
 namespace libbsarch {
 
@@ -36,11 +37,9 @@ void transform_archive(const bsa &source,
 
     bsa target;
     bsa_saver_complex target_saver(target);
-    /*
-    if (fs::exists(target_path))
-        throw exception("Cannot save transformed archive: file already exists");
-*/
+
     target_saver.prepare(target_path, std::move(entries), type);
+    exception_guard guard([target_path] { fs::remove(target_path); });
 
     for (const auto &relative_path : files)
     {

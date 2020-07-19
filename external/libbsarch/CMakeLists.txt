@@ -59,6 +59,8 @@ add_library(libbsarch_OOP STATIC
 
     src/utils/string_convert.cpp
     src/utils/string_convert.hpp
+
+    src/utils/exception_guard.hpp
     )
 
 
