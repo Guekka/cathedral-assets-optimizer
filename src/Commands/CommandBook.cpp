@@ -14,7 +14,7 @@ void CommandBook::registerCommand(std::unique_ptr<Command> command)
         return;
 
     insert_sorted(commands_, std::move(command), [](const auto &lhs, const auto &rhs) {
-        return lhs->priority() < rhs->priority();
+        return lhs->priority() > rhs->priority();
     });
 }
 
