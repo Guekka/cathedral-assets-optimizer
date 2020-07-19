@@ -51,7 +51,7 @@ bool contains(const nlohmann::json &json, const ValueType &val)
 }
 
 template<typename T>
-inline T getValue(nlohmann::json j)
+inline T getValue(const nlohmann::json &j)
 {
     if (j.is_null())
         return T{};
@@ -70,10 +70,25 @@ inline T getValue(nlohmann::json j)
 }
 
 template<class T>
-inline T getValue(nlohmann::json json, const std::string &key)
+inline T getValue(const nlohmann::json &json, const json_pointer &key)
+{
+    assert(json.is_object() || json.is_null());
+
+    if (!json.contains(getPointer(key)))
+        return getValue<T>(nlohmann::json{});
+
+    return getValue<T>(json[key]);
+}
+
+template<class T>
+inline T getValue(const nlohmann::json &json, const std::string &key)
 {
     assert(key.size() > 0);
     assert(json.is_object() || json.is_null());
+
+    if (!json.contains(getPointer(key)))
+        return getValue<T>(nlohmann::json{});
+
     return getValue<T>(json[getPointer(key)]);
 }
 
