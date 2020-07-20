@@ -5,54 +5,55 @@
 #include "TextureGenerateMipmaps.hpp"
 
 namespace CAO {
-CommandResult TextureGenerateMipmaps::process(File& file) const
+CommandResult TextureGenerateMipmaps::process(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
-    const auto &info = texFile->GetMetadata();
+    const auto &info    = texFile->GetMetadata();
     const size_t &tMips = calculateOptimalMipMapsNumber(info);
-    auto timage         = new TextureResource;
+    auto timage         = std::make_unique<TextureResource>();
 
-    if (info.mipLevels != 1 && info.mipLevels != tMips)
+    DirectX::TexMetadata mdata = info;
+    mdata.mipLevels            = 1;
+    const auto hr1             = timage->Initialize(mdata);
+    if (FAILED(hr1))
+        return _resultFactory.getFailedResult(1, "Failed to initialize target image with source metadata");
+
+    // Mips generation only works on a single base image, so strip off existing mip levels
+    // Also required for preserve alpha coverage so that existing mips are regenerated
+
+    for (size_t i = 0; i < info.arraySize; ++i)
     {
-        // Mips generation only works on a single base image, so strip off existing mip levels
-        // Also required for preserve alpha coverage so that existing mips are regenerated
-
-        DirectX::TexMetadata mdata = info;
-        mdata.mipLevels = 1;
-        HRESULT hr = timage->Initialize(mdata);
+        const auto hr = CopyRectangle(*texFile->GetImage(0, i, 0),
+                                      DirectX::Rect(0, 0, info.width, info.height),
+                                      *timage->GetImage(0, i, 0),
+                                      DirectX::TEX_FILTER_SEPARATE_ALPHA,
+                                      0,
+                                      0);
         if (FAILED(hr))
-            return _resultFactory.getFailedResult(1, "Failed to initialize target image with source metadata");
-
-        for (size_t i = 0; i < info.arraySize; ++i)
-        {
-            const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
-            hr = CopyRectangle(*texFile->GetImage(0, i, 0),
-                               DirectX::Rect(0, 0, info.width, info.height),
-                               *timage->GetImage(0, i, 0),
-                               filter,
-                               0,
-                               0);
-            if (FAILED(hr))
-                return _resultFactory.getFailedResult(1, "Failed to copy image to single level");
-        }
+            return _resultFactory.getFailedResult(1, "Failed to copy image to single level");
     }
 
-    auto timage2 = new TextureResource;
-    const DWORD &filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
-    const auto hr
-        = GenerateMipMaps(timage->GetImages(), timage->GetImageCount(), timage->GetMetadata(), filter, tMips, *timage2);
+    auto timage2        = std::make_unique<TextureResource>();
+    timage2->origFormat = texFile->origFormat;
+
+    const auto hr = GenerateMipMaps(timage->GetImages(),
+                                    timage->GetImageCount(),
+                                    timage->GetMetadata(),
+                                    DirectX::TEX_FILTER_SEPARATE_ALPHA,
+                                    tMips,
+                                    *timage2);
 
     if (FAILED(hr))
-        return _resultFactory.getFailedResult(2, "Failed to generate mipmaps");
+        return _resultFactory.getFailedResult(2, "Failed to generate mipmaps: " + QString::number(hr, 16));
 
-    file.setFile(std::unique_ptr<Resource>(std::move(timage2)));
+    file.setFile(std::move(timage2));
     return _resultFactory.getSuccessfulResult();
 }
 
-bool TextureGenerateMipmaps::isApplicable(File& file) const
+bool TextureGenerateMipmaps::isApplicable(File &file) const
 {
     if (!file.patternSettings().bTexturesMipmaps())
         return false;
@@ -65,7 +66,7 @@ bool TextureGenerateMipmaps::isApplicable(File& file) const
     if (DirectX::IsCompressed(info.format))
         return false; //Cannot process compressed file
 
-    const bool &compatible = info.width >= 4 && info.height >= 4;
+    const bool &compatible     = info.width >= 4 && info.height >= 4;
     const bool &optimalMipMaps = info.mipLevels == calculateOptimalMipMapsNumber(info);
 
     return compatible && !optimalMipMaps;
@@ -73,18 +74,19 @@ bool TextureGenerateMipmaps::isApplicable(File& file) const
 
 size_t TextureGenerateMipmaps::calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const
 {
-    size_t height = info.height;
-    size_t width = info.width;
-    size_t tMips = 1;
-    //Calculating mips levels
-    while (height > 1 || width > 1)
+    if (info.width < 4 && info.height < 4)
     {
-        if (height > 1)
-            height >>= 1;
+        return 1;
+    }
 
-        if (width > 1)
-            width >>= 1;
-
+    size_t height = info.height;
+    size_t width  = info.width;
+    size_t tMips  = 1;
+    //Calculating mips levels
+    while (height > 1 && width > 1)
+    {
+        height /= 2;
+        width /= 2;
         ++tMips;
     }
     return tMips;
