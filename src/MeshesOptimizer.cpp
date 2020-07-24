@@ -97,15 +97,18 @@ void MeshesOptimizer::optimize(const QString &filepath)
     const ScanResult scanResult = scan(nif);
     const QString relativeFilePath = filepath.mid(filepath.indexOf("/meshes/", Qt::CaseInsensitive) + 1);
 
+    bool processedHeadpart = false;
     //Headparts have to get a special optimization
     if (iMeshesOptimizationLevel >= 1
-        && (headparts.contains(relativeFilePath, Qt::CaseInsensitive) || relativeFilePath.contains("facegen")))
+        && (headparts.contains(relativeFilePath, Qt::CaseInsensitive)
+            || relativeFilePath.contains("facegen", Qt::CaseInsensitive)))
     {
         if (bMeshesHeadparts)
         {
             options.headParts = true;
             PLOG_INFO << "Optimizing: " + filepath + " as an headpart due to necessary optimization";
             nif.OptimizeFor(options);
+            processedHeadpart = true;
         }
         else
             PLOG_VERBOSE << "Headpart mesh ignored: " + filepath;
@@ -148,7 +151,7 @@ void MeshesOptimizer::optimize(const QString &filepath)
     const auto renamedReferencedTextures = Profiles::texturesConvertTga() && renameReferencedTexturesExtension(nif);
     PLOG_VERBOSE_IF(renamedReferencedTextures) << "Renamed referenced textures from TGA to DDS in " + filepath;
 
-    if (modifiedMesh || renamedReferencedTextures)
+    if (modifiedMesh || renamedReferencedTextures || processedHeadpart)
         saveMesh(nif, filepath);
     PLOG_VERBOSE << "Closing mesh: " + filepath;
 }

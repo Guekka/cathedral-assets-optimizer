@@ -492,6 +492,10 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
         <translation>It appears you are running CAO for the first time. All options have tooltips explaining what they do. If you need help, you can also join us on Discord. A dark theme is also available.</translation>
     </message>
     <message>
+        <source>Save UI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Create dummy plugins</source>
         <translation type="unfinished"></translation>
     </message>
@@ -501,10 +505,6 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Create the least BSAs possible</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save UI</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

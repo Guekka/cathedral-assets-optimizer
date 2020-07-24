@@ -5,8 +5,9 @@ See the included LICENSE file
 
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <cmath>
+#include <vector>
 
 #pragma warning (disable : 4018 4244 4267 4389)
 

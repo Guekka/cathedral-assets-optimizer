@@ -492,6 +492,18 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
         <translation>CAOを初めて実行しているようです。すべてのオプションには、その機能を説明するツールチップがあります。ヘルプが必要な場合は、Discordに参加することもできます。ダークテーマも使用できます。</translation>
     </message>
     <message>
+        <source>Create dummy plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : uncompressible, textures and standard. The uncompressible one contains sounds. If this option is checked, these three types of BSAs will be merged if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create the least BSAs possible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Save UI</source>
         <translation type="unfinished"></translation>
     </message>

@@ -68,12 +68,14 @@ int BSAOptimizer::create(BSA &bsa) const
     archive.setDDSCallback(&BSAOptimizer::DDSCallback, rootPath);
 
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
-    for (const auto &file : bsa.files)
-    {
-        if (!canBeCompressedFile(file))
-        {
-            archive.setCompressed(false);
-            break;
+    if (bsa.type == BSAType::UncompressableBsa) {
+        archive.setCompressed(false);
+    } else {
+        for (const auto& file : bsa.files) {
+            if (!canBeCompressedFile(file)) {
+                archive.setCompressed(false);
+                break;
+            }
         }
     }
 
@@ -201,11 +203,11 @@ bool BSAOptimizer::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo) 
     return false;
 }
 
-bool BSAOptimizer::canBeCompressedFile(const QString &filename)
-{
-    const bool cantBeCompressed = (filename.endsWith(".wav", Qt::CaseInsensitive)
-                                   || filename.endsWith(".xwm", Qt::CaseInsensitive)
-                                   || filename.contains(QRegularExpression("^.+\\.[^.]*strings$")));
+bool BSAOptimizer::canBeCompressedFile(const QString& filename) {
+    const bool cantBeCompressed =
+        uncompressableAssets.contains(QFileInfo(filename).suffix(),
+                                      Qt::CaseInsensitive) ||
+        filename.contains(QRegularExpression("^.+\\.[^.]*strings$"));
     return !cantBeCompressed;
 }
 

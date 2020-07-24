@@ -35,41 +35,47 @@ void BSA::nameBsa(std::initializer_list<BSA *> bsaList, const QString &folder)
 {
     for (auto bsa : bsaList)
     {
-        const QString &suffix = bsa->type == TexturesBsa ? Profiles::bsaTexturesSuffix() : Profiles::bsaSuffix();
+        const QString &suffix = bsa->type == TexturesBsa ? Profiles::bsaTexturesSuffix()
+                                                         : Profiles::bsaSuffix();
         bsa->path = folder + "/" + PluginsOperations::findPlugin(folder, bsa->type) + suffix;
         PLOG_VERBOSE << "Named " << bsa->type << bsa->path;
     }
 }
 
-size_t
-BSA::mergeBsas(QVector<BSA>& list, bool mergeBsa)
+size_t BSA::mergeBsas(QVector<BSA> &list, bool mergeBsa)
 {
     size_t counter = 0;
     for (int j = 0; j < list.size(); ++j)
     {
-      for (int k = 0; k < list.size(); ++k) {
-        if (j == k)
-          continue;
+        for (int k = 0; k < list.size(); ++k)
+        {
+            if (list[k].files.empty() || list[j].files.empty())
+                continue;
 
-        if ((list.at(j).type == TexturesBsa ||
-             list.at(k).type == TexturesBsa) &&
-            !mergeBsa)
-          continue;
+            if (j == k)
+                continue;
 
-        if (list.at(j).filesSize + list.at(k).filesSize < list.at(j).maxSize &&
-            (list.at(j).type == list.at(k).type ||
-             list.at(j).type == StandardBsa)) {
-          list[j] += list[k];
-          list[k].files.clear();
-          PLOG_VERBOSE << "Merged " << list.at(k).type << " into "
-                       << list.at(j).type;
-          ++counter;
+            if ((list.at(j).type == TexturesBsa ||
+                 list.at(k).type == TexturesBsa) &&
+                !mergeBsa)
+                continue;
+
+            if (list.at(j).filesSize + list.at(k).filesSize < list.at(j).maxSize
+                && (list.at(j).type == list.at(k).type || list.at(j).type == StandardBsa))
+            {
+                list[k] += list[j];
+                list[j].files.clear();
+                PLOG_VERBOSE << "Merged " << list.at(j).type << " into "
+                             << list.at(k).type;
+                ++counter;
+            }
         }
-      }
     }
 
-    //Removing empty BSAs
-    [[maybe_unused]] auto a = std::remove_if(list.begin(), list.end(), [](BSA &bsa) { return bsa.files.isEmpty(); });
+    // Removing empty BSAs
+    list.erase(std::remove_if(list.begin(), list.end(),
+                              [](BSA& bsa) { return bsa.files.isEmpty(); }),
+               list.end());
 
     PLOG_VERBOSE << "Merged " << counter << " BSAs";
     return counter;

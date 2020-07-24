@@ -9,6 +9,18 @@
 #endif
 #include "Manager.h"
 
+void displayError(const std::string &err)
+{
+#ifdef GUI
+    QMessageBox box(QMessageBox::Critical, "Unknown error", QString::fromStdString(err));
+    box.exec();
+#else
+    std::cerr << err << std::endl;
+#endif
+
+    PLOG_FATAL << err;
+}
+
 int main(int argc, char *argv[])
 {
 #ifdef GUI
@@ -44,8 +56,7 @@ int main(int argc, char *argv[])
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
-        PLOG_FATAL << e.what();
+        displayError(e.what());
         return 1;
     }
 

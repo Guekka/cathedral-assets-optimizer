@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>Several mods </source>
-        <translation>Plusieurs mods</translation>
+        <translation>Plusieurs mods </translation>
     </message>
     <message>
         <source>Run</source>
@@ -73,7 +73,7 @@
     </message>
     <message>
         <source>Delete backups </source>
-        <translation>Suppression des backups</translation>
+        <translation>Suppression des backups </translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Creates a new BSA, packing the existing loose files. &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -89,7 +89,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size of the files in GB. Increasing it will increase the number of files stored per BSA, but you might reach the hard limit of BSA size, causing the game to crash.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>La taille maximum non compressée des fichiers dans le BSA. L&apos;augmenter augmentera le nombre de fichiers stockés par BSA, mais vous pourriez atteindre la limite, causant des crashes en jeu.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;La taille maximum non compressée des fichiers dans le BSA. L&apos;augmenter augmentera le nombre de fichiers stockés par BSA, mais vous pourriez atteindre la limite, causant des crashes en jeu.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Maximum size</source>
@@ -97,7 +97,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The extension of the bsa. Usually, this will be &amp;quot;.bsa&amp;quot; for Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>L&apos;extension du BSA. Généralement, ce sera &quot;.bsa&quot; pour Skyrim et &quot;.ba2&quot; pour Fallout 4.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;L&apos;extension du BSA. Généralement, ce sera &quot;.bsa&quot; pour Skyrim et &quot;.ba2&quot; pour Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Extension</source>
@@ -105,7 +105,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Exemple : &quot; - Main.ba2&quot; pour Fallout 4.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exemple : &amp;quot; - Main.ba2&amp;quot; pour Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Suffix</source>
@@ -169,7 +169,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perform necessary optimization, and also lightly optimizes other meshes. This may fix some visual issues, but may also lower quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Exécute l&apos;optimisation nécessaire, et optimise légèrement les autres meshes. Cela pourrait corriger quelques problèmes visuels, mais aussi diminuer la qualité.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exécute l&apos;optimisation nécessaire, et optimise légèrement les autres meshes. Cela pourrait corriger quelques problèmes visuels, mais aussi diminuer la qualité. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Medium optimization</source>
@@ -185,7 +185,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When this option is disabled, headparts are ignored. It is recommended to keep it disabled when processing several mods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Quand cette option est désactivée, les headparts sont ignorés. Il est recommandé de désactiver cette option quand plusieurs mods sont traités.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quand cette option est désactivée, les headparts sont ignorés. Il est recommandé de désactiver cette option quand plusieurs mods sont traités.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Always process headparts</source>
@@ -257,7 +257,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Compresse les textures non compressées vers le format de sortie sélectionné. Cela est recommandé pour SSE et FO4, but pourrait hautement dégrader la qualité pour les autres jeux.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresse les textures non compressées vers le format de sortie sélectionné. Cela est recommandé pour SSE et FO4, but pourrait hautement dégrader la qualité pour les autres jeux.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Compress textures</source>
@@ -265,7 +265,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Génère des mipmaps pour les textures, améliorant les performances mais augmentant l&apos;utilisation du disque et de la vram.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Génère des mipmaps pour les textures, améliorant les performances mais augmentant l&apos;utilisation du disque et de la vram.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Generate mipmaps</source>
@@ -285,7 +285,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes textures, dividing the current width and height by the values given. Must result in texture dimensions expressed in powers of two, no less than 4x4. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Redimensionne les textures, divisant les hauteur et largeur actuelles par les valeurs données. Doit résulter dans des dimensions exprimées en puissances de deux, supérieures à 4x4.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Redimensionne les textures, divisant les hauteur et largeur actuelles par les valeurs données. Doit résulter dans des dimensions exprimées en puissances de deux, supérieures à 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>By ratio</source>
@@ -293,7 +293,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Redimensionne les textures vers la taille donnée. Doit résulter dans des dimensions exprimées en puissances de deux, supérieures à 4x4.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Redimensionne les textures vers la taille donnée. Doit résulter dans des dimensions exprimées en puissances de deux, supérieures à 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>By fixed size</source>
@@ -313,7 +313,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Format de sortie pour les textures non compressées, les textures modifiées, et les fichiers TGA convertis. BC7 devrait seulement être utilisé pour SSE et FO4.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Format de sortie pour les textures non compressées, les textures modifiées, et les fichiers TGA convertis. BC7 devrait seulement être utilisé pour SSE et FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Output format</source>
@@ -321,7 +321,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Convertit les TGA vers un format DDS compatible.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Convertit les TGA vers un format DDS compatible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>TGA</source>
@@ -349,7 +349,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Les textures utilisant ces formats seront converties vers un format supporté.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Les textures utilisant ces formats seront converties vers un format supporté.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Unwanted formats</source>
@@ -369,7 +369,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to the appropriate format. If an animation is already compatible, no change will be made.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Convertit les animations vers un format approprié. Si l&apos;animation est déjà compatible, aucun changement ne sera fait.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Convertit les animations vers un format approprié. Si l&apos;animation est déjà compatible, aucun changement ne sera fait.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Log</source>
@@ -437,7 +437,7 @@
     </message>
     <message>
         <source>You have selected the several mods option. This process may take a very long time, especially if you process BSA. </source>
-        <translation>Vous avez sélectionne l&apos;option &quot;plusieurs mods&quot;. Ce processus pourrait prendre un très long moment, particulièrement si vous traitez les BSAs.</translation>
+        <translation>Vous avez sélectionne l&apos;option &quot;plusieurs mods&quot;. Ce processus pourrait prendre un très long moment, particulièrement si vous traitez les BSAs. </translation>
     </message>
     <message>
         <source>This process has only been tested on the Mod Organizer mods folder.</source>
@@ -447,8 +447,9 @@
         <source>
 Made by G&apos;k
 This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTLY. See the Mozilla Public License</source>
-        <translation>Créé par G&apos;k
-Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE GARANTIE. Voir la Mozilla Public License.</translation>
+        <translation>
+Créé par G&apos;k
+Ce programme est distribué esb espérant qu&apos;il soit utile, mais SANS AUCUNE GARANTIE. Voir la Mozilla Public License</translation>
     </message>
     <message>
         <source>Save unsaved changes</source>
@@ -456,7 +457,7 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>Vous avez des changements non sauvegardés. Voulez-vous les sauvegarder ? Vous pouvez aussi appuyer sur &quot;Oui pour tous&quot; pour qu&apos;ils soient toujours sauvegardés.</translation>
+        <translation>Vous avez des changements non sauvegardés. Voulez-vous les sauvegarder ? Vous pouvez aussi appuyer sur &quot;Oui pour tous&quot; pour qu&apos;ils soient toujours sauvegardés</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>
@@ -480,7 +481,7 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation>Une exception a été rencontrée et le programme a été contraint de s&apos;arrêter:</translation>
+        <translation>Une exception a été rencontrée et le programme a été contraint de s&apos;arrêter: </translation>
     </message>
     <message>
         <source>Done</source>
@@ -493,6 +494,18 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     <message>
         <source>It appears you are running CAO for the first time. All options have tooltips explaining what they do. If you need help, you can also join us on Discord. A dark theme is also available.</source>
         <translation>Il semblerait que vous lanciez CAO pour la première fois. Toutes les options ont des infobulles expliquant leur utilité. Si vous avez besoin d&apos;aide, vous pouvez nous rejoindre sur Discord. Un thème sombre est aussi disponible.</translation>
+    </message>
+    <message>
+        <source>Create dummy plugins</source>
+        <translation>Créer des plugins factices</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : uncompressible, textures and standard. The uncompressible one contains sounds. If this option is checked, these three types of BSAs will be merged if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Il y a trois types de BSAs que CAO peut créer : incompressible, texture et standard. Le BSA incompressible contient les sons. Si cette option est activée, ces trois types de BSAs seront fusionnés si possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Create the least BSAs possible</source>
+        <translation>Créer le moins de BSAs possible</translation>
     </message>
 </context>
 <context>

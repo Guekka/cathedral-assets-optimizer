@@ -170,8 +170,8 @@ TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const
         }
     }
 
-    result.bNeedsResize = (bNecessary && !isPowerOfTwo())
-                          || (result.tHeight != _info.height || result.tWidth != _info.width);
+    result.bNeedsResize =
+        result.tHeight != _info.height || result.tWidth != _info.width;
 
     result.bNeedsCompress = (bNecessary && (isIncompatible() || _type == TGA))
                             || (bCompress && canBeCompressed() && _info.format != Profiles::texturesFormat());
@@ -187,6 +187,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
                                  const std::optional<size_t> &tWidth,
                                  const std::optional<size_t> &tHeight)
 {
+    PLOG_VERBOSE << "Processing arguments for: " << _name;
     //Getting operations to perform. This will be repeated several times, since the texture will change after each operation
     auto options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
@@ -420,7 +421,7 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
     const HRESULT hr = Resize(imgs, _image->GetImageCount(), _info, targetWidth, targetHeight, filter, *timage);
     if (FAILED(hr))
     {
-        PLOG_ERROR << "Failed to resize: " + _name;
+        PLOG_ERROR << QString("Failed to resize: '%1'. Error code: '%2'").arg(_name, hr);
         return false;
     }
 
@@ -685,7 +686,17 @@ bool TexturesOptimizer::isIncompatible() const
     for (const auto &f : Profiles::texturesUnwantedFormats())
         if (f == fileFormat)
             return true;
-    return false;
+
+    const bool isCubemap = _info.IsCubemap();
+    const bool uncompressed = !DirectX::IsCompressed(fileFormat);
+
+    const bool opaqueAlpha = _info.GetAlphaMode() == DirectX::TEX_ALPHA_MODE::TEX_ALPHA_MODE_OPAQUE;
+    const bool noAlpha = !DirectX::HasAlpha(fileFormat);
+    const bool badAlpha = opaqueAlpha || noAlpha;
+
+    const bool badCubemap = isCubemap && uncompressed && badAlpha;
+
+    return badCubemap;
 }
 
 void TexturesOptimizer::fitPowerOfTwo(uint &resultX, uint &resultY)

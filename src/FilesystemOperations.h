@@ -12,14 +12,15 @@ const QStringList texturesAssets{"dds"};
 /*!
 \brief List of standard assets. Includes uncompressable assets but does not include textures assets 
 */
-const QStringList standardAssets{"png", "nif", "seq", "pex", "psc", "lod", "fuz", "wav", "xwm",  "swf",  "hkx",
-                                 "tri", "btr", "bto", "btt", "lip", "txt", "lst", "gid", "bgsm", "bgem", "xml"};
+const QStringList standardAssets{"bgem", "bgsm", "bto", "btr", "btt", "dlodsettings", "dtl",
+                                 "egm",  "gid",  "hkx", "lod", "lst", "nif",          "pex",
+                                 "png",  "psc",  "seq", "swf", "tri", "txt"};
 /*!
 \brief List of uncompressable assets (sounds)
 */
-const QStringList uncompressableAssets{"wav", "xwm"};
+const QStringList uncompressableAssets{"fuz", "lip", "ogg", "wav", "xwm"};
 
-const QStringList allAssets = texturesAssets + standardAssets;
+const QStringList allAssets = texturesAssets + standardAssets + uncompressableAssets;
 
 /*!
  * \brief Manages filesystem operations : moving files, deleting empty dirs...

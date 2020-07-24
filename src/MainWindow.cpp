@@ -5,8 +5,7 @@
 
 #include "MainWindow.h"
 
-MainWindow::MainWindow()
-    : _ui(new Ui::MainWindow)
+MainWindow::MainWindow() : _ui(new Ui::MainWindow)
 {
     _ui->setupUi(this);
     setAcceptDrops(true);
@@ -34,7 +33,9 @@ MainWindow::MainWindow()
             connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
 
         for (const auto &c : comboBox)
-            connect(c, QOverload<int>::of(&QComboBox::activated), this, [this] { this->_settingsChanged = true; });
+            connect(c, QOverload<int>::of(&QComboBox::activated), this, [this] {
+                this->_settingsChanged = true;
+            });
 
         for (const auto &s : spinBox)
             connect(s, &QDoubleSpinBox::editingFinished, this, [this] { this->_settingsChanged = true; });
@@ -179,12 +180,13 @@ MainWindow::MainWindow()
         });
 
         connect(_ui->actionAbout, &QAction::triggered, this, [&] {
-            QMessageBox::about(this,
-                               tr("About"),
-                               QCoreApplication::applicationName() + ' ' + QCoreApplication::applicationVersion()
-                                   + tr("\nMade by G'k\nThis program is distributed in the hope that it will be useful "
-                                        "but WITHOUT ANY "
-                                        "WARRANTLY. See the Mozilla Public License"));
+            QMessageBox::about(
+                this,
+                tr("About"),
+                QCoreApplication::applicationName() + ' ' + QCoreApplication::applicationVersion()
+                    + tr("\nMade by G'k\nThis program is distributed in the hope that it will be useful "
+                         "but WITHOUT ANY "
+                         "WARRANTLY. See the Mozilla Public License"));
         });
         connect(_ui->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
 
@@ -193,13 +195,12 @@ MainWindow::MainWindow()
         });
 
         connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
-          QDesktopServices::openUrl(
-            QUrl("https://discordapp.com/invite/B9abN8d"));
+            QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
         });
 
         connect(_ui->actionSave_UI, &QAction::triggered, this, [this] {
-          saveUi();
-          loadUi();
+            saveUi();
+            loadUi();
         });
     }
 
@@ -227,12 +228,12 @@ void MainWindow::saveUi()
 
     if (!_alwaysSaveSettings)
     {
-        QMessageBox
-            box(QMessageBox::Information,
-                tr("Save unsaved changes"),
-                tr("You have unsaved changes. Do you want to save them? You can also press 'Yes to all' to always "
-                   "save unsaved changes"),
-                QMessageBox::No | QMessageBox::Yes | QMessageBox::YesToAll);
+        QMessageBox box(QMessageBox::Information,
+                        tr("Save unsaved changes"),
+                        tr("You have unsaved changes. Do you want to save them? You can also press 'Yes to "
+                           "all' to always "
+                           "save unsaved changes"),
+                        QMessageBox::No | QMessageBox::Yes | QMessageBox::YesToAll);
 
         box.exec();
 
@@ -257,10 +258,12 @@ void MainWindow::saveUi()
 void MainWindow::loadUi()
 {
     setDarkTheme(Profiles::commonSettings()->value("bDarkMode").toBool());
-    _ui->advancedSettingsCheckbox->setChecked(Profiles::commonSettings()->value("bShowAdvancedSettings").toBool());
-    _ui->presets->setCurrentIndex(_ui->presets->findText(Profiles::commonSettings()->value("profile").toString()));
+    _ui->advancedSettingsCheckbox->setChecked(
+        Profiles::commonSettings()->value("bShowAdvancedSettings").toBool());
+    _ui->presets->setCurrentIndex(
+        _ui->presets->findText(Profiles::commonSettings()->value("profile").toString()));
     _alwaysSaveSettings = Profiles::commonSettings()->value("alwaysSaveSettings").toBool();
-    _showTutorials = Profiles::commonSettings()->value("showTutorial").toBool();
+    _showTutorials = Profiles::commonSettings()->value("showTutorial", true).toBool();
     _ui->actionShow_tutorials->setChecked(_showTutorials);
 
     _options.readFromIni(Profiles::optionsSettings());
@@ -297,12 +300,14 @@ void MainWindow::refreshProfiles()
 
 void MainWindow::createProfile()
 {
-    showTutorialWindow(tr("New profile"),
-                       tr("You are about to create a new profile. It will create a new directory in 'CAO/profiles'. "
-                          "Please check it out after creation, some files will be created inside it."));
+    showTutorialWindow(
+        tr("New profile"),
+        tr("You are about to create a new profile. It will create a new directory in 'CAO/profiles'. "
+           "Please check it out after creation, some files will be created inside it."));
 
     bool ok = false;
-    const QString &text = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
+    const QString &text
+        = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
     if (!ok || text.isEmpty())
         return;
 
@@ -394,7 +399,8 @@ void MainWindow::updateLog() const
     {
         QTextStream ts(&log);
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
-        _ui->logTextEdit->appendHtml(ts.readAll());
+        while (!ts.atEnd())
+            _ui->logTextEdit->appendHtml(ts.readLine());
     }
 }
 
@@ -477,8 +483,10 @@ void MainWindow::firstStart()
     {
         QMessageBox(
             QMessageBox::Information,
-            tr("Welcome to %1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
-            tr("It appears you are running CAO for the first time. All options have tooltips explaining what they "
+            tr("Welcome to %1 %2")
+                .arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
+            tr("It appears you are running CAO for the first time. All options have tooltips explaining what "
+               "they "
                "do. If you need help, you can also join us on Discord. A dark theme is also available."))
             .exec();
 
