@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12...3.17)
 
-project(Cathedral_Assets_Optimizer VERSION 5.0.13 LANGUAGES CXX)
+project(Cathedral_Assets_Optimizer VERSION 5.0.14 LANGUAGES CXX)
 
 #Setting version for C++ files
 configure_file (
@@ -80,6 +80,7 @@ set(TS_FILES
     translations/AssetsOpt_en.ts
     translations/AssetsOpt_fr.ts
     translations/AssetsOpt_ja.ts
+    translations/AssetsOpt_zh_CN.ts
     )
 
 message("Updating translations files")
