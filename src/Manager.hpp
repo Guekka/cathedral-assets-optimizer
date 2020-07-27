@@ -14,24 +14,17 @@ class Manager final : public QObject
 {
     Q_OBJECT
 
-    enum OptimizationPhase
-    {
-        BSAExtraction,
-        FileOptimization,
-        BSAPacking
-    };
-
 public:
     explicit Manager();
 
     void runOptimization();
-    void emitProgress(const QString &modName, OptimizationPhase phase, int currModIndex);
+    void emitProgress(const QString &modName, CommandType type, int completedFiles, int totalFiles);
 
 private:
     void listDirectories();
     QString getOutputRootDirectory(const QString &inputDirectory);
 
-    QString phaseToString(OptimizationPhase phase);
+    QString fileTypeToString(CommandType type);
 
     std::vector<ModFolder> mods_;
     const QString creationDate_;

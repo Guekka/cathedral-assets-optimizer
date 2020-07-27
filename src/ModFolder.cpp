@@ -21,8 +21,8 @@ bool ModFolder::hasNext() const
 
 std::unique_ptr<File> ModFolder::consume()
 {
-    auto helper = [](auto &vec, auto &count) {
-        count++;
+    auto helper = [this](auto &vec) {
+        processedFileCount_++;
         auto file = std::move(vec.back());
         vec.pop_back();
         return std::move(file);
@@ -31,9 +31,9 @@ std::unique_ptr<File> ModFolder::consume()
     std::unique_ptr<File> res;
 
     if (!bsas_.empty())
-        res = helper(bsas_, processedBSACount_);
+        res = helper(bsas_);
     else
-        res = helper(files_, processedFileCount_);
+        res = helper(files_);
 
     //If the BSAs were extracted, new files could have appeared
     if (!BSAExhausted_ && bsas_.empty())
@@ -45,24 +45,14 @@ std::unique_ptr<File> ModFolder::consume()
     return res;
 }
 
-size_t ModFolder::processedBSACount() const
-{
-    return processedBSACount_;
-}
-
 size_t ModFolder::processedFileCount() const
 {
     return processedFileCount_;
 }
 
-size_t ModFolder::remainingBSACount() const
+size_t ModFolder::totalFileCount() const
 {
-    return bsas_.size();
-}
-
-size_t ModFolder::remainingFileCount() const
-{
-    return files_.size();
+    return totalFileCount_;
 }
 
 QString ModFolder::name() const
@@ -84,6 +74,10 @@ void ModFolder::load()
 {
     bsas_.clear();
     files_.clear();
+
+    //Typical amount of medium mod
+    bsas_.reserve(5);
+    files_.reserve(1'000);
 
     auto isBSA = [this](const QString &fileName) {
         return fileName.endsWith(bsaExtension_, Qt::CaseInsensitive);
@@ -108,7 +102,14 @@ void ModFolder::load()
             vec.emplace_back(std::move(file));
         }
     }
-    BSAExhausted_ = bsas_.empty();
+    BSAExhausted_ |= bsas_.empty();
+
+    if (!totalFileCount_)
+        totalFileCount_ = bsas_.size() + files_.size();
+
+    //Memory optimization
+    bsas_.shrink_to_fit();
+    files_.shrink_to_fit();
 }
 
 } // namespace CAO

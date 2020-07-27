@@ -18,7 +18,7 @@
     __if_exists(this) { this } \
     __if_not_exists(this) { 0 }
 #else
-#define PLOG_GET_THIS() reinterpret_cast<void *>(0)
+#define PLOG_GET_THIS() nullptr
 #endif
 
 #ifdef _MSC_VER

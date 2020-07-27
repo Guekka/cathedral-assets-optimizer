@@ -25,11 +25,8 @@ public:
     /// \note UB if hasNext == false
     std::unique_ptr<File> consume();
 
-    size_t processedBSACount() const;
     size_t processedFileCount() const;
-
-    size_t remainingBSACount() const;
-    size_t remainingFileCount() const;
+    size_t totalFileCount() const;
 
     QString name() const;
 
@@ -47,7 +44,7 @@ private:
 
     QString bsaExtension_;
 
-    size_t processedBSACount_  = 0;
     size_t processedFileCount_ = 0;
+    size_t totalFileCount_     = 0;
 };
 } // namespace CAO

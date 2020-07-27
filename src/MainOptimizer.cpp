@@ -13,13 +13,13 @@ MainOptimizer::MainOptimizer() {}
 
 void MainOptimizer::process(File &file, bool dryRun, MemoryData memoryData)
 {
+    emit processingFile(file.type());
     try
     {
         if (!loadFile(file, memoryData.pSource, memoryData.sourceSize))
         {
             return;
         }
-
         if (file.type() == CommandType::BSAFile)
         {
             if (!processBSA(file, dryRun))

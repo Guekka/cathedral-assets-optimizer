@@ -5,7 +5,10 @@
 
 #pragma once
 
+#include "pch.hpp"
+
 namespace CAO {
+Q_NAMESPACE
 enum class CommandType
 {
     Invalid = -1,
@@ -16,4 +19,6 @@ enum class CommandType
     Animation,
     Plugin
 };
-}
+Q_ENUM_NS(CommandType)
+} // namespace CAO
+Q_DECLARE_METATYPE(CAO::CommandType)

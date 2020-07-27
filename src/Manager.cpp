@@ -72,21 +72,21 @@ QString Manager::getOutputRootDirectory(const QString &inputDirectory)
                : inputDirectory;
 }
 
-QString Manager::phaseToString(Manager::OptimizationPhase phase)
+QString Manager::fileTypeToString(CommandType type)
 {
-    switch (phase)
+    switch (type)
     {
-        case BSAExtraction: return "Extracting BSAs";
-        case FileOptimization: return "Processing files";
-        case BSAPacking: return "Packing BSAs";
-        default: return "Unknown phase";
+        case CommandType::BSAFile: return "Processing BSAs";
+        case CommandType::BSAFolder: return "Packing BSAs";
+        default: return "Processing files";
     }
 }
 
-void Manager::emitProgress(const QString &modName, OptimizationPhase phase, int currModIndex)
+void Manager::emitProgress(const QString &modName, CommandType type, int completedFiles, int totalFiles)
 {
-    const auto &text = QString("Processing mod: '%1'. %2 - %v/%m - %p%").arg(modName, phaseToString(phase));
-    emit progressBarTextChanged(text, mods_.size(), currModIndex);
+    const auto &text = QString("Processing mod: '%1'. %2 - %v/%m - %p%").arg(modName, fileTypeToString(type));
+
+    emit progressBarTextChanged(text, totalFiles, completedFiles);
 }
 
 void Manager::runOptimization()
@@ -99,21 +99,23 @@ void Manager::runOptimization()
 
     MainOptimizer optimizer;
 
-    for (uint i = 0; i < mods_.size(); i++)
+    for (auto &mod : mods_)
     {
-        auto &mod = mods_[i];
         mod.load();
-        emitProgress(mod.name(), BSAExtraction, i);
+
+        optimizer.disconnect();
+        qRegisterMetaType<CommandType>("CommandType"); //Seriously, Qt?
+        connect(&optimizer, &MainOptimizer::processingFile, this, [this, &mod](auto type) {
+            emitProgress(mod.name(), type, mod.processedFileCount(), mod.totalFileCount());
+        });
 
         while (mod.hasNext())
         {
             auto file = mod.consume();
-            emitProgress(mod.name(), FileOptimization, i);
             optimizer.process(*file, currentProfile().getGeneralSettings().bDryRun());
         }
 
         //Packing BSAs
-        emitProgress(mod.name(), BSAPacking, i);
         optimizer.packBsa(mod.outPath());
     }
 

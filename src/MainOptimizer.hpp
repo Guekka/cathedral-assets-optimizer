@@ -16,7 +16,7 @@ namespace CAO {
  */
 class MainOptimizer final : public QObject
 {
-    Q_DECLARE_TR_FUNCTIONS(MainOptimizer)
+    Q_OBJECT
 
 public:
     explicit MainOptimizer();
@@ -44,5 +44,8 @@ private:
 
 
     CommandBook _commandBook;
+
+signals:
+    void processingFile(CommandType type);
 };
 } // namespace CAO

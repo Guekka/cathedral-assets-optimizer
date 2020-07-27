@@ -284,9 +284,9 @@ void MainWindow::initProcess()
     {
         caoProcess_.reset();
         caoProcess_ = std::make_unique<Manager>();
-        connect(&*caoProcess_, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
-        connect(&*caoProcess_, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
-        connect(&*caoProcess_, &Manager::end, this, &MainWindow::endProcess);
+        connect(caoProcess_.get(), &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+        connect(caoProcess_.get(), &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
+        connect(caoProcess_.get(), &Manager::end, this, &MainWindow::endProcess);
 
         freezeModules();
 

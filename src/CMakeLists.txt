@@ -1,7 +1,6 @@
 set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/BSAMemoryCallback.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Logger.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MainOptimizer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MainOptimizer.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Manager.cpp
@@ -30,6 +29,8 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandBook.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandResult.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandResult.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandType.hpp
+
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Animations/AnimationsConvert.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Animations/AnimationsConvert.hpp
@@ -180,7 +181,7 @@ target_link_libraries(CAO_LIB PUBLIC ${libs} Qt)
 
 #Main exe
 add_executable(Cathedral_Assets_Optimizer WIN32
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${resources}
     )
 target_link_libraries(Cathedral_Assets_Optimizer CAO_LIB)

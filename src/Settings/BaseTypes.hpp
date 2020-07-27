@@ -25,6 +25,7 @@ enum class GuiMode
     Medium        = 5,
     Advanced      = 10
 };
+
 } // namespace CAO
 
 Q_DECLARE_METATYPE(DXGI_FORMAT)
