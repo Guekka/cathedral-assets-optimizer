@@ -19,9 +19,9 @@ ProgressWindow::ProgressWindow(const QString &logFilePath, QWidget *parent)
         logEntries_.clear();
     });
 
-    connect(ui_->debugCheckbox, &QPushButton::clicked, this, &ProgressWindow::updateLog);
-    connect(ui_->errorCheckbox, &QPushButton::clicked, this, &ProgressWindow::updateLog);
-    connect(ui_->infoCheckbox, &QPushButton::clicked, this, &ProgressWindow::updateLog);
+    connect(ui_->debugCheckbox, &QPushButton::clicked, this, &ProgressWindow::reloadLog);
+    connect(ui_->errorCheckbox, &QPushButton::clicked, this, &ProgressWindow::reloadLog);
+    connect(ui_->infoCheckbox, &QPushButton::clicked, this, &ProgressWindow::reloadLog);
 
     ui_->text->setMaximumBlockCount(maxBlockSize_);
     logEntries_.reserve(maxBlockSize_);
@@ -58,8 +58,16 @@ void ProgressWindow::updateEntries()
         while (!readLine.endsWith('|')) //Parser helper
             readLine.append(logStream_.readLine());
 
+        readLine.chop(1); //Remove '|'
         addEntry(LogEntry(readLine));
     }
+}
+
+void ProgressWindow::resetLog()
+{
+    ui_->text->clear();
+    for (auto &entry : logEntries_)
+        entry.displayed = false;
 }
 
 void ProgressWindow::addEntry(ProgressWindow::LogEntry &&entry)
@@ -71,31 +79,30 @@ void ProgressWindow::addEntry(ProgressWindow::LogEntry &&entry)
     logEntries_.emplace_back(std::move(entry));
 }
 
-auto ProgressWindow::isAllowed()
+bool ProgressWindow::isAllowed(const ProgressWindow::LogEntry &entry)
 {
-    return [this](const ProgressWindow::LogEntry &entry) {
-        switch (entry.severity)
-        {
-            case plog::Severity::info: return ui_->infoCheckbox->isChecked();
-
-            case plog::Severity::fatal:
-            case plog::warning:
-            case plog::Severity::error: return ui_->errorCheckbox->isChecked();
-
-            case plog::Severity::verbose:
-            case plog::Severity::debug: return ui_->debugCheckbox->isChecked();
-
-            default: return false;
-        }
+    if (entry.displayed)
         return false;
-    };
-}
+
+    switch (entry.severity)
+    {
+        case plog::Severity::info: return ui_->infoCheckbox->isChecked();
+
+        case plog::Severity::fatal:
+        case plog::warning:
+        case plog::Severity::error: return ui_->errorCheckbox->isChecked();
+
+        case plog::Severity::verbose:
+        case plog::Severity::debug: return ui_->debugCheckbox->isChecked();
+
+        default: return false;
+    }
+    return false;
+};
 
 void ProgressWindow::updateLog()
 {
     updateEntries();
-
-    ui_->text->clear();
 
     if (!logFile_.isOpen())
     {
@@ -105,8 +112,20 @@ void ProgressWindow::updateLog()
             ui_->text->appendPlainText(tr("Cannot open log file"));
     }
 
-    for (const auto &entry : logEntries_ | rx::filter(isAllowed()))
-        ui_->text->appendHtml(entry.formatedText);
+    for (auto &entry : logEntries_)
+    {
+        if (isAllowed(entry))
+        {
+            ui_->text->appendHtml(entry.formatedText);
+            entry.displayed = true;
+        }
+    }
+}
+
+void ProgressWindow::reloadLog()
+{
+    resetLog();
+    updateLog();
 }
 
 ProgressWindow::LogEntry::LogEntry(const QString &line)

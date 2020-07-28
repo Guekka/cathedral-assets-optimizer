@@ -30,6 +30,7 @@ private:
         LogEntry(const QString &line);
         QString formatedText;
         plog::Severity severity;
+        bool displayed = false;
     };
 
     QFile logFile_;
@@ -42,8 +43,11 @@ private:
     void updateProgressBar(const QString &text, int max, int value);
     void updateLog();
 
+    void reloadLog();
     void updateEntries();
+    void resetLog();
+
     void addEntry(LogEntry &&entry);
-    auto isAllowed();
+    bool isAllowed(const ProgressWindow::LogEntry &entry);
 };
 } // namespace CAO

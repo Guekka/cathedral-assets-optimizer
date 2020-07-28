@@ -44,7 +44,7 @@ void MainOptimizer::process(File &file, bool dryRun, MemoryData memoryData)
 
 bool MainOptimizer::processReal(File &file, std::vector<std::byte> *out)
 {
-    PLOG_VERBOSE << "Processing: " << file.getInputFilePath() << '\n';
+    PLOG_VERBOSE << "Processing: " << file.getInputFilePath();
     for (auto &command : _commandBook.getCommands(file.type()))
         if (!runCommand(*command, file))
             return false;
