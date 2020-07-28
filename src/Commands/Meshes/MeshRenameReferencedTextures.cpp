@@ -3,52 +3,62 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "MeshRenameReferencedTextures.hpp"
+#include "Utils/Algorithms.hpp"
 
 namespace CAO {
-CommandResult MeshRenameReferencedTextures::process(File& file) const
+CommandResult MeshRenameReferencedTextures::process(File &file) const
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
     if (!nif)
         return _resultFactory.getCannotCastFileResult();
 
-    bool meshChanged = false;
-    constexpr int limit = 1000;
-
-    for (auto shape : nif->GetShapes())
+    for (NiShader *shader : getShaders(*nif))
     {
-        auto shader = nif->GetShader(shape);
-        if (shader)
+        std::string tex;
+        int texCounter = 0;
+
+        while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
         {
-            std::string tex;
-            int texCounter = 0;
-            while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
+            if (endsWith(std::string_view(tex), std::string_view(".tga"), false))
             {
-                QString qsTex = QString::fromStdString(tex);
-                if (qsTex.contains(".tga", Qt::CaseInsensitive))
-                {
-                    qsTex.replace(".tga", ".dds", Qt::CaseInsensitive);
-                    tex = qsTex.toStdString();
-                    nif->SetTextureSlot(shader, tex, texCounter);
-                    meshChanged = true;
-                }
-                if (++texCounter > limit)
-                {
-                    return _resultFactory
-                        .getFailedResult(1, "Failed to renamed referenced textures from TGA to DDS in mesh");
-                }
+                replaceAll(tex, std::string_view(".tga"), std::string_view(".dds"), false);
+                nif->SetTextureSlot(shader, tex, texCounter);
+            }
+            else if (++texCounter > limit)
+            {
+                return _resultFactory
+                    .getFailedResult(1, "Failed to renamed referenced textures from TGA to DDS in mesh");
             }
         }
     }
-    file.setOptimizedCurrentFile(meshChanged);
 
-    auto result = _resultFactory.getSuccessfulResult();
-    result.processedFile = meshChanged;
-    return result;
+    return _resultFactory.getSuccessfulResult();
 }
 
-bool MeshRenameReferencedTextures::isApplicable(File& file) const
+bool MeshRenameReferencedTextures::isApplicable(File &file) const
 {
-    bool isMeshFile = dynamic_cast<const MeshResource *>(&file.getFile());
-    return isMeshFile;
+    auto nif = dynamic_cast<MeshResource *>(&file.getFile(false));
+    if (!nif)
+        return _resultFactory.getCannotCastFileResult();
+
+    for (NiShader *shader : getShaders(*nif))
+    {
+        std::string tex;
+        int texCounter = 0;
+        while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
+        {
+            if (endsWith(std::string_view(tex), std::string_view(".tga"), false))
+                return true;
+            if (++texCounter > limit)
+                return false;
+        }
+    }
+    return false;
+}
+
+std::vector<NiShader *> MeshRenameReferencedTextures::getShaders(NifFile &nif) const
+{
+    return nif.GetShapes() | rx::transform([&nif](auto &&shape) { return nif.GetShader(shape); })
+           | rx::filter([](auto &&shader) { return bool(shader); }) | rx::to_vector();
 }
 } // namespace CAO

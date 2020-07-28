@@ -17,6 +17,10 @@ public:
 
     CommandResult process(File& file) const override;
     bool isApplicable(File &file) const override;
+
+private:
+    static constexpr int limit = 1000;
+    std::vector<NiShader *> getShaders(NifFile &nif) const;
 };
 REGISTER_COMMAND(MeshRenameReferencedTextures)
 } // namespace CAO
