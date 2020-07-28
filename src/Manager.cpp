@@ -12,7 +12,7 @@ Manager::Manager()
     : creationDate_(QDateTime::currentDateTime().toString("yy.MM.dd_hh.mm"))
 {
     //Preparing logging
-    initCustomLogger(currentProfile().logPath(), getProfiles().commonSettings().bDebugLog());
+    initCustomLogger(currentProfile().logPath());
 
     PLOG_VERBOSE << "Checking settings...";
 

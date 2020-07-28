@@ -10,7 +10,7 @@ Profile::Profile(QDir profileDir)
 {
     //Log path
     const QString &dateTime     = QDateTime::currentDateTime().toString("yy.MM.dd.hh.mm");
-    const QString &absolutePath = profileDir_.absoluteFilePath("logs/" + dateTime + ".html");
+    const QString &absolutePath = profileDir_.absoluteFilePath("logs/" + dateTime + ".txt");
     logPath_                    = QDir::toNativeSeparators(absolutePath);
 
     auto readJSON = [](Settings &sets, const QString &path) {

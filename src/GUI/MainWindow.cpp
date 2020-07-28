@@ -209,12 +209,6 @@ void MainWindow::resetUi()
     ui_->tabWidget->clear();
 }
 
-void MainWindow::readProgress(const QString &text, const int &max, const int &value)
-{
-    ui_->progressBar->setFormat(text);
-    ui_->progressBar->setMaximum(max);
-    ui_->progressBar->setValue(value);
-}
 
 void MainWindow::refreshProfiles()
 {
@@ -282,15 +276,21 @@ void MainWindow::initProcess()
 
     try
     {
-        caoProcess_.reset();
-        caoProcess_ = std::make_unique<Manager>();
-        connect(caoProcess_.get(), &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
-        connect(caoProcess_.get(), &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
+        caoProcess_     = std::make_unique<Manager>();
+        progressWindow_ = std::make_unique<ProgressWindow>(currentProfile().logPath());
+
+        connect(caoProcess_.get(),
+                &Manager::progressBarTextChanged,
+                progressWindow_.get(),
+                &ProgressWindow::update);
+
         connect(caoProcess_.get(), &Manager::end, this, &MainWindow::endProcess);
+
+        progressWindow_->show();
 
         freezeModules();
 
-        QtConcurrent::run(&*caoProcess_, &Manager::runOptimization);
+        QtConcurrent::run(caoProcess_.get(), &Manager::runOptimization);
     }
     catch (const std::exception &e)
     {
@@ -310,32 +310,16 @@ void MainWindow::endProcess()
     if (caoProcess_)
         caoProcess_->disconnect();
 
-    ui_->progressBar->setMaximum(100);
-    ui_->progressBar->setValue(100);
-    ui_->progressBar->setFormat(tr("Done"));
-
-    updateLog();
+    if (progressWindow_)
+    {
+        progressWindow_->end();
+        progressWindow_->disconnect();
+    }
 
     getProfiles().saveCommonSettings();
     currentProfile().saveToJSON();
 
     freezeModules(false);
-}
-
-void MainWindow::updateLog()
-{
-    if (!logFile.isOpen())
-    {
-        logFile.setFileName(currentProfile().logPath());
-        if (!logFile.open(QFile::Text | QFile::ReadOnly))
-        {
-            ui_->logTextEdit->appendPlainText(tr("Unable to open log file."));
-            return;
-        }
-    }
-
-    while (!logFile.atEnd())
-        ui_->logTextEdit->appendHtml(logFile.readLine());
 }
 
 void MainWindow::showTutorialWindow(const QString &title, const QString &text)

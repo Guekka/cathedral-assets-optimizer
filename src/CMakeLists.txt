@@ -122,6 +122,10 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.ui
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.ui
+
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.ui

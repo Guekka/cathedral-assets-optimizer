@@ -5,6 +5,7 @@
 #pragma once
 
 #include "IWindowModule.hpp"
+#include "ProgressWindow.hpp"
 #include "pch.hpp"
 #include "ui_mainWindow.h"
 
@@ -50,6 +51,8 @@ public:
 private:
     std::unique_ptr<Ui::MainWindow> ui_;
     std::unique_ptr<Manager> caoProcess_;
+    std::unique_ptr<ProgressWindow> progressWindow_;
+
     QFile logFile;
 
     std::vector<IWindowModule *> getModules();
@@ -66,11 +69,8 @@ private:
     void resetUi();
     void loadUi();
 
-    void updateLog();
-
     void initProcess();
     void endProcess();
-    void readProgress(const QString &text, const int &max, const int &value);
 
     void setDarkTheme(const bool &enabled);
     void showTutorialWindow(const QString &title, const QString &text);
