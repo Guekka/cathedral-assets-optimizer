@@ -35,7 +35,7 @@ TEST_CASE("Listing patterns")
 		[
 		  {
 			"Meshes": {
-			  "bMeshesResave": true,
+			  "bMeshesIgnoreHeadparts": true,
               "iMeshesOptimizationLevel": 3
 			},
 			"Priority": 0,
@@ -67,7 +67,7 @@ TEST_CASE("Listing patterns")
 		)"_json;
 
         PatternSettings sets1(0, {"*"});
-        sets1.bMeshesResave = true;
+        sets1.bMeshesIgnoreHeadparts   = true;
         sets1.iMeshesOptimizationLevel = 3;
 
         PatternSettings sets2(1, {"*.dds"});
@@ -87,7 +87,7 @@ TEST_CASE("cleanPatterns")
 {
     PatternSettings sets1(0, {"*"});
     sets1.priority_     = 0;
-    sets1.bMeshesResave = true;
+    sets1.bMeshesIgnoreHeadparts   = true;
     sets1.iMeshesOptimizationLevel = 3;
 
     PatternSettings sets2 = sets1;
@@ -115,7 +115,7 @@ TEST_CASE("Getting json from PatternMap")
 {
     PatternSettings sets1(0, {"*"});
     sets1.priority_     = 0;
-    sets1.bMeshesResave = true;
+    sets1.bMeshesIgnoreHeadparts   = true;
     sets1.iMeshesOptimizationLevel = 3;
 
     //Should be removed
@@ -133,7 +133,7 @@ TEST_CASE("Getting json from PatternMap")
     [
         {
             "Meshes": {
-                "bMeshesResave": true,
+                "bMeshesIgnoreHeadparts": true,
                 "iMeshesOptimizationLevel": 3
             },
             "Patterns": [

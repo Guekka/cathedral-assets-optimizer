@@ -31,6 +31,7 @@ CommandResult MeshConvert::process(File &file) const
     niVersion.SetStream(sets.iMeshesStream());
 
     OptOptions optOptions;
+    optOptions.mandatoryOnly  = file.patternSettings().iMeshesOptimizationLevel() <= 2;
     optOptions.targetVersion  = niVersion;
     optOptions.removeParallax = false;
     optOptions.headParts      = isHeadpart(file.getInputFilePath());
@@ -51,9 +52,9 @@ bool MeshConvert::isApplicable(File &file) const
     if (!meshFile)
         return false;
 
-    const bool headpart = isHeadpart(file.getInputFilePath()) && patternSettings.bMeshesHeadparts();
+    const bool headpart = isHeadpart(file.getInputFilePath()) && !patternSettings.bMeshesIgnoreHeadparts();
     const bool isSSECompatible = meshFile->IsSSECompatible();
-    const bool resave          = patternSettings.bMeshesResave() || optLevel >= 2;
+    const bool resave          = optLevel >= 2;
 
     return !isSSECompatible || headpart || resave;
 }

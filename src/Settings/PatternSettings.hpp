@@ -62,8 +62,7 @@ public:
                      "/Advanced/Textures/slTextureUnwantedFormats")
 
     REGISTER_SETTING(int, iMeshesOptimizationLevel, "/Meshes/iMeshesOptimizationLevel")
-    REGISTER_SETTING(bool, bMeshesHeadparts, "/Meshes/bMeshesHeadparts")
-    REGISTER_SETTING(bool, bMeshesResave, "/Meshes/bMeshesResave")
+    REGISTER_SETTING(bool, bMeshesIgnoreHeadparts, "/Meshes/bMeshesIgnoreHeadparts")
 
     REGISTER_SETTING(bool, bAnimationsOptimization, "/Animations/bAnimationsOptimization")
     REGISTER_SETTING(hkPackFormat, eAnimationsFormat, "/Advanced/Animations/eAnimationsFormat")
