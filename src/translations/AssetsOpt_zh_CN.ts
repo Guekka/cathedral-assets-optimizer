@@ -628,27 +628,25 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
         <translation>您要使用哪个配置文件作为基础？</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="371"/>
         <source>Error</source>
-        <translation>错误</translation>
+        <translation type="vanished">错误</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="372"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation>遇到异常，进程被迫停止：</translation>
+        <translation type="vanished">遇到异常，进程被迫停止：</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="389"/>
+        <location filename="../MainWindow.cpp" line="392"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="486"/>
+        <location filename="../MainWindow.cpp" line="489"/>
         <source>Welcome to %1 %2</source>
         <translation>欢迎来到 %1 %2</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="488"/>
+        <location filename="../MainWindow.cpp" line="491"/>
         <source>It appears you are running CAO for the first time. All options have tooltips explaining what they do. If you need help, you can also join us on Discord. A dark theme is also available.</source>
         <translation>看来您是第一次运行CAO。 所有选项都有单独的说明。 如果您需要帮助，可以加入我们的讨论。 您可以选择使用暗色主题进行操作。</translation>
     </message>

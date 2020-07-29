@@ -46,19 +46,19 @@ int main(int argc, char *argv[])
     Manager *manager = new Manager(QCoreApplication::arguments());
 #endif
 
-    try
-    {
+    /*try
+    {*/
 #ifdef GUI
         window->show();
 #else
         manager->runOptimization();
 #endif
-    }
-    catch (const std::exception &e)
-    {
-        displayError(e.what());
-        return 1;
-    }
+        /*}
+        catch (const std::exception &e)
+        {
+            displayError(e.what());
+            return 1;
+        }*/
 
 #ifdef GUI
     return QApplication::exec();

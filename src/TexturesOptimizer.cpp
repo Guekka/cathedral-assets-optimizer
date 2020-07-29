@@ -417,11 +417,17 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
     if (!imgs)
         return false;
 
-    const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
-    const HRESULT hr = Resize(imgs, _image->GetImageCount(), _info, targetWidth, targetHeight, filter, *timage);
+    // DirectX::Resize is dumb. If WIC is used, it will convert the image to
+    // R32G32B32A32 It works for small image.. But will, for example, allocate
+    // 1gb for a 8k picture. So disable WIC
+    const DWORD filter =
+        DirectX::TEX_FILTER_SEPARATE_ALPHA | DirectX::TEX_FILTER_FORCE_NON_WIC;
+    const HRESULT hr = Resize(imgs, _image->GetImageCount(), _info, targetWidth,
+                              targetHeight, filter, *timage);
     if (FAILED(hr))
     {
-        PLOG_ERROR << QString("Failed to resize: '%1'. Error code: '%2'").arg(_name, hr);
+        PLOG_ERROR << QString("Failed to resize: '%1'. Error code: '%2'")
+                          .arg(_name, QString::number(hr, 16));
         return false;
     }
 
@@ -473,7 +479,7 @@ bool TexturesOptimizer::generateMipMaps()
 
         for (size_t i = 0; i < _info.arraySize; ++i)
         {
-            const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
+            const DWORD filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
             hr = CopyRectangle(*_image->GetImage(0, i, 0),
                                DirectX::Rect(0, 0, _info.width, _info.height),
                                *timage->GetImage(0, i, 0),
@@ -503,7 +509,7 @@ bool TexturesOptimizer::generateMipMaps()
         }
 
         //Forcing non wic since WIC won't work on my computer, and thus probably on other computers
-        const DWORD filter = DirectX::TEX_FILTER_FANT | DirectX::TEX_FILTER_SEPARATE_ALPHA;
+        const DWORD filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
         const HRESULT hr = GenerateMipMaps(_image->GetImages(),
                                            _image->GetImageCount(),
                                            _image->GetMetadata(),

@@ -477,11 +477,11 @@ Ce programme est distribué esb espérant qu&apos;il soit utile, mais SANS AUCUN
     </message>
     <message>
         <source>Error</source>
-        <translation>Erreur</translation>
+        <translation type="vanished">Erreur</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation>Une exception a été rencontrée et le programme a été contraint de s&apos;arrêter: </translation>
+        <translation type="vanished">Une exception a été rencontrée et le programme a été contraint de s&apos;arrêter: </translation>
     </message>
     <message>
         <source>Done</source>

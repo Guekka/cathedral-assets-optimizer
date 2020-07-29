@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>676</width>
-    <height>752</height>
+    <height>776</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -248,7 +248,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -1313,7 +1313,7 @@
      <x>0</x>
      <y>0</y>
      <width>676</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTools">
