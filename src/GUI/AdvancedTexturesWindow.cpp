@@ -47,15 +47,13 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSet
     connectWrapper(*ui_->resizingMinimumWidth, patternSets.iTexturesMinimumWidth);
     connectWrapper(*ui_->resizingMinimumHeight, patternSets.iTexturesMinimumHeight);
 
-    connect(ui_->resizingBox, &QGroupBox::toggled, [this](bool state) {
-        CAO::setEnabled(state,
-                        ui_->resizingMode,
-                        ui_->resizingMinimumCheckBox,
-                        ui_->resizingMinimumWidth,
-                        ui_->resizingMinimumHeight,
-                        ui_->resizingWidth,
-                        ui_->resizingHeight);
-    });
+    connectGroupBox(ui_->resizingBox,
+                    ui_->resizingMode,
+                    ui_->resizingMinimumCheckBox,
+                    ui_->resizingMinimumWidth,
+                    ui_->resizingMinimumHeight,
+                    ui_->resizingWidth,
+                    ui_->resizingHeight);
 }
 
 } // namespace CAO

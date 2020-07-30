@@ -209,7 +209,6 @@ void MainWindow::resetUi()
     ui_->tabWidget->clear();
 }
 
-
 void MainWindow::refreshProfiles()
 {
     ui_->profiles->clear();

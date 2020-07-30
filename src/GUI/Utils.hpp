@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Utils/TemplateMetaProgramming.hpp"
 #include "pch.hpp"
 #include <functional>
 
@@ -22,11 +23,11 @@ template<typename UiElement,
          typename UiReadFunc,
          typename UiSaveFunc,
          typename ValueType = typename Wrapper::Type>
-void connectWrapper(UiElement &uiEl,
-                    Wrapper &wrapper,
-                    UiReadFunc &&readFunc,
-                    UiSaveFunc &&saveFunc,
-                    ValueType fallback = ValueType{})
+inline void connectWrapper(UiElement &uiEl,
+                           Wrapper &wrapper,
+                           UiReadFunc &&readFunc,
+                           UiSaveFunc &&saveFunc,
+                           ValueType fallback = ValueType{})
 {
     using wrapperType = std::remove_reference_t<decltype(wrapper)>;
 
@@ -43,49 +44,60 @@ void connectWrapper(UiElement &uiEl,
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
-void connectWrapper(QAbstractButton &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+inline void connectWrapper(QAbstractButton &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
     connectWrapper(uiEl, wrapper, &QAbstractButton::toggled, &QAbstractButton::setChecked, fallback);
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
-void connectWrapper(QSpinBox &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+inline void connectWrapper(QSpinBox &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
     connectWrapper(uiEl, wrapper, QOverload<int>::of(&QSpinBox::valueChanged), &QSpinBox::setValue, fallback);
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
-void connectWrapper(QLineEdit &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+inline void connectWrapper(QLineEdit &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
     connectWrapper(uiEl, wrapper, &QLineEdit::textChanged, &QLineEdit::setText, fallback);
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
-void connectWrapper(QAction &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+inline void connectWrapper(QAction &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
     connectWrapper(uiEl, wrapper, &QAction::triggered, &QAction::setChecked, fallback);
 }
 
-template<typename... UiElements>
-void connectGroupBox(QGroupBox &box, UiElements &... uiEls)
+inline void connectGroupBox(QGroupBox *box, QWidget *uiEl)
 {
-    connect(box, &QGroupBox::toggled, uiEls..., &QWidget::setEnabled);
+    QObject::connect(box, &QGroupBox::toggled, uiEl, &QWidget::setEnabled);
+}
+
+inline void connectGroupBox(QGroupBox *box, QAbstractButton *uiEl)
+{
+    QObject::connect(box, &QGroupBox::toggled, uiEl, &QWidget::setEnabled);
+    QObject::connect(box, &QGroupBox::toggled, uiEl, &QAbstractButton::setChecked);
 }
 
 template<typename... UiElements>
-void setEnabled(bool state, UiElements &... uiEls)
+inline void connectGroupBox(QGroupBox *box, UiElements *... uiEls)
+{
+    (std::invoke([](QGroupBox *b, QWidget *w) { connectGroupBox(b, w); }, box, uiEls), ...);
+}
+
+template<typename... UiElements>
+inline void setEnabled(bool state, UiElements &... uiEls)
 {
     (std::invoke(&QWidget::setEnabled, uiEls, state), ...);
 }
 
 template<typename... UiElements>
-void setEnabled(bool state, UiElements *... uiEls)
+inline void setEnabled(bool state, UiElements *... uiEls)
 {
     (std::invoke(&QWidget::setEnabled, uiEls, state), ...);
 }
 
 template<typename Data>
-void setData(QComboBox &box, const QString &text, Data &&data)
+inline void setData(QComboBox &box, const QString &text, Data &&data)
 {
     auto pos = box.findText(text, Qt::MatchFlag::MatchExactly);
     if (pos == -1)
@@ -93,7 +105,7 @@ void setData(QComboBox &box, const QString &text, Data &&data)
     box.setItemData(pos, data);
 }
 
-static bool selectText(QComboBox &box, const QString &text)
+inline bool selectText(QComboBox &box, const QString &text)
 {
     int idx = box.findText(text);
     if (idx == -1)
