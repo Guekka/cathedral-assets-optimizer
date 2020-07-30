@@ -27,7 +27,7 @@ CommandResult MeshRenameReferencedTextures::process(File &file) const
             else if (++texCounter > limit)
             {
                 return _resultFactory
-                    .getFailedResult(1, "Failed to renamed referenced textures from TGA to DDS in mesh");
+                    .getFailedResult(-1, "Failed to renamed referenced textures from TGA to DDS in mesh");
             }
         }
     }
@@ -39,7 +39,7 @@ bool MeshRenameReferencedTextures::isApplicable(File &file) const
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(false));
     if (!nif)
-        return _resultFactory.getCannotCastFileResult();
+        return false;
 
     for (NiShader *shader : getShaders(*nif))
     {

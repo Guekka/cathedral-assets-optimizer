@@ -13,7 +13,9 @@ TextureFile::TextureFile()
     // Initialize COM (needed for WIC)
     const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     if (FAILED(hr))
-        throw std::runtime_error("Failed to initialize COM. Textures processing won't work.");
+        throw std::runtime_error(QString("Failed to initialize COM. Textures processing won't work. hr: '%1'")
+                                     .arg(QString::number(hr, 16))
+                                     .toStdString());
 }
 
 int TextureFile::loadFromDisk(const QString &filePath)

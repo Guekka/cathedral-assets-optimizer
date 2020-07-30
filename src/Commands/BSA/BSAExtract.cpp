@@ -28,12 +28,13 @@ CommandResult BSAExtract::process(File& file) const
     catch (const std::exception &e)
     {
         const QString &error = QString("Failed to extract BSA with error message: '%1'").arg(e.what());
-        return _resultFactory.getFailedResult(1, error);
+        return _resultFactory.getFailedResult(-1, error);
     }
     bsafile->bsa.close();
 
     if (!QFile::remove(file.getInputFilePath())) //We want to remove the original file, not the backup file
-        return _resultFactory.getFailedResult(2, "BSA Extract succeeded but failed to delete the extracted BSA");
+        return _resultFactory.getFailedResult(-2,
+                                              "BSA Extract succeeded but failed to delete the extracted BSA");
 
     return _resultFactory.getSuccessfulResult();
 }

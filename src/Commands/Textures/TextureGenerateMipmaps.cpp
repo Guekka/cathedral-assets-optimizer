@@ -19,7 +19,7 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
     mdata.mipLevels            = 1;
     const auto hr1             = timage->Initialize(mdata);
     if (FAILED(hr1))
-        return _resultFactory.getFailedResult(1, "Failed to initialize target image with source metadata");
+        return _resultFactory.getFailedResult(hr1, "Failed to initialize target image with source metadata.");
 
     // Mips generation only works on a single base image, so strip off existing mip levels
     // Also required for preserve alpha coverage so that existing mips are regenerated
@@ -33,7 +33,7 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
                                       0,
                                       0);
         if (FAILED(hr))
-            return _resultFactory.getFailedResult(1, "Failed to copy image to single level");
+            return _resultFactory.getFailedResult(hr, "Failed to copy image to single level");
     }
 
     auto timage2        = std::make_unique<TextureResource>();
@@ -47,7 +47,7 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
                                     *timage2);
 
     if (FAILED(hr))
-        return _resultFactory.getFailedResult(2, "Failed to generate mipmaps: " + QString::number(hr, 16));
+        return _resultFactory.getFailedResult(hr, "Failed to generate mipmaps.");
 
     file.setFile(std::move(timage2));
     return _resultFactory.getSuccessfulResult();

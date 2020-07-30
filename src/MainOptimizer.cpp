@@ -62,7 +62,7 @@ bool MainOptimizer::processDry(File &file)
 {
     PLOG_INFO << "Processing: " << file.getInputFilePath() << '\n';
     for (auto command : _commandBook.getCommands(file.type()))
-        if (!dryRunCommand(*command, file))
+        if (!runCommand(*command, file, true))
             return false;
 
     return true;
@@ -122,37 +122,21 @@ void MainOptimizer::packBsa(const QString &folder)
         PluginsOperations::makeDummyPlugins(folder, currentProfile().getGeneralSettings());
 }
 
-bool MainOptimizer::runCommand(const Command &command, File &file)
+bool MainOptimizer::runCommand(const Command &command, File &file, bool dryRun)
 {
     const auto &result = command.processIfApplicable(file);
     if (result.processedFile)
     {
-        PLOG_VERBOSE << QString("%1: %2").arg(command.name(), "applied");
-        return true;
-    }
-    else if (result.errorCode)
-    {
-        PLOG_ERROR << QString("%1: %2 '%3'").arg(command.name(), "error", result.errorMessage);
-        return false;
-    }
-    else
-    {
-        PLOG_VERBOSE << QString("%1: %2").arg(command.name(), "unnecessary");
-        return true;
-    }
-}
+        const plog::Severity &sev = dryRun ? plog::Severity::info : plog::Severity::verbose;
+        const QString &message    = dryRun ? "would be applied" : "applied";
 
-bool MainOptimizer::dryRunCommand(const Command &command, File &file)
-{
-    const auto &result = command.processIfApplicable(file);
-    if (result.processedFile)
-    {
-        PLOG_INFO << QString("%1: %2").arg(command.name(), "would be applied");
+        PLOG(sev) << QString("%1: %2").arg(command.name(), message);
         return true;
     }
-    else if (result.errorCode)
+    else if (result.hasError())
     {
-        PLOG_ERROR << QString("%1: %2 '%3'").arg(command.name(), "error", result.errorMessage);
+        PLOG_ERROR << QString("%1: error. Code: '%2'. Message: '%3'")
+                          .arg(command.name(), QString::number(result.errorCode, 16), result.errorMessage);
         return false;
     }
     else

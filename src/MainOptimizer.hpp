@@ -32,8 +32,7 @@ public:
     void packBsa(const QString &folder);
 
 private:
-    bool runCommand(const Command &command, File &file);
-    bool dryRunCommand(const Command &command, File &file);
+    bool runCommand(const Command &command, File &file, bool dryRun = false);
 
     bool processReal(File &file, std::vector<std::byte> *out = nullptr);
     bool processDry(File &file);

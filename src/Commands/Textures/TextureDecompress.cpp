@@ -18,7 +18,7 @@ CommandResult TextureDecompress::process(File &file) const
     auto timage = new TextureResource;
     const auto hr = Decompress(img, nimg, info, DXGI_FORMAT_UNKNOWN /* picks good default */, *timage);
     if (FAILED(hr))
-        return _resultFactory.getFailedResult(1, "Failed to decompress");
+        return _resultFactory.getFailedResult(hr, "Failed to decompress");
 
     //This file is "unmodified". Decompressing the file is only done in order to perform other operations.
     file.setFile(std::unique_ptr<Resource>(std::move(timage)), false);

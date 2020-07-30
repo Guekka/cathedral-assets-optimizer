@@ -82,9 +82,9 @@ bool TextureConvert::needsConvert(const File &file, const DirectX::TexMetadata &
     return needsConvert || needsConvertCubemaps;
 }
 
-int TextureConvert::convertWithoutCompression(const DirectX::ScratchImage &image,
-                                              DirectX::ScratchImage &timage,
-                                              const DXGI_FORMAT &format)
+HRESULT TextureConvert::convertWithoutCompression(const DirectX::ScratchImage &image,
+                                                  DirectX::ScratchImage &timage,
+                                                  const DXGI_FORMAT &format)
 {
     const HRESULT hr = Convert(image.GetImages(),
                                image.GetImageCount(),
@@ -94,12 +94,12 @@ int TextureConvert::convertWithoutCompression(const DirectX::ScratchImage &image
                                DirectX::TEX_THRESHOLD_DEFAULT,
                                timage);
 
-    return FAILED(hr);
+    return hr;
 }
 
-int TextureConvert::convertWithCompression(const DirectX::ScratchImage &image,
-                                           DirectX::ScratchImage &timage,
-                                           const DXGI_FORMAT &format)
+HRESULT TextureConvert::convertWithCompression(const DirectX::ScratchImage &image,
+                                               DirectX::ScratchImage &timage,
+                                               const DXGI_FORMAT &format)
 {
     const auto img = image.GetImages();
     if (!img)
@@ -139,6 +139,6 @@ int TextureConvert::convertWithCompression(const DirectX::ScratchImage &image,
                                DirectX::TEX_THRESHOLD_DEFAULT,
                                timage);
 
-    return FAILED(hr);
+    return hr;
 }
 } // namespace CAO

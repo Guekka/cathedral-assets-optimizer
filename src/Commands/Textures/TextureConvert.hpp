@@ -19,13 +19,13 @@ public:
     CommandResult process(File& file) const override;
     bool isApplicable(File &file) const override;
 
-    static int convertWithoutCompression(const DirectX::ScratchImage &image,
-                                         DirectX::ScratchImage &timage,
-                                         const DXGI_FORMAT &format);
+    static HRESULT convertWithoutCompression(const DirectX::ScratchImage &image,
+                                             DirectX::ScratchImage &timage,
+                                             const DXGI_FORMAT &format);
 
-    static int convertWithCompression(const DirectX::ScratchImage &image,
-                                      DirectX::ScratchImage &timage,
-                                      const DXGI_FORMAT &format);
+    static HRESULT convertWithCompression(const DirectX::ScratchImage &image,
+                                          DirectX::ScratchImage &timage,
+                                          const DXGI_FORMAT &format);
 
     static bool needsConvert(const File &file, const DirectX::TexMetadata &info);
 };

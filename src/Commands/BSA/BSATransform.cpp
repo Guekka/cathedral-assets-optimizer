@@ -34,7 +34,7 @@ CommandResult BSATransform::process(File &file) const
     catch (const libbsarch::exception &e)
     {
         const QString &error = QString("Failed to process BSA content with error: '%1'").arg(e.what());
-        return _resultFactory.getFailedResult(1, error);
+        return _resultFactory.getFailedResult(-1, error);
     }
 
     QFile::remove(origOutputPath);             //Won't do anything if the file doesn't exist

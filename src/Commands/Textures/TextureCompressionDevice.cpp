@@ -99,7 +99,9 @@ bool TextureCompressionDevice::createDevice(uint adapter, ID3D11Device **pDevice
         auto hr = dxgiFactory->EnumAdapters1(adapter, pAdapter.GetAddressOf());
         if (FAILED(hr) || hr == DXGI_ERROR_NOT_FOUND)
         {
-            PLOG_ERROR << "Invalid GPU adapter index: " << adapter;
+            PLOG_ERROR << QString("Invalid GPU adapter index: %1. hr: '%2'")
+                              .arg(adapter)
+                              .arg(QString::number(hr, 16));
             return false;
         }
 

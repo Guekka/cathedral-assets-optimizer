@@ -9,18 +9,18 @@
 namespace CAO {
 struct CommandResult
 {
-    int errorCode;
+    HRESULT errorCode;
     QString errorMessage;
     bool processedFile;
 
-    operator bool() const { return errorCode; }
+    bool hasError() const { return FAILED(errorCode); }
 };
 
 class CommandResultFactory
 {
 public:
     CommandResult getSuccessfulResult() const;
-    CommandResult getFailedResult(const int &errorCode, const QString &errorMessage) const;
+    CommandResult getFailedResult(HRESULT errorCode, const QString &errorMessage) const;
     CommandResult getCannotCastFileResult() const;
 };
 

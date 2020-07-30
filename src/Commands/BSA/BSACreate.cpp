@@ -23,7 +23,7 @@ CommandResult BSACreate::process(File &file) const
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
-            return _resultFactory.getFailedResult(1, "Failed to create BSA: a BSA already exists.");
+            return _resultFactory.getFailedResult(-1, "Failed to create BSA: a BSA already exists.");
 
         BSAFileResource archive;
         archive.bsa.set_share_data(true);
@@ -45,7 +45,7 @@ CommandResult BSACreate::process(File &file) const
         }
         catch (const std::exception &e)
         {
-            return _resultFactory.getFailedResult(3, e.what());
+            return _resultFactory.getFailedResult(-3, e.what());
         }
 
         bsaFolder->bsas.emplace_back(std::move(archive));

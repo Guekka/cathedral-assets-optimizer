@@ -14,8 +14,12 @@ CommandResult CommandResultFactory::getSuccessfulResult() const
     return result;
 }
 
-CommandResult CommandResultFactory::getFailedResult(const int &errorCode, const QString &errorMessage) const
+CommandResult CommandResultFactory::getFailedResult(HRESULT errorCode, const QString &errorMessage) const
 {
+    //Error code are always negative
+    if (errorCode > 0)
+        errorCode = -errorCode;
+
     return CommandResult{errorCode, errorMessage, false};
 }
 
