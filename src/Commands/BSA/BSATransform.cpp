@@ -26,10 +26,7 @@ CommandResult BSATransform::process(File &file) const
     {
         PLOG_INFO << "Starting optimization of BSA content";
 
-        libbsarch::transform_archive(bsaFile->bsa,
-                                     outputPath.toStdString(),
-                                     *bsaFile->callback,
-                                     currentProfile().getGeneralSettings().eBSAFormat());
+        libbsarch::transform_archive(bsaFile->bsa, outputPath.toStdString(), *bsaFile->callback, type);
     }
     catch (const libbsarch::exception &e)
     {

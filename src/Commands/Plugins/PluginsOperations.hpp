@@ -8,6 +8,7 @@
 #include "pch.hpp"
 
 namespace CAO {
+class GameSettings;
 PACKED(struct PluginHeader {
     char type[4];
     uint32_t groupSize;
@@ -58,7 +59,7 @@ namespace PluginsOperations {
 * \param bsaType The type of BSA to load.
 * \return a QString containing the name of the plugin without the extension. If no plugin is found, it will return the name of the directory.
 */
-QString findPlugin(const QDir &folderPath, const GeneralSettings &settings);
+QString findPlugin(const QDir &folderPath, const GameSettings &settings);
 /*!
 * \brief Create enough plugins to load all BSAs
 * \param folderPath The folder to create plugins into
@@ -68,14 +69,14 @@ void makeDummyPlugins(const QString &folderPath, const GeneralSettings &settings
 * \brief Check if a bsa already has a plugin to load it
 * \param bsaPath The path of the bsa to check
 */
-bool checkIfBsaHasPlugin(const QString &bsaPath, const GeneralSettings &settings);
+bool checkIfBsaHasPlugin(const QString &bsaPath, const GameSettings &settings);
 
 /*!
  * \brief Find all the BSAs names in a directory
  * \param it An iterator to the dir to scan
  * \return A list containing the names of the BSAs found
  */
-QStringList listBSAsNames(QDirIterator it, const GeneralSettings &settings);
+QStringList listBSAsNames(QDirIterator it, const GameSettings &settings);
 /*!
 * \brief List all the headparts in a plugin file
 * \param filepath The path of the plugin to scan
@@ -88,5 +89,7 @@ std::vector<std::string> listHeadparts(const QString &filepath);
 * \return The list of headparts
 */
 std::vector<std::string> listLandscapeTextures(const QString &filepath);
+
+std::pair<QString, QString> getBSASuffixes(const GameSettings &sets);
 } // namespace PluginsOperations
 } // namespace CAO

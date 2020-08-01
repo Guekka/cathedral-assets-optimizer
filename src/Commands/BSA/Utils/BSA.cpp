@@ -5,6 +5,7 @@
 
 #include "BSA.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
+#include "Settings/Games.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Utils/Algorithms.hpp"
 
@@ -13,23 +14,36 @@ BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
 {
     BSA bsa;
 
+    const auto &games = GameSettings::get(settings.eGame());
+
     switch (type)
     {
         case StandardBsa:
+        {
             bsa.type    = BSAType::StandardBsa;
             bsa.maxSize = settings.iBSAMaxSize();
-            bsa.format  = settings.eBSAFormat();
+            bsa.format  = games.eBSAFormat();
             break;
+        }
         case TexturesBsa:
+        {
+            const auto &textFormat = games.eBSATexturesFormat();
+            if (!textFormat.has_value())
+                throw std::runtime_error("This game does not support texture bsa: "
+                                         + std::to_string(static_cast<int>(settings.eGame())));
+
             bsa.type    = BSAType::TexturesBsa;
             bsa.maxSize = settings.iBSATexturesMaxSize();
-            bsa.format  = settings.eBSATexturesFormat();
+            bsa.format  = textFormat.value();
             break;
+        }
         case UncompressableBsa:
+        {
             bsa.type    = BSAType::UncompressableBsa;
             bsa.maxSize = settings.iBSAMaxSize();
-            bsa.format  = settings.eBSAFormat();
+            bsa.format  = games.eBSAFormat();
             break;
+        }
     }
     return bsa;
 }
@@ -43,10 +57,12 @@ BSA::BSA(double maxSize, qint64 size, BSAType type)
 
 void BSA::name(const QString &folder, const GeneralSettings &settings)
 {
-    const auto &bsaSuffix    = settings.sBSASuffix();
-    const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
-    const QString &suffix    = type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
-    path                     = folder + "/" + PluginsOperations::findPlugin(folder, settings) + suffix;
+    const auto &games        = GameSettings::get(settings.eGame());
+    const auto &bsaSuffix    = games.sBSASuffix();
+    const auto &bsaTexSuffix = games.sBSATexturesSuffix().value_or(bsaSuffix);
+
+    const QString &suffix = type == TexturesBsa ? bsaTexSuffix : bsaSuffix;
+    path                  = folder + "/" + PluginsOperations::findPlugin(folder, games) + suffix;
     PLOG_VERBOSE << "Named " << type << path;
 }
 

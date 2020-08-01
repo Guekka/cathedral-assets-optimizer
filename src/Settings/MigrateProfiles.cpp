@@ -15,6 +15,20 @@ bool profileVersionIs5(const QDir &profile)
     return profile.exists("profile.ini");
 }
 
+Games guessGame(bsa_archive_type_t bsaFormat)
+{
+    switch (bsaFormat)
+    {
+        case baTES3: return Games::Morrowind;
+        case baTES4: return Games::Oblivion;
+        case baFO3: return Games::SkyrimLE; //Could also be FO3 and FNV, SSE is the most common
+        case baFO4:
+        case baFO4dds: return Games::Fallout4;
+        case baSSE:
+        default: return Games::SkyrimSE;
+    }
+}
+
 void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 {
     const QString inFile = oldProfile.absoluteFilePath("profile.ini");
@@ -25,29 +39,12 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 
     profileSettings.beginGroup("BSA");
 
-    generalSets.eBSAFormat  = static_cast<bsa_archive_type_t>(profileSettings.value("bsaFormat").toInt());
+    generalSets.eGame = guessGame(static_cast<bsa_archive_type_t>(profileSettings.value("bsaFormat").toInt()));
+
     generalSets.iBSAMaxSize = profileSettings.value("maxBsaUncompressedSize").toDouble();
 
-    generalSets.sBSAExtension = profileSettings.value("bsaExtension").toString();
-    generalSets.sBSASuffix = profileSettings.value("bsaSuffix").toString();
-
-    generalSets.eBSATexturesFormat = static_cast<bsa_archive_type_t>(
-        profileSettings.value("bsaTexturesFormat").toInt());
     generalSets.bBSATexturesEnabled = profileSettings.value("hasBsaTextures").toBool();
     generalSets.iBSATexturesMaxSize = profileSettings.value("maxBsaTexturesSize").toDouble();
-
-    generalSets.sBSATexturesSuffix = profileSettings.value("bsaTexturesSuffix").toString();
-
-    profileSettings.endGroup();
-    profileSettings.beginGroup("Meshes");
-
-    generalSets.eMeshesFileVersion = static_cast<NiFileVersion>(
-        profileSettings.value("meshesFileVersion").toInt());
-    generalSets.iMeshesStream = profileSettings.value("meshesStream").toUInt();
-    generalSets.iMeshesUser   = profileSettings.value("meshesUser").toUInt();
-    profileSettings.endGroup();
-    profileSettings.beginGroup("Animations");
-    gPattern.eAnimationsFormat = static_cast<hkPackFormat>(profileSettings.value("animationFormat").toInt());
 
     profileSettings.endGroup();
     profileSettings.beginGroup("Textures");

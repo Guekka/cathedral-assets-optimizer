@@ -44,8 +44,6 @@ public:
     REGISTER_SETTING(bool, bBSACompressArchive, "/BSA/bBSACompressArchive")
     REGISTER_SETTING(bool, bBSAProcessContent, "/BSA/bBSAProcessContent")
 
-    REGISTER_SETTING(bsa_archive_type_t, eBSAFormat, "/Advanced/BSA/eBSAFormat")
-    REGISTER_SETTING(bsa_archive_type_t, eBSATexturesFormat, "/Advanced/BSA/eBSATexturesFormat")
     REGISTER_SETTING(double, iBSAMaxSize, "/Advanced/BSA/iBSAMaxSize")
     REGISTER_SETTING(bool, bBSATexturesEnabled, "/Advanced/BSA/bBSATexturesEnabled")
     REGISTER_SETTING(double, iBSATexturesMaxSize, "/Advanced/BSA/iBSATexturesMaxSize")
@@ -54,6 +52,7 @@ public:
 
     REGISTER_SETTING(bool, bDryRun, "/General/bDryRun")
     REGISTER_SETTING(OptimizationMode, eMode, "/General/eMode")
+    REGISTER_SETTING(Games, eGame, "/General/Game")
 
     REGISTER_SETTING(bool, bEnableOutputPath, "/General/bEnableOutputPath")
     REGISTER_SETTING(QString, sInputPath, "/General/sInputPath")
@@ -61,13 +60,6 @@ public:
 
     REGISTER_SETTING(bool, bBSACompact, "/BSA/bBSACompact")
     REGISTER_SETTING(bool, bBSADeleteBackup, "/BSA/bBSADeleteBackup")
-    REGISTER_SETTING(QString, sBSAExtension, "/Advanced/BSA/sBSAExtension")
-    REGISTER_SETTING(QString, sBSASuffix, "/Advanced/BSA/sBSASuffix")
-    REGISTER_SETTING(QString, sBSATexturesSuffix, "/Advanced/BSA/sBSATexturesSuffix")
-
-    REGISTER_SETTING(NiFileVersion, eMeshesFileVersion, "/Advanced/Meshes/eMeshesFileVersion")
-    REGISTER_SETTING(uint, iMeshesStream, "/Advanced/Meshes/iMeshesStream")
-    REGISTER_SETTING(uint, iMeshesUser, "/Advanced/Meshes/iMeshesUser")
 };
 } // namespace CAO
 

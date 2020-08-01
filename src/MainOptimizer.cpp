@@ -6,6 +6,7 @@
 #include "MainOptimizer.hpp"
 #include "BSAMemoryCallback.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
+#include "Settings/Games.hpp"
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
@@ -74,9 +75,9 @@ bool MainOptimizer::processBSA(File &file, bool dryRun = false)
     if (!bsaFile)
         return false;
 
-    bsaFile->callback = BSAMemoryCallback(currentProfile().getGeneralSettings().sBSAExtension(),
-                                          *this,
-                                          dryRun);
+    const auto &games = GameSettings::get(currentProfile().getGeneralSettings().eGame());
+
+    bsaFile->callback = BSAMemoryCallback(games.sBSAExtension(), *this, dryRun);
 
     PLOG_VERBOSE << "Processing BSA: " + file.getInputFilePath();
 

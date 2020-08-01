@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "MeshConvert.hpp"
+#include "Settings/Games.hpp"
 #include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
 #include "Utils/TypeConvert.hpp"
@@ -24,11 +25,9 @@ CommandResult MeshConvert::process(File &file) const
     if (!nif)
         return _resultFactory.getCannotCastFileResult();
 
-    NiVersion niVersion;
     auto &sets = currentProfile().getGeneralSettings();
-    niVersion.SetUser(sets.iMeshesUser());
-    niVersion.SetFile(sets.eMeshesFileVersion());
-    niVersion.SetStream(sets.iMeshesStream());
+    auto &game          = GameSettings::get(sets.eGame());
+    NiVersion niVersion = game.cMeshesVersion().value();
 
     OptOptions optOptions;
     optOptions.mandatoryOnly  = file.patternSettings().iMeshesOptimizationLevel() <= 2;
@@ -46,6 +45,10 @@ bool MeshConvert::isApplicable(File &file) const
     auto& patternSettings = file.patternSettings();
     int optLevel          = patternSettings.iMeshesOptimizationLevel();
     if (optLevel == 0)
+        return false;
+
+    const auto &game = GameSettings::get(currentProfile().getGeneralSettings().eGame());
+    if (!game.cMeshesVersion().has_value())
         return false;
 
     auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());

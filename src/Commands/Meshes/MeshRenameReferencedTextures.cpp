@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "MeshRenameReferencedTextures.hpp"
+#include "Settings/Games.hpp"
 #include "Utils/Algorithms.hpp"
 
 namespace CAO {
@@ -37,6 +38,10 @@ CommandResult MeshRenameReferencedTextures::process(File &file) const
 
 bool MeshRenameReferencedTextures::isApplicable(File &file) const
 {
+    const auto &game = GameSettings::get(currentProfile().getGeneralSettings().eGame());
+    if (!game.cMeshesVersion().has_value())
+        return false;
+
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(false));
     if (!nif)
         return false;

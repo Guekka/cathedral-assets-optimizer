@@ -17,11 +17,11 @@ public:
     Priority priority() const override { return Low; };
     CommandType type() const override { return CommandType::BSAFolder; };
 
-    CommandResult process(File& file) const override;
-    bool isApplicable(File& file) const override;
+    CommandResult process(File &file) const override;
+    bool isApplicable(File &file) const override;
 
 protected:
     bool canBeCompressedFile(const QString &filename);
 };
-REGISTER_COMMAND(BSACreate);
+REGISTER_COMMAND(BSACreate)
 } // namespace CAO

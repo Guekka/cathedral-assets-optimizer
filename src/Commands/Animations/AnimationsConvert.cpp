@@ -3,6 +3,7 @@
   */
 
 #include "AnimationsConvert.hpp"
+#include "Settings/Games.hpp"
 
 namespace CAO {
 CommandResult AnimationsConvert::process(File &file) const
@@ -11,7 +12,7 @@ CommandResult AnimationsConvert::process(File &file) const
     if (!havok)
         return _resultFactory.getCannotCastFileResult();
 
-    havok->pkFormat = file.patternSettings().eAnimationsFormat();
+    havok->pkFormat = *GameSettings::get(currentProfile().getGeneralSettings().eGame()).eAnimationsFormat();
     return _resultFactory.getSuccessfulResult();
 }
 
@@ -20,11 +21,16 @@ bool AnimationsConvert::isApplicable(File &file) const
     if (!file.patternSettings().bAnimationsOptimization())
         return false;
 
+    const auto &format = GameSettings::get(currentProfile().getGeneralSettings().eGame()).eAnimationsFormat();
+
+    if (!format.has_value())
+        return false;
+
     auto havok = dynamic_cast<const AnimationResource *>(&file.getFile());
     if (!havok)
         return false;
 
-    if (havok->pkFormat == file.patternSettings().eAnimationsFormat())
+    if (havok->pkFormat == format.value())
         return false;
 
     return true;

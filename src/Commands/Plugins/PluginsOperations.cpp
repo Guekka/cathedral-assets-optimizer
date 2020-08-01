@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Commands/Plugins/PluginsOperations.hpp"
+#include "Settings/Games.hpp"
 #include "Settings/Profiles.hpp"
 #include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
@@ -13,20 +14,21 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Genera
 {
     PLOG_VERBOSE << "Creating enough dummy plugins to load BSAs";
 
+    const auto &game = GameSettings::get(settings.eGame());
+
     QDir dir(folderPath);
-    for (const auto &bsaName : listBSAsNames(QDirIterator(folderPath, QDirIterator::Subdirectories), settings))
+    for (const auto &bsaName : listBSAsNames(QDirIterator(folderPath, QDirIterator::Subdirectories), game))
     {
-        if (checkIfBsaHasPlugin(dir.absoluteFilePath(bsaName), settings))
+        if (checkIfBsaHasPlugin(dir.absoluteFilePath(bsaName), game))
             continue;
 
         currentProfile().getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
     }
 }
 
-QString PluginsOperations::findPlugin(const QDir &folderPath, const GeneralSettings &settings)
+QString PluginsOperations::findPlugin(const QDir &folderPath, const GameSettings &settings)
 {
-    const auto &bsaSuffix = settings.sBSASuffix();
-    const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
+    const auto &[bsaSuffix, bsaTexSuffix] = getBSASuffixes(settings);
 
     QStringList espNames;
     QDirIterator it(folderPath);
@@ -60,13 +62,12 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const GeneralSetti
     throw std::runtime_error("No plugin name found after 1 000 tries.");
 }
 
-bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const GeneralSettings &settings)
+bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const GameSettings &settings)
 {
     QDir bsaDir     = QFileInfo(bsaPath).absoluteDir();
     QString bsaName = QFileInfo(bsaPath).fileName();
 
-    const auto &bsaSuffix    = settings.sBSASuffix();
-    const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
+    const auto &[bsaSuffix, bsaTexSuffix] = getBSASuffixes(settings);
 
     bsaName.remove(bsaSuffix);
     bsaName.remove(bsaTexSuffix);
@@ -79,10 +80,9 @@ bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const Genera
     return false;
 }
 
-QStringList PluginsOperations::listBSAsNames(QDirIterator it, const GeneralSettings &settings)
+QStringList PluginsOperations::listBSAsNames(QDirIterator it, const GameSettings &settings)
 {
-    const auto &bsaSuffix = settings.sBSASuffix();
-    const auto &bsaTexSuffix = settings.sBSATexturesSuffix();
+    const auto &[bsaSuffix, bsaTexSuffix] = getBSASuffixes(settings);
 
     QStringList bsas;
     while (it.hasNext())
@@ -268,4 +268,14 @@ std::vector<std::string> PluginsOperations::listLandscapeTextures(const QString 
 
     return finalTextures;
 }
+
+std::pair<QString, QString> PluginsOperations::getBSASuffixes(const GameSettings &sets)
+{
+    const auto &bsaSuffix = sets.sBSASuffix();
+    //Doesn't matter if they're the same
+    const auto &bsaTexSuffix = sets.sBSATexturesSuffix().value_or(bsaSuffix);
+
+    return {bsaSuffix, bsaTexSuffix};
+}
+
 } // namespace CAO

@@ -65,7 +65,6 @@ public:
     REGISTER_SETTING(bool, bMeshesIgnoreHeadparts, "/Meshes/bMeshesIgnoreHeadparts")
 
     REGISTER_SETTING(bool, bAnimationsOptimization, "/Animations/bAnimationsOptimization")
-    REGISTER_SETTING(hkPackFormat, eAnimationsFormat, "/Advanced/Animations/eAnimationsFormat")
 };
 } // namespace CAO
 

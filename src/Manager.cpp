@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Manager.hpp"
+#include "Settings/Games.hpp"
 #include "Utils/Algorithms.hpp"
 #include "Utils/wildcards.hpp"
 
@@ -38,11 +39,12 @@ void Manager::listDirectories()
     mods_.clear();
 
     const auto &settings = currentProfile().getGeneralSettings();
+    const auto &games    = GameSettings::get(settings.eGame());
 
     if (settings.eMode() == SingleMod)
     {
         const QString &outDir = getOutputRootDirectory(settings.sInputPath());
-        mods_.emplace_back(ModFolder{settings.sInputPath(), settings.sBSAExtension(), outDir});
+        mods_.emplace_back(ModFolder{settings.sInputPath(), games.sBSAExtension(), outDir});
     }
     else
     {
@@ -54,10 +56,10 @@ void Manager::listDirectories()
         };
 
         mods_ = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) | rx::filter(notBlacklist)
-                | rx::transform([this, &settings, &dir](auto &&path) {
+                | rx::transform([this, &games, &dir](auto &&path) {
                       const QString absoluteInputPath = dir.absoluteFilePath(path);
                       const QString &outDir           = getOutputRootDirectory(absoluteInputPath);
-                      return ModFolder(absoluteInputPath, settings.sBSAExtension(), outDir);
+                      return ModFolder(absoluteInputPath, games.sBSAExtension(), outDir);
                   })
                 | rx::to_vector();
     }

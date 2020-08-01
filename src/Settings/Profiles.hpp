@@ -66,4 +66,5 @@ inline Profile &currentProfile()
 {
     return getProfiles().getCurrent();
 }
+
 } // namespace CAO

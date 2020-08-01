@@ -96,6 +96,8 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/MigrateProfiles.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/MigrateProfiles.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Settings.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Games.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Games.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/GeneralSettings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/GeneralSettings.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/PatternSettings.cpp
