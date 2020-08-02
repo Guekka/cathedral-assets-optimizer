@@ -16,12 +16,12 @@ inline libbsarch::transform_callback BSAMemoryCallback(const QString &bsaExt,
 {
     return [bsaExt, &optimizer, dryRun](const libbsarch::fs::path &relativePath,
                                         libbsarch::extracted_data &&blob) {
-        auto file = makeFile(QString::fromStdString(relativePath.string()), bsaExt);
+        const auto file = makeFile(QString::fromStdString(relativePath.string()), bsaExt);
         if (!file)
             return std::vector<std::byte>{};
 
         std::vector<std::byte> out;
-        MainOptimizer::MemoryData result{blob.get_buffer(), blob.get_size(), &out};
+        const MainOptimizer::MemoryData result{blob.get_buffer(), blob.get_size(), &out};
 
         optimizer.process(*file, dryRun, result);
         return out;

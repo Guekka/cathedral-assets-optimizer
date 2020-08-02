@@ -28,7 +28,7 @@ PatternSettings::PatternSettings(const PatternSettings &other)
     json_ = other.json_;
 }
 
-PatternSettings::PatternSettings(PatternSettings &&other)
+PatternSettings::PatternSettings(PatternSettings &&other) noexcept
     : patterns_(std::move(other.patterns_))
     , priority_(std::move(other.priority_))
 {
@@ -47,7 +47,7 @@ PatternSettings &PatternSettings::operator=(const PatternSettings &other)
     return *this;
 }
 
-PatternSettings &PatternSettings::operator=(PatternSettings &&other)
+PatternSettings &PatternSettings::operator=(PatternSettings &&other) noexcept
 {
     if (this == &other)
         return *this;
@@ -71,7 +71,7 @@ std::optional<QString> PatternSettings::isValid() const
     if (!isPow2(iTexturesMinimumWidth()) || !isPow2(iTexturesMinimumHeight()))
         return ("Textures resizing minimum size has to be a power of two");
 
-    if (iTexturesResizingWidth() % 2 != 0 || iTexturesResizingWidth() % 2 != 0)
+    if (iTexturesResizingWidth() % 2 != 0 || iTexturesResizingHeight() % 2 != 0)
         return ("Textures resizing target has to be a power of two");
 
     if (iMeshesOptimizationLevel() < 0 || iMeshesOptimizationLevel() > 3)

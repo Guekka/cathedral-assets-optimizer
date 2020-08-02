@@ -5,7 +5,6 @@
 #pragma once
 
 #include "GUI/MainWindow.hpp"
-#include "Utils/QJSONValueWrapper.hpp"
 #include "pch.hpp"
 
 namespace CAO {

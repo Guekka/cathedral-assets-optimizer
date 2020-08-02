@@ -71,7 +71,7 @@ void Filesystem::copyDir(const QDir &source, QDir destination, const bool overwr
     QDirIterator it(source, QDirIterator::Subdirectories);
 
     PLOG_DEBUG << QString("Copying directory: '%1' into '%2'\nOverwrite existing:%3")
-                      .arg(source.path(), destination.path(), QString::number(overwriteExisting));
+                      .arg(source.path(), destination.path(), QVariant(overwriteExisting).toString());
 
     QStringList oldFiles;
 
@@ -128,8 +128,8 @@ bool Filesystem::compareFiles(const QString &filepath1, const QString &filepath2
     if (file1.size() != file2.size())
         return false;
 
-    auto hash1 = fileChecksum(std::move(file1), QCryptographicHash::Sha1);
-    auto hash2 = fileChecksum(std::move(file2), QCryptographicHash::Sha1);
+    const auto hash1 = fileChecksum(std::move(file1), QCryptographicHash::Sha1);
+    const auto hash2 = fileChecksum(std::move(file2), QCryptographicHash::Sha1);
     return hash1 == hash2;
 }
 
@@ -150,7 +150,7 @@ QString Filesystem::backupFile(const QString &filePath)
     return backupFile.fileName();
 }
 
-QStringList Filesystem::readFile(QFile &file, std::function<void(QString &line)> function)
+QStringList Filesystem::readFile(QFile &file, const std::function<void(QString &line)> &function)
 {
     QStringList list;
 

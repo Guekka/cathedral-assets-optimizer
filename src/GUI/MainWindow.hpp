@@ -38,10 +38,11 @@ public:
     template<typename T>
     void removeModule()
     {
-        for (int i = 0; i < ui_->tabWidget->count(); i++)
-            if (dynamic_cast<T *>(ui_->tabWidget->widget(i)))
+        auto& tabWidget = ui_->tabWidget;
+        for (int i = 0; i < tabWidget->count(); i++)
+            if (dynamic_cast<T *>(tabWidget->widget(i)))
             {
-                ui_->tabWidget->removeTab(i);
+                tabWidget->removeTab(i);
                 break;
             }
     }

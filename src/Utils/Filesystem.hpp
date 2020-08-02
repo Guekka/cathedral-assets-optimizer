@@ -41,7 +41,7 @@ void copyDir(const QDir &source, QDir destination, bool overwriteExisting);
 QString backupFile(const QString &filePath);
 
 QStringList readFile(
-    QFile &file, std::function<void(QString &line)> function = [](QString &) {});
+    QFile &file, const std::function<void(QString &line)> &function = [](QString &) {});
 
 QStringList listPlugins(QDirIterator &it);
 

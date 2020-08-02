@@ -9,10 +9,9 @@
 #include "Utils/CallOnce.hpp"
 #include "pch.hpp"
 
-class MainWindow;
 
 namespace CAO {
-
+class MainWindow;
 class Profiles
 {
 public:

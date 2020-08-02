@@ -5,12 +5,13 @@
 
 #include "CallOnce.hpp"
 
-bool CallOnce::call(std::function<void()> func)
+bool CallOnce::call(const std::function<void()> &func) 
 {
     if (called_)
         return false;
 
     func();
+    called_ = true;
     return true;
 }
 

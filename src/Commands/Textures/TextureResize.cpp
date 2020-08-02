@@ -13,7 +13,7 @@ CommandResult TextureResize::process(File &file) const
 
     const auto &info = texFile->GetMetadata();
 
-    auto timage     = new TextureResource;
+    auto timage     = std::make_unique<TextureResource>();
     const auto &img = texFile->GetImages();
     if (!img)
         return _resultFactory.getFailedResult(-1, "Failed to get images from file");

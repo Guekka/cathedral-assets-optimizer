@@ -7,7 +7,6 @@
 
 #pragma once
 #include "Utils/Algorithms.hpp"
-#include "pch.hpp"
 #include "plog/Log.h"
 
 namespace plog {
@@ -18,7 +17,7 @@ public:
 
     static util::nstring format(const Record &record)
     {
-        tm t;
+        tm t{};
         util::localtime_s(&t, &record.getTime().time);
 
         util::nostringstream ss;
@@ -52,7 +51,8 @@ inline void initCustomLogger(const QString &logPath)
 
     //Creating log folder
     const QDir dir;
-    dir.mkpath(QFileInfo(logPath).path());
+    if(!dir.mkpath(QFileInfo(logPath).path()))
+        throw std::runtime_error("Cannot make log path: " + QFileInfo(logPath).path().toStdString());
 
     //Creating log file
     QFile file(logPath);

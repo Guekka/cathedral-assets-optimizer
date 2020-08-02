@@ -44,6 +44,7 @@ static std::unique_ptr<CAO::TextureFile> getStandardTextureFile(
 
     //Checking that the file is valid
     auto res = dynamic_cast<const CAO::TextureResource *>(&file->getFile());
+    REQUIRE(res);
     REQUIRE(res->GetImages());
 
     return file;

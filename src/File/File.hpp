@@ -69,7 +69,7 @@ protected:
         inputFilePath_.clear();
         outputFilePath_.clear();
 
-        file_.release();
+        file_ = nullptr;
     }
 
     template<class T>

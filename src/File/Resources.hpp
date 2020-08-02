@@ -42,6 +42,15 @@ struct BSAFileResource : public Resource
         saver.set_bsa(bsa);
     }
 
+    BSAFileResource &operator=(const BSAFileResource &) = delete;
+    BSAFileResource &operator=(BSAFileResource && other)
+    {
+        bsa = std::move(other.bsa);
+        saver = std::move(other.saver);
+        saver.set_bsa(bsa);
+    }
+
+
     libbsarch::bsa bsa;
     libbsarch::bsa_saver_simple saver;
     std::optional<libbsarch::transform_callback> callback;

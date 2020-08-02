@@ -31,7 +31,7 @@ FileTypes::FileTypes(const FileTypes &other)
     json_ = other.json_;
 }
 
-FileTypes::FileTypes(FileTypes &&other)
+FileTypes::FileTypes(FileTypes &&other) noexcept
 {
     json_ = std::move(other.json_);
 }
@@ -44,7 +44,7 @@ FileTypes &FileTypes::operator=(const FileTypes &other)
     return *this;
 }
 
-FileTypes &FileTypes::operator=(FileTypes &&other)
+FileTypes &FileTypes::operator=(FileTypes &&other) noexcept
 {
     if (this != &other)
         json_ = std::move(other.json_);

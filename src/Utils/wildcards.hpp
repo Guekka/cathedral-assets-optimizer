@@ -37,10 +37,10 @@ constexpr bool isMatch(std::string_view str,
         return str.empty();
 
     auto pat_it = strong_pattern.v.begin();
-    auto pat_end = strong_pattern.v.end();
+    const auto pat_end = strong_pattern.v.end();
 
     auto str_it = str.begin();
-    auto str_end = str.end();
+    const auto str_end = str.end();
 
     auto anyrep_pos_pat = pat_end;
     auto anyrep_pos_str = str_end;
@@ -59,12 +59,12 @@ constexpr bool isMatch(std::string_view str,
         if (pat_it != pat_end && current_pat == cards.set_begin)
         {
             set_pos_pat = pat_it;
-            pat_it++;
+            ++pat_it;
         }
         else if (pat_it != pat_end && current_pat == cards.set_end)
         {
             set_pos_pat = pat_end;
-            pat_it++;
+            ++pat_it;
         }
         else if (set_pos_pat != pat_end)
         {
@@ -72,7 +72,7 @@ constexpr bool isMatch(std::string_view str,
             {
                 set_pos_pat = pat_end;
                 pat_it = std::find(pat_it, pat_end, cards.set_end) + 1;
-                str_it++;
+                ++str_it;
             }
             else
             {
@@ -80,30 +80,30 @@ constexpr bool isMatch(std::string_view str,
                 {
                     return false;
                 }
-                pat_it++;
+                ++pat_it;
             }
         }
         else if (pat_it != pat_end && current_pat == current_str)
         {
-            pat_it++;
-            str_it++;
+            ++pat_it;
+            ++str_it;
         }
         else if (pat_it != pat_end && current_pat == cards.any)
         {
-            pat_it++;
-            str_it++;
+            ++pat_it;
+            ++str_it;
         }
         else if (pat_it != pat_end && current_pat == cards.any_repeat)
         {
             anyrep_pos_pat = pat_it;
             anyrep_pos_str = str_it;
-            pat_it++;
+            ++pat_it;
         }
         else if (anyrep_pos_pat != pat_end)
         {
             pat_it = anyrep_pos_pat + 1;
             str_it = anyrep_pos_str + 1;
-            anyrep_pos_str++;
+            ++anyrep_pos_str;
         }
         else
         {
@@ -112,9 +112,9 @@ constexpr bool isMatch(std::string_view str,
     }
     while (pat_it != pat_end)
     {
-        char cur = case_sensitive ? *pat_it : std::tolower(*pat_it);
+       const char cur = case_sensitive ? *pat_it : std::tolower(*pat_it);
         if (cur == cards.any_repeat)
-            pat_it++;
+            ++pat_it;
         else
             break;
     }

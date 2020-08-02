@@ -15,7 +15,12 @@ public:
     CallOnce(const CallOnce &) = delete;
     CallOnce(CallOnce &&)      = default;
 
-    bool call(std::function<void()> func);
+    CallOnce &operator=(const CallOnce &) = delete;
+    CallOnce &operator=(CallOnce &&) = delete;
+
+    ~CallOnce() = default;
+
+    bool call(const std::function<void()> &func);
     void reset();
 
 private:

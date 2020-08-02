@@ -33,6 +33,8 @@ public:
         assert(j.is_null() || j.is_object());
     }
 
+    ~QJSONValueWrapper() = default;
+
     QJSONValueWrapper(const QJSONValueWrapper &other) = delete;
     QJSONValueWrapper(QJSONValueWrapper &&other)      = delete;
     void operator=(const QJSONValueWrapper &other) = delete;
@@ -47,16 +49,20 @@ public:
         emit valueChanged();
     }
 
-    Type value() const { return JSON::getValue<Type>(json_, key_); }
-    Type value_or(const Type &fallback)
+    [[nodiscard]] Type value() const { return JSON::getValue<Type>(json_, key_); }
+    [[nodiscard]] Type value_or(const Type &fallback)
     {
         if (json_.contains(key_))
             return value();
         return fallback;
     }
 
-    Type operator()() const { return value(); }
-    void operator=(const Type &val) { setValue(val); }
+    [[nodiscard]] Type operator()() const { return value(); }
+    QJSONValueWrapper &operator=(const Type &val)
+    {
+        setValue(val);
+        return *this;
+    }
 
     void insert(const Type &val, bool allowDups = true)
     {

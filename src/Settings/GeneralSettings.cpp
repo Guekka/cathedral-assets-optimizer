@@ -15,7 +15,7 @@ GeneralSettings::GeneralSettings(const GeneralSettings &other)
     json_ = other.json_;
 }
 
-GeneralSettings::GeneralSettings(GeneralSettings &&other)
+GeneralSettings::GeneralSettings(GeneralSettings &&other) noexcept
 {
     json_ = std::move(other.json_);
 }
@@ -28,7 +28,7 @@ GeneralSettings &GeneralSettings::operator=(const GeneralSettings &other)
     return *this;
 }
 
-GeneralSettings &GeneralSettings::operator=(GeneralSettings &&other)
+GeneralSettings &GeneralSettings::operator=(GeneralSettings &&other) noexcept
 {
     if (this != &other)
         json_ = std::move(other.json_);

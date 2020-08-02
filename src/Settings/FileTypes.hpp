@@ -6,6 +6,7 @@
 
 #include "Commands/BSA/Utils/BSA.hpp"
 #include "Settings.hpp"
+#include "Utils/QJSONValueWrapper.hpp"
 
 #define REGISTER_SETTING(type, name, key) \
     QJSONValueWrapper<type> name{json_, nlohmann::json_pointer<nlohmann::json>{key}};

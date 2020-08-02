@@ -6,6 +6,8 @@ project(Cathedral_Assets_Optimizer VERSION 6.0.0 LANGUAGES CXX)
 #Setting version for C++ files
 configure_file (src/Version.hpp.in src/Version.hpp)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 include(cmake/Qt.cmake)
 
 add_subdirectory(data)

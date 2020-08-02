@@ -35,16 +35,18 @@ void ProgressWindow::update(const QString &text, int max, int value)
 
 void ProgressWindow::end()
 {
-    ui_->progressBar->setMaximum(100);
-    ui_->progressBar->setValue(100);
-    ui_->progressBar->setFormat(tr("Done"));
+    auto& progressBar = ui_->progressBar;
+    progressBar->setMaximum(100);
+    progressBar->setValue(100);
+    progressBar->setFormat(tr("Done"));
 }
 
 void ProgressWindow::updateProgressBar(const QString &text, int max, int value)
 {
-    ui_->progressBar->setFormat(text);
-    ui_->progressBar->setMaximum(max);
-    ui_->progressBar->setValue(value);
+    auto& progressBar = ui_->progressBar;
+    progressBar->setFormat(text);
+    progressBar->setMaximum(max);
+    progressBar->setValue(value);
 }
 
 void ProgressWindow::updateEntries()

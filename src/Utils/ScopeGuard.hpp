@@ -5,7 +5,6 @@
 #pragma once
 
 #include <functional>
-#include <stack>
 #include <utility>
 
 class ScopeGuard
@@ -23,12 +22,6 @@ public:
     {
     }
 
-    ScopeGuard(const ScopeGuard &) = delete;
-    ScopeGuard(ScopeGuard &&other) noexcept
-        : functions_(std::move(other.functions_))
-    {
-    } 
-
     ~ScopeGuard()
     {
         while (!functions_.empty())
@@ -36,6 +29,17 @@ public:
             functions_.back()();
             functions_.pop_back();
         }
+    }
+
+    ScopeGuard(const ScopeGuard &) = delete;
+    ScopeGuard(ScopeGuard &&other) noexcept
+        : functions_(std::move(other.functions_))
+    {
+    }
+
+    ScopeGuard &operator=(const ScopeGuard &) = delete;
+    ScopeGuard &operator=(ScopeGuard&& other) noexcept
+    { functions_ = std::move(other.functions_);
     }
 
     void add(const Function &func) { functions_.emplace_back(func); }

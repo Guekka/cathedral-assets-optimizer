@@ -76,21 +76,6 @@ const GameSettings &GameSettings::get(Games game)
             return sets;
         }
         case Games::Fallout3:
-        {
-            static GameSettings sets;
-            static CallOnce callOnce;
-            callOnce.call([] {
-                sets.eBSAFormat_         = baFO3;
-                sets.sBSAExtension_      = ".bsa";
-                sets.sBSASuffix_         = ".bsa";
-                sets.eBSATexturesFormat_ = std::nullopt;
-                sets.sBSATexturesSuffix_ = std::nullopt;
-                sets.cMeshesVersion_     = std::nullopt;
-                sets.eAnimationsFormat_  = std::nullopt;
-            });
-
-            return sets;
-        }
         case Games::FalloutNewVegas:
         {
             static GameSettings sets;
