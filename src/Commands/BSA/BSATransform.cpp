@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "BSATransform.hpp"
+#include "Settings/Games.hpp"
 #include "Utils/ScopeGuard.hpp"
 
 namespace CAO {
@@ -21,6 +22,11 @@ CommandResult BSATransform::process(File &file) const
         outputPath.insert(outputPath.length() - 4, " - out"); //Keep extension
 
     file.setOutputFilePath(outputPath);
+
+    const auto &games = GameSettings::get(currentProfile().getGeneralSettings().eGame());
+    const auto current_type = bsaFile->bsa.get_type();
+    const auto type = current_type == baFO4dds ? games.eBSATexturesFormat().value_or(games.eBSAFormat())
+                                               : games.eBSAFormat();
 
     try
     {
