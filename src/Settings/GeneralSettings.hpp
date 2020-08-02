@@ -17,10 +17,10 @@ public:
     GeneralSettings() = default;
     GeneralSettings(nlohmann::json j);
     GeneralSettings(const GeneralSettings &other);
-    GeneralSettings(GeneralSettings &&other);
+    GeneralSettings(GeneralSettings &&other) noexcept;
 
     GeneralSettings &operator=(const GeneralSettings &other);
-    GeneralSettings &operator=(GeneralSettings &&other);
+    GeneralSettings &operator=(GeneralSettings &&other) noexcept;
 
     std::optional<QString> isValid() const override;
 

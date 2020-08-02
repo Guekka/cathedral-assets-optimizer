@@ -37,7 +37,7 @@ struct BSA
     /*!
      * \brief Finds a name for a BSA
      * \param folder The folder in which the BSA will be
-     * \param file.settings() CAO Settings
+     * \param settings CAO Settings
      */
     void name(const QString &folder, const GeneralSettings &settings);
 

@@ -18,10 +18,10 @@ public:
     PatternSettings(const nlohmann::json &json);
     PatternSettings(size_t priority, const std::vector<std::string> &regex);
     PatternSettings(const PatternSettings &other);
-    PatternSettings(PatternSettings &&other);
+    PatternSettings(PatternSettings &&other) noexcept;
 
     PatternSettings &operator=(const PatternSettings &other);
-    PatternSettings &operator=(PatternSettings &&other);
+    PatternSettings &operator=(PatternSettings &&other) noexcept; 
     bool operator==(const PatternSettings &other) const;
 
     std::optional<QString> isValid() const override;

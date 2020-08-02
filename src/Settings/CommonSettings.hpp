@@ -15,14 +15,14 @@ class CommonSettings : public Settings
 public:
     CommonSettings(){};
     CommonSettings(const CommonSettings &other) { json_ = other.json_; }
-    CommonSettings(CommonSettings &&other) { json_ = std::move(other.json_); }
+    CommonSettings(CommonSettings &&other) noexcept { json_ = std::move(other.json_); }
 
     CommonSettings &operator=(const CommonSettings &other)
     {
         json_ = other.json_;
         return *this;
     }
-    CommonSettings &operator=(CommonSettings &&other)
+    CommonSettings &operator=(CommonSettings &&other) noexcept
     {
         json_ = std::move(other.json_);
         return *this;

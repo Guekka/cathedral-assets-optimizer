@@ -18,10 +18,10 @@ public:
 
     FileTypes() = default;
     FileTypes(const FileTypes &other);
-    FileTypes(FileTypes &&other);
+    FileTypes(FileTypes &&other) noexcept;
 
     FileTypes &operator=(const FileTypes &other);
-    FileTypes &operator=(FileTypes &&other);
+    FileTypes &operator=(FileTypes &&other) noexcept;
 
     bool match(const std::vector<std::string> &patterns, const QString &str) const;
 

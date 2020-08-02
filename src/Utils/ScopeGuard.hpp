@@ -24,7 +24,10 @@ public:
     }
 
     ScopeGuard(const ScopeGuard &) = delete;
-    ScopeGuard(ScopeGuard &&other) { functions_ = std::move(other.functions_); }
+    ScopeGuard(ScopeGuard &&other) noexcept
+        : functions_(std::move(other.functions_))
+    {
+    } 
 
     ~ScopeGuard()
     {

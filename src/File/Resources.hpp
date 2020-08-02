@@ -34,7 +34,7 @@ struct BSAFileResource : public Resource
 
     BSAFileResource(const BSAFileResource &) = delete;
 
-    BSAFileResource(BSAFileResource &&other)
+    BSAFileResource(BSAFileResource &&other) noexcept
         : bsa(std::move(other.bsa))
         , saver(bsa)
     {
