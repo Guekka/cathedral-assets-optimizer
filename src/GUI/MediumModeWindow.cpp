@@ -67,25 +67,22 @@ void MediumModeWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets
     connectWrapper(*ui_->TexturesCompress, pSets.bTexturesCompress);
     connectWrapper(*ui_->TexturesMipmaps, pSets.bTexturesMipmaps);
 
+    setData(*ui_->TexturesResizingMode, "Disabled", TextureResizingMode::None);
     setData(*ui_->TexturesResizingMode, "By ratio", TextureResizingMode::ByRatio);
     setData(*ui_->TexturesResizingMode, "By fixed size", TextureResizingMode::BySize);
 
-    ui_->TexturesResizingGroupBox->setChecked(pSets.eTexturesResizingMode() != None);
-
-    connect(ui_->TexturesResizingGroupBox, &QGroupBox::toggled, this, [this, &pSets](bool state) {
-        if (state)
-            pSets.eTexturesResizingMode = ui_->TexturesResizingMode->currentData().value<TextureResizingMode>();
-        else
-            pSets.eTexturesResizingMode = None;
-    });
-
     connect(ui_->TexturesResizingMode,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this,
-            [this, &pSets](int idx) {
-                auto value = ui_->TexturesResizingMode->itemData(idx).value<TextureResizingMode>();
-                pSets.eTexturesResizingMode = value;
+            &pSets.eTexturesResizingMode,
+            [&pSets, this](int idx) {
+                auto data                   = ui_->TexturesResizingMode->itemData(idx);
+                pSets.eTexturesResizingMode = data.value<TextureResizingMode>();
             });
+
+    connect(&pSets.eTexturesResizingMode, &detail::QValueWrapperHelper::valueChanged, this, [this, &pSets] {
+        int idx = ui_->TexturesResizingMode->findData(pSets.eTexturesResizingMode());
+        ui_->TexturesResizingMode->setCurrentIndex(idx);
+    });
 
     connectWrapper(*ui_->TexturesResizingMinimumCheckBox, pSets.bTexturesResizeMinimum);
 

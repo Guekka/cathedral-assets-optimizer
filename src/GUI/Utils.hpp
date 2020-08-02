@@ -97,9 +97,9 @@ inline void setEnabled(bool state, UiElements *... uiEls)
 }
 
 template<typename Data>
-inline void setData(QComboBox &box, const QString &text, Data &&data)
+inline void setData(QComboBox &box, const QString &text, const Data &data)
 {
-    auto pos = box.findText(text, Qt::MatchFlag::MatchExactly);
+    const auto pos = box.findText(text, Qt::MatchFlag::MatchExactly);
     if (pos == -1)
         throw UiException(QString("UI was different than expected. Element '%1' not found").arg(text));
     box.setItemData(pos, data);

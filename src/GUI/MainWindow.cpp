@@ -36,11 +36,11 @@ MainWindow::MainWindow()
         QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
     });
 
-    connect(ui_->actionDonate, &QAction::triggered, this, [&] {
+    connect(ui_->actionDonate, &QAction::triggered, this, [] {
         QDesktopServices::openUrl(QUrl("https://ko-fi.com/guekka"));
     });
 
-    connect(ui_->actionAbout, &QAction::triggered, this, [&] {
+    connect(ui_->actionAbout, &QAction::triggered, this, [this] {
         constexpr char message[]
             = "\nMade by G'k\nThis program is distributed in the hope that it will be useful "
               "but WITHOUT ANY WARRANTLY. See the Mozilla Public License";
@@ -53,7 +53,7 @@ MainWindow::MainWindow()
         QMessageBox::about(this, tr("About"), text);
     });
 
-    connect(ui_->actionAbout_Qt, &QAction::triggered, this, [&] { QMessageBox::aboutQt(this); });
+    connect(ui_->actionAbout_Qt, &QAction::triggered, this, [this] { QMessageBox::aboutQt(this); });
 
     //Profiles
     setProfile(getProfiles().currentProfileName());
