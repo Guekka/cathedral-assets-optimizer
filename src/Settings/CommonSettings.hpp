@@ -35,7 +35,6 @@ public:
     REGISTER_SETTING(bool, bDarkMode, "/DarkMode")
     REGISTER_SETTING(bool, bShowTutorials, "/ShowTutorials")
     REGISTER_SETTING(bool, bFirstStart, "/FirstStart")
-    REGISTER_SETTING(bool, bDebugLog, "/DebugLog");
 
     REGISTER_SETTING(int, iGPUIndex, "/GPUIndex")
 };

@@ -302,17 +302,6 @@
     <string>Enable dark theme</string>
    </property>
   </action>
-  <action name="actionEnable_debug_log">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Enable debug log</string>
-   </property>
-   <property name="toolTip">
-    <string>Used when reporting bugs</string>
-   </property>
-  </action>
   <action name="actionDocumentation">
    <property name="text">
     <string>Documentation</string>

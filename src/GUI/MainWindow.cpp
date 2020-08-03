@@ -191,7 +191,6 @@ void MainWindow::connectAll()
     });
 
     connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials);
-    connectWrapper(*ui_->actionEnable_debug_log, commonSettings.bDebugLog);
 }
 
 void MainWindow::loadUi()
