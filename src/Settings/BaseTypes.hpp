@@ -26,7 +26,7 @@ enum class GuiMode
     Advanced      = 10
 };
 
-enum class Games
+enum Games
 {
     Morrowind,
     Oblivion,
@@ -36,7 +36,6 @@ enum class Games
     FalloutNewVegas,
     Fallout4
 };
-
 } // namespace CAO
 
 Q_DECLARE_METATYPE(DXGI_FORMAT)

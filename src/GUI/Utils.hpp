@@ -7,6 +7,7 @@
 #include "Utils/TemplateMetaProgramming.hpp"
 #include "pch.hpp"
 #include <functional>
+#include <QStandardItemModel>
 
 namespace CAO {
 class UiException : public std::runtime_error
@@ -105,6 +106,26 @@ inline void setData(QComboBox &box, const QString &text, const Data &data)
     box.setItemData(pos, data);
 }
 
+template<typename Data>
+inline int findData(const QComboBox &box, const Data &data)
+{
+    for (int i = 0; i < box.count(); ++i)
+        if (box.itemData(i).value<Data>() == data)
+            return i;
+    return -1;
+};
+
+template<typename Data>
+inline bool selectData(QComboBox &box, const Data &data)
+{
+    int idx = box.findData(data);
+    if (idx == -1)
+        return false;
+
+    box.setCurrentIndex(idx);
+    return true;
+}
+
 inline bool selectText(QComboBox &box, const QString &text)
 {
     int idx = box.findText(text);
@@ -113,6 +134,21 @@ inline bool selectText(QComboBox &box, const QString &text)
 
     box.setCurrentIndex(idx);
     return true;
+}
+
+inline void setItemEnabled(QComboBox &box, int idx, bool state)
+{
+    auto *model = qobject_cast<QStandardItemModel *>(box.model());
+    auto *view  = qobject_cast<QListView *>(box.view());
+
+    if (!model || !view)
+        throw UiException("Couldn't get model / view of QComboBox");
+
+    view->setRowHidden(idx, !state);
+    QStandardItem *item = model->item(idx);
+
+    const auto flags = state ? item->flags() & ~Qt::ItemIsEnabled : item->flags() | Qt::ItemIsEnabled;
+    item->setFlags(flags);
 }
 
 } // namespace CAO

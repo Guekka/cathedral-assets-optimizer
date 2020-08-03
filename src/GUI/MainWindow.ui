@@ -55,7 +55,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="newProfilePushButton">
+        <widget class="QPushButton" name="manageProfiles">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -63,7 +63,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>New</string>
+          <string>Manage</string>
          </property>
         </widget>
        </item>

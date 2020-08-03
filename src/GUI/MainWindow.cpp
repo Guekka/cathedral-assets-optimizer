@@ -5,6 +5,7 @@
 
 #include "MainWindow.hpp"
 #include "Manager.hpp"
+#include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
 #include "Utils.hpp"
 
@@ -20,7 +21,13 @@ MainWindow::MainWindow()
     setData(*ui_->modeChooserComboBox, "Several mods", SeveralMods);
 
     //Connecting widgets that do not depend on current profile
-    connect(ui_->newProfilePushButton, &QPushButton::pressed, this, &MainWindow::createProfile);
+
+    connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
+        ProfilesManagerWindow profilesManager(getProfiles());
+        profilesManager.exec();
+        updateProfiles();
+    });
+
     connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
 
     //Menu buttons
@@ -56,7 +63,7 @@ MainWindow::MainWindow()
     connect(ui_->actionAbout_Qt, &QAction::triggered, this, [this] { QMessageBox::aboutQt(this); });
 
     //Profiles
-    setProfile(getProfiles().currentProfileName());
+    updateProfiles();
 
     firstStart();
 }
@@ -193,6 +200,15 @@ void MainWindow::connectAll()
     connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials);
 }
 
+void MainWindow::updateProfiles()
+{
+    auto *profiles              = ui_->profiles;
+    const QString &previousText = profiles->currentText();
+    ProfilesManagerWindow(getProfiles()).updateProfiles(*ui_->profiles);
+    selectText(*profiles, previousText);
+    connectAll();
+}
+
 void MainWindow::loadUi()
 {
     auto &commonSettings = getProfiles().commonSettings();
@@ -206,52 +222,6 @@ void MainWindow::loadUi()
 void MainWindow::resetUi()
 {
     ui_->tabWidget->clear();
-}
-
-void MainWindow::refreshProfiles()
-{
-    ui_->profiles->clear();
-    ui_->profiles->addItems(getProfiles().list());
-}
-
-void MainWindow::createProfile()
-{
-    bool ok = false;
-    const QString &text
-        = QInputDialog::getText(this, tr("New profile"), tr("Name:"), QLineEdit::Normal, "", &ok);
-    if (!ok || text.isEmpty())
-        return;
-
-    //Choosing base profile
-
-    QStringList profilesList;
-    auto& profiles = ui_->profiles;
-    for (int i = 0; i < profiles->count(); ++i)
-        profilesList << profiles->itemText(i);
-
-    const QString &baseProfile = QInputDialog::getItem(this,
-                                                       tr("Base profile"),
-                                                       tr("Which profile do you want to use as a base?"),
-                                                       profilesList,
-                                                       profiles->currentIndex(),
-                                                       false,
-                                                       &ok);
-
-    if (!ok)
-        return;
-
-    getProfiles().create(text, baseProfile);
-    setProfile(text);
-}
-
-void MainWindow::setProfile(const QString &name)
-{
-    refreshProfiles();
-
-    ui_->profiles->setCurrentIndex(ui_->profiles->findText(name));
-
-    connectAll();
-    reconnectModules();
 }
 
 void MainWindow::setDarkTheme(const bool &enabled)
@@ -316,7 +286,8 @@ void MainWindow::endProcess()
     }
 
     getProfiles().saveCommonSettings();
-    currentProfile().saveToJSON();
+    for (const auto &profile : getProfiles().list())
+        getProfiles().get(profile).saveToJSON();
 
     freezeModules(false);
 }

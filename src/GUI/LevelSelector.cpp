@@ -38,7 +38,6 @@ void LevelSelector::setupWindow(std::unique_ptr<MainWindow> &mw, GuiMode level)
         {
             getProfiles() = Profiles(QDir(Profiles::QuickAutoPortProfilesDir));
             mw            = std::make_unique<MainWindow>();
-            mw->refreshProfiles();
             break;
         }
         case GuiMode::Medium:

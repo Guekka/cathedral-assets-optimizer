@@ -27,6 +27,9 @@ public:
     void create(const QString &name, const QString &baseProfile);
     void create(const QString &name);
     void create(const Profile &profile, const QString &name);
+    bool remove(const QString &profile);
+    bool rename(const QString &profile, const QString &newName);
+
     Profile &setCurrent(const QString &profile);
 
     //Also sets the current profile. Reads the current profile from INI

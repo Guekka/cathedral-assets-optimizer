@@ -47,7 +47,6 @@ public:
             }
     }
 
-    void refreshProfiles();
 
 private:
     std::unique_ptr<Ui::MainWindow> ui_;
@@ -64,8 +63,7 @@ private:
     void connectAll();
     void disconnectAll();
 
-    void createProfile();
-    void setProfile(const QString &name);
+    void updateProfiles();
 
     void resetUi();
     void loadUi();

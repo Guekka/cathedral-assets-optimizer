@@ -45,6 +45,39 @@ void Profiles::create(const Profile &profile, const QString &name)
     profiles_.try_emplace(name, profile);
 }
 
+bool Profiles::remove(const QString &profile)
+{
+    if (!get(profile).profileDirectory().removeRecursively())
+        return false;
+
+    update(true);
+
+    if (commonSettings().sProfile() == profile)
+    {
+        commonSettings().sProfile = defaultProfile;
+        saveCommonSettings();
+    }
+
+    return true;
+}
+
+bool Profiles::rename(const QString &profile, const QString &newName)
+{
+    if (!rootProfileDir_.rename(profile, newName))
+        return false;
+
+    profiles_.erase(profile);
+    update();
+
+    if (commonSettings().sProfile() == profile)
+    {
+        commonSettings().sProfile = newName;
+        saveCommonSettings();
+    }
+
+    return true;
+}
+
 Profile &Profiles::setCurrent(const QString &profile)
 {
     if (!profiles_.count(profile))
@@ -54,6 +87,7 @@ Profile &Profiles::setCurrent(const QString &profile)
     commonSettings_.sProfile = profile;
     return profiles_.at(profile);
 }
+
 Profile &Profiles::getCurrent()
 {
     //Current profile
