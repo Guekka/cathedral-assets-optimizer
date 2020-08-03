@@ -18,6 +18,14 @@ MeshesAdvancedWindow::MeshesAdvancedWindow(QWidget *parent)
 
 void MeshesAdvancedWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
 {
+    //Only LE and SSE are supported
+    switch (gSets.eGame())
+    {
+        case SkyrimLE:
+        case SkyrimSE: setEnabled(true); break;
+        default: setEnabled(false); return;
+    }
+
     connectGroupBox(ui_->mainGroupBox,
                     ui_->necessaryOptimizationRadioButton,
                     ui_->mediumOptimizationRadioButton,
