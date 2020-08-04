@@ -155,30 +155,37 @@ void addDefaultValues5To6(Profile &outProfile)
     ft.slModsBlacklist.insert("*_separator", false);
 }
 
-void migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot)
+QStringList migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot)
 {
     Profiles profiles(newProfileRoot);
+    QStringList migratedProfiles;
     for (const auto &dir : oldProfileRoot.entryList(QDir::NoDotAndDotDot | QDir::Dirs))
     {
         try
         {
+            const QString &profileName = dir + "_migrated";
             QDir oldDir{oldProfileRoot.absoluteFilePath(dir)};
-            QDir newDir{newProfileRoot.absoluteFilePath(dir)};
+            QDir newDir{newProfileRoot.absoluteFilePath(profileName)};
 
             if (!profileVersionIs5(oldDir))
                 continue;
 
-            profiles.create(dir);
-            auto &profile = profiles.get(dir);
+            profiles.create(profileName);
+            auto &profile = profiles.get(profileName);
             migrate5To6(oldDir, profile);
             convertFiles5To6(oldDir, newDir, profile);
             addDefaultValues5To6(profile);
             profile.saveToJSON();
+
+            oldDir.removeRecursively();
+
+            migratedProfiles.push_back(oldDir.dirName());
         }
         catch (const std::exception &e)
         {
             continue;
         }
     }
+    return migratedProfiles;
 }
 } // namespace CAO

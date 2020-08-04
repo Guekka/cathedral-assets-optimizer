@@ -7,5 +7,5 @@
 #include "pch.hpp"
 
 namespace CAO {
-void migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot);
+QStringList migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot);
 }

@@ -80,7 +80,9 @@ bool Profiles::rename(const QString &profile, const QString &newName)
 
 Profile &Profiles::setCurrent(const QString &profile)
 {
-    if (!profiles_.count(profile))
+    const QString &target = exists(profile) ? profile : defaultProfile;
+
+    if (!profiles_.count(target))
         throw std::runtime_error(
             "Trying to load a profile that does not exist. Please reinstall the application");
 
@@ -90,9 +92,10 @@ Profile &Profiles::setCurrent(const QString &profile)
 
 Profile &Profiles::getCurrent()
 {
-    //Current profile
-    const QString &profile = currentProfileName(); //Safety check
-    return setCurrent(profile.isEmpty() ? defaultProfile : profile);
+    if (!exists(currentProfileName()))
+        return setCurrent(defaultProfile);
+
+    return profiles_.at(currentProfileName());
 }
 
 QString Profiles::currentProfileName()

@@ -6,6 +6,7 @@
 #include "GUI/LevelSelector.hpp"
 #include "GUI/MainWindow.hpp"
 #include "Manager.hpp"
+#include "Settings/MigrateProfiles.hpp"
 #include "Version.hpp"
 
 void init()
@@ -38,6 +39,36 @@ void displayError(bool cli, const std::string &err)
     PLOG_FATAL << err;
 }
 
+void displayInfo(bool cli, const std::string &text)
+{
+    if (cli)
+    {
+        std::cout << text << std::endl;
+    }
+    else
+    {
+        QMessageBox box(QMessageBox::Information, "Information", QString::fromStdString(text));
+        box.exec();
+    }
+    PLOG_FATAL << text;
+}
+
+void migrateProfiles(bool cli)
+{
+    const auto &migratedProfiles = CAO::migrateProfiles(QDir("importedProfiles"), QDir("profiles"));
+    if (!migratedProfiles.size())
+        return;
+
+    const QString &text = QCoreApplication::translate("main",
+                                                      "Migrated profiles:\n%1. Please check that they were "
+                                                      "assigned the right game. This process in not perfect")
+                              .arg(migratedProfiles.join('\n'));
+
+    CAO::getProfiles().update(true);
+
+    displayInfo(cli, text.toStdString());
+}
+
 int main(int argc, char *argv[])
 {
     std::unique_ptr<QCoreApplication> app = std::make_unique<QCoreApplication>(argc, argv);
@@ -49,17 +80,25 @@ int main(int argc, char *argv[])
     parser.addOption({"cli", "Do not run the GUI"});
     parser.process(*app);
 
-    std::unique_ptr<CAO::MainWindow> window;
-    std::unique_ptr<CAO::Manager> manager;
+    const bool cli = parser.isSet("cli");
 
+    if (!cli)
+    {
+        app = nullptr;
+        app = std::make_unique<QApplication>(argc, argv);
+    }
+
+    std::unique_ptr<CAO::MainWindow> window;
     try
     {
-        if (parser.isSet("cli"))
+        migrateProfiles(cli);
+
+        if (cli)
         {
             CAO::getProfiles().setCurrent(parser.positionalArguments().at(0));
 
-            manager = std::make_unique<CAO::Manager>();
-            manager->runOptimization();
+            CAO::Manager manager;
+            manager.runOptimization();
         }
         else
         {
@@ -75,7 +114,7 @@ int main(int argc, char *argv[])
     }
     catch (const std::exception &e)
     {
-        displayError(parser.isSet("cli"), e.what());
+        displayError(cli, e.what());
         return 1;
     }
 
