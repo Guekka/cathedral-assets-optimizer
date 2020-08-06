@@ -47,6 +47,7 @@ public:
             }
     }
 
+    void setPatternsEnabled(bool state);
 
 private:
     std::unique_ptr<Ui::MainWindow> ui_;
@@ -62,8 +63,10 @@ private:
 
     void connectAll();
     void disconnectAll();
+    void reconnectAll();
 
     void updateProfiles();
+    void updatePatterns();
 
     void resetUi();
     void loadUi();

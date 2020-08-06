@@ -21,22 +21,18 @@ void PatternMap::listPatterns(const nlohmann::json &json)
         addPattern(PatternSettings(value));
     }
 
-    bool hasDefault = any_of(patterns_, [](auto &&pSets) {
-        return any_of(pSets.patterns_, [](const std::string &str) { return str == "*"; });
-    });
+    const bool hasDefault = any_of(patterns_, [](auto &&pSets) { return pSets.pattern == "*"; });
 
     if (!hasDefault)
-        addPattern(PatternSettings{0, {"*"}});
-
-    cleanPatterns();
+        addPattern(PatternSettings{0, "*"});
 }
 
 void PatternMap::addPattern(PatternSettings pattern)
 {
-    size_t idx = pattern.priority_;
+    size_t idx = pattern.priority;
     if (idx > patterns_.size())
     {
-        pattern.priority_ = patterns_.size();
+        pattern.priority = patterns_.size();
         patterns_.emplace_back(std::move(pattern));
     }
     else
@@ -59,7 +55,7 @@ PatternSettings PatternMap::getSettings(const QString &filePath) const
 
     nlohmann::json merged;
     for (const auto &patternSettings : patterns_)
-        if (any_of(patternSettings.patterns_, matchWildcard))
+        if (matchWildcard(patternSettings.pattern))
             merged.merge_patch(patternSettings.getJSON());
 
     return PatternSettings{merged};
@@ -75,74 +71,17 @@ PatternSettings &PatternMap::getDefaultSettings()
     return *patterns_.begin();
 }
 
-nlohmann::json PatternMap::mergePattern(const nlohmann::json &main, const nlohmann::json &second) const
-{
-    auto patt1 = JSON::getValue<std::vector<std::string>>(main, PatternSettings::patternKey);
-    auto patt2 = JSON::getValue<std::vector<std::string>>(second, PatternSettings::patternKey);
-    patt1.insert(patt1.end(), patt2.begin(), patt2.end());
-    remove_duplicates(patt1);
-
-    size_t prio1 = main.value<size_t>(PatternSettings::priorityKey, UINT_MAX);
-    size_t prio2 = second.value<size_t>(PatternSettings::priorityKey, UINT_MAX);
-
-    auto mergedPriority = std::min(prio1, prio2);
-    if (mergedPriority == UINT_MAX)
-        mergedPriority = 0;
-
-    nlohmann::json merged = main;
-    JSON::setValue(merged, PatternSettings::patternKey, patt1);
-    JSON::setValue(merged, PatternSettings::priorityKey, mergedPriority);
-
-    return merged;
-}
-
 void PatternMap::updatePatternsPriority()
 {
     for (size_t i = 0; i < patterns_.size(); i++)
-        patterns_[i].priority_ = i;
+        patterns_[i].priority = i;
 }
 
-void PatternMap::cleanPatterns()
-{
-    std::unordered_map<nlohmann::json, std::unordered_set<PatternSettings>> JsonToSets;
-
-    for (const auto &pattern : patterns_)
-    {
-        auto cleanedJson = PatternSettings::removeMeta(pattern.getJSON());
-        auto curKeys     = JsonToSets | rx::transform([](auto &&p) { return p.first; }) | rx::to_vector();
-
-        nlohmann::json key = [&cleanedJson, &curKeys] {
-            for (const auto &cur : curKeys)
-            {
-                if (JSON::contains(cur, cleanedJson))
-                    return cur;
-            }
-            return cleanedJson;
-        }();
-
-        JsonToSets[key].emplace(pattern);
-    }
-
-    patterns_.clear();
-
-    for (auto &value : JsonToSets)
-    {
-        nlohmann::json merged = value.first;
-        for (auto &settings : value.second)
-            merged = mergePattern(merged, settings.getJSON());
-
-        addPattern(PatternSettings{merged});
-    }
-}
 
 nlohmann::json PatternMap::getUnifiedJSON() const
 {
-    auto copy = *this;
-    copy.cleanPatterns();
-    auto patterns = std::move(copy.patterns_);
-
     auto getJSON = [](const auto &val) { return val.getJSON(); };
-    auto jsons   = patterns | rx::transform(getJSON) | rx::to_vector();
+    auto jsons   = patterns_ | rx::transform(getJSON) | rx::to_vector();
 
     auto master = *jsons.begin();
     jsons.erase(jsons.begin());
@@ -154,5 +93,37 @@ nlohmann::json PatternMap::getUnifiedJSON() const
             | rx::to_vector();
 
     return jsons;
+}
+
+PatternSettings &PatternMap::getSettingsByName(const QString &name)
+{
+    const std::string sName = name.toStdString();
+    auto it                 = std::find_if(patterns_.begin(), patterns_.end(), [&sName](auto pSets) {
+        return pSets.pattern == sName;
+    });
+
+    if (it == patterns_.end())
+        throw std::runtime_error("Pattern '" + name.toStdString() + "' does not exist");
+
+    return *it;
+}
+
+QStringList PatternMap::list()
+{
+    QStringList list;
+    for (const auto &pattern : patterns_)
+        list.push_back(QString::fromStdString(pattern.pattern));
+    return list;
+}
+
+void PatternMap::remove(const QString &patternName)
+{
+    const std::string toFind = patternName.toStdString();
+    auto it                  = std::find_if(patterns_.begin(), patterns_.end(), [&toFind](auto &&pSets) {
+        return pSets.pattern == toFind;
+    });
+
+    if (it != patterns_.end())
+        patterns_.erase(it);
 }
 } // namespace CAO

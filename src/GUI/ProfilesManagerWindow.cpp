@@ -99,7 +99,7 @@ void ProfilesManagerWindow::createProfile()
     if (!ok)
         return;
 
-    getProfiles().create(text, baseProfile);
+    this->profiles.create(text, baseProfile);
     setProfile(text);
 }
 

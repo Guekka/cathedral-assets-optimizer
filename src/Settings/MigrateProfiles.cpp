@@ -59,10 +59,13 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     PatternSettings pSetsTGA{1, {"*.tga"}};
     pSetsTGA.bTexturesForceConvert = texturesConvertTga;
 
-    PatternSettings pSetsInterface{2, {"*/interface/*.dds", "*/interface/*.tga"}};
-    pSetsInterface.bTexturesForceConvert = texturesCompressInterface;
+    PatternSettings pSetsInterfaceDDS{2, "*/interface/*.dds"};
+    pSetsInterfaceDDS.bTexturesForceConvert = texturesCompressInterface;
 
-    PatternSettings pSetsLodgen{3, {"*/textures/terrain/lodgen/*"}};
+    PatternSettings pSetsInterfaceTGA{3, "*/interface/*.tga"};
+    pSetsInterfaceTGA.bTexturesForceConvert = texturesCompressInterface;
+
+    PatternSettings pSetsLodgen{4, {"*/textures/terrain/lodgen/*"}};
     pSetsLodgen.bTexturesMipmaps        = false;
     pSetsLodgen.bTexturesCompress       = false;
     pSetsLodgen.bTexturesForceConvert   = false;
@@ -76,7 +79,8 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     PatternMap &patterns = outProfile.getPatterns();
     patterns.addPattern(gPattern);
     patterns.addPattern(pSetsTGA);
-    patterns.addPattern(pSetsInterface);
+    patterns.addPattern(pSetsInterfaceDDS);
+    patterns.addPattern(pSetsInterfaceTGA);
     patterns.addPattern(pSetsLodgen);
 }
 

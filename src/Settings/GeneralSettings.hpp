@@ -54,6 +54,7 @@ public:
     REGISTER_SETTING(bool, bDryRun, "/General/bDryRun")
     REGISTER_SETTING(OptimizationMode, eMode, "/General/eMode")
     REGISTER_SETTING(Games, eGame, "/General/Game")
+    REGISTER_SETTING(QString, sCurrentPattern, "/General/sCurrentPattern")
 
     REGISTER_SETTING(bool, bEnableOutputPath, "/General/bEnableOutputPath")
     REGISTER_SETTING(QString, sInputPath, "/General/sInputPath")

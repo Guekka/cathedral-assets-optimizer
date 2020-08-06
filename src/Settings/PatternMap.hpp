@@ -19,7 +19,11 @@ public:
     const PatternSettings &getDefaultSettings() const;
     PatternSettings &getDefaultSettings();
 
-    void cleanPatterns();
+    PatternSettings &getSettingsByName(const QString &name);
+
+    QStringList list();
+    void remove(const QString &patternName);
+
     nlohmann::json getUnifiedJSON() const;
 
     auto &get() { return patterns_; }
@@ -27,9 +31,6 @@ public:
 
 private:
     std::vector<PatternSettings> patterns_;
-
-    //! \note It is assumed both patterns share the same keys
-    nlohmann::json mergePattern(const nlohmann::json &main, const nlohmann::json &second) const;
 
     void updatePatternsPriority();
 };

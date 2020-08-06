@@ -152,6 +152,10 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.ui
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.ui
+
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.ui

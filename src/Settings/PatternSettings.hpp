@@ -15,30 +15,31 @@ namespace CAO {
 class PatternSettings final : public Settings
 {
 public:
+    static constexpr auto patternKey  = "Pattern";
+    static constexpr auto priorityKey = "Priority";
+
     PatternSettings();
     PatternSettings(const nlohmann::json &json);
-    PatternSettings(size_t priority, const std::vector<std::string> &regex);
+    PatternSettings(size_t priority, const std::string &wildcard);
     PatternSettings(const PatternSettings &other);
     PatternSettings(PatternSettings &&other) noexcept;
 
     PatternSettings &operator=(const PatternSettings &other);
-    PatternSettings &operator=(PatternSettings &&other) noexcept; 
+    PatternSettings &operator=(PatternSettings &&other) noexcept;
     bool operator==(const PatternSettings &other) const;
 
     std::optional<QString> isValid() const override;
 
-    std::vector<std::string> patterns_;
-    size_t priority_{0};
-
     void setJSON(const nlohmann::json &j) override;
     nlohmann::json getJSON() const override;
+
     static nlohmann::json removeMeta(const nlohmann::json &j);
 
-    static constexpr auto patternKey  = "Patterns";
-    static constexpr auto priorityKey = "Priority";
+    std::string pattern;
+    size_t priority{0};
 
 private:
-    std::vector<std::string> getPatternWildcardsFromJSON(const nlohmann::json &json);
+    std::string getPatternWildcardsFromJSON(const nlohmann::json &json);
     std::optional<size_t> getPatternPriorityFromJSON(const nlohmann::json &json);
 
 public:

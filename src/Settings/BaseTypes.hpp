@@ -20,10 +20,10 @@ enum TextureResizingMode
 //Leaving place for intermediate levels
 enum class GuiMode
 {
-    Invalid       = 0,
-    QuickAutoPort = 1,
-    Medium        = 5,
-    Advanced      = 10
+    Invalid            = 0,
+    QuickAutoPort      = 1,
+    Medium             = 5,
+    Advanced           = 10
 };
 
 enum Games

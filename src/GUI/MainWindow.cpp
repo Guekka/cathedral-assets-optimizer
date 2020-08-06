@@ -5,6 +5,7 @@
 
 #include "MainWindow.hpp"
 #include "Manager.hpp"
+#include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
 #include "Utils.hpp"
@@ -26,6 +27,12 @@ MainWindow::MainWindow()
         ProfilesManagerWindow profilesManager(getProfiles());
         profilesManager.exec();
         updateProfiles();
+    });
+
+    connect(ui_->managePatterns, &QPushButton::pressed, this, [this] {
+        PatternsManagerWindow patternsManager(currentProfile());
+        patternsManager.exec();
+        updatePatterns();
     });
 
     connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
@@ -65,7 +72,28 @@ MainWindow::MainWindow()
     //Profiles
     updateProfiles();
 
+    updatePatterns();
+
     firstStart();
+}
+
+void MainWindow::setPatternsEnabled(bool state)
+{
+    static const std::array patternsObject = {static_cast<QWidget *>(ui_->patterns),
+                                              static_cast<QWidget *>(ui_->managePatterns),
+                                              static_cast<QWidget *>(ui_->patternsLabel)};
+
+    if (!selectText(*ui_->patterns, "*"))
+    {
+        QMessageBox::critical(this,
+                              tr("Pattern not found"),
+                              tr("Couldn't find the pattern '*'. Please reinstall the application"));
+    }
+
+    patternsObject | rx::for_each([state](auto *widget) {
+        widget->setEnabled(state);
+        widget->setVisible(state);
+    });
 }
 
 std::vector<IWindowModule *> MainWindow::getModules()
@@ -81,8 +109,8 @@ std::vector<IWindowModule *> MainWindow::getModules()
 void MainWindow::connectModule(IWindowModule &mod)
 {
     mod.disconnectAll();
-    mod.connectAll(currentProfile().getPatterns().getDefaultSettings(), currentProfile().getGeneralSettings());
-    //FIXME Change patterns to the current selected pattern
+    auto &pattern = currentProfile().getPatterns().getSettingsByName(ui_->patterns->currentText());
+    mod.connectAll(pattern, currentProfile().getGeneralSettings());
 }
 
 void MainWindow::reconnectModules()
@@ -131,17 +159,19 @@ void MainWindow::connectAll()
     connect(ui_->profiles,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             &commonSettings.sProfile,
-            [this, &commonSettings](int idx) { commonSettings.sProfile = ui_->profiles->itemText(idx); });
+            [this, &commonSettings](int idx) {
+                commonSettings.sProfile = ui_->profiles->itemText(idx);
+                getProfiles().setCurrent(commonSettings.sProfile());
+                reconnectAll();
+            });
 
-    connect(&commonSettings.sProfile,
-            &detail::QValueWrapperHelper::valueChanged,
-            this,
-            [this, &commonSettings] {
-                auto profile = commonSettings.sProfile();
-                profile      = getProfiles().exists(profile) ? profile : Profiles::defaultProfile;
-
-                selectText(*ui_->profiles, profile);
-                getProfiles().setCurrent(profile);
+    selectText(*ui_->patterns, generalSettings.sCurrentPattern.value_or("*"));
+    connect(ui_->patterns,
+            QOverload<int>::of(&QComboBox::currentIndexChanged),
+            &generalSettings.sCurrentPattern,
+            [this, &generalSettings](int idx) {
+                generalSettings.sCurrentPattern = ui_->patterns->itemText(idx);
+                reconnectAll();
             });
 
     const int currentModeIndex = ui_->modeChooserComboBox->findData(generalSettings.eMode());
@@ -200,13 +230,35 @@ void MainWindow::connectAll()
     connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials);
 }
 
+void MainWindow::disconnectAll()
+{
+    for (auto *widget : findChildren<QWidget *>())
+        widget->disconnect();
+}
+
+void MainWindow::reconnectAll()
+{
+    disconnectAll();
+    connectAll();
+    reconnectModules();
+}
+
 void MainWindow::updateProfiles()
 {
     auto *profiles              = ui_->profiles;
     const QString &previousText = profiles->currentText();
     ProfilesManagerWindow(getProfiles()).updateProfiles(*ui_->profiles);
     selectText(*profiles, previousText);
-    connectAll();
+    reconnectAll();
+}
+
+void MainWindow::updatePatterns()
+{
+    auto *patterns              = ui_->patterns;
+    const QString &previousText = patterns->currentText();
+    PatternsManagerWindow(currentProfile()).updatePatterns(*ui_->patterns);
+    selectText(*patterns, previousText);
+    reconnectAll();
 }
 
 void MainWindow::loadUi()
@@ -229,9 +281,12 @@ void MainWindow::setDarkTheme(const bool &enabled)
     if (enabled)
     {
         QFile f(":qdarkstyle/style.qss");
-        f.open(QFile::ReadOnly | QFile::Text);
+        if (f.open(QFile::ReadOnly | QFile::Text))
+        {
+            PLOG_ERROR << "Cannot set darkstyle";
+            return;
+        }
         qApp->setStyleSheet(f.readAll());
-        f.close();
     }
     else
         qApp->setStyleSheet("");

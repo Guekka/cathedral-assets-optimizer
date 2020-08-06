@@ -6,7 +6,7 @@
 
 namespace CAO {
 PatternSettings::PatternSettings()
-    : patterns_{"*"}
+    : pattern{"*"}
 {
 }
 
@@ -15,22 +15,22 @@ PatternSettings::PatternSettings(const nlohmann::json &json)
     setJSON(json);
 }
 
-PatternSettings::PatternSettings(size_t priority, const std::vector<std::string> &wildcards)
-    : patterns_(wildcards)
-    , priority_(priority)
+PatternSettings::PatternSettings(size_t priority, const std::string &wildcard)
+    : pattern(wildcard)
+    , priority(priority)
 {
 }
 
 PatternSettings::PatternSettings(const PatternSettings &other)
-    : patterns_(other.patterns_)
-    , priority_(other.priority_)
+    : pattern(other.pattern)
+    , priority(other.priority)
 {
     json_ = other.json_;
 }
 
 PatternSettings::PatternSettings(PatternSettings &&other) noexcept
-    : patterns_(std::move(other.patterns_))
-    , priority_(std::move(other.priority_))
+    : pattern(std::move(other.pattern))
+    , priority(std::move(other.priority))
 {
     json_ = std::move(other.json_);
 }
@@ -41,8 +41,8 @@ PatternSettings &PatternSettings::operator=(const PatternSettings &other)
         return *this;
 
     json_     = other.json_;
-    patterns_ = other.patterns_;
-    priority_ = other.priority_;
+    pattern   = other.pattern;
+    priority  = other.priority;
 
     return *this;
 }
@@ -53,8 +53,8 @@ PatternSettings &PatternSettings::operator=(PatternSettings &&other) noexcept
         return *this;
 
     json_     = std::move(other.json_);
-    patterns_ = std::move(other.patterns_);
-    priority_ = std::move(other.priority_);
+    pattern   = std::move(other.pattern);
+    priority  = std::move(other.priority);
 
     return *this;
 }
@@ -84,8 +84,8 @@ std::optional<QString> PatternSettings::isValid() const
 nlohmann::json PatternSettings::getJSON() const
 {
     nlohmann::json j = json_;
-    JSON::setValue(j, priorityKey, priority_);
-    JSON::setValue(j, patternKey, patterns_);
+    JSON::setValue(j, priorityKey, priority);
+    JSON::setValue(j, patternKey, pattern);
     return j;
 }
 
@@ -101,15 +101,15 @@ nlohmann::json PatternSettings::removeMeta(const nlohmann::json &j)
 
 void PatternSettings::setJSON(const nlohmann::json &j)
 {
-    priority_ = getPatternPriorityFromJSON(j).value_or(0);
-    patterns_ = getPatternWildcardsFromJSON(j);
+    priority  = getPatternPriorityFromJSON(j).value_or(0);
+    pattern   = getPatternWildcardsFromJSON(j);
     json_     = removeMeta(j);
 }
 
-std::vector<std::string> PatternSettings::getPatternWildcardsFromJSON(const nlohmann::json &json)
+std::string PatternSettings::getPatternWildcardsFromJSON(const nlohmann::json &json)
 {
     if (json.contains(PatternSettings::patternKey))
-        return JSON::getValue<std::vector<std::string>>(json, PatternSettings::patternKey);
+        return JSON::getValue<std::string>(json, PatternSettings::patternKey);
     else
         return {};
 }
