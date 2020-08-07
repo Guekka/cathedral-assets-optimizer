@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProfilesManagerWindow</class>
- <widget class="QWidget" name="ProfilesManagerWindow">
+ <class>PatternsManagerWindow</class>
+ <widget class="QWidget" name="PatternsManagerWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Profiles manager</string>
+   <string>Patterns manager</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" alignment="Qt::AlignHCenter">
