@@ -18,9 +18,6 @@ add_subdirectory(DirectXTex)
 message("-- nlohmann/json")
 add_subdirectory(json)
 
-message("-- pipes")
-add_subdirectory(pipes)
-
 message("-- doctest")
 add_library(doctest doctest/doctest.h)
 set_target_properties(doctest PROPERTIES LINKER_LANGUAGE CXX)
@@ -35,7 +32,6 @@ function(getExternalLibrariesList list)
         libbsarch_OOP
         nif
         nlohmann_json::nlohmann_json
-        pipes
         plog
         rx-ranges
         PARENT_SCOPE)

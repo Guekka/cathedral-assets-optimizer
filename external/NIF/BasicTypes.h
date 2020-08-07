@@ -122,108 +122,66 @@ enum NiEndian : byte {
 	ENDIAN_LITTLE
 };
 
-class NiStreamBase
-{
+class NiStream {
 private:
-    NiVersion *version = nullptr;
-
-protected:
-    NiStreamBase(NiVersion *_version)
-        : version(_version)
-
-    {}
-
-    int blockSize = 0;
+	std::iostream* stream = nullptr;
+	NiVersion* version = nullptr;
+	int blockSize = 0;
 
 public:
-    void InitBlockSize() { blockSize = 0; }
-    int GetBlockSize() { return blockSize; }
+	NiStream(std::iostream* stream, NiVersion* version) {
+		this->stream = stream;
+		this->version = version;
+	}
 
-    NiVersion &GetVersion() { return *version; }
-};
+	void write(const char* ptr, std::streamsize count) {
+		stream->write(ptr, count);
+		blockSize += count;
+	}
 
-class NiIStream : virtual public NiStreamBase
-{
-    std::istream *istream = nullptr;
+	void writeline(const char* ptr, std::streamsize count) {
+		stream->write(ptr, count);
+		stream->write("\n", 1);
+		blockSize += count + 1;
+	}
 
-public:
-    NiIStream(std::istream *_stream, NiVersion *version)
-        : NiStreamBase(version)
-        , istream(_stream)
-    {}
+	void read(char* ptr, std::streamsize count) {
+		stream->read(ptr, count);
+	}
 
-    void read(char *ptr, std::streamsize count) { istream->read(ptr, count); }
+	void getline(char* ptr, std::streamsize maxCount) {
+		stream->getline(ptr, maxCount);
+	}
 
-    void getline(char *ptr, std::streamsize maxCount) { istream->getline(ptr, maxCount); }
+	std::streampos tellp() {
+		return stream->tellp();
+	}
 
-    // Be careful with sizes of structs and classes
-    template<typename T>
-    NiIStream &operator>>(T &t)
-    {
-        read((char *) &t, sizeof(T));
-        return *this;
-    }
-};
+	// Be careful with sizes of structs and classes
+	template<typename T>
+	NiStream& operator<<(const T& t) {
+		write((const char*)&t, sizeof(T));
+		return *this;
+	}
 
-class NiOStream : virtual public NiStreamBase
-{
-    std::ostream *stream = nullptr;
+	// Be careful with sizes of structs and classes
+	template<typename T>
+	NiStream& operator>>(T& t) {
+		read((char*)&t, sizeof(T));
+		return *this;
+	}
 
-public:
-    NiOStream(std::ostream *_stream, NiVersion *version)
-        : NiStreamBase(version)
-        , stream(_stream)
-    {}
+	void InitBlockSize() {
+		blockSize = 0;
+	}
 
-    void write(const char *ptr, std::streamsize count)
-    {
-        stream->write(ptr, count);
-        blockSize += count;
-    }
+	int GetBlockSize() {
+		return blockSize;
+	}
 
-    void writeline(const char *ptr, std::streamsize count)
-    {
-        stream->write(ptr, count);
-        stream->write("\n", 1);
-        blockSize += count + 1;
-    }
-
-    std::streampos tellp() { return stream->tellp(); }
-
-    // Be careful with sizes of structs and classes
-    template<typename T>
-    NiOStream &operator<<(const T &t)
-    {
-        write((const char *) &t, sizeof(T));
-        return *this;
-    }
-};
-
-class NiStream final : public NiIStream, public NiOStream
-{
-public:
-    NiStream(std::iostream *stream, NiVersion *version)
-        : NiStreamBase(version)
-        , NiIStream(stream, version)
-        , NiOStream(stream, version)
-
-    {}
-
-    // Be careful with sizes of structs and classes
-    template<typename T>
-    NiStream &operator<<(const T &t)
-    {
-        write((const char *) &t, sizeof(T));
-        return *this;
-    }
-
-    // Be careful with sizes of structs and classes
-    template<typename T>
-    NiStream &operator>>(T &t)
-    {
-        read((char *) &t, sizeof(T));
-        return *this;
-    }
+	NiVersion& GetVersion() {
+		return *version;
+	}
 };
 
 class NiString {

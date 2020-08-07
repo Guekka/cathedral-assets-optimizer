@@ -72,9 +72,8 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     pSetsLodgen.bTexturesLandscapeAlpha = false;
 
     std::vector<DXGI_FORMAT> unwantedFormats;
-    auto getFormat = [](const QVariant &variant) { return variant.value<DXGI_FORMAT>(); };
-    texturesUnwantedFormats >>= pipes::transform(getFormat) >>= pipes::push_back(unwantedFormats);
-    gPattern.slTextureUnwantedFormats = unwantedFormats;
+    auto getFormat                    = [](const QVariant &variant) { return variant.value<DXGI_FORMAT>(); };
+    gPattern.slTextureUnwantedFormats = texturesUnwantedFormats | rx::transform(getFormat) | rx::to_vector();
 
     PatternMap &patterns = outProfile.getPatterns();
     patterns.addPattern(gPattern);

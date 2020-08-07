@@ -24,8 +24,9 @@ inline QStringList toStringList(Container &&cont)
     QStringList stringList;
     stringList.reserve(cont.size());
 
-    auto toqs = [](auto &&e) { return toQString(e); };
-    cont >>= pipes::transform(toqs) >>= pipes::push_back(stringList);
+    for (auto &&elem : std::forward<Container>(cont))
+        stringList.push_back(toQString(std::forward<decltype(elem)>(elem)));
+
     return stringList;
 } // namespace CAO
 
@@ -34,7 +35,10 @@ inline std::vector<std::string> toStringVector(Container &&cont)
 {
     std::vector<std::string> stringVec;
     stringVec.reserve(cont.size());
-    cont >>= pipes::transform(toString) >>= pipes::push_back(stringVec);
+
+    for (auto &&elem : std::forward<Container>(cont))
+        stringVec.emplace_back(toString(std::forward<decltype(elem)>(elem)));
+
     return stringVec;
 }
 } // namespace CAO

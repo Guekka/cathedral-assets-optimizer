@@ -5,12 +5,8 @@
 #
 # http://go.microsoft.com/fwlink/?LinkId=248926
 
-cmake_minimum_required (VERSION 3.8)
-project (DirectXTex_CMake LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+cmake_minimum_required (VERSION 3.11)
+project (DirectXTex LANGUAGES CXX)
 
 add_library (directxtex STATIC
     BC.h
@@ -40,18 +36,28 @@ add_library (directxtex STATIC
     DirectXTexTGA.cpp
     DirectXTexUtil.cpp
     DirectXTexWIC.cpp
-)
+    )
 
-target_compile_options( directxtex PRIVATE /fp:fast )
+target_compile_features(directxtex PRIVATE cxx_std_14)
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
-    target_compile_options( directxtex PRIVATE -Wall -Wpedantic -Wextra )
+if(MSVC)
+    target_compile_options(directxtex PRIVATE /permissive- /JMC- /Zc:__cplusplus /fp:fast)
+
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
+        target_compile_options(directxtex PRIVATE /Zc:preprocessor /wd5105)
+    endif()
+
+
     if (${CMAKE_SIZEOF_VOID_P} EQUAL "4")
-        target_compile_options( directxtex PRIVATE /arch:SSE2 )
+        target_compile_options(directxtex PRIVATE /arch:SSE2)
     endif()
 endif()
-if ( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-    target_compile_options( directxtex PRIVATE /Wall /permissive- /Zc:__cplusplus )
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options( directxtex PRIVATE "-Wpedantic" "-Wextra" "-ffast-math")
+    if (${CMAKE_SIZEOF_VOID_P} EQUAL "4")
+        target_compile_options( directxtex PRIVATE -arch:SSE2)
+    endif()
 endif()
 
 target_compile_definitions(directxtex PRIVATE _UNICODE UNICODE _WIN32_WINNT=_WIN32_WINNT_WIN7)

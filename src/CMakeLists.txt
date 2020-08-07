@@ -186,7 +186,9 @@ target_include_directories(CAO_LIB PUBLIC
 target_compile_features(CAO_LIB PUBLIC cxx_std_17)
 
 #Strictly follow the standard
-target_compile_options(CAO_LIB PRIVATE "/permissive-")
+if(MSVC)
+    target_compile_options(CAO_LIB PRIVATE "/permissive-")
+endif()
 
 #AUTOUIC
 #I don't know why, but ui files are not found if I do not manually include them

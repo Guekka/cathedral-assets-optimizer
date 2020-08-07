@@ -7,6 +7,9 @@
 
 #pragma once
 #include "Utils/Algorithms.hpp"
+#include "plog/Appenders/RollingFileAppender.h"
+#include "plog/Formatters/TxtFormatter.h"
+#include "plog/Init.h"
 #include "plog/Log.h"
 
 namespace plog {

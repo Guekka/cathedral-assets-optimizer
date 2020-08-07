@@ -20,8 +20,9 @@ CommandResult TextureResize::process(File &file) const
 
     const auto &tinfo = calculateTargetDimensions(info, file.patternSettings());
 
-    const DWORD &filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
-    const HRESULT hr = Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
+    const auto filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
+    const HRESULT hr
+        = DirectX::Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
     if (FAILED(hr))
         return _resultFactory.getFailedResult(hr, "Failed to resize image.");
 

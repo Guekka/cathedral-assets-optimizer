@@ -91,9 +91,8 @@
 #include "hkxcmd/hkfutils.h"
 #include "libbsarch/src/bsa_saver.hpp"
 #include "libbsarch/src/transform_archive.hpp"
-#include "pipes/pipes.hpp"
 #include "rx/ranges.hpp"
-#include "json/single_include/nlohmann/json.hpp"
+#include "json/include/nlohmann/json.hpp"
 /*----------------------*/
 
 #endif

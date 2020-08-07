@@ -12,17 +12,43 @@
 #pragma once
 
 //=====================================================================================
+// Bitmask flags enumerator operators
+//=====================================================================================
+DEFINE_ENUM_FLAG_OPERATORS(CP_FLAGS);
+DEFINE_ENUM_FLAG_OPERATORS(DDS_FLAGS);
+DEFINE_ENUM_FLAG_OPERATORS(WIC_FLAGS);
+DEFINE_ENUM_FLAG_OPERATORS(TEX_FR_FLAGS);
+DEFINE_ENUM_FLAG_OPERATORS(TEX_FILTER_FLAGS);
+DEFINE_ENUM_FLAG_OPERATORS(TEX_PMALPHA_FLAGS);
+DEFINE_ENUM_FLAG_OPERATORS(TEX_COMPRESS_FLAGS);
+DEFINE_ENUM_FLAG_OPERATORS(CNMAP_FLAGS);
+DEFINE_ENUM_FLAG_OPERATORS(CMSE_FLAGS);
+
+// WIC_FILTER modes match TEX_FILTER modes
+inline constexpr WIC_FLAGS operator|(WIC_FLAGS a, TEX_FILTER_FLAGS b) { return static_cast<WIC_FLAGS>(static_cast<unsigned long>(a) | static_cast<unsigned long>(b & TEX_FILTER_MODE_MASK)); }
+inline constexpr WIC_FLAGS operator|(TEX_FILTER_FLAGS a, WIC_FLAGS b) { return static_cast<WIC_FLAGS>(static_cast<unsigned long>(a & TEX_FILTER_MODE_MASK) | static_cast<unsigned long>(b)); }
+
+// TEX_PMALPHA_SRGB match TEX_FILTER_SRGB
+inline constexpr TEX_PMALPHA_FLAGS operator|(TEX_PMALPHA_FLAGS a, TEX_FILTER_FLAGS b) { return static_cast<TEX_PMALPHA_FLAGS>(static_cast<unsigned long>(a) | static_cast<unsigned long>(b & TEX_FILTER_SRGB_MASK)); }
+inline constexpr TEX_PMALPHA_FLAGS operator|(TEX_FILTER_FLAGS a, TEX_PMALPHA_FLAGS b) { return static_cast<TEX_PMALPHA_FLAGS>(static_cast<unsigned long>(a & TEX_FILTER_SRGB_MASK) | static_cast<unsigned long>(b)); }
+
+// TEX_COMPRESS_SRGB match TEX_FILTER_SRGB
+inline constexpr TEX_COMPRESS_FLAGS operator|(TEX_COMPRESS_FLAGS a, TEX_FILTER_FLAGS b) { return static_cast<TEX_COMPRESS_FLAGS>(static_cast<unsigned long>(a) | static_cast<unsigned long>(b & TEX_FILTER_SRGB_MASK)); }
+inline constexpr TEX_COMPRESS_FLAGS operator|(TEX_FILTER_FLAGS a, TEX_COMPRESS_FLAGS b) { return static_cast<TEX_COMPRESS_FLAGS>(static_cast<unsigned long>(a & TEX_FILTER_SRGB_MASK) | static_cast<unsigned long>(b)); }
+
+
+//=====================================================================================
 // DXGI Format Utilities
 //=====================================================================================
 
 _Use_decl_annotations_
-inline bool __cdecl IsValid(DXGI_FORMAT fmt)
+constexpr inline bool __cdecl IsValid(DXGI_FORMAT fmt) noexcept
 {
     return (static_cast<size_t>(fmt) >= 1 && static_cast<size_t>(fmt) <= 190);
 }
 
 _Use_decl_annotations_
-inline bool __cdecl IsCompressed(DXGI_FORMAT fmt)
+inline bool __cdecl IsCompressed(DXGI_FORMAT fmt) noexcept
 {
     switch (fmt)
     {
@@ -55,7 +81,7 @@ inline bool __cdecl IsCompressed(DXGI_FORMAT fmt)
 }
 
 _Use_decl_annotations_
-inline bool __cdecl IsPalettized(DXGI_FORMAT fmt)
+inline bool __cdecl IsPalettized(DXGI_FORMAT fmt) noexcept
 {
     switch (fmt)
     {
@@ -71,7 +97,7 @@ inline bool __cdecl IsPalettized(DXGI_FORMAT fmt)
 }
 
 _Use_decl_annotations_
-inline bool __cdecl IsSRGB(DXGI_FORMAT fmt)
+inline bool __cdecl IsSRGB(DXGI_FORMAT fmt) noexcept
 {
     switch (fmt)
     {
@@ -94,7 +120,7 @@ inline bool __cdecl IsSRGB(DXGI_FORMAT fmt)
 // Image I/O
 //=====================================================================================
 _Use_decl_annotations_
-inline HRESULT __cdecl SaveToDDSMemory(const Image& image, DWORD flags, Blob& blob)
+inline HRESULT __cdecl SaveToDDSMemory(const Image& image, DDS_FLAGS flags, Blob& blob) noexcept
 {
     TexMetadata mdata = {};
     mdata.width = image.width;
@@ -109,7 +135,7 @@ inline HRESULT __cdecl SaveToDDSMemory(const Image& image, DWORD flags, Blob& bl
 }
 
 _Use_decl_annotations_
-inline HRESULT __cdecl SaveToDDSFile(const Image& image, DWORD flags, const wchar_t* szFile)
+inline HRESULT __cdecl SaveToDDSFile(const Image& image, DDS_FLAGS flags, const wchar_t* szFile) noexcept
 {
     TexMetadata mdata = {};
     mdata.width = image.width;

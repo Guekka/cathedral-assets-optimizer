@@ -1951,7 +1951,7 @@ void NiGeometry::SetDataRef(int datRef) {
 	dataRef.SetIndex(datRef);
 }
 
-int NiGeometry::GetSkinInstanceRef() {
+int NiGeometry::GetSkinInstanceRef() const {
 	return skinInstanceRef.GetIndex();
 }
 
@@ -2069,6 +2069,9 @@ void NiTriShapeData::Create(const std::vector<Vector3>* verts, const std::vector
 	}
 
 	numMatchGroups = 0;
+
+	// Calculate again, now with triangles
+	CalcTangentSpace();
 }
 
 void NiTriShapeData::notifyVerticesDelete(const std::vector<ushort>& vertIndices) {
