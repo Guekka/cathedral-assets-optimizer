@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "MainWindow.hpp"
+#include "GUI/Utils/SetTheme.hpp"
 #include "Manager.hpp"
 #include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
@@ -35,7 +36,40 @@ MainWindow::MainWindow()
         updatePatterns();
     });
 
+    auto &commonSettings = getProfiles().commonSettings();
+
+    ui_->actionEnableDarkTheme->setChecked(commonSettings.eTheme.value_or(GuiTheme::Dark) == GuiTheme::Dark);
+    setTheme(commonSettings.eTheme.value_or(GuiTheme::Dark));
+
+    connect(ui_->actionEnableDarkTheme,
+            &QAction::triggered,
+            &commonSettings.eTheme,
+            [&commonSettings](bool state) {
+                GuiTheme theme        = state ? GuiTheme::Dark : GuiTheme::Light;
+                commonSettings.eTheme = theme;
+                setTheme(theme);
+            });
+
+    connect(&commonSettings.eTheme,
+            &decltype(commonSettings.eTheme)::valueChanged,
+            this,
+            [this, &commonSettings] {
+                ui_->actionEnableDarkTheme->setChecked(commonSettings.eTheme() == GuiTheme::Dark);
+                setTheme(commonSettings.eTheme());
+            });
+
+    selectText(*ui_->profiles, commonSettings.sProfile());
+    connect(ui_->profiles,
+            QOverload<int>::of(&QComboBox::currentIndexChanged),
+            &commonSettings.sProfile,
+            [this, &commonSettings](int idx) {
+                commonSettings.sProfile = ui_->profiles->itemText(idx);
+                getProfiles().setCurrent(commonSettings.sProfile());
+                reconnectAll();
+            });
+
     connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
+    connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials);
 
     //Menu buttons
     connect(ui_->actionOpen_log_file, &QAction::triggered, this, [] {
@@ -127,7 +161,6 @@ void MainWindow::freezeModules(bool state)
 
 void MainWindow::connectAll()
 {
-    auto &commonSettings  = getProfiles().commonSettings();
     auto &generalSettings = currentProfile().getGeneralSettings();
 
     connect(ui_->actionSelect_GPU, &QAction::triggered, this, [] {
@@ -155,16 +188,6 @@ void MainWindow::connectAll()
             generalSettings.sInputPath = dir;
     });
 
-    selectText(*ui_->profiles, commonSettings.sProfile());
-    connect(ui_->profiles,
-            QOverload<int>::of(&QComboBox::currentIndexChanged),
-            &commonSettings.sProfile,
-            [this, &commonSettings](int idx) {
-                commonSettings.sProfile = ui_->profiles->itemText(idx);
-                getProfiles().setCurrent(commonSettings.sProfile());
-                reconnectAll();
-            });
-
     selectText(*ui_->patterns, generalSettings.sCurrentPattern.value_or("*"));
     connect(ui_->patterns,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -190,25 +213,6 @@ void MainWindow::connectAll()
         ui_->modeChooserComboBox->setCurrentIndex(idx);
     });
 
-    ui_->actionEnableDarkTheme->setChecked(commonSettings.bDarkMode.value_or(true));
-    setDarkTheme(commonSettings.bDarkMode.value_or(true));
-
-    connect(ui_->actionEnableDarkTheme,
-            &QAction::triggered,
-            &commonSettings.bDarkMode,
-            [this, &commonSettings](bool state) {
-                commonSettings.bDarkMode = state;
-                setDarkTheme(state);
-            });
-
-    connect(&commonSettings.bDarkMode,
-            &decltype(commonSettings.bDarkMode)::valueChanged,
-            this,
-            [this, &commonSettings] {
-                ui_->actionEnableDarkTheme->setChecked(commonSettings.bDarkMode());
-                setDarkTheme(commonSettings.bDarkMode());
-            });
-
     connectWrapper(*ui_->dryRunCheckBox, generalSettings.bDryRun);
     connectWrapper(*ui_->inputDirTextEdit, generalSettings.sInputPath);
     connectWrapper(*ui_->actionRedirect_output, generalSettings.bEnableOutputPath);
@@ -227,7 +231,6 @@ void MainWindow::connectAll()
             generalSettings.sOutputPath = dir;
     });
 
-    connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials);
 }
 
 void MainWindow::disconnectAll()
@@ -265,7 +268,7 @@ void MainWindow::loadUi()
 {
     auto &commonSettings = getProfiles().commonSettings();
 
-    setDarkTheme(commonSettings.bDarkMode());
+    setTheme(commonSettings.eTheme());
 
     ui_->profiles->setCurrentIndex(ui_->profiles->findText(getProfiles().currentProfileName()));
     ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials());
@@ -274,22 +277,6 @@ void MainWindow::loadUi()
 void MainWindow::resetUi()
 {
     ui_->tabWidget->clear();
-}
-
-void MainWindow::setDarkTheme(bool enabled)
-{
-    if (enabled)
-    {
-        QFile f(":qdarkstyle/style.qss");
-        if (f.open(QFile::ReadOnly | QFile::Text))
-        {
-            PLOG_ERROR << "Cannot set darkstyle";
-            return;
-        }
-        qApp->setStyleSheet(f.readAll());
-    }
-    else
-        qApp->setStyleSheet("");
 }
 
 void MainWindow::initProcess()

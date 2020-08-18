@@ -6,6 +6,7 @@
 
 #include "IWindowModule.hpp"
 #include "ProgressWindow.hpp"
+#include "Settings/BaseTypes.hpp"
 #include "pch.hpp"
 #include "ui_mainWindow.h"
 
@@ -72,7 +73,6 @@ private:
     void initProcess();
     void endProcess();
 
-    void setDarkTheme(bool enabled);
     void showTutorialWindow(const QString &title, const QString &text);
 
     void firstStart();

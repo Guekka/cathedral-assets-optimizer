@@ -26,6 +26,12 @@ enum class GuiMode
     Advanced           = 10
 };
 
+enum class GuiTheme
+{
+    Dark,
+    Light
+};
+
 enum Games
 {
     Morrowind,
@@ -36,6 +42,7 @@ enum Games
     FalloutNewVegas,
     Fallout4
 };
+
 } // namespace CAO
 
 Q_DECLARE_METATYPE(DXGI_FORMAT)
@@ -44,4 +51,5 @@ Q_DECLARE_METATYPE(bsa_archive_type_e)
 Q_DECLARE_METATYPE(CAO::OptimizationMode)
 Q_DECLARE_METATYPE(CAO::TextureResizingMode)
 Q_DECLARE_METATYPE(CAO::GuiMode)
+Q_DECLARE_METATYPE(CAO::GuiTheme)
 Q_DECLARE_METATYPE(CAO::Games)

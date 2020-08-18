@@ -163,6 +163,9 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.hpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils.hpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.cpp
     )
 
 #Resources

@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "BaseTypes.hpp"
 #include "Settings.hpp"
 #include "Utils/QJSONValueWrapper.hpp"
 
@@ -32,7 +33,7 @@ public:
     std::optional<QString> isValid() const override { return std::nullopt; }
 
     REGISTER_SETTING(QString, sProfile, "/Profile")
-    REGISTER_SETTING(bool, bDarkMode, "/DarkMode")
+    REGISTER_SETTING(GuiTheme, eTheme, "/Theme")
     REGISTER_SETTING(bool, bShowTutorials, "/ShowTutorials")
     REGISTER_SETTING(bool, bFirstStart, "/FirstStart")
 

@@ -5,6 +5,7 @@
 
 #include "GUI/LevelSelector.hpp"
 #include "GUI/MainWindow.hpp"
+#include "GUI/Utils/SetTheme.hpp"
 #include "Manager.hpp"
 #include "Settings/MigrateProfiles.hpp"
 #include "Version.hpp"
