@@ -9,18 +9,9 @@
 #include "pch.hpp"
 
 namespace CAO {
-namespace detail {
-class QValueWrapperHelper : public QObject
-{
-    Q_OBJECT
-
-signals:
-    void valueChanged();
-};
-} // namespace detail
 
 template<typename T>
-class QJSONValueWrapper : public detail::QValueWrapperHelper
+class QJSONValueWrapper : public QObject
 {
 public:
     using Type = T;
@@ -46,7 +37,6 @@ public:
             return;
 
         JSON::setValue(json_, key_, newValue);
-        emit valueChanged();
     }
 
     [[nodiscard]] Type value() const { return JSON::getValue<Type>(json_, key_); }

@@ -24,13 +24,13 @@ MainWindow::MainWindow()
 
     //Connecting widgets that do not depend on current profile
 
-    connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
+    QObject::connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
         ProfilesManagerWindow profilesManager(getProfiles());
         profilesManager.exec();
         updateProfiles();
     });
 
-    connect(ui_->managePatterns, &QPushButton::pressed, this, [this] {
+    QObject::connect(ui_->managePatterns, &QPushButton::pressed, this, [this] {
         PatternsManagerWindow patternsManager(currentProfile());
         patternsManager.exec();
         updatePatterns();
@@ -41,54 +41,43 @@ MainWindow::MainWindow()
     ui_->actionEnableDarkTheme->setChecked(commonSettings.eTheme.value_or(GuiTheme::Dark) == GuiTheme::Dark);
     setTheme(commonSettings.eTheme.value_or(GuiTheme::Dark));
 
-    connect(ui_->actionEnableDarkTheme,
-            &QAction::triggered,
-            &commonSettings.eTheme,
-            [&commonSettings](bool state) {
-                GuiTheme theme        = state ? GuiTheme::Dark : GuiTheme::Light;
-                commonSettings.eTheme = theme;
-                setTheme(theme);
-            });
-
-    connect(&commonSettings.eTheme,
-            &decltype(commonSettings.eTheme)::valueChanged,
-            this,
-            [this, &commonSettings] {
-                ui_->actionEnableDarkTheme->setChecked(commonSettings.eTheme() == GuiTheme::Dark);
-                setTheme(commonSettings.eTheme());
-            });
+    QObject::connect(ui_->actionEnableDarkTheme,
+                     &QAction::triggered,
+                     &commonSettings.eTheme,
+                     [this, &commonSettings](bool state) {
+                         GuiTheme theme        = state ? GuiTheme::Dark : GuiTheme::Light;
+                         commonSettings.eTheme = theme;
+                         ui_->actionEnableDarkTheme->setChecked(commonSettings.eTheme() == GuiTheme::Dark);
+                         setTheme(theme);
+                     });
 
     selectText(*ui_->profiles, commonSettings.sProfile());
-    connect(ui_->profiles,
-            QOverload<int>::of(&QComboBox::currentIndexChanged),
-            &commonSettings.sProfile,
-            [this, &commonSettings](int idx) {
-                commonSettings.sProfile = ui_->profiles->itemText(idx);
-                getProfiles().setCurrent(commonSettings.sProfile());
-                reconnectAll();
-            });
+    QObject::connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
+        getProfiles().setCurrent(ui_->profiles->itemText(idx));
+        reconnectAll();
+    });
 
-    connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
+    QObject::connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
     connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials);
 
     //Menu buttons
-    connect(ui_->actionOpen_log_file, &QAction::triggered, this, [] {
+    QObject::connect(ui_->actionOpen_log_file, &QAction::triggered, this, [] {
         QDesktopServices::openUrl(QUrl("file:///" + currentProfile().logPath(), QUrl::TolerantMode));
     });
 
-    connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
+    QObject::connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
         QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
     });
 
-    connect(ui_->actionDiscord, &QAction::triggered, this, [&] {
+    QObject::connect(ui_->actionDiscord, &QAction::triggered, this, [&] {
         QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
     });
 
-    connect(ui_->actionDonate, &QAction::triggered, this, [] {
+    QObject::connect(ui_->actionDonate, &QAction::triggered, this, [] {
         QDesktopServices::openUrl(QUrl("https://ko-fi.com/guekka"));
     });
 
-    connect(ui_->actionAbout, &QAction::triggered, this, [this] {
+    QObject::connect(ui_->actionAbout, &QAction::triggered, this, [this] {
         constexpr char message[]
             = "\nMade by G'k\nThis program is distributed in the hope that it will be useful "
               "but WITHOUT ANY WARRANTLY. See the Mozilla Public License";
@@ -101,7 +90,7 @@ MainWindow::MainWindow()
         QMessageBox::about(this, tr("About"), text);
     });
 
-    connect(ui_->actionAbout_Qt, &QAction::triggered, this, [this] { QMessageBox::aboutQt(this); });
+    QObject::connect(ui_->actionAbout_Qt, &QAction::triggered, this, [this] { QMessageBox::aboutQt(this); });
 
     //Profiles
     updateProfiles();
@@ -130,6 +119,18 @@ void MainWindow::setPatternsEnabled(bool state)
     });
 }
 
+template<typename... Args>
+void MainWindow::connect(Args &&... args)
+{
+    connections_.emplace_back(QObject::connect(std::forward<Args>(args)...));
+}
+
+template<typename... Args>
+void MainWindow::connectWrapper(Args &&... args)
+{
+    connections_.emplace_back(CAO::connectWrapper(std::forward<Args>(args)...));
+}
+
 std::vector<IWindowModule *> MainWindow::getModules()
 {
     std::vector<IWindowModule *> modules;
@@ -142,7 +143,6 @@ std::vector<IWindowModule *> MainWindow::getModules()
 
 void MainWindow::connectModule(IWindowModule &mod)
 {
-    mod.disconnectAll();
     auto &pattern = currentProfile().getPatterns().getSettingsByName(ui_->patterns->currentText());
     mod.connectAll(pattern, currentProfile().getGeneralSettings());
 }
@@ -150,7 +150,10 @@ void MainWindow::connectModule(IWindowModule &mod)
 void MainWindow::reconnectModules()
 {
     for (auto *mod : getModules())
+    {
+        mod->disconnectAll();
         connectModule(*mod);
+    }
 }
 
 void MainWindow::freezeModules(bool state)
@@ -204,14 +207,9 @@ void MainWindow::connectAll()
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             &generalSettings.eMode,
             [&generalSettings, this](int idx) {
-                auto data             = ui_->modeChooserComboBox->itemData(idx);
+                const auto data       = ui_->modeChooserComboBox->itemData(idx);
                 generalSettings.eMode = data.value<OptimizationMode>();
             });
-
-    connect(&generalSettings.eMode, &detail::QValueWrapperHelper::valueChanged, this, [this, &generalSettings] {
-        int idx = ui_->modeChooserComboBox->findData(generalSettings.eMode());
-        ui_->modeChooserComboBox->setCurrentIndex(idx);
-    });
 
     connectWrapper(*ui_->dryRunCheckBox, generalSettings.bDryRun);
     connectWrapper(*ui_->inputDirTextEdit, generalSettings.sInputPath);
@@ -230,13 +228,12 @@ void MainWindow::connectAll()
         if (!dir.isEmpty())
             generalSettings.sOutputPath = dir;
     });
-
 }
 
 void MainWindow::disconnectAll()
 {
-    for (auto *widget : findChildren<QWidget *>())
-        widget->disconnect();
+    for (auto connection : connections_)
+        QObject::disconnect(connection);
 }
 
 void MainWindow::reconnectAll()
@@ -381,4 +378,5 @@ void MainWindow::dropEvent(QDropEvent *e)
     if (dir.exists(fileName))
         ui_->inputDirTextEdit->setText(QDir::cleanPath(fileName));
 }
+
 } // namespace CAO

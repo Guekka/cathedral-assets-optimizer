@@ -24,48 +24,55 @@ template<typename UiElement,
          typename UiReadFunc,
          typename UiSaveFunc,
          typename ValueType = typename Wrapper::Type>
-inline void connectWrapper(UiElement &uiEl,
-                           Wrapper &wrapper,
-                           UiReadFunc &&readFunc,
-                           UiSaveFunc &&saveFunc,
-                           ValueType fallback = ValueType{})
+auto connectWrapper(UiElement &uiEl,
+                    Wrapper &wrapper,
+                    UiReadFunc &&readFunc,
+                    UiSaveFunc &&saveFunc,
+                    ValueType fallback = ValueType{})
 {
     using wrapperType = std::remove_reference_t<decltype(wrapper)>;
 
     //Init data
     std::invoke(std::forward<UiSaveFunc>(saveFunc), uiEl, wrapper.value_or(fallback));
     //Connect
-    QObject::connect(&uiEl, std::forward<UiReadFunc>(readFunc), &wrapper, &wrapperType::setValue);
-    QObject::connect(&wrapper,
-                     &wrapperType::valueChanged,
-                     &uiEl,
-                     [&wrapper, &uiEl, saveFunc = std::forward<UiSaveFunc>(saveFunc)] {
-                         std::invoke(saveFunc, uiEl, wrapper());
-                     });
+
+    const auto lambda = [&wrapper,
+                         &uiEl,
+                         readFunc = std::forward<UiReadFunc>(readFunc),
+                         saveFunc = std::forward<UiSaveFunc>(saveFunc)](ValueType value) {
+        wrapper = value;
+        std::invoke(saveFunc, uiEl, wrapper());
+    };
+
+    return QObject::connect(&uiEl, std::forward<UiReadFunc>(readFunc), &wrapper, lambda);
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
-inline void connectWrapper(QAbstractButton &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+auto connectWrapper(QAbstractButton &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
-    connectWrapper(uiEl, wrapper, &QAbstractButton::toggled, &QAbstractButton::setChecked, fallback);
+    return connectWrapper(uiEl, wrapper, &QAbstractButton::toggled, &QAbstractButton::setChecked, fallback);
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
-inline void connectWrapper(QSpinBox &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+auto connectWrapper(QSpinBox &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
-    connectWrapper(uiEl, wrapper, QOverload<int>::of(&QSpinBox::valueChanged), &QSpinBox::setValue, fallback);
+    return connectWrapper(uiEl,
+                          wrapper,
+                          QOverload<int>::of(&QSpinBox::valueChanged),
+                          &QSpinBox::setValue,
+                          fallback);
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
-inline void connectWrapper(QLineEdit &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+auto connectWrapper(QLineEdit &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
-    connectWrapper(uiEl, wrapper, &QLineEdit::textChanged, &QLineEdit::setText, fallback);
+    return connectWrapper(uiEl, wrapper, &QLineEdit::textChanged, &QLineEdit::setText, fallback);
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
-inline void connectWrapper(QAction &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+auto connectWrapper(QAction &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
-    connectWrapper(uiEl, wrapper, &QAction::triggered, &QAction::setChecked, fallback);
+    return connectWrapper(uiEl, wrapper, &QAction::triggered, &QAction::setChecked, fallback);
 }
 
 inline void connectGroupBox(QGroupBox *box, QWidget *uiEl)
@@ -80,25 +87,25 @@ inline void connectGroupBox(QGroupBox *box, QAbstractButton *uiEl)
 }
 
 template<typename... UiElements>
-inline void connectGroupBox(QGroupBox *box, UiElements *... uiEls)
+void connectGroupBox(QGroupBox *box, UiElements *... uiEls)
 {
     (std::invoke([](QGroupBox *b, QWidget *w) { connectGroupBox(b, w); }, box, uiEls), ...);
 }
 
 template<typename... UiElements>
-inline void setEnabled(bool state, UiElements &... uiEls)
+void setEnabled(bool state, UiElements &... uiEls)
 {
     (std::invoke(&QWidget::setEnabled, uiEls, state), ...);
 }
 
 template<typename... UiElements>
-inline void setEnabled(bool state, UiElements *... uiEls)
+void setEnabled(bool state, UiElements *... uiEls)
 {
     (std::invoke(&QWidget::setEnabled, uiEls, state), ...);
 }
 
 template<typename Data>
-inline void setData(QComboBox &box, const QString &text, const Data &data)
+void setData(QComboBox &box, const QString &text, const Data &data)
 {
     const auto pos = box.findText(text, Qt::MatchFlag::MatchExactly);
     if (pos == -1)
@@ -107,7 +114,7 @@ inline void setData(QComboBox &box, const QString &text, const Data &data)
 }
 
 template<typename Data>
-inline int findData(const QComboBox &box, const Data &data)
+int findData(const QComboBox &box, const Data &data)
 {
     for (int i = 0; i < box.count(); ++i)
         if (box.itemData(i).value<Data>() == data)
@@ -116,7 +123,7 @@ inline int findData(const QComboBox &box, const Data &data)
 };
 
 template<typename Data>
-inline bool selectData(QComboBox &box, const Data &data)
+bool selectData(QComboBox &box, const Data &data)
 {
     int idx = box.findData(data);
     if (idx == -1)

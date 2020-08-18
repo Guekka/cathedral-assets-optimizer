@@ -75,14 +75,9 @@ void MediumModeWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             &pSets.eTexturesResizingMode,
             [&pSets, this](int idx) {
-                auto data                   = ui_->TexturesResizingMode->itemData(idx);
+                const auto data             = ui_->TexturesResizingMode->itemData(idx);
                 pSets.eTexturesResizingMode = data.value<TextureResizingMode>();
             });
-
-    connect(&pSets.eTexturesResizingMode, &detail::QValueWrapperHelper::valueChanged, this, [this, &pSets] {
-        int idx = ui_->TexturesResizingMode->findData(pSets.eTexturesResizingMode());
-        ui_->TexturesResizingMode->setCurrentIndex(idx);
-    });
 
     connectWrapper(*ui_->TexturesResizingMinimumCheckBox, pSets.bTexturesResizeMinimum);
 

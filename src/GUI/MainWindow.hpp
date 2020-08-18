@@ -55,6 +55,14 @@ private:
     std::unique_ptr<Manager> caoProcess_;
     std::unique_ptr<ProgressWindow> progressWindow_;
 
+    std::vector<QMetaObject::Connection> connections_;
+
+    template<typename... Args>
+    void connect(Args &&... args);
+
+    template<typename... Args>
+    void connectWrapper(Args &&... args);
+
     std::vector<IWindowModule *> getModules();
     void connectModule(IWindowModule &);
     void reconnectModules();

@@ -31,8 +31,6 @@ bool setTheme(GuiTheme theme)
         if (darkSheet.isEmpty())
             return false;
 
-        qDebug() << (void *) QCoreApplication::instance() << (void *) qApp;
-
         qApp->setStyleSheet(darkSheet);
     }
     return true;
