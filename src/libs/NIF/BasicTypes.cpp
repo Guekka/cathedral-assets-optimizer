@@ -11,6 +11,10 @@ static const std::string NIF_NETIMMERSE = "NetImmerse File Format";
 static const std::string NIF_NDS = "NDSNIF....@....@....";
 static const std::string NIF_VERSTRING = ", Version ";
 
+NiVersion::NiVersion(NiFileVersion _file, uint _user, uint _stream)
+	: file(_file), user(_user), stream(_stream)
+{}
+
 std::string NiVersion::GetVersionInfo() {
 	return vstr +
 		"\nUser Version: " + std::to_string(user) +
@@ -306,10 +310,11 @@ bool NiHeader::IsBlockReferenced(const int blockId) {
 		return false;
 
 	for (auto &block : (*blocks)) {
-		std::set<Ref*> references;
-		block->GetChildRefs(references);
+		std::set<Ref*> refs;
+		block->GetChildRefs(refs);
+		block->GetPtrs(refs);
 
-		for (auto &ref : references)
+		for (auto &ref : refs)
 			if (ref->GetIndex() == blockId)
 				return true;
 	}
@@ -317,21 +322,23 @@ bool NiHeader::IsBlockReferenced(const int blockId) {
 	return false;
 }
 
-void NiHeader::DeleteUnreferencedBlocks(const int rootId, bool* hadDeletions) {
-	if (rootId == 0xFFFFFFFF)
-		return;
+int NiHeader::GetBlockRefCount(const int blockId) {
+	if (blockId == 0xFFFFFFFF)
+		return 0;
 
-	for (int i = 0; i < numBlocks; i++) {
-		if (i != rootId && !IsBlockReferenced(i)) {
-			DeleteBlock(i);
+	int refCount = 0;
 
-			// Deleting a block can cause others to become unreferenced
-			if (hadDeletions)
-				(*hadDeletions) = true;
+	for (auto &block : (*blocks)) {
+		std::set<Ref*> refs;
+		block->GetChildRefs(refs);
+		block->GetPtrs(refs);
 
-			return DeleteUnreferencedBlocks(rootId > i ? rootId - 1 : rootId);
-		}
+		for (auto &ref : refs)
+			if (ref->GetIndex() == blockId)
+				refCount++;
 	}
+
+	return refCount;
 }
 
 ushort NiHeader::AddOrFindBlockTypeId(const std::string& blockTypeName) {

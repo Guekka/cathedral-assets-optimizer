@@ -8,6 +8,7 @@ See the included LICENSE file
 #include "Nodes.h"
 
 #include "utils/KDMatcher.h"
+#include "NifUtil.h"
 
 void NiAdditionalGeometryData::Get(NiStream & stream) {
 	AdditionalGeomData::Get(stream);
@@ -276,7 +277,7 @@ void NiGeometryData::UpdateBounds() {
 	bounds = BoundingSphere(vertices);
 }
 
-void NiGeometryData::Create(std::vector<Vector3>* verts, std::vector<Triangle>*, std::vector<Vector2>* texcoords, std::vector<Vector3>* norms) {
+void NiGeometryData::Create(const std::vector<Vector3>* verts, const std::vector<Triangle>*, const std::vector<Vector2>* texcoords, const std::vector<Vector3>* norms) {
 	size_t vertCount = verts->size();
 	ushort maxIndex = std::numeric_limits<ushort>().max();
 
@@ -290,19 +291,21 @@ void NiGeometryData::Create(std::vector<Vector3>* verts, std::vector<Triangle>*,
 		vertices[v] = (*verts)[v];
 
 	bounds = BoundingSphere(*verts);
-	numUVSets = 0;
 
 	if (texcoords) {
 		size_t uvCount = texcoords->size();
 		if (uvCount == numVertices) {
-			uvSets.resize(1);
-			uvSets[0].resize(uvCount);
+			SetUVs(true);
+
 			for (size_t uv = 0; uv < uvSets[0].size(); uv++)
 				uvSets[0][uv] = (*texcoords)[uv];
-
-			if (uvCount > 0)
-				numUVSets = 4097;
 		}
+		else {
+			SetUVs(false);
+		}
+	}
+	else {
+		SetUVs(false);
 	}
 
 	if (norms && norms->size() == numVertices) {
@@ -317,39 +320,18 @@ void NiGeometryData::Create(std::vector<Vector3>* verts, std::vector<Triangle>*,
 }
 
 void NiGeometryData::notifyVerticesDelete(const std::vector<ushort>& vertIndices) {
-	std::vector<int> indexCollapse(vertices.size(), 0);
-	bool hasNorm = normals.size() > 0;
-	bool hasTan = tangents.size() > 0;
-	bool hasBin = bitangents.size() > 0;
-	bool hasCol = vertexColors.size() > 0;
-	bool hasUV = uvSets.size() > 0;
-
-	for (int i = 0, j = 0; i < indexCollapse.size(); i++) {
-		if (j < vertIndices.size() && vertIndices[j] == i) {	// Found one to remove
-			indexCollapse[i] = -1;	// Flag delete
-			j++;
-		}
-	}
-
-	for (int i = vertices.size() - 1; i >= 0; i--) {
-		if (indexCollapse[i] == -1) {
-			vertices.erase(vertices.begin() + i);
-			numVertices--;
-			if (hasNorm)
-				normals.erase(normals.begin() + i);
-			if (hasTan)
-				tangents.erase(tangents.begin() + i);
-			if (hasBin)
-				bitangents.erase(bitangents.begin() + i);
-			if (hasCol)
-				vertexColors.erase(vertexColors.begin() + i);
-
-			if (hasUV) {
-				for (int j = 0; j < uvSets.size(); j++)
-					uvSets[j].erase(uvSets[j].begin() + i);
-			}
-		}
-	}
+	EraseVectorIndices(vertices, vertIndices);
+	numVertices = vertices.size();
+	if (!normals.empty())
+		EraseVectorIndices(normals, vertIndices);
+	if (!tangents.empty())
+		EraseVectorIndices(tangents, vertIndices);
+	if (!bitangents.empty())
+		EraseVectorIndices(bitangents, vertIndices);
+	if (!vertexColors.empty())
+		EraseVectorIndices(vertexColors, vertIndices);
+	for (int j = 0; j < uvSets.size(); j++)
+		EraseVectorIndices(uvSets[j], vertIndices);
 }
 
 void NiGeometryData::RecalcNormals(const bool, const float) {
@@ -364,7 +346,7 @@ void NiGeometryData::CalcTangentSpace() {
 NiGeometryData* NiShape::GetGeomData() { return nullptr; };
 void NiShape::SetGeomData(NiGeometryData*) { };
 
-int NiShape::GetSkinInstanceRef() { return 0xFFFFFFFF; }
+int NiShape::GetSkinInstanceRef() const { return 0xFFFFFFFF; }
 void NiShape::SetSkinInstanceRef(int) { }
 
 int NiShape::GetShaderPropertyRef() { return 0xFFFFFFFF; }
@@ -512,6 +494,26 @@ int NiShape::GetBoneID(NiHeader& hdr, const std::string& boneName) {
 	}
 
 	return 0xFFFFFFFF;
+}
+
+bool NiShape::ReorderTriangles(const std::vector<uint>& triInds) {
+	std::vector<Triangle> trisOrdered;
+	std::vector<Triangle> tris;
+	if (!GetTriangles(tris))
+		return false;
+
+	if (tris.size() != triInds.size())
+		return false;
+
+	for (uint id : triInds)
+		if (id < tris.size())
+			trisOrdered.push_back(tris[id]);
+
+	if (trisOrdered.size() != tris.size())
+		return false;
+
+	SetTriangles(trisOrdered);
+	return true;
 }
 
 
@@ -806,40 +808,17 @@ void BSTriShape::Put(NiStream& stream) {
 }
 
 void BSTriShape::notifyVerticesDelete(const std::vector<ushort>& vertIndices) {
-	std::vector<int> indexCollapse(vertData.size(), 0);
-
 	deletedTris.clear();
 
-	int remCount = 0;
-	for (int i = 0, j = 0; i < indexCollapse.size(); i++) {
-		if (j < vertIndices.size() && vertIndices[j] == i) {	// Found one to remove
-			indexCollapse[i] = -1;	// Flag delete
-			remCount++;
-			j++;
-		}
-		else
-			indexCollapse[i] = remCount;
-	}
+	std::vector<int> indexCollapse = GenerateIndexCollapseMap(vertIndices, vertData.size());
 
-	for (int i = vertData.size() - 1; i >= 0; i--) {
-		if (indexCollapse[i] == -1) {
-			vertData.erase(vertData.begin() + i);
-			numVertices--;
-		}
-	}
+	EraseVectorIndices(vertData, vertIndices);
+	numVertices = vertData.size();
 
-	for (int i = numTriangles - 1; i >= 0; i--) {
-		if (indexCollapse[triangles[i].p1] == -1 || indexCollapse[triangles[i].p2] == -1 || indexCollapse[triangles[i].p3] == -1) {
-			deletedTris.push_back(i);
-			triangles.erase(triangles.begin() + i);
-			numTriangles--;
-		}
-		else {
-			triangles[i].p1 = triangles[i].p1 - indexCollapse[triangles[i].p1];
-			triangles[i].p2 = triangles[i].p2 - indexCollapse[triangles[i].p2];
-			triangles[i].p3 = triangles[i].p3 - indexCollapse[triangles[i].p3];
-		}
-	}
+	ApplyMapToTriangles(triangles, indexCollapse, &deletedTris);
+	numTriangles = triangles.size();
+
+	std::sort(deletedTris.begin(), deletedTris.end(), std::greater<>());
 }
 
 void BSTriShape::GetChildRefs(std::set<Ref*>& refs) {
@@ -850,7 +829,7 @@ void BSTriShape::GetChildRefs(std::set<Ref*>& refs) {
 	refs.insert(&alphaPropertyRef);
 }
 
-int BSTriShape::GetSkinInstanceRef() {
+int BSTriShape::GetSkinInstanceRef() const {
 	return skinInstanceRef.GetIndex();
 }
 
@@ -990,6 +969,17 @@ std::vector<Color4>* BSTriShape::GetColorData() {
 	return &rawColors;
 }
 
+std::vector<float>* BSTriShape::GetEyeData() {
+	if (!HasEyeData())
+		return nullptr;
+
+	rawEyeData.resize(numVertices);
+	for (int i = 0; i < numVertices; ++i)
+		rawEyeData[i] = vertData[i].eyeData;
+
+	return &rawEyeData;
+}
+
 ushort BSTriShape::GetNumVertices() {
 	return numVertices;
 }
@@ -1117,49 +1107,90 @@ void BSTriShape::SetNormals(const std::vector<Vector3>& inNorms) {
 	}
 }
 
+void BSTriShape::SetTangentData(const std::vector<Vector3>& in) {
+	SetTangents(true);
+
+	for (int i = 0; i < numVertices; i++) {
+		vertData[i].tangent[0] = (unsigned char)round((((in[i].x + 1.0f) / 2.0f) * 255.0f));
+		vertData[i].tangent[1] = (unsigned char)round((((in[i].y + 1.0f) / 2.0f) * 255.0f));
+		vertData[i].tangent[2] = (unsigned char)round((((in[i].z + 1.0f) / 2.0f) * 255.0f));
+	}
+}
+
+void BSTriShape::SetBitangentData(const std::vector<Vector3>& in) {
+	SetTangents(true);
+
+	for (int i = 0; i < numVertices; i++) {
+		vertData[i].bitangentX = in[i].x;
+		vertData[i].bitangentY = (unsigned char)round((((in[i].y + 1.0f) / 2.0f) * 255.0f));
+		vertData[i].bitangentZ = (unsigned char)round((((in[i].z + 1.0f) / 2.0f) * 255.0f));
+	}
+}
+
+void BSTriShape::SetEyeData(const std::vector<float>& in) {
+	SetEyeData(true);
+
+	for (int i = 0; i < numVertices; i++)
+		vertData[i].eyeData = in[i];
+}
+
+static void CalculateNormals(const std::vector<Vector3> &verts, const std::vector<Triangle> &tris, std::vector<Vector3> &norms, const bool smooth, float smoothThresh) {
+	// Zero norms
+	norms.clear();
+	norms.resize(verts.size());
+
+	// Face normals
+	for (const Triangle &t : tris) {
+		Vector3 tn;
+		t.trinormal(verts, &tn);
+		norms[t.p1] += tn;
+		norms[t.p2] += tn;
+		norms[t.p3] += tn;
+	}
+
+	for (Vector3 &n : norms)
+		n.Normalize();
+
+	// Smooth normals
+	if (smooth) {
+		smoothThresh *= DEG2RAD;
+		std::vector<Vector3> seamNorms;
+		SortingMatcher matcher(verts.data(), verts.size());
+		for (const std::vector<int> &matchset : matcher.matches) {
+			seamNorms.resize(matchset.size());
+			for (int j = 0; j < matchset.size(); ++j) {
+				const Vector3 &n = norms[matchset[j]];
+				Vector3 sn = n;
+				for (int k = 0; k < matchset.size(); ++k) {
+					if (j == k)
+						continue;
+					const Vector3 &mn = norms[matchset[k]];
+					if (n.angle(mn) >= smoothThresh)
+						continue;
+					sn += mn;
+				}
+				sn.Normalize();
+				seamNorms[j] = sn;
+			}
+			for (int j = 0; j < matchset.size(); ++j)
+				norms[matchset[j]] = seamNorms[j];
+		}
+	}
+}
+
 void BSTriShape::RecalcNormals(const bool smooth, const float smoothThresh) {
 	GetRawVerts();
 	SetNormals(true);
 
 	std::vector<Vector3> verts(numVertices);
-	std::vector<Vector3> norms(numVertices);
 	for (int i = 0; i < numVertices; i++) {
 		verts[i].x = rawVertices[i].x * -0.1f;
 		verts[i].z = rawVertices[i].y * 0.1f;
 		verts[i].y = rawVertices[i].z * 0.1f;
 	}
 
-	// Face normals
-	Vector3 tn;
-	for (int t = 0; t < numTriangles; t++) {
-		triangles[t].trinormal(verts, &tn);
-		norms[triangles[t].p1] += tn;
-		norms[triangles[t].p2] += tn;
-		norms[triangles[t].p3] += tn;
-	}
-
-	for (auto &n : norms)
-		n.Normalize();
-
-	// Smooth normals
-	if (smooth) {
-		kd_matcher matcher(verts.data(), numVertices);
-		for (int i = 0; i < matcher.matches.size(); i++) {
-			std::pair<Vector3*, int>& a = matcher.matches[i].first;
-			std::pair<Vector3*, int>& b = matcher.matches[i].second;
-
-			Vector3& an = norms[a.second];
-			Vector3& bn = norms[b.second];
-			if (an.angle(bn) < smoothThresh * DEG2RAD) {
-				Vector3 anT = an;
-				an += bn;
-				bn += anT;
-			}
-		}
-
-		for (auto &n : norms)
-			n.Normalize();
-	}
+	std::vector<Vector3> norms;
+	CalculateNormals(verts, triangles, norms, smooth, smoothThresh);
 
 	rawNormals.resize(numVertices);
 	for (int i = 0; i < numVertices; i++) {
@@ -1321,7 +1352,7 @@ int BSTriShape::CalcDataSizes(NiVersion& version) {
 	return dataSize;
 }
 
-void BSTriShape::Create(std::vector<Vector3>* verts, std::vector<Triangle>* tris, std::vector<Vector2>* uvs, std::vector<Vector3>* normals) {
+void BSTriShape::Create(const std::vector<Vector3>* verts, const std::vector<Triangle>* tris, const std::vector<Vector2>* uvs, const std::vector<Vector3>* normals) {
 	flags = 14;
 
 	ushort maxVertIndex = std::numeric_limits<ushort>().max();
@@ -1332,7 +1363,7 @@ void BSTriShape::Create(std::vector<Vector3>* verts, std::vector<Triangle>* tris
 		numVertices = ushort(vertCount);
 
 	uint maxTriIndex = std::numeric_limits<uint>().max();
-	size_t triCount = tris->size();
+	size_t triCount = tris ? tris->size() : 0;
 	if (triCount > maxTriIndex || numVertices == 0)
 		numTriangles = 0;
 	else
@@ -1411,8 +1442,8 @@ void BSSubIndexTriShape::Get(NiStream& stream) {
 
 			segmentation.subSegmentData.dataRecords.resize(segmentation.numTotalSegments);
 			for (auto &dataRecord : segmentation.subSegmentData.dataRecords) {
-				stream >> dataRecord.segmentUser;
-				stream >> dataRecord.unkInt2;
+				stream >> dataRecord.userSlotID;
+				stream >> dataRecord.material;
 				stream >> dataRecord.numData;
 
 				dataRecord.extraData.resize(dataRecord.numData);
@@ -1462,8 +1493,8 @@ void BSSubIndexTriShape::Put(NiStream& stream) {
 				stream << arrayIndex;
 
 			for (auto &dataRecord : segmentation.subSegmentData.dataRecords) {
-				stream << dataRecord.segmentUser;
-				stream << dataRecord.unkInt2;
+				stream << dataRecord.userSlotID;
+				stream << dataRecord.material;
 				stream << dataRecord.numData;
 
 				for (auto &data : dataRecord.extraData)
@@ -1574,12 +1605,156 @@ void BSSubIndexTriShape::SetDefaultSegments() {
 	segments.clear();
 }
 
-void BSSubIndexTriShape::Create(std::vector<Vector3>* verts, std::vector<Triangle>* tris, std::vector<Vector2>* uvs, std::vector<Vector3>* normals) {
+void BSSubIndexTriShape::Create(const std::vector<Vector3>* verts, const std::vector<Triangle>* tris, const std::vector<Vector2>* uvs, const std::vector<Vector3>* normals) {
 	BSTriShape::Create(verts, tris, uvs, normals);
 
 	// Skinned most of the time
 	SetSkinned(true);
 	SetDefaultSegments();
+}
+
+void BSSubIndexTriShape::GetSegmentation(NifSegmentationInfo &inf, std::vector<int> &triParts) {
+	inf.segs.clear();
+	inf.ssfFile = segmentation.subSegmentData.ssfFile.GetString();
+	inf.segs.resize(segmentation.segments.size());
+	triParts.clear();
+
+	uint numTris = GetNumTriangles();
+	triParts.resize(numTris, -1);
+
+	int partID = 0;
+	int arrayIndex = 0;
+
+	for (int i = 0; i < segmentation.segments.size(); ++i) {
+		BSSITSSegment &seg = segmentation.segments[i];
+		uint startIndex = seg.startIndex / 3;
+		uint endIndex = std::min(numTris, startIndex + seg.numPrimitives);
+
+		for (uint id = startIndex; id < endIndex; id++)
+			triParts[id] = partID;
+
+		inf.segs[i].partID = partID++;
+		inf.segs[i].subs.resize(seg.subSegments.size());
+
+		for (int j = 0; j < seg.subSegments.size(); ++j) {
+			BSSITSSubSegment &sub = seg.subSegments[j];
+			startIndex = sub.startIndex / 3;
+
+			endIndex = std::min(numTris, startIndex + sub.numPrimitives);
+			for (uint id = startIndex; id < endIndex; id++)
+				triParts[id] = partID;
+
+			inf.segs[i].subs[j].partID = partID++;
+			arrayIndex++;
+
+			BSSITSSubSegmentDataRecord &rec = segmentation.subSegmentData.dataRecords[arrayIndex];
+			inf.segs[i].subs[j].userSlotID = rec.userSlotID < 30 ? 0 : rec.userSlotID;
+			inf.segs[i].subs[j].material = rec.material;
+			inf.segs[i].subs[j].extraData = rec.extraData;
+		}
+		arrayIndex++;
+	}
+}
+
+void BSSubIndexTriShape::SetSegmentation(const NifSegmentationInfo &inf, const std::vector<int> &inTriParts) {
+	uint numTris = GetNumTriangles();
+	if (inTriParts.size() != numTris)
+		return;
+
+	// Renumber partitions so that the partition IDs are increasing.
+	int newPartID = 0;
+	std::vector<int> oldToNewPartIDs;
+	for (const NifSegmentInfo &seg : inf.segs) {
+		if (seg.partID >= oldToNewPartIDs.size())
+			oldToNewPartIDs.resize(seg.partID + 1);
+
+		oldToNewPartIDs[seg.partID] = newPartID++;
+		for (const NifSubSegmentInfo &sub : seg.subs) {
+			if (sub.partID >= oldToNewPartIDs.size())
+				oldToNewPartIDs.resize(sub.partID + 1);
+			oldToNewPartIDs[sub.partID] = newPartID++;
+		}
+	}
+
+	std::vector<int> triParts(numTris);
+	for (int i = 0; i < numTris; ++i)
+		if (triParts[i] >= 0)
+			triParts[i] = oldToNewPartIDs[inTriParts[i]];
+
+	// Sort triangles by partition ID
+	std::vector<uint> triInds(numTris);
+	for (int i = 0; i < numTris; ++i)
+		triInds[i] = i;
+
+	std::stable_sort(triInds.begin(), triInds.end(), [&triParts](int i, int j) {
+		return triParts[i] < triParts[j];
+	});
+
+	ReorderTriangles(triInds);
+	// Note that triPart's indexing no longer matches triangle indexing.
+
+	// Find first triangle of each partition
+	std::vector<int> partTriInds(newPartID + 1);
+	for (int i = 0, j = 0; i < triInds.size(); ++i)
+		while (triParts[triInds[i]] >= j)
+			partTriInds[j++] = i;
+
+	partTriInds.back() = triInds.size();
+
+	segmentation = std::move(BSSITSSegmentation());
+	uint parentArrayIndex = 0;
+	uint segmentIndex = 0;
+	int partID = 0;
+
+	for (const NifSegmentInfo &seg : inf.segs) {
+		// Create new segment
+		segmentation.segments.emplace_back();
+		BSSITSSegment &segment = segmentation.segments.back();
+		int childCount = seg.subs.size();
+		segment.numPrimitives = partTriInds[partID + childCount + 1] - partTriInds[partID];
+		segment.startIndex = partTriInds[partID] * 3;
+		segment.numSubSegments = childCount;
+		++partID;
+
+		// Create new segment data record
+		BSSITSSubSegmentDataRecord segmentDataRecord;
+		segmentDataRecord.userSlotID = segmentIndex;
+		segmentation.subSegmentData.arrayIndices.push_back(parentArrayIndex);
+		segmentation.subSegmentData.dataRecords.push_back(segmentDataRecord);
+
+		uint subSegmentNumber = 1;
+		for (const NifSubSegmentInfo &sub : seg.subs) {
+			// Create new subsegment
+			segment.subSegments.emplace_back();
+			BSSITSSubSegment &subSegment = segment.subSegments.back();
+			subSegment.arrayIndex = parentArrayIndex;
+			subSegment.numPrimitives = partTriInds[partID + 1] - partTriInds[partID];
+			subSegment.startIndex = partTriInds[partID] * 3;
+			++partID;
+
+			// Create new subsegment data record
+			BSSITSSubSegmentDataRecord subSegmentDataRecord;
+			if (sub.userSlotID < 30)
+				subSegmentDataRecord.userSlotID = subSegmentNumber++;
+			else
+				subSegmentDataRecord.userSlotID = sub.userSlotID;
+
+			subSegmentDataRecord.material = sub.material;
+			subSegmentDataRecord.numData = sub.extraData.size();
+			subSegmentDataRecord.extraData = sub.extraData;
+			segmentation.subSegmentData.dataRecords.push_back(subSegmentDataRecord);
+		}
+
+		parentArrayIndex += childCount + 1;
+		++segmentIndex;
+	}
+
+	segmentation.numPrimitives = numTris;
+	segmentation.numSegments = segmentIndex;
+	segmentation.numTotalSegments = parentArrayIndex;
+	segmentation.subSegmentData.numSegments = segmentIndex;
+	segmentation.subSegmentData.numTotalSegments = parentArrayIndex;
+	segmentation.subSegmentData.ssfFile.SetString(inf.ssfFile);
 }
 
 
@@ -1638,20 +1813,8 @@ void BSDynamicTriShape::Put(NiStream& stream) {
 void BSDynamicTriShape::notifyVerticesDelete(const std::vector<ushort>& vertIndices) {
 	BSTriShape::notifyVerticesDelete(vertIndices);
 
-	std::vector<int> indexCollapse(dynamicData.size(), 0);
-	for (int i = 0, j = 0; i < indexCollapse.size(); i++) {
-		if (j < vertIndices.size() && vertIndices[j] == i) {
-			indexCollapse[i] = -1;
-			j++;
-		}
-	}
-
-	for (int i = dynamicData.size() - 1; i >= 0; i--) {
-		if (indexCollapse[i] == -1) {
-			dynamicData.erase(dynamicData.begin() + i);
-			dynamicDataSize--;
-		}
-	}
+	EraseVectorIndices(dynamicData, vertIndices);
+	dynamicDataSize = dynamicData.size();
 }
 
 void BSDynamicTriShape::CalcDynamicData() {
@@ -1672,7 +1835,7 @@ void BSDynamicTriShape::CalcDynamicData() {
 	}
 }
 
-void BSDynamicTriShape::Create(std::vector<Vector3>* verts, std::vector<Triangle>* tris, std::vector<Vector2>* uvs, std::vector<Vector3>* normals) {
+void BSDynamicTriShape::Create(const std::vector<Vector3>* verts, const std::vector<Triangle>* tris, const std::vector<Vector2>* uvs, const std::vector<Vector3>* normals) {
 	BSTriShape::Create(verts, tris, uvs, normals);
 
 	uint maxIndex = std::numeric_limits<uint>().max();
@@ -1788,7 +1951,7 @@ void NiGeometry::SetDataRef(int datRef) {
 	dataRef.SetIndex(datRef);
 }
 
-int NiGeometry::GetSkinInstanceRef() {
+int NiGeometry::GetSkinInstanceRef() const {
 	return skinInstanceRef.GetIndex();
 }
 
@@ -1825,12 +1988,12 @@ void NiTriBasedGeomData::Put(NiStream& stream) {
 	stream << numTriangles;
 }
 
-void NiTriBasedGeomData::Create(std::vector<Vector3>* verts, std::vector<Triangle>* inTris, std::vector<Vector2>* texcoords, std::vector<Vector3>* norms) {
+void NiTriBasedGeomData::Create(const std::vector<Vector3>* verts, const std::vector<Triangle>* inTris, const std::vector<Vector2>* texcoords, const std::vector<Vector3>* norms) {
 	NiGeometryData::Create(verts, inTris, texcoords, norms);
 
 	if (inTris) {
 		ushort maxIndex = std::numeric_limits<ushort>().max();
-		size_t triCount = inTris->size();
+		size_t triCount = inTris ? inTris->size() : 0;
 		if (triCount <= maxIndex && numVertices != 0)
 			numTriangles = ushort(triCount);
 		else
@@ -1887,7 +2050,7 @@ void NiTriShapeData::Put(NiStream& stream) {
 	}
 }
 
-void NiTriShapeData::Create(std::vector<Vector3>* verts, std::vector<Triangle>* inTris, std::vector<Vector2>* texcoords, std::vector<Vector3>* norms) {
+void NiTriShapeData::Create(const std::vector<Vector3>* verts, const std::vector<Triangle>* inTris, const std::vector<Vector2>* texcoords, const std::vector<Vector3>* norms) {
 	NiTriBasedGeomData::Create(verts, inTris, texcoords, norms);
 
 	if (numTriangles > 0) {
@@ -1899,40 +2062,25 @@ void NiTriShapeData::Create(std::vector<Vector3>* verts, std::vector<Triangle>* 
 		hasTriangles = false;
 	}
 
-	triangles.resize(numTriangles);
-	for (ushort t = 0; t < numTriangles; t++)
-		triangles[t] = (*inTris)[t];
+	if (inTris) {
+		triangles.resize(numTriangles);
+		for (ushort t = 0; t < numTriangles; t++)
+			triangles[t] = (*inTris)[t];
+	}
 
 	numMatchGroups = 0;
+
+	// Calculate again, now with triangles
+	CalcTangentSpace();
 }
 
 void NiTriShapeData::notifyVerticesDelete(const std::vector<ushort>& vertIndices) {
-	std::vector<int> indexCollapse(vertices.size(), 0);
-	int remCount = 0;
-	for (int i = 0, j = 0; i < indexCollapse.size(); i++) {
-		if (j < vertIndices.size() && vertIndices[j] == i) {	// Found one to remove
-			indexCollapse[i] = -1;	// Flag delete
-			remCount++;
-			j++;
-		}
-		else
-			indexCollapse[i] = remCount;
-	}
+	std::vector<int> indexCollapse = GenerateIndexCollapseMap(vertIndices, vertices.size());
+	ApplyMapToTriangles(triangles, indexCollapse);
+	numTriangles = triangles.size();
+	numTrianglePoints = 3 * numTriangles;
 
 	NiTriBasedGeomData::notifyVerticesDelete(vertIndices);
-
-	for (int i = numTriangles - 1; i >= 0; i--) {
-		if (indexCollapse[triangles[i].p1] == -1 || indexCollapse[triangles[i].p2] == -1 || indexCollapse[triangles[i].p3] == -1) {
-			triangles.erase(triangles.begin() + i);
-			numTriangles--;
-			numTrianglePoints -= 3;
-		}
-		else {
-			triangles[i].p1 = triangles[i].p1 - indexCollapse[triangles[i].p1];
-			triangles[i].p2 = triangles[i].p2 - indexCollapse[triangles[i].p2];
-			triangles[i].p3 = triangles[i].p3 - indexCollapse[triangles[i].p3];
-		}
-	}
 }
 
 uint NiTriShapeData::GetNumTriangles() {
@@ -1957,41 +2105,7 @@ void NiTriShapeData::RecalcNormals(const bool smooth, const float smoothThresh) 
 
 	NiTriBasedGeomData::RecalcNormals();
 
-	// Zero out existing normals
-	for (auto &n : normals)
-		n.Zero();
-
-	// Face normals
-	Vector3 tn;
-	for (int t = 0; t < numTriangles; t++) {
-		triangles[t].trinormal(vertices, &tn);
-		normals[triangles[t].p1] += tn;
-		normals[triangles[t].p2] += tn;
-		normals[triangles[t].p3] += tn;
-	}
-
-	for (auto &n : normals)
-		n.Normalize();
-
-	// Smooth normals
-	if (smooth) {
-		kd_matcher matcher(vertices.data(), numVertices);
-		for (int i = 0; i < matcher.matches.size(); i++) {
-			std::pair<Vector3*, int>& a = matcher.matches[i].first;
-			std::pair<Vector3*, int>& b = matcher.matches[i].second;
-
-			Vector3& an = normals[a.second];
-			Vector3& bn = normals[b.second];
-			if (an.angle(bn) < smoothThresh * DEG2RAD) {
-				Vector3 anT = an;
-				an += bn;
-				bn += anT;
-			}
-		}
-
-		for (auto &n : normals)
-			n.Normalize();
-	}
+	CalculateNormals(vertices, triangles, normals, smooth, smoothThresh);
 }
 
 void NiTriShapeData::CalcTangentSpace() {
@@ -2123,17 +2237,7 @@ void NiTriStripsData::Put(NiStream& stream) {
 }
 
 void NiTriStripsData::notifyVerticesDelete(const std::vector<ushort>& vertIndices) {
-	std::vector<int> indexCollapse(vertices.size(), 0);
-	int remCount = 0;
-	for (int i = 0, j = 0; i < indexCollapse.size(); i++) {
-		if (j < vertIndices.size() && vertIndices[j] == i) {	// Found one to remove
-			indexCollapse[i] = -1;	// Flag delete
-			remCount++;
-			j++;
-		}
-		else
-			indexCollapse[i] = remCount;
-	}
+	std::vector<int> indexCollapse = GenerateIndexCollapseMap(vertIndices, vertices.size());
 
 	NiTriBasedGeomData::notifyVerticesDelete(vertIndices);
 
@@ -2143,7 +2247,10 @@ void NiTriStripsData::notifyVerticesDelete(const std::vector<ushort>& vertIndice
 			if (indexCollapse[points[i][j]] == -1) {
 				points[i].erase(points[i].begin() + j);
 				stripLengths[i]--;
+				--j;
 			}
+			else
+				points[i][j] = indexCollapse[points[i][j]];
 		}
 	}
 
@@ -2154,13 +2261,11 @@ void NiTriStripsData::notifyVerticesDelete(const std::vector<ushort>& vertIndice
 }
 
 uint NiTriStripsData::GetNumTriangles() {
-	std::vector<Triangle> tris;
-	StripsToTris(&tris);
-	return tris.size();
+	return StripsToTris().size();
 }
 
 bool NiTriStripsData::GetTriangles(std::vector<Triangle>& tris) {
-	StripsToTris(&tris);
+	tris = StripsToTris();
 	return hasPoints;
 }
 
@@ -2168,27 +2273,8 @@ void NiTriStripsData::SetTriangles(const std::vector<Triangle>&) {
 	// Not implemented, stripify here
 }
 
-void NiTriStripsData::StripsToTris(std::vector<Triangle>* outTris) {
-	Triangle triangle;
-	for (int strip = 0; strip < numStrips; strip++) {
-		for (int vi = 0; vi < stripLengths[strip] - 2; vi++) {
-			if (vi & 1) {
-				triangle.p1 = points[strip][vi];
-				triangle.p2 = points[strip][vi + 2];
-				triangle.p3 = points[strip][vi + 1];
-			}
-			else {
-				triangle.p1 = points[strip][vi];
-				triangle.p2 = points[strip][vi + 1];
-				triangle.p3 = points[strip][vi + 2];
-			}
-
-			if (triangle.p1 == triangle.p2 || triangle.p2 == triangle.p3 || triangle.p3 == triangle.p1)
-				continue;
-
-			outTris->push_back(triangle);
-		}
-	}
+std::vector<Triangle> NiTriStripsData::StripsToTris() {
+	return GenerateTrianglesFromStrips(points);
 }
 
 void NiTriStripsData::RecalcNormals(const bool smooth, const float smoothThresh) {
@@ -2197,44 +2283,9 @@ void NiTriStripsData::RecalcNormals(const bool smooth, const float smoothThresh)
 
 	NiTriBasedGeomData::RecalcNormals();
 
-	std::vector<Triangle> tris;
-	StripsToTris(&tris);
+	std::vector<Triangle> tris = StripsToTris();
 
-	// Zero out existing normals
-	for (auto &n : normals)
-		n.Zero();
-
-	// Face normals
-	Vector3 tn;
-	for (int t = 0; t < tris.size(); t++) {
-		tris[t].trinormal(vertices, &tn);
-		normals[tris[t].p1] += tn;
-		normals[tris[t].p2] += tn;
-		normals[tris[t].p3] += tn;
-	}
-
-	for (auto &n : normals)
-		n.Normalize();
-
-	// Smooth normals
-	if (smooth) {
-		kd_matcher matcher(vertices.data(), numVertices);
-		for (int i = 0; i < matcher.matches.size(); i++) {
-			std::pair<Vector3*, int>& a = matcher.matches[i].first;
-			std::pair<Vector3*, int>& b = matcher.matches[i].second;
-
-			Vector3& an = normals[a.second];
-			Vector3& bn = normals[b.second];
-			if (an.angle(bn) < smoothThresh * DEG2RAD) {
-				Vector3 anT = an;
-				an += bn;
-				bn += anT;
-			}
-		}
-
-		for (auto &n : normals)
-			n.Normalize();
-	}
+	CalculateNormals(vertices, tris, normals, smooth, smoothThresh);
 }
 
 void NiTriStripsData::CalcTangentSpace() {
@@ -2248,8 +2299,7 @@ void NiTriStripsData::CalcTangentSpace() {
 	tan1.resize(numVertices);
 	tan2.resize(numVertices);
 
-	std::vector<Triangle> tris;
-	StripsToTris(&tris);
+	std::vector<Triangle> tris = StripsToTris();
 
 	for (int i = 0; i < tris.size(); i++) {
 		int i1 = tris[i].p1;
@@ -2352,20 +2402,7 @@ void NiLinesData::Put(NiStream& stream) {
 void NiLinesData::notifyVerticesDelete(const std::vector<ushort>& vertIndices) {
 	NiGeometryData::notifyVerticesDelete(vertIndices);
 
-	std::vector<int> indexCollapse(lineFlags.size(), 0);
-
-	for (int i = 0, j = 0; i < indexCollapse.size(); i++) {
-		if (j < vertIndices.size() && vertIndices[j] == i) {	// Found one to remove
-			indexCollapse[i] = -1;	// Flag delete
-			j++;
-		}
-	}
-
-	for (int i = lineFlags.size() - 1; i >= 0; i--) {
-		if (indexCollapse[i] == -1) {
-			lineFlags.erase(lineFlags.begin() + i);
-		}
-	}
+	EraseVectorIndices(lineFlags, vertIndices);
 }
 
 

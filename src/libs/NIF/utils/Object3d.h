@@ -5,9 +5,10 @@ See the included LICENSE file
 
 #pragma once
 
+#include <vector>
 #include <algorithm>
 #include <cmath>
-#include <vector>
+#include <cstring>
 
 #pragma warning (disable : 4018 4244 4267 4389)
 
@@ -19,6 +20,11 @@ const float DEG2RAD = PI / 180.0f;
 typedef unsigned char byte;
 typedef unsigned short ushort;
 typedef unsigned int uint;
+
+inline bool FloatsAreNearlyEqual(float a, float b) {
+	float scale = std::max(std::max(std::fabs(a), std::fabs(b)), 1.0f);
+	return std::fabs(a - b) <= EPSILON * scale;
+}
 
 struct Vector2 {
 	float u;
@@ -38,7 +44,7 @@ struct Vector2 {
 		return false;
 	}
 	bool operator != (const Vector2& other) {
-		if (u != other.u && v != other.v)
+		if (u != other.u || v != other.v)
 			return true;
 		return false;
 	}
@@ -102,6 +108,9 @@ struct Vector3 {
 		z = Z;
 	}
 
+	float &operator[](int ind) {return ind?(ind==2?z:y):x;}
+	const float &operator[](int ind) const {return ind?(ind==2?z:y):x;}
+
 	void Zero() {
 		x = y = z = 0.0f;
 	}
@@ -141,7 +150,7 @@ struct Vector3 {
 		return false;
 	}
 	bool operator != (const Vector3& other) {
-		if (x != other.x && y != other.y && z != other.z)
+		if (x != other.x || y != other.y || z != other.z)
 			return true;
 		return false;
 	}
@@ -166,6 +175,28 @@ struct Vector3 {
 	Vector3 operator + (const Vector3& other) const {
 		Vector3 tmp = (*this);
 		tmp += other;
+		return tmp;
+	}
+	Vector3& operator *= (const Vector3& other) {
+		x *= other.x;
+		y *= other.y;
+		z *= other.z;
+		return (*this);
+	}
+	Vector3 operator * (const Vector3& other) const {
+		Vector3 tmp = (*this);
+		tmp *= other;
+		return tmp;
+	}
+	Vector3& operator /= (const Vector3& other) {
+		x /= other.x;
+		y /= other.y;
+		z /= other.z;
+		return (*this);
+	}
+	Vector3 operator / (const Vector3& other) const {
+		Vector3 tmp = (*this);
+		tmp /= other;
 		return tmp;
 	}
 	Vector3& operator *= (float val) {
@@ -231,7 +262,7 @@ struct Vector3 {
 		else if (dot == 0.0f)
 			return PI / 2.0f;
 
-		return acosf(dot);
+		return acos(dot);
 	}
 
 	void clampEpsilon() {
@@ -242,7 +273,36 @@ struct Vector3 {
 		if (fabs(z) < EPSILON)
 			z = 0.0f;
 	}
+
+	bool IsNearlyEqualTo(const Vector3& other) const {
+		return FloatsAreNearlyEqual(x, other.x) &&
+			FloatsAreNearlyEqual(y, other.y) &&
+			FloatsAreNearlyEqual(z, other.z);
+	}
+
+	float length2() const {
+		return x*x + y*y + z*z;
+	}
+
+	float length() const {
+		return sqrt(x*x + y*y + z*z);
+	}
+
+	float DistanceToSegment(const Vector3& p1, const Vector3& p2) const {
+		Vector3 segvec(p2 - p1);
+		Vector3 diffp1(*this - p1);
+		float dp = segvec.dot(diffp1);
+		if (dp <= 0)
+			return diffp1.length();
+		else if (dp >= segvec.length2())
+			return (*this - p2).length();
+		return segvec.cross(diffp1).length() / segvec.length();
+	}
 };
+
+inline Vector3 operator*(float f, const Vector3 &v) {
+	return Vector3(f*v.x, f*v.y, f*v.z);
+}
 
 struct Vector4 {
 	float x;
@@ -451,52 +511,83 @@ public:
 	}
 
 	Matrix3& operator*=(const Matrix3& other) {
-		Matrix3 res;
-		res[0].x = rows[0].x * other[0].x + rows[1].x * other[0].y + rows[2].x * other[0].z;
-		res[0].y = rows[0].y * other[0].x + rows[1].y * other[0].y + rows[2].y * other[0].z;
-		res[0].z = rows[0].z * other[0].x + rows[1].z * other[0].y + rows[2].z * other[0].z;
-		res[1].x = rows[0].x * other[1].x + rows[1].x * other[1].y + rows[2].x * other[1].z;
-		res[1].y = rows[0].y * other[1].x + rows[1].y * other[1].y + rows[2].y * other[1].z;
-		res[1].z = rows[0].z * other[1].x + rows[1].z * other[1].y + rows[2].z * other[1].z;
-		res[2].x = rows[0].x * other[2].x + rows[1].x * other[2].y + rows[2].x * other[2].z;
-		res[2].y = rows[0].y * other[2].x + rows[1].y * other[2].y + rows[2].y * other[2].z;
-		res[2].z = rows[0].z * other[2].x + rows[1].z * other[2].y + rows[2].z * other[2].z;
-
-		*this = res;
-		return (*this);
+		*this = *this * other;
+		return *this;
 	}
 
-	Matrix3 operator*(const Matrix3& other) {
+	Matrix3 operator*(const Matrix3& o) const {
 		Matrix3 res;
-		res *= other;
+		res[0][0] = rows[0][0] * o[0][0] + rows[0][1] * o[1][0] + rows[0][2] * o[2][0];
+		res[0][1] = rows[0][0] * o[0][1] + rows[0][1] * o[1][1] + rows[0][2] * o[2][1];
+		res[0][2] = rows[0][0] * o[0][2] + rows[0][1] * o[1][2] + rows[0][2] * o[2][2];
+		res[1][0] = rows[1][0] * o[0][0] + rows[1][1] * o[1][0] + rows[1][2] * o[2][0];
+		res[1][1] = rows[1][0] * o[0][1] + rows[1][1] * o[1][1] + rows[1][2] * o[2][1];
+		res[1][2] = rows[1][0] * o[0][2] + rows[1][1] * o[1][2] + rows[1][2] * o[2][2];
+		res[2][0] = rows[2][0] * o[0][0] + rows[2][1] * o[1][0] + rows[2][2] * o[2][0];
+		res[2][1] = rows[2][0] * o[0][1] + rows[2][1] * o[1][1] + rows[2][2] * o[2][1];
+		res[2][2] = rows[2][0] * o[0][2] + rows[2][1] * o[1][2] + rows[2][2] * o[2][2];
 		return res;
 	}
 
-	// Set rotation matrix from yaw, pitch and roll
-	static Matrix3 MakeRotation(const float yaw, const float pitch, const float roll) {
-		float ch = std::cosf(yaw);
-		float sh = std::sinf(yaw);
-		float cp = std::cosf(pitch);
-		float sp = std::sinf(pitch);
-		float cb = std::cosf(roll);
-		float sb = std::sinf(roll);
+	Vector3 operator*(const Vector3& v) const {
+		return Vector3(
+			rows[0][0] * v.x + rows[0][1] * v.y + rows[0][2] * v.z,
+			rows[1][0] * v.x + rows[1][1] * v.y + rows[1][2] * v.z,
+			rows[2][0] * v.x + rows[2][1] * v.y + rows[2][2] * v.z);
+	}
 
-		Matrix3 rot;
-		rot[0].x = ch * cb + sh * sp * sb;
-		rot[0].y = sb * cp;
-		rot[0].z = -sh * cb + ch * sp * sb;
+	float Determinant() const;
 
-		rot[1].x = -ch * sb + sh * sp * cb;
-		rot[1].y = cb * cp;
-		rot[1].z = sb * sh + ch * sp * cb;
+	// Invert attempts to invert this matrix, returning the result in
+	// inverse.  It returns false if the matrix is not invertible, in
+	// which case inverse is not changed.
+	bool Invert(Matrix3 *inverse) const;
 
-		rot[2].x = sh * cp;
-		rot[2].y = -sp;
-		rot[2].z = ch * cp;
+	// Inverse returns the inverse of this matrix if it's invertible.
+	// If this matrix is not invertible, the identity matrix is returned.
+	Matrix3 Inverse() const;
 
-		return rot;
+	// Generate rotation matrix from yaw, pitch and roll (in radians)
+	// This is not the inverse of ToEulerAngles; though both functions
+	// work with Euler angles, there are many conflicting definitions
+	// of "Euler angles" (yaw, pitch, and roll), and these two functions
+	// use different definitions.
+	static Matrix3 MakeRotation(const float yaw, const float pitch, const float roll);
+
+	// Convert rotation to euler degrees (Yaw, Pitch, Roll)
+	// This function assumes that the matrix is a rotation matrix.
+	// ToEulerAngles is not the inverse of MakeRotation; though both
+	// functions work with Euler angles, there are many conflicting
+	// definitions of "Euler angles", and these two functions use
+	// different definitions.
+	// The return result "canRot" apparently means roll is not zero.
+	bool ToEulerAngles(float &y, float& p, float& r) const;
+	bool ToEulerDegrees(float &y, float& p, float& r) const {
+		bool canRot = ToEulerAngles(y, p, r);
+		y *= 180.0f / PI;
+		p *= 180.0f / PI;
+		r *= 180.0f / PI;
+		return canRot;
+	}
+
+	bool IsNearlyEqualTo(const Matrix3 &other) const {
+		return rows[0].IsNearlyEqualTo(other.rows[0]) &&
+			rows[1].IsNearlyEqualTo(other.rows[1]) &&
+			rows[2].IsNearlyEqualTo(other.rows[2]);
 	}
 };
+
+// RotVecToMat: converts a rotation vector to a rotation matrix.
+// (A rotation vector has direction the axis of the rotation
+// and magnitude the angle of rotation.)
+Matrix3 RotVecToMat(const Vector3 &v);
+
+// RotMatToVec: converts a rotation matrix into a rotation vector.
+// (A rotation vector has direction the axis of the rotation
+// and magnitude the angle of rotation.)
+// Note that this function is unstable for angles near pi, but it
+// should still work.
+Vector3 RotMatToVec(const Matrix3 &m);
 
 // 4D Matrix class for calculating and applying transformations.
 class Matrix4 {
@@ -525,7 +616,7 @@ public:
 		m[12] = 0;		   m[13] = 0;		  m[14] = 0;	      m[15] = 1;
 	}
 
-	void SetRow(int row, Vector3& inVec) {
+	void SetRow(int row, const Vector3& inVec) {
 		m[row * 4 + 0] = inVec.x;
 		m[row * 4 + 1] = inVec.y;
 		m[row * 4 + 2] = inVec.z;
@@ -730,8 +821,8 @@ public:
 	}
 
 	Matrix4& Rotate(float radAngle, float x, float y, float z) {
-		float c = std::cosf(radAngle);
-		float s = std::sinf(radAngle);
+		float c = std::cos(radAngle);
+		float s = std::sin(radAngle);
 
 		float xx = x*x;
 		float xy = x*y;
@@ -842,9 +933,29 @@ struct QuatTransform {
 };
 
 struct MatTransform {
+	/* On MatTransform and coordinate-system (CS) transformations:
+
+	A MatTransform can represent a "similarity transform", where
+	it scales, rotates, and moves geometry; or it can represent a
+	"coordinate-system transform", where the geometry itself does
+	not change, but its representation changes from one CS to another.
+
+	If CS1 is the source CS and CS2 is the target CS, then:
+	ApplyTransform(v) converts a point v represented in CS1 to CS2.
+	translation is CS1's origin represented in CS2.
+	rotation has columns the basis vectors of CS1 represented in CS2.
+	scale gives how much farther apart points appear to be in CS2 than in CS1.
+
+	Note that we do not force "rotation" to actually be a rotation
+	matrix.  A rotation matrix's inverse is its transpose.  Instead,
+	we only assume "rotation" is invertible, which means its inverse
+	must be calculated (using Matrix3::Invert).  Even though we always
+	treat "rotation" as a general invertible matrix and not a rotation
+	matrix, in practice it is always a rotation matrix.
+	*/
 	Vector3 translation;
-	Matrix3 rotation;
-	float scale = 1.0f;
+	Matrix3 rotation; // must be invertible
+	float scale = 1.0f; // must be nonzero
 
 	void Clear() {
 		translation.Zero();
@@ -853,54 +964,65 @@ struct MatTransform {
 	}
 
 	// Rotation in euler degrees (Yaw, Pitch, Roll)
-	bool ToEulerDegrees(float &y, float& p, float& r) {
-		float rx, ry, rz;
-		bool canRot = false;
-
-		if (rotation[0].z < 1.0f) {
-			if (rotation[0].z > -1.0f) {
-				rx = atan2(-rotation[1].z, rotation[2].z);
-				ry = asin(rotation[0].z);
-				rz = atan2(-rotation[0].y, rotation[0].x);
-				canRot = true;
-			}
-			else {
-				rx = -atan2(-rotation[1].x, rotation[1].y);
-				ry = -PI / 2.0f;
-				rz = 0.0f;
-			}
-		}
-		else {
-			rx = atan2(rotation[1].x, rotation[1].y);
-			ry = PI / 2.0f;
-			rz = 0.0f;
-		}
-
-		y = rx * 180.0f / PI;
-		p = ry * 180.0f / PI;
-		r = rz * 180.0f / PI;
-		return canRot;
+	bool ToEulerDegrees(float &y, float& p, float& r) const {
+		return rotation.ToEulerDegrees(y, p, r);
 	}
 
 	// Full matrix of translation, rotation and scale
-	Matrix4 ToMatrix() {
+	Matrix4 ToMatrix() const {
 		Matrix4 mat;
 		mat[0] = rotation[0].x * scale;
-		mat[1] = rotation[0].y;
-		mat[2] = rotation[0].z;
+		mat[1] = rotation[0].y * scale;
+		mat[2] = rotation[0].z * scale;
 		mat[3] = translation.x;
-		mat[4] = rotation[1].x;
+		mat[4] = rotation[1].x * scale;
 		mat[5] = rotation[1].y * scale;
-		mat[6] = rotation[1].z;
+		mat[6] = rotation[1].z * scale;
 		mat[7] = translation.y;
-		mat[8] = rotation[2].x;
-		mat[9] = rotation[2].y;
+		mat[8] = rotation[2].x * scale;
+		mat[9] = rotation[2].y * scale;
 		mat[10] = rotation[2].z * scale;
 		mat[11] = translation.z;
 		return mat;
 	}
+
+	// ApplyTransform applies this MatTransform to a vector v by first
+	// scaling v, then rotating the result of that, then translating the
+	// result of that.
+	Vector3 ApplyTransform(const Vector3 &v) const;
+
+	// Note that InverseTransform will return garbage if "rotation"
+	// is not invertible or scale is 0.
+	MatTransform InverseTransform() const;
+
+	// ComposeTransforms returns the transform that is the composition
+	// of this and other.  That is, if t3 = t1.ComposeTransforms(t2), then
+	// t3.ApplyTransform(v) == t1.ApplyTransform(t2.ApplyTransform(v)).
+	MatTransform ComposeTransforms(const MatTransform &other) const;
+
+	bool IsNearlyEqualTo(const MatTransform &other) const {
+		return translation.IsNearlyEqualTo(other.translation) &&
+			rotation.IsNearlyEqualTo(other.rotation) &&
+			FloatsAreNearlyEqual(scale, other.scale);
+	}
 };
 
+
+struct Edge {
+	ushort p1;
+	ushort p2;
+
+	Edge() {
+		p1 = p2 = 0;
+	}
+	Edge(ushort P1, ushort P2) {
+		p1 = P1; p2 = P2;
+	}
+
+	bool CompareIndices(const Edge& o) {
+		return (p1 == o.p1 && p2 == o.p2) || (p1 == o.p2 && p2 == o.p1);
+	}
+};
 
 struct Triangle {
 	ushort p1;
@@ -920,13 +1042,13 @@ struct Triangle {
 		p1 = P1; p2 = P2; p3 = P3;
 	}
 
-	void trinormal(Vector3* vertref, Vector3* outNormal) {
+	void trinormal(Vector3* vertref, Vector3* outNormal) const {
 		outNormal->x = (vertref[p2].y - vertref[p1].y) * (vertref[p3].z - vertref[p1].z) - (vertref[p2].z - vertref[p1].z) * (vertref[p3].y - vertref[p1].y);
 		outNormal->y = (vertref[p2].z - vertref[p1].z) * (vertref[p3].x - vertref[p1].x) - (vertref[p2].x - vertref[p1].x) * (vertref[p3].z - vertref[p1].z);
 		outNormal->z = (vertref[p2].x - vertref[p1].x) * (vertref[p3].y - vertref[p1].y) - (vertref[p2].y - vertref[p1].y) * (vertref[p3].x - vertref[p1].x);
 	}
 
-	void trinormal(const std::vector<Vector3>& vertref, Vector3* outNormal) {
+	void trinormal(const std::vector<Vector3>& vertref, Vector3* outNormal) const {
 		outNormal->x = (vertref[p2].y - vertref[p1].y) * (vertref[p3].z - vertref[p1].z) - (vertref[p2].z - vertref[p1].z) * (vertref[p3].y - vertref[p1].y);
 		outNormal->y = (vertref[p2].z - vertref[p1].z) * (vertref[p3].x - vertref[p1].x) - (vertref[p2].x - vertref[p1].x) * (vertref[p3].z - vertref[p1].z);
 		outNormal->z = (vertref[p2].x - vertref[p1].x) * (vertref[p3].y - vertref[p1].y) - (vertref[p2].y - vertref[p1].y) * (vertref[p3].x - vertref[p1].x);
@@ -949,6 +1071,23 @@ struct Triangle {
 
 	float AxisMidPointZ(Vector3* vertref) {
 		return (vertref[p1].z + vertref[p2].z + vertref[p3].z) / 3.0f;
+	}
+
+	bool HasOrientedEdge(const Edge &e) const {
+		return (e.p1 == p1 && e.p2 == p2) ||
+			(e.p1 == p2 && e.p2 == p3) ||
+			(e.p1 == p3 && e.p2 == p1);
+	}
+
+	Edge ClosestEdge(Vector3* vertref, const Vector3 &p) const {
+		float d1 = p.DistanceToSegment(vertref[p1], vertref[p2]);
+		float d2 = p.DistanceToSegment(vertref[p2], vertref[p3]);
+		float d3 = p.DistanceToSegment(vertref[p3], vertref[p1]);
+		if (d1 <= d2 && d1 <= d3)
+			return Edge(p1, p2);
+		else if (d2 < d3)
+			return Edge(p2, p3);
+		return Edge(p3, p1);
 	}
 
 	bool IntersectRay(Vector3* vertref, Vector3& origin, Vector3& direction, float* outDistance = nullptr, Vector3* worldPos = nullptr) {
@@ -1091,6 +1230,9 @@ struct Triangle {
 		return true;
 	}
 
+	ushort &operator[](int ind) {return ind?(ind==2?p3:p2):p1;}
+	const ushort &operator[](int ind) const {return ind?(ind==2?p3:p2):p1;}
+
 	bool operator < (const Triangle& other) const {
 		int d = 0;
 		if (d == 0) d = p1 - other.p1;
@@ -1119,32 +1261,14 @@ struct Triangle {
 	}
 };
 
-struct Edge {
-	ushort p1;
-	ushort p2;
-
-	Edge() {
-		p1 = p2 = 0;
-	}
-	Edge(ushort P1, ushort P2) {
-		p1 = P1; p2 = P2;
-	}
-};
-
 namespace std {
-	template<> struct std::hash < Edge > {
+	template<> struct hash < Edge > {
 		std::size_t operator() (const Edge& t) const {
 			return ((t.p2 << 16) | (t.p1 & 0xFFFF));
 		}
 	};
 
-	template <> struct std::equal_to < Edge > {
-		bool operator() (const Edge& t1, const Edge& t2) const {
-			return ((t1.p1 == t2.p1) && (t1.p2 == t2.p2));
-		}
-	};
-
-	template <> struct std::hash < Triangle > {
+	template <> struct hash < Triangle > {
 		std::size_t operator() (const Triangle& t) const {
 			char* d = (char*)&t;
 			std::size_t len = sizeof(Triangle);
@@ -1160,12 +1284,10 @@ namespace std {
 			return hash;
 		}
 	};
+}
 
-	template <> struct std::equal_to < Triangle > {
-		bool operator() (const Triangle& t1, const Triangle& t2) const {
-			return ((t1.p1 == t2.p1) && (t1.p2 == t2.p2) && (t1.p3 == t2.p3));
-		}
-	};
+inline bool operator== (const Edge& t1, const Edge& t2) {
+	return ((t1.p1 == t2.p1) && (t1.p2 == t2.p2));
 }
 
 struct Face {
@@ -1190,5 +1312,156 @@ struct Face {
 			p4 = points[3];
 			uv4 = tc[3];
 		}
+	}
+};
+
+struct Rect {
+	float x1 = 0.0f;
+	float y1 = 0.0f;
+	float x2 = 0.0f;
+	float y2 = 0.0f;
+
+	Rect() {}
+
+	Rect(float X1, float Y1, float X2, float Y2) {
+		x1 = X1;
+		y1 = Y1;
+		x2 = X2;
+		y2 = Y2;
+	}
+
+	float GetLeft() {
+		return x1;
+	}
+	float GetTop() {
+		return y1;
+	}
+	float GetRight() {
+		return x2;
+	}
+	float GetBottom() {
+		return y2;
+	}
+
+	Vector2 GetTopLeft() {
+		return Vector2(x1, y1);
+	}
+	Vector2 GetBottomRight() {
+		return Vector2(x2, y2);
+	}
+	Vector2 GetTopRight() {
+		return Vector2(x2, y1);
+	}
+	Vector2 GetBottomLeft() {
+		return Vector2(x1, y2);
+	}
+
+	Vector2 GetCenter() {
+		return Vector2((x1 + x2) / 2, (y1 + y2) / 2);
+	}
+
+	float GetWidth() {
+		return  x2 - x1 + 1;
+	}
+	float GetHeight() {
+		return  y2 - y1 + 1;
+	}
+	Vector2 GetSize() {
+		return Vector2(GetWidth(), GetHeight());
+	}
+
+	void SetLeft(float pos) {
+		x1 = pos;
+	}
+	void SetTop(float pos) {
+		y1 = pos;
+	}
+	void SetRight(float pos) {
+		x2 = pos;
+	}
+	void SetBottom(float pos) {
+		y2 = pos;
+	}
+
+	void SetTopLeft(const Vector2 &p) {
+		x1 = p.u;
+		y1 = p.v;
+	}
+	void SetBottomRight(const Vector2 &p) {
+		x2 = p.u;
+		y2 = p.v;
+	}
+	void SetTopRight(const Vector2 &p) {
+		x2 = p.u;
+		y1 = p.v;
+	}
+	void SetBottomLeft(const Vector2 &p) {
+		x1 = p.u;
+		y2 = p.v;
+	}
+
+	void SetWidth(float w) {
+		x2 = x1 + w - 1.0f;
+	}
+	void SetHeight(float h) {
+		y2 = y1 + h - 1.0f;
+	}
+
+	Rect Normalized() {
+		Rect r;
+
+		if (x2 < x1) {
+			r.x1 = x2;
+			r.x2 = x1;
+		}
+		else {
+			r.x1 = x1;
+			r.x2 = x2;
+		}
+
+		if (y2 < y1) {
+			r.y1 = y2;
+			r.y2 = y1;
+		}
+		else {
+			r.y1 = y1;
+			r.y2 = y2;
+		}
+
+		return r;
+	}
+
+	bool Contains(const Vector2& p) {
+		float l = 0.0f;
+		float r = 0.0f;
+
+		if (x2 < x1 - 1.0f) {
+			l = x2;
+			r = x1;
+		}
+		else {
+			l = x1;
+			r = x2;
+		}
+
+		if (p.u < l || p.u > r)
+			return false;
+
+		float t = 0.0f;
+		float b = 0.0f;
+
+		if (y2 < y1 - 1.0f) {
+			t = y2;
+			b = y1;
+		}
+		else {
+			t = y1;
+			b = y2;
+		}
+
+		if (p.v < t || p.v > b)
+			return false;
+
+		return true;
 	}
 };
