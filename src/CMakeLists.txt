@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12...3.17)
 
-project(Cathedral_Assets_Optimizer VERSION 5.0.14 LANGUAGES CXX)
+project(Cathedral_Assets_Optimizer VERSION 5.0.15 LANGUAGES CXX)
 
 #Setting version for C++ files
 configure_file (
@@ -78,8 +78,12 @@ set(QRC_PATH "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc")
 set(TS_FILES
     translations/AssetsOpt_de.ts
     translations/AssetsOpt_en.ts
-    translations/AssetsOpt_fr.ts
+    translations/AssetsOpt_es.ts
+    translations/AssetsOpt_fr_FR.ts
     translations/AssetsOpt_ja.ts
+    translations/AssetsOpt_ko_KR.ts
+    translations/AssetsOpt_nl.ts
+    translations/AssetsOpt_tr.ts
     translations/AssetsOpt_zh_CN.ts
     )
 

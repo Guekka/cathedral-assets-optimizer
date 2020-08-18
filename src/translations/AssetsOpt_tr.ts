@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.1">
 <context>
     <name>MainWindow</name>
     <message>
@@ -7,27 +7,27 @@
     </message>
     <message>
         <source>Will write which files would be affected, without actually processing them</source>
-        <translation>Will write which files would be affected, without actually processing them</translation>
+        <translation>Dosyaları işlemeden, hangilerinin etkileneceğini gösterir</translation>
     </message>
     <message>
         <source>Open Directory</source>
-        <translation>Open Directory</translation>
+        <translation>Dizini Aç</translation>
     </message>
     <message>
         <source>Run</source>
-        <translation>Run</translation>
+        <translation>Başlat</translation>
     </message>
     <message>
         <source>One mod</source>
-        <translation>One mod</translation>
+        <translation>Tek Mod</translation>
     </message>
     <message>
         <source>Dry run</source>
-        <translation>Dry run</translation>
+        <translation>Prova Modu</translation>
     </message>
     <message>
         <source>Show advanced settings</source>
-        <translation>Show advanced settings</translation>
+        <translation>Gelişmiş ayarları göster</translation>
     </message>
     <message>
         <source>SSE</source>
@@ -39,31 +39,31 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder. &lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts any BSAs present in the mod folder. &lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mod klasöründe bulunan tüm BSA arşivlerini çıkartır. &lt;span style=&quot; font-weight:600;&quot;&gt;Uyarı&lt;/span&gt;: Bu seçeneği işaretlerseniz, işleme süreci kaydadeğer ölçüde yavaşlar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Extract BSA</source>
-        <translation>Extract BSA</translation>
+        <translation>BSA Arşivlerini Çıkart</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;By default, a backup of existing bsa is created. Enabling this option will disable those backups.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;By default, a backup of existing bsa is created. Enabling this option will disable those backups.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Varsayılan olarak, varolan BSA arşivlerinin yedeği alınır. Bu seçeneği işaretlemek, yedek alma işlemini devre dışı bırakır.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Delete backups </source>
-        <translation>Delete backups </translation>
+        <translation>Yedekleri sil</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Creates a new BSA, packing the existing loose files. &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Creates a new BSA, packing the existing loose files. &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;. If you enable this option, the process will be considerably slowed down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span&gt;Varolan açıktaki dosyaları kullanarak bir BSA arşivi oluşturur. &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Uyarı&lt;/span&gt;: Bu seçeneği işaretlerseniz, işleme süreci kaydadeğer ölçüde yavaşlar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Create BSA</source>
-        <translation>Create BSA</translation>
+        <translation>BSA Arşivi Oluştur</translation>
     </message>
     <message>
         <source>Advanced</source>
-        <translation>Advanced</translation>
+        <translation>Gelişmiş</translation>
     </message>
     <message>
         <source>Morrowind</source>
@@ -83,51 +83,51 @@
     </message>
     <message>
         <source>Maximum size</source>
-        <translation>Maximum size</translation>
+        <translation>Toplam Boyut</translation>
     </message>
     <message>
         <source>Extension</source>
-        <translation>Extension</translation>
+        <translation>Uzantı</translation>
     </message>
     <message>
         <source>Suffix</source>
-        <translation>Suffix</translation>
+        <translation>Ek</translation>
     </message>
     <message>
         <source>Meshes</source>
-        <translation>Meshes</translation>
+        <translation>Meshler</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to repair meshes which are guaranteed to crash the game. Headparts are included.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to repair meshes which are guaranteed to crash the game. Headparts are included.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Oyunun kesin olarak çökmesine sebep olacak meshleri onarmaya çalışır. Headpart dosyaları (saç, sakal vb.) buna dahildir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Necessary optimization</source>
-        <translation>Necessary optimization</translation>
+        <translation>Gerekli Optimizasyon</translation>
     </message>
     <message>
         <source>Medium optimization</source>
-        <translation>Medium optimization</translation>
+        <translation>Orta Optimizasyon</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only apply if standard mesh optimization ignored necessary files. May lower visual quality.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only apply if standard mesh optimization ignored necessary files. May lower visual quality.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tüm meshleri optimize eder. Yalnızca, normal mesh optimizasyonu gerekli dosyaları işlemediyse kullanın. Kaliteyi düşürebilir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Full optimization</source>
-        <translation>Full optimization</translation>
+        <translation>Tam Optimizasyon</translation>
     </message>
     <message>
         <source>Always process headparts</source>
-        <translation>Always process headparts</translation>
+        <translation>Headpart dosyalarını (saç, sakal vb.) her zaman işle</translation>
     </message>
     <message>
         <source>Resave meshes</source>
-        <translation>Resave meshes</translation>
+        <translation>Meshleri tekrar kaydet</translation>
     </message>
     <message>
         <source>Version</source>
-        <translation>Version</translation>
+        <translation>Sürüm</translation>
     </message>
     <message>
         <source>Oblivion (V20_0_0_5)</source>
@@ -139,7 +139,7 @@
     </message>
     <message>
         <source>User</source>
-        <translation>User</translation>
+        <translation>Kullanıcı</translation>
     </message>
     <message>
         <source>Oblivion (11)</source>
@@ -151,7 +151,7 @@
     </message>
     <message>
         <source>Stream</source>
-        <translation>Stream</translation>
+        <translation>Sınıflandırma</translation>
     </message>
     <message>
         <source>Oblivion / Fallout 3 (82)</source>
@@ -171,27 +171,27 @@
     </message>
     <message>
         <source>Textures</source>
-        <translation>Textures</translation>
+        <translation>Dokular</translation>
     </message>
     <message>
         <source>Resizing</source>
-        <translation>Resizing</translation>
+        <translation>Yeniden Boyutlandırma</translation>
     </message>
     <message>
         <source>Height:</source>
-        <translation>Height:</translation>
+        <translation>Yükseklik</translation>
     </message>
     <message>
         <source>Width:</source>
-        <translation>Width:</translation>
+        <translation>Genişlik</translation>
     </message>
     <message>
         <source>By ratio</source>
-        <translation>By ratio</translation>
+        <translation>Orana Göre</translation>
     </message>
     <message>
         <source>By fixed size</source>
-        <translation>By fixed size</translation>
+        <translation>Belirlenen Boyuta Göre</translation>
     </message>
     <message>
         <source>TGA</source>
@@ -199,127 +199,127 @@
     </message>
     <message>
         <source>Enable TGA conversion</source>
-        <translation>Enable TGA conversion</translation>
+        <translation>TGA dönüştürülmesini etkinleştir</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation>Profile</translation>
+        <translation>Profil</translation>
     </message>
     <message>
         <source>New profile</source>
-        <translation>New profile</translation>
+        <translation>Yeni Profil</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>New</translation>
+        <translation>Yeni</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will list all files that would be modified, without actually processing them. Will ignore files in BSAs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will list all files that would be modified, without actually processing them. Will ignore files in BSAs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dosyaları işlemeden, hangilerinin etkileneceğini listeler. BSA arşivlerindeki dosyaları yoksayar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Several mods </source>
-        <translation>Several mods </translation>
+        <translation>Birden fazla Mod</translation>
     </message>
     <message>
         <source>Process BSAs</source>
-        <translation>Process BSAs</translation>
+        <translation>BSA arşivlerini işle</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size of the files in GB. Increasing it will increase the number of files stored per BSA, but you might reach the hard limit of BSA size, causing the game to crash.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size of the files in GB. Increasing it will increase the number of files stored per BSA, but you might reach the hard limit of BSA size, causing the game to crash.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dosyaların, sıkıştırılmamış hallerindeki toplam boyutları (GB). Bu sayıyı yükseltmek, her BSA arşivinde bulunan dosyaların sayısını artırarak oluşturulacak BSA arşivlerinin sayısını azaltır fakat oyuna kodlanmış maksimum BSA arşivi boyutu sınırını aşarsanız oyununuzun çökmesine sebep olabilirsiniz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The extension of the bsa. Usually, this will be &amp;quot;.bsa&amp;quot; for Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The extension of the bsa. Usually, this will be &amp;quot;.bsa&amp;quot; for Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BSA arşivinin uzantısı. Genellikle, Skyrim için &amp;quot;.bsa&amp;quot; Fallout 4 içinse, &amp;quot;.ba2&amp;quot; şeklindedir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Örnek :Fallout 4 için, &amp;quot; - Main.ba2&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Create textures BSA</source>
-        <translation>Create textures BSA</translation>
+        <translation>Dokular için BSA Arşivi Oluştur</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Örnek : Skyrim SE için &amp;quot; - Textures.bsa&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Expert</source>
-        <translation>Expert</translation>
+        <translation>Uzman</translation>
     </message>
     <message>
         <source>BSA Format</source>
-        <translation>BSA Format</translation>
+        <translation>BSA Formatı</translation>
     </message>
     <message>
         <source>Textures BSA Format</source>
-        <translation>Textures BSA Format</translation>
+        <translation>Doku dosyalarının BSA Formatı</translation>
     </message>
     <message>
         <source>Process meshes</source>
-        <translation>Process meshes</translation>
+        <translation>Meshleri işle</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perform necessary optimization, and also lightly optimizes other meshes. This may fix some visual issues, but may also lower quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perform necessary optimization, and also lightly optimizes other meshes. This may fix some visual issues, but may also lower quality. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gerekli optimizasyonları gerçekleştirir ve diğer meshleri hafifçe optimize eder. Bu seçenek, görsel sorunları düzeltebilir fakat kaliteyi düşürebilir. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When this option is disabled, headparts are ignored. It is recommended to keep it disabled when processing several mods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When this option is disabled, headparts are ignored. It is recommended to keep it disabled when processing several mods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bu seçenek seçili değilken headpart dosyaları (saç, sakal vb.) yoksayılır. Birden fazla mod işlerken bu seçeneği seçmemeniz önerilir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will resave meshes even if optimization is disabled. Will perform the same optimization as opening a mesh in NifSkope.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will resave meshes even if optimization is disabled. Will perform the same optimization as opening a mesh in NifSkope.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optimizasyon devre dışı bırakıldıysa bile meshleri tekrar kaydeder. Bir mesh dosyasını NifSkope&apos;da açmakla aynı işlemi gerçekleştirir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Process textures</source>
-        <translation>Process textures</translation>
+        <translation>Dokuları işle</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts any TGA files into DDS, as SSE cannot read these. Attempts to convert and fix any textures that would crash the game, as some older formats are incompatible with SSE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts any TGA files into DDS, as SSE cannot read these. Attempts to convert and fix any textures that would crash the game, as some older formats are incompatible with SSE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SSE, .TGA uzantılı dosyaları okuyamadığı için bu türdeki tüm dosyaları .DDS formatına dönüştürür. Bazı eski formatlar SSE ile uyumlu olmadığından oyunun çökmesine sebep olabilecek tüm doku dosyalarını dönüştürmeye ve onarmaya çalışır.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sıkıştırılmamış dosyaları, yapılandırılan çıktı formatında sıkıştırır. SSE ve FO4 için önerilir fakat diğer oyunlarda kaliteyi gözle görülür ölçüde düşürebilir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Compress textures</source>
-        <translation>Compress textures</translation>
+        <translation>Dokuları sıkıştır</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Doku dosyaları için mipmap oluşturarak daha yüksek disk ve vram kullanımı karşılığında performansı iyileştirir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Generate mipmaps</source>
-        <translation>Generate mipmaps</translation>
+        <translation>Mipmap oluştur</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes textures, dividing the current width and height by the values given. Must result in texture dimensions expressed in powers of two, no less than 4x4. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes textures, dividing the current width and height by the values given. Must result in texture dimensions expressed in powers of two, no less than 4x4. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Yazılı olan değerlerde yüksekliği ve genişliği bölerek dokuları yeniden boyutlandırır. Boyutlandırılan dosya, yeniden boyutlandırıldığında, 4x4&apos;den küçük olmamalı ve ikinin katı bir boyuta sahip olmalıdır. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dosyayı yazılı değerleri kullanarak yeniden boyutlandırır. Boyutlandırılan dosya, yeniden boyutlandırıldığında, 4x4&apos;den küçük olmamalı ve ikinin katı bir boyuta sahip olmalıdır..&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some games do not support compressed interface textures.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some games do not support compressed interface textures.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bazı oyunlar sıkıştırılmış arayüz dokularını desteklemez.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sıkıştırılmamış, düzenlenmiş doku dosyalarının ve donüştürülmüş TGA dosyalarının çıktı formatı. SSE ve FO4 için BC7 kullanılmalıdır.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Output format</source>
-        <translation>Output format</translation>
+        <translation>Çıktı Formatı</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;İşaretlenirse, TGA dosyalarını uyumlu bir DDS formatına dönüştürür.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>BC7 (BC7_UNORM)</source>
@@ -335,31 +335,31 @@
     </message>
     <message>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
-        <translation>Uncompressed (R8G8B8A8_UNORM)</translation>
+        <translation>Sıkıştırılmamış (R8G8B8A8_UNORM)</translation>
     </message>
     <message>
         <source>Process animations</source>
-        <translation>Process animations</translation>
+        <translation>Animasyonları işle</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to the appropriate format. If an animation is already compatible, no change will be made.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations to the appropriate format. If an animation is already compatible, no change will be made.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Animasyonları uygun bir formata dönüştürür. Bir animasyon dosyası zaten uyumlu bir formata sahipse hiçbir değişiklik yapılmaz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation>Help</translation>
+        <translation>Yardım</translation>
     </message>
     <message>
         <source>Enable debug log</source>
-        <translation>Enable debug log</translation>
+        <translation>Hata ayıklama günlüğünü etkinleştir</translation>
     </message>
     <message>
         <source>Used when reporting bugs</source>
-        <translation>Used when reporting bugs</translation>
+        <translation>Hata bildirirken kullanılır</translation>
     </message>
     <message>
         <source>Documentation</source>
-        <translation>Documentation</translation>
+        <translation>Belgelendirme</translation>
     </message>
     <message>
         <source>Discord</source>
@@ -367,154 +367,154 @@
     </message>
     <message>
         <source>About</source>
-        <translation>About</translation>
+        <translation>Hakkında</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation>About Qt</translation>
+        <translation>Qt Hakkında</translation>
     </message>
     <message>
         <source>Show tutorials</source>
-        <translation>Show tutorials</translation>
+        <translation>Eğiticileri Göster</translation>
     </message>
     <message>
         <source>Open log file</source>
-        <translation>Open log file</translation>
+        <translation>Günlük dosyasını aç</translation>
     </message>
     <message>
         <source>Interface</source>
-        <translation>Interface</translation>
+        <translation>Arayüz</translation>
     </message>
     <message>
         <source>Compress interface textures</source>
-        <translation>Compress interface textures</translation>
+        <translation>Arayüz dokularını sıkıştır</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;Bu formattaki tüm dokular desteklenen bir formata dönüştürülür.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Unwanted formats</source>
-        <translation>Unwanted formats</translation>
+        <translation>İstenmeyen Formatlar</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Edit</translation>
+        <translation>Düzenle</translation>
     </message>
     <message>
         <source>Animations</source>
-        <translation>Animations</translation>
+        <translation>Animasyonlar</translation>
     </message>
     <message>
         <source>Log</source>
-        <translation>Log</translation>
+        <translation>Günlük</translation>
     </message>
     <message>
         <source>Tools</source>
-        <translation>Tools</translation>
+        <translation>Araçlar</translation>
     </message>
     <message>
         <source>Enable dark theme</source>
-        <translation>Enable dark theme</translation>
+        <translation>Karanlık Modu Etkinleştir</translation>
     </message>
     <message>
         <source>Advanced settings</source>
-        <translation>Advanced settings</translation>
+        <translation>Gelişmiş Ayarlar</translation>
     </message>
     <message>
         <source>Advanced settings can only be modified when using custom profiles.</source>
-        <translation>Advanced settings can only be modified when using custom profiles.</translation>
+        <translation>Gelişmiş ayarlar sadece özel profil kullanırken değiştirilebilir.</translation>
     </message>
     <message>
         <source>Several mods option</source>
-        <translation>Several mods option</translation>
+        <translation>Birden fazla Mod seçeneği</translation>
     </message>
     <message>
         <source>You have selected the several mods option. This process may take a very long time, especially if you process BSA. </source>
-        <translation>You have selected the several mods option. This process may take a very long time, especially if you process BSA. </translation>
+        <translation>Birden fazla mod seçeneğini işaretlediniz. Özellike BSA arşivi işliyorsanız, bu işlem uzun sürebilir.</translation>
     </message>
     <message>
         <source>This process has only been tested on the Mod Organizer mods folder.</source>
-        <translation>This process has only been tested on the Mod Organizer mods folder.</translation>
+        <translation>Bu işlem sadece Mod Organizer&apos;ın modlar klasöründe test edilmiştir.</translation>
     </message>
     <message>
         <source>
 Made by G'k
 This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTLY. See the Mozilla Public License</source>
         <translation>
-Made by G&apos;k
-This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTLY. See the Mozilla Public License</translation>
+Bu program, G&apos;k Tarafından yazılmıştır.
+Bu programın dağıtımı, yararlı olabilmesi adına yapılmıştır fakat BİR TEMİNAT SAĞLANMAMAKTADIR. Mozilla Toplum Lisansına bakınız.</translation>
     </message>
     <message>
         <source>Save unsaved changes</source>
-        <translation>Save unsaved changes</translation>
+        <translation>Kaydedilmemiş değişiklikleri kaydet</translation>
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</translation>
+        <translation>Kaydedilmemiş değişiklikleriniz mevcut. Bu değişiklikleri kaydetmek ister misiniz? Ayrıca, her zaman kaydedilmemiş değişiklikleri kaydetmek için &apos;Hepsine evet&apos;e tıklayabilirsiniz.</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>
-        <translation>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</translation>
+        <translation>Yeni bir profil oluşturmak üzeresiniz. Bu işlem, &apos;CAO/profiles&apos; dizini içinde yeni bir klasör oluşturur. Lütfen, profili oluşturduktan sonra bu klasörü kontrol edin içinde bazı dosyalar oluşturulacak.</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>İsim:</translation>
     </message>
     <message>
         <source>Base profile</source>
-        <translation>Base profile</translation>
+        <translation>Taban Alınacak Profil</translation>
     </message>
     <message>
         <source>Which profile do you want to use as a base?</source>
-        <translation>Which profile do you want to use as a base?</translation>
+        <translation>Hangi profili taban almak istiyorsunuz?</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">Error</translation>
+        <translation type="vanished">Hata</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">An exception has been encountered and the process was forced to stop: </translation>
+        <translation type="vanished">Bir istisna meydana geldi ve işlem zorla durduruldu:</translation>
     </message>
     <message>
         <source>Done</source>
-        <translation>Done</translation>
+        <translation>Tamamlandı</translation>
     </message>
     <message>
         <source>Welcome to %1 %2</source>
-        <translation>Welcome to %1 %2</translation>
+        <translation>%1&apos;a Hoş geldiniz. Sürüm: %2</translation>
     </message>
     <message>
         <source>It appears you are running CAO for the first time. All options have tooltips explaining what they do. If you need help, you can also join us on Discord. A dark theme is also available.</source>
-        <translation>It appears you are running CAO for the first time. All options have tooltips explaining what they do. If you need help, you can also join us on Discord. A dark theme is also available.</translation>
+        <translation>CAO&apos;yu ilk kez çalıştırıyorsunuz. Her seçeneğin ne yaptığını açıklayan kendi bilgiçubuğu mevcuttur. Yardıa ihtiyacınız olursa Discord sunucumuza katılabilirsiniz. Ayrıca, Programda Karanlık Mod seçeneği mevcuttur.</translation>
     </message>
     <message>
         <source>Create dummy plugins</source>
-        <translation>Create dummy plugins</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : uncompressible, textures and standard. The uncompressible one contains sounds. If this option is checked, these three types of BSAs will be merged if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : uncompressible, textures and standard. The uncompressible one contains sounds. If this option is checked, these three types of BSAs will be merged if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create the least BSAs possible</source>
-        <translation>Create the least BSAs possible</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save UI</source>
-        <translation>Save UI</translation>
+        <translation>Kullanıcı Arayüzünü Kaydet</translation>
     </message>
 </context>
 <context>
     <name>TexturesFormatSelectDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation>Pencere</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Search</translation>
+        <translation>Ara</translation>
     </message>
 </context>
 </TS>
