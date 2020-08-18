@@ -54,8 +54,6 @@ private:
     std::unique_ptr<Manager> caoProcess_;
     std::unique_ptr<ProgressWindow> progressWindow_;
 
-    QFile logFile;
-
     std::vector<IWindowModule *> getModules();
     void connectModule(IWindowModule &);
     void reconnectModules();
@@ -74,10 +72,8 @@ private:
     void initProcess();
     void endProcess();
 
-    void setDarkTheme(const bool &enabled);
+    void setDarkTheme(bool enabled);
     void showTutorialWindow(const QString &title, const QString &text);
-
-    void setAdvancedSettingsEnabled(const bool &value);
 
     void firstStart();
 

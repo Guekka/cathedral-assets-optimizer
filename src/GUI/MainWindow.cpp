@@ -276,7 +276,7 @@ void MainWindow::resetUi()
     ui_->tabWidget->clear();
 }
 
-void MainWindow::setDarkTheme(const bool &enabled)
+void MainWindow::setDarkTheme(bool enabled)
 {
     if (enabled)
     {
