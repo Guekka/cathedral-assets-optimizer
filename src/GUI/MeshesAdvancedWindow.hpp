@@ -20,6 +20,8 @@ public:
 
     void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
 
+    QString name() override;
+
 private:
     Ui::MeshesAdvancedWindow *ui_;
 };

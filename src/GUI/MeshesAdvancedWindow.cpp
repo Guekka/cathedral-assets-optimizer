@@ -70,4 +70,9 @@ void MeshesAdvancedWindow::connectAll(PatternSettings &pSets, GeneralSettings &g
 
     connectWrapper(*ui_->ignoreHeadpartsCheckBox, pSets.bMeshesIgnoreHeadparts);
 }
+
+QString MeshesAdvancedWindow::name()
+{
+    return tr("Meshes (Patterns)");
+}
 } // namespace CAO

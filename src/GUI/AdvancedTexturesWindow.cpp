@@ -56,4 +56,9 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSet
                     ui_->resizingHeight);
 }
 
+QString AdvancedTexturesWindow::name()
+{
+    return tr("Textures (Patterns)");
+}
+
 } // namespace CAO

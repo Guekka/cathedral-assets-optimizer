@@ -18,6 +18,8 @@ public:
 
     void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
 
+    QString name() override;
+
 private:
     std::unique_ptr<Ui::MediumModeWindow> ui_;
 };

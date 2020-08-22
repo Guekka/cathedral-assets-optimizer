@@ -19,6 +19,8 @@ public:
     explicit AdvancedTexturesWindow(QWidget *parent = nullptr);
     void connectAll(PatternSettings &patternSets, GeneralSettings &generalSets) override;
 
+    QString name() override;
+
 private:
     std::unique_ptr<Ui::AdvancedTexturesWindow> ui_;
 };

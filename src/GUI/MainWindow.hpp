@@ -28,10 +28,10 @@ public:
     MainWindow();
 
     template<typename T>
-    void addModule(const QString &name)
+    void addModule()
     {
         T *mod = new T;
-        ui_->tabWidget->insertTab(0, mod, name);
+        ui_->tabWidget->addTab(mod, mod->name());
         ui_->tabWidget->setCurrentIndex(0);
         connectModule(*mod);
     }

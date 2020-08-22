@@ -15,7 +15,7 @@ LevelSelector::LevelSelector(std::unique_ptr<MainWindow> &mw)
 {
     ui_->setupUi(this);
 
-    GuiMode curMode = toGuiMode(ui_->levelSlider->value());
+    const GuiMode curMode = toGuiMode(ui_->levelSlider->value());
 
     ui_->label->setText(getHelpText(curMode));
 
@@ -44,7 +44,7 @@ void LevelSelector::setupWindow(std::unique_ptr<MainWindow> &mw, GuiMode level)
         case GuiMode::Medium:
         {
             mw = std::make_unique<MainWindow>();
-            mw->addModule<MediumModeWindow>("Intermediate mode");
+            mw->addModule<MediumModeWindow>();
             mw->setPatternsEnabled(false);
             return;
         }

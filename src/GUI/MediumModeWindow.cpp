@@ -88,4 +88,9 @@ void MediumModeWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets
     connectWrapper(*ui_->TexturesResizingMinimumHeight, pSets.iTexturesMinimumHeight);
 }
 
+QString MediumModeWindow::name()
+{
+    return tr("Intermediate mode");
+}
+
 } // namespace CAO

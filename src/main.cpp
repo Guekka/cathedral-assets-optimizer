@@ -51,13 +51,13 @@ void displayInfo(bool cli, const std::string &text)
         QMessageBox box(QMessageBox::Information, "Information", QString::fromStdString(text));
         box.exec();
     }
-    PLOG_FATAL << text;
+    PLOG_INFO << text;
 }
 
 void migrateProfiles(bool cli)
 {
     const auto &migratedProfiles = CAO::migrateProfiles(QDir("importedProfiles"), QDir("profiles"));
-    if (!migratedProfiles.size())
+    if (migratedProfiles.empty())
         return;
 
     const QString &text = QCoreApplication::translate("main",
@@ -89,7 +89,6 @@ int main(int argc, char *argv[])
         app = std::make_unique<QApplication>(argc, argv);
     }
 
-    std::unique_ptr<CAO::MainWindow> window;
     try
     {
         migrateProfiles(cli);
@@ -105,12 +104,13 @@ int main(int argc, char *argv[])
         {
             app    = nullptr;
             app    = std::make_unique<QApplication>(argc, argv);
-            window = std::make_unique<CAO::MainWindow>();
+            auto window = std::make_unique<CAO::MainWindow>();
             CAO::LevelSelector selector(window);
-            if (selector.exec() == 1)
+            if (selector.exec() == QDialog::Accepted)
+            {
                 window->show();
-            else
-                return 0;
+                return app->exec();
+            }
         }
     }
     catch (const std::exception &e)
@@ -119,5 +119,5 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    return app->exec();
+    return 0;
 }
