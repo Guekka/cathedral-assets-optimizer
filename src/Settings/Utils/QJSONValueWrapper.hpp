@@ -66,7 +66,7 @@ public:
 
         else
             for (const auto &el : val)
-                insert(el);
+                insert(el, allowDups);
     }
 
     template<class U = Type>
