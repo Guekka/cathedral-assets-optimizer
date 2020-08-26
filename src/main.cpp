@@ -105,12 +105,15 @@ int main(int argc, char *argv[])
             app    = nullptr;
             app    = std::make_unique<QApplication>(argc, argv);
             auto window = std::make_unique<CAO::MainWindow>();
-            CAO::LevelSelector selector(window);
-            if (selector.exec() == QDialog::Accepted)
-            {
-                window->show();
-                return app->exec();
-            }
+
+            CAO::LevelSelector selector;
+            if (!selector.runSelection(*window))
+                return 0;
+
+            window->show();
+            selector.setHandler(*window);
+
+            return app->exec();
         }
     }
     catch (const std::exception &e)

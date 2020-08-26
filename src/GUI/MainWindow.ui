@@ -273,6 +273,7 @@
     </property>
     <addaction name="actionEnableDarkTheme"/>
     <addaction name="actionSelect_GPU"/>
+    <addaction name="actionChange_level"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -381,6 +382,11 @@
   <action name="actionSet_output_path">
    <property name="text">
     <string>Set output path</string>
+   </property>
+  </action>
+  <action name="actionChange_level">
+   <property name="text">
+    <string>Change level</string>
    </property>
   </action>
  </widget>

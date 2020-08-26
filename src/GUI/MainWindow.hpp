@@ -27,28 +27,13 @@ class MainWindow final : public QMainWindow
 public:
     MainWindow();
 
-    template<typename T>
-    void addModule()
-    {
-        T *mod = new T;
-        ui_->tabWidget->addTab(mod, mod->name());
-        ui_->tabWidget->setCurrentIndex(0);
-        connectModule(*mod);
-    }
-
-    template<typename T>
-    void removeModule()
-    {
-        auto& tabWidget = ui_->tabWidget;
-        for (int i = 0; i < tabWidget->count(); i++)
-            if (dynamic_cast<T *>(tabWidget->widget(i)))
-            {
-                tabWidget->removeTab(i);
-                break;
-            }
-    }
+    void addModule(IWindowModule *module);
+    void clearModules();
 
     void setPatternsEnabled(bool state);
+    void setLevelSelectorHandler(const std::function<void()> &callback);
+
+    void initSettings();
 
 private:
     std::unique_ptr<Ui::MainWindow> ui_;

@@ -92,19 +92,33 @@ MainWindow::MainWindow()
 
     QObject::connect(ui_->actionAbout_Qt, &QAction::triggered, this, [this] { QMessageBox::aboutQt(this); });
 
-    //Profiles
-    updateProfiles();
-
-    updatePatterns();
+    initSettings();
 
     firstStart();
 }
 
+void MainWindow::addModule(IWindowModule *module)
+{
+    ui_->tabWidget->addTab(module, module->name());
+    ui_->tabWidget->setCurrentIndex(0);
+    connectModule(*module);
+}
+
+void MainWindow::clearModules()
+{
+    auto &tabs = ui_->tabWidget;
+    for (int i = 0; i < tabs->count(); ++i)
+    {
+        tabs->widget(i)->deleteLater();
+        tabs->removeTab(i);
+    }
+}
+
 void MainWindow::setPatternsEnabled(bool state)
 {
-    static const std::array patternsObject = {static_cast<QWidget *>(ui_->patterns),
-                                              static_cast<QWidget *>(ui_->managePatterns),
-                                              static_cast<QWidget *>(ui_->patternsLabel)};
+    const std::array patternsObject = {static_cast<QWidget *>(ui_->patterns),
+                                       static_cast<QWidget *>(ui_->managePatterns),
+                                       static_cast<QWidget *>(ui_->patternsLabel)};
 
     if (!selectText(*ui_->patterns, "*"))
     {
@@ -113,10 +127,22 @@ void MainWindow::setPatternsEnabled(bool state)
                               tr("Couldn't find the pattern '*'. Please reinstall the application"));
     }
 
-    patternsObject | rx::for_each([state](auto *widget) {
+    for (auto *widget : patternsObject)
+    {
         widget->setEnabled(state);
         widget->setVisible(state);
-    });
+    }
+}
+
+void MainWindow::setLevelSelectorHandler(const std::function<void()> &callback)
+{
+    QObject::connect(ui_->actionChange_level, &QAction::triggered, this, callback);
+}
+
+void MainWindow::initSettings()
+{
+    updateProfiles();
+    updatePatterns();
 }
 
 template<typename... Args>

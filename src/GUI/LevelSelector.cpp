@@ -6,47 +6,85 @@
 #include "LevelSelector.hpp"
 #include "GUI/MediumModeWindow.hpp"
 #include "GUI/QuickAutoPortWindow.hpp"
+#include "Settings/CommonSettings.hpp"
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
-LevelSelector::LevelSelector(std::unique_ptr<MainWindow> &mw)
+LevelSelector::LevelSelector()
     : QDialog(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
     , ui_(new Ui::LevelSelector)
 {
     ui_->setupUi(this);
 
-    const GuiMode curMode = toGuiMode(ui_->levelSlider->value());
+    auto &sets            = getProfiles().commonSettings();
+    const GuiMode curMode = sets.bRememberGUIMode() ? sets.eGUIMode() : GuiMode::QuickAutoPort;
 
+    ui_->levelSlider->setValue(toInt(curMode));
     ui_->label->setText(getHelpText(curMode));
 
     connect(ui_->levelSlider, &QSlider::valueChanged, this, [this](int val) {
-        GuiMode mode = toGuiMode(val);
+        const GuiMode mode = toGuiMode(val);
         ui_->label->setText(getHelpText(mode));
-    });
-
-    connect(ui_->buttonBox, &QDialogButtonBox::accepted, this, [&mw, this] {
-        GuiMode mode = toGuiMode(ui_->levelSlider->value());
-        setupWindow(mw, mode);
     });
 }
 
-void LevelSelector::setupWindow(std::unique_ptr<MainWindow> &mw, GuiMode level)
+bool LevelSelector::runSelection(MainWindow &window)
 {
+    if (getProfiles().commonSettings().bRememberGUIMode())
+    {
+        setupWindow(window, getProfiles().commonSettings().eGUIMode());
+        return true;
+    }
+
+    if (QDialog::exec() != QDialog::Accepted)
+        return false;
+
+    const GuiMode selectedValue = toGuiMode(ui_->levelSlider->value());
+    setupWindow(window, selectedValue);
+
+    auto &sets = getProfiles().commonSettings(); //In case they were changed in setupWindow
+
+    if (ui_->rememberChoice->isChecked())
+    {
+        sets.bRememberGUIMode = true;
+        sets.eGUIMode         = selectedValue;
+    }
+    else
+    {
+        sets.bRememberGUIMode = false;
+    }
+
+    return true;
+}
+
+void LevelSelector::setHandler(MainWindow &mw)
+{
+    mw.setLevelSelectorHandler([this, &mw] {
+        mw.hide();
+        getProfiles().commonSettings().bRememberGUIMode = false;
+        runSelection(mw);
+        mw.show();
+    });
+}
+
+void LevelSelector::setupWindow(MainWindow &mw, GuiMode level)
+{
+    mw.clearModules();
     switch (level)
     {
         case GuiMode::QuickAutoPort:
         {
             getProfiles() = Profiles(QDir(Profiles::QuickAutoPortProfilesDir));
-            mw            = std::make_unique<MainWindow>();
-            mw->setPatternsEnabled(false);
-            return;
+            mw.initSettings();
+            mw.setPatternsEnabled(false);
+            break;
         }
         case GuiMode::Medium:
         {
-            mw = std::make_unique<MainWindow>();
-            mw->addModule<MediumModeWindow>();
-            mw->setPatternsEnabled(false);
-            return;
+            mw.initSettings();
+            mw.addModule(new IntermediateModeModule);
+            mw.setPatternsEnabled(false);
+            break;
         }
         case GuiMode::Advanced:
         {

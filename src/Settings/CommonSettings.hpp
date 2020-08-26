@@ -34,6 +34,10 @@ public:
 
     REGISTER_SETTING(QString, sProfile, "/Profile")
     REGISTER_SETTING(GuiTheme, eTheme, "/Theme")
+
+    REGISTER_SETTING(bool, bRememberGUIMode, "/RememberGUIMode")
+    REGISTER_SETTING(GuiMode, eGUIMode, "/GUIMode")
+
     REGISTER_SETTING(bool, bShowTutorials, "/ShowTutorials")
     REGISTER_SETTING(bool, bFirstStart, "/FirstStart")
 

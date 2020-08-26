@@ -15,12 +15,13 @@ class LevelSelector;
 }
 
 namespace CAO {
-class LevelSelector : public QDialog
+class LevelSelector : private QDialog
 {
-    Q_OBJECT
 
 public:
-    explicit LevelSelector(std::unique_ptr<MainWindow> &mw);
+    explicit LevelSelector();
+    bool runSelection(MainWindow &window);
+    void setHandler(MainWindow &mw);
 
 private:
     //QSlider does not support custom values. Mapping enum to contingent ints
@@ -43,8 +44,9 @@ private:
         return 0;
     }
 
-    void setupWindow(std::unique_ptr<MainWindow> &mw, GuiMode level);
     QString getHelpText(GuiMode level);
+
+    void setupWindow(MainWindow &mw, GuiMode level);
 
 private:
     std::unique_ptr<Ui::LevelSelector> ui_;
