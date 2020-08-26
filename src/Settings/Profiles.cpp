@@ -86,8 +86,8 @@ Profile &Profiles::setCurrent(const QString &profile)
         throw std::runtime_error(
             "Trying to load a profile that does not exist. Please reinstall the application");
 
-    commonSettings_.sProfile = profile;
-    return profiles_.at(profile);
+    commonSettings_.sProfile = target;
+    return profiles_.at(target);
 }
 
 Profile &Profiles::getCurrent()
