@@ -3,20 +3,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "MeshesAdvancedWindow.hpp"
+#include "AdvancedMeshesModule.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
 
 namespace CAO {
-MeshesAdvancedWindow::MeshesAdvancedWindow(QWidget *parent)
+AdvancedMeshesModule::AdvancedMeshesModule(QWidget *parent)
     : IWindowModule(parent)
-    , ui_(new Ui::MeshesAdvancedWindow)
+    , ui_(new Ui::AdvancedMeshesModule)
 {
     ui_->setupUi(this);
 }
 
-void MeshesAdvancedWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
+void AdvancedMeshesModule::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
 {
     //Only LE and SSE are supported
     switch (gSets.eGame())
@@ -71,7 +71,7 @@ void MeshesAdvancedWindow::connectAll(PatternSettings &pSets, GeneralSettings &g
     connectWrapper(*ui_->ignoreHeadpartsCheckBox, pSets.bMeshesIgnoreHeadparts);
 }
 
-QString MeshesAdvancedWindow::name()
+QString AdvancedMeshesModule::name()
 {
     return tr("Meshes (Patterns)");
 }

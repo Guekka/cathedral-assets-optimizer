@@ -4,8 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "LevelSelector.hpp"
-#include "GUI/MediumModeWindow.hpp"
-#include "GUI/QuickAutoPortWindow.hpp"
+#include "GUI/IntermediateModeModule.hpp"
 #include "Settings/CommonSettings.hpp"
 #include "Settings/Profiles.hpp"
 

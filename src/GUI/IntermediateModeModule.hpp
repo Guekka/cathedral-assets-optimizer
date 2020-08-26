@@ -6,23 +6,21 @@
 #pragma once
 
 #include "IWindowModule.hpp"
-#include "ui_MeshesAdvancedWindow.h"
-
-namespace Ui {
-class MeshesAdvancedWindow;
-}
+#include "ui_IntermediateModeModule.h"
 
 namespace CAO {
-class MeshesAdvancedWindow : public IWindowModule
+class IntermediateModeModule : public IWindowModule
 {
+    Q_OBJECT
+
 public:
-    explicit MeshesAdvancedWindow(QWidget *parent = nullptr);
+    explicit IntermediateModeModule(QWidget *parent = nullptr);
 
     void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
 
     QString name() override;
 
 private:
-    Ui::MeshesAdvancedWindow *ui_;
+    std::unique_ptr<Ui::IntermediateModeModule> ui_;
 };
 } // namespace CAO

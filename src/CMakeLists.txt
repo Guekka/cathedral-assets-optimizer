@@ -132,21 +132,17 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.ui
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/QuickAutoPortWindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/QuickAutoPortWindow.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/QuickAutoPortWindow.ui
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MediumModeWindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MediumModeWindow.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MediumModeWindow.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.ui
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MeshesAdvancedWindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MeshesAdvancedWindow.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MeshesAdvancedWindow.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.ui
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.hpp

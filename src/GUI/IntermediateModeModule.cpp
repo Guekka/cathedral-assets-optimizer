@@ -3,20 +3,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "MediumModeWindow.hpp"
+#include "IntermediateModeModule.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
 
 namespace CAO {
-MediumModeWindow::MediumModeWindow(QWidget *parent)
+IntermediateModeModule::IntermediateModeModule(QWidget *parent)
     : IWindowModule(parent)
-    , ui_(std::make_unique<Ui::MediumModeWindow>())
+    , ui_(std::make_unique<Ui::IntermediateModeModule>())
 {
     ui_->setupUi(this);
 }
 
-void MediumModeWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
+void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
 {
     ui_->BSAExtract->setChecked(!gSets.bBSACreate());
     ui_->BSACreate->setChecked(gSets.bBSACreate());
@@ -88,7 +88,7 @@ void MediumModeWindow::connectAll(PatternSettings &pSets, GeneralSettings &gSets
     connectWrapper(*ui_->TexturesResizingMinimumHeight, pSets.iTexturesMinimumHeight);
 }
 
-QString MediumModeWindow::name()
+QString IntermediateModeModule::name()
 {
     return tr("Intermediate mode");
 }
