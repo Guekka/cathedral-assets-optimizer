@@ -80,7 +80,7 @@ protected:
 
         setInputFilePath(filename);
 
-        file_.reset(new T);
+        file_ = std::make_unique<T>();
     }
 
     [[nodiscard]] bool saveToDiskHelper(const QString &filename) const

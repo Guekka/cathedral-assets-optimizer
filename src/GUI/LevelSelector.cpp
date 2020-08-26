@@ -12,7 +12,7 @@
 namespace CAO {
 LevelSelector::LevelSelector()
     : QDialog(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
-    , ui_(new Ui::LevelSelector)
+    , ui_(std::make_unique<Ui::LevelSelector>())
 {
     ui_->setupUi(this);
 

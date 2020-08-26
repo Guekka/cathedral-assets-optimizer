@@ -12,7 +12,7 @@ namespace CAO {
 ProfilesManagerWindow::ProfilesManagerWindow(Profiles &profiles_, QWidget *parent)
     : QDialog(parent)
     , profiles(profiles_)
-    , ui_(new Ui::ProfilesManagerWindow)
+    , ui_(std::make_unique<Ui::ProfilesManagerWindow>())
 {
     ui_->setupUi(this);
 

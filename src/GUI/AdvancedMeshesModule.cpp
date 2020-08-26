@@ -7,14 +7,17 @@
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
+#include "ui_AdvancedMeshesModule.h"
 
 namespace CAO {
 AdvancedMeshesModule::AdvancedMeshesModule(QWidget *parent)
     : IWindowModule(parent)
-    , ui_(new Ui::AdvancedMeshesModule)
+    , ui_(std::make_unique<Ui::AdvancedMeshesModule>())
 {
     ui_->setupUi(this);
 }
+
+AdvancedMeshesModule::~AdvancedMeshesModule() = default;
 
 void AdvancedMeshesModule::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
 {

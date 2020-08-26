@@ -6,7 +6,6 @@
 #pragma once
 
 #include "IWindowModule.hpp"
-#include "ui_AdvancedMeshesModule.h"
 
 namespace Ui {
 class AdvancedMeshesModule;
@@ -17,12 +16,13 @@ class AdvancedMeshesModule : public IWindowModule
 {
 public:
     explicit AdvancedMeshesModule(QWidget *parent = nullptr);
+    ~AdvancedMeshesModule();
 
     void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
 
     QString name() override;
 
 private:
-    Ui::AdvancedMeshesModule *ui_;
+    std::unique_ptr<Ui::AdvancedMeshesModule> ui_;
 };
 } // namespace CAO

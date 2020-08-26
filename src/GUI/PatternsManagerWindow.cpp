@@ -10,7 +10,7 @@
 namespace CAO {
 PatternsManagerWindow::PatternsManagerWindow(Profile &profile_, QWidget *parent)
     : QDialog(parent)
-    , ui_(new Ui::PatternsManagerWindow)
+    , ui_(std::make_unique<Ui::PatternsManagerWindow>())
     , profile(profile_)
 {
     ui_->setupUi(this);

@@ -15,7 +15,7 @@ CommandResult TextureDecompress::process(File &file) const
     const size_t &nimg = texFile->GetImageCount();
     const auto &info = texFile->GetMetadata();
 
-    auto timage = new TextureResource;
+    auto timage   = std::make_unique<TextureResource>();
     const auto hr = Decompress(img, nimg, info, DXGI_FORMAT_UNKNOWN /* picks good default */, *timage);
     if (FAILED(hr))
         return _resultFactory.getFailedResult(hr, "Failed to decompress");
