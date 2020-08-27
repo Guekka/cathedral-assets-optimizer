@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "GUI/MainWindow.hpp"
 #include "pch.hpp"
 
 namespace CAO {

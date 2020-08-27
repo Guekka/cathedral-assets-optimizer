@@ -4,22 +4,20 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "MainWindow.hpp"
-#include "Manager.hpp"
 #include "Settings/BaseTypes.hpp"
-#include "ui_LevelSelector.h"
-#include <QDialog>
 
 namespace Ui {
 class LevelSelector;
 }
 
 namespace CAO {
+class MainWindow;
 class LevelSelector : private QDialog
 {
 
 public:
     explicit LevelSelector();
+    ~LevelSelector();
     bool runSelection(MainWindow &window);
     void setHandler(MainWindow &mw);
 

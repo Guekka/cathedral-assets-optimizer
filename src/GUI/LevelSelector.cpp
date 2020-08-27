@@ -5,8 +5,9 @@
 
 #include "LevelSelector.hpp"
 #include "GUI/IntermediateModeModule.hpp"
-#include "Settings/CommonSettings.hpp"
+#include "MainWindow.hpp"
 #include "Settings/Profiles.hpp"
+#include "ui_LevelSelector.h"
 
 namespace CAO {
 LevelSelector::LevelSelector()
@@ -26,6 +27,8 @@ LevelSelector::LevelSelector()
         ui_->label->setText(getHelpText(mode));
     });
 }
+
+LevelSelector::~LevelSelector() = default;
 
 bool LevelSelector::runSelection(MainWindow &window)
 {

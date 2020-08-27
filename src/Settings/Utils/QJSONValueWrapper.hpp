@@ -54,9 +54,10 @@ public:
         return *this;
     }
 
-    void insert(const Type &val, bool allowDups = true)
+    template<typename U = Type>
+    void insert(const U &val, bool allowDups = true)
     {
-        static_assert(is_vector_v<Type>, "Type must be a vector");
+        static_assert(is_vector_v<U>, "Type must be a vector");
 
         nlohmann::json &j = json_[key_];
 
@@ -68,10 +69,10 @@ public:
                 insert(el);
     }
 
-    template<class ValueType = typename Type::value_type>
-    void insert(const ValueType &val, bool allowDups = true)
+    template<class U = Type>
+    void insert(const typename U::value_type &val, bool allowDups = true)
     {
-        static_assert(is_vector_v<Type>, "Type must be a vector");
+        static_assert(is_vector_v<U>, "Type must be a vector");
 
         nlohmann::json &j = json_[key_];
 
@@ -86,5 +87,12 @@ private:
     nlohmann::json &json_;
     JSON::json_pointer key_;
 };
+
+//Add default instantiations for some common types
+template class QJSONValueWrapper<int>;
+template class QJSONValueWrapper<bool>;
+template class QJSONValueWrapper<QString>;
+template class QJSONValueWrapper<double>;
+template class QJSONValueWrapper<std::vector<std::string>>;
 
 } // namespace CAO
