@@ -44,7 +44,7 @@ public:
     REGISTER_SETTING(bool, bBSAProcessContent, "/BSA/bBSAProcessContent")
 
     REGISTER_SETTING(bool, bBSACreateDummies, "/BSA/bBSACreateDummies")
-    REGISTER_SETTING(bool, bBSACompressArchive, "/BSA/bBSACompressArchive")
+    REGISTER_SETTING(bool, bBSACompress, "/BSA/bBSACompress")
     REGISTER_SETTING(bool, bBSACompact, "/BSA/bBSACompact")
 
     REGISTER_SETTING(double, iBSAMaxSize, "/Advanced/BSA/iBSAMaxSize")
