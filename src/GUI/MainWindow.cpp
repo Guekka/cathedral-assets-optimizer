@@ -170,7 +170,7 @@ std::vector<IWindowModule *> MainWindow::getModules()
 void MainWindow::connectModule(IWindowModule &mod)
 {
     auto &pattern = currentProfile().getPatterns().getSettingsByName(ui_->patterns->currentText());
-    mod.connectAll(pattern, currentProfile().getGeneralSettings());
+    mod.setup(pattern, currentProfile().getGeneralSettings());
 }
 
 void MainWindow::reconnectModules()

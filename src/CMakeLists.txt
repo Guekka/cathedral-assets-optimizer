@@ -157,6 +157,7 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.ui
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils.hpp
 

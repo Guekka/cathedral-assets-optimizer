@@ -17,7 +17,15 @@ AdvancedTexturesWindow::AdvancedTexturesWindow(QWidget *parent)
     ui_->setupUi(this);
 }
 
-void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSettings &generalSets)
+void AdvancedTexturesWindow::init([[maybe_unused]] PatternSettings &pSets,
+                                  [[maybe_unused]] GeneralSettings &gSets)
+{
+    setData(*ui_->resizingMode, "By ratio", TextureResizingMode::ByRatio);
+    setData(*ui_->resizingMode, "By fixed size", TextureResizingMode::BySize);
+}
+
+void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets,
+                                        [[maybe_unused]] GeneralSettings &generalSets)
 {
     //Base
     connectWrapper(*ui_->mainNecessary, patternSets.bTexturesNecessary);
@@ -29,8 +37,6 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSet
     });
 
     //Resizing
-    setData(*ui_->resizingMode, "By ratio", TextureResizingMode::ByRatio);
-    setData(*ui_->resizingMode, "By fixed size", TextureResizingMode::BySize);
 
     connect(ui_->resizingMode,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -59,6 +65,11 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets, GeneralSet
 QString AdvancedTexturesWindow::name()
 {
     return tr("Textures (Patterns)");
+}
+
+bool AdvancedTexturesWindow::isSupportedGame([[maybe_unused]] Games game)
+{
+    return true;
 }
 
 } // namespace CAO

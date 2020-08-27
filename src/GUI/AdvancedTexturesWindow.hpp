@@ -17,11 +17,15 @@ class AdvancedTexturesWindow final : public IWindowModule
 
 public:
     explicit AdvancedTexturesWindow(QWidget *parent = nullptr);
-    void connectAll(PatternSettings &patternSets, GeneralSettings &generalSets) override;
 
     QString name() override;
 
 private:
     std::unique_ptr<Ui::AdvancedTexturesWindow> ui_;
+
+    void init(PatternSettings &pSets, GeneralSettings &gSets) override;
+    void connectAll(PatternSettings &patternSets, GeneralSettings &generalSets) override;
+
+    bool isSupportedGame(Games game) override;
 };
 } // namespace CAO

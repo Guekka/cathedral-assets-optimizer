@@ -18,11 +18,14 @@ public:
     explicit AdvancedMeshesModule(QWidget *parent = nullptr);
     ~AdvancedMeshesModule();
 
-    void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
-
     QString name() override;
 
 private:
     std::unique_ptr<Ui::AdvancedMeshesModule> ui_;
+
+    void init(PatternSettings &pSets, GeneralSettings &gSets) override;
+
+    void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
+    bool isSupportedGame(Games game) override;
 };
 } // namespace CAO

@@ -19,23 +19,18 @@ AdvancedMeshesModule::AdvancedMeshesModule(QWidget *parent)
 
 AdvancedMeshesModule::~AdvancedMeshesModule() = default;
 
-void AdvancedMeshesModule::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
+void AdvancedMeshesModule::init(PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets)
 {
-    //Only LE and SSE are supported
-    switch (gSets.eGame())
-    {
-        case SkyrimLE:
-        case SkyrimSE: setEnabled(true); break;
-        default: setEnabled(false); return;
-    }
-
     connectGroupBox(ui_->mainGroupBox,
                     ui_->necessaryOptimizationRadioButton,
                     ui_->mediumOptimizationRadioButton,
                     ui_->fullOptimizationRadioButton);
 
     ui_->mainGroupBox->setChecked(pSets.iMeshesOptimizationLevel() == 0);
+}
 
+void AdvancedMeshesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets)
+{
     connect(ui_->mainGroupBox, &QGroupBox::toggled, &pSets.iMeshesOptimizationLevel, [&pSets](bool state) {
         if (state)
             pSets.iMeshesOptimizationLevel = 0;
@@ -74,8 +69,20 @@ void AdvancedMeshesModule::connectAll(PatternSettings &pSets, GeneralSettings &g
     connectWrapper(*ui_->ignoreHeadpartsCheckBox, pSets.bMeshesIgnoreHeadparts);
 }
 
+bool AdvancedMeshesModule::isSupportedGame(Games game)
+{
+    //Only LE and SSE are supported
+    switch (game)
+    {
+        case SkyrimLE:
+        case SkyrimSE: return true;
+        default: return false;
+    }
+}
+
 QString AdvancedMeshesModule::name()
 {
     return tr("Meshes (Patterns)");
 }
+
 } // namespace CAO

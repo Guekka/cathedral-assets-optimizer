@@ -16,11 +16,22 @@ IntermediateModeModule::IntermediateModeModule(QWidget *parent)
     ui_->setupUi(this);
 }
 
-void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
+void IntermediateModeModule::init(PatternSettings &pSets, GeneralSettings &gSets)
 {
     ui_->BSAExtract->setChecked(!gSets.bBSACreate());
     ui_->BSACreate->setChecked(gSets.bBSACreate());
     ui_->BSAProcessContent->setChecked(gSets.bBSAProcessContent());
+
+    pSets.bTexturesNecessary      = true;
+    pSets.bTexturesLandscapeAlpha = true;
+
+    setData(*ui_->TexturesResizingMode, "Disabled", TextureResizingMode::None);
+    setData(*ui_->TexturesResizingMode, "By ratio", TextureResizingMode::ByRatio);
+    setData(*ui_->TexturesResizingMode, "By fixed size", TextureResizingMode::BySize);
+}
+
+void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
+{
 
     connect(ui_->BSACreate, &QCheckBox::toggled, this, [this, &gSets](bool checked) {
         if (!checked)
@@ -61,15 +72,9 @@ void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings 
         ui_->BSAProcessContent->setChecked(true);
     });
 
-    pSets.bTexturesNecessary      = true;
-    pSets.bTexturesLandscapeAlpha = true;
 
     connectWrapper(*ui_->TexturesCompress, pSets.bTexturesCompress);
     connectWrapper(*ui_->TexturesMipmaps, pSets.bTexturesMipmaps);
-
-    setData(*ui_->TexturesResizingMode, "Disabled", TextureResizingMode::None);
-    setData(*ui_->TexturesResizingMode, "By ratio", TextureResizingMode::ByRatio);
-    setData(*ui_->TexturesResizingMode, "By fixed size", TextureResizingMode::BySize);
 
     connect(ui_->TexturesResizingMode,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -86,6 +91,11 @@ void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings 
 
     connectWrapper(*ui_->TexturesResizingMinimumWidth, pSets.iTexturesMinimumWidth);
     connectWrapper(*ui_->TexturesResizingMinimumHeight, pSets.iTexturesMinimumHeight);
+}
+
+bool IntermediateModeModule::isSupportedGame([[maybe_unused]] Games game)
+{
+    return true;
 }
 
 QString IntermediateModeModule::name()
