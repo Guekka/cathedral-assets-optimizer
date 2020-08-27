@@ -74,9 +74,13 @@ bool AdvancedMeshesModule::isSupportedGame(Games game)
     //Only LE and SSE are supported
     switch (game)
     {
-        case SkyrimLE:
-        case SkyrimSE: return true;
-        default: return false;
+        case Games::Morrowind:
+        case Games::Oblivion: return false;
+        case Games::SkyrimLE:
+        case Games::SkyrimSE: return true;
+        case Games::Fallout3:
+        case Games::FalloutNewVegas:
+        case Games::Fallout4: return false;
     }
 }
 

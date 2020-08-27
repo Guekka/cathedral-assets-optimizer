@@ -75,9 +75,18 @@ void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings 
     connectWrapper(*ui_->TexturesResizingMinimumHeight, pSets.iTexturesMinimumHeight);
 }
 
-bool IntermediateModeModule::isSupportedGame([[maybe_unused]] Games game)
+bool IntermediateModeModule::isSupportedGame(Games game)
 {
-    return true;
+    switch (game)
+    {
+        case Games::Morrowind:
+        case Games::Oblivion:
+        case Games::SkyrimLE:
+        case Games::SkyrimSE:
+        case Games::Fallout3:
+        case Games::FalloutNewVegas:
+        case Games::Fallout4: return true;
+    }
 }
 
 QString IntermediateModeModule::name()

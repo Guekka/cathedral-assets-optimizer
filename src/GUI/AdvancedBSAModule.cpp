@@ -58,9 +58,18 @@ void AdvancedBSAModule::connectAll([[maybe_unused]] PatternSettings &pSets, Gene
     connectWrapper(*ui_->maxTexturesSize, gSets.iBSATexturesMaxSize);
 }
 
-bool AdvancedBSAModule::isSupportedGame([[maybe_unused]] Games game)
+bool AdvancedBSAModule::isSupportedGame(Games game)
 {
-    return true;
+    switch (game)
+    {
+        case Games::Morrowind:
+        case Games::Oblivion:
+        case Games::SkyrimLE:
+        case Games::SkyrimSE:
+        case Games::Fallout3:
+        case Games::FalloutNewVegas:
+        case Games::Fallout4: return true;
+    }
 }
 
 AdvancedBSAModule::~AdvancedBSAModule() = default;

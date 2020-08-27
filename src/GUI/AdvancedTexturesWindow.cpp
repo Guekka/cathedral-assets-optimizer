@@ -67,9 +67,18 @@ QString AdvancedTexturesWindow::name()
     return tr("Textures (Patterns)");
 }
 
-bool AdvancedTexturesWindow::isSupportedGame([[maybe_unused]] Games game)
+bool AdvancedTexturesWindow::isSupportedGame(Games game)
 {
-    return true;
+    switch (game)
+    {
+        case Games::Morrowind:
+        case Games::Oblivion:
+        case Games::SkyrimLE:
+        case Games::SkyrimSE:
+        case Games::Fallout3:
+        case Games::FalloutNewVegas:
+        case Games::Fallout4: return true;
+    }
 }
 
 } // namespace CAO
