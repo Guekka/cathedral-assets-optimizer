@@ -136,13 +136,17 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.ui
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.ui
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.ui
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.hpp
