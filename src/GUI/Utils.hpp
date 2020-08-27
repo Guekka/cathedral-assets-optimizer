@@ -64,6 +64,16 @@ auto connectWrapper(QSpinBox &uiEl, Wrapper &wrapper, ValueType fallback = Value
 }
 
 template<typename Wrapper, typename ValueType = typename Wrapper::Type>
+auto connectWrapper(QDoubleSpinBox &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
+{
+    return connectWrapper(uiEl,
+                          wrapper,
+                          QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+                          &QDoubleSpinBox::setValue,
+                          fallback);
+}
+
+template<typename Wrapper, typename ValueType = typename Wrapper::Type>
 auto connectWrapper(QLineEdit &uiEl, Wrapper &wrapper, ValueType fallback = ValueType{})
 {
     return connectWrapper(uiEl, wrapper, &QLineEdit::textChanged, &QLineEdit::setText, fallback);
