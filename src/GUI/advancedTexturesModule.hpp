@@ -7,21 +7,21 @@
 #include "GUI/IWindowModule.hpp"
 
 namespace Ui {
-class AdvancedTexturesWindow;
+class AdvancedTexturesModule;
 }
 
 namespace CAO {
-class AdvancedTexturesWindow final : public IWindowModule
+class AdvancedTexturesModule final : public IWindowModule
 {
     Q_OBJECT
 
 public:
-    explicit AdvancedTexturesWindow(QWidget *parent = nullptr);
+    explicit AdvancedTexturesModule(QWidget *parent = nullptr);
 
     QString name() override;
 
 private:
-    std::unique_ptr<Ui::AdvancedTexturesWindow> ui_;
+    std::unique_ptr<Ui::AdvancedTexturesModule> ui_;
 
     void init(PatternSettings &pSets, GeneralSettings &gSets) override;
     void connectAll(PatternSettings &patternSets, GeneralSettings &generalSets) override;

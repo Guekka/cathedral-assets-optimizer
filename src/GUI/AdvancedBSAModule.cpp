@@ -17,6 +17,8 @@ AdvancedBSAModule::AdvancedBSAModule(QWidget *parent)
     ui_->setupUi(this);
 }
 
+AdvancedBSAModule::~AdvancedBSAModule() = default;
+
 void AdvancedBSAModule::init([[maybe_unused]] PatternSettings &pSets, GeneralSettings &gSets)
 {
     ui_->BSAExtract->setChecked(!gSets.bBSACreate());
@@ -72,6 +74,9 @@ bool AdvancedBSAModule::isSupportedGame(Games game)
     }
 }
 
-AdvancedBSAModule::~AdvancedBSAModule() = default;
+QString AdvancedBSAModule::name()
+{
+    return tr("BSA (General)");
+}
 
 } // namespace CAO

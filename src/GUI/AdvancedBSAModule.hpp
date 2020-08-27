@@ -18,6 +18,8 @@ public:
     explicit AdvancedBSAModule(QWidget *parent = nullptr);
     ~AdvancedBSAModule();
 
+    QString name() override;
+
 private:
     std::unique_ptr<Ui::AdvancedBSAModule> ui_;
 

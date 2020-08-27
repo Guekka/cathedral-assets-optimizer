@@ -144,9 +144,9 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.ui
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesWindow.ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.ui
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.hpp

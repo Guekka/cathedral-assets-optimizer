@@ -3,28 +3,28 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "AdvancedTexturesWindow.hpp"
+#include "AdvancedTexturesModule.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
-#include "ui_AdvancedTexturesWindow.h"
+#include "ui_AdvancedTexturesModule.h"
 
 namespace CAO {
-AdvancedTexturesWindow::AdvancedTexturesWindow(QWidget *parent)
+AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
     : IWindowModule(parent)
-    , ui_(std::make_unique<Ui::AdvancedTexturesWindow>())
+    , ui_(std::make_unique<Ui::AdvancedTexturesModule>())
 {
     ui_->setupUi(this);
 }
 
-void AdvancedTexturesWindow::init([[maybe_unused]] PatternSettings &pSets,
+void AdvancedTexturesModule::init([[maybe_unused]] PatternSettings &pSets,
                                   [[maybe_unused]] GeneralSettings &gSets)
 {
     setData(*ui_->resizingMode, "By ratio", TextureResizingMode::ByRatio);
     setData(*ui_->resizingMode, "By fixed size", TextureResizingMode::BySize);
 }
 
-void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets,
+void AdvancedTexturesModule::connectAll(PatternSettings &patternSets,
                                         [[maybe_unused]] GeneralSettings &generalSets)
 {
     //Base
@@ -62,12 +62,12 @@ void AdvancedTexturesWindow::connectAll(PatternSettings &patternSets,
                     ui_->resizingHeight);
 }
 
-QString AdvancedTexturesWindow::name()
+QString AdvancedTexturesModule::name()
 {
     return tr("Textures (Patterns)");
 }
 
-bool AdvancedTexturesWindow::isSupportedGame(Games game)
+bool AdvancedTexturesModule::isSupportedGame(Games game)
 {
     switch (game)
     {
@@ -79,6 +79,7 @@ bool AdvancedTexturesWindow::isSupportedGame(Games game)
         case Games::FalloutNewVegas:
         case Games::Fallout4: return true;
     }
+    return false;
 }
 
 } // namespace CAO
