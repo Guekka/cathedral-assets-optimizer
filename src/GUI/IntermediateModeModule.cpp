@@ -32,46 +32,28 @@ void IntermediateModeModule::init(PatternSettings &pSets, GeneralSettings &gSets
 
 void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings &gSets)
 {
+    auto *bsaButtonGroup = new QButtonGroup(this);
+    bsaButtonGroup->addButton(ui_->BSACreate);
+    bsaButtonGroup->addButton(ui_->BSAExtract);
+    bsaButtonGroup->addButton(ui_->BSAProcessContent);
 
-    connect(ui_->BSACreate, &QCheckBox::toggled, this, [this, &gSets](bool checked) {
-        if (!checked)
-            return;
+    connect(bsaButtonGroup,
+            QOverload<QAbstractButton *>::of(&QButtonGroup::buttonPressed),
+            this,
+            [this, &gSets](QAbstractButton *button) {
+                gSets.bBSACreate         = false;
+                gSets.bBSAExtract        = false;
+                gSets.bBSAProcessContent = false;
 
-        gSets.bBSACreate         = true;
-        gSets.bBSAExtract = false;
-        gSets.bBSAProcessContent = false;
-
-        ui_->BSACreate->setChecked(true);
-        ui_->BSAExtract->setChecked(false);
-        ui_->BSAProcessContent->setChecked(false);
-    });
-
-    connect(ui_->BSAExtract, &QCheckBox::toggled, this, [this, &gSets](bool checked) {
-        if (!checked)
-            return;
-
-        gSets.bBSACreate         = false;
-        gSets.bBSAExtract = true;
-        gSets.bBSAProcessContent = false;
-
-        ui_->BSACreate->setChecked(false);
-        ui_->BSAExtract->setChecked(true);
-        ui_->BSAProcessContent->setChecked(false);
-    });
-
-    connect(ui_->BSAProcessContent, &QCheckBox::toggled, this, [this, &gSets](bool checked) {
-        if (!checked)
-            return;
-
-        gSets.bBSACreate         = false;
-        gSets.bBSAExtract = false;
-        gSets.bBSAProcessContent = true;
-
-        ui_->BSACreate->setChecked(false);
-        ui_->BSAExtract->setChecked(false);
-        ui_->BSAProcessContent->setChecked(true);
-    });
-
+                if (button == ui_->BSACreate)
+                    gSets.bBSACreate = true;
+                else if (button == ui_->BSAExtract)
+                    gSets.bBSAExtract = true;
+                else if (button == ui_->BSAProcessContent)
+                    gSets.bBSAProcessContent = true;
+                else
+                    throw UiException("Unknown BSA button pressed");
+            });
 
     connectWrapper(*ui_->TexturesCompress, pSets.bTexturesCompress);
     connectWrapper(*ui_->TexturesMipmaps, pSets.bTexturesMipmaps);

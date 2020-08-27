@@ -11,6 +11,7 @@
 /*---CORE---------------*/
 #include <QAction>
 #include <QApplication>
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCommandLineParser>
