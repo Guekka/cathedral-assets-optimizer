@@ -41,7 +41,7 @@ CommandResult BSAExtract::process(File& file) const
 
 bool BSAExtract::isApplicable(File& file) const
 {
-    if (!currentProfile().getGeneralSettings().bBSAExtractFromBSA())
+    if (!currentProfile().getGeneralSettings().bBSAExtract())
         return false;
 
     auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());

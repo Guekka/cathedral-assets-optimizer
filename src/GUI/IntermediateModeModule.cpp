@@ -27,7 +27,7 @@ void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings 
             return;
 
         gSets.bBSACreate         = true;
-        gSets.bBSAExtractFromBSA = false;
+        gSets.bBSAExtract = false;
         gSets.bBSAProcessContent = false;
 
         ui_->BSACreate->setChecked(true);
@@ -40,7 +40,7 @@ void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings 
             return;
 
         gSets.bBSACreate         = false;
-        gSets.bBSAExtractFromBSA = true;
+        gSets.bBSAExtract = true;
         gSets.bBSAProcessContent = false;
 
         ui_->BSACreate->setChecked(false);
@@ -53,7 +53,7 @@ void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings 
             return;
 
         gSets.bBSACreate         = false;
-        gSets.bBSAExtractFromBSA = false;
+        gSets.bBSAExtract = false;
         gSets.bBSAProcessContent = true;
 
         ui_->BSACreate->setChecked(false);

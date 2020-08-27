@@ -10,7 +10,6 @@
 
 namespace CAO {
 
-//Note: this macro is not the same as the one standard Settings use, as types are always optional
 #define REGISTER_SETTING(type, name) \
 private:                             \
     type name##_ = type{};           \

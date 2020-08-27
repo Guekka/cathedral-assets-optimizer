@@ -40,7 +40,7 @@ private:
 
 public:
     REGISTER_SETTING(bool, bBSACreate, "/BSA/bBSACreate")
-    REGISTER_SETTING(bool, bBSAExtractFromBSA, "/BSA/bBSAExtractFromBSA")
+    REGISTER_SETTING(bool, bBSAExtract, "/BSA/bBSAExtract")
     REGISTER_SETTING(bool, bBSACreateDummies, "/BSA/bBSACreateDummies")
     REGISTER_SETTING(bool, bBSACompressArchive, "/BSA/bBSACompressArchive")
     REGISTER_SETTING(bool, bBSAProcessContent, "/BSA/bBSAProcessContent")
