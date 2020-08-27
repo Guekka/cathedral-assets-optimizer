@@ -41,9 +41,11 @@ private:
 public:
     REGISTER_SETTING(bool, bBSACreate, "/BSA/bBSACreate")
     REGISTER_SETTING(bool, bBSAExtract, "/BSA/bBSAExtract")
+    REGISTER_SETTING(bool, bBSAProcessContent, "/BSA/bBSAProcessContent")
+
     REGISTER_SETTING(bool, bBSACreateDummies, "/BSA/bBSACreateDummies")
     REGISTER_SETTING(bool, bBSACompressArchive, "/BSA/bBSACompressArchive")
-    REGISTER_SETTING(bool, bBSAProcessContent, "/BSA/bBSAProcessContent")
+    REGISTER_SETTING(bool, bBSACompact, "/BSA/bBSACompact")
 
     REGISTER_SETTING(double, iBSAMaxSize, "/Advanced/BSA/iBSAMaxSize")
     REGISTER_SETTING(bool, bBSATexturesEnabled, "/Advanced/BSA/bBSATexturesEnabled")
@@ -60,8 +62,6 @@ public:
     REGISTER_SETTING(QString, sInputPath, "/General/sInputPath")
     REGISTER_SETTING(QString, sOutputPath, "/General/sOutputPath")
 
-    REGISTER_SETTING(bool, bBSACompact, "/BSA/bBSACompact")
-    REGISTER_SETTING(bool, bBSADeleteBackup, "/BSA/bBSADeleteBackup")
 };
 } // namespace CAO
 

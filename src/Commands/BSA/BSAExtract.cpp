@@ -13,9 +13,7 @@ CommandResult BSAExtract::process(File& file) const
     if (!bsafile)
         return _resultFactory.getCannotCastFileResult();
 
-    auto bsaPath = file.getInputFilePath();
-    if (!currentProfile().getGeneralSettings().bBSADeleteBackup())
-        bsaPath = Filesystem::backupFile(bsaPath);
+    const auto bsaPath = file.getInputFilePath();
 
     libbsarch::fs::path rootPath = QFileInfo(bsaPath).path().toStdString();
 
@@ -32,9 +30,11 @@ CommandResult BSAExtract::process(File& file) const
     }
     bsafile->bsa.close();
 
-    if (!QFile::remove(file.getInputFilePath())) //We want to remove the original file, not the backup file
+    if (!currentProfile().getGeneralSettings().bEnableOutputPath() && !QFile::remove(bsaPath))
+    {
         return _resultFactory.getFailedResult(-2,
                                               "BSA Extract succeeded but failed to delete the extracted BSA");
+    }
 
     return _resultFactory.getSuccessfulResult();
 }
