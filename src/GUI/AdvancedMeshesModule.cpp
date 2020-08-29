@@ -26,45 +26,32 @@ void AdvancedMeshesModule::init(PatternSettings &pSets, [[maybe_unused]] General
                     ui_->mediumOptimizationRadioButton,
                     ui_->fullOptimizationRadioButton);
 
-    ui_->mainGroupBox->setChecked(pSets.iMeshesOptimizationLevel() == 0);
+    ui_->mainGroupBox->setChecked(pSets.iMeshesOptimizationLevel() != 0);
 }
 
 void AdvancedMeshesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets)
 {
-    connect(ui_->mainGroupBox, &QGroupBox::toggled, &pSets.iMeshesOptimizationLevel, [&pSets](bool state) {
-        if (state)
-            pSets.iMeshesOptimizationLevel = 0;
-    });
+    auto *buttonGroup = new QButtonGroup(this);
+    buttonGroup->addButton(ui_->necessaryOptimizationRadioButton, 1);
+    buttonGroup->addButton(ui_->mediumOptimizationRadioButton, 2);
+    buttonGroup->addButton(ui_->fullOptimizationRadioButton, 3);
 
-    ui_->necessaryOptimizationRadioButton->setChecked(pSets.iMeshesOptimizationLevel() == 1);
-
-    connect(ui_->necessaryOptimizationRadioButton,
-            &QRadioButton::toggled,
+    connect(ui_->mainGroupBox,
+            &QGroupBox::toggled,
             &pSets.iMeshesOptimizationLevel,
-            [&pSets](bool state) {
-                if (state)
-                    pSets.iMeshesOptimizationLevel = 1;
+            [&pSets, buttonGroup](bool state) {
+                pSets.iMeshesOptimizationLevel = state ? buttonGroup->checkedId() : 0;
             });
 
-    ui_->mediumOptimizationRadioButton->setChecked(pSets.iMeshesOptimizationLevel() == 2);
-
-    connect(ui_->mediumOptimizationRadioButton,
-            &QRadioButton::toggled,
-            &pSets.iMeshesOptimizationLevel,
-            [&pSets](bool state) {
-                if (state)
-                    pSets.iMeshesOptimizationLevel = 2;
+    connect(buttonGroup,
+            QOverload<QAbstractButton *>::of(&QButtonGroup::buttonPressed),
+            this,
+            [&pSets, buttonGroup](QAbstractButton *button) {
+                pSets.iMeshesOptimizationLevel = buttonGroup->id(button);
             });
 
-    ui_->fullOptimizationRadioButton->setChecked(pSets.iMeshesOptimizationLevel() == 2);
-
-    connect(ui_->fullOptimizationRadioButton,
-            &QRadioButton::toggled,
-            &pSets.iMeshesOptimizationLevel,
-            [&pSets](bool state) {
-                if (state)
-                    pSets.iMeshesOptimizationLevel = 3;
-            });
+    if (pSets.iMeshesOptimizationLevel() != 0)
+        buttonGroup->button(pSets.iMeshesOptimizationLevel())->setChecked(true);
 
     connectWrapper(*ui_->ignoreHeadpartsCheckBox, pSets.bMeshesIgnoreHeadparts);
 }
