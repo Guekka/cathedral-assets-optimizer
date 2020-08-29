@@ -87,6 +87,7 @@ bool IntermediateModeModule::isSupportedGame(Games game)
         case Games::FalloutNewVegas:
         case Games::Fallout4: return true;
     }
+    return false;
 }
 
 QString IntermediateModeModule::name()

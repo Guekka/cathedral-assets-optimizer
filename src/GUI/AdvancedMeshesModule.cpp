@@ -82,6 +82,7 @@ bool AdvancedMeshesModule::isSupportedGame(Games game)
         case Games::FalloutNewVegas:
         case Games::Fallout4: return false;
     }
+    return false;
 }
 
 QString AdvancedMeshesModule::name()
