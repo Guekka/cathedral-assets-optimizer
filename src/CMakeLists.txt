@@ -112,10 +112,6 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Utils/QJSONValueWrapper.hpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/BSAFilesToPack.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.ui
