@@ -11,6 +11,8 @@ class AdvancedTexturesModule;
 }
 
 namespace CAO {
+class ListDialog;
+
 class AdvancedTexturesModule final : public IWindowModule
 {
     Q_OBJECT
@@ -22,10 +24,14 @@ public:
 
 private:
     std::unique_ptr<Ui::AdvancedTexturesModule> ui_;
+    std::unique_ptr<ListDialog> textureFormatDialog_;
 
+    //IWindowModule
     void init(PatternSettings &pSets, GeneralSettings &gSets) override;
     void connectAll(PatternSettings &patternSets, GeneralSettings &generalSets) override;
 
     bool isSupportedGame(Games game) override;
+
+    void disconnectAll() override;
 };
 } // namespace CAO

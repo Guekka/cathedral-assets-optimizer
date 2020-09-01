@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>515</width>
-    <height>551</height>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -273,12 +273,50 @@
      <property name="title">
       <string>Advanced</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="1" colspan="2">
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_14">
+        <property name="cursor">
+         <cursorShape>WhatsThisCursor</cursorShape>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Force convert</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="forceConversion">
+        <property name="text">
+         <string>Enable forced conversion</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="cursor">
+         <cursorShape>WhatsThisCursor</cursorShape>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Output format</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
        <widget class="QComboBox" name="outputFormat">
         <item>
          <property name="text">
           <string>BC7 (BC7_UNORM)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>BC5 (BC5_UNORM)</string>
          </property>
         </item>
         <item>
@@ -298,36 +336,6 @@
         </item>
        </widget>
       </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QCheckBox" name="tgaConversion">
-        <property name="text">
-         <string>Enable forced conversion</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_12">
-        <property name="cursor">
-         <cursorShape>WhatsThisCursor</cursorShape>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Output format</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" rowspan="2">
-       <widget class="QListWidget" name="texturesUnwantedFormatsList"/>
-      </item>
-      <item row="2" column="2">
-       <widget class="QPushButton" name="texturesUnwantedFormatsEdit">
-        <property name="text">
-         <string>Edit</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_19">
         <property name="cursor">
@@ -341,16 +349,16 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_14">
-        <property name="cursor">
-         <cursorShape>WhatsThisCursor</cursorShape>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="texturesUnwantedFormatsEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
-         <string>Force convert</string>
+         <string>Edit</string>
         </property>
        </widget>
       </item>

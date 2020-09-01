@@ -2,41 +2,49 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "ListDialog.hpp"
 #include "ui_ListDialog.h"
 
 namespace CAO {
-ListDialog::ListDialog(QWidget *parent)
+ListDialog::ListDialog(bool sortByText, QWidget *parent)
     : QDialog(parent)
-    , _ui(new Ui::ListDialog)
+    , ui_(new Ui::ListDialog)
 {
-    _ui->setupUi(this);
-    connect(_ui->lineEdit, &QLineEdit::textEdited, this, &ListDialog::search);
-    connect(_ui->addItemButton, &QPushButton::clicked, this, [this] { this->addItem(); });
-    connect(_ui->closeButton, &QPushButton::clicked, this, [this] {
-        emit accepted();
-        close();
+    ui_->setupUi(this);
+    connect(ui_->lineEdit, &QLineEdit::textEdited, this, &ListDialog::filterView);
+    connect(ui_->addItemButton, &QPushButton::clicked, this, [this] { this->addUserItem(); });
+    connect(ui_->closeButton, &QPushButton::clicked, this, &QDialog::accept);
+
+    //Always keeping checked items at the top
+    connect(ui_->listWidget, &QListWidget::itemActivated, this, [this](auto *item) {
+        if (item->checkState() != Qt::Checked)
+            return;
+
+        auto *extractedItem = ui_->listWidget->takeItem(ui_->listWidget->row(item));
+        ui_->listWidget->insertItem(findInsertPos(extractedItem), extractedItem);
     });
 }
 
-ListDialog::~ListDialog()
-{
-    delete _ui;
-}
+ListDialog::~ListDialog() = default;
 
-void ListDialog::setUserAddItemAllowed(bool allowed)
+void ListDialog::setUserAddItemVisible(bool visible)
 {
-    _ui->addItemButton->setEnabled(allowed);
+    ui_->addItemButton->setVisible(visible);
 }
 
 void ListDialog::addItem(QListWidgetItem *item)
 {
-    item->setCheckState(Qt::Unchecked);
-    _ui->listWidget->addItem(item);
-    _ui->listWidget->sortItems();
+    item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+
+    //Weird workaround to display the checkbox. It isn't displayed otherwise
+    if (item->checkState() != Qt::Checked)
+        item->setCheckState(Qt::Unchecked);
+
+    ui_->listWidget->insertItem(findInsertPos(item), item);
 }
 
-void ListDialog::addItem()
+void ListDialog::addUserItem()
 {
     bool ok = false;
     const QString &text = QInputDialog::getText(this, tr("New item"), tr("Name:"), QLineEdit::Normal, "", &ok);
@@ -45,46 +53,81 @@ void ListDialog::addItem()
 
     auto item = new QListWidgetItem(text);
     item->setCheckState(Qt::Checked);
-    _ui->listWidget->addItem(item);
+    ui_->listWidget->addItem(item);
 }
 
-void ListDialog::search(const QString &text)
+void ListDialog::filterView(const QString &text)
 {
-    for (int i = 0; i < _ui->listWidget->count(); ++i)
-        _ui->listWidget->item(i)->setHidden(true);
+    for (int i = 0; i < ui_->listWidget->count(); ++i)
+        ui_->listWidget->item(i)->setHidden(true);
 
-    QList<QListWidgetItem *> matches(_ui->listWidget->findItems(text, Qt::MatchFlag::MatchContains));
+    const auto matches(ui_->listWidget->findItems(text, Qt::MatchFlag::MatchContains));
     for (QListWidgetItem *item : matches)
         item->setHidden(false);
 }
 
-QVector<QListWidgetItem *> ListDialog::getChoices()
+int ListDialog::findInsertPos(const QListWidgetItem *item)
 {
-    QVector<QListWidgetItem *> items;
-    for (int i = 0; i < _ui->listWidget->count(); ++i)
+    auto *list = ui_->listWidget;
+
+    for (int i = 0, count = list->count(); i < count; ++i)
     {
-        auto item = new QListWidgetItem(*_ui->listWidget->item(i));
+        auto *other = list->item(i);
+        if (other->checkState() != item->checkState())
+            continue;
+
+        if (!sortByText_)
+            return i;
+
+        if (item > other)
+            return i;
+    }
+
+    return 0;
+}
+
+std::vector<const QListWidgetItem *> ListDialog::getChoices()
+{
+    std::vector<const QListWidgetItem *> items;
+
+    for (int i = 0; i < ui_->listWidget->count(); ++i)
+    {
+        auto *item = ui_->listWidget->item(i);
         if (item->checkState() == Qt::Checked)
-            items << item;
+            items.emplace_back(item);
     }
     return items;
 }
 
-void ListDialog::setCheckedItems(const QStringList &textList)
+std::vector<QListWidgetItem *> ListDialog::items()
 {
-    for (const QString &string : textList)
-        setCheckedItems(string);
+    std::vector<QListWidgetItem *> result;
+    result.reserve(ui_->listWidget->count());
+
+    for (int i = 0; i < ui_->listWidget->count(); ++i)
+        result.emplace_back(ui_->listWidget->item(i));
+
+    return result;
 }
 
-void ListDialog::setCheckedItems(const QString &text)
+void ListDialog::setCheckedItems(const QStringList &textList, bool addMissingItems)
 {
-    const auto &list = _ui->listWidget->findItems(text, Qt::MatchExactly);
-    list | rx::for_each([](auto &&item) { item->setCheckState(Qt::Checked); });
-    if (list.isEmpty())
+    for (const QString &string : textList)
+        setCheckedItems(string, addMissingItems);
+}
+
+void ListDialog::setCheckedItems(const QString &text, bool addMissingItems)
+{
+    const auto &list = ui_->listWidget->findItems(text, Qt::MatchExactly);
+
+    for (auto &item : list)
+        item->setCheckState(Qt::Checked);
+
+    if (list.isEmpty() && addMissingItems)
     {
         auto newItem = new QListWidgetItem();
         newItem->setCheckState(Qt::Checked);
-        _ui->listWidget->addItem(text);
+        ui_->listWidget->addItem(text);
     }
 }
 

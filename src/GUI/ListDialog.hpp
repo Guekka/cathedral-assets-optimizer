@@ -1,3 +1,4 @@
+
 /* Copyright (C) 2019 G'k
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,18 +15,28 @@ namespace CAO {
 class ListDialog : public QDialog
 {
 public:
-    explicit ListDialog(QWidget *parent = nullptr);
+    static constexpr bool sortByText     = true;
+    static constexpr bool dontSortByText = false;
+
+    explicit ListDialog(bool sortByText, QWidget *parent = nullptr);
     ~ListDialog();
 
     void addItem(QListWidgetItem *item);
-    void setUserAddItemAllowed(bool allowed);
-    void search(const QString &text);
-    QVector<QListWidgetItem *> getChoices();
-    void setCheckedItems(const QString &text);
-    void setCheckedItems(const QStringList &textList);
 
-protected:
-    void addItem();
-    Ui::ListDialog *_ui;
+    std::vector<const QListWidgetItem *> getChoices();
+    std::vector<QListWidgetItem *> items();
+
+    void setUserAddItemVisible(bool visible);
+
+    void setCheckedItems(const QString &text, bool addMissingItems = true);
+    void setCheckedItems(const QStringList &textList, bool addMissingItems = true);
+
+private:
+    void addUserItem();
+    void filterView(const QString &text);
+    int findInsertPos(const QListWidgetItem *item);
+
+    std::unique_ptr<Ui::ListDialog> ui_;
+    bool sortByText_ = false;
 };
 } // namespace CAO
