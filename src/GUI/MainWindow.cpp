@@ -18,6 +18,9 @@ MainWindow::MainWindow()
     ui_->setupUi(this);
     setAcceptDrops(true);
 
+    //Init UI view
+    ui_->tabWidget->setHidden(true);
+
     //Setting data for widgets
     setData(*ui_->modeChooserComboBox, "One mod", SingleMod);
     setData(*ui_->modeChooserComboBox, "Several mods", SeveralMods);
@@ -99,9 +102,14 @@ MainWindow::MainWindow()
 
 void MainWindow::addModule(IWindowModule *module)
 {
-    ui_->tabWidget->addTab(module, module->name());
-    ui_->tabWidget->setCurrentIndex(0);
+    auto *tabs = ui_->tabWidget;
+
+    tabs->addTab(module, module->name());
+    tabs->setCurrentIndex(0);
+
     connectModule(*module);
+
+    tabs->setHidden(false);
 }
 
 void MainWindow::clearModules()
@@ -112,6 +120,7 @@ void MainWindow::clearModules()
         tabs->widget(i)->deleteLater();
         tabs->removeTab(i);
     }
+    tabs->setHidden(true);
 }
 
 void MainWindow::setPatternsEnabled(bool state)
