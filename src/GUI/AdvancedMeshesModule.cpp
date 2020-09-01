@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "AdvancedMeshesModule.hpp"
+#include "Settings/Games.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
@@ -58,18 +59,7 @@ void AdvancedMeshesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] G
 
 bool AdvancedMeshesModule::isSupportedGame(Games game)
 {
-    //Only LE and SSE are supported
-    switch (game)
-    {
-        case Games::Morrowind:
-        case Games::Oblivion: return false;
-        case Games::SkyrimLE:
-        case Games::SkyrimSE: return true;
-        case Games::Fallout3:
-        case Games::FalloutNewVegas:
-        case Games::Fallout4: return false;
-    }
-    return false;
+    return GameSettings::get(game).cMeshesVersion().has_value();
 }
 
 QString AdvancedMeshesModule::name()

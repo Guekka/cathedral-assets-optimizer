@@ -132,6 +132,10 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.ui
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.ui
+
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.ui
