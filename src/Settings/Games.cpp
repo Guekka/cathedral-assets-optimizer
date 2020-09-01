@@ -54,7 +54,12 @@ const GameSettings &GameSettings::get(Games game)
                 sets.eBSATexturesFormat_ = std::nullopt;
                 sets.sBSATexturesSuffix_ = std::nullopt;
                 sets.cMeshesVersion_     = NiVersion::getSK();
-                sets.eAnimationsFormat_  = hkPackFormat::HKPF_WIN32;
+
+                //In theory, the following should be used
+                //sets.eAnimationsFormat_  = hkPackFormat::HKPF_WIN32;
+                //But the used Havok SDK does not support it
+
+                sets.eAnimationsFormat_ = std::nullopt;
             });
 
             return sets;
