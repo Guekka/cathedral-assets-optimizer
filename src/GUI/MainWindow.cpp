@@ -382,6 +382,7 @@ void MainWindow::firstStart()
         box.exec();
 
         getProfiles().commonSettings().bFirstStart = false;
+        getProfiles().saveCommonSettings();
     }
 }
 
