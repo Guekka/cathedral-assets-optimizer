@@ -4,6 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "LevelSelector.hpp"
+#include "GUI/AdvancedAnimationsModule.hpp"
+#include "GUI/AdvancedBSAModule.hpp"
+#include "GUI/AdvancedMeshesModule.hpp"
+#include "GUI/AdvancedTexturesModule.hpp"
 #include "GUI/IntermediateModeModule.hpp"
 #include "MainWindow.hpp"
 #include "Settings/Profiles.hpp"
@@ -90,7 +94,13 @@ void LevelSelector::setupWindow(MainWindow &mw, GuiMode level)
         }
         case GuiMode::Advanced:
         {
-            throw std::runtime_error("This level has not yet been implemented.");
+            mw.initSettings();
+            mw.addModule(new AdvancedBSAModule);
+            mw.addModule(new AdvancedMeshesModule);
+            mw.addModule(new AdvancedTexturesModule);
+            mw.addModule(new AdvancedAnimationsModule);
+            mw.setPatternsEnabled(true);
+            break;
         }
         case GuiMode::Invalid: throw std::runtime_error("This level does not exist.");
     }
@@ -117,7 +127,6 @@ QString LevelSelector::getHelpText(GuiMode level)
         case GuiMode::Advanced:
         {
             return tr("Advanced mode\n"
-                      "NOT IMPLEMENTED\n"
                       "The full CAO experience. With profiles and patterns, you can fully customize "
                       "how CAO will optimize your files.");
         }
