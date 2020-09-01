@@ -21,7 +21,7 @@ BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
         case StandardBsa:
         {
             bsa.type    = BSAType::StandardBsa;
-            bsa.maxSize = settings.iBSAMaxSize();
+            bsa.maxSize = settings.iBSAMaxSize() * GigaByte;
             bsa.format  = games.eBSAFormat();
             break;
         }
@@ -33,14 +33,14 @@ BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
                                          + std::to_string(static_cast<int>(settings.eGame())));
 
             bsa.type    = BSAType::TexturesBsa;
-            bsa.maxSize = settings.iBSATexturesMaxSize();
+            bsa.maxSize = settings.iBSATexturesMaxSize() * GigaByte;
             bsa.format  = textFormat.value();
             break;
         }
         case UncompressableBsa:
         {
             bsa.type    = BSAType::UncompressableBsa;
-            bsa.maxSize = settings.iBSAMaxSize();
+            bsa.maxSize = settings.iBSAMaxSize() * GigaByte;
             bsa.format  = games.eBSAFormat();
             break;
         }
