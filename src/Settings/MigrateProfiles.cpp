@@ -83,7 +83,7 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     patterns.addPattern(pSetsLodgen);
 }
 
-void convertFiles5To6(const QDir &oldProfile, const QDir &newProfile, Profile &outProfile)
+void convertFiles5To6(const QDir &oldProfile, Profile &outProfile)
 {
     auto readFile = [](const QString &path) {
         QFile file(path);
@@ -112,9 +112,6 @@ void convertFiles5To6(const QDir &oldProfile, const QDir &newProfile, Profile &o
 
         else if (filename == "isBase")
             outProfile.getGeneralSettings().isBaseProfile = true;
-
-        else if (filename == "DummyPlugin.esp")
-            QFile::copy(it.filePath(), newProfile.absoluteFilePath(filename));
     }
 }
 
@@ -176,7 +173,7 @@ QStringList migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRo
             profiles.create(profileName);
             auto &profile = profiles.get(profileName);
             migrate5To6(oldDir, profile);
-            convertFiles5To6(oldDir, newDir, profile);
+            convertFiles5To6(oldDir, profile);
             addDefaultValues5To6(profile);
             profile.saveToJSON();
 

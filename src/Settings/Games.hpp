@@ -36,6 +36,8 @@ private:
     REGISTER_SETTING(QString, sBSAExtension)
     REGISTER_SETTING(QString, sBSASuffix)
 
+    REGISTER_SETTING(std::optional<std::vector<uint8_t>>, sDummyPlugin)
+
     REGISTER_SETTING(std::optional<bsa_archive_type_t>, eBSATexturesFormat)
     REGISTER_SETTING(std::optional<QString>, sBSATexturesSuffix)
 

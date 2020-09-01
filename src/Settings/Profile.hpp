@@ -20,8 +20,6 @@ public:
 
     Profile(QDir profileDir);
 
-    QFile getFile(const QString &filename) const;
-
     /* Getters */
     bool isBaseProfile() const;
     QDir profileDirectory() const;

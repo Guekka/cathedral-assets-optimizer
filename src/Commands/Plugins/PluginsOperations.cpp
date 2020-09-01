@@ -12,9 +12,12 @@
 namespace CAO {
 void PluginsOperations::makeDummyPlugins(const QString &folderPath, const GeneralSettings &settings)
 {
-    PLOG_VERBOSE << "Creating enough dummy plugins to load BSAs";
-
     const auto &game = GameSettings::get(settings.eGame());
+
+    if (!game.sDummyPlugin().has_value())
+        return;
+
+    PLOG_VERBOSE << "Creating enough dummy plugins to load BSAs";
 
     QDir dir(folderPath);
     for (const auto &bsaName : listBSAsNames(QDirIterator(folderPath, QDirIterator::Subdirectories), game))
@@ -22,7 +25,11 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Genera
         if (checkIfBsaHasPlugin(dir.absoluteFilePath(bsaName), game))
             continue;
 
-        currentProfile().getFile("DummyPlugin.esp").copy(folderPath + "/" + bsaName + ".esp");
+        const std::filesystem::path dummyPath = QString(folderPath + "/" + bsaName + ".esp").toStdString();
+        std::ofstream dummy(dummyPath, std::ios::out | std::ios::binary);
+
+        const auto dummyBytes = game.sDummyPlugin().value();
+        dummy.write(reinterpret_cast<const char *>(dummyBytes.data()), dummyBytes.size());
     }
 }
 

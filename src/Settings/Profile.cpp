@@ -27,13 +27,6 @@ Profile::Profile(QDir profileDir)
     patternSettings_.listPatterns(patternJson);
 }
 
-QFile Profile::getFile(const QString &filename) const
-{
-    if (!profileDir_.exists(filename))
-        return QFile();
-    return QFile(profileDir_.absoluteFilePath(filename));
-}
-
 bool Profile::isBaseProfile() const
 {
     return profileDir_.exists(isBaseProfileFilename);
