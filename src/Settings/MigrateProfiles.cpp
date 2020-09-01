@@ -121,25 +121,9 @@ void addDefaultValues5To6(Profile &outProfile)
 
     if (ft.slBSAStandardFiles().empty())
     {
-        ft.slBSAStandardFiles = {
-            "*.bgem",
-            "*.bgsm",
-            "*.bto",
-            "*.btr",
-            "*.btt",
-            "*.gid",
-            "*.hkx",
-            "*.lod",
-            "*.lst",
-            "*.nif",
-            "*.pex",
-            "*.png",
-            "*.psc",
-            "*.seq",
-            "*.swf",
-            "*.tri",
-            "*.txt",
-        };
+        ft.slBSAStandardFiles = {"*.bgem", "*.bgsm", "*.bto", "*.btr", "*.btt", "*.dlodsettings", "*.dtl",
+                                 "*.egm",  "*.gid",  "*.hkx", "*.lod", "*.lst", "*.nif",          "*.pex",
+                                 "*.png",  "*.psc",  "*.seq", "*.swf", "*.tri", "*.txt"};
     }
 
     if (ft.slBSATextureFiles().empty())
@@ -149,7 +133,7 @@ void addDefaultValues5To6(Profile &outProfile)
 
     if (ft.slBSAUncompressibleFiles().empty())
     {
-        ft.slBSAUncompressibleFiles = {"*.fuz", "*.lip", "*.mp3", "*.ogg", "*.wav", "*.xwm", "*.*script"};
+        ft.slBSAUncompressibleFiles = {"*.fuz", "*.lip", "*.ogg", "*.wav", "*.xwm", "*.*script"};
     }
 
     ft.slModsBlacklist.insert(std::string("*_separator"), false);
