@@ -16,17 +16,18 @@ AdvancedMeshesModule::AdvancedMeshesModule(QWidget *parent)
     , ui_(std::make_unique<Ui::AdvancedMeshesModule>())
 {
     ui_->setupUi(this);
-}
 
-AdvancedMeshesModule::~AdvancedMeshesModule() = default;
-
-void AdvancedMeshesModule::init(PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets)
-{
     connectGroupBox(ui_->mainGroupBox,
                     ui_->necessaryOptimizationRadioButton,
                     ui_->mediumOptimizationRadioButton,
                     ui_->fullOptimizationRadioButton);
+}
 
+AdvancedMeshesModule::~AdvancedMeshesModule() = default;
+
+void AdvancedMeshesModule::setUIData(const PatternSettings &pSets,
+                                     [[maybe_unused]] const GeneralSettings &gSets)
+{
     ui_->mainGroupBox->setChecked(pSets.iMeshesOptimizationLevel() != 0);
 }
 

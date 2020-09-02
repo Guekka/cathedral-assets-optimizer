@@ -24,7 +24,8 @@ public:
     virtual QString name() = 0;
 
 private:
-    virtual void init(PatternSettings &pSets, GeneralSettings &gSets);
+    virtual void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets);
+
     virtual void connectAll(PatternSettings &pSets, GeneralSettings &gSets) = 0;
 
     virtual bool isSupportedGame(Games game) = 0;

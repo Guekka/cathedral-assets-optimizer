@@ -23,7 +23,7 @@ void IWindowModule::setup(PatternSettings &pSets, GeneralSettings &gSets)
     }
     this->setEnabled(true);
 
-    init(pSets, gSets);
+    setUIData(pSets, gSets);
     connectAll(pSets, gSets);
 }
 
@@ -33,6 +33,9 @@ void IWindowModule::disconnectAll()
         obj->disconnect();
 }
 
-void IWindowModule::init([[maybe_unused]] PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets) {}
+void IWindowModule::setUIData([[maybe_unused]] const PatternSettings &pSets,
+                              [[maybe_unused]] const GeneralSettings &gSets)
+{
+}
 
 } // namespace CAO

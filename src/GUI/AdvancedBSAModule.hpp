@@ -23,7 +23,8 @@ public:
 private:
     std::unique_ptr<Ui::AdvancedBSAModule> ui_;
 
-    void init(PatternSettings &pSets, GeneralSettings &gSets) override;
+    void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets) override;
+
     void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
 
     bool isSupportedGame(Games game) override;

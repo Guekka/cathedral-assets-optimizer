@@ -15,17 +15,17 @@ AdvancedBSAModule::AdvancedBSAModule(QWidget *parent)
     , ui_(std::make_unique<Ui::AdvancedBSAModule>())
 {
     ui_->setupUi(this);
+
+    connectGroupBox(ui_->createTexturesBSAGroupBox, ui_->maxTexturesSize);
 }
 
 AdvancedBSAModule::~AdvancedBSAModule() = default;
 
-void AdvancedBSAModule::init([[maybe_unused]] PatternSettings &pSets, GeneralSettings &gSets)
+void AdvancedBSAModule::setUIData([[maybe_unused]] const PatternSettings &pSets, const GeneralSettings &gSets)
 {
     ui_->BSAExtract->setChecked(!gSets.bBSACreate());
     ui_->BSACreate->setChecked(gSets.bBSACreate());
     ui_->BSAProcessContent->setChecked(gSets.bBSAProcessContent());
-
-    connectGroupBox(ui_->createTexturesBSAGroupBox, ui_->maxTexturesSize);
 }
 
 void AdvancedBSAModule::connectAll([[maybe_unused]] PatternSettings &pSets, GeneralSettings &gSets)

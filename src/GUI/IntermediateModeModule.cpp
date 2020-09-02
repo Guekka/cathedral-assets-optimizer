@@ -14,20 +14,18 @@ IntermediateModeModule::IntermediateModeModule(QWidget *parent)
     , ui_(std::make_unique<Ui::IntermediateModeModule>())
 {
     ui_->setupUi(this);
-}
-
-void IntermediateModeModule::init(PatternSettings &pSets, GeneralSettings &gSets)
-{
-    ui_->BSAExtract->setChecked(!gSets.bBSACreate());
-    ui_->BSACreate->setChecked(gSets.bBSACreate());
-    ui_->BSAProcessContent->setChecked(gSets.bBSAProcessContent());
-
-    pSets.bTexturesNecessary      = true;
-    pSets.bTexturesLandscapeAlpha = true;
 
     setData(*ui_->TexturesResizingMode, "Disabled", TextureResizingMode::None);
     setData(*ui_->TexturesResizingMode, "By ratio", TextureResizingMode::ByRatio);
     setData(*ui_->TexturesResizingMode, "By fixed size", TextureResizingMode::BySize);
+}
+
+void IntermediateModeModule::setUIData([[maybe_unused]] const PatternSettings &pSets,
+                                       const GeneralSettings &gSets)
+{
+    ui_->BSAExtract->setChecked(!gSets.bBSACreate());
+    ui_->BSACreate->setChecked(gSets.bBSACreate());
+    ui_->BSAProcessContent->setChecked(gSets.bBSAProcessContent());
 }
 
 void IntermediateModeModule::connectAll(PatternSettings &pSets, GeneralSettings &gSets)

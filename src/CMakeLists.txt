@@ -192,7 +192,6 @@ target_compile_features(CAO_LIB PUBLIC cxx_std_20)
 #Strictly follow the standard
 if(MSVC)
     target_compile_options(CAO_LIB PRIVATE "/permissive-")
-        string(REGEX REPLACE "/W[1-3]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
 #AUTOUIC

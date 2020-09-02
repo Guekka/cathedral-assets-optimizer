@@ -17,16 +17,7 @@ AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
     , textureFormatDialog_(std::make_unique<ListDialog>(ListDialog::sortByText))
 {
     ui_->setupUi(this);
-}
 
-void AdvancedTexturesModule::disconnectAll()
-{
-    IWindowModule::disconnectAll();
-}
-
-void AdvancedTexturesModule::init([[maybe_unused]] PatternSettings &pSets,
-                                  [[maybe_unused]] GeneralSettings &gSets)
-{
     connectGroupBox(ui_->mainBox, ui_->mainNecessary, ui_->mainCompress, ui_->mainMipMaps);
 
     connectGroupBox(ui_->resizingBox,
@@ -49,18 +40,22 @@ void AdvancedTexturesModule::init([[maybe_unused]] PatternSettings &pSets,
     //Init unwanted formats
     textureFormatDialog_->setUserAddItemVisible(false);
 
-    const auto unwantedFormats = pSets.slTextureUnwantedFormats();
-
     for (const auto &value : Detail::DxgiFormats)
     {
         auto item = new QListWidgetItem(value.name);
         item->setData(Qt::UserRole, value.format);
 
-        if (contains(unwantedFormats, value.format))
-            item->setCheckState(Qt::Checked);
-
         textureFormatDialog_->addItem(item);
     }
+}
+
+void AdvancedTexturesModule::setUIData(const PatternSettings &pSets,
+                                       [[maybe_unused]] const GeneralSettings &gSets)
+{
+    const auto unwantedFormats = pSets.slTextureUnwantedFormats();
+    for (auto *item : textureFormatDialog_->items())
+        if (contains(unwantedFormats, item->data(Qt::UserRole).value<DXGI_FORMAT>()))
+            item->setCheckState(Qt::Checked);
 }
 
 void AdvancedTexturesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets)

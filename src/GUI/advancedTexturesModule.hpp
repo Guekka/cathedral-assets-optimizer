@@ -27,11 +27,10 @@ private:
     std::unique_ptr<ListDialog> textureFormatDialog_;
 
     //IWindowModule
-    void init(PatternSettings &pSets, GeneralSettings &gSets) override;
+    void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets) override;
+
     void connectAll(PatternSettings &patternSets, GeneralSettings &generalSets) override;
 
     bool isSupportedGame(Games game) override;
-
-    void disconnectAll() override;
 };
 } // namespace CAO
