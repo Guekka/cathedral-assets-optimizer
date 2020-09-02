@@ -54,7 +54,6 @@ MainWindow::MainWindow()
                          setTheme(theme);
                      });
 
-    selectText(*ui_->profiles, commonSettings.sProfile());
     QObject::connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
         getProfiles().setCurrent(ui_->profiles->itemText(idx));
         reconnectAll();
@@ -150,8 +149,10 @@ void MainWindow::setLevelSelectorHandler(const std::function<void()> &callback)
 
 void MainWindow::initSettings()
 {
+    const QString targetProfile = getProfiles().commonSettings().sProfile();
     updateProfiles();
     updatePatterns();
+    selectText(*ui_->profiles, targetProfile);
 }
 
 template<typename... Args>
