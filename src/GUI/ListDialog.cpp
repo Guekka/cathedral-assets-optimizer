@@ -10,6 +10,7 @@ namespace CAO {
 ListDialog::ListDialog(bool sortByText, QWidget *parent)
     : QDialog(parent)
     , ui_(new Ui::ListDialog)
+    , sortByText_(sortByText)
 {
     ui_->setupUi(this);
     connect(ui_->lineEdit, &QLineEdit::textEdited, this, &ListDialog::filterView);
@@ -17,10 +18,7 @@ ListDialog::ListDialog(bool sortByText, QWidget *parent)
     connect(ui_->closeButton, &QPushButton::clicked, this, &QDialog::accept);
 
     //Always keeping checked items at the top
-    connect(ui_->listWidget, &QListWidget::itemActivated, this, [this](auto *item) {
-        if (item->checkState() != Qt::Checked)
-            return;
-
+    connect(ui_->listWidget, &QListWidget::itemChanged, this, [this](auto *item) {
         auto *extractedItem = ui_->listWidget->takeItem(ui_->listWidget->row(item));
         ui_->listWidget->insertItem(findInsertPos(extractedItem), extractedItem);
     });

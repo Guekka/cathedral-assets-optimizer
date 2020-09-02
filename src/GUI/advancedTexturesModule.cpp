@@ -14,7 +14,7 @@ namespace CAO {
 AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
     : IWindowModule(parent)
     , ui_(std::make_unique<Ui::AdvancedTexturesModule>())
-    , textureFormatDialog_(std::make_unique<ListDialog>(ListDialog::dontSortByText))
+    , textureFormatDialog_(std::make_unique<ListDialog>(ListDialog::sortByText))
 {
     ui_->setupUi(this);
 }
