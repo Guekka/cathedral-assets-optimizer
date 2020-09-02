@@ -20,9 +20,9 @@ CommandResult MeshRenameReferencedTextures::process(File &file) const
 
         while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
         {
-            if (endsWith(std::string_view(tex), std::string_view(".tga"), false))
+            if (ends_with(std::string_view(tex), std::string_view(".tga"), false))
             {
-                replaceAll(tex, std::string_view(".tga"), std::string_view(".dds"), false);
+                replace_all(tex, std::string_view(".tga"), std::string_view(".dds"), false);
                 nif->SetTextureSlot(shader, tex, texCounter);
             }
             else if (++texCounter > limit)
@@ -52,7 +52,7 @@ bool MeshRenameReferencedTextures::isApplicable(File &file) const
         int texCounter = 0;
         while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
         {
-            if (endsWith(std::string_view(tex), std::string_view(".tga"), false))
+            if (ends_with(std::string_view(tex), std::string_view(".tga"), false))
                 return true;
             if (++texCounter > limit)
                 return false;

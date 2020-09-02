@@ -116,7 +116,7 @@ inline auto insert_sorted(Container &cont, ValueType &&value, Compare &&comp)
 }
 
 template<class String>
-constexpr size_t strLength(String &&str)
+constexpr size_t str_length(String &&str)
 {
     if constexpr (CAO::is_equiv_v<String, const char *>)
         return strlen(std::forward<String>(str));
@@ -134,7 +134,7 @@ constexpr size_t strLength(String &&str)
         return (std::forward<String>(str)).length();
 }
 
-auto stringCompare(bool caseSensitive = true)
+auto str_compare(bool caseSensitive = true)
 {
     return [caseSensitive](char ch1, char ch2) {
         if (!caseSensitive)
@@ -148,12 +148,12 @@ auto stringCompare(bool caseSensitive = true)
 }
 
 template<class CharT>
-size_t strFind(std::basic_string_view<CharT> string,
-               std::basic_string_view<CharT> snippet,
-               bool caseSensitive = true,
-               size_t fromPos     = 0)
+size_t str_find(std::basic_string_view<CharT> string,
+                std::basic_string_view<CharT> snippet,
+                bool caseSensitive = true,
+                size_t fromPos     = 0)
 {
-    auto pred = stringCompare(caseSensitive);
+    auto pred = str_compare(caseSensitive);
     using namespace std;
 
     if (cbegin(string) + fromPos > cend(string))
@@ -168,10 +168,10 @@ size_t strFind(std::basic_string_view<CharT> string,
 }
 
 template<class CharT>
-void replaceAll(std::basic_string<CharT> &source,
-                std::basic_string_view<CharT> from,
-                std::basic_string_view<CharT> to,
-                bool caseSensitive = true)
+void replace_all(std::basic_string<CharT> &source,
+                 std::basic_string_view<CharT> from,
+                 std::basic_string_view<CharT> to,
+                 bool caseSensitive = true)
 {
     using String = std::basic_string<CharT>;
     using Size   = typename String::size_type;
@@ -181,20 +181,20 @@ void replaceAll(std::basic_string<CharT> &source,
 
     Size lastPos = 0;
 
-    Size findPos = strFind(std::basic_string_view<CharT>(source),
-                           std::basic_string_view<CharT>(from),
-                           caseSensitive);
+    Size findPos = str_find(std::basic_string_view<CharT>(source),
+                            std::basic_string_view<CharT>(from),
+                            caseSensitive);
 
     while (findPos != String::npos)
     {
         newString.append(source, lastPos, findPos - lastPos);
         newString += to;
-        lastPos = findPos + strLength(from);
+        lastPos = findPos + str_length(from);
 
-        findPos = strFind(std::basic_string_view<CharT>(source),
-                          std::basic_string_view<CharT>(from),
-                          caseSensitive,
-                          lastPos);
+        findPos = str_find(std::basic_string_view<CharT>(source),
+                           std::basic_string_view<CharT>(from),
+                           caseSensitive,
+                           lastPos);
     }
 
     // Care for the rest after last occurrence
@@ -204,22 +204,22 @@ void replaceAll(std::basic_string<CharT> &source,
 }
 
 template<class CharT>
-bool startsWith(std::basic_string_view<CharT> string,
-                std::basic_string_view<CharT> prefix,
-                bool caseSensitive = true)
+bool starts_with(std::basic_string_view<CharT> string,
+                 std::basic_string_view<CharT> prefix,
+                 bool caseSensitive = true)
 {
-    auto pred = stringCompare(caseSensitive);
+    auto pred = str_compare(caseSensitive);
 
     using namespace std;
     return string.size() >= prefix.size() && std::equal(cbegin(prefix), cend(prefix), cbegin(string), pred);
 }
 
 template<class CharT>
-bool endsWith(std::basic_string_view<CharT> string,
-              std::basic_string_view<CharT> suffix,
-              bool caseSensitive = true)
+bool ends_with(std::basic_string_view<CharT> string,
+               std::basic_string_view<CharT> suffix,
+               bool caseSensitive = true)
 {
-    auto pred = stringCompare(caseSensitive);
+    auto pred = str_compare(caseSensitive);
 
     using namespace std;
     return string.size() >= suffix.size()

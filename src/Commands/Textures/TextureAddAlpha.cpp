@@ -104,7 +104,7 @@ void TextureAddAlpha::listLandscapeTextures(const GeneralSettings &settings, Fil
     }
 
     for (auto &tex : landTextures)
-        if (endsWith(std::string_view(tex), std::string_view("_n.dds")))
+        if (ends_with(std::string_view(tex), std::string_view("_n.dds")))
             tex.insert(tex.size() - 4, "_n");
 
     remove_duplicates(landTextures);
