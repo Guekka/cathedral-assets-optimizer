@@ -4,15 +4,14 @@
             "Textures": {
                 "eTexturesFormat": 98,
                 "slTextureUnwantedFormats": [
+                    115,
                     86,
                     85,
-                    115
+                    95
                 ]
             }
         },
-        "Patterns": [
-            "*"
-        ],
+        "Pattern": "*",
         "Priority": 0
     },
     {
@@ -21,12 +20,26 @@
                 "bTexturesForceConvert": true
             }
         },
-        "Patterns": [
-            "*.tga",
-            "*/interface/*.dds",
-            "*/interface/*.tga"
-        ],
+        "Pattern": "*.tga",
         "Priority": 1
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": true
+            }
+        },
+        "Pattern": "*/interface/*.dds",
+        "Priority": 2
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": true
+            }
+        },
+        "Pattern": "*/interface/*.tga",
+        "Priority": 3
     },
     {
         "Advanced": {
@@ -34,10 +47,8 @@
                 "bTexturesForceConvert": false
             }
         },
-        "Patterns": [
-            "*/textures/terrain/lodgen/*"
-        ],
-        "Priority": 2,
+        "Pattern": "*/textures/terrain/lodgen/*",
+        "Priority": 4,
         "Textures": {
             "bTexturesCompress": false,
             "bTexturesLandscapeAlpha": false,

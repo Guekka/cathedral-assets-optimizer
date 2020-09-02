@@ -2,21 +2,18 @@
     "Advanced": {
         "BSA": {
             "bBSATexturesEnabled": true,
-            "eBSAFormat": 4,
-            "eBSATexturesFormat": 4,
-            "iBSAMaxSize": 2100000000.0,
-            "iBSATexturesMaxSize": 2544768122.88,
-            "sBSAExtension": ".bsa",
-            "sBSASuffix": ".bsa",
-            "sBSATexturesSuffix": " - Textures.bsa"
-        },
-        "Meshes": {
-            "eMeshesFileVersion": 335675399,
-            "iMeshesStream": 100,
-            "iMeshesUser": 12
+            "iBSAMaxSize": 2.0,
+            "iBSATexturesMaxSize": 2.3
         }
     },
+    "BSA": {
+        "bBSACompact": true,
+        "bBSACompress": true,
+        "bBSACreateDummies": true
+    },
     "General": {
-        "isBaseProfile": true
+        "Game": 3,
+        "isBaseProfile": true,
+        "sCurrentPattern": "*"
     }
 }

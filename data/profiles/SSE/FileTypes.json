@@ -47,7 +47,6 @@
     },
     "Meshes": {
         "slHeadparts": [
-            "*/meshes/actors/character/facegendata/facegeom/*.nif",
             "*/meshes/actors/character/character assets/beards/humanbeardlong01.nif",
             "*/meshes/actors/character/character assets/beards/humanbeardlong01_1bit.nif",
             "*/meshes/actors/character/character assets/beards/humanbeardlong02.nif",
@@ -517,6 +516,7 @@
             "*/meshes/actors/character/character assets/mouth/mouthkhajiitfemale.nif",
             "*/meshes/actors/character/character assets/mouth/mouthorc.nif",
             "*/meshes/actors/character/character assets/mouth/mouthorcfemale.nif",
+            "*/meshes/actors/character/facegendata/facegeom/*.nif",
             "*/meshes/actors/dlc01/character/hair/dlc1femaleseranahair.nif",
             "*/meshes/actors/dlc01/character/hair/dlc1femaleseranahair_hairline.nif",
             "*/meshes/actors/dlc01/character/hair/dlc1femalevalericahair.nif",
@@ -529,7 +529,7 @@
             "*/Nemesis",
             "*/FNIS",
             "*/Bodyslide",
-			"*_separator"
+            "*_separator"
         ]
     },
     "Textures": {

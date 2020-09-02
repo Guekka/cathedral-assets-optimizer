@@ -1,0 +1,13 @@
+{
+    "Advanced": {
+        "BSA": {
+            "bBSATexturesEnabled": true,
+            "iBSAMaxSize": 4.1875931136,
+            "iBSATexturesMaxSize": 4831838208.0
+        }
+    },
+    "General": {
+        "Game": 6,
+        "isBaseProfile": true
+    }
+}

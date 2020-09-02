@@ -2,17 +2,13 @@
     "Advanced": {
         "BSA": {
             "bBSATexturesEnabled": false,
-            "iBSAMaxSize": 2.0,
+            "iBSAMaxSize": 2.1,
             "iBSATexturesMaxSize": 0.0
         }
     },
-    "BSA": {
-        "bBSACompact": true,
-        "bBSACompress": true,
-        "bBSACreateDummies": true
-    },
     "General": {
         "Game": 2,
-        "isBaseProfile": true
+        "isBaseProfile": true,
+        "sCurrentPattern": "*"
     }
 }

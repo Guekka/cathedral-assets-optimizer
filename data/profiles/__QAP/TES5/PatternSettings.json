@@ -1,22 +1,78 @@
 [
     {
         "Advanced": {
-            "Animations": {
-                "eAnimationsFormat": 2
-            },
             "Textures": {
-                "eTexturesFormat": 77,
+                "eTexturesFormat": 28,
                 "slTextureUnwantedFormats": [
-                    97,
-					98,
-					99
+                    98,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    98,
+                    98,
+                    98,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    98,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    98,
+                    98,
+                    98,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    98,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    115,
+                    86,
+                    85,
+                    98,
+                    98
                 ]
             }
         },
-        "Patterns": [
-            "*"
-        ],
-        "Priority": 0
+        "Meshes": {
+            "iMeshesOptimizationLevel": 1
+        },
+        "Pattern": "*",
+        "Priority": 0,
+        "Textures": {
+            "bTexturesCompress": true,
+            "bTexturesLandscapeAlpha": true,
+            "bTexturesNecessary": true
+        }
     },
     {
         "Advanced": {
@@ -24,9 +80,7 @@
                 "bTexturesForceConvert": false
             }
         },
-        "Patterns": [
-            "*.tga"
-        ],
+        "Pattern": "*.tga",
         "Priority": 1
     },
     {
@@ -35,11 +89,17 @@
                 "bTexturesForceConvert": true
             }
         },
-        "Patterns": [
-            "*/interface/*.dds",
-            "*/interface/*.tga"
-        ],
+        "Pattern": "*/interface/*.dds",
         "Priority": 2
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": true
+            }
+        },
+        "Pattern": "*/interface/*.tga",
+        "Priority": 3
     },
     {
         "Advanced": {
@@ -47,10 +107,8 @@
                 "bTexturesForceConvert": false
             }
         },
-        "Patterns": [
-            "*/textures/terrain/lodgen/*"
-        ],
-        "Priority": 3,
+        "Pattern": "*/textures/terrain/lodgen/*",
+        "Priority": 4,
         "Textures": {
             "bTexturesCompress": false,
             "bTexturesLandscapeAlpha": false,

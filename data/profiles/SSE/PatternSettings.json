@@ -1,22 +1,39 @@
 [
     {
         "Advanced": {
-            "Animations": {
-                "eAnimationsFormat": 3
-            },
             "Textures": {
                 "eTexturesFormat": 98,
                 "slTextureUnwantedFormats": [
-                    85,
+                    115,
                     86,
-                    115
+                    85,
+                    95
                 ]
             }
         },
-        "Patterns": [
-            "*"
-        ],
-        "Priority": 0
+        "Animations": {
+            "bAnimationsOptimization": true
+        },
+        "Meshes": {
+            "iMeshesOptimizationLevel": 1
+        },
+        "Pattern": "*",
+        "Priority": 0,
+        "Textures": {
+            "bTexturesCompress": true,
+            "bTexturesLandscapeAlpha": true,
+            "bTexturesNecessary": true
+        }
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": true,
+                "eTexturesFormat": 28
+            }
+        },
+        "Pattern": "*.tga",
+        "Priority": 1
     },
     {
         "Advanced": {
@@ -24,12 +41,17 @@
                 "bTexturesForceConvert": true
             }
         },
-        "Patterns": [
-            "*.tga",
-            "*/interface/*.dds",
-            "*/interface/*.tga"
-        ],
-        "Priority": 1
+        "Pattern": "*/interface/*.dds",
+        "Priority": 2
+    },
+    {
+        "Advanced": {
+            "Textures": {
+                "bTexturesForceConvert": true
+            }
+        },
+        "Pattern": "*/interface/*.tga",
+        "Priority": 3
     },
     {
         "Advanced": {
@@ -37,10 +59,8 @@
                 "bTexturesForceConvert": false
             }
         },
-        "Patterns": [
-            "*/textures/terrain/lodgen/*"
-        ],
-        "Priority": 3,
+        "Pattern": "*/textures/terrain/lodgen/*",
+        "Priority": 4,
         "Textures": {
             "bTexturesCompress": false,
             "bTexturesLandscapeAlpha": false,

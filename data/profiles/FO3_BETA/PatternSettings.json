@@ -2,7 +2,7 @@
     {
         "Advanced": {
             "Textures": {
-                "eTexturesFormat": 98,
+                "eTexturesFormat": 77,
                 "slTextureUnwantedFormats": [
                     115,
                     86,
@@ -11,24 +11,13 @@
                 ]
             }
         },
-        "Animations": {
-            "bAnimationsOptimization": true
-        },
-        "Meshes": {
-            "iMeshesOptimizationLevel": 1
-        },
         "Pattern": "*",
-        "Priority": 0,
-        "Textures": {
-            "bTexturesCompress": true,
-            "bTexturesLandscapeAlpha": true,
-            "bTexturesNecessary": true
-        }
+        "Priority": 0
     },
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": true
+                "bTexturesForceConvert": false
             }
         },
         "Pattern": "*.tga",
@@ -37,7 +26,7 @@
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": true
+                "bTexturesForceConvert": false
             }
         },
         "Pattern": "*/interface/*.dds",
@@ -46,7 +35,7 @@
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": true
+                "bTexturesForceConvert": false
             }
         },
         "Pattern": "*/interface/*.tga",
