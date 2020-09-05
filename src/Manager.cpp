@@ -118,6 +118,7 @@ void Manager::runOptimization()
         }
 
         //Packing BSAs
+        emitProgress(mod.name(), CommandType::BSAFolder, mod.processedFileCount(), mod.totalFileCount());
         optimizer.packBsa(mod.outPath());
     }
 

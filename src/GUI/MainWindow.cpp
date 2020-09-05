@@ -329,6 +329,7 @@ void MainWindow::initProcess()
                 &ProgressWindow::update);
 
         connect(caoProcess_.get(), &Manager::end, this, &MainWindow::endProcess);
+        connect(progressWindow_.get(), &ProgressWindow::closed, this, &MainWindow::endProcess);
 
         progressWindow_->show();
 

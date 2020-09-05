@@ -130,6 +130,12 @@ void ProgressWindow::reloadLog()
     updateLog();
 }
 
+void ProgressWindow::closeEvent(QCloseEvent *event)
+{
+    emit closed();
+    event->accept();
+}
+
 ProgressWindow::LogEntry::LogEntry(const QString &line)
 {
     //We know CustomFormatter is used. Time always uses the same number of chars, 24

@@ -16,11 +16,18 @@ namespace CAO {
 
 class ProgressWindow : public QWidget
 {
+    Q_OBJECT
 public:
     explicit ProgressWindow(const QString &logFilePath, QWidget *parent = nullptr);
 
     void update(const QString &text, int max, int value);
     void end();
+
+signals:
+    void closed();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     static constexpr size_t maxBlockSize_ = 500;
