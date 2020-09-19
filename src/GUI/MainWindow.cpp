@@ -78,7 +78,7 @@ MainWindow::MainWindow()
     QObject::connect(ui_->actionAbout, &QAction::triggered, this, [this] {
         constexpr char message[]
             = "\nMade by G'k\nThis program is distributed in the hope that it will be useful "
-              "but WITHOUT ANY WARRANTLY. See the Mozilla Public License";
+              "but WITHOUT ANY WARRANTY. See the Mozilla Public License";
 
         const QString text = QString("%1 %2 %3")
                                  .arg(QCoreApplication::applicationName(),
