@@ -18,15 +18,13 @@ BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
 
     switch (type)
     {
-        case StandardBsa:
-        {
+        case StandardBsa: {
             bsa.type    = BSAType::StandardBsa;
             bsa.maxSize = settings.iBSAMaxSize() * GigaByte;
             bsa.format  = games.eBSAFormat();
             break;
         }
-        case TexturesBsa:
-        {
+        case TexturesBsa: {
             const auto &textFormat = games.eBSATexturesFormat();
             if (!textFormat.has_value())
                 throw std::runtime_error("This game does not support texture bsa: "
@@ -37,8 +35,7 @@ BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
             bsa.format  = textFormat.value();
             break;
         }
-        case UncompressableBsa:
-        {
+        case UncompressableBsa: {
             bsa.type    = BSAType::UncompressableBsa;
             bsa.maxSize = settings.iBSAMaxSize() * GigaByte;
             bsa.format  = games.eBSAFormat();
@@ -66,14 +63,16 @@ void BSA::name(const QString &folder, const GeneralSettings &settings)
     PLOG_VERBOSE << "Named " << type << path;
 }
 
-void BSA::mergeBSAs(std::vector<BSA> &list, bool merge)
+void BSA::mergeBSAs(std::vector<BSA> &list, MergeBSATypes mergeTypes)
 {
-    auto secondBegin = std::partition(list.begin(), list.end(), [](const BSA &val) {
+    auto standardBegin = list.begin();
+
+    auto incompressibleBegin = std::partition(standardBegin, list.end(), [](const BSA &val) {
         return val.type == StandardBsa;
     });
 
-    auto thirdBegin = std::partition(secondBegin, list.end(), [](const BSA &val) {
-        return val.type == TexturesBsa;
+    auto texturesBegin = std::partition(incompressibleBegin, list.end(), [](const BSA &val) {
+        return val.type == UncompressableBsa;
     });
 
     auto sortBSADescending = [](auto &&one, auto &&two) { return one.filesSize > two.filesSize; };
@@ -87,20 +86,42 @@ void BSA::mergeBSAs(std::vector<BSA> &list, bool merge)
         return merge_if(begin, end, notMaxSize);
     };
 
-    auto firstEnd  = sortMerge(list.begin(), secondBegin);
-    auto secondEnd = sortMerge(secondBegin, thirdBegin);
-    auto thirdEnd = sortMerge(thirdBegin, list.end());
+    auto standardEnd       = sortMerge(standardBegin, incompressibleBegin);
+    auto incompressibleEnd = sortMerge(incompressibleBegin, texturesBegin);
+    auto texturesEnd       = sortMerge(texturesBegin, list.end());
 
     std::vector<BSA> result;
     result.reserve(list.size());
 
-    std::move(list.begin(), firstEnd, std::back_inserter(result));
-    std::move(secondBegin, secondEnd, std::back_inserter(result));
-    std::move(thirdBegin, thirdEnd, std::back_inserter(result));
+    //This isn't complicated, but it is necessary to pay attention to the order
+    std::move(standardBegin, standardEnd, std::back_inserter(result));
 
-    if (merge)
-        result.erase(sortMerge(result.begin(), result.end()), result.end());
-
+    switch (mergeTypes)
+    {
+        case MergeBSATypes::Both: {
+            std::move(incompressibleBegin, incompressibleEnd, std::back_inserter(result));
+            std::move(texturesBegin, texturesEnd, std::back_inserter(result));
+            result.erase(sortMerge(result.begin(), result.end()), result.end());
+            break;
+        }
+        case MergeBSATypes::Incompressible: {
+            std::move(incompressibleBegin, incompressibleEnd, std::back_inserter(result));
+            result.erase(sortMerge(result.begin(), result.end()), result.end());
+            std::move(texturesBegin, texturesEnd, std::back_inserter(result));
+            break;
+        }
+        case MergeBSATypes::Textures: {
+            std::move(texturesBegin, texturesEnd, std::back_inserter(result));
+            result.erase(sortMerge(result.begin(), result.end()), result.end());
+            std::move(incompressibleBegin, incompressibleEnd, std::back_inserter(result));
+            break;
+        }
+        default: {
+            std::move(incompressibleBegin, incompressibleEnd, std::back_inserter(result));
+            std::move(texturesBegin, texturesEnd, std::back_inserter(result));
+            break;
+        }
+    }
     list = result;
 }
 
@@ -108,8 +129,13 @@ BSA &BSA::operator+=(const BSA &other)
 {
     filesSize += other.filesSize;
     files += other.files;
+
     if (type != other.type)
-        type = StandardBsa;
+    {
+        const bool incompressible = type == UncompressableBsa || other.type == UncompressableBsa;
+        type                      = incompressible ? UncompressableBsa : StandardBsa;
+    }
+
     return *this;
 }
 

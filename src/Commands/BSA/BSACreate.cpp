@@ -31,8 +31,8 @@ CommandResult BSACreate::process(File &file) const
         archive.saver.set_save_type(bsa.format);
         archive.saver.set_save_path(bsa.path.toStdString());
 
-        bool canBeCompressed = currentProfile().getGeneralSettings().bBSACompress()
-                               && bsa.type != BSAType::UncompressableBsa;
+        const bool canBeCompressed = !currentProfile().getGeneralSettings().bBSADontCompress()
+                                     && bsa.type != BSAType::UncompressableBsa;
 
         archive.bsa.set_compressed(canBeCompressed);
         const libbsarch::fs::path &rootPath = file.getOutputFilePath().toStdString();

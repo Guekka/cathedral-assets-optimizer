@@ -53,9 +53,10 @@ void AdvancedBSAModule::connectAll([[maybe_unused]] PatternSettings &pSets, Gene
                     throw UiException("Unknown BSA button pressed");
             });
 
-    connectWrapper(*ui_->bsaLeastBsaCheckBox, gSets.bBSACompact);
-    connectWrapper(*ui_->bsaCreateDummiesCheckbox, gSets.bBSACreateDummies);
-    connectWrapper(*ui_->allowCompression, gSets.bBSACompress);
+    connectWrapper(*ui_->dontMergeIncompressible, gSets.bBSADontMergeIncomp);
+    connectWrapper(*ui_->dontMergeTextures, gSets.bBSADontMergeTextures);
+    connectWrapper(*ui_->dontMakeLoaded, gSets.bBSADontMakeLoaded);
+    connectWrapper(*ui_->disallowCompression, gSets.bBSADontCompress);
     connectWrapper(*ui_->maxStandardSize, gSets.iBSAMaxSize);
     connectWrapper(*ui_->maxTexturesSize, gSets.iBSATexturesMaxSize);
 }

@@ -49,7 +49,17 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
     bsas = bsas | rx::filter([](const BSA &bsa) { return !bsa.files.empty(); }) | rx::to_vector();
 
     //Merging BSAs that can be merged
-    BSA::mergeBSAs(bsas, generalSets.bBSACompact());
+    BSA::MergeBSATypes mergeTypes;
+    if (!generalSets.bBSADontMergeIncomp() && !generalSets.bBSADontMergeTextures())
+        mergeTypes = BSA::MergeBSATypes::Both;
+    else if (!generalSets.bBSADontMergeIncomp())
+        mergeTypes = BSA::MergeBSATypes::Incompressible;
+    else if (!generalSets.bBSADontMergeTextures())
+        mergeTypes = BSA::MergeBSATypes::Textures;
+    else
+        mergeTypes = BSA::MergeBSATypes::None;
+
+    BSA::mergeBSAs(bsas, mergeTypes);
 
     return bsas;
 }

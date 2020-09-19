@@ -41,11 +41,16 @@ struct BSA
      */
     void name(const QString &folder, const GeneralSettings &settings);
 
-    static constexpr bool mergeDifferentTypes    = true;
-    static constexpr bool separateDifferentTypes = false;
+    enum class MergeBSATypes
+    {
+        None,
+        Incompressible,
+        Textures,
+        Both
+    };
 
     //! \brief Merges BSAs when possible, according to their max size
-    static void mergeBSAs(std::vector<BSA> &list, bool merge);
+    static void mergeBSAs(std::vector<BSA> &list, MergeBSATypes mergeTypes);
 };
 
 inline std::ostream &operator<<(std::ostream &os, const BSA &bsa)

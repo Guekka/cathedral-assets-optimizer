@@ -119,7 +119,7 @@ void MainOptimizer::packBsa(const QString &folder)
     if (!saveFile(bsa))
         return;
 
-    if (currentProfile().getGeneralSettings().bBSACreateDummies())
+    if (!currentProfile().getGeneralSettings().bBSADontMakeLoaded())
         PluginsOperations::makeDummyPlugins(folder, currentProfile().getGeneralSettings());
 }
 

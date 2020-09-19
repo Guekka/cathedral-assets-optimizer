@@ -186,7 +186,7 @@ target_include_directories(CAO_LIB PUBLIC
     ${CMAKE_SOURCE_DIR}/external
     ${CMAKE_CURRENT_SOURCE_DIR})
 
-#C++17
+#C++20
 target_compile_features(CAO_LIB PUBLIC cxx_std_20)
 
 #Strictly follow the standard

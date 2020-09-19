@@ -43,9 +43,10 @@ public:
     REGISTER_SETTING(bool, bBSAExtract, "/BSA/bBSAExtract")
     REGISTER_SETTING(bool, bBSAProcessContent, "/BSA/bBSAProcessContent")
 
-    REGISTER_SETTING(bool, bBSACreateDummies, "/BSA/bBSACreateDummies")
-    REGISTER_SETTING(bool, bBSACompress, "/BSA/bBSACompress")
-    REGISTER_SETTING(bool, bBSACompact, "/BSA/bBSACompact")
+    REGISTER_SETTING(bool, bBSADontMakeLoaded, "/BSA/bBSADontMakeLoaded")
+    REGISTER_SETTING(bool, bBSADontCompress, "/BSA/bBSADontCompress")
+    REGISTER_SETTING(bool, bBSADontMergeTextures, "/BSA/bBSADontMergeTextures")
+    REGISTER_SETTING(bool, bBSADontMergeIncomp, "/BSA/bBSADontMergeIncomp")
 
     REGISTER_SETTING(double, iBSAMaxSize, "/Advanced/BSA/iBSAMaxSize")
     REGISTER_SETTING(bool, bBSATexturesEnabled, "/Advanced/BSA/bBSATexturesEnabled")
