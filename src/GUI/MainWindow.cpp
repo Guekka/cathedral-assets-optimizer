@@ -219,8 +219,12 @@ void MainWindow::connectAll()
                                                                QFileDialog::ShowDirsOnly
                                                                    | QFileDialog::DontResolveSymlinks);
 
-        if (!dir.isEmpty())
-            generalSettings.sInputPath = dir;
+        if (dir.isEmpty())
+            return;
+
+        generalSettings.sInputPath = dir;
+        ui_->inputDirTextEdit->setText(dir);
+            
     });
 
     selectText(*ui_->patterns, generalSettings.sCurrentPattern.value_or("*"));
@@ -257,8 +261,10 @@ void MainWindow::connectAll()
                                                                QFileDialog::ShowDirsOnly
                                                                    | QFileDialog::DontResolveSymlinks);
 
-        if (!dir.isEmpty())
-            generalSettings.sOutputPath = dir;
+        if (dir.isEmpty())
+            return;
+
+        generalSettings.sOutputPath = dir;
     });
 }
 
