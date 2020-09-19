@@ -22,6 +22,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QCheckBox" name="necessaryOpt">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations from LE to SE format&lt;/p&gt;&lt;p&gt;Note: If an animation is already converted, an error message will be logged. This is normal as the Havok SDK cannot read SSE animations &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Necessary optimization</string>
         </property>

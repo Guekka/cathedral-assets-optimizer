@@ -22,6 +22,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QRadioButton" name="BSAExtract">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts all BSAs&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Note: loose files are not overwritten by files in BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Extract BSAs</string>
         </property>
@@ -29,6 +32,9 @@
       </item>
       <item>
        <widget class="QRadioButton" name="BSACreate">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Packs all loose files into BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Create BSAs</string>
         </property>
@@ -36,6 +42,9 @@
       </item>
       <item>
        <widget class="QRadioButton" name="BSAProcessContent">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Directly optimize BSA content in memory, instead of extracting, processing and repacking. This is the recommended way to optimize files in BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Optimize BSAs content</string>
         </property>
@@ -52,6 +61,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item alignment="Qt::AlignHCenter">
        <widget class="QCheckBox" name="TexturesCompress">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Compress textures</string>
         </property>
@@ -59,6 +71,9 @@
       </item>
       <item alignment="Qt::AlignHCenter">
        <widget class="QCheckBox" name="TexturesMipmaps">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Generate mipmaps</string>
         </property>
@@ -69,6 +84,9 @@
    </item>
    <item>
     <widget class="QGroupBox" name="TexturesResizingGroupBox">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="title">
       <string>Resizing</string>
      </property>
