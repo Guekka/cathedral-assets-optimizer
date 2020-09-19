@@ -60,13 +60,9 @@ MainWindow::MainWindow()
     });
 
     QObject::connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
-    connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials);
+    CAO::connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials, true);
 
     //Menu buttons
-    QObject::connect(ui_->actionOpen_log_file, &QAction::triggered, this, [] {
-        QDesktopServices::openUrl(QUrl("file:///" + currentProfile().logPath(), QUrl::TolerantMode));
-    });
-
     QObject::connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
         QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
     });
