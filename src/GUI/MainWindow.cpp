@@ -279,7 +279,11 @@ void MainWindow::updateProfiles()
 {
     auto *profiles              = ui_->profiles;
     const QString &previousText = profiles->currentText();
-    ProfilesManagerWindow(getProfiles()).updateProfiles(*ui_->profiles);
+
+    {
+        QSignalBlocker blocker(profiles);
+        ProfilesManagerWindow(getProfiles()).updateProfiles(*profiles);
+    }
     selectText(*profiles, previousText);
     reconnectAll();
 }
@@ -288,7 +292,11 @@ void MainWindow::updatePatterns()
 {
     auto *patterns              = ui_->patterns;
     const QString &previousText = patterns->currentText();
-    PatternsManagerWindow(currentProfile()).updatePatterns(*ui_->patterns);
+
+    {
+        QSignalBlocker blocker(patterns);
+        PatternsManagerWindow(currentProfile()).updatePatterns(*ui_->patterns);
+    }
     selectText(*patterns, previousText);
     reconnectAll();
 }
