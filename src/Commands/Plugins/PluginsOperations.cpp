@@ -167,9 +167,10 @@ std::vector<std::string> PluginsOperations::listHeadparts(const QString &filepat
                 file.read(buffer, pluginFieldHeader.dataSize);
 
                 // make sure that nif path starts with meshes
-                QString headpart = std::move(buffer);
-                if (!headpart.startsWith("meshes", Qt::CaseInsensitive))
-                    headpart.prepend("meshes/");
+                QString headpart     = std::move(buffer);
+                const QString prefix = headpart.startsWith("meshes", Qt::CaseInsensitive) ? "*/"
+                                                                                          : "*/meshes/";
+                headpart.prepend(prefix);
 
                 //Adding headparts to the list
                 headparts.emplace_back(QDir::cleanPath(headpart).toStdString());
@@ -251,9 +252,10 @@ std::vector<std::string> PluginsOperations::listLandscapeTextures(const QString 
                     assert(pluginFieldHeader.dataSize < 1024);
                     file.read(buffer, pluginFieldHeader.dataSize);
 
-                    QString string = QDir::cleanPath(std::move(buffer));
-                    if (!string.startsWith("textures/"))
-                        string.prepend("textures/");
+                    QString string       = QDir::cleanPath(std::move(buffer));
+                    const QString prefix = string.startsWith("textures", Qt::CaseInsensitive) ? "*/"
+                                                                                              : "*/textures/";
+                    string.prepend(prefix);
 
                     slTextures.try_emplace(header.record.id, string.toStdString());
                 }
