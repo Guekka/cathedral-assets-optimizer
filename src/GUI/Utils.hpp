@@ -85,21 +85,23 @@ auto connectWrapper(QAction &uiEl, Wrapper &wrapper, ValueType fallback = ValueT
     return connectWrapper(uiEl, wrapper, &QAction::triggered, &QAction::setChecked, fallback);
 }
 
-inline void connectGroupBox(QGroupBox *box, QWidget *uiEl)
-{
-    QObject::connect(box, &QGroupBox::toggled, uiEl, &QWidget::setEnabled);
-}
-
-inline void connectGroupBox(QGroupBox *box, QAbstractButton *uiEl)
-{
-    QObject::connect(box, &QGroupBox::toggled, uiEl, &QWidget::setEnabled);
-    QObject::connect(box, &QGroupBox::toggled, uiEl, &QAbstractButton::setChecked);
-}
-
 template<typename... UiElements>
 void connectGroupBox(QGroupBox *box, UiElements *... uiEls)
 {
-    (std::invoke([](QGroupBox *b, QWidget *w) { connectGroupBox(b, w); }, box, uiEls), ...);
+    struct Functor
+    {
+        void operator()(QGroupBox *box, QAbstractButton *uiEl)
+        {
+            QObject::connect(box, &QGroupBox::toggled, uiEl, &QWidget::setEnabled);
+            QObject::connect(box, &QGroupBox::toggled, uiEl, &QAbstractButton::setChecked);
+        }
+        void operator()(QGroupBox *box, QWidget *uiEl)
+        {
+            QObject::connect(box, &QGroupBox::toggled, uiEl, &QWidget::setEnabled);
+        }
+    } functor;
+
+    (std::invoke(functor, box, uiEls), ...);
 }
 
 template<typename... UiElements>
