@@ -14,7 +14,7 @@ namespace CAO {
 
 MeshConvert::MeshConvert()
 {
-    getProfiles().callOncePerRun(callOnceHeadparts_, [this] {
+    Profiles::callWhenRunStart([this] {
         this->listHeadparts(currentProfile().getGeneralSettings(), currentProfile().getFileTypes());
     });
 }

@@ -47,15 +47,14 @@ public:
     void saveCommonSettings();
 
     void beginRun();
-    //Note: this does not store the function, it works like std::call_once. It is not thread safe.
-    bool callOncePerRun(CallOnce &callOnce, std::function<void()> callable);
+    static void callWhenRunStart(const std::function<void()> &callable);
 
 private:
     std::unordered_map<QString, Profile> profiles_;
     QDir rootProfileDir_;
     CommonSettings commonSettings_;
 
-    std::vector<CallOnce *> callOnceList_;
+    static std::vector<std::function<void()>> &callOnceList();
 };
 
 inline Profiles &getProfiles()

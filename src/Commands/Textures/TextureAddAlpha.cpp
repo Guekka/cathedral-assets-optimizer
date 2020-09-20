@@ -12,7 +12,7 @@ namespace CAO {
 
 TextureAddAlpha::TextureAddAlpha()
 {
-    getProfiles().callOncePerRun(callOnceLandscape_, [] {
+    Profiles::callWhenRunStart([] {
         listLandscapeTextures(currentProfile().getGeneralSettings(), currentProfile().getFileTypes());
     });
 }

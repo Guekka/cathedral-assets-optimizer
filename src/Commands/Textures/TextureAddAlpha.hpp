@@ -21,8 +21,6 @@ public:
 
     static bool isLandscape(const QString &filepath);
     static void listLandscapeTextures(const GeneralSettings &settings, FileTypes &filetypes);
-
-    static inline CallOnce callOnceLandscape_;
 };
 REGISTER_COMMAND(TextureAddAlpha)
 } // namespace CAO

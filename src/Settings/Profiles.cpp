@@ -149,11 +149,19 @@ void Profiles::saveCommonSettings()
 
 void Profiles::beginRun()
 {
-    callOnceList_ | rx::for_each([](CallOnce *item) { item->reset(); });
+    for (auto &func : callOnceList())
+        func();
 }
 
-bool Profiles::callOncePerRun(CallOnce &callOnce, std::function<void()> callable)
+void Profiles::callWhenRunStart(const std::function<void()> &callable)
 {
-    return callOnce.call(callable);
+    callOnceList().emplace_back(callable);
 }
+
+std::vector<std::function<void()>> &Profiles::callOnceList()
+{
+    static std::vector<std::function<void()>> list_;
+    return list_;
+}
+
 } // namespace CAO

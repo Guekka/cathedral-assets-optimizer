@@ -24,8 +24,6 @@ public:
 
     static bool isHeadpart(const QString &filepath);
     static void listHeadparts(const GeneralSettings &settings, FileTypes &filetypes);
-
-    static inline CallOnce callOnceHeadparts_;
 };
 REGISTER_COMMAND(MeshConvert)
 } // namespace CAO
