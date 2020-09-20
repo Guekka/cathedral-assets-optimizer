@@ -21,7 +21,7 @@ int MeshFile::saveToDisk(const QString &filePath) const
         return -1;
 
     auto meshFile = static_cast<MeshResource *>(const_cast<Resource *>((&getFile())));
-    //Same reasoning for const_cast here than for BSAFile
+    //Unfortunately, NIF library really doesn't like constness
     return meshFile->Save(filePath.toStdString());
 }
 

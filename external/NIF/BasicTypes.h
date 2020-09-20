@@ -111,10 +111,10 @@ public:
 	bool IsFO4() { return file == V20_2_0_7 && stream == 130; }
 
 	static NiVersion getOB() { return NiVersion(NiFileVersion::V20_0_0_5, 11, 0); }
-	static NiVersion getFO3() { return NiVersion(NiFileVersion::V20_2_0_7, 0, 82); }
-	static NiVersion getSK() { return NiVersion(NiFileVersion::V20_2_0_7, 0, 83); }
-	static NiVersion getSSE() { return NiVersion(NiFileVersion::V20_2_0_7, 0, 100); }
-	static NiVersion getFO4() { return NiVersion(NiFileVersion::V20_2_0_7, 0, 130); }
+    static NiVersion getFO3() { return NiVersion(NiFileVersion::V20_2_0_7, 12, 82); }
+    static NiVersion getSK() { return NiVersion(NiFileVersion::V20_2_0_7, 12, 83); }
+    static NiVersion getSSE() { return NiVersion(NiFileVersion::V20_2_0_7, 12, 100); }
+    static NiVersion getFO4() { return NiVersion(NiFileVersion::V20_2_0_7, 12, 130); }
 };
 
 enum NiEndian : byte {

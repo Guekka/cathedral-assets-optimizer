@@ -27,13 +27,19 @@ CommandResult MeshConvert::process(File &file) const
 
     auto &sets = currentProfile().getGeneralSettings();
     auto &game          = GameSettings::get(sets.eGame());
-    NiVersion niVersion = game.cMeshesVersion().value();
+    NiVersion targetVer = nif->GetHeader().GetVersion();
+    NiVersion gameVer = game.cMeshesVersion().value();
+    targetVer.SetFile(gameVer.File());
+    targetVer.SetStream(gameVer.Stream());
+    targetVer.SetUser(gameVer.User());
 
-    OptOptions optOptions;
-    optOptions.mandatoryOnly  = file.patternSettings().iMeshesOptimizationLevel() <= 2;
-    optOptions.targetVersion  = niVersion;
-    optOptions.removeParallax = false;
-    optOptions.headParts      = isHeadpart(file.getInputFilePath());
+    OptOptions optOptions
+        {
+            .targetVersion  = targetVer,
+            .headParts      = isHeadpart(file.getInputFilePath()),
+            .removeParallax = false,
+            .mandatoryOnly  = file.patternSettings().iMeshesOptimizationLevel() <= 2
+        };
 
     nif->OptimizeFor(optOptions);
 
