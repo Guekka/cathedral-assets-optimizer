@@ -81,7 +81,7 @@
       <item row="0" column="0">
        <widget class="QCheckBox" name="disallowCompression">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, BSAs that can be compressed will be compressed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If disabled, BSAs that can be compressed will NOT be compressed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>Disallow BSA compression</string>
