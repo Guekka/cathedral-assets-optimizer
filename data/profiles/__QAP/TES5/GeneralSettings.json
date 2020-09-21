@@ -7,12 +7,17 @@
         }
     },
     "BSA": {
-        "bBSACompact": true,
-        "bBSACompress": true,
-        "bBSACreateDummies": true
+        "bBSADontMergeTextures": false,
+        "bBSADontMergeIncomp": false,
+        "bBSADontCompress": false,
+        "bBSACreate": false,
+        "bBSADontMakeLoaded": false,
+        "bBSAExtract": false,
+        "bBSAProcessContent": true
     },
     "General": {
         "Game": 2,
-        "isBaseProfile": true
+        "isBaseProfile": true,
+        "sCurrentPattern": "*"
     }
 }

@@ -7,13 +7,17 @@
         }
     },
     "BSA": {
-        "bBSACompact": true,
-        "bBSACompress": true,
-        "bBSACreateDummies": true
+        "bBSADontMergeTextures": false,
+        "bBSADontMergeIncomp": false,
+        "bBSADontCompress": false,
+        "bBSACreate": false,
+        "bBSADontMakeLoaded": false,
+        "bBSAExtract": false,
+        "bBSAProcessContent": true
     },
     "General": {
         "Game": 3,
         "isBaseProfile": true,
-        "sCurrentPattern": "*/textures/terrain/lodgen/*"
+        "sCurrentPattern": "*"
     }
 }

@@ -37,7 +37,8 @@
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": true
+                "bTexturesForceConvert": true,
+                "eTexturesFormat": 28
             }
         },
         "Pattern": "*/interface/*.dds",
@@ -46,7 +47,8 @@
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": true
+                "bTexturesForceConvert": true,
+                "eTexturesFormat": 28
             }
         },
         "Pattern": "*/interface/*.tga",
@@ -55,7 +57,7 @@
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": false
+                "eTexturesFormat": 28
             }
         },
         "Pattern": "*/textures/terrain/lodgen/*",

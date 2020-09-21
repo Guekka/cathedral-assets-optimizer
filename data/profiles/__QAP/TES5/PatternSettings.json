@@ -4,61 +4,6 @@
             "Textures": {
                 "eTexturesFormat": 28,
                 "slTextureUnwantedFormats": [
-                    98,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    98,
-                    98,
-                    98,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    98,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    98,
-                    98,
-                    98,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    98,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    115,
-                    86,
-                    85,
-                    98,
                     98
                 ]
             }
@@ -77,38 +22,31 @@
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": false
+                "bTexturesForceConvert": true,
+                "eTexturesFormat": 28
             }
         },
-        "Pattern": "*.tga",
+        "Pattern": "*/interface/*.dds",
         "Priority": 1
     },
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": true
+                "bTexturesForceConvert": true,
+                "eTexturesFormat": 28
             }
         },
-        "Pattern": "*/interface/*.dds",
+        "Pattern": "*/interface/*.tga",
         "Priority": 2
     },
     {
         "Advanced": {
             "Textures": {
-                "bTexturesForceConvert": true
-            }
-        },
-        "Pattern": "*/interface/*.tga",
-        "Priority": 3
-    },
-    {
-        "Advanced": {
-            "Textures": {
-                "bTexturesForceConvert": false
+                "eTexturesFormat": 28
             }
         },
         "Pattern": "*/textures/terrain/lodgen/*",
-        "Priority": 4,
+        "Priority": 3,
         "Textures": {
             "bTexturesCompress": false,
             "bTexturesLandscapeAlpha": false,
