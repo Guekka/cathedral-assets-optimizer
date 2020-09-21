@@ -52,10 +52,22 @@ AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
 void AdvancedTexturesModule::setUIData(const PatternSettings &pSets,
                                        [[maybe_unused]] const GeneralSettings &gSets)
 {
+    //Resizing
+    selectData(*ui_->resizingMode, pSets.eTexturesResizingMode());
+    ui_->resizingBox->setChecked(pSets.eTexturesResizingMode() != None);
+
+    selectData(*ui_->outputFormat, pSets.eTexturesFormat());
+
+    //Unwanted formats (note: very inefficient algorithm but dataset is small)
     const auto unwantedFormats = pSets.slTextureUnwantedFormats();
     for (auto *item : textureFormatDialog_->items())
-        if (contains(unwantedFormats, item->data(Qt::UserRole).value<DXGI_FORMAT>()))
-            item->setCheckState(Qt::Checked);
+    {
+        const auto checkState = contains(unwantedFormats, item->data(Qt::UserRole).value<DXGI_FORMAT>())
+                                    ? Qt::Checked
+                                    : Qt::Unchecked;
+
+        item->setCheckState(checkState);
+    }
 }
 
 void AdvancedTexturesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets)
@@ -67,17 +79,18 @@ void AdvancedTexturesModule::connectAll(PatternSettings &pSets, [[maybe_unused]]
     connectWrapper(*ui_->mainAlphaLandscape, pSets.bTexturesLandscapeAlpha);
 
     //Resizing
+    const auto updateResizeMode = [&pSets, this](int index) {
+        const auto data = ui_->resizingBox->isChecked()
+                              ? ui_->resizingMode->itemData(index).value<TextureResizingMode>()
+                              : None;
+        pSets.eTexturesResizingMode = data;
+    };
 
-    connect(ui_->resizingMode,
-            QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this,
-            [this, &pSets](int index) {
-                if (!ui_->resizingBox->isChecked())
-                    return;
+    connect(ui_->resizingMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, updateResizeMode);
 
-                const auto data = ui_->resizingMode->itemData(index).value<TextureResizingMode>();
-                pSets.eTexturesResizingMode = data;
-            });
+    connect(ui_->resizingBox, &QGroupBox::toggled, this, [this, updateResizeMode]() {
+        updateResizeMode(ui_->resizingMode->currentIndex());
+    });
 
     connectWrapper(*ui_->resizingWidth, pSets.iTexturesResizingWidth);
     connectWrapper(*ui_->resizingHeight, pSets.iTexturesResizingHeight);
@@ -92,8 +105,8 @@ void AdvancedTexturesModule::connectAll(PatternSettings &pSets, [[maybe_unused]]
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             &pSets.eTexturesFormat,
             [&pSets, this](int idx) {
-                const auto data             = ui_->outputFormat->itemData(idx);
-                pSets.eTexturesFormat       = data.value<DXGI_FORMAT>();
+                const auto data       = ui_->outputFormat->itemData(idx);
+                pSets.eTexturesFormat = data.value<DXGI_FORMAT>();
             });
 
     connect(ui_->texturesUnwantedFormatsEdit,
