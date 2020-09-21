@@ -20,7 +20,7 @@ class GeneralSettings;
 class Profile;
 class Profiles;
 
-class MainWindow final : public QMainWindow
+class MainWindow final : public QMainWindow, ConnectionWrapper
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
@@ -40,22 +40,19 @@ private:
     std::unique_ptr<Manager> caoProcess_;
     std::unique_ptr<ProgressWindow> progressWindow_;
 
-    std::vector<QMetaObject::Connection> connections_;
-
-    template<typename... Args>
-    void connect(Args &&... args);
-
-    template<typename... Args>
-    void connectWrapper(Args &&... args);
-
     std::vector<IWindowModule *> getModules();
+
+private:
+    using ConnectionWrapper::connect;
+    using ConnectionWrapper::connectWrapper;
+
     void connectModule(IWindowModule &);
     void reconnectModules();
     void freezeModules(bool state = true);
 
-    void connectAll();
-    void disconnectAll();
-    void reconnectAll();
+    void connectThis();
+    void disconnectThis();
+    void reconnectThis();
 
     void updateProfiles();
     void updatePatterns();

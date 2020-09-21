@@ -21,6 +21,10 @@ public:
 private:
     std::unique_ptr<Ui::IntermediateModeModule> ui_;
 
+private:
+    using ConnectionWrapper::connect;
+    using ConnectionWrapper::connectWrapper;
+
     void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets) override;
 
     void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;

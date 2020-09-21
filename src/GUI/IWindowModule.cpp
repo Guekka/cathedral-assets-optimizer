@@ -27,12 +27,6 @@ void IWindowModule::setup(PatternSettings &pSets, GeneralSettings &gSets)
     connectAll(pSets, gSets);
 }
 
-void IWindowModule::disconnectAll()
-{
-    for (auto *obj : this->findChildren<QObject *>())
-        obj->disconnect();
-}
-
 void IWindowModule::setUIData([[maybe_unused]] const PatternSettings &pSets,
                               [[maybe_unused]] const GeneralSettings &gSets)
 {

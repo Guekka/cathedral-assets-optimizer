@@ -167,6 +167,9 @@ set(SOURCES
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/ConnectionWrapper.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/ConnectionWrapper.cpp
     )
 
 #Resources

@@ -56,7 +56,7 @@ MainWindow::MainWindow()
 
     QObject::connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
         getProfiles().setCurrent(ui_->profiles->itemText(idx));
-        reconnectAll();
+        reconnectThis();
     });
 
     QObject::connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
@@ -151,18 +151,6 @@ void MainWindow::initSettings()
     selectText(*ui_->profiles, targetProfile);
 }
 
-template<typename... Args>
-void MainWindow::connect(Args &&... args)
-{
-    connections_.emplace_back(QObject::connect(std::forward<Args>(args)...));
-}
-
-template<typename... Args>
-void MainWindow::connectWrapper(Args &&... args)
-{
-    connections_.emplace_back(CAO::connectWrapper(std::forward<Args>(args)...));
-}
-
 std::vector<IWindowModule *> MainWindow::getModules()
 {
     std::vector<IWindowModule *> modules;
@@ -175,7 +163,8 @@ std::vector<IWindowModule *> MainWindow::getModules()
 
 void MainWindow::connectModule(IWindowModule &mod)
 {
-    auto &pattern = currentProfile().getPatterns().getSettingsByName(ui_->patterns->currentText());
+    const auto currentPattern = currentProfile().getGeneralSettings().sCurrentPattern();
+    auto &pattern             = currentProfile().getPatterns().getSettingsByName(currentPattern);
     mod.setup(pattern, currentProfile().getGeneralSettings());
 }
 
@@ -194,7 +183,7 @@ void MainWindow::freezeModules(bool state)
         mod->setDisabled(state);
 }
 
-void MainWindow::connectAll()
+void MainWindow::connectThis()
 {
     auto &generalSettings = currentProfile().getGeneralSettings();
 
@@ -233,7 +222,7 @@ void MainWindow::connectAll()
             &generalSettings.sCurrentPattern,
             [this, &generalSettings](int idx) {
                 generalSettings.sCurrentPattern = ui_->patterns->itemText(idx);
-                reconnectAll();
+                reconnectThis();
             });
 
     const int currentModeIndex = ui_->modeChooserComboBox->findData(generalSettings.eMode());
@@ -268,16 +257,15 @@ void MainWindow::connectAll()
     });
 }
 
-void MainWindow::disconnectAll()
+void MainWindow::disconnectThis()
 {
-    for (auto connection : connections_)
-        QObject::disconnect(connection);
+    ConnectionWrapper::disconnectAll();
 }
 
-void MainWindow::reconnectAll()
+void MainWindow::reconnectThis()
 {
-    disconnectAll();
-    connectAll();
+    disconnectThis();
+    connectThis();
     reconnectModules();
 }
 
@@ -291,7 +279,7 @@ void MainWindow::updateProfiles()
         ProfilesManagerWindow(getProfiles()).updateProfiles(*profiles);
     }
     selectText(*profiles, previousText);
-    reconnectAll();
+    reconnectThis();
 }
 
 void MainWindow::updatePatterns()
@@ -304,7 +292,7 @@ void MainWindow::updatePatterns()
         PatternsManagerWindow(currentProfile()).updatePatterns(*ui_->patterns);
     }
     selectText(*patterns, previousText);
-    reconnectAll();
+    reconnectThis();
 }
 
 void MainWindow::loadUi()

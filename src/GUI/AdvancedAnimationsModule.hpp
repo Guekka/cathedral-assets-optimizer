@@ -23,6 +23,10 @@ public:
 private:
     std::unique_ptr<Ui::AdvancedAnimationsModule> ui_;
 
+private:
+    using ConnectionWrapper::connect;
+    using ConnectionWrapper::connectWrapper;
+
     void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
     bool isSupportedGame(Games game) override;
 };

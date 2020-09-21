@@ -26,6 +26,10 @@ private:
     std::unique_ptr<Ui::AdvancedTexturesModule> ui_;
     std::unique_ptr<ListDialog> textureFormatDialog_;
 
+private:
+    using ConnectionWrapper::connect;
+    using ConnectionWrapper::connectWrapper;
+
     //IWindowModule
     void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets) override;
 

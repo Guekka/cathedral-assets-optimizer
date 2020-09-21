@@ -5,14 +5,14 @@
 #pragma once
 
 #include "Settings/BaseTypes.hpp"
-#include "pch.hpp"
+#include "Utils/ConnectionWrapper.hpp"
 
 namespace CAO {
 
 class PatternSettings;
 class GeneralSettings;
 
-class IWindowModule : public QWidget
+class IWindowModule : public QWidget, public ConnectionWrapper
 {
     Q_OBJECT
 
@@ -20,7 +20,6 @@ public:
     explicit IWindowModule(QWidget *parent);
 
     void setup(PatternSettings &pSets, GeneralSettings &gSets);
-    virtual void disconnectAll();
     virtual QString name() = 0;
 
 private:
