@@ -81,25 +81,25 @@ void LevelSelector::setupWindow(MainWindow &mw, GuiMode level)
         case GuiMode::QuickAutoPort:
         {
             getProfiles() = Profiles(QDir(Profiles::QuickAutoPortProfilesDir));
-            mw.initSettings();
             mw.setPatternsEnabled(false);
+            mw.initSettings();
             break;
         }
         case GuiMode::Medium:
         {
-            mw.initSettings();
             mw.addModule(new IntermediateModeModule);
             mw.setPatternsEnabled(false);
+            mw.initSettings();
             break;
         }
         case GuiMode::Advanced:
         {
-            mw.initSettings();
             mw.addModule(new AdvancedBSAModule);
             mw.addModule(new AdvancedMeshesModule);
             mw.addModule(new AdvancedTexturesModule);
             mw.addModule(new AdvancedAnimationsModule);
             mw.setPatternsEnabled(true);
+            mw.initSettings();
             break;
         }
         case GuiMode::Invalid: throw std::runtime_error("This level does not exist.");
