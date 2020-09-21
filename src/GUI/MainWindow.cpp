@@ -163,7 +163,7 @@ std::vector<IWindowModule *> MainWindow::getModules()
 
 void MainWindow::connectModule(IWindowModule &mod)
 {
-    const auto currentPattern = currentProfile().getGeneralSettings().sCurrentPattern();
+    const auto currentPattern = currentProfile().getGeneralSettings().sCurrentPattern.value_or("*");
     auto &pattern             = currentProfile().getPatterns().getSettingsByName(currentPattern);
     mod.setup(pattern, currentProfile().getGeneralSettings());
 }
