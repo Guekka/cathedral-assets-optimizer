@@ -172,7 +172,7 @@ bool MainOptimizer::saveFile(File &file, std::vector<std::byte> *out)
 {
     auto error = [&file](int errCode) {
         PLOG_ERROR << QString("Cannot save file to disk: '%1'\nError code: '%2'")
-                          .arg(file.getOutputFilePath(), errCode);
+                          .arg(file.getOutputFilePath(), QString::number(errCode));
     };
 
     if (out)
