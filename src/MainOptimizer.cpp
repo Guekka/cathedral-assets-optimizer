@@ -46,7 +46,7 @@ void MainOptimizer::process(File &file, bool dryRun, MemoryData memoryData)
 bool MainOptimizer::processReal(File &file, std::vector<std::byte> *out)
 {
     PLOG_VERBOSE << "Processing: " << file.getInputFilePath();
-    for (auto &command : _commandBook.getCommands(file.type()))
+    for (auto &command : CommandBook::getCommands(file.type()))
         if (!runCommand(*command, file))
             return false;
 
@@ -62,7 +62,7 @@ bool MainOptimizer::processReal(File &file, std::vector<std::byte> *out)
 bool MainOptimizer::processDry(File &file)
 {
     PLOG_INFO << "Processing: " << file.getInputFilePath() << '\n';
-    for (auto command : _commandBook.getCommands(file.type()))
+    for (auto command : CommandBook::getCommands(file.type()))
         if (!runCommand(*command, file, true))
             return false;
 
@@ -81,7 +81,7 @@ bool MainOptimizer::processBSA(File &file, bool dryRun = false)
 
     PLOG_VERBOSE << "Processing BSA: " + file.getInputFilePath();
 
-    for (auto &command : _commandBook.getCommands(file.type()))
+    for (auto &command : CommandBook::getCommands(file.type()))
         if (!runCommand(*command, file))
             return false;
 
@@ -101,7 +101,7 @@ void MainOptimizer::packBsa(const QString &folder)
     if (!loadFile(bsa))
         return;
 
-    auto command = _commandBook.getCommand<BSACreate *>();
+    auto command = CommandBook::getCommand<BSACreate *>();
     if (!command)
     {
         PLOG_ERROR << "BSA Create command was not registered";

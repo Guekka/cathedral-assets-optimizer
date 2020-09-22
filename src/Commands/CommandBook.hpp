@@ -15,11 +15,11 @@ class CommandBook final
 public:
     static void registerCommand(std::unique_ptr<Command> command);
 
-    std::vector<const Command *> getCommands(CommandType type);
-    const Command *getCommand(const QString &name);
+    static std::vector<const Command *> getCommands(CommandType type);
+    static const Command *getCommand(const QString &name);
 
     template<typename T>
-    const Command *getCommand()
+    static const Command *getCommand()
     {
         static_assert(std::is_base_of_v<Command, std::remove_pointer_t<T>>, "T must derive from CAO::Command");
         static_assert(std::is_pointer_v<T>, "T must be a pointer");
