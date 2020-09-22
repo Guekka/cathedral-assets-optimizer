@@ -25,21 +25,18 @@ CommandResult MeshConvert::process(File &file) const
     if (!nif)
         return _resultFactory.getCannotCastFileResult();
 
-    auto &sets = currentProfile().getGeneralSettings();
+    auto &sets          = currentProfile().getGeneralSettings();
     auto &game          = GameSettings::get(sets.eGame());
     NiVersion targetVer = nif->GetHeader().GetVersion();
-    NiVersion gameVer = game.cMeshesVersion().value();
+    NiVersion gameVer   = game.cMeshesVersion().value();
     targetVer.SetFile(gameVer.File());
     targetVer.SetStream(gameVer.Stream());
     targetVer.SetUser(gameVer.User());
 
-    OptOptions optOptions
-        {
-            .targetVersion  = targetVer,
-            .headParts      = isHeadpart(file.getInputFilePath()),
-            .removeParallax = false,
-            .mandatoryOnly  = file.patternSettings().iMeshesOptimizationLevel() <= 2
-        };
+    OptOptions optOptions{.targetVersion  = targetVer,
+                          .headParts      = isHeadpart(file.getInputFilePath()),
+                          .removeParallax = false,
+                          .mandatoryOnly  = false};
 
     nif->OptimizeFor(optOptions);
 
@@ -48,7 +45,7 @@ CommandResult MeshConvert::process(File &file) const
 
 bool MeshConvert::isApplicable(File &file) const
 {
-    auto& patternSettings = file.patternSettings();
+    auto &patternSettings = file.patternSettings();
     int optLevel          = patternSettings.iMeshesOptimizationLevel();
     if (optLevel == 0)
         return false;
