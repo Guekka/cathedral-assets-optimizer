@@ -29,8 +29,8 @@ constexpr bool case_insensitive = false;
 
 constexpr bool isMatch(std::string_view str,
                        pattern strong_pattern,
-                       bool case_sensitive = true,
-                       cards cards         = defaultCards)
+                       bool case_sensitivity = true,
+                       cards cards           = defaultCards)
 {
     // Empty pattern can only match with empty sting
     if (strong_pattern.v.empty())
@@ -53,8 +53,8 @@ constexpr bool isMatch(std::string_view str,
         char current_str = -1;
         if (pat_it != pat_end)
         {
-            current_pat = case_sensitive ? *pat_it : std::tolower(*pat_it);
-            current_str = case_sensitive ? *str_it : std::tolower(*str_it);
+            current_pat = case_sensitivity ? *pat_it : std::tolower(*pat_it);
+            current_str = case_sensitivity ? *str_it : std::tolower(*str_it);
         }
         if (pat_it != pat_end && current_pat == cards.set_begin)
         {
@@ -112,7 +112,7 @@ constexpr bool isMatch(std::string_view str,
     }
     while (pat_it != pat_end)
     {
-        const char cur = case_sensitive ? *pat_it : std::tolower(*pat_it);
+        const char cur = case_sensitivity ? *pat_it : std::tolower(*pat_it);
         if (cur == cards.any_repeat)
             ++pat_it;
         else

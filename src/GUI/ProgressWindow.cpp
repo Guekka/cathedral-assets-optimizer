@@ -107,7 +107,6 @@ bool ProgressWindow::isAllowed(const ProgressWindow::LogEntry &entry)
 
         default: return false;
     }
-    return false;
 };
 
 void ProgressWindow::updateLog()

@@ -205,7 +205,6 @@ target_include_directories(CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/src/CAO_LIB_autog
 getExternalLibrariesList(libs)
 target_link_libraries(CAO_LIB PUBLIC ${libs} Qt)
 
-
 #Main exe
 add_executable(Cathedral_Assets_Optimizer WIN32
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp

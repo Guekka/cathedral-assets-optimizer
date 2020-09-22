@@ -46,8 +46,8 @@ int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath) const
     }
 
     for (const auto &bsa : dir->bsas)
-        for (const auto &filePath : bsa.saver.get_file_list())
-            if (!QFile::remove(QString::fromStdString(filePath.path_on_disk.string())))
+        for (const auto &file : bsa.saver.get_file_list())
+            if (!QFile::remove(QString::fromStdString(file.path_on_disk.string())))
                 return 4;
 
     return 0;

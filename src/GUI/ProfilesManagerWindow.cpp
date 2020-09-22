@@ -84,15 +84,15 @@ void ProfilesManagerWindow::createProfile()
     //Choosing base profile
 
     QStringList profilesList;
-    auto &profiles = ui_->profiles;
-    for (int i = 0; i < profiles->count(); ++i)
-        profilesList.push_back(profiles->itemText(i));
+    auto &profilesBox = ui_->profiles;
+    for (int i = 0; i < profilesBox->count(); ++i)
+        profilesList.push_back(profilesBox->itemText(i));
 
     const QString &baseProfile = QInputDialog::getItem(this,
                                                        tr("Base profile"),
                                                        tr("Which profile do you want to use as a base?"),
                                                        profilesList,
-                                                       profiles->currentIndex(),
+                                                       profilesBox->currentIndex(),
                                                        false,
                                                        &ok);
 

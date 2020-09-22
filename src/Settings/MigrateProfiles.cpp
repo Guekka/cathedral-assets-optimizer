@@ -165,7 +165,7 @@ QStringList migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRo
 
             migratedProfiles.push_back(oldDir.dirName());
         }
-        catch (const std::exception &e)
+        catch (const std::exception &)
         {
             continue;
         }

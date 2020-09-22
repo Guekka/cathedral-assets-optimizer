@@ -15,7 +15,7 @@ namespace CAO {
 class ListDialog : public QDialog
 {
 public:
-    static constexpr bool sortByText     = true;
+    static constexpr bool doSortByText   = true;
     static constexpr bool dontSortByText = false;
 
     explicit ListDialog(bool sortByText, QWidget *parent = nullptr);
