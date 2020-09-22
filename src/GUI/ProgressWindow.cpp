@@ -69,6 +69,7 @@ void ProgressWindow::updateEntries()
         }
 
         addEntry(LogEntry(readLine));
+        readLine.clear();
     }
 }
 
@@ -147,7 +148,8 @@ ProgressWindow::LogEntry::LogEntry(const QString &line)
 {
     //We know CustomFormatter is used. Time always uses the same number of chars, 24
     constexpr int timeLength = 24;
-    const auto lineSeverity  = line.mid(timeLength, line.indexOf(' ', timeLength));
+    const int levelEnd       = line.indexOf(' ', timeLength) - timeLength;
+    const auto lineSeverity  = line.mid(timeLength, levelEnd);
     severity                 = plog::severityFromString(qPrintable(lineSeverity));
 
     const QString &beginColor = [this] {
