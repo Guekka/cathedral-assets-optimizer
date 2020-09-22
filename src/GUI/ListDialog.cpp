@@ -44,7 +44,7 @@ void ListDialog::addItem(QListWidgetItem *item)
 
 void ListDialog::addUserItem()
 {
-    bool ok = false;
+    bool ok             = false;
     const QString &text = QInputDialog::getText(this, tr("New item"), tr("Name:"), QLineEdit::Normal, "", &ok);
     if (!ok || text.isEmpty())
         return;

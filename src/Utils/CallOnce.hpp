@@ -26,4 +26,3 @@ public:
 private:
     bool called_ = false;
 };
-

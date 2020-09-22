@@ -41,7 +41,6 @@ private:
     bool loadFile(File &file, void *pSource = nullptr, size_t size = 0);
     bool saveFile(File &file, std::vector<std::byte> *out = nullptr);
 
-
     CommandBook _commandBook;
 
 signals:

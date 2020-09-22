@@ -31,7 +31,6 @@ AnimationFile::AnimationFile()
     }
 }
 
-
 bool AnimationFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
 {
     return setFileHelper<AnimationResource>(std::move(file), optimizedFile);

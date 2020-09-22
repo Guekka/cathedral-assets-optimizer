@@ -52,12 +52,13 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const GameSettings
     if (espNames.isEmpty())
         espNames << folderPath.dirName();
 
-    for (size_t i = 0; i < 1000; ++i) {
+    for (size_t i = 0; i < 1000; ++i)
+    {
         for (const auto &esp : espNames)
         {
             const QString &texBsaName = folderPath.filePath(esp + bsaTexSuffix);
-            const QString &bsaName = folderPath.filePath(esp + bsaSuffix);
-            const bool goodName = !QFile(texBsaName).exists() && !QFile(bsaName).exists();
+            const QString &bsaName    = folderPath.filePath(esp + bsaSuffix);
+            const bool goodName       = !QFile(texBsaName).exists() && !QFile(bsaName).exists();
 
             if (goodName)
                 return esp;

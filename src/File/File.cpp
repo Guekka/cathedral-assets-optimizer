@@ -44,7 +44,7 @@ int File::loadFromDisk()
 }
 
 int File::saveToDisk() const
-{   
+{
     return saveToDisk(getOutputFilePath());
 }
 

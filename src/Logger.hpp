@@ -54,7 +54,7 @@ inline void initCustomLogger(const QString &logPath)
 
     //Creating log folder
     const QDir dir;
-    if(!dir.mkpath(QFileInfo(logPath).path()))
+    if (!dir.mkpath(QFileInfo(logPath).path()))
         throw std::runtime_error("Cannot make log path: " + QFileInfo(logPath).path().toStdString());
 
     //Creating log file

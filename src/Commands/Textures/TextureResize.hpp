@@ -16,7 +16,7 @@ public:
     Priority priority() const override { return High; };
     QString name() const override { return "Resize Texture"; }
 
-    CommandResult process(File& file) const override;
+    CommandResult process(File &file) const override;
     bool isApplicable(File &file) const override;
 
     static DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info,

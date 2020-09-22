@@ -49,9 +49,9 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
     profileSettings.endGroup();
     profileSettings.beginGroup("Textures");
 
-    gPattern.eTexturesFormat = profileSettings.value("texturesFormat").value<DXGI_FORMAT>();
-    bool texturesConvertTga = profileSettings.value("texturesConvertTga").toBool();
-    auto texturesUnwantedFormats = profileSettings.value("texturesUnwantedFormats").toList();
+    gPattern.eTexturesFormat       = profileSettings.value("texturesFormat").value<DXGI_FORMAT>();
+    bool texturesConvertTga        = profileSettings.value("texturesConvertTga").toBool();
+    auto texturesUnwantedFormats   = profileSettings.value("texturesUnwantedFormats").toList();
     bool texturesCompressInterface = profileSettings.value("texturesCompressInterface").toBool();
 
     profileSettings.endGroup();

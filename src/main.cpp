@@ -102,8 +102,8 @@ int main(int argc, char *argv[])
         }
         else
         {
-            app    = nullptr;
-            app    = std::make_unique<QApplication>(argc, argv);
+            app         = nullptr;
+            app         = std::make_unique<QApplication>(argc, argv);
             auto window = std::make_unique<CAO::MainWindow>();
 
             CAO::LevelSelector selector;

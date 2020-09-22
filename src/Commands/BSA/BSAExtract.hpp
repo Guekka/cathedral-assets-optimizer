@@ -15,7 +15,7 @@ public:
     CommandType type() const override { return CommandType::BSAFile; };
     Priority priority() const override { return VeryHigh; };
 
-    CommandResult process(File& file) const override;
+    CommandResult process(File &file) const override;
     bool isApplicable(File &file) const override;
 
     static constexpr double maxBSASize = 4.0 * GigaByte;

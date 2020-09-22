@@ -23,7 +23,7 @@ CommandResult BSATransform::process(File &file) const
 
     file.setOutputFilePath(outputPath);
 
-    const auto &games = GameSettings::get(currentProfile().getGeneralSettings().eGame());
+    const auto &games       = GameSettings::get(currentProfile().getGeneralSettings().eGame());
     const auto current_type = bsaFile->bsa.get_type();
     const auto type = current_type == baFO4dds ? games.eBSATexturesFormat().value_or(games.eBSAFormat())
                                                : games.eBSAFormat();

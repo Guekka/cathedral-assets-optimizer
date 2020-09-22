@@ -16,7 +16,7 @@ public:
     Priority priority() const override { return VeryLow; };
     QString name() const override { return "Convert Texture"; }
 
-    CommandResult process(File& file) const override;
+    CommandResult process(File &file) const override;
     bool isApplicable(File &file) const override;
 
     static HRESULT convertWithoutCompression(const DirectX::ScratchImage &image,

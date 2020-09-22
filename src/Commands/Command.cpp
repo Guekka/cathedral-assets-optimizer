@@ -10,7 +10,7 @@ CommandResult Command::processIfApplicable(File &file) const
 {
     CommandResult result;
     result.processedFile = false;
-    result.errorCode = 0;
+    result.errorCode     = 0;
 
     if (isApplicable(file))
         return process(file);

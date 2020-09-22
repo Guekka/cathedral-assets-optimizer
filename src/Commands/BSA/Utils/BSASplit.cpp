@@ -15,9 +15,9 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
                           BSA::getBSA(UncompressableBsa, generalSets),
                           BSA::getBSA(TexturesBsa, generalSets)};
 
-    auto *standardBsa = &bsas[0];
+    auto *standardBsa       = &bsas[0];
     auto *uncompressableBsa = &bsas[1];
-    auto *texturesBsa = &bsas[2];
+    auto *texturesBsa       = &bsas[2];
 
     QDirIterator it(dir, QDirIterator::Subdirectories);
     while (it.hasNext())

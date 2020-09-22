@@ -5,7 +5,4 @@
 
 #include "ModFolder.hpp"
 
-ModFolder::ModFolder()
-{
-
-}
+ModFolder::ModFolder() {}

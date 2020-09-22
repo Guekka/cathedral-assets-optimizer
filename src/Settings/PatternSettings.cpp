@@ -40,9 +40,9 @@ PatternSettings &PatternSettings::operator=(const PatternSettings &other)
     if (this == &other)
         return *this;
 
-    json_     = other.json_;
-    pattern   = other.pattern;
-    priority  = other.priority;
+    json_    = other.json_;
+    pattern  = other.pattern;
+    priority = other.priority;
 
     return *this;
 }
@@ -52,9 +52,9 @@ PatternSettings &PatternSettings::operator=(PatternSettings &&other) noexcept
     if (this == &other)
         return *this;
 
-    json_     = std::move(other.json_);
-    pattern   = std::move(other.pattern);
-    priority  = std::move(other.priority);
+    json_    = std::move(other.json_);
+    pattern  = std::move(other.pattern);
+    priority = std::move(other.priority);
 
     return *this;
 }
@@ -101,9 +101,9 @@ nlohmann::json PatternSettings::removeMeta(const nlohmann::json &j)
 
 void PatternSettings::setJSON(const nlohmann::json &j)
 {
-    priority  = getPatternPriorityFromJSON(j).value_or(0);
-    pattern   = getPatternWildcardsFromJSON(j);
-    json_     = removeMeta(j);
+    priority = getPatternPriorityFromJSON(j).value_or(0);
+    pattern  = getPatternWildcardsFromJSON(j);
+    json_    = removeMeta(j);
 }
 
 std::string PatternSettings::getPatternWildcardsFromJSON(const nlohmann::json &json)

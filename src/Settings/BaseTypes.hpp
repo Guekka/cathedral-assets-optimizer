@@ -9,7 +9,11 @@
 constexpr double GigaByte = 1024 * 1024 * 1024;
 
 namespace CAO {
-enum OptimizationMode { SingleMod = 0, SeveralMods = 1 };
+enum OptimizationMode
+{
+    SingleMod   = 0,
+    SeveralMods = 1
+};
 enum TextureResizingMode
 {
     None,
@@ -20,10 +24,10 @@ enum TextureResizingMode
 //Leaving place for intermediate levels
 enum class GuiMode
 {
-    Invalid            = 0,
-    QuickAutoPort      = 1,
-    Medium             = 5,
-    Advanced           = 10
+    Invalid       = 0,
+    QuickAutoPort = 1,
+    Medium        = 5,
+    Advanced      = 10
 };
 
 enum class GuiTheme

@@ -22,8 +22,8 @@ inline void BSACallback([[maybe_unused]] bsa_archive_t archive,
 
     const auto &info = static_cast<const TextureResource *>(&tex.getFile())->GetMetadata();
 
-    dds_info->width = info.width;
-    dds_info->height = info.height;
+    dds_info->width   = info.width;
+    dds_info->height  = info.height;
     dds_info->mipmaps = info.mipLevels;
 }
 } // namespace CAO

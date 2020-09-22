@@ -16,8 +16,8 @@ public:
     Priority priority() const override { return Low; };
     QString name() const override { return "Generate Mipmaps for Texture"; }
 
-    CommandResult process(File& file) const override;
-    bool isApplicable(File& file) const override;
+    CommandResult process(File &file) const override;
+    bool isApplicable(File &file) const override;
 
 protected:
     size_t calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const;

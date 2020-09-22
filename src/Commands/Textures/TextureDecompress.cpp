@@ -11,9 +11,9 @@ CommandResult TextureDecompress::process(File &file) const
     if (!texFile)
         return _resultFactory.getCannotCastFileResult();
 
-    const auto &img = texFile->GetImages();
+    const auto &img    = texFile->GetImages();
     const size_t &nimg = texFile->GetImageCount();
-    const auto &info = texFile->GetMetadata();
+    const auto &info   = texFile->GetMetadata();
 
     auto timage   = std::make_unique<TextureResource>();
     const auto hr = Decompress(img, nimg, info, DXGI_FORMAT_UNKNOWN /* picks good default */, *timage);

@@ -14,7 +14,6 @@ namespace CAO {
 class MainWindow;
 class LevelSelector : private QDialog
 {
-
 public:
     explicit LevelSelector();
     ~LevelSelector();

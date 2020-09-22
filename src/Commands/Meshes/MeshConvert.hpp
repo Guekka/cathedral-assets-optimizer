@@ -19,8 +19,8 @@ public:
     CommandType type() const override { return CommandType::Mesh; };
     Priority priority() const override { return Priority::Medium; };
 
-    CommandResult process(File& file) const override;
-    bool isApplicable(File& file) const override;
+    CommandResult process(File &file) const override;
+    bool isApplicable(File &file) const override;
 
     static bool isHeadpart(const QString &filepath);
     static void listHeadparts(const GeneralSettings &settings, FileTypes &filetypes);

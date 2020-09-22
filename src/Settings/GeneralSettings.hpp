@@ -62,7 +62,6 @@ public:
     REGISTER_SETTING(bool, bEnableOutputPath, "/General/bEnableOutputPath")
     REGISTER_SETTING(QString, sInputPath, "/General/sInputPath")
     REGISTER_SETTING(QString, sOutputPath, "/General/sOutputPath")
-
 };
 } // namespace CAO
 

@@ -26,8 +26,8 @@ CommandResult CommandResultFactory::getFailedResult(HRESULT errorCode, const QSt
 CommandResult CommandResultFactory::getCannotCastFileResult() const
 {
     CommandResult result;
-    result.errorCode = 3;
-    result.errorMessage = "Failed to cast File to its derived type";
+    result.errorCode     = 3;
+    result.errorMessage  = "Failed to cast File to its derived type";
     result.processedFile = false;
     return result;
 }

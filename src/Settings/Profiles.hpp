@@ -9,14 +9,13 @@
 #include "Utils/CallOnce.hpp"
 #include "pch.hpp"
 
-
 namespace CAO {
 class MainWindow;
 class Profiles
 {
 public:
-    static inline const QString commonSettingsFileName = "CommonSettings.json";
-    static inline const QString defaultProfile         = "SSE";
+    static inline const QString commonSettingsFileName   = "CommonSettings.json";
+    static inline const QString defaultProfile           = "SSE";
     static inline const QString defaultProfileDir        = "profiles";
     static inline const QString QuickAutoPortProfilesDir = defaultProfileDir + "/__QAP";
 

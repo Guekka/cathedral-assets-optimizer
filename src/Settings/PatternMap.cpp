@@ -77,7 +77,6 @@ void PatternMap::updatePatternsPriority()
         patterns_[i].priority = i;
 }
 
-
 nlohmann::json PatternMap::getUnifiedJSON() const
 {
     auto getJSON = [](const auto &val) { return val.getJSON(); };

@@ -58,10 +58,10 @@ inline T getValue(const nlohmann::json &j)
 
     const nlohmann::json *json = &j;
 
-    nlohmann::json defaultJ = T();
-    const bool jIsInt = j.is_number_integer() || j.is_number_unsigned();
+    nlohmann::json defaultJ  = T();
+    const bool jIsInt        = j.is_number_integer() || j.is_number_unsigned();
     const bool defaultJIsInt = defaultJ.is_number_integer() || defaultJ.is_number_unsigned();
-    const bool areBothInt = jIsInt && defaultJIsInt;
+    const bool areBothInt    = jIsInt && defaultJIsInt;
 
     if (j.type() != defaultJ.type() && !areBothInt)
         json = &defaultJ;

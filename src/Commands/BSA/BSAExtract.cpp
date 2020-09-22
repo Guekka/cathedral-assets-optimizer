@@ -7,7 +7,7 @@
 #include "Utils/Filesystem.hpp"
 
 namespace CAO {
-CommandResult BSAExtract::process(File& file) const
+CommandResult BSAExtract::process(File &file) const
 {
     auto bsafile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
     if (!bsafile)
@@ -18,7 +18,7 @@ CommandResult BSAExtract::process(File& file) const
     libbsarch::fs::path rootPath = QFileInfo(bsaPath).path().toStdString();
 
     try
-    {;
+    {
         bsafile->bsa.set_dds_callback(&BSACallback, rootPath);
         bsafile->bsa.load(bsaPath.toStdString());
         bsafile->bsa.extract_all_to_disk(rootPath, false);
@@ -39,7 +39,7 @@ CommandResult BSAExtract::process(File& file) const
     return _resultFactory.getSuccessfulResult();
 }
 
-bool BSAExtract::isApplicable(File& file) const
+bool BSAExtract::isApplicable(File &file) const
 {
     if (!currentProfile().getGeneralSettings().bBSAExtract())
         return false;

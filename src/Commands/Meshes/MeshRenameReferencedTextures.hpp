@@ -15,7 +15,7 @@ public:
     CommandType type() const override { return CommandType::Mesh; };
     Priority priority() const override { return Low; };
 
-    CommandResult process(File& file) const override;
+    CommandResult process(File &file) const override;
     bool isApplicable(File &file) const override;
 
 private:

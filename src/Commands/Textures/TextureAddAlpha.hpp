@@ -17,7 +17,7 @@ public:
     CommandResult process(File &file) const;
     Priority priority() const { return Medium; }
     CommandType type() const { return CommandType::Texture; }
-    QString name() const{ return "Add alpha to landscape textures"; };
+    QString name() const { return "Add alpha to landscape textures"; };
 
     static bool isLandscape(const QString &filepath);
     static void listLandscapeTextures(const GeneralSettings &settings, FileTypes &filetypes);

@@ -43,13 +43,12 @@ struct BSAFileResource : public Resource
     }
 
     BSAFileResource &operator=(const BSAFileResource &) = delete;
-    BSAFileResource &operator=(BSAFileResource && other)
+    BSAFileResource &operator                           =(BSAFileResource &&other)
     {
-        bsa = std::move(other.bsa);
+        bsa   = std::move(other.bsa);
         saver = std::move(other.saver);
         saver.set_bsa(bsa);
     }
-
 
     libbsarch::bsa bsa;
     libbsarch::bsa_saver_simple saver;

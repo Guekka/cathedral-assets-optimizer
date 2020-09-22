@@ -63,9 +63,9 @@ const GameSettings &GameSettings::get(Games game)
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {
-                sets.eBSAFormat_         = baTES4;
-                sets.sBSAExtension_      = ".bsa";
-                sets.sBSASuffix_         = ".bsa";
+                sets.eBSAFormat_    = baTES4;
+                sets.sBSAExtension_ = ".bsa";
+                sets.sBSASuffix_    = ".bsa";
                 sets.sDummyPlugin_->assign(std::begin(Dummy::Oblivion), std::end(Dummy::Oblivion));
                 sets.eBSATexturesFormat_ = std::nullopt;
                 sets.sBSATexturesSuffix_ = std::nullopt;
@@ -79,9 +79,9 @@ const GameSettings &GameSettings::get(Games game)
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {
-                sets.eBSAFormat_         = baFO3;
-                sets.sBSAExtension_      = ".bsa";
-                sets.sBSASuffix_         = ".bsa";
+                sets.eBSAFormat_    = baFO3;
+                sets.sBSAExtension_ = ".bsa";
+                sets.sBSASuffix_    = ".bsa";
                 sets.sDummyPlugin_->assign(std::begin(Dummy::Skyrim), std::end(Dummy::Skyrim));
                 sets.eBSATexturesFormat_ = std::nullopt;
                 sets.sBSATexturesSuffix_ = std::nullopt;
@@ -100,9 +100,9 @@ const GameSettings &GameSettings::get(Games game)
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {
-                sets.eBSAFormat_         = baSSE;
-                sets.sBSAExtension_      = ".bsa";
-                sets.sBSASuffix_         = ".bsa";
+                sets.eBSAFormat_    = baSSE;
+                sets.sBSAExtension_ = ".bsa";
+                sets.sBSASuffix_    = ".bsa";
                 sets.sDummyPlugin_->assign(std::begin(Dummy::SkyrimSE), std::end(Dummy::SkyrimSE));
                 sets.eBSATexturesFormat_ = baSSE;
                 sets.sBSATexturesSuffix_ = " - Textures.bsa";

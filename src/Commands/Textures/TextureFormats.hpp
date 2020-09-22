@@ -10,8 +10,8 @@
 //Used to convert enum to string and vice versa
 
 namespace Detail {
-#define DEFFMT(fmt) \
-    { \
+#define DEFFMT(fmt)             \
+    {                           \
 #fmt, DXGI_FORMAT_##fmt \
     }
 

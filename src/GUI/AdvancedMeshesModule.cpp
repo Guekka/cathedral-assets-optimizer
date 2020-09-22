@@ -54,7 +54,6 @@ void AdvancedMeshesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] G
             this,
             [&pSets, buttonGroup](QAbstractButton *button) {
                 pSets.iMeshesOptimizationLevel = buttonGroup->id(button);
-                
             });
 
     if (pSets.iMeshesOptimizationLevel() != 0)

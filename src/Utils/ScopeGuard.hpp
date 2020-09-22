@@ -38,9 +38,7 @@ public:
     }
 
     ScopeGuard &operator=(const ScopeGuard &) = delete;
-    ScopeGuard &operator=(ScopeGuard&& other) noexcept
-    { functions_ = std::move(other.functions_);
-    }
+    ScopeGuard &operator=(ScopeGuard &&other) noexcept { functions_ = std::move(other.functions_); }
 
     void add(const Function &func) { functions_.emplace_back(func); }
     void add(Function &&func) { functions_.emplace_back(std::move(func)); }
