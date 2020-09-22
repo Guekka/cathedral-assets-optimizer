@@ -20,6 +20,15 @@ public:
     {
     }
 
+    RAIIConnection(const RAIIConnection &) = delete;
+    RAIIConnection(RAIIConnection &&other)
+        : connection_(std::exchange(other.connection_, {}))
+    {
+    }
+
+    RAIIConnection &operator=(const RAIIConnection &) = delete;
+    RAIIConnection &operator=(RAIIConnection &&) = delete;
+
     ~RAIIConnection() { QObject::disconnect(connection_); }
 };
 } // namespace detail
