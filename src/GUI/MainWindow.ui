@@ -291,7 +291,6 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionShow_tutorials"/>
     <addaction name="actionDocumentation"/>
     <addaction name="actionDiscord"/>
    </widget>
@@ -350,17 +349,6 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt</string>
-   </property>
-  </action>
-  <action name="actionShow_tutorials">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show tutorials</string>
    </property>
   </action>
   <action name="actionDonate">
