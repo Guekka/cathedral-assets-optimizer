@@ -60,7 +60,6 @@ MainWindow::MainWindow()
     });
 
     QObject::connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
-    CAO::connectWrapper(*ui_->actionShow_tutorials, commonSettings.bShowTutorials, true);
 
     //Menu buttons
     QObject::connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
@@ -110,10 +109,11 @@ void MainWindow::addModule(IWindowModule *module)
 void MainWindow::clearModules()
 {
     auto &tabs = ui_->tabWidget;
-    for (int i = 0; i < tabs->count(); ++i)
+    //Iterating backwards as tabs are contained in a stack
+    for (int i = tabs->count() - 1; i > -1; --i)
     {
-        tabs->widget(i)->deleteLater();
-        tabs->removeTab(i);
+        tabs->widget(0)->deleteLater();
+        tabs->removeTab(0);
     }
     tabs->setHidden(true);
 }
@@ -213,7 +213,6 @@ void MainWindow::connectThis()
 
         generalSettings.sInputPath = dir;
         ui_->inputDirTextEdit->setText(dir);
-            
     });
 
     selectText(*ui_->patterns, generalSettings.sCurrentPattern.value_or("*"));
@@ -298,11 +297,9 @@ void MainWindow::updatePatterns()
 void MainWindow::loadUi()
 {
     auto &commonSettings = getProfiles().commonSettings();
-
     setTheme(commonSettings.eTheme());
 
     ui_->profiles->setCurrentIndex(ui_->profiles->findText(getProfiles().currentProfileName()));
-    ui_->actionShow_tutorials->setChecked(commonSettings.bShowTutorials());
 }
 
 void MainWindow::resetUi()
@@ -364,12 +361,6 @@ void MainWindow::endProcess()
         getProfiles().get(profile).saveToJSON();
 
     freezeModules(false);
-}
-
-void MainWindow::showTutorialWindow(const QString &title, const QString &text)
-{
-    if (getProfiles().commonSettings().bShowTutorials())
-        QMessageBox::information(this, title, text);
 }
 
 void MainWindow::firstStart()
