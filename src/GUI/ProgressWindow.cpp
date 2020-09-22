@@ -56,11 +56,18 @@ void ProgressWindow::updateEntries()
 
     while (!logStream_.atEnd())
     {
-        logStream_.readLineInto(&readLine);
-        while (!readLine.endsWith('|')) //Parser helper
+        while (true) //Parser helper
+        {
             readLine.append(logStream_.readLine());
+            if (readLine.endsWith('|'))
+            {
+                readLine.chop(1); //Remove '|'
+                readLine.append("<br>");
+                break;
+            }
+            readLine.append("<br>");
+        }
 
-        readLine.chop(1); //Remove '|'
         addEntry(LogEntry(readLine));
     }
 }
