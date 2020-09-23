@@ -5,8 +5,6 @@
 #pragma once
 
 #include "Commands/CommandBook.hpp"
-#include "Commands/Textures/TextureCompressionDevice.hpp"
-#include "File/Textures/TextureFile.hpp"
 
 namespace CAO {
 class TextureConvert final : public Command

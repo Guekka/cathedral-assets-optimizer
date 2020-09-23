@@ -3,8 +3,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QDir>
+
 #include "BSACreate.hpp"
+#include "Commands/BSA/Utils/BSA.hpp"
 #include "Commands/BSA/Utils/BSACallback.hpp"
+#include "Commands/BSA/Utils/BSASplit.hpp"
+#include "File/BSA/BSAFolder.hpp"
 #include "Utils/Algorithms.hpp"
 #include "Utils/wildcards.hpp"
 
@@ -13,7 +18,7 @@ CommandResult BSACreate::process(File &file) const
 {
     auto bsaFolder = dynamic_cast<BSAFolderResource *>(&file.getFile(true));
     if (!bsaFolder)
-        return _resultFactory.getCannotCastFileResult();
+        return CommandResultFactory::getCannotCastFileResult();
 
     auto bsas = BSASplit::splitBSA(QDir{file.getOutputFilePath()}, currentProfile().getGeneralSettings());
 
@@ -23,7 +28,7 @@ CommandResult BSACreate::process(File &file) const
 
         //Checking if a bsa already exists
         if (QFile(bsa.path).exists())
-            return _resultFactory.getFailedResult(-1, "Failed to create BSA: a BSA already exists.");
+            return CommandResultFactory::getFailedResult(-1, "Failed to create BSA: a BSA already exists.");
 
         BSAFileResource archive;
         archive.bsa.set_share_data(true);
@@ -45,12 +50,12 @@ CommandResult BSACreate::process(File &file) const
         }
         catch (const std::exception &e)
         {
-            return _resultFactory.getFailedResult(-3, e.what());
+            return CommandResultFactory::getFailedResult(-3, e.what());
         }
 
         bsaFolder->bsas.emplace_back(std::move(archive));
     }
-    return _resultFactory.getSuccessfulResult();
+    return CommandResultFactory::getSuccessfulResult();
 }
 
 bool BSACreate::isApplicable(File &file) const

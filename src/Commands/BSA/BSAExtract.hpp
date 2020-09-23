@@ -5,7 +5,6 @@
 #pragma once
 
 #include "Commands/CommandBook.hpp"
-#include "File/BSA/BSAFile.hpp"
 
 namespace CAO {
 class BSAExtract : public Command

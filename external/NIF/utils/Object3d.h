@@ -5,12 +5,15 @@ See the included LICENSE file
 
 #pragma once
 
-#include <vector>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <vector>
 
-#pragma warning (disable : 4018 4244 4267 4389)
+#undef min
+#undef max
+
+#pragma warning(disable : 4018 4244 4267 4389)
 
 const double EPSILON = 0.0001;
 
@@ -23,7 +26,7 @@ typedef unsigned int uint;
 
 inline bool FloatsAreNearlyEqual(float a, float b) {
 	float scale = std::max(std::max(std::fabs(a), std::fabs(b)), 1.0f);
-	return std::fabs(a - b) <= EPSILON * scale;
+    return std::fabs(a - b) <= EPSILON * scale;
 }
 
 struct Vector2 {

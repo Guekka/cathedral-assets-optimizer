@@ -5,11 +5,15 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.hpp"
+#include <vector>
+
+#include <QDialog>
 
 namespace Ui {
 class ListDialog;
 }
+
+class QListWidgetItem;
 
 namespace CAO {
 class ListDialog : public QDialog

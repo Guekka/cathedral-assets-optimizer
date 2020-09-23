@@ -3,11 +3,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QCommandLineParser>
+#include <QDir>
+#include <QMessageBox>
+#include <QTranslator>
+
 #include "GUI/LevelSelector.hpp"
 #include "GUI/MainWindow.hpp"
 #include "GUI/Utils/SetTheme.hpp"
 #include "Manager.hpp"
 #include "Settings/MigrateProfiles.hpp"
+#include "Settings/Profiles.hpp"
 #include "Version.hpp"
 
 void init()

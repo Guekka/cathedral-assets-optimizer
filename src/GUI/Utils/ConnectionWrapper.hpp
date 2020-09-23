@@ -6,7 +6,10 @@
 #pragma once
 
 #include "../Utils.hpp"
-#include "pch.hpp"
+#include <QMetaObject>
+#include <QObject>
+
+#include <vector>
 
 namespace CAO {
 namespace detail {

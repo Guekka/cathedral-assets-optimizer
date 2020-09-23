@@ -4,12 +4,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "Commands/Command.hpp"
-#include "Utils/TemplateMetaProgramming.hpp"
-#include "pch.hpp"
+#include "Commands/CommandType.hpp"
 
 namespace CAO {
-
 class CommandBook final
 {
 public:
@@ -43,9 +44,9 @@ public:
 	 * \param command The command to manage
 	 */
     CommandBookManager(std::unique_ptr<Command> command) { CommandBook::registerCommand(std::move(command)); }
+};
 
 //! Register a Spell using a CommandBookManager
 #define REGISTER_COMMAND(COMMAND) inline CommandBookManager Manager_##COMMAND(std::make_unique<COMMAND>());
-};
 
 } // namespace CAO

@@ -3,9 +3,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "TextureAddAlpha.hpp"
+#include <QDirIterator>
+
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "Commands/Textures/TextureConvert.hpp"
+#include "File/Textures/TextureFile.hpp"
+#include "TextureAddAlpha.hpp"
+#include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
 
 namespace CAO {
@@ -21,7 +25,7 @@ CommandResult TextureAddAlpha::process(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
-        return _resultFactory.getCannotCastFileResult();
+        return CommandResultFactory::getCannotCastFileResult();
 
     auto timage = std::make_unique<TextureResource>();
 
@@ -32,8 +36,8 @@ CommandResult TextureAddAlpha::process(File &file) const
                                                                   DXGI_FORMAT_R8G8B8A8_UNORM);
         if (FAILED(hr))
         {
-            return _resultFactory
-                .getFailedResult(hr, "Failed to convert landscape texture to a format with alpha");
+            return CommandResultFactory::getFailedResult(
+                hr, "Failed to convert landscape texture to a format with alpha");
         }
     }
     constexpr auto transform = [](DirectX::XMVECTOR *outPixels,
@@ -55,11 +59,11 @@ CommandResult TextureAddAlpha::process(File &file) const
 
     if (FAILED(hr))
     {
-        return _resultFactory.getFailedResult(hr, "Failed to add alpha to landscape textures.");
+        return CommandResultFactory::getFailedResult(hr, "Failed to add alpha to landscape textures.");
     }
 
     file.setFile(std::unique_ptr<Resource>(std::move(timage2)));
-    return _resultFactory.getSuccessfulResult();
+    return CommandResultFactory::getSuccessfulResult();
 }
 
 bool TextureAddAlpha::isApplicable(File &file) const

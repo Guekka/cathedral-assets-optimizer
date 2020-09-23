@@ -5,6 +5,7 @@
 
 #include "Settings/Profiles.hpp"
 #include "Manager.hpp"
+#include "Utils/Filesystem.hpp"
 
 namespace CAO {
 

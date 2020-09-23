@@ -11,6 +11,8 @@
 #define REGISTER_SETTING(type, name, key) \
     QJSONValueWrapper<type> name{json_, nlohmann::json_pointer<nlohmann::json>{key}};
 
+class QDir;
+
 namespace CAO {
 class GeneralSettings final : public Settings
 {

@@ -5,8 +5,6 @@
 #pragma once
 
 #include "Commands/CommandBook.hpp"
-#include "File/Textures/TextureFile.hpp"
-#include "pch.hpp"
 
 namespace CAO {
 class TextureResize : public Command

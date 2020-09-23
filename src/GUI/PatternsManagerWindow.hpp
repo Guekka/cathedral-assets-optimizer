@@ -5,8 +5,12 @@
 
 #pragma once
 
-#include "pch.hpp"
-#include "ui_PatternsManagerWindow.h"
+#include <QDialog>
+class QComboBox;
+
+namespace Ui {
+class PatternsManagerWindow;
+}
 
 namespace CAO {
 class Profile;
@@ -16,6 +20,8 @@ class PatternsManagerWindow : public QDialog
 
 public:
     explicit PatternsManagerWindow(Profile &profile, QWidget *parent = nullptr);
+    ~PatternsManagerWindow(); // = default
+
     void updatePatterns(QComboBox &box);
 
 private:

@@ -2,7 +2,9 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "MeshRenameReferencedTextures.hpp"
+#include "File/Meshes/MeshFile.hpp"
 #include "Settings/Games.hpp"
 #include "Utils/Algorithms.hpp"
 
@@ -11,7 +13,7 @@ CommandResult MeshRenameReferencedTextures::process(File &file) const
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
     if (!nif)
-        return _resultFactory.getCannotCastFileResult();
+        return CommandResultFactory::getCannotCastFileResult();
 
     for (NiShader *shader : getShaders(*nif))
     {
@@ -27,13 +29,13 @@ CommandResult MeshRenameReferencedTextures::process(File &file) const
             }
             else if (++texCounter > limit)
             {
-                return _resultFactory
-                    .getFailedResult(-1, "Failed to renamed referenced textures from TGA to DDS in mesh");
+                return CommandResultFactory::getFailedResult(
+                    -1, "Failed to renamed referenced textures from TGA to DDS in mesh");
             }
         }
     }
 
-    return _resultFactory.getSuccessfulResult();
+    return CommandResultFactory::getSuccessfulResult();
 }
 
 bool MeshRenameReferencedTextures::isApplicable(File &file) const

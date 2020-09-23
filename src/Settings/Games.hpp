@@ -6,7 +6,10 @@
 #pragma once
 
 #include "BaseTypes.hpp"
+#include "NIF/BasicTypes.h"
 #include "Settings.hpp"
+#include "hkxcmd/hkPackFormat.hpp"
+#include "libbsarch/src/libbsarch.h"
 
 namespace CAO {
 

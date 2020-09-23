@@ -4,7 +4,20 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.hpp"
+#include <optional>
+#include <QObject>
+
+#include "Commands/Textures/TextureFormats.hpp"
+#include "DirectXTex/DirectXTex.h"
+#include "NIF/NifFile.h"
+
+#include "hkxcmd/hkPackFormat.hpp"
+#include <Common/Base/Types/hkBaseTypes.h>
+#include <Common/Base/hkBase.h>
+#include <Common/Serialize/Resource/hkResource.h>
+
+#include "libbsarch/src/bsa_saver.hpp"
+#include "libbsarch/src/transform_archive.hpp"
 
 namespace CAO {
 class Resource
@@ -48,6 +61,7 @@ struct BSAFileResource : public Resource
         bsa   = std::move(other.bsa);
         saver = std::move(other.saver);
         saver.set_bsa(bsa);
+        return *this;
     }
 
     libbsarch::bsa bsa;
@@ -68,3 +82,6 @@ struct AnimationResource : public Resource
 };
 
 } // namespace CAO
+
+Q_DECLARE_METATYPE(NiFileVersion)
+Q_DECLARE_METATYPE(bsa_archive_type_e)

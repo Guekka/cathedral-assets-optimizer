@@ -3,7 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QDir>
+#include <QDirIterator>
+
 #include "ModFolder.hpp"
+#include "File/BSA/BSAFile.hpp"
 #include "File/FileFactory.hpp"
 
 namespace CAO {

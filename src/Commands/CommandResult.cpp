@@ -2,10 +2,18 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "Commands/CommandResult.hpp"
 
 namespace CAO {
-CommandResult CommandResultFactory::getSuccessfulResult() const
+bool CommandResult::hasError() const
+{
+    return errorCode < 0;
+}
+} // namespace CAO
+
+namespace CAO::CommandResultFactory {
+CommandResult getSuccessfulResult()
 {
     CommandResult result;
     result.errorCode = 0;
@@ -14,7 +22,7 @@ CommandResult CommandResultFactory::getSuccessfulResult() const
     return result;
 }
 
-CommandResult CommandResultFactory::getFailedResult(HRESULT errorCode, const QString &errorMessage) const
+CommandResult getFailedResult(HRESULT errorCode, const QString &errorMessage)
 {
     //Error code are always negative
     if (errorCode > 0)
@@ -23,7 +31,7 @@ CommandResult CommandResultFactory::getFailedResult(HRESULT errorCode, const QSt
     return CommandResult{errorCode, errorMessage, false};
 }
 
-CommandResult CommandResultFactory::getCannotCastFileResult() const
+CommandResult getCannotCastFileResult()
 {
     CommandResult result;
     result.errorCode     = 3;
@@ -31,4 +39,4 @@ CommandResult CommandResultFactory::getCannotCastFileResult() const
     result.processedFile = false;
     return result;
 }
-} // namespace CAO
+} // namespace CAO::CommandResultFactory

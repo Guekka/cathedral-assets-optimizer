@@ -4,10 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "MainOptimizer.hpp"
+#include <QObject>
+#include <QString>
+
 #include "ModFolder.hpp"
-#include "Utils/Filesystem.hpp"
-#include "pch.hpp"
+#include "Settings/BaseTypes.hpp"
 
 namespace CAO {
 class Manager final : public QObject
@@ -26,6 +27,7 @@ private:
 
     QString fileTypeToString(CommandType type);
 
+private:
     std::vector<ModFolder> mods_;
     const QString creationDate_;
 

@@ -3,7 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QCloseEvent>
+
 #include "ProgressWindow.hpp"
+#include "ui_ProgressWindow.h"
 
 namespace CAO {
 ProgressWindow::ProgressWindow(const QString &logFilePath, QWidget *parent)
@@ -26,6 +29,8 @@ ProgressWindow::ProgressWindow(const QString &logFilePath, QWidget *parent)
     ui_->text->setMaximumBlockCount(maxBlockSize_);
     logEntries_.reserve(maxBlockSize_);
 }
+
+ProgressWindow::~ProgressWindow() = default;
 
 void ProgressWindow::update(const QString &text, int max, int value)
 {

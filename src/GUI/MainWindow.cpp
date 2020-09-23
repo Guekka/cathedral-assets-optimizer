@@ -3,6 +3,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QDesktopServices>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QUrl>
+#include <QtConcurrent/QtConcurrent>
+
+#include "Settings/Profiles.hpp"
+
 #include "MainWindow.hpp"
 #include "GUI/Utils/SetTheme.hpp"
 #include "Manager.hpp"

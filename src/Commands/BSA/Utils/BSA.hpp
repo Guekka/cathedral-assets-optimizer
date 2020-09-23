@@ -4,8 +4,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <iosfwd>
+#include <vector>
+
+#include <QString>
+#include <QStringList>
+
 #include "Settings/BaseTypes.hpp"
-#include "pch.hpp"
+#include "libbsarch/src/libbsarch.h"
 
 namespace CAO {
 enum BSAType
@@ -23,7 +29,7 @@ struct BSA
     explicit BSA() = default;
     explicit BSA(double maxSize, qint64 size, BSAType type);
 
-    qint64 filesSize = 0;
+    long long int filesSize = 0;
     double maxSize   = LONG_MAX;
     QString path;
     QStringList files{};
@@ -53,28 +59,6 @@ struct BSA
     static void mergeBSAs(std::vector<BSA> &list, MergeBSATypes mergeTypes);
 };
 
-inline std::ostream &operator<<(std::ostream &os, const BSA &bsa)
-{
-    auto str = QString("Path:'%1'\n"
-                       "Size:%2Gb\n"
-                       "Type:%3\n"
-                       "Format:%4\n")
-                   .arg(bsa.path)
-                   .arg(bsa.filesSize / GigaByte)
-                   .arg(bsa.type)
-                   .arg(bsa.format);
-
-    return os << str.toStdString();
-}
-
-inline std::ostream &operator<<(std::ostream &os, const BSAType &type)
-{
-    switch (type)
-    {
-        case CAO::StandardBsa: return os << "Standard BSA";
-        case CAO::UncompressableBsa: return os << "Uncompressible BSA";
-        case CAO::TexturesBsa: return os << "Textures BSA";
-    }
-    return os << "Unknown BSA type";
-}
+std::ostream &operator<<(std::ostream &os, const BSA &bsa);
+std::ostream &operator<<(std::ostream &os, const BSAType &type);
 } // namespace CAO

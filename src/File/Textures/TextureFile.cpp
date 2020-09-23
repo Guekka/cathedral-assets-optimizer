@@ -5,6 +5,7 @@
 
 #include "TextureFile.hpp"
 #include "Utils/ScopeGuard.hpp"
+#include <QDir>
 
 namespace CAO {
 

@@ -5,7 +5,6 @@
 #pragma once
 
 #include "Commands/CommandBook.hpp"
-#include "File/Meshes/MeshFile.hpp"
 
 namespace CAO {
 class MeshRenameReferencedTextures : public Command

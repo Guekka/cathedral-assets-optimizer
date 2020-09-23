@@ -4,7 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.hpp"
+using HRESULT = long;
+#include <QString>
 
 namespace CAO {
 struct CommandResult
@@ -13,15 +14,13 @@ struct CommandResult
     QString errorMessage;
     bool processedFile;
 
-    bool hasError() const { return FAILED(errorCode); }
+    bool hasError() const;
 };
 
-class CommandResultFactory
-{
-public:
-    CommandResult getSuccessfulResult() const;
-    CommandResult getFailedResult(HRESULT errorCode, const QString &errorMessage) const;
-    CommandResult getCannotCastFileResult() const;
-};
+namespace CommandResultFactory {
+CommandResult getSuccessfulResult();
+CommandResult getFailedResult(HRESULT errorCode, const QString &errorMessage);
+CommandResult getCannotCastFileResult();
+}; // namespace CommandResultFactory
 
 } // namespace CAO

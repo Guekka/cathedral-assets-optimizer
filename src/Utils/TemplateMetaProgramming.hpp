@@ -4,7 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.hpp"
+#include <type_traits>
+#include <vector>
 
 namespace CAO {
 template<typename T>

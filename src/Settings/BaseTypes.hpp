@@ -4,7 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.hpp"
+#include "Commands/Textures/TextureFormats.hpp"
+#include <QObject>
 
 constexpr double GigaByte = 1024 * 1024 * 1024;
 
@@ -49,11 +50,9 @@ enum Games
 
 } // namespace CAO
 
-Q_DECLARE_METATYPE(DXGI_FORMAT)
-Q_DECLARE_METATYPE(NiFileVersion)
-Q_DECLARE_METATYPE(bsa_archive_type_e)
 Q_DECLARE_METATYPE(CAO::OptimizationMode)
 Q_DECLARE_METATYPE(CAO::TextureResizingMode)
 Q_DECLARE_METATYPE(CAO::GuiMode)
 Q_DECLARE_METATYPE(CAO::GuiTheme)
 Q_DECLARE_METATYPE(CAO::Games)
+Q_DECLARE_METATYPE(DXGI_FORMAT)

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "pch.hpp"
+#include <QObject>
 
 namespace CAO {
 Q_NAMESPACE

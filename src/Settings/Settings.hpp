@@ -4,7 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.hpp"
+#include "nlohmann/json.hpp"
+#include <optional>
+#include <QString>
 
 namespace CAO {
 class Settings
@@ -25,6 +27,6 @@ public:
     virtual void setJSON(const nlohmann::json &j) { json_ = j; }
 
 protected:
-    mutable nlohmann::json json_;
+    mutable nlohmann::json json_; //TODO why mutable ?
 };
 } // namespace CAO

@@ -4,23 +4,21 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/Animations/Animation.hpp"
-#include "Commands/BSA/BSA.hpp"
-#include "Commands/Meshes/Mesh.hpp"
-#include "Commands/Textures/Texture.hpp"
-#include "Settings/Settings.hpp"
+#include "Commands/CommandType.hpp"
+#include <QObject>
 
 namespace CAO {
 /*!
  * \brief Coordinates all the subclasses in order to optimize BSAs, textures, meshes and animations
  */
+
+class File;
+class Command;
 class MainOptimizer final : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit MainOptimizer();
-
     struct MemoryData
     {
         void *pSource               = nullptr;
@@ -40,8 +38,6 @@ private:
 
     bool loadFile(File &file, void *pSource = nullptr, size_t size = 0);
     bool saveFile(File &file, std::vector<std::byte> *out = nullptr);
-
-    CommandBook _commandBook;
 
 signals:
     void processingFile(CommandType type);

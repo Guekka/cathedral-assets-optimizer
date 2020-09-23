@@ -5,8 +5,13 @@
 
 #pragma once
 
-#include "pch.hpp"
-#include "ui_ProgressWindow.h"
+#include <QFile>
+#include <QTextStream>
+#include <QWidget>
+
+#include "plog/Severity.h"
+
+class QCloseEvent;
 
 namespace Ui {
 class ProgressWindow;
@@ -19,6 +24,7 @@ class ProgressWindow : public QWidget
     Q_OBJECT
 public:
     explicit ProgressWindow(const QString &logFilePath, QWidget *parent = nullptr);
+    ~ProgressWindow(); // = default
 
     void update(const QString &text, int max, int value);
     void end();

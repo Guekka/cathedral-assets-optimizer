@@ -2,14 +2,17 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "TextureConvert.hpp"
+#include "Commands/Textures/TextureCompressionDevice.hpp"
+#include "File/Textures/TextureFile.hpp"
 
 namespace CAO {
 CommandResult TextureConvert::process(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
-        return _resultFactory.getCannotCastFileResult();
+        return CommandResultFactory::getCannotCastFileResult();
 
     auto outputFormat = file.patternSettings().eTexturesFormat();
 
@@ -22,16 +25,16 @@ CommandResult TextureConvert::process(File &file) const
     if (DirectX::IsCompressed(outputFormat))
     {
         if (auto result = convertWithCompression(*texFile, *timage, outputFormat))
-            return _resultFactory.getFailedResult(result, "Failed to convert with compression");
+            return CommandResultFactory::getFailedResult(result, "Failed to convert with compression");
     }
     else
     {
         if (auto result = convertWithoutCompression(*texFile, *timage, outputFormat))
-            return _resultFactory.getFailedResult(result, "Failed to convert without compression");
+            return CommandResultFactory::getFailedResult(result, "Failed to convert without compression");
     }
 
     file.setFile(std::unique_ptr<Resource>(std::move(timage)));
-    return _resultFactory.getSuccessfulResult();
+    return CommandResultFactory::getSuccessfulResult();
 }
 
 bool TextureConvert::isApplicable(File &file) const

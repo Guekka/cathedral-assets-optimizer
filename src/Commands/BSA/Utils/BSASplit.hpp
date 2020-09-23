@@ -5,12 +5,13 @@
 #pragma once
 
 #include "Commands/BSA/Utils/BSA.hpp"
-#include "File/BSA/BSAFolder.hpp"
-#include "Settings/Settings.hpp"
+
+class QDir;
 
 namespace CAO {
+class GeneralSettings;
+
 namespace BSASplit {
 std::vector<BSA> splitBSA(const QDir &dir, const GeneralSettings &generalSets);
-bool isAllowedFile(const QDir &bsaDir, const QFileInfo &settings);
 }; // namespace BSASplit
 } // namespace CAO

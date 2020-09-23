@@ -3,12 +3,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QCryptographicHash>
+#include <QDir>
+#include <QDirIterator>
+#include <QMap>
+#include <QMapIterator>
+#include <QRegularExpression>
+#include <QVariant>
+
 #include "Utils/Filesystem.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "Settings/FileTypes.hpp"
 
-namespace CAO {
-void Filesystem::deleteEmptyDirectories(const QString &folderPath, const FileTypes &filetypes)
+namespace CAO::Filesystem {
+QByteArray fileChecksum(QFile &&file, QCryptographicHash::Algorithm hashAlgorithm);
+
+void deleteEmptyDirectories(const QString &folderPath, const FileTypes &filetypes)
 {
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     QMap<int, QStringList> dirs;
@@ -37,7 +47,7 @@ void Filesystem::deleteEmptyDirectories(const QString &folderPath, const FileTyp
     }
 }
 
-bool Filesystem::compareFolders(const QString &folder1, const QString &folder2)
+bool compareFolders(const QString &folder1, const QString &folder2)
 {
     QDirIterator it1(folder1, QDirIterator::Subdirectories);
     QDirIterator it2(folder2, QDirIterator::Subdirectories);
@@ -66,7 +76,7 @@ bool Filesystem::compareFolders(const QString &folder1, const QString &folder2)
     return true;
 }
 
-void Filesystem::copyDir(const QDir &source, QDir destination, const bool overwriteExisting)
+void copyDir(const QDir &source, QDir destination, const bool overwriteExisting)
 {
     QDirIterator it(source, QDirIterator::Subdirectories);
 
@@ -108,7 +118,7 @@ void Filesystem::copyDir(const QDir &source, QDir destination, const bool overwr
     QDir::setCurrent(currentDir);
 }
 
-QByteArray Filesystem::fileChecksum(QFile &&file, QCryptographicHash::Algorithm hashAlgorithm)
+QByteArray fileChecksum(QFile &&file, QCryptographicHash::Algorithm hashAlgorithm)
 {
     if (file.open(QFile::ReadOnly))
     {
@@ -120,7 +130,7 @@ QByteArray Filesystem::fileChecksum(QFile &&file, QCryptographicHash::Algorithm 
     return QByteArray();
 }
 
-bool Filesystem::compareFiles(const QString &filepath1, const QString &filepath2)
+bool compareFiles(const QString &filepath1, const QString &filepath2)
 {
     QFile file1(filepath1);
     QFile file2(filepath2);
@@ -133,7 +143,7 @@ bool Filesystem::compareFiles(const QString &filepath1, const QString &filepath2
     return hash1 == hash2;
 }
 
-QString Filesystem::backupFile(const QString &filePath)
+QString backupFile(const QString &filePath)
 {
     QFile backupFile(filePath + ".bak");
 
@@ -150,7 +160,7 @@ QString Filesystem::backupFile(const QString &filePath)
     return backupFile.fileName();
 }
 
-QStringList Filesystem::readFile(QFile &file, const std::function<void(QString &line)> &function)
+QStringList readFile(QFile &file, const std::function<void(QString &line)> &function)
 {
     QStringList list;
 
@@ -170,7 +180,7 @@ QStringList Filesystem::readFile(QFile &file, const std::function<void(QString &
     return list;
 }
 
-QStringList Filesystem::listPlugins(QDirIterator &it)
+QStringList listPlugins(QDirIterator &it)
 {
     QStringList plugins;
     const QRegularExpression pluginsExt("\\.es[plm]$");
@@ -184,11 +194,11 @@ QStringList Filesystem::listPlugins(QDirIterator &it)
     return plugins;
 }
 
-std::fstream Filesystem::openBinaryFile(const QString &filepath)
+std::fstream openBinaryFile(const QString &filepath)
 {
     std::fstream file;
     namespace fs = std::filesystem;
     file.open(fs::u8path(filepath.toStdString()), std::ios::binary | std::ios::in);
     return file;
 }
-} // namespace CAO
+} // namespace CAO::Filesystem

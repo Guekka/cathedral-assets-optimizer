@@ -4,10 +4,21 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Utils/TemplateMetaProgramming.hpp"
-#include "pch.hpp"
-#include <functional>
+#include <QAbstractButton>
+#include <QAction>
+#include <QComboBox>
+#include <QDialog>
+#include <QDoubleSpinBox>
+#include <QGroupBox>
+#include <QLineEdit>
+#include <QListView>
+#include <QSpinBox>
 #include <QStandardItemModel>
+
+#include <functional>
+#include <stdexcept>
+
+#include "Utils/TemplateMetaProgramming.hpp"
 
 namespace CAO {
 class UiException : public std::runtime_error

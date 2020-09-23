@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "File/BSA/BSAFile.hpp"
 #include "File/File.hpp"
 
 namespace CAO {

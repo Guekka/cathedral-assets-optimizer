@@ -4,9 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <QObject>
+
 #include "Settings/JSON.hpp"
 #include "Utils/TemplateMetaProgramming.hpp"
-#include "pch.hpp"
 
 namespace CAO {
 

@@ -7,8 +7,11 @@
 #include "Commands/BSA/Utils/BSA.hpp"
 #include "pch.hpp"
 
+class QDir;
+
 namespace CAO {
 class GameSettings;
+
 PACKED(struct PluginHeader {
     char type[4];
     uint32_t groupSize;
@@ -71,12 +74,6 @@ void makeDummyPlugins(const QString &folderPath, const GeneralSettings &settings
 */
 bool checkIfBsaHasPlugin(const QString &bsaPath, const GameSettings &settings);
 
-/*!
- * \brief Find all the BSAs names in a directory
- * \param it An iterator to the dir to scan
- * \return A list containing the names of the BSAs found
- */
-QStringList listBSAsNames(QDirIterator it, const GameSettings &settings);
 /*!
 * \brief List all the headparts in a plugin file
 * \param filepath The path of the plugin to scan

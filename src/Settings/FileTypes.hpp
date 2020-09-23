@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/BSA/Utils/BSA.hpp"
 #include "Settings.hpp"
 #include "Utils/QJSONValueWrapper.hpp"
 

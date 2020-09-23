@@ -5,13 +5,17 @@
 
 #include "MainOptimizer.hpp"
 #include "BSAMemoryCallback.hpp"
+#include "Commands/Animations/Animation.hpp"
+#include "Commands/BSA/BSA.hpp"
+#include "Commands/Meshes/Mesh.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
+#include "Commands/Textures/Texture.hpp"
+#include "File/BSA/BSAFolder.hpp"
 #include "Settings/Games.hpp"
 #include "Settings/Profiles.hpp"
+#include "Settings/Settings.hpp"
 
 namespace CAO {
-MainOptimizer::MainOptimizer() {}
-
 void MainOptimizer::process(File &file, bool dryRun, MemoryData memoryData)
 {
     emit processingFile(file.type());

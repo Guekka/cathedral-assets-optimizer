@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "File/Meshes/MeshFile.hpp"
+#include "Utils/Algorithms.hpp"
 #include <strstream>
 
 namespace CAO {

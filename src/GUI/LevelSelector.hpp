@@ -4,6 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <array>
+#include <QDialog>
+
 #include "Settings/BaseTypes.hpp"
 
 namespace Ui {

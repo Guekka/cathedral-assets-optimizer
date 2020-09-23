@@ -2,14 +2,24 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#include <QDir>
+#include <QDirIterator>
+
 #include "BSASplit.hpp"
+#include "Commands/BSA/Utils/BSA.hpp"
+#include "File/BSA/BSAFolder.hpp"
+#include "Settings/GeneralSettings.hpp"
 #include "Settings/Profiles.hpp"
 #include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
 #include "Utils/wildcards.hpp"
 
-namespace CAO {
-std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &generalSets)
+namespace CAO::BSASplit {
+
+bool isAllowedFile(const QDir &bsaDir, const QFileInfo &settings);
+
+std::vector<BSA> splitBSA(const QDir &dir, const GeneralSettings &generalSets)
 {
     std::vector<BSA> bsas{BSA::getBSA(StandardBsa, generalSets),
                           BSA::getBSA(UncompressableBsa, generalSets),
@@ -64,7 +74,7 @@ std::vector<BSA> BSASplit::splitBSA(const QDir &dir, const GeneralSettings &gene
     return bsas;
 }
 
-bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
+bool isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
 {
     if (fileinfo.isDir())
         return false;
@@ -83,4 +93,4 @@ bool BSASplit::isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
            || ft.match(ft.slBSAUncompressibleFiles(), path);
 }
 
-} // namespace CAO
+} // namespace CAO::BSASplit

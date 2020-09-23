@@ -41,7 +41,7 @@ add_library (directxtex STATIC
 target_compile_features(directxtex PRIVATE cxx_std_14)
 
 if(MSVC)
-    target_compile_options(directxtex PRIVATE /permissive- /JMC- /Zc:__cplusplus /fp:fast)
+    target_compile_options(directxtex PRIVATE /permissive- /JMC- /Zc:__cplusplus /fp:fast /EHsc)
 
     if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.26)
         target_compile_options(directxtex PRIVATE /Zc:preprocessor /wd5105)

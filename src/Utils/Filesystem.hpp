@@ -4,8 +4,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.hpp"
+#include <functional>
+#include <QStringList>
+
+class QDir;
+class QDirIterator;
+class QString;
+class QFile;
+
 namespace CAO {
+
 class FileTypes;
 /*!
  * \brief Manages filesystem operations : moving files, deleting empty dirs...
@@ -49,7 +57,6 @@ std::fstream openBinaryFile(const QString &filepath);
 
 bool compareFiles(const QString &filepath1, const QString &filepath2);
 
-QByteArray fileChecksum(QFile &&file, QCryptographicHash::Algorithm hashAlgorithm);
 
 }; // namespace Filesystem
 } // namespace CAO

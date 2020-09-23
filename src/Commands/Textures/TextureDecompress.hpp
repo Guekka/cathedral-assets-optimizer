@@ -5,7 +5,6 @@
 #pragma once
 
 #include "Commands/CommandBook.hpp"
-#include "File/Textures/TextureFile.hpp"
 
 namespace CAO {
 class TextureDecompress final : public Command

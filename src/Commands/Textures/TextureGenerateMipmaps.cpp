@@ -3,13 +3,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "TextureGenerateMipmaps.hpp"
+#include "File/Textures/TextureFile.hpp"
 
 namespace CAO {
 CommandResult TextureGenerateMipmaps::process(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
-        return _resultFactory.getCannotCastFileResult();
+        return CommandResultFactory::getCannotCastFileResult();
 
     const auto &info    = texFile->GetMetadata();
     const size_t &tMips = calculateOptimalMipMapsNumber(info);
@@ -19,7 +20,7 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
     mdata.mipLevels            = 1;
     const auto hr1             = timage->Initialize(mdata);
     if (FAILED(hr1))
-        return _resultFactory.getFailedResult(hr1, "Failed to initialize target image with source metadata.");
+        return CommandResultFactory::getFailedResult(hr1, "Failed to initialize target image with source metadata.");
 
     // Mips generation only works on a single base image, so strip off existing mip levels
     // Also required for preserve alpha coverage so that existing mips are regenerated
@@ -33,7 +34,7 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
                                       0,
                                       0);
         if (FAILED(hr))
-            return _resultFactory.getFailedResult(hr, "Failed to copy image to single level");
+            return CommandResultFactory::getFailedResult(hr, "Failed to copy image to single level");
     }
 
     auto timage2        = std::make_unique<TextureResource>();
@@ -47,10 +48,10 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
                                     *timage2);
 
     if (FAILED(hr))
-        return _resultFactory.getFailedResult(hr, "Failed to generate mipmaps.");
+        return CommandResultFactory::getFailedResult(hr, "Failed to generate mipmaps.");
 
     file.setFile(std::move(timage2));
-    return _resultFactory.getSuccessfulResult();
+    return CommandResultFactory::getSuccessfulResult();
 }
 
 bool TextureGenerateMipmaps::isApplicable(File &file) const

@@ -3,7 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QDirIterator>
+
 #include "MeshConvert.hpp"
+#include "Commands/Plugins/PluginsOperations.hpp"
+#include "File/Meshes/MeshFile.hpp"
 #include "Settings/Games.hpp"
 #include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
@@ -23,7 +27,7 @@ CommandResult MeshConvert::process(File &file) const
 {
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
     if (!nif)
-        return _resultFactory.getCannotCastFileResult();
+        return CommandResultFactory::getCannotCastFileResult();
 
     auto &sets          = currentProfile().getGeneralSettings();
     auto &game          = GameSettings::get(sets.eGame());
@@ -40,7 +44,7 @@ CommandResult MeshConvert::process(File &file) const
 
     nif->OptimizeFor(optOptions);
 
-    return _resultFactory.getSuccessfulResult();
+    return CommandResultFactory::getSuccessfulResult();
 }
 
 bool MeshConvert::isApplicable(File &file) const

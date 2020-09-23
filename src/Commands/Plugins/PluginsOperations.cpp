@@ -3,14 +3,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QDir>
+#include <QDirIterator>
+#include <QRegularExpression>
+
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "Settings/Games.hpp"
 #include "Settings/Profiles.hpp"
 #include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
 
-namespace CAO {
-void PluginsOperations::makeDummyPlugins(const QString &folderPath, const GeneralSettings &settings)
+namespace CAO::PluginsOperations {
+/*!
+ * \brief Find all the BSAs names in a directory
+ * \param it An iterator to the dir to scan
+ * \return A list containing the names of the BSAs found
+ */
+QStringList listBSAsNames(QDirIterator it, const GameSettings &settings);
+
+void makeDummyPlugins(const QString &folderPath, const GeneralSettings &settings)
 {
     const auto &game = GameSettings::get(settings.eGame());
 
@@ -33,7 +44,7 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath, const Genera
     }
 }
 
-QString PluginsOperations::findPlugin(const QDir &folderPath, const GameSettings &settings)
+QString findPlugin(const QDir &folderPath, const GameSettings &settings)
 {
     const auto &[bsaSuffix, bsaTexSuffix] = getBSASuffixes(settings);
 
@@ -70,7 +81,7 @@ QString PluginsOperations::findPlugin(const QDir &folderPath, const GameSettings
     throw std::runtime_error("No plugin name found after 1 000 tries.");
 }
 
-bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const GameSettings &settings)
+bool checkIfBsaHasPlugin(const QString &bsaPath, const GameSettings &settings)
 {
     QDir bsaDir     = QFileInfo(bsaPath).absoluteDir();
     QString bsaName = QFileInfo(bsaPath).fileName();
@@ -88,7 +99,7 @@ bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath, const GameSe
     return false;
 }
 
-QStringList PluginsOperations::listBSAsNames(QDirIterator it, const GameSettings &settings)
+QStringList listBSAsNames(QDirIterator it, const GameSettings &settings)
 {
     const auto &[bsaSuffix, bsaTexSuffix] = getBSASuffixes(settings);
 
@@ -107,7 +118,7 @@ QStringList PluginsOperations::listBSAsNames(QDirIterator it, const GameSettings
     return bsas;
 }
 
-std::vector<std::string> PluginsOperations::listHeadparts(const QString &filepath)
+std::vector<std::string> listHeadparts(const QString &filepath)
 {
     auto file = Filesystem::openBinaryFile(filepath);
 
@@ -182,7 +193,7 @@ std::vector<std::string> PluginsOperations::listHeadparts(const QString &filepat
     return headparts;
 }
 
-std::vector<std::string> PluginsOperations::listLandscapeTextures(const QString &filepath)
+std::vector<std::string> listLandscapeTextures(const QString &filepath)
 {
     auto file = Filesystem::openBinaryFile(filepath);
 
@@ -279,7 +290,7 @@ std::vector<std::string> PluginsOperations::listLandscapeTextures(const QString 
     return finalTextures;
 }
 
-std::pair<QString, QString> PluginsOperations::getBSASuffixes(const GameSettings &sets)
+std::pair<QString, QString> getBSASuffixes(const GameSettings &sets)
 {
     const auto &bsaSuffix = sets.sBSASuffix();
     //Doesn't matter if they're the same
@@ -288,4 +299,4 @@ std::pair<QString, QString> PluginsOperations::getBSASuffixes(const GameSettings
     return {bsaSuffix, bsaTexSuffix};
 }
 
-} // namespace CAO
+} // namespace CAO::PluginsOperations

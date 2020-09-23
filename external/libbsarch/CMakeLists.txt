@@ -63,6 +63,10 @@ add_library(libbsarch_OOP STATIC
     src/utils/exception_guard.hpp
     )
 
+#Set exception handler
+if(MSVC)
+    target_compile_options(libbsarch_OOP PRIVATE /EHsc)
+endif()
 
 ## Copying the corresponding DLL ##
 

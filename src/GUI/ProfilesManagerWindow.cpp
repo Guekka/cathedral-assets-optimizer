@@ -3,10 +3,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QInputDialog>
+#include <QMessageBox>
+
 #include "ProfilesManagerWindow.hpp"
 #include "Settings/BaseTypes.hpp"
 #include "Settings/Profiles.hpp"
 #include "Utils.hpp"
+#include "ui_ProfilesManagerWindow.h"
 
 namespace CAO {
 ProfilesManagerWindow::ProfilesManagerWindow(Profiles &profiles_, QWidget *parent)
@@ -41,6 +45,8 @@ ProfilesManagerWindow::ProfilesManagerWindow(Profiles &profiles_, QWidget *paren
     updateProfiles(*ui_->profiles);
     selectRightGame(ui_->profiles->currentText());
 }
+
+ProfilesManagerWindow::~ProfilesManagerWindow() = default;
 
 void ProfilesManagerWindow::updateProfiles(QComboBox &box)
 {

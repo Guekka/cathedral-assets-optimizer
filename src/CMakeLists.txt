@@ -1,5 +1,6 @@
 set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/BSAMemoryCallback.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Logger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Logger.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MainOptimizer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MainOptimizer.hpp
@@ -169,7 +170,6 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/ConnectionWrapper.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/ConnectionWrapper.cpp
     )
 
 #Resources
@@ -183,6 +183,11 @@ add_library(CAO_LIB STATIC ${SOURCES}
     ${resources}
     ${qm_files}
     )
+
+#Unity build
+set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD true)
+set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD_BATCH_SIZE 0)
+
 
 #Include source
 target_include_directories(CAO_LIB PUBLIC
@@ -208,6 +213,5 @@ target_link_libraries(CAO_LIB PUBLIC ${libs} Qt)
 #Main exe
 add_executable(Cathedral_Assets_Optimizer WIN32
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    ${resources}
     )
 target_link_libraries(Cathedral_Assets_Optimizer CAO_LIB)

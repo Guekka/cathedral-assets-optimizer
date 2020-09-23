@@ -3,8 +3,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QFile>
+
 #include "BSATransform.hpp"
+#include "File/BSA/BSAFile.hpp"
 #include "Settings/Games.hpp"
+#include "Utils/BSA.hpp"
 #include "Utils/ScopeGuard.hpp"
 
 namespace CAO {
@@ -13,7 +17,7 @@ CommandResult BSATransform::process(File &file) const
 {
     auto bsaFile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
     if (!bsaFile)
-        return _resultFactory.getCannotCastFileResult();
+        return CommandResultFactory::getCannotCastFileResult();
 
     const QString &origOutputPath = file.getOutputFilePath();
     QString outputPath            = origOutputPath;
@@ -37,13 +41,13 @@ CommandResult BSATransform::process(File &file) const
     catch (const libbsarch::exception &e)
     {
         const QString &error = QString("Failed to process BSA content with error: '%1'").arg(e.what());
-        return _resultFactory.getFailedResult(-1, error);
+        return CommandResultFactory::getFailedResult(-1, error);
     }
 
     QFile::remove(origOutputPath);             //Won't do anything if the file doesn't exist
     QFile::rename(outputPath, origOutputPath); //Same
 
-    return _resultFactory.getSuccessfulResult();
+    return CommandResultFactory::getSuccessfulResult();
 }
 
 bool BSATransform::isApplicable(File &file) const

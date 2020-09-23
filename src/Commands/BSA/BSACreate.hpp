@@ -4,10 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Commands/BSA/Utils/BSA.hpp"
-#include "Commands/BSA/Utils/BSASplit.hpp"
 #include "Commands/CommandBook.hpp"
-#include "File/BSA/BSAFolder.hpp"
 
 namespace CAO {
 class BSACreate : public Command

@@ -6,12 +6,13 @@
 #pragma once
 
 #include "Settings/BaseTypes.hpp"
-#include "pch.hpp"
-#include "ui_ProfilesManagerWindow.h"
+#include <QDialog>
 
 namespace Ui {
 class ProfilesManagerWindow;
 }
+
+class QComboBox;
 
 namespace CAO {
 class Profiles;
@@ -21,6 +22,8 @@ class ProfilesManagerWindow : public QDialog
 
 public:
     explicit ProfilesManagerWindow(Profiles &profiles, QWidget *parent = nullptr);
+    ~ProfilesManagerWindow(); // = default
+
     QString getSelectedProfile();
     void setEnabledProfile(const QString &name);
     void setAllowedGames(const std::vector<Games> &games);

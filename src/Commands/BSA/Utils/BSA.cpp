@@ -3,6 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QDir>
+
 #include "BSA.hpp"
 #include "Commands/Plugins/PluginsOperations.hpp"
 #include "Settings/Games.hpp"
@@ -150,5 +152,30 @@ bool BSA::operator==(const BSA &other) const
 {
     return path == other.path && filesSize == other.filesSize && files == other.files
            && qFuzzyCompare(maxSize, other.maxSize) && type == other.type && format == other.format;
+}
+
+std::ostream &operator<<(std::ostream &os, const BSA &bsa)
+{
+    auto str = QString("Path:'%1'\n"
+                       "Size:%2Gb\n"
+                       "Type:%3\n"
+                       "Format:%4\n")
+                   .arg(bsa.path)
+                   .arg(bsa.filesSize / GigaByte)
+                   .arg(bsa.type)
+                   .arg(bsa.format);
+
+    return os << str.toStdString();
+}
+
+std::ostream &operator<<(std::ostream &os, const BSAType &type)
+{
+    switch (type)
+    {
+        case CAO::StandardBsa: return os << "Standard BSA";
+        case CAO::UncompressableBsa: return os << "Uncompressible BSA";
+        case CAO::TexturesBsa: return os << "Textures BSA";
+    }
+    return os << "Unknown BSA type";
 }
 } // namespace CAO

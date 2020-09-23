@@ -5,7 +5,6 @@
 #pragma once
 
 #include "File/File.hpp"
-#include "pch.hpp"
 
 namespace CAO {
 class MeshFile : public File

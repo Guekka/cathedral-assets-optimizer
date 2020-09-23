@@ -5,17 +5,16 @@
 #pragma once
 
 #include "Commands/CommandType.hpp"
-#include "File/Resources.hpp"
-#include "Settings/GeneralSettings.hpp"
+#include "Resources.hpp"
 #include "Settings/PatternSettings.hpp"
-#include "pch.hpp"
 
 //TODO Only call once some init operations for files
 namespace CAO {
+
 class File
 {
 public:
-    virtual ~File() = default;
+    virtual ~File(); // = default
 
     void setInputFilePath(const QString &filePath);
     const QString &getInputFilePath() const;
@@ -61,16 +60,7 @@ protected:
         return true;
     }
 
-    void resetHelper()
-    {
-        isLoaded_             = false;
-        optimizedCurrentFile_ = false;
-
-        inputFilePath_.clear();
-        outputFilePath_.clear();
-
-        file_ = nullptr;
-    }
+    void resetHelper();
 
     template<class T>
     void loadHelper(const QString &filename)
@@ -83,16 +73,8 @@ protected:
         file_ = std::make_unique<T>();
     }
 
-    [[nodiscard]] bool saveToDiskHelper(const QString &filename) const
-    {
-        if (!isLoaded())
-            return false;
-
-        auto dir = QFileInfo(filename).dir();
-        return dir.mkpath(dir.path());
-    }
-
-    [[nodiscard]] bool saveToMemoryHelper() const { return isLoaded(); }
+    [[nodiscard]] bool saveToDiskHelper(const QString &filename) const;
+    [[nodiscard]] bool saveToMemoryHelper() const;
 
 private:
     void matchSettings();

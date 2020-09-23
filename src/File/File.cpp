@@ -3,10 +3,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include <QDir>
+#include <QFileInfo>
+
 #include "File/File.hpp"
 #include "Settings/Profiles.hpp"
 
 namespace CAO {
+
+File::~File() = default;
 
 void File::setInputFilePath(const QString &filePath)
 {
@@ -77,6 +82,31 @@ void File::reset()
 const PatternSettings &CAO::File::patternSettings() const
 {
     return patternSettings_;
+}
+
+void File::resetHelper()
+{
+    isLoaded_             = false;
+    optimizedCurrentFile_ = false;
+
+    inputFilePath_.clear();
+    outputFilePath_.clear();
+
+    file_ = nullptr;
+}
+
+bool File::saveToDiskHelper(const QString &filename) const
+{
+    if (!isLoaded())
+        return false;
+
+    auto dir = QFileInfo(filename).dir();
+    return dir.mkpath(dir.path());
+}
+
+bool File::saveToMemoryHelper() const
+{
+    return isLoaded();
 }
 
 void File::matchSettings()

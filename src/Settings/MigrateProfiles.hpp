@@ -4,7 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "pch.hpp"
+#include <QStringList>
+
+class QDir;
 
 namespace CAO {
 QStringList migrateProfiles(const QDir &oldProfileRoot, const QDir &newProfileRoot);

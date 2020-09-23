@@ -2,21 +2,23 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #include "TextureResize.hpp"
+#include "File/Textures/TextureFile.hpp"
 
 namespace CAO {
 CommandResult TextureResize::process(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
-        return _resultFactory.getCannotCastFileResult();
+        return CommandResultFactory::getCannotCastFileResult();
 
     const auto &info = texFile->GetMetadata();
 
     auto timage     = std::make_unique<TextureResource>();
     const auto &img = texFile->GetImages();
     if (!img)
-        return _resultFactory.getFailedResult(-1, "Failed to get images from file");
+        return CommandResultFactory::getFailedResult(-1, "Failed to get images from file");
 
     const auto &tinfo = calculateTargetDimensions(info, file.patternSettings());
 
@@ -24,10 +26,10 @@ CommandResult TextureResize::process(File &file) const
     const HRESULT hr
         = DirectX::Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
     if (FAILED(hr))
-        return _resultFactory.getFailedResult(hr, "Failed to resize image.");
+        return CommandResultFactory::getFailedResult(hr, "Failed to resize image.");
 
     file.setFile(std::unique_ptr<Resource>(std::move(timage)));
-    return _resultFactory.getSuccessfulResult();
+    return CommandResultFactory::getSuccessfulResult();
 }
 
 bool TextureResize::isApplicable(File &file) const

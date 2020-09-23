@@ -6,6 +6,8 @@
 #include "SelectGPUWindow.hpp"
 #include "Commands/Textures/TextureCompressionDevice.hpp"
 
+#include <QRadioButton>
+
 namespace CAO {
 SelectGPUWindow::SelectGPUWindow(QWidget *parent)
     : QDialog(parent)

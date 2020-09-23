@@ -4,10 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <QDir>
+
 #include "Settings/FileTypes.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternMap.hpp"
-#include "pch.hpp"
 
 namespace CAO {
 class Profile

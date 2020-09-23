@@ -6,11 +6,12 @@
 
 #include "CommandType.hpp"
 #include "Commands/CommandResult.hpp"
-#include "File/File.hpp"
 #include "Settings/Profiles.hpp"
 #include "Settings/Settings.hpp"
 
 namespace CAO {
+class File;
+
 class Command
 {
 public:
@@ -41,8 +42,5 @@ public:
     virtual QString name() const      = 0;
 
     virtual ~Command() = default;
-
-protected:
-    CommandResultFactory _resultFactory;
 };
 } // namespace CAO
