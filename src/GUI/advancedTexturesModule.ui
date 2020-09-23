@@ -85,7 +85,7 @@
          <cursorShape>WhatsThisCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts any TGA files into DDS, as SSE cannot read these. Attempts to convert and fix any textures that would crash the game, as some older formats are incompatible with SSE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to convert and fix any textures that would crash the game.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>Necessary optimization</string>
