@@ -92,9 +92,10 @@ namespace plog
             for (int fileNumber = m_maxFiles - 2; fileNumber >= 0; --fileNumber)
             {
                 util::nstring currentFileName = buildFileName(fileNumber);
-                util::nstring nextFileName = buildFileName(fileNumber + 1);
+                util::nstring nextFileName    = buildFileName(fileNumber + 1);
 
-                util::File::rename(currentFileName.c_str(), nextFileName.c_str());
+                if (util::File::rename(currentFileName.c_str(), nextFileName.c_str()))
+                    break; //Move failed, continue to use the same file
             }
 
             openLogFile();

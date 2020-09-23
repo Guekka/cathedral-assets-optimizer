@@ -5,13 +5,12 @@
 
 #pragma once
 
-#include <QFile>
-#include <QTextStream>
 #include <QWidget>
 
 #include "plog/Severity.h"
 
 class QCloseEvent;
+class QTextStream;
 
 namespace Ui {
 class ProgressWindow;
@@ -46,19 +45,25 @@ private:
         bool displayed = false;
     };
 
-    QFile logFile_;
-    QTextStream logStream_;
-
     std::vector<LogEntry> logEntries_;
 
     std::unique_ptr<Ui::ProgressWindow> ui_;
 
+    int64_t logReadPos_;
+    QString firstLine_;
+
+    const QString logFilePath_;
+
+private:
     void updateProgressBar(const QString &text, int max, int value);
     void updateLog();
 
     void reloadLog();
     void updateEntries();
     void resetLog();
+
+    void updateLastRead(QTextStream &ts);
+    void advanceToLastRead(QTextStream &ts);
 
     void addEntry(LogEntry &&entry);
     bool isAllowed(const ProgressWindow::LogEntry &entry);

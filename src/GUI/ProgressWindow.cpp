@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include <QCloseEvent>
+#include <QFile>
+#include <QTextStream>
 
 #include "ProgressWindow.hpp"
 #include "ui_ProgressWindow.h"
@@ -11,8 +13,7 @@
 namespace CAO {
 ProgressWindow::ProgressWindow(const QString &logFilePath, QWidget *parent)
     : QWidget(parent)
-    , logFile_(logFilePath)
-    , logStream_(&logFile_)
+    , logFilePath_(logFilePath)
     , ui_(std::make_unique<Ui::ProgressWindow>())
 {
     ui_->setupUi(this);
@@ -56,14 +57,27 @@ void ProgressWindow::updateProgressBar(const QString &text, int max, int value)
 
 void ProgressWindow::updateEntries()
 {
+    QFile logFile(logFilePath_);
+    logFile.open(QFile::ReadOnly);
+
+    if (!logFile.isOpen())
+    {
+        ui_->text->appendPlainText(tr("Cannot open log file"));
+        return;
+    }
+
+    QTextStream logStream(&logFile);
+
     QString readLine;
     readLine.reserve(1000);
 
-    while (!logStream_.atEnd())
+    advanceToLastRead(logStream);
+
+    while (!logStream.atEnd())
     {
         while (true) //Parser helper
         {
-            readLine.append(logStream_.readLine());
+            readLine.append(logStream.readLine());
             if (readLine.endsWith('|'))
             {
                 readLine.chop(1); //Remove '|'
@@ -76,6 +90,7 @@ void ProgressWindow::updateEntries()
         addEntry(LogEntry(readLine));
         readLine.clear();
     }
+    updateLastRead(logStream);
 }
 
 void ProgressWindow::resetLog()
@@ -85,10 +100,32 @@ void ProgressWindow::resetLog()
         entry.displayed = false;
 }
 
+void ProgressWindow::updateLastRead(QTextStream &ts)
+{
+    logReadPos_ = ts.pos();
+}
+
+void ProgressWindow::advanceToLastRead(QTextStream &ts)
+{
+    if (ts.atEnd())
+        return;
+
+    const QString first = ts.readLine();
+
+    if (first != firstLine_) //Current and previous file are not the sam
+    {
+        firstLine_  = std::move(first);
+        logReadPos_ = 0;
+        return;
+    }
+
+    ts.seek(logReadPos_);
+}
+
 void ProgressWindow::addEntry(ProgressWindow::LogEntry &&entry)
 {
     //Do not store more than 500 entries. A circular buffer would be nice here
-    if (logEntries_.size() >= 500)
+    if (logEntries_.size() >= maxBlockSize_)
         logEntries_.erase(logEntries_.begin(), logEntries_.begin() + 100);
 
     logEntries_.emplace_back(std::move(entry));
@@ -117,14 +154,6 @@ bool ProgressWindow::isAllowed(const ProgressWindow::LogEntry &entry)
 void ProgressWindow::updateLog()
 {
     updateEntries();
-
-    if (!logFile_.isOpen())
-    {
-        logFile_.open(QFile::ReadOnly);
-
-        if (!logFile_.isOpen())
-            ui_->text->appendPlainText(tr("Cannot open log file"));
-    }
 
     for (auto &entry : logEntries_)
     {
