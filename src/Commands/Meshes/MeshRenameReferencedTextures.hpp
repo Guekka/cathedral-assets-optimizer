@@ -11,11 +11,12 @@ class MeshRenameReferencedTextures : public Command
 {
 public:
     QString name() const override { return "Rename referenced textures in Mesh"; }
+    bool isOptimization() const override { return true; }
     CommandType type() const override { return CommandType::Mesh; };
     Priority priority() const override { return Low; };
 
     CommandResult process(File &file) const override;
-    bool isApplicable(File &file) const override;
+    CommandState isApplicable(File &file) const override;
 
 private:
     static constexpr int limit = 1000;

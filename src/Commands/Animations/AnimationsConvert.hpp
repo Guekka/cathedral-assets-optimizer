@@ -15,9 +15,10 @@ class AnimationsConvert final : public Command
 {
 public:
     CommandResult process(File &file) const override;
-    bool isApplicable(File &file) const override;
+    CommandState isApplicable(File &file) const override;
 
     QString name() const override { return "Animation Convert"; }
+    bool isOptimization() const override { return true; }
     CommandType type() const override { return CommandType::Animation; };
     Priority priority() const override { return Medium; };
 };

@@ -57,6 +57,5 @@ std::fstream openBinaryFile(const QString &filepath);
 
 bool compareFiles(const QString &filepath1, const QString &filepath2);
 
-
 }; // namespace Filesystem
 } // namespace CAO

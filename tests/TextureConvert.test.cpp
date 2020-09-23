@@ -21,28 +21,28 @@ SCENARIO("Converting a texture")
         sets.bTexturesNecessary = true;
         auto file               = getStandardTextureFile(sets, false, DXGI_FORMAT_B5G6R5_UNORM);
 
-        WHEN("The file is scanned") { CHECK(convert.isApplicable(*file)); }
+        WHEN("The file is scanned") { CHECK_EQ(convert.isApplicable(*file), CommandState::Ready); }
     }
     GIVEN("An unmodified image using a compatible format, and settings with necessary opt enabled")
     {
         sets.bTexturesNecessary = true;
         auto file               = getStandardTextureFile(sets, false);
 
-        WHEN("The file is scanned") { CHECK_FALSE(convert.isApplicable(*file)); }
+        WHEN("The file is scanned") { CHECK_EQ(convert.isApplicable(*file), CommandState::NotRequired); }
     }
     GIVEN("An unmodified image using a incompatible format, and settings with necessary opt disabled")
     {
         sets.bTexturesNecessary = false;
         auto file               = getStandardTextureFile(sets, false, DXGI_FORMAT_B5G6R5_UNORM);
 
-        WHEN("The file is scanned") { CHECK_FALSE(convert.isApplicable(*file)); }
+        WHEN("The file is scanned") { CHECK_EQ(convert.isApplicable(*file), CommandState::NotRequired); }
     }
     GIVEN("A modified image using a compatible format, and settings with necessary opt enabled")
     {
         sets.bTexturesNecessary = true;
         auto file               = getStandardTextureFile(sets, true);
 
-        WHEN("The file is scanned") { CHECK(convert.isApplicable(*file)); }
+        WHEN("The file is scanned") { CHECK_EQ(convert.isApplicable(*file), CommandState::Ready); }
     }
     GIVEN("A modified image using the same format as the output format, and settings with necessary opt "
           "enabled")
@@ -51,6 +51,6 @@ SCENARIO("Converting a texture")
         sets.bTexturesNecessary = true;
         auto file               = getStandardTextureFile(sets, true, DXGI_FORMAT_A8_UNORM);
 
-        WHEN("The file is scanned") { CHECK_FALSE(convert.isApplicable(*file)); }
+        WHEN("The file is scanned") { CHECK_EQ(convert.isApplicable(*file), CommandState::NotRequired); }
     }
 }

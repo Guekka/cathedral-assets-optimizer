@@ -17,7 +17,7 @@ TEST_CASE("Detecting if TextureAddAlpha is applicable by settings")
     TextureAddAlpha command;
 
     currentProfile().getFileTypes().slTextureLandscapes = {};
-    CHECK_FALSE(command.isApplicable(*file));
+    CHECK_EQ(command.isApplicable(*file), CommandState::NotRequired);
 }
 /*
  * This was an attempt at testing the alpha detection. But it is quite dumb, as it uses the same function

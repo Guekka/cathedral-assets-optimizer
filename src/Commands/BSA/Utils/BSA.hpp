@@ -30,7 +30,7 @@ struct BSA
     explicit BSA(double maxSize, qint64 size, BSAType type);
 
     long long int filesSize = 0;
-    double maxSize   = LONG_MAX;
+    double maxSize          = LONG_MAX;
     QString path;
     QStringList files{};
     BSAType type = StandardBsa;

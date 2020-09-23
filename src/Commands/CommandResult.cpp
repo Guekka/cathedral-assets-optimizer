@@ -18,7 +18,6 @@ CommandResult getSuccessfulResult()
     CommandResult result;
     result.errorCode = 0;
     result.errorMessage.clear();
-    result.processedFile = true;
     return result;
 }
 
@@ -28,7 +27,7 @@ CommandResult getFailedResult(HRESULT errorCode, const QString &errorMessage)
     if (errorCode > 0)
         errorCode = -errorCode;
 
-    return CommandResult{errorCode, errorMessage, false};
+    return CommandResult{errorCode, errorMessage};
 }
 
 CommandResult getCannotCastFileResult()
@@ -36,7 +35,6 @@ CommandResult getCannotCastFileResult()
     CommandResult result;
     result.errorCode     = 3;
     result.errorMessage  = "Failed to cast File to its derived type";
-    result.processedFile = false;
     return result;
 }
 } // namespace CAO::CommandResultFactory

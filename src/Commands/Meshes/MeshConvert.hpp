@@ -13,11 +13,12 @@ public:
     MeshConvert();
 
     QString name() const override { return "Convert Mesh"; }
+    bool isOptimization() const override { return true; }
     CommandType type() const override { return CommandType::Mesh; };
     Priority priority() const override { return Priority::Medium; };
 
     CommandResult process(File &file) const override;
-    bool isApplicable(File &file) const override;
+    CommandState isApplicable(File &file) const override;
 
     static bool isHeadpart(const QString &filepath);
     static void listHeadparts(const GeneralSettings &settings, FileTypes &filetypes);

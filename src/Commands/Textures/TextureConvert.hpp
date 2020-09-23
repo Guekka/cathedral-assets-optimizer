@@ -7,15 +7,18 @@
 #include "Commands/CommandBook.hpp"
 
 namespace CAO {
+class PatternSettings;
+
 class TextureConvert final : public Command
 {
 public:
     CommandType type() const override { return CommandType::Texture; };
     Priority priority() const override { return VeryLow; };
     QString name() const override { return "Convert Texture"; }
+    bool isOptimization() const override { return true; }
 
     CommandResult process(File &file) const override;
-    bool isApplicable(File &file) const override;
+    CommandState isApplicable(File &file) const override;
 
     static HRESULT convertWithoutCompression(const DirectX::ScratchImage &image,
                                              DirectX::ScratchImage &timage,
@@ -25,7 +28,7 @@ public:
                                           DirectX::ScratchImage &timage,
                                           const DXGI_FORMAT &format);
 
-    static bool needsConvert(const File &file, const DirectX::TexMetadata &info);
+    static bool needsConvert(const PatternSettings &pSets, const DirectX::TexMetadata &info);
 };
 REGISTER_COMMAND(TextureConvert)
 } // namespace CAO

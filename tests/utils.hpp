@@ -36,9 +36,16 @@ static std::unique_ptr<CAO::TextureFile> getStandardTextureFile(
     setSettings(pSets, gSets);
 
     auto textureResource = std::make_unique<CAO::TextureResource>();
-    auto file            = std::make_unique<CAO::TextureFile>();
     textureResource->Initialize2D(format, 16, 16, 1, 1);
     textureResource->origFormat = format;
+
+    //Assigning an orig format different than the current one. This would also happen
+    //if the file was really optimized
+    if (optimizedFile)
+        textureResource->origFormat = format == DXGI_FORMAT_BC7_UNORM ? DXGI_FORMAT_A8_UNORM
+                                                                      : DXGI_FORMAT_BC7_UNORM;
+
+    auto file = std::make_unique<CAO::TextureFile>();
     file->setFile(std::unique_ptr<CAO::Resource>(std::move(textureResource)), optimizedFile);
     file->setInputFilePath("TextureTest");
 

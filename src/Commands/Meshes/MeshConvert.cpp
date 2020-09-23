@@ -47,26 +47,29 @@ CommandResult MeshConvert::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool MeshConvert::isApplicable(File &file) const
+CommandState MeshConvert::isApplicable(File &file) const
 {
     auto &patternSettings = file.patternSettings();
     int optLevel          = patternSettings.iMeshesOptimizationLevel();
     if (optLevel == 0)
-        return false;
+        return CommandState::NotRequired;
 
     const auto &game = GameSettings::get(currentProfile().getGeneralSettings().eGame());
     if (!game.cMeshesVersion().has_value())
-        return false;
+        return CommandState::NotRequired;
 
     auto meshFile = dynamic_cast<const MeshResource *>(&file.getFile());
     if (!meshFile)
-        return false;
+        return CommandState::NotRequired;
 
     const bool headpart = isHeadpart(file.getInputFilePath()) && !patternSettings.bMeshesIgnoreHeadparts();
     const bool isSSECompatible = meshFile->IsSSECompatible();
     const bool resave          = optLevel >= 2;
 
-    return !isSSECompatible || headpart || resave;
+    if (isSSECompatible && !headpart && !resave)
+        return CommandState::NotRequired;
+
+    return CommandState::Ready;
 }
 
 bool MeshConvert::isHeadpart(const QString &filepath)

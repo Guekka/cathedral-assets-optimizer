@@ -43,22 +43,22 @@ CommandResult BSAExtract::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool BSAExtract::isApplicable(File &file) const
+CommandState BSAExtract::isApplicable(File &file) const
 {
     if (!currentProfile().getGeneralSettings().bBSAExtract())
-        return false;
+        return CommandState::NotRequired;
 
     auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());
     if (!bsafile)
-        return false;
+        return CommandState::NotRequired;
 
     if (QFileInfo(file.getInputFilePath()).size() > maxBSASize)
     {
         PLOG_ERROR << QString("BSA '%1' is over 4GB. It cannot be extracted and may be corrupted.")
                           .arg(file.getInputFilePath());
-        return false;
+        return CommandState::NotRequired;
     }
 
-    return true;
+    return CommandState::Ready;
 }
 } // namespace CAO

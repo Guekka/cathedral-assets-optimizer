@@ -11,11 +11,12 @@ class BSAExtract : public Command
 {
 public:
     QString name() const override { return "BSA Extract"; }
+    bool isOptimization() const override { return true; }
     CommandType type() const override { return CommandType::BSAFile; };
     Priority priority() const override { return VeryHigh; };
 
     CommandResult process(File &file) const override;
-    bool isApplicable(File &file) const override;
+    CommandState isApplicable(File &file) const override;
 
     static constexpr double maxBSASize = 4.0 * GigaByte;
 };

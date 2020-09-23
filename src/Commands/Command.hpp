@@ -12,6 +12,13 @@
 namespace CAO {
 class File;
 
+enum class CommandState
+{
+    NotRequired,
+    PendingPreviousSteps,
+    Ready
+};
+
 class Command
 {
 public:
@@ -32,14 +39,13 @@ public:
     Command &operator=(const Command &) = delete;
     Command &operator=(Command &&) = default;
 
-    virtual bool isApplicable(File &file) const     = 0;
-    virtual CommandResult process(File &file) const = 0;
+    virtual CommandState isApplicable(File &file) const = 0;
+    virtual CommandResult process(File &file) const     = 0;
 
-    CommandResult processIfApplicable(File &file) const;
-
-    virtual Priority priority() const = 0;
-    virtual CommandType type() const  = 0;
-    virtual QString name() const      = 0;
+    virtual Priority priority() const   = 0;
+    virtual CommandType type() const    = 0;
+    virtual QString name() const        = 0;
+    virtual bool isOptimization() const = 0;
 
     virtual ~Command() = default;
 };

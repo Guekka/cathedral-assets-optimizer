@@ -11,11 +11,12 @@ class BSACreate : public Command
 {
 public:
     QString name() const override { return "BSA Create"; }
+    bool isOptimization() const override { return true; }
     Priority priority() const override { return Low; };
     CommandType type() const override { return CommandType::BSAFolder; };
 
     CommandResult process(File &file) const override;
-    bool isApplicable(File &file) const override;
+    CommandState isApplicable(File &file) const override;
 
 protected:
     bool canBeCompressedFile(const QString &filename);

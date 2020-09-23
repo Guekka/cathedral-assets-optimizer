@@ -38,15 +38,15 @@ CommandResult MeshRenameReferencedTextures::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool MeshRenameReferencedTextures::isApplicable(File &file) const
+CommandState MeshRenameReferencedTextures::isApplicable(File &file) const
 {
     const auto &game = GameSettings::get(currentProfile().getGeneralSettings().eGame());
     if (!game.cMeshesVersion().has_value())
-        return false;
+        return CommandState::NotRequired;
 
     auto nif = dynamic_cast<MeshResource *>(&file.getFile(false));
     if (!nif)
-        return false;
+        return CommandState::NotRequired;
 
     for (NiShader *shader : getShaders(*nif))
     {
@@ -55,12 +55,12 @@ bool MeshRenameReferencedTextures::isApplicable(File &file) const
         while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
         {
             if (ends_with(std::string_view(tex), std::string_view(".tga"), false))
-                return true;
+                return CommandState::Ready;
             if (++texCounter > limit)
-                return false;
+                return CommandState::NotRequired;
         }
     }
-    return false;
+    return CommandState::NotRequired;
 }
 
 std::vector<NiShader *> MeshRenameReferencedTextures::getShaders(NifFile &nif) const

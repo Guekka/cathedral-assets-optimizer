@@ -12,7 +12,6 @@ struct CommandResult
 {
     HRESULT errorCode;
     QString errorMessage;
-    bool processedFile;
 
     bool hasError() const;
 };

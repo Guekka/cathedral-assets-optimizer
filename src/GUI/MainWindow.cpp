@@ -333,6 +333,10 @@ void MainWindow::initProcess()
                 progressWindow_.get(),
                 &ProgressWindow::update);
 
+        connect(caoProcess_.get(), &Manager::end, progressWindow_.get(), [this] {
+            progressWindow_->update(tr("Done"), 1, 1);
+        });
+
         connect(caoProcess_.get(), &Manager::end, this, &MainWindow::endProcess);
         connect(progressWindow_.get(), &ProgressWindow::closed, this, &MainWindow::endProcess);
 

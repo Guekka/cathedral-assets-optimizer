@@ -13,9 +13,10 @@ public:
     CommandType type() const override { return CommandType::Texture; };
     Priority priority() const override { return High; };
     QString name() const override { return "Resize Texture"; }
+    bool isOptimization() const override { return true; }
 
     CommandResult process(File &file) const override;
-    bool isApplicable(File &file) const override;
+    CommandState isApplicable(File &file) const override;
 
     static DirectX::TexMetadata calculateTargetDimensions(const DirectX::TexMetadata &info,
                                                           const PatternSettings &settings);

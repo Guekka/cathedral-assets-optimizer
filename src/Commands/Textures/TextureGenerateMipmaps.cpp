@@ -54,23 +54,27 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool TextureGenerateMipmaps::isApplicable(File &file) const
+CommandState TextureGenerateMipmaps::isApplicable(File &file) const
 {
     if (!file.patternSettings().bTexturesMipmaps())
-        return false;
+        return CommandState::NotRequired;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
-        return false;
+        return CommandState::NotRequired;
 
-    const auto &info = texFile->GetMetadata();
-    if (DirectX::IsCompressed(info.format))
-        return false; //Cannot process compressed file
+    const auto info = texFile->GetMetadata();
 
     const bool &compatible     = info.width >= 4 && info.height >= 4;
     const bool &optimalMipMaps = info.mipLevels == calculateOptimalMipMapsNumber(info);
 
-    return compatible && !optimalMipMaps;
+    if (!compatible || optimalMipMaps)
+        return CommandState::NotRequired;
+
+    if (DirectX::IsCompressed(info.format))
+        return CommandState::PendingPreviousSteps; //Cannot process compressed file
+
+    return CommandState::Ready;
 }
 
 size_t TextureGenerateMipmaps::calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const

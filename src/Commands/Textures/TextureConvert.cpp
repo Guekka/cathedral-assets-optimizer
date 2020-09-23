@@ -37,40 +37,43 @@ CommandResult TextureConvert::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool TextureConvert::isApplicable(File &file) const
+CommandState TextureConvert::isApplicable(File &file) const
 {
     auto texResource = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texResource)
-        return false;
+        return CommandState::NotRequired;
 
-    const DXGI_FORMAT &origFormat    = texResource->origFormat;
-    const DXGI_FORMAT &currentFormat = texResource->GetMetadata().format;
-    if (DirectX::IsCompressed(currentFormat))
-        return false; //Cannot process compressed file
+    const DXGI_FORMAT origFormat    = texResource->origFormat;
+    const DXGI_FORMAT currentFormat = texResource->GetMetadata().format;
 
     //If the target format is the same as the current format, no conversion is needed
     if (file.patternSettings().eTexturesFormat() == currentFormat)
-        return false;
+        return CommandState::NotRequired;
 
-    const bool sameFormatAsOrig = currentFormat == origFormat;
+    const bool necessary = needsConvert(file.patternSettings(), texResource->GetMetadata());
+    if (necessary && DirectX::IsCompressed(currentFormat))
+        return CommandState::PendingPreviousSteps;
+    else if (necessary)
+        return CommandState::Ready;
 
     //Compatible but compressing in order to improve performance
     const bool userWantsConvert = file.patternSettings().bTexturesCompress()
-                                  && sameFormatAsOrig; //If true, the file was not compressed originally
+                                  && !DirectX::IsCompressed(origFormat);
 
-    const bool necessary = needsConvert(file, texResource->GetMetadata());
+    if (userWantsConvert)
+        return CommandState::Ready; //Cannot process compressed file
 
-    //If the file was optimized, it was previously in a different format, and thus needs a conversion
-    const bool optimizedFile = file.optimizedCurrentFile();
+    //If current format != original format, the file was optimized and may need to be recompressed
+    if (currentFormat != origFormat)
+        return CommandState::Ready;
 
-    return necessary || userWantsConvert || optimizedFile;
+    return CommandState::NotRequired;
 }
 
-bool TextureConvert::needsConvert(const File &file, const DirectX::TexMetadata &info)
+bool TextureConvert::needsConvert(const PatternSettings &pSets, const DirectX::TexMetadata &info)
 {
-    auto format = info.format;
+    const auto format = info.format;
     //Checking incompatibility with file format
-    const auto &pSets         = file.patternSettings();
     const auto &vec           = pSets.slTextureUnwantedFormats();
     const bool isUnwanted     = std::find(vec.begin(), vec.end(), format) != vec.end();
     const bool isIncompatible = isUnwanted || pSets.bTexturesForceConvert();

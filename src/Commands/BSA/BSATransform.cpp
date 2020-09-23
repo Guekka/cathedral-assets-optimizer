@@ -50,18 +50,18 @@ CommandResult BSATransform::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool BSATransform::isApplicable(File &file) const
+CommandState BSATransform::isApplicable(File &file) const
 {
     if (!currentProfile().getGeneralSettings().bBSAProcessContent())
-        return false;
+        return CommandState::NotRequired;
 
     auto bsaFile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
     if (!bsaFile)
-        return false;
+        return CommandState::NotRequired;
 
     if (!bsaFile->callback)
-        return false;
+        return CommandState::NotRequired;
 
-    return true;
+    return CommandState::Ready;
 }
 } // namespace CAO

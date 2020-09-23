@@ -32,23 +32,26 @@ CommandResult TextureResize::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool TextureResize::isApplicable(File &file) const
+CommandState TextureResize::isApplicable(File &file) const
 {
     if (file.patternSettings().eTexturesResizingMode() == None)
-        return false;
+        return CommandState::NotRequired;
 
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
-        return false;
-
-    const DXGI_FORMAT &fileFormat = texFile->GetMetadata().format;
-    if (DirectX::IsCompressed(fileFormat))
-        return false; //Cannot process compressed file
+        return CommandState::NotRequired;
 
     const auto &info  = texFile->GetMetadata();
     const auto &tinfo = calculateTargetDimensions(info, file.patternSettings());
 
-    return info.width != tinfo.width || info.height != tinfo.height;
+    if (info.width == tinfo.width && info.height == tinfo.height)
+        return CommandState::NotRequired;
+
+    const DXGI_FORMAT fileFormat = texFile->GetMetadata().format;
+    if (DirectX::IsCompressed(fileFormat))
+        return CommandState::PendingPreviousSteps; //Cannot process compressed file
+
+    return CommandState::Ready;
 }
 
 DirectX::TexMetadata TextureResize::calculateTargetDimensions(const DirectX::TexMetadata &info,

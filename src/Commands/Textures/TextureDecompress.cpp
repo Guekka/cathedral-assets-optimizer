@@ -26,12 +26,15 @@ CommandResult TextureDecompress::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool TextureDecompress::isApplicable(File &file) const
+CommandState TextureDecompress::isApplicable(File &file) const
 {
     auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
     if (!texFile)
-        return false;
+        return CommandState::NotRequired;
 
-    return DirectX::IsCompressed(texFile->GetMetadata().format);
+    if (!DirectX::IsCompressed(texFile->GetMetadata().format))
+        return CommandState::NotRequired;
+
+    return CommandState::Ready;
 }
 } // namespace CAO

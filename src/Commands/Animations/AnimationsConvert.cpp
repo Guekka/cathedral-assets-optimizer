@@ -17,24 +17,24 @@ CommandResult AnimationsConvert::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool AnimationsConvert::isApplicable(File &file) const
+CommandState AnimationsConvert::isApplicable(File &file) const
 {
     if (!file.patternSettings().bAnimationsOptimization())
-        return false;
+        return CommandState::NotRequired;
 
     const auto &format = GameSettings::get(currentProfile().getGeneralSettings().eGame()).eAnimationsFormat();
 
     if (!format.has_value())
-        return false;
+        return CommandState::NotRequired;
 
     auto havok = dynamic_cast<const AnimationResource *>(&file.getFile());
     if (!havok)
-        return false;
+        return CommandState::NotRequired;
 
     if (havok->pkFormat == format.value())
-        return false;
+        return CommandState::NotRequired;
 
-    return true;
+    return CommandState::Ready;
 }
 
 } // namespace CAO

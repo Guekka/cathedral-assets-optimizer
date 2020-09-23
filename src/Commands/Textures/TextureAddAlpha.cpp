@@ -66,25 +66,31 @@ CommandResult TextureAddAlpha::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool TextureAddAlpha::isApplicable(File &file) const
+CommandState TextureAddAlpha::isApplicable(File &file) const
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
-    if (!texFile)
-        return false;
-
     if (!file.patternSettings().bTexturesLandscapeAlpha())
-        return false;
+        return CommandState::NotRequired;
 
     if (!isLandscape(file.getInputFilePath()))
-        return false;
+        return CommandState::NotRequired;
+
+    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    if (!texFile)
+        return CommandState::NotRequired;
+
+    if (DirectX::IsCompressed(texFile->GetMetadata().format))
+        return CommandState::PendingPreviousSteps;
 
     if (!DirectX::HasAlpha(texFile->GetMetadata().format))
-        return true;
+        return CommandState::Ready;
 
     if (texFile->GetMetadata().GetAlphaMode() == DirectX::TEX_ALPHA_MODE_OPAQUE)
-        return true;
+        return CommandState::Ready;
 
-    return texFile->IsAlphaAllOpaque();
+    if (!texFile->IsAlphaAllOpaque())
+        return CommandState::NotRequired;
+
+    return CommandState::Ready;
 }
 
 bool TextureAddAlpha::isLandscape(const QString &filepath)

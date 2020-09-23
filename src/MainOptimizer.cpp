@@ -50,9 +50,8 @@ void MainOptimizer::process(File &file, bool dryRun, MemoryData memoryData)
 bool MainOptimizer::processReal(File &file, std::vector<std::byte> *out)
 {
     PLOG_VERBOSE << "Processing: " << file.getInputFilePath();
-    for (auto &command : CommandBook::getCommands(file.type()))
-        if (!runCommand(*command, file))
-            return false;
+    if (!runCommands(file))
+        return false;
 
     if (!file.optimizedCurrentFile())
         return false;
@@ -66,9 +65,8 @@ bool MainOptimizer::processReal(File &file, std::vector<std::byte> *out)
 bool MainOptimizer::processDry(File &file)
 {
     PLOG_INFO << "Processing: " << file.getInputFilePath() << '\n';
-    for (auto command : CommandBook::getCommands(file.type()))
-        if (!runCommand(*command, file, true))
-            return false;
+    if (!runCommands(file, true))
+        return false;
 
     return true;
 }
@@ -85,9 +83,8 @@ bool MainOptimizer::processBSA(File &file, bool dryRun = false)
 
     PLOG_VERBOSE << "Processing BSA: " + file.getInputFilePath();
 
-    for (auto &command : CommandBook::getCommands(file.type()))
-        if (!runCommand(*command, file))
-            return false;
+    if (!runCommands(file))
+        return false;
 
     if (!file.optimizedCurrentFile())
         return false;
@@ -112,7 +109,7 @@ void MainOptimizer::packBsa(const QString &folder)
         return;
     }
 
-    if (!command->isApplicable(bsa))
+    if (command->isApplicable(bsa) != CommandState::Ready)
         return;
 
     PLOG_INFO << "Creating BSA...";
@@ -127,10 +124,50 @@ void MainOptimizer::packBsa(const QString &folder)
         PluginsOperations::makeDummyPlugins(folder, currentProfile().getGeneralSettings());
 }
 
+bool MainOptimizer::runCommands(File &file, bool dryRun)
+{
+    const auto commands = CommandBook::getCommands(file.type());
+
+    bool isReady = false;
+    for (const auto command : commands)
+    {
+        const auto res = command->isApplicable(file);
+
+        if ((res == CommandState::PendingPreviousSteps || res == CommandState::Ready)
+            && command->isOptimization())
+        {
+            isReady = true;
+            break;
+        }
+    }
+
+    if (isReady)
+        for (const auto command : commands)
+            if (!runCommand(*command, file, dryRun))
+                return false;
+
+    return true;
+}
+
 bool MainOptimizer::runCommand(const Command &command, File &file, bool dryRun)
 {
-    const auto &result = command.processIfApplicable(file);
-    if (result.processedFile)
+    const auto applicable = command.isApplicable(file);
+    if (applicable == CommandState::NotRequired)
+    {
+        PLOG_VERBOSE << QString("%1: %2").arg(command.name(), "unnecessary");
+        return true;
+    }
+    else if (applicable == CommandState::PendingPreviousSteps)
+    { //This should not happen
+        PLOG_ERROR << QString("%1: %2").arg(command.name(),
+                                            "was not applied because it was pending previous steps");
+        return false;
+    }
+    //Else : ready
+
+    const auto result = command.process(file);
+
+    if (!result.hasError())
     {
         const plog::Severity &sev = dryRun ? plog::Severity::info : plog::Severity::verbose;
         const QString &message    = dryRun ? "would be applied" : "applied";
@@ -138,17 +175,13 @@ bool MainOptimizer::runCommand(const Command &command, File &file, bool dryRun)
         PLOG(sev) << QString("%1: %2").arg(command.name(), message);
         return true;
     }
-    else if (result.hasError())
+    else
     {
         PLOG_ERROR << QString("%1: error. Code: '%2'. Message: '%3'")
                           .arg(command.name(), QString::number(result.errorCode, 16), result.errorMessage);
         return false;
     }
-    else
-    {
-        PLOG_VERBOSE << QString("%1: %2").arg(command.name(), "unnecessary");
-        return true;
-    }
+    return true;
 }
 
 bool MainOptimizer::loadFile(File &file, void *pSource, size_t size)

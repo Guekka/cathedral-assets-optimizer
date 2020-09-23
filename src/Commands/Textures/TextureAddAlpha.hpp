@@ -13,11 +13,13 @@ class TextureAddAlpha : public Command
 public:
     TextureAddAlpha();
 
-    bool isApplicable(File &file) const;
-    CommandResult process(File &file) const;
-    Priority priority() const { return Medium; }
-    CommandType type() const { return CommandType::Texture; }
-    QString name() const { return "Add alpha to landscape textures"; };
+    CommandState isApplicable(File &file) const override;
+    CommandResult process(File &file) const override;
+
+    Priority priority() const override { return Medium; }
+    CommandType type() const override { return CommandType::Texture; }
+    QString name() const override { return "Add alpha to landscape textures"; }
+    bool isOptimization() const override { return true; }
 
     static bool isLandscape(const QString &filepath);
     static void listLandscapeTextures(const GeneralSettings &settings, FileTypes &filetypes);

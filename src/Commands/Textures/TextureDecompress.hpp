@@ -13,10 +13,11 @@ public:
     CommandType type() const override { return CommandType::Texture; };
     Priority priority() const override { return VeryHigh; };
     QString name() const override { return "Decompress Texture"; }
+    bool isOptimization() const override { return false; }
 
     CommandResult process(File &file) const override;
 
-    bool isApplicable(File &file) const override;
+    CommandState isApplicable(File &file) const override;
 };
 REGISTER_COMMAND(TextureDecompress)
 } // namespace CAO

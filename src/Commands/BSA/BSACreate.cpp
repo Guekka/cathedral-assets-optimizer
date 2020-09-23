@@ -58,13 +58,16 @@ CommandResult BSACreate::process(File &file) const
     return CommandResultFactory::getSuccessfulResult();
 }
 
-bool BSACreate::isApplicable(File &file) const
+CommandState BSACreate::isApplicable(File &file) const
 {
     auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
     if (!bsaFolder)
-        return false;
+        return CommandState::NotRequired;
 
-    return currentProfile().getGeneralSettings().bBSACreate();
+    if (!currentProfile().getGeneralSettings().bBSACreate())
+        return CommandState::NotRequired;
+
+    return CommandState::Ready;
 }
 
 bool BSACreate::canBeCompressedFile(const QString &filename)
