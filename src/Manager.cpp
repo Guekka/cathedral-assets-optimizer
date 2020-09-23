@@ -102,7 +102,7 @@ void Manager::runOptimization()
 {
     PLOG_DEBUG << "Profile directory: " << currentProfile().profileDirectory().path();
     PLOG_INFO << "Processing: " + currentProfile().getGeneralSettings().sInputPath();
-    PLOG_INFO << "Beginning...";
+    PLOG_INFO << QString("Beginning...Start time: %1").arg(QDateTime::currentDateTime().toString("dd_hh.mm"));
 
     getProfiles().beginRun();
 
@@ -134,7 +134,7 @@ void Manager::runOptimization()
 
     Filesystem::deleteEmptyDirectories(dirToClean, currentProfile().getFileTypes());
 
-    PLOG_INFO << "Process completed\n\n\n";
+    PLOG_INFO << "Process completed\n\n\nEnd time: " << QDateTime::currentDateTime().toString("dd_hh.mm");
     emit end();
 }
 } // namespace CAO
