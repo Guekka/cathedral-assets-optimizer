@@ -25,6 +25,12 @@ function (getResources list)
         PARENT_SCOPE)
 endfunction()
 
+function(getIcon list)
+    SET(${list}
+        ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/styles/Cathedral_Assets_Optimizer.rc
+        PARENT_SCOPE)
+endfunction()
+
 function (copyDataToBinaryDir target dir)
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
