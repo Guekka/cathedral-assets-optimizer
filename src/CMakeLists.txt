@@ -196,11 +196,6 @@ target_include_directories(CAO_LIB PUBLIC
 #C++20
 target_compile_features(CAO_LIB PUBLIC cxx_std_20)
 
-#Strictly follow the standard
-if(MSVC)
-    target_compile_options(CAO_LIB PRIVATE "/permissive-")
-endif()
-
 #AUTOUIC
 #I don't know why, but ui files are not found if I do not manually include them
 target_include_directories(CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/src/CAO_LIB_autogen/include")
