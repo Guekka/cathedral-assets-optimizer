@@ -43,9 +43,12 @@ CommandState TextureConvert::isApplicable(File &file) const
     if (!texResource)
         return CommandState::NotRequired;
 
+    //Cannot process very small textures
+    if (std::min(texResource->GetMetadata().width, texResource->GetMetadata().height) < 2)
+        return CommandState::NotRequired;
+
     const DXGI_FORMAT origFormat    = texResource->origFormat;
     const DXGI_FORMAT currentFormat = texResource->GetMetadata().format;
-
     //If the target format is the same as the current format, no conversion is needed
     if (file.patternSettings().eTexturesFormat() == currentFormat)
         return CommandState::NotRequired;
