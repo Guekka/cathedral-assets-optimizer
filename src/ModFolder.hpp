@@ -19,7 +19,7 @@ public:
     ModFolder &operator=(ModFolder &&) = default;
 
     void load();
-    bool hasNext() const;
+    bool hasNext();
 
     /// \note UB if hasNext == false
     std::unique_ptr<File> consume();

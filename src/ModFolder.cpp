@@ -18,8 +18,15 @@ ModFolder::ModFolder(const QString &inDir, const QString &bsaExtension, const QS
 {
 }
 
-bool ModFolder::hasNext() const
+bool ModFolder::hasNext()
 {
+    //If the BSAs were extracted, new files could have appeared
+    if (!BSAExhausted_ && bsas_.empty())
+    {
+        BSAExhausted_ = true;
+        load();
+    }
+
     return !bsas_.empty() || !files_.empty();
 }
 
@@ -38,13 +45,6 @@ std::unique_ptr<File> ModFolder::consume()
         res = helper(bsas_);
     else
         res = helper(files_);
-
-    //If the BSAs were extracted, new files could have appeared
-    if (!BSAExhausted_ && bsas_.empty())
-    {
-        BSAExhausted_ = true;
-        load();
-    }
 
     return res;
 }
@@ -92,6 +92,9 @@ void ModFolder::load()
     {
         it.next();
 
+        if (!it.fileInfo().isFile())
+            continue;
+
         if (isBSA(it.fileName()) && BSAExhausted_)
             continue; //BSAs were already processed. New ones cannot have appeared
 
@@ -108,12 +111,10 @@ void ModFolder::load()
     }
     BSAExhausted_ |= bsas_.empty();
 
-    if (!totalFileCount_)
-        totalFileCount_ = bsas_.size() + files_.size();
+    totalFileCount_ = bsas_.size() + files_.size();
 
     //Memory optimization
     bsas_.shrink_to_fit();
     files_.shrink_to_fit();
 }
-
 } // namespace CAO
