@@ -74,7 +74,7 @@ std::optional<QString> PatternSettings::isValid() const
     if (iTexturesResizingWidth() % 2 != 0 || iTexturesResizingHeight() % 2 != 0)
         return ("Textures resizing target has to be a power of two");
 
-    if (iMeshesOptimizationLevel() < 0 || iMeshesOptimizationLevel() > 3)
+    if (iMeshesOptimizationLevel() < 0 || iMeshesOptimizationLevel() > 2)
         return ("This meshes optimization level does not exist. Level: "
                 + QString::number(iMeshesOptimizationLevel()));
 

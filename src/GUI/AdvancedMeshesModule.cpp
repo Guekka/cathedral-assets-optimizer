@@ -21,7 +21,6 @@ AdvancedMeshesModule::AdvancedMeshesModule(QWidget *parent)
 
     connectGroupBox(ui_->mainGroupBox,
                     ui_->necessaryOptimizationRadioButton,
-                    ui_->mediumOptimizationRadioButton,
                     ui_->fullOptimizationRadioButton);
 }
 
@@ -37,8 +36,7 @@ void AdvancedMeshesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] G
 {
     auto *buttonGroup = new QButtonGroup(this);
     buttonGroup->addButton(ui_->necessaryOptimizationRadioButton, 1);
-    buttonGroup->addButton(ui_->mediumOptimizationRadioButton, 2);
-    buttonGroup->addButton(ui_->fullOptimizationRadioButton, 3);
+    buttonGroup->addButton(ui_->fullOptimizationRadioButton, 2);
 
     connect(ui_->mainGroupBox,
             &QGroupBox::toggled,

@@ -370,11 +370,6 @@ void NiSkinPartition::Put(NiStream& stream) {
         if (stream.GetVersion().User() >= 12 && stream.GetVersion().Stream() == 100) {
             partitions[p].vertexDesc.Put(stream);
 
-            if (partitions[p].numTriangles > partitions[p].trueTriangles.size())
-                throw std::runtime_error(
-                    "True triangles count was smaller than numTriangles in partition: "
-                    + std::to_string(p));
-
             for (int i = 0; i < partitions[p].numTriangles; i++)
                 stream << partitions[p].trueTriangles[i];
         }

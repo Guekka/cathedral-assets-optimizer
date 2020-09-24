@@ -166,37 +166,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="88"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perform necessary optimization, and also lightly optimizes other meshes. It will likely causes more issues than it fixes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="91"/>
-        <source>Extra </source>
+        <source>Extensive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="113"/>
+        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only use if other settings did not work. It has very low odds to succeed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="116"/>
-        <source>Overkill</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="126"/>
+        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="101"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="135"/>
+        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, headparts are ignored. It is recommended to enable this option when processing already converted mods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="138"/>
+        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="113"/>
         <source>Ignore headparts</source>
         <translation type="unfinished"></translation>
     </message>
@@ -394,7 +384,7 @@
 <context>
     <name>CAO::AdvancedMeshesModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.cpp" line="74"/>
+        <location filename="../../src/GUI/AdvancedMeshesModule.cpp" line="72"/>
         <source>Meshes (Patterns)</source>
         <translation type="unfinished"></translation>
     </message>

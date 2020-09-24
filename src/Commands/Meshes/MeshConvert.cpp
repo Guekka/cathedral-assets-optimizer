@@ -39,8 +39,7 @@ CommandResult MeshConvert::process(File &file) const
 
     OptOptions optOptions{.targetVersion  = targetVer,
                           .headParts      = isHeadpart(file.getInputFilePath()),
-                          .removeParallax = false,
-                          .mandatoryOnly  = false};
+                          .removeParallax = false};
 
     nif->OptimizeFor(optOptions);
 
