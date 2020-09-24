@@ -52,21 +52,9 @@ int AnimationFile::saveToDisk(const QString &filePath) const
     if (!saveToDiskHelper(filePath))
         return 5;
 
-    //Outputting to a temporarary file
-    QString outPath = filePath;
-    if (QFile::exists(outPath))
-        outPath = outPath.chopped(3) + "out.hkx";
-
-    hkOstream ostream(qPrintable(outPath));
-
-    commonSaveHelper(ostream);
-
-    if (outPath != filePath && QFile::exists(outPath))
-    {
-        QFile::remove(filePath);
-        if (!QFile::rename(outPath, filePath))
-            return 3;
-    }
+    hkOstream ostream(qPrintable(filePath));
+    if (auto res = commonSaveHelper(ostream))
+        return res;
 
     return 0;
 }
