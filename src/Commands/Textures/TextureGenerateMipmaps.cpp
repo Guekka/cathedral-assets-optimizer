@@ -79,16 +79,17 @@ CommandState TextureGenerateMipmaps::isApplicable(File &file) const
 
 size_t TextureGenerateMipmaps::calculateOptimalMipMapsNumber(const DirectX::TexMetadata &info) const
 {
-    if (info.width < 4 && info.height < 4)
+    size_t height = info.height;
+    size_t width  = info.width;
+
+    if (width < 2 && height < 2)
     {
         return 1;
     }
 
-    size_t height = info.height;
-    size_t width  = info.width;
-    size_t tMips  = 1;
+    size_t tMips = 1;
     //Calculating mips levels
-    while (height > 1 && width > 1)
+    while (height > 1 || width > 1)
     {
         height /= 2;
         width /= 2;
