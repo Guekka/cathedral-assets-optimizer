@@ -174,14 +174,12 @@ set(SOURCES
 #Resources
 getResources(resources)
 
-#Translations
-generateTranslations(${SOURCES} qm_files)
 
 #Main library
 add_library(CAO_LIB STATIC ${SOURCES}
-    ${qm_files}
     ${resources}
     )
+
 
 #Unity build
 set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD true)
@@ -207,9 +205,13 @@ target_link_libraries(CAO_LIB PUBLIC ${libs} Qt)
 #Icon
 getIcon(icon)
 
+#Translations
+generateTranslations("${SOURCES}" qm_files)
+
 #Main exe
 add_executable(Cathedral_Assets_Optimizer WIN32
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${icon}
+    ${qm_files}
     )
 target_link_libraries(Cathedral_Assets_Optimizer CAO_LIB)

@@ -1,14 +1,21 @@
 function (generateTranslations sources qm_files)
     set(TS_FILES
-        ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_de.ts
-        ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_en.ts
-        ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_fr.ts
-        ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_ja.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_de.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_en.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_es.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_fr_FR.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_ja.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_ko_KR.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_nl.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_tr.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_zh_CN.ts
+
         CACHE FILEPATH "List of translations files")
 
     message("Updating translations files")
     qt5_create_translation(QM_FILES ${TS_FILES} ${sources})
-    set(${qm_files}
+
+    set(qm_files
         ${QM_FILES}
         PARENT_SCOPE
         )
