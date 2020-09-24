@@ -14,6 +14,7 @@ class AdvancedBSAModule;
 namespace CAO {
 class AdvancedBSAModule : public IWindowModule
 {
+    Q_OBJECT
 public:
     explicit AdvancedBSAModule(QWidget *parent = nullptr);
     ~AdvancedBSAModule();

@@ -14,6 +14,7 @@ class AdvancedMeshesModule;
 namespace CAO {
 class AdvancedMeshesModule : public IWindowModule
 {
+    Q_OBJECT
 public:
     explicit AdvancedMeshesModule(QWidget *parent = nullptr);
     ~AdvancedMeshesModule();

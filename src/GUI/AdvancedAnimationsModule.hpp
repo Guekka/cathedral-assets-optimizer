@@ -14,6 +14,7 @@ class AdvancedAnimationsModule;
 namespace CAO {
 class AdvancedAnimationsModule : public IWindowModule
 {
+    Q_OBJECT
 public:
     explicit AdvancedAnimationsModule(QWidget *parent = nullptr);
     ~AdvancedAnimationsModule();
