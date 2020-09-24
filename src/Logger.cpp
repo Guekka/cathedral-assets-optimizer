@@ -29,7 +29,7 @@ void initCustomLogger(const QString &logPath)
     if (!file.open(QFile::ReadWrite | QFile::Append))
         throw std::runtime_error("Cannot open log file: " + logPath.toStdString());
 
-    static plog::RollingFileAppender<plog::CustomFormatter> appender(qPrintable(logPath), 1'000'000, 1'000);
+    static plog::RollingFileAppender<plog::CustomFormatter> appender(qPrintable(logPath), 1'000'000, 20);
     plog::init(plog::Severity::verbose, &appender);
 }
 } // namespace CAO

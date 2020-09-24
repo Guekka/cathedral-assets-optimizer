@@ -94,8 +94,7 @@ namespace plog
                 util::nstring currentFileName = buildFileName(fileNumber);
                 util::nstring nextFileName    = buildFileName(fileNumber + 1);
 
-                if (util::File::rename(currentFileName.c_str(), nextFileName.c_str()))
-                    break; //Move failed, continue to use the same file
+                util::File::rename(currentFileName.c_str(), nextFileName.c_str());
             }
 
             openLogFile();
