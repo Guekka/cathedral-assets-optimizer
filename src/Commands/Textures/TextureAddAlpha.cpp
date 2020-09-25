@@ -29,8 +29,10 @@ CommandResult TextureAddAlpha::process(File &file) const
 
     Resources::Texture timage;
 
+    bool converted = false;
     if (!DirectX::HasAlpha(texFile->GetMetadata().format))
     {
+        converted     = true;
         const auto hr = TextureConvert::convertWithoutCompression(*texFile,
                                                                   timage,
                                                                   DXGI_FORMAT_R8G8B8A8_UNORM);
@@ -40,6 +42,7 @@ CommandResult TextureAddAlpha::process(File &file) const
                 hr, "Failed to convert landscape texture to a format with alpha");
         }
     }
+
     constexpr auto transform = [](DirectX::XMVECTOR *outPixels,
                                   const DirectX::XMVECTOR *inPixels,
                                   size_t width,
@@ -51,9 +54,10 @@ CommandResult TextureAddAlpha::process(File &file) const
 
     Resources::Texture timage2;
 
-    const auto hr = DirectX::TransformImage(timage.GetImages(),
-                                            timage.GetImageCount(),
-                                            timage.GetMetadata(),
+    auto *source  = converted ? &timage : texFile;
+    const auto hr = DirectX::TransformImage(source->GetImages(),
+                                            source->GetImageCount(),
+                                            source->GetMetadata(),
                                             transform,
                                             timage2);
 
@@ -114,7 +118,7 @@ void TextureAddAlpha::listLandscapeTextures(const GeneralSettings &settings, Fil
     }
 
     for (auto &tex : landTextures)
-        if (ends_with(std::string_view(tex), std::string_view("_n.dds")))
+        if (!ends_with(std::string_view(tex), std::string_view("_n.dds")))
             tex.insert(tex.size() - 4, "_n");
 
     remove_duplicates(landTextures);
