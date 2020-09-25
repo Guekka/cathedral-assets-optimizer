@@ -39,6 +39,6 @@ add_library(nif STATIC
 
 target_compile_features(nif PUBLIC cxx_std_17)
 if(MSVC)
-    target_compile_options(nif PUBLIC "/EHsc")
+    target_compile_options(nif PUBLIC "/EHsc" "/bigobj")
 endif()
 
