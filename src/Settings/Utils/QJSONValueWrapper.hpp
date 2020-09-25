@@ -41,6 +41,21 @@ public:
     }
 
     [[nodiscard]] Type value() const { return JSON::getValue<Type>(json_, key_); }
+
+    template<typename U = T>
+    [[nodiscard]] const Type &value() const requires is_vector_v<U>
+    {
+        return JSON::getRef<Type>(json_, key_);
+    }
+
+    [[nodiscard]] Type operator()() const { return value(); }
+
+    template<typename U = T>
+    [[nodiscard]] const Type &operator()() const requires is_vector_v<U>
+    {
+        return value();
+    }
+
     [[nodiscard]] Type value_or(const Type &fallback)
     {
         if (json_.contains(key_))
@@ -48,7 +63,6 @@ public:
         return fallback;
     }
 
-    [[nodiscard]] Type operator()() const { return value(); }
     QJSONValueWrapper &operator=(const Type &val)
     {
         setValue(val);

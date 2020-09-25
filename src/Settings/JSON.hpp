@@ -70,7 +70,7 @@ inline T getValue(const nlohmann::json &j)
 }
 
 template<class T>
-inline T getValue(const nlohmann::json &json, const json_pointer &key)
+inline T getValue(const nlohmann::json &json, const std::string &key)
 {
     assert(json.is_object() || json.is_null());
 
@@ -81,15 +81,21 @@ inline T getValue(const nlohmann::json &json, const json_pointer &key)
 }
 
 template<class T>
-inline T getValue(const nlohmann::json &json, const std::string &key)
+inline T getValue(const nlohmann::json &json, const json_pointer &key)
 {
-    assert(key.size() > 0);
     assert(json.is_object() || json.is_null());
 
-    if (!json.contains(getPointer(key)))
+    if (!json.contains(key))
         return getValue<T>(nlohmann::json{});
 
     return getValue<T>(json[getPointer(key)]);
+}
+
+template<class T>
+T &getRef(const nlohmann::json &json, const std::string &key)
+{
+    static_assert(is_vector_v<T>, "Type must be a vector");
+    return json.get_ref<T>();
 }
 
 template<class T>
