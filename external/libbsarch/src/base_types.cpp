@@ -96,6 +96,12 @@ bsa_wrapper::bsa_wrapper(detail::bsa_wrapper &&other)
     std::swap(data_, other.data_);
 }
 
+bsa_wrapper &bsa_wrapper::operator=(bsa_wrapper &&other)
+{
+    std::swap(data_, other.data_);
+    return *this;
+}
+
 bsa_archive_t bsa_wrapper::get() const
 {
     return data_;

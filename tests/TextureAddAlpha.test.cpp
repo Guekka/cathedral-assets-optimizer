@@ -30,7 +30,7 @@ TEST_CASE("r")
     sets.bTexturesLandscapeAlpha = true;
     auto file                    = getStandardTextureFile(sets);
 
-    auto texFile     = dynamic_cast<const TextureResource *>(&file->getFile());
+    const auto *texFile     = file->getFile<Resources::Texture>();
 
     auto transform = [](DirectX::XMVECTOR *outPixels,
                         const DirectX::XMVECTOR *inPixels,
@@ -41,13 +41,13 @@ TEST_CASE("r")
             outPixels[j] = XMVectorSelect(black, inPixels[j], DirectX::g_XMSelect1110);
     };
 
-    auto timage = std::make_unique<TextureResource>();
+    Resources::Texture timage;
 
     auto hr = DirectX::TransformImage(texFile->GetImages(),
                                       texFile->GetImageCount(),
                                       texFile->GetMetadata(),
                                       transform,
-                                      *timage2);
+                                      timage2);
 
 
 }

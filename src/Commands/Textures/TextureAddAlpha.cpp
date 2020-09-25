@@ -23,16 +23,16 @@ TextureAddAlpha::TextureAddAlpha()
 
 CommandResult TextureAddAlpha::process(File &file) const
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandResultFactory::getCannotCastFileResult();
 
-    auto timage = std::make_unique<TextureResource>();
+    Resources::Texture timage;
 
     if (!DirectX::HasAlpha(texFile->GetMetadata().format))
     {
         const auto hr = TextureConvert::convertWithoutCompression(*texFile,
-                                                                  *timage,
+                                                                  timage,
                                                                   DXGI_FORMAT_R8G8B8A8_UNORM);
         if (FAILED(hr))
         {
@@ -49,20 +49,20 @@ CommandResult TextureAddAlpha::process(File &file) const
             outPixels[j] = XMVectorSelect(black, inPixels[j], DirectX::g_XMSelect1110);
     };
 
-    auto timage2 = std::make_unique<TextureResource>();
+    Resources::Texture timage2;
 
-    const auto hr = DirectX::TransformImage(timage->GetImages(),
-                                            timage->GetImageCount(),
-                                            timage->GetMetadata(),
+    const auto hr = DirectX::TransformImage(timage.GetImages(),
+                                            timage.GetImageCount(),
+                                            timage.GetMetadata(),
                                             transform,
-                                            *timage2);
+                                            timage2);
 
     if (FAILED(hr))
     {
         return CommandResultFactory::getFailedResult(hr, "Failed to add alpha to landscape textures.");
     }
 
-    file.setFile(std::unique_ptr<Resource>(std::move(timage2)));
+    file.setFile(std::move(timage2));
     return CommandResultFactory::getSuccessfulResult();
 }
 
@@ -74,7 +74,7 @@ CommandState TextureAddAlpha::isApplicable(File &file) const
     if (!isLandscape(file.getInputFilePath()))
         return CommandState::NotRequired;
 
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandState::NotRequired;
 

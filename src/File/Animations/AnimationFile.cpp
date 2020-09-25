@@ -34,20 +34,20 @@ AnimationFile::AnimationFile()
     }
 }
 
-bool AnimationFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
+bool AnimationFile::setFile(Resource &&file, bool optimizedFile)
 {
-    return setFileHelper<AnimationResource>(std::move(file), optimizedFile);
+    return setFileHelper<Resources::Animation>(std::move(file), optimizedFile);
 }
 
 int AnimationFile::loadFromDisk(const QString &filePath)
 {
-    loadHelper<AnimationResource>(filePath);
+    loadHelper<Resources::Animation>(filePath);
 
     hkIstream istream(qPrintable(filePath));
     return commonLoadHelper(istream);
 }
 
-int AnimationFile::saveToDisk(const QString &filePath) const
+int AnimationFile::saveToDisk(const QString &filePath)
 {
     if (!saveToDiskHelper(filePath))
         return 5;
@@ -61,13 +61,13 @@ int AnimationFile::saveToDisk(const QString &filePath) const
 
 int AnimationFile::loadFromMemory(const void *pSource, size_t size, const QString &fileName)
 {
-    loadHelper<AnimationResource>(fileName);
+    loadHelper<Resources::Animation>(fileName);
 
     hkIstream istream(pSource, size);
     return commonLoadHelper(istream);
 }
 
-int AnimationFile::saveToMemory(std::vector<std::byte> &out) const
+int AnimationFile::saveToMemory(std::vector<std::byte> &out)
 {
     if (!saveToMemoryHelper())
         return 1;
@@ -88,7 +88,7 @@ int AnimationFile::commonLoadHelper(hkIstream &istream)
 {
     try
     {
-        auto havok = static_cast<AnimationResource *>(&getFile(false));
+        auto *havok = getFile<Resources::Animation>(false);
 
         if (!istream.isOk())
             return 1;
@@ -119,7 +119,7 @@ int AnimationFile::commonSaveHelper(hkOstream &ostream) const
 {
     try
     {
-        auto havok = static_cast<const AnimationResource *>(&getFile());
+        const auto *havok = getFile<Resources::Animation>();
 
         if (!ostream.isOk())
             return 1;

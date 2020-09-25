@@ -11,7 +11,7 @@
 namespace CAO {
 CommandResult MeshRenameReferencedTextures::process(File &file) const
 {
-    auto nif = dynamic_cast<MeshResource *>(&file.getFile(true));
+    auto *nif = file.getFile<Resources::Mesh>(true);
     if (!nif)
         return CommandResultFactory::getCannotCastFileResult();
 
@@ -44,7 +44,7 @@ CommandState MeshRenameReferencedTextures::isApplicable(File &file) const
     if (!game.cMeshesVersion().has_value())
         return CommandState::NotRequired;
 
-    auto nif = dynamic_cast<MeshResource *>(&file.getFile(false));
+    auto *nif = file.getFile<Resources::Mesh>(false);
     if (!nif)
         return CommandState::NotRequired;
 

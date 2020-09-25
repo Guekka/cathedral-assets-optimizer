@@ -7,19 +7,19 @@
 namespace CAO {
 int BSAFile::loadFromDisk(const QString &filePath)
 {
-    loadHelper<BSAFileResource>(filePath);
+    loadHelper<Resources::BSAFile>(filePath);
 
-    auto bsaFile = static_cast<BSAFileResource *>(&getFile(false));
+    auto *bsaFile = getFile<Resources::BSAFile>(false);
     bsaFile->bsa.load(filePath.toStdString());
     return 0;
 }
 
-int BSAFile::saveToDisk(const QString &filePath) const
+int BSAFile::saveToDisk(const QString &filePath)
 {
     if (!saveToDiskHelper(filePath))
         return 2;
 
-    auto bsaFile = static_cast<const BSAFileResource *>(&getFile());
+    const auto *bsaFile = getFile<Resources::BSAFile>();
 
     bsaFile->saver.save(filePath.toStdString(), bsaFile->saver.get_save_type());
     return 0;
@@ -30,14 +30,14 @@ int BSAFile::loadFromMemory(const void *pSource, size_t size, const QString &fil
     return 1;
 }
 
-int BSAFile::saveToMemory(std::vector<std::byte> &out) const
+int BSAFile::saveToMemory(std::vector<std::byte> &out)
 {
     return 1;
 }
 
-bool BSAFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
+bool BSAFile::setFile(Resource &&file, bool optimizedFile)
 {
-    return setFileHelper<BSAFileResource>(std::move(file), optimizedFile);
+    return setFileHelper<Resources::BSAFile>(std::move(file), optimizedFile);
 }
 
 } // namespace CAO

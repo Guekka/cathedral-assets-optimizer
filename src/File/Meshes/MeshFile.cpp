@@ -10,31 +10,31 @@
 namespace CAO {
 int MeshFile::loadFromDisk(const QString &filePath)
 {
-    loadHelper<MeshResource>(filePath);
+    loadHelper<Resources::Mesh>(filePath);
 
-    auto meshFile = static_cast<MeshResource *>(&getFile(false));
+    auto *meshFile = getFile<Resources::Mesh>(false);
     return meshFile->Load(filePath.toStdString());
 }
 
-int MeshFile::saveToDisk(const QString &filePath) const
+int MeshFile::saveToDisk(const QString &filePath)
 {
     if (!saveToDiskHelper(filePath))
         return -1;
 
-    auto meshFile = static_cast<MeshResource *>(const_cast<Resource *>((&getFile())));
+    auto *meshFile = getFile<Resources::Mesh>(false);
     //Unfortunately, NIF library really doesn't like constness
     return meshFile->Save(filePath.toStdString());
 }
 
 int MeshFile::loadFromMemory(const void *pSource, size_t size, const QString &fileName)
 {
-    loadHelper<MeshResource>(fileName);
+    loadHelper<Resources::Mesh>(fileName);
 
     //We know pSource is empty, so it doesn't matter if we cast away constness. Furthermore,
     //NifFile::Load does not change the pointed contents. A simple std::istream& would be enough
     auto ptr = static_cast<const char *>(pSource);
 
-    auto meshFile = static_cast<MeshResource *>((&getFile(false)));
+    auto *meshFile = getFile<Resources::Mesh>(false);
 
     std::string str(ptr, size);
     std::stringstream stream(std::move(str), std::ios_base::in | std::ios_base::binary);
@@ -45,12 +45,12 @@ int MeshFile::loadFromMemory(const void *pSource, size_t size, const QString &fi
     return res;
 }
 
-int MeshFile::saveToMemory(std::vector<std::byte> &out) const
+int MeshFile::saveToMemory(std::vector<std::byte> &out)
 {
     if (!saveToMemoryHelper())
         return 1;
 
-    auto meshFile = static_cast<MeshResource *>(const_cast<Resource *>((&getFile())));
+    auto *meshFile = getFile<Resources::Mesh>(false);
 
     std::stringstream strStream;
     if (int res = meshFile->Save(strStream); res)
@@ -62,8 +62,8 @@ int MeshFile::saveToMemory(std::vector<std::byte> &out) const
     return 0;
 }
 
-bool MeshFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
+bool MeshFile::setFile(Resource&& file, bool optimizedFile)
 {
-    return setFileHelper<MeshResource>(std::move(file), optimizedFile);
+    return setFileHelper<Resources::Mesh>(std::move(file), optimizedFile);
 }
 } // namespace CAO

@@ -8,17 +8,17 @@
 namespace CAO {
 CommandResult TextureGenerateMipmaps::process(File &file) const
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandResultFactory::getCannotCastFileResult();
 
     const auto &info    = texFile->GetMetadata();
     const size_t &tMips = calculateOptimalMipMapsNumber(info);
-    auto timage         = std::make_unique<TextureResource>();
+    Resources::Texture timage;
 
     DirectX::TexMetadata mdata = info;
     mdata.mipLevels            = 1;
-    const auto hr1             = timage->Initialize(mdata);
+    const auto hr1             = timage.Initialize(mdata);
     if (FAILED(hr1))
         return CommandResultFactory::getFailedResult(hr1, "Failed to initialize target image with source metadata.");
 
@@ -29,7 +29,7 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
     {
         const auto hr = CopyRectangle(*texFile->GetImage(0, i, 0),
                                       DirectX::Rect(0, 0, info.width, info.height),
-                                      *timage->GetImage(0, i, 0),
+                                      *timage.GetImage(0, i, 0),
                                       DirectX::TEX_FILTER_SEPARATE_ALPHA,
                                       0,
                                       0);
@@ -37,15 +37,15 @@ CommandResult TextureGenerateMipmaps::process(File &file) const
             return CommandResultFactory::getFailedResult(hr, "Failed to copy image to single level");
     }
 
-    auto timage2        = std::make_unique<TextureResource>();
-    timage2->origFormat = texFile->origFormat;
+    Resources::Texture timage2;
+    timage2.origFormat = texFile->origFormat;
 
-    const auto hr = GenerateMipMaps(timage->GetImages(),
-                                    timage->GetImageCount(),
-                                    timage->GetMetadata(),
+    const auto hr = GenerateMipMaps(timage.GetImages(),
+                                    timage.GetImageCount(),
+                                    timage.GetMetadata(),
                                     DirectX::TEX_FILTER_SEPARATE_ALPHA,
                                     tMips,
-                                    *timage2);
+                                    timage2);
 
     if (FAILED(hr))
         return CommandResultFactory::getFailedResult(hr, "Failed to generate mipmaps.");
@@ -59,7 +59,7 @@ CommandState TextureGenerateMipmaps::isApplicable(File &file) const
     if (!file.patternSettings().bTexturesMipmaps())
         return CommandState::NotRequired;
 
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandState::NotRequired;
 

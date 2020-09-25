@@ -73,7 +73,7 @@ bool MainOptimizer::processDry(File &file)
 
 bool MainOptimizer::processBSA(File &file, bool dryRun = false)
 {
-    auto bsaFile = dynamic_cast<BSAFileResource *>(&file.getFile(false));
+    auto *bsaFile = file.getFile<Resources::BSAFile>(true);
     if (!bsaFile)
         return false;
 

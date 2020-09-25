@@ -48,7 +48,7 @@ int File::loadFromDisk()
     return loadFromDisk(getInputFilePath());
 }
 
-int File::saveToDisk() const
+int File::saveToDisk()
 {
     return saveToDisk(getOutputFilePath());
 }
@@ -61,17 +61,6 @@ bool File::optimizedCurrentFile() const
 void File::setOptimizedCurrentFile(const bool optimizedFile)
 {
     optimizedCurrentFile_ |= optimizedFile;
-}
-
-const Resource &File::getFile() const
-{
-    return *file_;
-}
-
-Resource &File::getFile(const bool modifiedFile)
-{
-    setOptimizedCurrentFile(modifiedFile);
-    return *file_;
 }
 
 void File::reset()
@@ -92,7 +81,7 @@ void File::resetHelper()
     inputFilePath_.clear();
     outputFilePath_.clear();
 
-    file_ = nullptr;
+    file_ = std::monostate{};
 }
 
 bool File::saveToDiskHelper(const QString &filename) const

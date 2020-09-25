@@ -5,6 +5,8 @@
 #pragma once
 
 #include <optional>
+#include <variant>
+
 #include <QObject>
 
 #include "Commands/Textures/TextureFormats.hpp"
@@ -19,35 +21,28 @@
 #include "libbsarch/src/bsa_saver.hpp"
 #include "libbsarch/src/transform_archive.hpp"
 
-namespace CAO {
-class Resource
-{
-public:
-    virtual ~Resource() = default;
-};
-
-class MeshResource : public Resource, public NifFile
+namespace CAO::Resources {
+class Mesh : public NifFile
 {
 };
-
-class TextureResource : public Resource, public DirectX::ScratchImage
+class Texture : public DirectX::ScratchImage
 {
 public:
     DXGI_FORMAT origFormat{};
 };
 
-struct BSAFileResource : public Resource
+struct BSAFile
 {
-    BSAFileResource()
+    BSAFile()
         : saver(bsa)
     {
     }
 
-    ~BSAFileResource() = default;
+    ~BSAFile() = default;
 
-    BSAFileResource(const BSAFileResource &) = delete;
+    BSAFile(const BSAFile &) = delete;
 
-    BSAFileResource(BSAFileResource &&other) noexcept
+    BSAFile(BSAFile &&other) noexcept
         : bsa(std::move(other.bsa))
         , saver(bsa)
     {
@@ -55,8 +50,8 @@ struct BSAFileResource : public Resource
         saver.set_bsa(bsa);
     }
 
-    BSAFileResource &operator=(const BSAFileResource &) = delete;
-    BSAFileResource &operator                           =(BSAFileResource &&other)
+    BSAFile &operator=(const BSAFile &) = delete;
+    BSAFile &operator                   =(BSAFile &&other)
     {
         bsa   = std::move(other.bsa);
         saver = std::move(other.saver);
@@ -69,17 +64,26 @@ struct BSAFileResource : public Resource
     std::optional<libbsarch::transform_callback> callback;
 };
 
-struct BSAFolderResource : public Resource
+struct BSAFolder
 {
-    std::vector<BSAFileResource> bsas;
+    std::vector<BSAFile> bsas;
 };
 
-struct AnimationResource : public Resource
+struct Animation
 {
     hkVariant root;
     hkResource *resource;
     hkPackFormat pkFormat;
 };
+} // namespace CAO::Resources
+
+namespace CAO {
+using Resource = std::variant<std::monostate,
+                              Resources::Mesh,
+                              Resources::Texture,
+                              Resources::BSAFile,
+                              Resources::BSAFolder,
+                              Resources::Animation>;
 
 } // namespace CAO
 

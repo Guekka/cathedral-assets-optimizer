@@ -15,7 +15,7 @@ namespace CAO {
 
 CommandResult BSATransform::process(File &file) const
 {
-    auto bsaFile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
+    auto *bsaFile = file.getFile<Resources::BSAFile>();
     if (!bsaFile)
         return CommandResultFactory::getCannotCastFileResult();
 
@@ -55,7 +55,7 @@ CommandState BSATransform::isApplicable(File &file) const
     if (!currentProfile().getGeneralSettings().bBSAProcessContent())
         return CommandState::NotRequired;
 
-    auto bsaFile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
+    auto *bsaFile = file.getFile<Resources::BSAFile>();
     if (!bsaFile)
         return CommandState::NotRequired;
 

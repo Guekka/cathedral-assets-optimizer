@@ -9,7 +9,7 @@
 namespace CAO {
 CommandResult AnimationsConvert::process(File &file) const
 {
-    auto havok = dynamic_cast<AnimationResource *>(&file.getFile(true));
+    auto *havok = file.getFile<Resources::Animation>(true);
     if (!havok)
         return CommandResultFactory::getCannotCastFileResult();
 
@@ -27,7 +27,7 @@ CommandState AnimationsConvert::isApplicable(File &file) const
     if (!format.has_value())
         return CommandState::NotRequired;
 
-    auto havok = dynamic_cast<const AnimationResource *>(&file.getFile());
+    const auto *havok = file.getFile<Resources::Animation>();
     if (!havok)
         return CommandState::NotRequired;
 

@@ -72,10 +72,10 @@ public:
 		return *this;
 	}
 
-	NiHeader& GetHeader() { return hdr; }
-	void CopyFrom(const NifFile& other);
+    NiHeader &GetHeader() { return hdr; }
+    void CopyFrom(const NifFile &other);
 
-	int Load(const std::string& fileName, const NifLoadOptions& options = NifLoadOptions());
+    int Load(const std::string& fileName, const NifLoadOptions& options = NifLoadOptions());
 	int Load(std::iostream &file, const NifLoadOptions& options = NifLoadOptions());
 	int Save(const std::string& fileName, const NifSaveOptions& options = NifSaveOptions());
 	int Save(std::iostream& file, const NifSaveOptions& options = NifSaveOptions());

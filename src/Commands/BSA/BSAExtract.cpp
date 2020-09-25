@@ -13,7 +13,7 @@
 namespace CAO {
 CommandResult BSAExtract::process(File &file) const
 {
-    auto bsafile = dynamic_cast<BSAFileResource *>(&file.getFile(true));
+    auto *bsafile = file.getFile<Resources::BSAFile>(true);
     if (!bsafile)
         return CommandResultFactory::getCannotCastFileResult();
 
@@ -48,7 +48,7 @@ CommandState BSAExtract::isApplicable(File &file) const
     if (!currentProfile().getGeneralSettings().bBSAExtract())
         return CommandState::NotRequired;
 
-    auto bsafile = dynamic_cast<const BSAFileResource *>(&file.getFile());
+    const auto *bsafile = file.getFile<Resources::BSAFile>();
     if (!bsafile)
         return CommandState::NotRequired;
 

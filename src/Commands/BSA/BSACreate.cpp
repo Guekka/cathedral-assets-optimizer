@@ -16,7 +16,7 @@
 namespace CAO {
 CommandResult BSACreate::process(File &file) const
 {
-    auto bsaFolder = dynamic_cast<BSAFolderResource *>(&file.getFile(true));
+    auto *bsaFolder = file.getFile<Resources::BSAFolder>(true);
     if (!bsaFolder)
         return CommandResultFactory::getCannotCastFileResult();
 
@@ -30,7 +30,7 @@ CommandResult BSACreate::process(File &file) const
         if (QFile(bsa.path).exists())
             return CommandResultFactory::getFailedResult(-1, "Failed to create BSA: a BSA already exists.");
 
-        BSAFileResource archive;
+        Resources::BSAFile archive;
         archive.bsa.set_share_data(true);
 
         archive.saver.set_save_type(bsa.format);
@@ -60,7 +60,7 @@ CommandResult BSACreate::process(File &file) const
 
 CommandState BSACreate::isApplicable(File &file) const
 {
-    auto bsaFolder = dynamic_cast<const BSAFolderResource *>(&file.getFile());
+    const auto *bsaFolder = file.getFile<Resources::BSAFolder>();
     if (!bsaFolder)
         return CommandState::NotRequired;
 

@@ -25,18 +25,34 @@ public:
     virtual int loadFromDisk();
     virtual int loadFromDisk(const QString &filePath) = 0;
 
-    virtual int saveToDisk() const;
-    virtual int saveToDisk(const QString &filePath) const = 0;
+    virtual int saveToDisk();
+    virtual int saveToDisk(const QString &filePath) = 0;
 
     virtual int loadFromMemory(const void *pSource, size_t size, const QString &fileName) = 0;
-    virtual int saveToMemory(std::vector<std::byte> &out) const                           = 0;
+    virtual int saveToMemory(std::vector<std::byte> &out)                                 = 0;
 
     bool optimizedCurrentFile() const;
     void setOptimizedCurrentFile(const bool optimizedFile);
 
-    const Resource &getFile() const;
-    Resource &getFile(const bool modifiedFile);
-    virtual bool setFile(std::unique_ptr<Resource> file, bool optimizedFile = true) = 0;
+    template<typename T>
+    const T *getFile() const
+    {
+        if (!std::holds_alternative<T>(file_))
+            return nullptr;
+        return &std::get<T>(file_);
+    }
+
+    template<typename T>
+    T *getFile(const bool modifiedFile)
+    {
+        if (!std::holds_alternative<T>(file_))
+            return nullptr;
+
+        setOptimizedCurrentFile(modifiedFile);
+        return &std::get<T>(file_);
+    }
+
+    virtual bool setFile(Resource &&file, bool optimizedFile = true) = 0;
 
     virtual void reset();
 
@@ -48,10 +64,9 @@ public:
 
 protected:
     template<class T>
-    bool setFileHelper(std::unique_ptr<Resource> file, bool optimizedFile)
+    bool setFileHelper(Resource &&file, bool optimizedFile)
     {
-        auto convertedFile = dynamic_cast<T *>(&*file);
-        if (!convertedFile)
+        if (!std::holds_alternative<T>(file))
             return false;
 
         file_ = std::move(file);
@@ -70,7 +85,7 @@ protected:
 
         setInputFilePath(filename);
 
-        file_ = std::make_unique<T>();
+        file_ = T();
     }
 
     [[nodiscard]] bool saveToDiskHelper(const QString &filename) const;
@@ -79,7 +94,7 @@ protected:
 private:
     void matchSettings();
 
-    std::unique_ptr<Resource> file_;
+    Resource file_;
 
     QString inputFilePath_;
     QString outputFilePath_;
@@ -89,4 +104,5 @@ private:
 
     PatternSettings patternSettings_;
 };
+
 } // namespace CAO

@@ -10,7 +10,7 @@
 namespace CAO {
 CommandResult TextureConvert::process(File &file) const
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandResultFactory::getCannotCastFileResult();
 
@@ -20,26 +20,26 @@ CommandResult TextureConvert::process(File &file) const
     if (texFile->GetMetadata().width < 4 || texFile->GetMetadata().height < 4)
         outputFormat = DXGI_FORMAT_B8G8R8A8_UNORM; //Standard uncompressed format
 
-    auto timage = std::make_unique<TextureResource>();
+    Resources::Texture timage;
 
     if (DirectX::IsCompressed(outputFormat))
     {
-        if (auto result = convertWithCompression(*texFile, *timage, outputFormat))
+        if (auto result = convertWithCompression(*texFile, timage, outputFormat))
             return CommandResultFactory::getFailedResult(result, "Failed to convert with compression");
     }
     else
     {
-        if (auto result = convertWithoutCompression(*texFile, *timage, outputFormat))
+        if (auto result = convertWithoutCompression(*texFile, timage, outputFormat))
             return CommandResultFactory::getFailedResult(result, "Failed to convert without compression");
     }
 
-    file.setFile(std::unique_ptr<Resource>(std::move(timage)));
+    file.setFile(std::move(timage));
     return CommandResultFactory::getSuccessfulResult();
 }
 
 CommandState TextureConvert::isApplicable(File &file) const
 {
-    auto texResource = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texResource = file.getFile<Resources::Texture>();
     if (!texResource)
         return CommandState::NotRequired;
 

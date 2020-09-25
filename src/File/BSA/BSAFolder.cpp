@@ -14,7 +14,7 @@ int BSAFolder::loadFromDisk(const QString &filePath)
     if (!QFileInfo(filePath).isDir())
         return 1;
 
-    loadHelper<BSAFolderResource>(filePath);
+    loadHelper<Resources::BSAFolder>(filePath);
 
     return 0;
 }
@@ -24,17 +24,17 @@ int BSAFolder::loadFromMemory(const void *pSource, size_t size, const QString &f
     return 1;
 }
 
-int BSAFolder::saveToMemory(std::vector<std::byte> &out) const
+int BSAFolder::saveToMemory(std::vector<std::byte> &out)
 {
     return 1;
 }
 
-int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath) const
+int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath)
 {
     if (!saveToDiskHelper(filePath))
         return 1;
 
-    auto dir = dynamic_cast<const BSAFolderResource *>(&getFile());
+    const auto *dir = getFile<Resources::BSAFolder>();
     if (!dir)
         return 2;
 
@@ -57,9 +57,9 @@ int BSAFolder::saveToDisk([[maybe_unused]] const QString &filePath) const
     return 0;
 }
 
-bool BSAFolder::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
+bool BSAFolder::setFile(Resource &&file, bool optimizedFile)
 {
-    return setFileHelper<BSAFolderResource>(std::move(file), optimizedFile);
+    return setFileHelper<Resources::BSAFolder>(std::move(file), optimizedFile);
 }
 
 } // namespace CAO

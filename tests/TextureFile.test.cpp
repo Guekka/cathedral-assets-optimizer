@@ -19,8 +19,8 @@ SCENARIO("Saving and loading a dds file to the disk")
                     //We assume here here the loadFromDisk function works correctly
                     TextureFile file2;
                     REQUIRE(file2.loadFromDisk(filePath) == 0);
-                    const auto info1 = dynamic_cast<const TextureResource *>(&file->getFile())->GetMetadata();
-                    const auto info2 = dynamic_cast<const TextureResource *>(&file2.getFile())->GetMetadata();
+                    const auto info1 = file->getFile<Resources::Texture>()->GetMetadata();
+                    const auto info2 = file2.getFile<Resources::Texture>()->GetMetadata();
                     CHECK(info1.width == info2.width);
                     CHECK(info1.height == info2.height);
                     CHECK(info1.depth == info2.depth);

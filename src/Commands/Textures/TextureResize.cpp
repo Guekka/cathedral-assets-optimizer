@@ -9,13 +9,13 @@
 namespace CAO {
 CommandResult TextureResize::process(File &file) const
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandResultFactory::getCannotCastFileResult();
 
     const auto &info = texFile->GetMetadata();
 
-    auto timage     = std::make_unique<TextureResource>();
+    Resources::Texture timage;
     const auto &img = texFile->GetImages();
     if (!img)
         return CommandResultFactory::getFailedResult(-1, "Failed to get images from file");
@@ -24,11 +24,11 @@ CommandResult TextureResize::process(File &file) const
 
     const auto filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
     const HRESULT hr
-        = DirectX::Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, *timage);
+        = DirectX::Resize(img, texFile->GetImageCount(), info, tinfo.width, tinfo.height, filter, timage);
     if (FAILED(hr))
         return CommandResultFactory::getFailedResult(hr, "Failed to resize image.");
 
-    file.setFile(std::unique_ptr<Resource>(std::move(timage)));
+    file.setFile(std::move(timage));
     return CommandResultFactory::getSuccessfulResult();
 }
 
@@ -37,7 +37,7 @@ CommandState TextureResize::isApplicable(File &file) const
     if (file.patternSettings().eTexturesResizingMode() == None)
         return CommandState::NotRequired;
 
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandState::NotRequired;
 

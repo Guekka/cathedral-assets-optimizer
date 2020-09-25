@@ -23,14 +23,14 @@ int TextureFile::loadFromDisk(const QString &filePath)
 {
     ScopeGuard guard([this] { this->reset(); });
 
-    loadHelper<TextureResource>(filePath);
+    loadHelper<Resources::Texture>(filePath);
 
     wchar_t wFilePath[1024];
     QDir::toNativeSeparators(filePath).toWCharArray(wFilePath);
     wFilePath[filePath.length()] = '\0';
 
     //Trying to guess texture type. DDS is more common
-    auto image = static_cast<TextureResource *>(&getFile(false));
+    auto *image = getFile<Resources::Texture>(false);
     if (FAILED(LoadFromDDSFile(wFilePath, DirectX::DDS_FLAGS_NONE, &_info, *image)))
         if (FAILED(LoadFromTGAFile(wFilePath, &_info, *image)))
             return 1;
@@ -47,9 +47,9 @@ int TextureFile::loadFromMemory(const void *pSource, size_t size, const QString 
 {
     ScopeGuard guard([this] { this->reset(); });
 
-    loadHelper<TextureResource>(fileName);
+    loadHelper<Resources::Texture>(fileName);
 
-    auto image = static_cast<TextureResource *>(&getFile(false));
+    auto *image = getFile<Resources::Texture>(false);
     if (FAILED(LoadFromDDSMemory(pSource, size, DirectX::DDS_FLAGS_NONE, &_info, *image)))
         if (FAILED(LoadFromTGAMemory(pSource, size, &_info, *image)))
             return 1;
@@ -62,12 +62,12 @@ int TextureFile::loadFromMemory(const void *pSource, size_t size, const QString 
     return 0;
 }
 
-int TextureFile::saveToMemory(std::vector<std::byte> &out) const
+int TextureFile::saveToMemory(std::vector<std::byte> &out)
 {
     if (!saveToMemoryHelper())
         return 1;
 
-    auto image = static_cast<const TextureResource *>(&getFile());
+    const auto *image = getFile<Resources::Texture>();
 
     const auto img = image->GetImages();
     if (!img)
@@ -87,12 +87,12 @@ int TextureFile::saveToMemory(std::vector<std::byte> &out) const
     return 0;
 }
 
-int TextureFile::saveToDisk(const QString &filePath) const
+int TextureFile::saveToDisk(const QString &filePath)
 {
     if (!saveToDiskHelper(filePath))
         return 2;
 
-    auto image     = static_cast<const TextureResource *>(&getFile());
+    const auto *image = getFile<Resources::Texture>();
     const auto img = image->GetImages();
     if (!img)
         return 1;
@@ -117,11 +117,11 @@ int TextureFile::saveToDisk(const QString &filePath) const
     return FAILED(hr);
 }
 
-bool TextureFile::setFile(std::unique_ptr<Resource> file, bool optimizedFile)
+bool TextureFile::setFile(Resource &&file, bool optimizedFile)
 {
-    if (!setFileHelper<TextureResource>(std::move(file), optimizedFile))
+    if (!setFileHelper<Resources::Texture>(std::move(file), optimizedFile))
         return false;
-    _info = static_cast<TextureResource *>(&getFile(false))->GetMetadata();
+    _info = getFile<Resources::Texture>()->GetMetadata();
     return true;
 }
 
@@ -131,7 +131,7 @@ void TextureFile::reset()
     _info = DirectX::TexMetadata();
 }
 
-bool TextureFile::makeTypelessUNORM(TextureResource &image)
+bool TextureFile::makeTypelessUNORM(Resources::Texture &image)
 {
     if (DirectX::IsTypeless(_info.format))
     {

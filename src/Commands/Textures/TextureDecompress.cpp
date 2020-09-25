@@ -8,7 +8,7 @@
 namespace CAO {
 CommandResult TextureDecompress::process(File &file) const
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandResultFactory::getCannotCastFileResult();
 
@@ -16,19 +16,19 @@ CommandResult TextureDecompress::process(File &file) const
     const size_t &nimg = texFile->GetImageCount();
     const auto &info   = texFile->GetMetadata();
 
-    auto timage   = std::make_unique<TextureResource>();
-    const auto hr = Decompress(img, nimg, info, DXGI_FORMAT_UNKNOWN /* picks good default */, *timage);
+    Resources::Texture timage;
+    const auto hr = Decompress(img, nimg, info, DXGI_FORMAT_UNKNOWN /* picks good default */, timage);
     if (FAILED(hr))
         return CommandResultFactory::getFailedResult(hr, "Failed to decompress");
 
     //This file is "unmodified". Decompressing the file is only done in order to perform other operations.
-    file.setFile(std::unique_ptr<Resource>(std::move(timage)), false);
+    file.setFile(std::move(timage), false);
     return CommandResultFactory::getSuccessfulResult();
 }
 
 CommandState TextureDecompress::isApplicable(File &file) const
 {
-    auto texFile = dynamic_cast<const TextureResource *>(&file.getFile());
+    const auto *texFile = file.getFile<Resources::Texture>();
     if (!texFile)
         return CommandState::NotRequired;
 
