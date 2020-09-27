@@ -7,6 +7,7 @@ function (generateTranslations sources qm_files)
          ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_ja.ts
          ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_ko_KR.ts
          ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_nl.ts
+         ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_ru.ts
          ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_tr.ts
          ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/translations/AssetsOpt_zh_CN.ts
 
