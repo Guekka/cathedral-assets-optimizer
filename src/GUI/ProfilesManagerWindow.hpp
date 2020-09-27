@@ -5,8 +5,10 @@
 
 #pragma once
 
-#include "Settings/BaseTypes.hpp"
+#include <QCoreApplication>
 #include <QDialog>
+
+#include "Settings/BaseTypes.hpp"
 
 namespace Ui {
 class ProfilesManagerWindow;
@@ -18,7 +20,7 @@ namespace CAO {
 class Profiles;
 class ProfilesManagerWindow : public QDialog
 {
-    Q_OBJECT
+    Q_DECLARE_TR_FUNCTIONS(ProfilesManagerWindow)
 
 public:
     explicit ProfilesManagerWindow(Profiles &profiles, QWidget *parent = nullptr);

@@ -166,13 +166,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="91"/>
-        <source>Extensive</source>
+        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="88"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only use if other settings did not work. It has very low odds to succeed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="88"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only use if other settings did not work. It has very low odds to succeed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="91"/>
+        <source>Extensive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -266,11 +266,13 @@
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="216"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="37"/>
         <source>By ratio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="221"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="38"/>
         <source>By fixed size</source>
         <translation type="unfinished"></translation>
     </message>
@@ -321,26 +323,31 @@
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="323"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="40"/>
         <source>BC7 (BC7_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="328"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
         <source>BC5 (BC5_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="333"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
         <source>BC3 (BC3_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="338"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="43"/>
         <source>BC1 (BC1_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="343"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -362,6 +369,11 @@
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
         <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="133"/>
+        <source>Textures (Patterns)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -390,15 +402,22 @@
     </message>
 </context>
 <context>
-    <name>CAO::AdvancedTexturesModule</name>
+    <name>CAO::IntermediateModeModule</name>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="131"/>
-        <source>Textures (Patterns)</source>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="20"/>
+        <source>Disabled</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>CAO::IntermediateModeModule</name>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="21"/>
+        <source>By ratio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="22"/>
+        <source>By fixed size</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../../src/GUI/IntermediateModeModule.cpp" line="95"/>
         <source>Intermediate mode</source>
@@ -476,69 +495,6 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     <message>
         <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="76"/>
         <source>Are you sure you want to remove Pattern &apos;%1&apos;? This action cannot be undone</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CAO::ProfilesManagerWindow</name>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
-        <source>New profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
-        <source>Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="98"/>
-        <source>Base profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="99"/>
-        <source>Which profile do you want to use as a base?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="123"/>
-        <source>Remove profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="124"/>
-        <source>Are you sure you want to remove profile &apos;%1&apos;? This action cannot be undone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
-        <source>Removal failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
-        <source>Failed to delete profile: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
-        <source>Rename profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
-        <source>New name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
-        <source>Renaming failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
-        <source>Failed to rename profile: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -741,8 +697,8 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="154"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="216"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="257"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="218"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="259"/>
         <source>Open Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -763,11 +719,13 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="251"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="37"/>
         <source>One mod</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="256"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="38"/>
         <source>Several mods</source>
         <translation type="unfinished"></translation>
     </message>
@@ -794,7 +752,8 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="312"/>
         <location filename="../../src/GUI/MainWindow.ui" line="346"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="97"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="28"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="99"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -844,32 +803,32 @@ The full CAO experience. With profiles and patterns, you can fully customize how
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="140"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="142"/>
         <source>Pattern not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="141"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="143"/>
         <source>Couldn&apos;t find the pattern &apos;*&apos;. Please reinstall the application</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="337"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="339"/>
         <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="352"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="354"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="353"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="355"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="392"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="394"/>
         <source>Welcome to %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -931,37 +890,104 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="59"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="26"/>
         <source>Morrowind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="64"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="27"/>
         <source>Oblivion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="69"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="28"/>
         <source>Skyrim LE (2011)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="74"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="29"/>
         <source>Skyrim SE (2016)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="79"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="30"/>
         <source>Fallout 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="84"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="31"/>
         <source>Fallout New Vegas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="89"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="32"/>
         <source>Fallout 4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="88"/>
+        <source>New profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="88"/>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="100"/>
+        <source>Base profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="101"/>
+        <source>Which profile do you want to use as a base?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="125"/>
+        <source>Remove profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="126"/>
+        <source>Are you sure you want to remove profile &apos;%1&apos;? This action cannot be undone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="133"/>
+        <source>Removal failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="133"/>
+        <source>Failed to delete profile: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="140"/>
+        <source>Rename profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="140"/>
+        <source>New name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="147"/>
+        <source>Renaming failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="147"/>
+        <source>Failed to rename profile: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -21,13 +21,13 @@ ProfilesManagerWindow::ProfilesManagerWindow(Profiles &profiles_, QWidget *paren
     ui_->setupUi(this);
 
     auto &games = *ui_->games;
-    setData(games, "Morrowind", Games::Morrowind);
-    setData(games, "Oblivion", Games::Oblivion);
-    setData(games, "Skyrim LE (2011)", Games::SkyrimLE);
-    setData(games, "Skyrim SE (2016)", Games::SkyrimSE);
-    setData(games, "Fallout 3", Games::Fallout3);
-    setData(games, "Fallout New Vegas", Games::FalloutNewVegas);
-    setData(games, "Fallout 4", Games::Fallout4);
+    setData(games, tr("Morrowind"), Games::Morrowind);
+    setData(games, tr("Oblivion"), Games::Oblivion);
+    setData(games, tr("Skyrim LE (2011)"), Games::SkyrimLE);
+    setData(games, tr("Skyrim SE (2016)"), Games::SkyrimSE);
+    setData(games, tr("Fallout 3"), Games::Fallout3);
+    setData(games, tr("Fallout New Vegas"), Games::FalloutNewVegas);
+    setData(games, tr("Fallout 4"), Games::Fallout4);
 
     connect(ui_->games, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
         auto &profile                      = profiles.get(ui_->profiles->currentText());

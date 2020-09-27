@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <QCoreApplication>
+
 #include "GUI/IWindowModule.hpp"
 
 namespace Ui {
@@ -15,7 +17,7 @@ class ListDialog;
 
 class AdvancedTexturesModule final : public IWindowModule
 {
-    Q_OBJECT
+    Q_DECLARE_TR_FUNCTIONS(AdvancedTexturesModule)
 
 public:
     explicit AdvancedTexturesModule(QWidget *parent = nullptr);

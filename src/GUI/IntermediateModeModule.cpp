@@ -17,9 +17,9 @@ IntermediateModeModule::IntermediateModeModule(QWidget *parent)
 {
     ui_->setupUi(this);
 
-    setData(*ui_->TexturesResizingMode, "Disabled", TextureResizingMode::None);
-    setData(*ui_->TexturesResizingMode, "By ratio", TextureResizingMode::ByRatio);
-    setData(*ui_->TexturesResizingMode, "By fixed size", TextureResizingMode::BySize);
+    setData(*ui_->TexturesResizingMode, tr("Disabled"), TextureResizingMode::None);
+    setData(*ui_->TexturesResizingMode, tr("By ratio"), TextureResizingMode::ByRatio);
+    setData(*ui_->TexturesResizingMode, tr("By fixed size"), TextureResizingMode::BySize);
 }
 
 void IntermediateModeModule::setUIData([[maybe_unused]] const PatternSettings &pSets,

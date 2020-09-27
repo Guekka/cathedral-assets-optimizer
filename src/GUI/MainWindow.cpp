@@ -32,8 +32,8 @@ MainWindow::MainWindow()
     ui_->tabWidget->setHidden(true);
 
     //Setting data for widgets
-    setData(*ui_->modeChooserComboBox, "One mod", SingleMod);
-    setData(*ui_->modeChooserComboBox, "Several mods", SeveralMods);
+    setData(*ui_->modeChooserComboBox, tr("One mod"), SingleMod);
+    setData(*ui_->modeChooserComboBox, tr("Several mods"), SeveralMods);
 
     //Connecting widgets that do not depend on current profile
 

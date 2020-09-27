@@ -22,12 +22,15 @@ void init()
 
     QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
     QCoreApplication::setApplicationVersion(CAO_VERSION);
+}
 
-    QTranslator qtTranslator;
+void initTranslations()
+{
+    static QTranslator qtTranslator;
     qtTranslator.load(QLocale(), "qt", "_", "translations");
     QCoreApplication::installTranslator(&qtTranslator);
 
-    QTranslator AssetsOptTranslator;
+    static QTranslator AssetsOptTranslator;
     AssetsOptTranslator.load(QLocale(), "AssetsOpt", "_", "translations");
     QCoreApplication::installTranslator(&AssetsOptTranslator);
 }
@@ -95,6 +98,8 @@ int main(int argc, char *argv[])
         app = std::make_unique<QApplication>(argc, argv);
     }
 
+    initTranslations();
+
     try
     {
         migrateProfiles(cli);
@@ -108,8 +113,6 @@ int main(int argc, char *argv[])
         }
         else
         {
-            app         = nullptr;
-            app         = std::make_unique<QApplication>(argc, argv);
             auto window = std::make_unique<CAO::MainWindow>();
 
             CAO::LevelSelector selector;

@@ -5,6 +5,8 @@
 
 #include <QListWidgetItem>
 
+#include <QDebug>
+
 #include "ui_AdvancedTexturesModule.h"
 
 #include "AdvancedTexturesModule.hpp"
@@ -32,14 +34,14 @@ AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
                     ui_->resizingWidth,
                     ui_->resizingHeight);
 
-    setData(*ui_->resizingMode, "By ratio", TextureResizingMode::ByRatio);
-    setData(*ui_->resizingMode, "By fixed size", TextureResizingMode::BySize);
+    setData(*ui_->resizingMode, tr("By ratio"), TextureResizingMode::ByRatio);
+    setData(*ui_->resizingMode, tr("By fixed size"), TextureResizingMode::BySize);
 
-    setData(*ui_->outputFormat, "BC7 (BC7_UNORM)", DXGI_FORMAT_BC7_UNORM);
-    setData(*ui_->outputFormat, "BC5 (BC5_UNORM)", DXGI_FORMAT_BC5_UNORM);
-    setData(*ui_->outputFormat, "BC3 (BC3_UNORM)", DXGI_FORMAT_BC3_UNORM);
-    setData(*ui_->outputFormat, "BC1 (BC1_UNORM)", DXGI_FORMAT_BC1_UNORM);
-    setData(*ui_->outputFormat, "Uncompressed (R8G8B8A8_UNORM)", DXGI_FORMAT_R8G8B8A8_UNORM);
+    setData(*ui_->outputFormat, tr("BC7 (BC7_UNORM)"), DXGI_FORMAT_BC7_UNORM);
+    setData(*ui_->outputFormat, tr("BC5 (BC5_UNORM)"), DXGI_FORMAT_BC5_UNORM);
+    setData(*ui_->outputFormat, tr("BC3 (BC3_UNORM)"), DXGI_FORMAT_BC3_UNORM);
+    setData(*ui_->outputFormat, tr("BC1 (BC1_UNORM)"), DXGI_FORMAT_BC1_UNORM);
+    setData(*ui_->outputFormat, tr("Uncompressed (R8G8B8A8_UNORM)"), DXGI_FORMAT_R8G8B8A8_UNORM);
 
     //Init unwanted formats
     textureFormatDialog_->setUserAddItemVisible(false);
