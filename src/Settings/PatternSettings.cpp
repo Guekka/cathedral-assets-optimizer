@@ -69,14 +69,14 @@ std::optional<QString> PatternSettings::isValid() const
     auto isPow2 = [](int val) { return val % 2 == 0; };
 
     if (!isPow2(iTexturesMinimumWidth()) || !isPow2(iTexturesMinimumHeight()))
-        return ("Textures resizing minimum size has to be a power of two");
+        return tr("Textures resizing minimum size has to be a power of two");
 
     if (iTexturesResizingWidth() % 2 != 0 || iTexturesResizingHeight() % 2 != 0)
-        return ("Textures resizing target has to be a power of two");
+        return tr("Textures resizing target has to be a power of two");
 
     if (iMeshesOptimizationLevel() < 0 || iMeshesOptimizationLevel() > 2)
-        return ("This meshes optimization level does not exist. Level: "
-                + QString::number(iMeshesOptimizationLevel()));
+        return tr("This meshes optimization level does not exist. Level: %1")
+            .arg(QString::number(iMeshesOptimizationLevel()));
 
     return std::nullopt;
 }

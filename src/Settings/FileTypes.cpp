@@ -19,9 +19,9 @@ std::optional<QString> FileTypes::isValid() const
     auto uniq = allBSA | rx::sort() | rx::uniq() | rx::to_vector();
 
     if (uniq.size() != allBSA.size()) //Duplicates
-        return "slBSAStandardFiles, slBSATextureFiles and slBSATextureFiles have to contain different "
-               "files.\n"
-               "They cannot contain the same pattern";
+        return tr("slBSAStandardFiles, slBSATextureFiles and slBSATextureFiles have to contain different "
+                  "files.\n"
+                  "They cannot contain the same pattern");
 
     return std::nullopt;
 }

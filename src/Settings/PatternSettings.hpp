@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <QCoreApplication>
+
 #include "BaseTypes.hpp"
 #include "Settings.hpp"
 #include "Utils/QJSONValueWrapper.hpp"
@@ -14,6 +16,7 @@
 namespace CAO {
 class PatternSettings final : public Settings
 {
+    Q_DECLARE_TR_FUNCTIONS(PatternSettings)
 public:
     static constexpr auto patternKey  = "Pattern";
     static constexpr auto priorityKey = "Priority";

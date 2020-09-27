@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="ru">
 <context>
     <name>AdvancedAnimationsModule</name>
     <message>
@@ -12,12 +14,12 @@
         <translation>Базовый</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedAnimationsModule.ui" line="26"/>
+        <location filename="../../src/GUI/AdvancedAnimationsModule.ui" line="29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converts animations from LE to SE format&lt;/p&gt;&lt;p&gt;Note: If an animation is already converted, an error message will be logged. This is normal as the Havok SDK cannot read SSE animations &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Конвертирует анимации из формата SE в формат LE.&lt;/p&gt;&lt;p&gt;Внимание: если файл анимации уже сконвертирован, предупреждающее сообщение будет записано в журнал. Это не является ошибкой, Havok SDK не поддерживает анимации в формате SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedAnimationsModule.ui" line="29"/>
+        <location filename="../../src/GUI/AdvancedAnimationsModule.ui" line="32"/>
         <source>Necessary optimization</source>
         <translation>Необходимые оптимизации</translation>
     </message>
@@ -32,111 +34,111 @@
     <message>
         <location filename="../../src/GUI/AdvancedBSAModule.ui" line="20"/>
         <source>BSA</source>
-        <translation type="unfinished"/>
+        <translation>BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="26"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts all BSAs&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Note: loose files are not overwritten by files in BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Распаковывает все BSA архивы&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Внимание: свободные файлы не будут перезаписаны файлами из архива&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="29"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="32"/>
         <source>Extract BSAs</source>
         <translation>Распаковать BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="36"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="42"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Packs all loose files into BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Пакует все свободные файлы в BSA архивы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="39"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="45"/>
         <source>Create BSAs</source>
         <translation>Создавать BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="46"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="55"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Directly optimize BSA content in memory, instead of extracting, processing and repacking. This is the recommended way to optimize files in BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Оптимизировать содержимое BSA в памяти вместо распаковки на диск, обработки и перепаковки. Это рекомендуемый метод оптимизации BSA архивов.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="49"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="58"/>
         <source>Optimize BSAs content</source>
         <translation>Оптимизировать содержимое BSA архивов</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="65"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="74"/>
         <source>More</source>
         <translation>Больше</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="74"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="86"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, CAO will not make BSAs loaded by the game. &lt;/p&gt;&lt;p&gt;That is to say: &lt;/p&gt;&lt;p&gt;- For games that use plugins, CAO will not create dummy plugins &lt;/p&gt;&lt;p&gt;- For games that use the ini, CAO will not edit the INI (&lt;span style=&quot; font-weight:600;&quot;&gt;Note: CAO does not support yet editing the INI. This option will have no effect on these games&lt;/span&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, CAO не будет делать BSA архивы загружаемыми игрой &lt;/p&gt;&lt;p&gt;Это означает следующее: &lt;/p&gt;&lt;p&gt;- Для игр, которые использую плагины, CAO не будет создавать плагины-&quot;заглушки&quot; &lt;/p&gt;&lt;p&gt;- Для игр, которые используют INI, CAO не будет редактировать INI файлы (&lt;span style=&quot; font-weight:600;&quot;&gt;Внимание: на данный момент CAO не поддерживает редактирование INI. Этот параметр не будет влиять на игры, использующие INI файлы для загрузки архивов&lt;/span&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="77"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="89"/>
         <source>Do not make BSA loaded</source>
         <translation>Не делать BSA загружаемыми</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="84"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="99"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If disabled, BSAs that can be compressed will NOT be compressed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, BSA которые могут быть сжаты, не будут использовать сжатие.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="87"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="102"/>
         <source>Disallow BSA compression</source>
         <translation>Не сжимать BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="94"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="112"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, incompressible files such as sounds and strings will not be merged into the main BSA. This feature is very niche and is mostly used for very large mods such as Enderal.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, несжимаемые файлы, такие как звук и строки, не будут добавлены в основной BSA. Эта функция в основном предназначена для очень больших модов таких как Enderal.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="97"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="115"/>
         <source>Do not merge incompressible files</source>
         <translation>Не совмещать несжимаемые файлы в одном архиве</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="107"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="125"/>
         <source>Advanced</source>
         <translation>Дополнительно</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="113"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="131"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size for files in a BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальный несжатый размер для файлов в BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="120"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="141"/>
         <source>Create textures BSA</source>
         <translation>Создавать текстурный BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="129"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="153"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size for files in a textures BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Максимальный несжатый размер для файлов в текстурном BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="136"/>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="163"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="160"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="193"/>
         <source>Uncompressed max size</source>
         <translation>Максимальный несжатый размер</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="143"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="170"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be packed into their own BSA, even when they could be merged into the main BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, текстуры всегда будут упаковываться в отдельный BSA только для текстур, даже если они могут быть упакованы в основной архив.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="146"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="173"/>
         <source>Do not merge textures</source>
         <translation>Не совмещать текстуры</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="153"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="180"/>
         <source>Separate textures</source>
         <translation>Разделять текстуры</translation>
     </message>
@@ -164,14 +166,14 @@
         <translation>Рекомендованный</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="91"/>
-        <source>Extensive</source>
-        <translation>Полный</translation>
-    </message>
-    <message>
         <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fully optimize all meshes. Only use if other settings did not work. It has very low odds to succeed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Полностью оптимизировать все модели. Используйте только если другие параметры не сработали так как вероятность успеха в случае использования этой опции достаточно низкая.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="91"/>
+        <source>Extensive</source>
+        <translation>Полный</translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedMeshesModule.ui" line="101"/>
@@ -242,125 +244,137 @@
         <translation>Добавлять альфа-канал для текстур ландшафта.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="142"/>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="264"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="145"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="267"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Изменять размер текстур до указанного. В результате размер текстур должен быть кратен двум, но не менее чем 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="145"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="148"/>
         <source>Resizing</source>
         <translation>Изменение размера</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="163"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="166"/>
         <source>Width</source>
         <translation>Ширина</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="176"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="179"/>
         <source>Height</source>
         <translation>Высота</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="216"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="219"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="37"/>
         <source>By ratio</source>
         <translation>Соотношение</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="221"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="224"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="38"/>
         <source>By fixed size</source>
         <translation>Фиксированный размер</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="267"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="270"/>
         <source>Minimum size:</source>
         <translation>Минимальный размер</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="277"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="280"/>
         <source>Advanced</source>
         <translation>Дополнительно</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="286"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="289"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, текстуры в формате TGA будут сконвертированы в совместимый DDS.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="289"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="292"/>
         <source>Force convert</source>
         <translation>Принудительное конвертирование</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="296"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="299"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be converted to the configured output format, no matter their current state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, текстуры всегда будут преобразовываться в указанный выходной формат независимо от их исходного формата.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="299"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="302"/>
         <source>Enable forced conversion</source>
         <translation>Включить принудительное конвертирование</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="309"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выходной формат для несжатых текстур, сконвертированных текстур и TGA файлов. Формат BC7 должен использоваться только для Skyrim SE и Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="312"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="315"/>
         <source>Output format</source>
         <translation>Выходной формат</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="319"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="322"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The output format used for modified textures&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Формат, который будет использован для сконвертированных текстур.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="323"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="326"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="40"/>
         <source>BC7 (BC7_UNORM)</source>
-        <translation type="unfinished"/>
+        <translation>BC7 (BC7_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="328"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="331"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
         <source>BC5 (BC5_UNORM)</source>
-        <translation type="unfinished"/>
+        <translation>BC5 (BC5_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="333"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="336"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
         <source>BC3 (BC3_UNORM)</source>
-        <translation type="unfinished"/>
+        <translation>BC3 (BC3_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="338"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="341"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="43"/>
         <source>BC1 (BC1_UNORM)</source>
-        <translation type="unfinished"/>
+        <translation>BC1 (BC1_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="343"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="346"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation>Без сжатия (R8G8B8A8_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="354"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="357"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Текстуры в данных форматах будут преобразованы в поддерживаемый формат.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="357"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="360"/>
         <source>Unwanted formats</source>
         <translation>Нежелательные форматы</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="370"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unwanted formats are formats that will always be converted to the configured output format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нежелательные форматы это форматы текстур которые всегда будут сконвертированы в указанный выходной формат.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="376"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="133"/>
+        <source>Textures (Patterns)</source>
+        <translation>Текстуры (шаблоны)</translation>
     </message>
 </context>
 <context>
@@ -388,52 +402,26 @@
     </message>
 </context>
 <context>
-    <name>CAO::AdvancedTexturesModule</name>
-    <message>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="131"/>
-        <source>Textures (Patterns)</source>
-        <translation>Текстуры (шаблоны)</translation>
-    </message>
-</context>
-<context>
     <name>CAO::IntermediateModeModule</name>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="20"/>
+        <source>Disabled</source>
+        <translation>Отключено</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="21"/>
+        <source>By ratio</source>
+        <translation>Соотношение</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="22"/>
+        <source>By fixed size</source>
+        <translation>Фиксированный размер</translation>
+    </message>
     <message>
         <location filename="../../src/GUI/IntermediateModeModule.cpp" line="95"/>
         <source>Intermediate mode</source>
         <translation>Промежуточный режим</translation>
-    </message>
-</context>
-<context>
-    <name>CAO::LevelSelector</name>
-    <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="115"/>
-        <source>Quick Auto Port
-Quick Auto Port uses default settings for porting a mod between LE and SSE.
-It will work for most of the cases and is the recommended way to port a mod.
-It is safe to apply it on a mod, and it is recommended to apply it to your whole mod list if you experience crashes.</source>
-        <translation>Quick Auto Port
-Quick Auto Port использует настройки по умолчанию для портирования мода для Skyrim LE на Skyrim SE. Он будет работать в большинстве случаев и является рекомендуемым способом для портирования модов.
-
-Этот метод можно безопасно применять на модах и это рекомендуемый способ для использования на всём списке модов если случаются вылеты из игры.</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="123"/>
-        <source>Intermediate mode
-Intermediate mode offers default settings for most use cases, as well as being a bit more customizable than Quick Auto Port.</source>
-        <translation>Промежуточный режим
-Этот режим использует параметры по умолчанию для большинства случаев, но является более настраиваемым в отличие от Quick Auto Port.</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="129"/>
-        <source>Advanced mode
-The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.</source>
-        <translation>Расширенный режим
-Все возможности CAO. Используя профили и шаблоны вы сможете полностью настроить как CAO будет оптимизировать ваши файлы.</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="138"/>
-        <source>Unknown mode</source>
-        <translation>Неизвестный режим</translation>
     </message>
 </context>
 <context>
@@ -483,69 +471,6 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
 </context>
 <context>
-    <name>CAO::ProfilesManagerWindow</name>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
-        <source>New profile</source>
-        <translation>Новый профиль</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
-        <source>Name:</source>
-        <translation>Название:</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="98"/>
-        <source>Base profile</source>
-        <translation>Базовый профиль</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="99"/>
-        <source>Which profile do you want to use as a base?</source>
-        <translation>Какой профиль использовать как базовый?</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="123"/>
-        <source>Remove profile</source>
-        <translation>Удалить профиль</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="124"/>
-        <source>Are you sure you want to remove profile &apos;%1&apos;? This action cannot be undone</source>
-        <translation>Вы уверены, что хотите удалить профиль &apos;%1&apos;? Это действие не может быть отменено.</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
-        <source>Removal failed</source>
-        <translation>Ошибка удаления</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
-        <source>Failed to delete profile: %1</source>
-        <translation>Не удалось удалить профиль &apos;%1&apos;.</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
-        <source>Rename profile</source>
-        <translation>Переименовать профиль</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
-        <source>New name:</source>
-        <translation>Новое название:</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
-        <source>Renaming failed</source>
-        <translation>Ошибка переименования</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
-        <source>Failed to rename profile: %1</source>
-        <translation>Не удалось переименовать профиль &apos;%1&apos;.</translation>
-    </message>
-</context>
-<context>
     <name>CAO::ProgressWindow</name>
     <message>
         <location filename="../../src/GUI/ProgressWindow.cpp" line="47"/>
@@ -559,6 +484,50 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
 </context>
 <context>
+    <name>FileTypes</name>
+    <message>
+        <location filename="../../src/Settings/FileTypes.cpp" line="22"/>
+        <source>slBSAStandardFiles, slBSATextureFiles and slBSATextureFiles have to contain different files.
+They cannot contain the same pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GeneralSettings</name>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
+        <source>BSA Max size cannot be negative</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
+        <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
+        <source>Input path does not exist. Path: &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
+        <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
+ If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
+Path: &apos;%2&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
+        <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
+        <source>Output path does not exist. Path: &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>IntermediateModeModule</name>
     <message>
         <location filename="../../src/GUI/IntermediateModeModule.ui" line="14"/>
@@ -568,101 +537,101 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     <message>
         <location filename="../../src/GUI/IntermediateModeModule.ui" line="20"/>
         <source>BSA</source>
-        <translation type="unfinished"/>
+        <translation>BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="26"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts all BSAs&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Note: loose files are not overwritten by files in BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Распаковывает все BSA архивы&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Внимание: свободные файлы не будут перезаписаны файлами из архива&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="29"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="32"/>
         <source>Extract BSAs</source>
         <translation>Распаковать BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="36"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="42"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Packs all loose files into BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Пакует все свободные файлы в BSA архивы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="39"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="45"/>
         <source>Create BSAs</source>
         <translation>Создавать BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="46"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="55"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Directly optimize BSA content in memory, instead of extracting, processing and repacking. This is the recommended way to optimize files in BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Оптимизировать содержимое BSA в памяти вместо распаковки на диск, обработки и перепаковки. Это рекомендуемый метод оптимизации BSA архивов.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="49"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="58"/>
         <source>Optimize BSAs content</source>
         <translation>Оптимизировать содержимое BSA архивов</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="59"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="68"/>
         <source>Textures</source>
         <translation>Текстуры</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="65"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="77"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;html&gt;Сжимать несжатые текстуры использую указанные выходной формат. Рекомендуется использовать эту опцию для Skyrim SE и Fallout 4, в других играх это может привести к значительному ухудшению качества.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="68"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="80"/>
         <source>Compress textures</source>
         <translation>Сжимать текстуры</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="75"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="90"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Создавать mip-карты для текстур. Это улучшает производительность, но приводит увеличению размера файла на диске и  повышенному расходу видеопамяти (VRAM).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="78"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="93"/>
         <source>Generate mipmaps</source>
         <translation>Создавать mip-карты</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="88"/>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="239"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="103"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="254"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Изменять размер текстур до указанного. В результате размер текстур должен быть кратен двум, но не менее чем 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="91"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="106"/>
         <source>Resizing</source>
         <translation>Изменение размера</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="144"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="159"/>
         <source>Height</source>
         <translation>Высота</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="157"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="172"/>
         <source>Width</source>
         <translation>Ширина</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="218"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="233"/>
         <source>Disabled</source>
         <translation>Отключено</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="223"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="238"/>
         <source>By ratio</source>
         <translation>Соотношение</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="228"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="243"/>
         <source>By fixed size</source>
         <translation>Фиксированный размер</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.ui" line="242"/>
+        <location filename="../../src/GUI/IntermediateModeModule.ui" line="257"/>
         <source>Minimum size:</source>
         <translation>Минимальный размер</translation>
     </message>
@@ -680,9 +649,34 @@ The full CAO experience. With profiles and patterns, you can fully customize how
         <translation>Запомнить мой выбор</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.ui" line="37"/>
-        <source>TextLabel</source>
-        <translation type="unfinished"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="115"/>
+        <source>Quick Auto Port
+Quick Auto Port uses default settings for porting a mod between LE and SSE.
+It will work for most of the cases and is the recommended way to port a mod.
+It is safe to apply it on a mod, and it is recommended to apply it to your whole mod list if you experience crashes.</source>
+        <translation>Quick Auto Port
+Quick Auto Port использует настройки по умолчанию для портирования мода для Skyrim LE на Skyrim SE. Он будет работать в большинстве случаев и является рекомендуемым способом для портирования модов.
+
+Этот метод можно безопасно применять на модах и это рекомендуемый способ для использования на всём списке модов если случаются вылеты из игры.</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="123"/>
+        <source>Intermediate mode
+Intermediate mode offers default settings for most use cases, as well as being a bit more customizable than Quick Auto Port.</source>
+        <translation>Промежуточный режим
+Этот режим использует параметры по умолчанию для большинства случаев, но является более настраиваемым в отличие от Quick Auto Port.</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="129"/>
+        <source>Advanced mode
+The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.</source>
+        <translation>Расширенный режим
+Все возможности CAO. Используя профили и шаблоны вы сможете полностью настроить как CAO будет оптимизировать ваши файлы.</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="138"/>
+        <source>Unknown mode</source>
+        <translation>Неизвестный режим</translation>
     </message>
 </context>
 <context>
@@ -713,7 +707,7 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="28"/>
         <source>Cathedral Assets Optimizer</source>
-        <translation type="unfinished"/>
+        <translation>Cathedral Assets Optimizer</translation>
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="31"/>
@@ -766,11 +760,13 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="251"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="35"/>
         <source>One mod</source>
         <translation>Один мод</translation>
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="256"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="36"/>
         <source>Several mods</source>
         <translation>Несколько модов</translation>
     </message>
@@ -814,7 +810,7 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="341"/>
         <source>Discord</source>
-        <translation type="unfinished"/>
+        <translation>Discord</translation>
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="351"/>
@@ -878,6 +874,24 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
 </context>
 <context>
+    <name>PatternSettings</name>
+    <message>
+        <location filename="../../src/Settings/PatternSettings.cpp" line="72"/>
+        <source>Textures resizing minimum size has to be a power of two</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/PatternSettings.cpp" line="75"/>
+        <source>Textures resizing target has to be a power of two</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/PatternSettings.cpp" line="78"/>
+        <source>This meshes optimization level does not exist. Level: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PatternsManagerWindow</name>
     <message>
         <location filename="../../src/GUI/PatternsManagerWindow.ui" line="14"/>
@@ -934,38 +948,105 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="59"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="24"/>
         <source>Morrowind</source>
-        <translation type="unfinished"/>
+        <translation>Morrowind</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="64"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="25"/>
         <source>Oblivion</source>
-        <translation type="unfinished"/>
+        <translation>Oblivion</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="69"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="26"/>
         <source>Skyrim LE (2011)</source>
-        <translation type="unfinished"/>
+        <translation>Skyrim LE (2011)</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="74"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="27"/>
         <source>Skyrim SE (2016)</source>
-        <translation type="unfinished"/>
+        <translation>Skyrim SE (2016)</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="79"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="28"/>
         <source>Fallout 3</source>
-        <translation type="unfinished"/>
+        <translation>Fallout 3</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="84"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="29"/>
         <source>Fallout New Vegas</source>
         <translation>Fallout: New Vegas</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="89"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="30"/>
         <source>Fallout 4</source>
-        <translation type="unfinished"/>
+        <translation>Fallout 4</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
+        <source>New profile</source>
+        <translation>Новый профиль</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
+        <source>Name:</source>
+        <translation>Название:</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="98"/>
+        <source>Base profile</source>
+        <translation>Базовый профиль</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="99"/>
+        <source>Which profile do you want to use as a base?</source>
+        <translation>Какой профиль использовать как базовый?</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="123"/>
+        <source>Remove profile</source>
+        <translation>Удалить профиль</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="124"/>
+        <source>Are you sure you want to remove profile &apos;%1&apos;? This action cannot be undone</source>
+        <translation>Вы уверены, что хотите удалить профиль &apos;%1&apos;? Это действие не может быть отменено.</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
+        <source>Removal failed</source>
+        <translation>Ошибка удаления</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
+        <source>Failed to delete profile: %1</source>
+        <translation>Не удалось удалить профиль &apos;%1&apos;.</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
+        <source>Rename profile</source>
+        <translation>Переименовать профиль</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
+        <source>New name:</source>
+        <translation>Новое название:</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
+        <source>Renaming failed</source>
+        <translation>Ошибка переименования</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
+        <source>Failed to rename profile: %1</source>
+        <translation>Не удалось переименовать профиль &apos;%1&apos;.</translation>
     </message>
 </context>
 <context>
@@ -1006,7 +1087,7 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     <message>
         <location filename="../../src/GUI/SelectGPUWindow.ui" line="20"/>
         <source>GPU</source>
-        <translation type="unfinished"/>
+        <translation>GPU</translation>
     </message>
 </context>
 </TS>

@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <QCoreApplication>
+
 #include "BaseTypes.hpp"
 #include "Settings.hpp"
 #include "Utils/QJSONValueWrapper.hpp"
@@ -16,6 +18,7 @@ class QDir;
 namespace CAO {
 class GeneralSettings final : public Settings
 {
+    Q_DECLARE_TR_FUNCTIONS(GeneralSettings)
 public:
     GeneralSettings() = default;
     GeneralSettings(nlohmann::json j);
