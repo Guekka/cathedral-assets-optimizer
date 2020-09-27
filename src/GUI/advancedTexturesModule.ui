@@ -138,6 +138,9 @@
    </item>
    <item>
     <widget class="QGroupBox" name="resizingBox">
+     <property name="cursor">
+      <cursorShape>WhatsThisCursor</cursorShape>
+     </property>
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>

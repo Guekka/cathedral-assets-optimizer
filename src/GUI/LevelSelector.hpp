@@ -5,6 +5,8 @@
 #pragma once
 
 #include <array>
+
+#include <QCoreApplication>
 #include <QDialog>
 
 #include "Settings/BaseTypes.hpp"
@@ -17,6 +19,7 @@ namespace CAO {
 class MainWindow;
 class LevelSelector : private QDialog
 {
+    Q_DECLARE_TR_FUNCTIONS(LevelSelector)
 public:
     explicit LevelSelector();
     ~LevelSelector();
