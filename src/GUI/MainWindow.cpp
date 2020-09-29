@@ -262,6 +262,11 @@ void MainWindow::connectThis()
         if (dir.isEmpty())
             return;
 
+        //Creating an empty file in order to mark the dir as "not empty"
+        //This will prevent CAO from deleting the root output dir if there's no output
+        QFile file(dir + "/__cao_output_dir");
+        file.open(QFile::WriteOnly);
+
         generalSettings.sOutputPath = dir;
     });
 }
