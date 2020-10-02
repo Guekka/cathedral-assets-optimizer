@@ -127,8 +127,12 @@ void Manager::runOptimization()
         }
 
         //Packing BSAs
-        emitProgress(mod.name(), CommandType::BSAFolder, mod.processedFileCount(), mod.totalFileCount());
-        optimizer.packBsa(mod.outPath());
+        //If output redirection is enabled but no files were processed, the folder does not exist
+        if (QDir(mod.outPath()).exists())
+        {
+            emitProgress(mod.name(), CommandType::BSAFolder, mod.processedFileCount(), mod.totalFileCount());
+            optimizer.packBsa(mod.outPath());
+        }
     }
 
     const auto &sets          = currentProfile().getGeneralSettings();
