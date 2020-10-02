@@ -45,10 +45,10 @@ void migrate5To6(const QDir &oldProfile, Profile &outProfile)
 
     generalSets.eGame = guessGame(static_cast<bsa_archive_type_t>(profileSettings.value("bsaFormat").toInt()));
 
-    generalSets.iBSAMaxSize = profileSettings.value("maxBsaUncompressedSize").toDouble();
+    generalSets.iBSAMaxSize = profileSettings.value("maxBsaUncompressedSize").toDouble() / GigaByte;
 
     generalSets.bBSATexturesEnabled = profileSettings.value("hasBsaTextures").toBool();
-    generalSets.iBSATexturesMaxSize = profileSettings.value("maxBsaTexturesSize").toDouble();
+    generalSets.iBSATexturesMaxSize = profileSettings.value("maxBsaTexturesSize").toDouble() / GigaByte;
 
     profileSettings.endGroup();
     profileSettings.beginGroup("Textures");
@@ -91,7 +91,9 @@ void convertFiles5To6(const QDir &oldProfile, Profile &outProfile)
 {
     auto readFile = [](const QString &path) {
         QFile file(path);
-        auto list = Filesystem::readFile(file, [](QString &line) { return line.prepend('*').append('*'); });
+        auto list = Filesystem::readFile(file, [](QString &line) {
+            line = QDir::cleanPath(line.prepend('*').append('*'));
+        });
         return std::move(list) | rx::transform([](QString val) { return val.toStdString(); })
                | rx::to_vector();
     };
