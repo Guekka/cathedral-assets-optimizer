@@ -41,8 +41,9 @@ GeneralSettings &GeneralSettings::operator=(GeneralSettings &&other) noexcept
 
 std::optional<QString> GeneralSettings::isValid() const
 {
-    if (iBSAMaxSize() < 0 || iBSATexturesMaxSize() < 0)
-        return tr("BSA Max size cannot be negative");
+    //TODO
+    if (iBSAMaxSize() < 0.5 || iBSATexturesMaxSize() < 0.5)
+        return tr("BSA Max size cannot be smaller than 0.5Gb");
 
     if (sInputPath().size() < 5)
         return tr("This path is shorter than 5 characters: Path: '%1'").arg(sInputPath());
