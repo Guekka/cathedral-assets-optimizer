@@ -24,7 +24,7 @@ enum BSAType
 class GeneralSettings;
 struct BSA
 {
-    static BSA getBSA(const BSAType &type, const GeneralSettings &settings);
+    static BSA getBSA(BSAType type, const GeneralSettings &settings);
 
     explicit BSA() = default;
     explicit BSA(double maxSize, qint64 size, BSAType type);

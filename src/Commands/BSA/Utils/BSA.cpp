@@ -12,11 +12,13 @@
 #include "Utils/Algorithms.hpp"
 
 namespace CAO {
-BSA BSA::getBSA(const BSAType &type, const GeneralSettings &settings)
+BSA BSA::getBSA(BSAType type, const GeneralSettings &settings)
 {
-    BSA bsa;
-
     const auto &games = GameSettings::get(settings.eGame());
+    if (type == TexturesBsa && !games.eBSATexturesFormat().has_value())
+        type = StandardBsa;
+
+    BSA bsa;
 
     switch (type)
     {

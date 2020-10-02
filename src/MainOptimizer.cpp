@@ -114,8 +114,16 @@ void MainOptimizer::packBsa(const QString &folder)
 
     PLOG_INFO << "Creating BSA...";
 
-    if (!runCommand(*command, bsa))
+    try
+    {
+        if (!runCommand(*command, bsa))
+            return;
+    }
+    catch (const std::exception &e)
+    {
+        PLOG_ERROR << e.what();
         return;
+    }
 
     if (!saveFile(bsa))
         return;
