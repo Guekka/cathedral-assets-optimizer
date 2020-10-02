@@ -21,13 +21,14 @@ bool isAllowedFile(const QDir &bsaDir, const QFileInfo &settings);
 
 std::vector<BSA> splitBSA(const QDir &dir, const GeneralSettings &generalSets)
 {
-    std::vector<BSA> bsas{BSA::getBSA(StandardBsa, generalSets),
-                          BSA::getBSA(UncompressableBsa, generalSets),
-                          BSA::getBSA(TexturesBsa, generalSets)};
+    //Using a deque in order to prevent iterators from being invalidated
+    std::deque<BSA> bsas{BSA::getBSA(StandardBsa, generalSets),
+                         BSA::getBSA(UncompressableBsa, generalSets),
+                         BSA::getBSA(TexturesBsa, generalSets)};
 
-    auto *standardBsa       = &bsas[0];
-    auto *uncompressableBsa = &bsas[1];
-    auto *texturesBsa       = &bsas[2];
+    auto standardBsa       = std::ref(bsas[0]);
+    auto uncompressableBsa = std::ref(bsas[1]);
+    auto texturesBsa       = std::ref(bsas[2]);
 
     QDirIterator it(dir, QDirIterator::Subdirectories);
     while (it.hasNext())
@@ -41,22 +42,19 @@ std::vector<BSA> splitBSA(const QDir &dir, const GeneralSettings &generalSets)
         const bool isTexture        = ft.match(ft.slBSATextureFiles(), it.filePath());
         const bool isUncompressible = ft.match(ft.slBSAUncompressibleFiles(), it.filePath());
 
-        BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
+        auto *pBsa = isTexture ? &texturesBsa : &standardBsa;
         pBsa       = isUncompressible ? &uncompressableBsa : pBsa;
 
         //adding files and sizes to list
-        (*pBsa)->files << it.filePath();
-        (*pBsa)->filesSize += it.fileInfo().size();
+        pBsa->get().files << it.filePath();
+        pBsa->get().filesSize += it.fileInfo().size();
 
-        if ((*pBsa)->filesSize >= (*pBsa)->maxSize)
-        {
-            bsas.emplace_back(BSA::getBSA((*pBsa)->type, generalSets));
-            *pBsa = &bsas.back();
-        }
+        if (pBsa->get().filesSize >= pBsa->get().maxSize)
+            *pBsa = bsas.emplace_back(BSA::getBSA(pBsa->get().type, generalSets));
     }
 
     //Removing empty BSAs
-    bsas = bsas | rx::filter([](const BSA &bsa) { return !bsa.files.empty(); }) | rx::to_vector();
+    auto cleanBSAs = bsas | rx::filter([](const BSA &bsa) { return !bsa.files.empty(); }) | rx::to_vector();
 
     //Merging BSAs that can be merged
     BSA::MergeBSATypes mergeTypes;
@@ -69,9 +67,9 @@ std::vector<BSA> splitBSA(const QDir &dir, const GeneralSettings &generalSets)
     else
         mergeTypes = BSA::MergeBSATypes::None;
 
-    BSA::mergeBSAs(bsas, mergeTypes);
+    BSA::mergeBSAs(cleanBSAs, mergeTypes);
 
-    return bsas;
+    return cleanBSAs;
 }
 
 bool isAllowedFile(const QDir &bsaDir, const QFileInfo &fileinfo)
