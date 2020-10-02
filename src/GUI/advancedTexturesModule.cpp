@@ -24,7 +24,11 @@ AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
 {
     ui_->setupUi(this);
 
-    connectGroupBox(ui_->mainBox, ui_->mainNecessary, ui_->mainCompress, ui_->mainMipMaps);
+    connectGroupBox(ui_->mainBox,
+                    ui_->mainNecessary,
+                    ui_->mainCompress,
+                    ui_->mainMipMaps,
+                    ui_->mainAlphaLandscape);
 
     connectGroupBox(ui_->resizingBox,
                     ui_->resizingMode,
@@ -58,6 +62,9 @@ AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
 void AdvancedTexturesModule::setUIData(const PatternSettings &pSets,
                                        [[maybe_unused]] const GeneralSettings &gSets)
 {
+    ui_->mainBox->setChecked(pSets.bTexturesNecessary() || pSets.bTexturesCompress()
+                             || pSets.bTexturesMipmaps() || pSets.bTexturesLandscapeAlpha());
+
     //Resizing
     selectData(*ui_->resizingMode, pSets.eTexturesResizingMode());
     ui_->resizingBox->setChecked(pSets.eTexturesResizingMode() != None);
