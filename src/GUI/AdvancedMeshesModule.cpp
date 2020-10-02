@@ -42,11 +42,11 @@ void AdvancedMeshesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] G
             &QGroupBox::toggled,
             &pSets.iMeshesOptimizationLevel,
             [&pSets, buttonGroup](bool state) {
-                pSets.iMeshesOptimizationLevel = state ? buttonGroup->checkedId() : 0;
-
                 //The default is the last, no idea why
                 if (state)
                     buttonGroup->button(1)->setChecked(true);
+
+                pSets.iMeshesOptimizationLevel = state ? buttonGroup->checkedId() : 0;
             });
 
     connect(buttonGroup,
