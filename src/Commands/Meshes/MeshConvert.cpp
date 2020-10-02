@@ -53,19 +53,22 @@ CommandState MeshConvert::isApplicable(File &file) const
     if (optLevel == 0)
         return CommandState::NotRequired;
 
-    const auto &game = GameSettings::get(currentProfile().getGeneralSettings().eGame());
-    if (!game.cMeshesVersion().has_value())
+    const auto game      = currentProfile().getGeneralSettings().eGame();
+    const auto &gameSets = GameSettings::get(game);
+    if (!gameSets.cMeshesVersion().has_value())
         return CommandState::NotRequired;
 
     const auto *meshFile = file.getFile<Resources::Mesh>();
     if (!meshFile)
         return CommandState::NotRequired;
 
-    const bool headpart = isHeadpart(file.getInputFilePath()) && !patternSettings.bMeshesIgnoreHeadparts();
-    const bool isSSECompatible = meshFile->IsSSECompatible();
-    const bool resave          = optLevel >= 2;
+    if (optLevel >= 2)
+        return CommandState::Ready;
 
-    if (isSSECompatible && !headpart && !resave)
+    const bool headpart = isHeadpart(file.getInputFilePath()) && !patternSettings.bMeshesIgnoreHeadparts();
+    const bool isSSECompatible = meshFile->IsSSECompatible() && game == SkyrimSE;
+
+    if (isSSECompatible && !headpart)
         return CommandState::NotRequired;
 
     return CommandState::Ready;
