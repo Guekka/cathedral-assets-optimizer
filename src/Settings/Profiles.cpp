@@ -25,11 +25,18 @@ Profiles::Profiles(QDir dir)
 
 void Profiles::create(const QString &name, const QString &baseProfile)
 {
-    const QString &baseFolder = rootProfileDir_.absoluteFilePath(exists(baseProfile) ? baseProfile
-                                                                                     : defaultProfile);
-    const QString &newFolder  = rootProfileDir_.absoluteFilePath(name);
-    Filesystem::copyDir(baseFolder, newFolder, false);
-    profiles_.try_emplace(name, Profile(newFolder));
+    const QString &newFolder = rootProfileDir_.absoluteFilePath(name);
+    rootProfileDir_.mkpath(newFolder);
+    auto [it, inserted] = profiles_.try_emplace(name, Profile(newFolder));
+
+    if (inserted)
+    {
+        const Profile &base             = get(exists(baseProfile) ? baseProfile : defaultProfile);
+        it->second.getPatterns()        = base.getPatterns();
+        it->second.getFileTypes()       = base.getFileTypes();
+        it->second.getGeneralSettings() = base.getGeneralSettings();
+        it->second.saveToJSON();
+    }
 }
 
 void Profiles::create(const QString &name)
