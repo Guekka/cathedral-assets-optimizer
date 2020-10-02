@@ -9,6 +9,8 @@
 #include <QMap>
 #include <QMapIterator>
 #include <QRegularExpression>
+#include <QTextCodec>
+#include <QTextStream>
 #include <QVariant>
 
 #include "Utils/Filesystem.hpp"
@@ -162,15 +164,23 @@ QString backupFile(const QString &filePath)
 
 QStringList readFile(QFile &file, const std::function<void(QString &line)> &function)
 {
-    QStringList list;
-
     file.open(QFile::ReadOnly);
     if (!file.isOpen())
-        return list;
+        return {};
 
-    while (!file.atEnd())
+    QTextStream ts(&file);
+
+    const unsigned char UTF16_BOM[2] = {255, 254};
+
+    if (file.read(2) == QByteArray(reinterpret_cast<const char *>(UTF16_BOM)))
+        ts.setCodec(QTextCodec::codecForName("UTF-16LE"));
+
+    file.seek(0);
+
+    QStringList list;
+    while (!ts.atEnd())
     {
-        QString &&line = file.readLine().simplified();
+        QString &&line = ts.readLine().simplified();
         if (line.startsWith("#") || line.isEmpty())
             continue;
 
