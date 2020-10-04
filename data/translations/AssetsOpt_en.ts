@@ -112,33 +112,33 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="141"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="144"/>
         <source>Create textures BSA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="153"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="156"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size for files in a textures BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="160"/>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="193"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="166"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="199"/>
         <source>Uncompressed max size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="170"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="176"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be packed into their own BSA, even when they could be merged into the main BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="173"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="179"/>
         <source>Do not merge textures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="180"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="186"/>
         <source>Separate textures</source>
         <translation type="unfinished"></translation>
     </message>
@@ -266,13 +266,13 @@
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="219"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="37"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
         <source>By ratio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="224"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="38"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
         <source>By fixed size</source>
         <translation type="unfinished"></translation>
     </message>
@@ -323,31 +323,31 @@
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="326"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="40"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
         <source>BC7 (BC7_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="331"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="45"/>
         <source>BC5 (BC5_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="336"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="46"/>
         <source>BC3 (BC3_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="341"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="43"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="47"/>
         <source>BC1 (BC1_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="346"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="48"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -372,7 +372,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="133"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="140"/>
         <source>Textures (Patterns)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -495,34 +495,34 @@ They cannot contain the same pattern</source>
 <context>
     <name>GeneralSettings</name>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
-        <source>BSA Max size cannot be negative</source>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="46"/>
+        <source>BSA Max size cannot be smaller than 0.5Gb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="49"/>
         <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="54"/>
         <source>Input path does not exist. Path: &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="60"/>
         <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
  If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
 Path: &apos;%2&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="70"/>
         <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="80"/>
         <source>Output path does not exist. Path: &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -848,22 +848,22 @@ The full CAO experience. With profiles and patterns, you can fully customize how
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="337"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="342"/>
         <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="352"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="357"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="353"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="358"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="392"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="397"/>
         <source>Welcome to %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
