@@ -1074,11 +1074,6 @@ OptResult NifFile::OptimizeFor(OptOptions& options) {
 
 				BSTriShape* bsOptShape = nullptr;
 
-				// Check to optimize all shapes or only mandatory ones
-				const bool needsOpt = !options.mandatoryOnly || options.headParts || !IsSSECompatible(shape);
-				if (!needsOpt)
-					continue;
-
 				auto bsSegmentShape = dynamic_cast<BSSegmentedTriShape*>(shape);
 				if (bsSegmentShape) {
 					bsOptShape = new BSSubIndexTriShape();
@@ -1494,11 +1489,12 @@ void NifFile::FinalizeData() {
 }
 
 bool NifFile::IsSSECompatible() const {
-	const auto& shapes = GetShapes();
+    const auto& shapes = GetShapes();
 	return std::all_of(shapes.cbegin(), shapes.cend(), [this](auto&& shape) { return IsSSECompatible(shape); });
 }
 
-bool NifFile::IsSSECompatible(const NiShape *shape) const {
+
+bool NifFile::IsSSECompatible(const NiShape* shape) const {
 	// Check if shape has strips in the geometry or skin partition
 	if (shape->HasType<NiTriStrips>())
 		return false;
@@ -1527,16 +1523,6 @@ std::vector<std::string> NifFile::GetShapeNames() {
 	return outList;
 }
 
-std::vector<const NiShape *> NifFile::GetShapes() const {
-	std::vector<const NiShape*> outList;
-	for (auto& block : blocks) {
-		auto shape = dynamic_cast<NiShape*>(block.get());
-		if (shape)
-			outList.push_back(shape);
-	}
-	return outList;
-}
-
 std::vector<NiShape *> NifFile::GetShapes() {
 	std::vector<NiShape*> outList;
 	for (auto& block : blocks) {
@@ -1545,6 +1531,16 @@ std::vector<NiShape *> NifFile::GetShapes() {
 			outList.push_back(shape);
 	}
 	return outList;
+}
+
+std::vector<const NiShape *> NifFile::GetShapes() const {
+    std::vector<const NiShape*> outList;
+    for (auto& block : blocks) {
+        auto shape = dynamic_cast<NiShape*>(block.get());
+        if (shape)
+            outList.push_back(shape);
+    }
+    return outList;
 }
 
 bool NifFile::RenameShape(NiShape* shape, const std::string& newName) {

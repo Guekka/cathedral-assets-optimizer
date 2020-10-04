@@ -365,15 +365,15 @@ void NiSkinPartition::Put(NiStream& stream) {
 				stream << partitions[p].boneIndices[i];
 
 		if (stream.GetVersion().User() >= 12)
-            stream << partitions[p].unkShort;
+			stream << partitions[p].unkShort;
 
-        if (stream.GetVersion().User() >= 12 && stream.GetVersion().Stream() == 100) {
-            partitions[p].vertexDesc.Put(stream);
+		if (stream.GetVersion().User() >= 12 && stream.GetVersion().Stream() == 100) {
+			partitions[p].vertexDesc.Put(stream);
 
-            for (int i = 0; i < partitions[p].numTriangles; i++)
-                stream << partitions[p].trueTriangles[i];
-        }
-    }
+			for (int i = 0; i < partitions[p].numTriangles; i++)
+				stream << partitions[p].trueTriangles[i];
+		}
+	}
 }
 
 void NiSkinPartition::notifyVerticesDelete(const std::vector<ushort>& vertIndices) {

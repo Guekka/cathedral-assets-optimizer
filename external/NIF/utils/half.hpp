@@ -16,9 +16,6 @@
 
 // Version 1.12.0
 
-#undef min
-#undef max
-
 /// \file
 /// Main header file for half precision functionality.
 
