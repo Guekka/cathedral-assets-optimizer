@@ -9,6 +9,7 @@ configure_file (src/Version.hpp.in src/Version.hpp)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(cmake/Qt.cmake)
+include(cmake/BuildType.cmake)
 
 add_subdirectory(data)
 add_subdirectory(external)
