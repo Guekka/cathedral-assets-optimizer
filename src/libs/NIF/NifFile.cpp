@@ -190,9 +190,9 @@ void NifFile::Clear()
     hdr.Clear();
 }
 
-int NifFile::Load(const std::string &fileName, const NifLoadOptions &options)
+int NifFile::Load(const std::filesystem::path &fileName, const NifLoadOptions &options)
 {
-    std::fstream file(fileName.c_str(), std::ios::in | std::ios::binary);
+    std::fstream file(fileName, std::ios::in | std::ios::binary);
     return Load(file, options);
 }
 
@@ -1023,9 +1023,9 @@ int NifFile::CloneNamedNode(const std::string &nodeName, NifFile *srcNif)
     return hdr.AddBlock(destNode);
 }
 
-int NifFile::Save(const std::string &fileName, const NifSaveOptions &options)
+int NifFile::Save(const std::filesystem::path &fileName, const NifSaveOptions &options)
 {
-    std::fstream file(fileName.c_str(), std::ios::out | std::ios::binary);
+    std::fstream file(fileName, std::ios::out | std::ios::binary);
     return Save(file, options);
 }
 

@@ -189,7 +189,7 @@ std::tuple<bool, NifFile> MeshesOptimizer::loadMesh(const QString &filepath) con
 {
     PLOG_VERBOSE << "Loading mesh: " + filepath;
     NifFile nif;
-    if (nif.Load(filepath.toStdString())) {
+    if (nif.Load(filepath.toStdU16String())) {
         PLOG_ERROR << "Cannot load mesh: " + filepath;
         return std::make_tuple(false, std::move(nif));
     }
@@ -199,7 +199,7 @@ std::tuple<bool, NifFile> MeshesOptimizer::loadMesh(const QString &filepath) con
 bool MeshesOptimizer::saveMesh(NifFile &nif, const QString &filepath) const
 {
     PLOG_VERBOSE << "Saving mesh: " + filepath;
-    if (nif.Save(filepath.toStdString())) {
+    if (nif.Save(filepath.toStdU16String())) {
         PLOG_ERROR << "Cannot save mesh: " + filepath;
         return false;
     }

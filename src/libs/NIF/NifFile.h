@@ -5,6 +5,8 @@ See the included LICENSE file
 
 #pragma once
 
+#include <filesystem>
+
 #include "Factory.h"
 
 struct OptOptions
@@ -62,7 +64,7 @@ private:
 public:
     NifFile() {}
 
-    NifFile(const std::string &fileName, const NifLoadOptions &options = NifLoadOptions())
+    NifFile(const std::filesystem::path &fileName, const NifLoadOptions &options = NifLoadOptions())
     {
         Load(fileName, options);
     }
@@ -80,9 +82,9 @@ public:
     NiHeader &GetHeader() { return hdr; }
     void CopyFrom(const NifFile &other);
 
-    int Load(const std::string &fileName, const NifLoadOptions &options = NifLoadOptions());
+    int Load(const std::filesystem::path &fileName, const NifLoadOptions &options = NifLoadOptions());
     int Load(std::iostream &file, const NifLoadOptions &options = NifLoadOptions());
-    int Save(const std::string &fileName, const NifSaveOptions &options = NifSaveOptions());
+    int Save(const std::filesystem::path &fileName, const NifSaveOptions &options = NifSaveOptions());
     int Save(std::iostream &file, const NifSaveOptions &options = NifSaveOptions());
 
     void Optimize();
