@@ -24,7 +24,7 @@ public:
     /*!
    * \brief Constructor that will read CustomHeadparts.txt and read settings from file
    */
-    MeshesOptimizer(const bool &processHeadparts, const int &optimizationLevel, const bool &resaveMeshes);
+    MeshesOptimizer(bool processHeadparts, int optimizationLevel, bool resaveMeshes);
     /*!
    * \brief Scans the selected meshes for issues
    * \param nif The mesh to scan

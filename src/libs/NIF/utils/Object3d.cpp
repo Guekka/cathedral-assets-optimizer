@@ -1,5 +1,6 @@
 #include "Object3d.h"
 #include "Miniball.hpp"
+#include "math.h"
 
 BoundingSphere::BoundingSphere(const std::vector<Vector3>& vertices) {
 	if (vertices.empty())
@@ -7,11 +8,11 @@ BoundingSphere::BoundingSphere(const std::vector<Vector3>& vertices) {
 
 	// Convert vertices to list of coordinates
 	std::list<std::vector<float>> lp;
-	for (int i = 0; i < vertices.size(); ++i) {
+	for (auto vertice : vertices) {
 		std::vector<float> p(3);
-		p[0] = vertices[i].x;
-		p[1] = vertices[i].y;
-		p[2] = vertices[i].z;
+		p[0] = vertice.x;
+		p[1] = vertice.y;
+		p[2] = vertice.z;
 		lp.push_back(p);
 	}
 
@@ -38,7 +39,7 @@ float Matrix3::Determinant() const {
 
 bool Matrix3::Invert(Matrix3 *inverse) const {
 	float det = Determinant();
-	if (det == 0.0f) return false;
+	if (det == 0.0F) return false;
 	float idet = 1/det;
 	Matrix3 &im = *inverse;
 	im[0][0] = (rows[1][1]*rows[2][2]-rows[1][2]*rows[2][1])*idet;
@@ -86,8 +87,8 @@ Matrix3 Matrix3::MakeRotation(const float yaw, const float pitch, const float ro
 bool Matrix3::ToEulerAngles(float &y, float& p, float& r) const {
 	bool canRot = false;
 
-	if (rows[0].z < 1.0f) {
-		if (rows[0].z > -1.0f) {
+	if (rows[0].z < 1.0F) {
+		if (rows[0].z > -1.0F) {
 			y = atan2(-rows[1].z, rows[2].z);
 			p = asin(rows[0].z);
 			r = atan2(-rows[0].y, rows[0].x);
@@ -95,14 +96,14 @@ bool Matrix3::ToEulerAngles(float &y, float& p, float& r) const {
 		}
 		else {
 			y = -atan2(-rows[1].x, rows[1].y);
-			p = -PI / 2.0f;
-			r = 0.0f;
+			p = -PI / 2.0F;
+			r = 0.0F;
 		}
 	}
 	else {
 		y = atan2(rows[1].x, rows[1].y);
-		p = PI / 2.0f;
-		r = 0.0f;
+		p = PI / 2.0F;
+		r = 0.0F;
 	}
 	return canRot;
 }
@@ -131,7 +132,7 @@ Matrix3 RotVecToMat(const Vector3 &v) {
 	double angle = std::sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 	double cosang = std::cos(angle);
 	double sinang = std::sin(angle);
-	double onemcosang;	// One minus cosang
+	double onemcosang = NAN;	// One minus cosang
 	// Avoid loss of precision from cancellation in calculating onemcosang
 	if (cosang > .5)
 		onemcosang = sinang * sinang / (1 + cosang);
@@ -155,7 +156,7 @@ Vector3 RotMatToVec(const Matrix3 &m) {
 	double cosang = (m[0][0] + m[1][1] + m[2][2] - 1) * 0.5;
 	if (cosang >= 1)
 		return Vector3(0,0,0);
-	else if (cosang > -1) {
+	if (cosang > -1) {
 		Vector3 v(m[1][2] - m[2][1], m[2][0] - m[0][2], m[0][1] - m[1][0]);
 		v.Normalize();
 		return v * std::acos(cosang);
