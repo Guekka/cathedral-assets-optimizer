@@ -16,15 +16,14 @@ class TexturesOptimizer final : public QObject
 public:
     TexturesOptimizer();
 
-    enum TextureType
-    {
-        DDS,
-        TGA
-    };
+    enum TextureType { DDS, TGA };
 
     void listLandscapeTextures(QDirIterator &it);
 
-    bool open(const void *pSource, const size_t &size, const TextureType &type, const QString &fileName);
+    bool open(const void *pSource,
+              const size_t &size,
+              const TextureType &type,
+              const QString &fileName);
     bool open(const QString &filePath, const TextureType &type);
 
     bool saveToFile(const QString &filePath) const;

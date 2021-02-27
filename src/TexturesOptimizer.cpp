@@ -31,7 +31,6 @@ void TexturesOptimizer::listLandscapeTextures(QDirIterator &it)
 
     for (const auto &plugin : FilesystemOperations::listPlugins(it))
         _landscapeTextures += PluginsOperations::listLandscapeTextures(plugin);
-
     for (auto &tex : _landscapeTextures)
         if (!tex.endsWith("_n.dds"))
             tex.insert(tex.size() - 4, "_n");
@@ -174,7 +173,8 @@ TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const
         result.tHeight != _info.height || result.tWidth != _info.width;
 
     result.bNeedsCompress = (bNecessary && (isIncompatible() || _type == TGA))
-                            || (bCompress && canBeCompressed() && _info.format != Profiles::texturesFormat());
+                            || (bCompress && canBeCompressed()
+                                && _info.format != Profiles::texturesFormat());
 
     result.bNeedsMipmaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
@@ -231,6 +231,11 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
         targetFormat = Profiles::texturesFormat();
         PLOG_VERBOSE << "Converting this texture to format: " << dxgiFormatToString(targetFormat);
     }
+
+    // Cannot compress if size became smaller than 4x4
+    if (!canBeCompressed())
+        targetFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
+
     if (!convert(targetFormat))
         return false;
 
@@ -250,7 +255,8 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
     const bool needsResize = bNecessary && (!isPowerOfTwo() || newHeight != _info.height || newWidth != _info.width);
 
     const bool needsConversion = (bNecessary && (isIncompatible() || _type == TGA))
-                                 || (bCompress && canBeCompressed() && _info.format != Profiles::texturesFormat());
+                                 || (bCompress && canBeCompressed()
+                                     && _info.format != Profiles::texturesFormat());
 
     const bool needsMipMaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
