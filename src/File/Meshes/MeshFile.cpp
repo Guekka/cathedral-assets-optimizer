@@ -13,7 +13,7 @@ int MeshFile::loadFromDisk(const QString &filePath)
     loadHelper<Resources::Mesh>(filePath);
 
     auto *meshFile = getFile<Resources::Mesh>(false);
-    return meshFile->Load(filePath.toStdString());
+    return meshFile->Load(filePath.toStdU16String());
 }
 
 int MeshFile::saveToDisk(const QString &filePath)
@@ -23,7 +23,7 @@ int MeshFile::saveToDisk(const QString &filePath)
 
     auto *meshFile = getFile<Resources::Mesh>(false);
     //Unfortunately, NIF library really doesn't like constness
-    return meshFile->Save(filePath.toStdString());
+    return meshFile->Save(filePath.toStdU16String());
 }
 
 int MeshFile::loadFromMemory(const void *pSource, size_t size, const QString &fileName)
