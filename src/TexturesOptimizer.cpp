@@ -281,8 +281,13 @@ void TexturesOptimizer::dryOptimize(const bool &bNecessary,
 
 bool TexturesOptimizer::canBeCompressed() const
 {
-    return !((_name.contains("interface", Qt::CaseInsensitive) && !Profiles::texturesCompressInterface())
-             || DirectX::IsCompressed(_info.format) || _info.width < 4 || _info.height < 4);
+    const bool isInterface = _name.contains("interface", Qt::CaseInsensitive);
+    const bool already = DirectX::IsCompressed(_info.format);
+    const bool badSize = _info.width < 4 || _info.height < 4;
+
+    const bool interfaceOkay = Profiles::texturesCompressInterface() || !isInterface;
+
+    return interfaceOkay && !already && !badSize;
 }
 
 bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
