@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="tr">
 <context>
     <name>MainWindow</name>
     <message>
@@ -439,7 +441,7 @@
     </message>
     <message>
         <source>
-Made by G'k
+Made by G&apos;k
 This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTLY. See the Mozilla Public License</source>
         <translation>
 Bu program, G&apos;k Tarafından yazılmıştır.
@@ -491,15 +493,15 @@ Bu programın dağıtımı, yararlı olabilmesi adına yapılmıştır fakat Bİ
     </message>
     <message>
         <source>Create dummy plugins</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : uncompressible, textures and standard. The uncompressible one contains sounds. If this option is checked, these three types of BSAs will be merged if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Create the least BSAs possible</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save UI</source>

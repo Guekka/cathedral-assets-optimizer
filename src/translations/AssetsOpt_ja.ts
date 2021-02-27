@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ja" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="ja">
 <context>
     <name>MainWindow</name>
     <message>
@@ -439,7 +441,7 @@
     </message>
     <message>
         <source>
-Made by G'k
+Made by G&apos;k
 This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTLY. See the Mozilla Public License</source>
         <translation>
 製作者 by G&apos;k
