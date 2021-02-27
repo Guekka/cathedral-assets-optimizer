@@ -189,7 +189,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
 {
     PLOG_VERBOSE << "Processing arguments for: " << _name;
     //Getting operations to perform. This will be repeated several times, since the texture will change after each operation
-    auto options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
+    const auto options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
     DXGI_FORMAT targetFormat = _info.format;
 
@@ -208,7 +208,6 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
         if (!decompress())
             return false;
     }
-    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
     //Fitting to a power of two or resizing
     if (options.bNeedsResize)
@@ -217,7 +216,6 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
         if (!resize(options.tWidth, options.tHeight))
             return false;
     }
-    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
     //Generating mipmaps
     if (options.bNeedsMipmaps)
@@ -226,7 +224,6 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
         if (!generateMipMaps())
             return false;
     }
-    options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
     //Converting to the new format, or the compressing back into the original format
     if (options.bNeedsCompress)
