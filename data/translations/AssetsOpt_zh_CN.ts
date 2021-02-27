@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AdvancedAnimationsModule</name>
     <message>
@@ -110,33 +112,33 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;这个大小以下的纹理不会被压缩。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="141"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="144"/>
         <source>Create textures BSA</source>
         <translation>创建纹理BSA包</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="153"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="156"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size for files in a textures BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;这个大小以下的纹理不会被压缩。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="160"/>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="193"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="166"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="199"/>
         <source>Uncompressed max size</source>
         <translation>不被压缩的最小纹理</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="170"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="176"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be packed into their own BSA, even when they could be merged into the main BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>启用后，纹理将会被强制打包进一个单独的BSA包，即使它们能合并到主BSA包中。</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="173"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="179"/>
         <source>Do not merge textures</source>
         <translation>强制打包</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="180"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="186"/>
         <source>Separate textures</source>
         <translation>打包选项：</translation>
     </message>
@@ -192,185 +194,185 @@
 <context>
     <name>AdvancedTexturesModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="14"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="14"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="26"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="26"/>
         <source>Process textures</source>
         <translation>纹理处理</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="60"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="60"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>生成纹理映射，通过提高磁盘和内存的使用来增强纹理的表现性。</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="63"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="63"/>
         <source>Generate mipmaps</source>
         <translation>生成纹理映射</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="88"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to convert and fix any textures that would crash the game.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;尝试转制并修复会导致游戏崩溃的纹理。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="91"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="91"/>
         <source>Necessary optimization</source>
         <translation>必要转制</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="110"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;将未压缩的纹理转制为支持的输出格式。 建议将其用于天际SE和辐射4，用于其他游戏可能会大大降低纹理质量。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="113"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="113"/>
         <source>Compress textures</source>
         <translation>纹理压缩</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="129"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add an alpha layer to landscape textures. Required for SSE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;生成天际SE景观纹理所需的 alpha layer 底图。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="132"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="132"/>
         <source>Add alpha to landscape textures</source>
         <translation>为景观纹理生成 alpha</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="145"/>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="267"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="145"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="267"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;将纹理大小调整为给定大小。 必须以2的幂来表示纹理大小，不得低于4x4。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="148"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="148"/>
         <source>Resizing</source>
         <translation>调整大小</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="166"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="166"/>
         <source>Width</source>
         <translation>宽度</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="179"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="179"/>
         <source>Height</source>
         <translation>高度</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="219"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="37"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="219"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
         <source>By ratio</source>
         <translation>调整比例</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="224"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="38"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="224"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
         <source>By fixed size</source>
         <translation>调整尺寸</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="270"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="270"/>
         <source>Minimum size:</source>
         <translation>最小值</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="280"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="280"/>
         <source>Advanced</source>
         <translation>专业选项</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="289"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="289"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;启用后，则将TGA格式转制为兼容的DDS格式。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="292"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="292"/>
         <source>Force convert</source>
         <translation>强制转制：</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="299"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="299"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be converted to the configured output format, no matter their current state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>将纹理强制转制成输出格式</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="302"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="302"/>
         <source>Enable forced conversion</source>
         <translation>启用强制转制</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="312"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;未压缩纹理，已压缩纹理和TGA转换文件的输出格式。 提示：BC7格式仅适用于SSE或FO4。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="315"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="315"/>
         <source>Output format</source>
         <translation>输出格式：</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="322"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="322"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The output format used for modified textures&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;选择纹理的输出格式&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="326"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="40"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="326"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
         <source>BC7 (BC7_UNORM)</source>
         <translation>BC7 (BC7_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="331"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="331"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="45"/>
         <source>BC5 (BC5_UNORM)</source>
         <translation>BC5 (BC5_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="336"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="336"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="46"/>
         <source>BC3 (BC3_UNORM)</source>
         <translation>BC3 (BC3_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="341"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="43"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="341"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="47"/>
         <source>BC1 (BC1_UNORM)</source>
         <translation>BC1 (BC1_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="346"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="346"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="48"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation>未压缩(R8G8B8A8_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="357"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="357"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;使用这些格式的纹理将会被转换成游戏支持的纹理&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="360"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="360"/>
         <source>Unwanted formats</source>
         <translation>格式转换名单</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="373"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unwanted formats are formats that will always be converted to the configured output format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;格式转换名单中的选定格式将会被强制转换成输出格式&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="376"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="376"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="133"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="140"/>
         <source>Textures (Patterns)</source>
         <translation>纹理（模式）</translation>
     </message>
@@ -494,35 +496,39 @@ They cannot contain the same pattern</source>
 <context>
     <name>GeneralSettings</name>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
         <source>BSA Max size cannot be negative</source>
-        <translation>BSA最大值不能为负数</translation>
+        <translation type="vanished">BSA最大值不能为负数</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="46"/>
+        <source>BSA Max size cannot be smaller than 0.5Gb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="49"/>
         <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
         <translation>该路径长度小于5。路径： &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="54"/>
         <source>Input path does not exist. Path: &apos;%1&apos;</source>
         <translation>输入路径不存在。路径： &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
-        <source>'Several mods' mode is enabled, but this path does not seem to be handled by a mod manager.
- If you are sure you want to process this folder, please create a file named '%1' in this folder. This is a necessary evil to ensure safety for your mods.
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="60"/>
+        <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
+ If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
 Path: &apos;%2&apos;</source>
         <translation>您选择的是“置入多个模组”，但这个路径似乎不是mod管理器下的模组路径。
 如果您确定要转制这个文件夹内的所有模组，请在该文件夹下创建一个名为 &apos;%1&apos; 的文件。这是为了保证您模组的安全。路径： &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="70"/>
         <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
         <translation>您选择的是“置入一个模组，但这个路径似乎是mod管理器下的模组路径。路径：&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="80"/>
         <source>Output path does not exist. Path: &apos;%1&apos;</source>
         <translation>输出路径不存在。路径： &apos;%1&apos;</translation>
     </message>
@@ -853,22 +859,22 @@ The full CAO experience. With profiles and patterns, you can fully customize how
         <translation>找不到默认处理模式&apos;*&apos;。请尝试重新安装应用程序</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="337"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="342"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="352"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="357"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="353"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="358"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation>遇到异常，进程被迫停止：</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="392"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="397"/>
         <source>Welcome to %1 %2</source>
         <translation>欢迎使用 %1 %2</translation>
     </message>

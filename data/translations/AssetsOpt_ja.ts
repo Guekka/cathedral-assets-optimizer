@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ja" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="ja">
 <context>
     <name>AdvancedAnimationsModule</name>
     <message>
@@ -110,33 +112,33 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BSA内にあるファイルの最大非圧縮サイズ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="141"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="144"/>
         <source>Create textures BSA</source>
         <translation>テクスチャのBSAを作成</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="153"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="156"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size for files in a textures BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;テクスチャBSA内にあるファイルの最大非圧縮サイズ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="160"/>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="193"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="166"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="199"/>
         <source>Uncompressed max size</source>
         <translation>非圧縮時の最大サイズ</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="170"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="176"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be packed into their own BSA, even when they could be merged into the main BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;有効にすると、すでにテクスチャがメインのBSA内に取り込まれてマージされていても、テクスチャを独自のBSAとして別パッケージにパックします。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="173"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="179"/>
         <source>Do not merge textures</source>
         <translation>テクスチャを纏めない</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="180"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="186"/>
         <source>Separate textures</source>
         <translation>テクスチャの分割をする</translation>
     </message>
@@ -192,185 +194,185 @@
 <context>
     <name>AdvancedTexturesModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="14"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="14"/>
         <source>Form</source>
         <translation>フォーム</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="26"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="26"/>
         <source>Process textures</source>
         <translation>テクスチャの処理</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="60"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="60"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;テクスチャのミップマップを生成し、ディスクとVRAMの使用量が増える代わりにパフォーマンスを向上させます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="63"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="63"/>
         <source>Generate mipmaps</source>
         <translation>ミップマップを生成する</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="88"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to convert and fix any textures that would crash the game.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ゲームをクラッシュさせる可能性のあるテクスチャの変換と修正を試みます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="91"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="91"/>
         <source>Necessary optimization</source>
         <translation>必ず必要な最適化</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="110"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;圧縮されていないテクスチャを設定された出力形式で圧縮します。 SSEおよびFO4では推奨されていますが、他のゲームでは品質が著しく低下する可能性があります。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="113"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="113"/>
         <source>Compress textures</source>
         <translation>テクスチャを圧縮する</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="129"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add an alpha layer to landscape textures. Required for SSE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ランドスケープ(風景)テクスチャにアルファレイヤーを追加します。 SSEでは必ず必要になります。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="132"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="132"/>
         <source>Add alpha to landscape textures</source>
         <translation>ランドスケープテクスチャにアルファを追加する</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="145"/>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="267"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="145"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="267"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;テクスチャのサイズを指定された大きさに変更します。2の累乗の値で、4x4 以上の大きさを指定してください。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="148"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="148"/>
         <source>Resizing</source>
         <translation>サイズ変更</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="166"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="166"/>
         <source>Width</source>
         <translation>幅</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="179"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="179"/>
         <source>Height</source>
         <translation>高さ</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="219"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="37"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="219"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
         <source>By ratio</source>
         <translation>割合</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="224"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="38"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="224"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
         <source>By fixed size</source>
         <translation>固定サイズ</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="270"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="270"/>
         <source>Minimum size:</source>
         <translation>最小サイズ:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="280"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="280"/>
         <source>Advanced</source>
         <translation>詳細</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="289"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="289"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;オプションが選択されている場合、TGAを互換性のあるDDS形式に変換します。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="292"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="292"/>
         <source>Force convert</source>
         <translation>コンバートの強制</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="299"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="299"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be converted to the configured output format, no matter their current state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;有効にすると、テクスチャは、現在の状態に関係なく、常に設定された出力フォーマットで変換されます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="302"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="302"/>
         <source>Enable forced conversion</source>
         <translation>強制的にコンバートする</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="312"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;非圧縮テクスチャ、修正されたテクスチャ、変換されたTGAファイルの出力フォーマット。BC7は、SSEまたはFO4にのみ使用してください。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="315"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="315"/>
         <source>Output format</source>
         <translation>出力フォーマット</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="322"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="322"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The output format used for modified textures&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;修正されたテクスチャに使用される出力フォーマット&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="326"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="40"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="326"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
         <source>BC7 (BC7_UNORM)</source>
         <translation>BC7 (BC7_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="331"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="331"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="45"/>
         <source>BC5 (BC5_UNORM)</source>
         <translation>BC5 (BC5_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="336"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="336"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="46"/>
         <source>BC3 (BC3_UNORM)</source>
         <translation>BC3 (BC3_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="341"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="43"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="341"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="47"/>
         <source>BC1 (BC1_UNORM)</source>
         <translation>BC1 (BC1_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="346"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="346"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="48"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation>圧縮しない (R8G8B8A8_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="357"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="357"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;これらの形式を使用しているテクスチャは、サポートされている形式に変換されます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="360"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="360"/>
         <source>Unwanted formats</source>
         <translation>不要なフォーマット</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="373"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unwanted formats are formats that will always be converted to the configured output format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;不要なフォーマットとは、(ターゲットとするゲームには不適切なため)常に設定された出力形式にコンバートされる必要があるファイルのことです。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="376"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="376"/>
         <source>Edit</source>
         <translation>編集</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="133"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="140"/>
         <source>Textures (Patterns)</source>
         <translation>テクスチャ (パターン)</translation>
     </message>
@@ -493,36 +495,40 @@ They cannot contain the same pattern</source>
 <context>
     <name>GeneralSettings</name>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
         <source>BSA Max size cannot be negative</source>
-        <translation>BSAの最大サイズを負の値にすることはできません</translation>
+        <translation type="vanished">BSAの最大サイズを負の値にすることはできません</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="46"/>
+        <source>BSA Max size cannot be smaller than 0.5Gb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="49"/>
         <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
         <translation>このパスは5文字より短いです: パス &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="54"/>
         <source>Input path does not exist. Path: &apos;%1&apos;</source>
         <translation>入力パスが存在しません。パス: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
-        <source>'Several mods' mode is enabled, but this path does not seem to be handled by a mod manager.
- If you are sure you want to process this folder, please create a file named '%1' in this folder. This is a necessary evil to ensure safety for your mods.
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="60"/>
+        <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
+ If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
 Path: &apos;%2&apos;</source>
         <translation>&apos;複数のMod&apos; モードが有効になっていますが、このパスはModマネージャーによって処理されていないようです。
 このフォルダを処理したい場合は、フォルダ名を &apos;%1&apos; という名前で作成してください。これはModの安全性を確保するために必要になります。
 パス: &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="70"/>
         <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
         <translation>&apos;一つのMod&apos; モードが有効になっていますが、このパスは Modマネージャによって処理されているようです。パス: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="80"/>
         <source>Output path does not exist. Path: &apos;%1&apos;</source>
         <translation>出力パスが存在しません。パス: &apos;%1&apos;</translation>
     </message>
@@ -853,22 +859,22 @@ CAOの全機能を使用。プロファイルとパターンを使用するこ�
         <translation>パターン  &apos;*&apos; が見つかりませんでした。アプリケーションを再インストールしてください。</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="337"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="342"/>
         <source>Done</source>
         <translation>完了</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="352"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="357"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="353"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="358"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation>例外が発生し、処理は強制的に停止されました: </translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="392"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="397"/>
         <source>Welcome to %1 %2</source>
         <translation>ようこそ %1 %2 へ</translation>
     </message>

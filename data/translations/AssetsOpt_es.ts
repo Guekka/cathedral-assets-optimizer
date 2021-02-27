@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="es">
 <context>
     <name>AdvancedAnimationsModule</name>
     <message>
@@ -110,33 +112,33 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;El tamaño máximo sin comprimir para los archivos en un BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="141"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="144"/>
         <source>Create textures BSA</source>
         <translation>Crear texturas BSA</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="153"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="156"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size for files in a textures BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;El tamaño máximo sin comprimir de los archivos en una textura BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="160"/>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="193"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="166"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="199"/>
         <source>Uncompressed max size</source>
         <translation>Tamaño máximo sin comprimir</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="170"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="176"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be packed into their own BSA, even when they could be merged into the main BSA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si se activa, las texturas siempre se empaquetarán en su propio BSA, incluso cuando podrían fusionarse en el BSA principal</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="173"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="179"/>
         <source>Do not merge textures</source>
         <translation>No fusionar texturas</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="180"/>
+        <location filename="../../src/GUI/AdvancedBSAModule.ui" line="186"/>
         <source>Separate textures</source>
         <translation>Separar texturas</translation>
     </message>
@@ -192,185 +194,185 @@
 <context>
     <name>AdvancedTexturesModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="14"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="14"/>
         <source>Form</source>
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="26"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="26"/>
         <source>Process textures</source>
         <translation>Procesar texturas</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="60"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="60"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Genera mipmaps para las texturas, mejorando el rendimiento a costa de un mayor uso de disco y vram.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="63"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="63"/>
         <source>Generate mipmaps</source>
         <translation>Generar mipmaps</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="88"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to convert and fix any textures that would crash the game.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Los intentos de convertir y arreglar cualquier textura que pueda hacer fracasar al juego&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="91"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="91"/>
         <source>Necessary optimization</source>
         <translation>Optimización necesaria</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="110"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Comprime las texturas no comprimidas al formato de salida configurado. Se recomienda para SSE y FO4, pero puede disminuir mucho la calidad para otros juegos&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="113"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="113"/>
         <source>Compress textures</source>
         <translation>Comprimir texturas</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="129"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add an alpha layer to landscape textures. Required for SSE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Añade una capa alfa a las texturas del paisaje. Requerido para SSE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="132"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="132"/>
         <source>Add alpha to landscape textures</source>
         <translation>Añadir alfa a las texturas de los paisajes</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="145"/>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="267"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="145"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="267"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Redimensiona las dimensiones de la textura a los tamaños indicados. Debe generar dimensiones de textura expresadas en potencias de dos, no menos de 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="148"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="148"/>
         <source>Resizing</source>
         <translation>Cambiar el tamaño</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="166"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="166"/>
         <source>Width</source>
         <translation>Ancho</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="179"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="179"/>
         <source>Height</source>
         <translation>Alto</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="219"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="37"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="219"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
         <source>By ratio</source>
         <translation>Por proporción</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="224"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="38"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="224"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
         <source>By fixed size</source>
         <translation>Por tamaño fijo</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="270"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="270"/>
         <source>Minimum size:</source>
         <translation>Tamaño mínimo:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="280"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="280"/>
         <source>Advanced</source>
         <translation>Avanzado</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="289"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="289"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Convertirá los TGAs a un formato DDS compatible si se selecciona esta opción&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="292"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="292"/>
         <source>Force convert</source>
         <translation>Forzar la conversión</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="299"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="299"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be converted to the configured output format, no matter their current state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si se activa, las texturas siempre se convertirán al formato de salida configurado, sin importar su estado actual&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="302"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="302"/>
         <source>Enable forced conversion</source>
         <translation>Activar la conversión forzada</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="312"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Formato de salida para texturas sin comprimir, texturas modificadas y archivos TGA convertidos. BC7 sólo debe ser usado para SSE o FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="315"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="315"/>
         <source>Output format</source>
         <translation>Formato de salida</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="322"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="322"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The output format used for modified textures&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Formato de salida utilizado para las texturas modificadas&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="326"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="40"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="326"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
         <source>BC7 (BC7_UNORM)</source>
         <translation>BC7 (BC7_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="331"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="331"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="45"/>
         <source>BC5 (BC5_UNORM)</source>
         <translation>BC5 (BC5_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="336"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="336"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="46"/>
         <source>BC3 (BC3_UNORM)</source>
         <translation>BC3 (BC3_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="341"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="43"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="341"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="47"/>
         <source>BC1 (BC1_UNORM)</source>
         <translation>BC1 (BC1_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="346"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="346"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="48"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation>No comprimido (R8G8B8A8_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="357"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="357"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Las texturas que utilicen estos formatos se convertirán a un formato compatible&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="360"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="360"/>
         <source>Unwanted formats</source>
         <translation>Formatos no deseados</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="373"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unwanted formats are formats that will always be converted to the configured output format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Los formatos no deseados son formatos que siempre se convertirán al formato de salida configurado&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="376"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="376"/>
         <source>Edit</source>
         <translation>Editar</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="133"/>
+        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="140"/>
         <source>Textures (Patterns)</source>
         <translation>Texturas (Patrones)</translation>
     </message>
@@ -494,36 +496,40 @@ No pueden contener el mismo patrón</translation>
 <context>
     <name>GeneralSettings</name>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
         <source>BSA Max size cannot be negative</source>
-        <translation>El tamaño máximo del BSA no puede ser negativo</translation>
+        <translation type="vanished">El tamaño máximo del BSA no puede ser negativo</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="46"/>
+        <source>BSA Max size cannot be smaller than 0.5Gb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="49"/>
         <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
         <translation>Esta ruta tiene menos de 5 caracteres: Ruta: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="54"/>
         <source>Input path does not exist. Path: &apos;%1&apos;</source>
         <translation>La ruta de entrada no existe. Ruta: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
-        <source>'Several mods' mode is enabled, but this path does not seem to be handled by a mod manager.
- If you are sure you want to process this folder, please create a file named '%1' in this folder. This is a necessary evil to ensure safety for your mods.
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="60"/>
+        <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
+ If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
 Path: &apos;%2&apos;</source>
         <translation>El modo &apos;Varios mods&apos; está habilitado, pero esta ruta no parece ser gestionada por un administrador de mods.
 Si estás seguro de que quieres procesar esta carpeta, por favor crea un archivo llamado &apos;%1&apos;&apos; en esta carpeta. Este es un mal necesario para garantizar la seguridad de tus mods.
 Ruta: &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="70"/>
         <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
         <translation>El modo &apos;mod único&apos; está habilitado, pero esta ruta parece ser gestionada por un administrador de mod. Ruta:  &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="80"/>
         <source>Output path does not exist. Path: &apos;%1&apos;</source>
         <translation>La ruta de salida no existe. Ruta: &apos;%1&apos;</translation>
     </message>
@@ -854,22 +860,22 @@ La experiencia completa de CAO. Con perfiles y patrones, puedes personalizar com
         <translation>No se pudo encontrar el patrón &apos;*&apos;. Por favor, reinstale la aplicación</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="337"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="342"/>
         <source>Done</source>
         <translation>Hecho</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="352"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="357"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="353"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="358"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation>Se ha encontrado una excepción y el proceso se ha visto obligado a detenerse: </translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="392"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="397"/>
         <source>Welcome to %1 %2</source>
         <translation>Bienvenido a %1 %2</translation>
     </message>

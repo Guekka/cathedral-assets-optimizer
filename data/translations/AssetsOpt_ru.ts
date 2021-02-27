@@ -194,180 +194,180 @@
 <context>
     <name>AdvancedTexturesModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="14"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="14"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="26"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="26"/>
         <source>Process textures</source>
         <translation>Обрабатывать текстуры</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="60"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="60"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Создавать mip-карты для текстур. Это улучшает производительность, но приводит увеличению размера файла на диске и  повышенному расходу видеопамяти (VRAM).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="63"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="63"/>
         <source>Generate mipmaps</source>
         <translation>Создавать mip-карты</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="88"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to convert and fix any textures that would crash the game.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Пытаться конвертировать и исправлять любые текстуры, которые могут приводить к вылетам игры.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="91"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="91"/>
         <source>Necessary optimization</source>
         <translation>Необходимые оптимизации</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="110"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;html&gt;Сжимать несжатые текстуры использую указанные выходной формат. Рекомендуется использовать эту опцию для Skyrim SE и Fallout 4, в других играх это может привести к значительному ухудшению качества.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="113"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="113"/>
         <source>Compress textures</source>
         <translation>Сжимать текстуры</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="129"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add an alpha layer to landscape textures. Required for SSE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Добавлять альфа-канал для текстур ландшафта. Эта опция обязательна для Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="132"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="132"/>
         <source>Add alpha to landscape textures</source>
         <translation>Добавлять альфа-канал для текстур ландшафта.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="145"/>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="267"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="145"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="267"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Изменять размер текстур до указанного. В результате размер текстур должен быть кратен двум, но не менее чем 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="148"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="148"/>
         <source>Resizing</source>
         <translation>Изменение размера</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="166"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="166"/>
         <source>Width</source>
         <translation>Ширина</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="179"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="179"/>
         <source>Height</source>
         <translation>Высота</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="219"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="219"/>
         <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
         <source>By ratio</source>
         <translation>Соотношение</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="224"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="224"/>
         <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
         <source>By fixed size</source>
         <translation>Фиксированный размер</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="270"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="270"/>
         <source>Minimum size:</source>
         <translation>Минимальный размер</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="280"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="280"/>
         <source>Advanced</source>
         <translation>Дополнительно</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="289"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="289"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, текстуры в формате TGA будут сконвертированы в совместимый DDS.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="292"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="292"/>
         <source>Force convert</source>
         <translation>Принудительное конвертирование</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="299"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="299"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be converted to the configured output format, no matter their current state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если включено, текстуры всегда будут преобразовываться в указанный выходной формат независимо от их исходного формата.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="302"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="302"/>
         <source>Enable forced conversion</source>
         <translation>Включить принудительное конвертирование</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="312"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выходной формат для несжатых текстур, сконвертированных текстур и TGA файлов. Формат BC7 должен использоваться только для Skyrim SE и Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="315"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="315"/>
         <source>Output format</source>
         <translation>Выходной формат</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="322"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="322"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The output format used for modified textures&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Формат, который будет использован для сконвертированных текстур.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="326"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="326"/>
         <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
         <source>BC7 (BC7_UNORM)</source>
         <translation>BC7 (BC7_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="331"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="331"/>
         <location filename="../../src/GUI/advancedTexturesModule.cpp" line="45"/>
         <source>BC5 (BC5_UNORM)</source>
         <translation>BC5 (BC5_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="336"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="336"/>
         <location filename="../../src/GUI/advancedTexturesModule.cpp" line="46"/>
         <source>BC3 (BC3_UNORM)</source>
         <translation>BC3 (BC3_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="341"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="341"/>
         <location filename="../../src/GUI/advancedTexturesModule.cpp" line="47"/>
         <source>BC1 (BC1_UNORM)</source>
         <translation>BC1 (BC1_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="346"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="346"/>
         <location filename="../../src/GUI/advancedTexturesModule.cpp" line="48"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation>Без сжатия (R8G8B8A8_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="357"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="357"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Текстуры в данных форматах будут преобразованы в поддерживаемый формат.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="360"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="360"/>
         <source>Unwanted formats</source>
         <translation>Нежелательные форматы</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="373"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unwanted formats are formats that will always be converted to the configured output format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нежелательные форматы это форматы текстур которые всегда будут сконвертированы в указанный выходной формат.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="376"/>
+        <location filename="../../src/GUI/advancedTexturesModule.ui" line="376"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
     </message>
