@@ -42,6 +42,8 @@ public:
     REGISTER_SETTING(bool, bFirstStart, "/FirstStart")
 
     REGISTER_SETTING(int, iGPUIndex, "/GPUIndex")
+
+    REGISTER_SETTING(bool, bDeleteEmptyFolders, "/DeleteEmptyFolders")
 };
 
 } // namespace CAO

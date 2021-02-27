@@ -500,22 +500,22 @@ Aynı şablona sahip olamazlar</translation>
         <translation type="vanished">Maksimum BSA boyutu negatif olamaz</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="46"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
         <source>BSA Max size cannot be smaller than 0.5Gb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="49"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
         <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
         <translation>Dosya yolu 5 karakterden daha kısa: Dosya Yolu: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="54"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
         <source>Input path does not exist. Path: &apos;%1&apos;</source>
         <translation>Girdi yolu mevcut değil. Girdi Yolu: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="60"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
         <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
  If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
 Path: &apos;%2&apos;</source>
@@ -524,12 +524,12 @@ Bu klasöü işlemek istiyorsanız lütfen bu klasör içinde &apos;%1&apos; ism
 Dosya yolu: &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="70"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
         <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
         <translation>&quot;Tek Mod&quot; seçeneği etkin fakat seçili yol bir mod programı tarafından kontrol ediliypr. Dosya yolu: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="80"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
         <source>Output path does not exist. Path: &apos;%1&apos;</source>
         <translation>Çıktı yolu mevcut değil. Çıktı Yolu: &apos;%1&apos;</translation>
     </message>
@@ -745,8 +745,8 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="154"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="216"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="257"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="218"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="259"/>
         <source>Open Directory</source>
         <translation>Dizini Aç</translation>
     </message>
@@ -783,99 +783,104 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
         <translation>Seçenekler</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="292"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="293"/>
         <source>Help</source>
         <translation>Yardım</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="299"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="300"/>
         <source>Output</source>
         <translation>Çıktı</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="306"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="307"/>
         <source>Supporting CAO</source>
         <translation>CAO&apos;yu destekle</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="312"/>
-        <location filename="../../src/GUI/MainWindow.ui" line="346"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="97"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="313"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="347"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="99"/>
         <source>About</source>
         <translation>Hakkında</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="331"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="332"/>
         <source>Enable dark theme</source>
         <translation>Karanlık Modu Etkinleştir</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="336"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="337"/>
         <source>Documentation</source>
         <translation>Belgelendirme</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="341"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="342"/>
         <source>Discord</source>
         <translation>Discord</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="351"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="352"/>
         <source>About Qt</source>
         <translation>Qt Hakkında</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="356"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="357"/>
         <source>Donate</source>
         <translation>Bağış Yap</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="361"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="362"/>
         <source>Select GPU</source>
         <translation>Kullanılacak GPU&apos;yu seç</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="369"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="370"/>
         <source>Enable output redirection</source>
         <translation>Çıktı yönlendirmesini etkinleştir</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="374"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="375"/>
         <source>Set output path</source>
         <translation>Çıktı yolu seç</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="379"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="380"/>
         <source>Change level</source>
         <translation>Düzeyi değiştir</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="140"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="391"/>
+        <source>Delete empty directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/MainWindow.cpp" line="142"/>
         <source>Pattern not found</source>
         <translation>Şablon bulunamadı</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="141"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="143"/>
         <source>Couldn&apos;t find the pattern &apos;*&apos;. Please reinstall the application</source>
         <translation>&apos;*&apos; şablonu bulunamadı. Lütfen uygulamayı yeniden yükleyin.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="342"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="344"/>
         <source>Done</source>
         <translation>Tamamlandı</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="357"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="359"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="358"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="360"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation>Bir istisna meydana geldi ve işlem zorla durduruldu:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="397"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="399"/>
         <source>Welcome to %1 %2</source>
         <translation>%1&apos;a Hoş geldiniz. Sürüm: %2</translation>
     </message>

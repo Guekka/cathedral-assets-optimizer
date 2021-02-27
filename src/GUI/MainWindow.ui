@@ -284,6 +284,7 @@
      <string>Options</string>
     </property>
     <addaction name="actionEnableDarkTheme"/>
+    <addaction name="actionDelete_empty_directories"/>
     <addaction name="actionSelect_GPU"/>
     <addaction name="actionChange_level"/>
    </widget>
@@ -325,7 +326,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Enable dark theme</string>
@@ -377,6 +378,17 @@
   <action name="actionChange_level">
    <property name="text">
     <string>Change level</string>
+   </property>
+  </action>
+  <action name="actionDelete_empty_directories">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Delete empty directories</string>
    </property>
   </action>
  </widget>

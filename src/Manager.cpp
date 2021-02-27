@@ -138,7 +138,8 @@ void Manager::runOptimization()
     const auto &sets          = currentProfile().getGeneralSettings();
     const QString &dirToClean = sets.bEnableOutputPath() ? sets.sOutputPath() : sets.sInputPath();
 
-    Filesystem::deleteEmptyDirectories(dirToClean, currentProfile().getFileTypes());
+    if (getProfiles().commonSettings().bDeleteEmptyFolders())
+        Filesystem::deleteEmptyDirectories(dirToClean, currentProfile().getFileTypes());
 
     const auto endTime     = QDateTime::currentDateTime();
     const auto elapsedTime = endTime.secsTo(startTime);

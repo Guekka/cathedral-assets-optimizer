@@ -64,6 +64,8 @@ MainWindow::MainWindow()
                          setTheme(theme);
                      });
 
+    connectWrapper(*ui_->actionDelete_empty_directories, commonSettings.bDeleteEmptyFolders);
+
     QObject::connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
         getProfiles().setCurrent(ui_->profiles->itemText(idx));
         reconnectThis();

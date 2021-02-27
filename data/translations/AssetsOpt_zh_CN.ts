@@ -500,22 +500,22 @@ They cannot contain the same pattern</source>
         <translation type="vanished">BSA最大值不能为负数</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="46"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
         <source>BSA Max size cannot be smaller than 0.5Gb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="49"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
         <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
         <translation>该路径长度小于5。路径： &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="54"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
         <source>Input path does not exist. Path: &apos;%1&apos;</source>
         <translation>输入路径不存在。路径： &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="60"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
         <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
  If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
 Path: &apos;%2&apos;</source>
@@ -523,12 +523,12 @@ Path: &apos;%2&apos;</source>
 如果您确定要转制这个文件夹内的所有模组，请在该文件夹下创建一个名为 &apos;%1&apos; 的文件。这是为了保证您模组的安全。路径： &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="70"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
         <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
         <translation>您选择的是“置入一个模组，但这个路径似乎是mod管理器下的模组路径。路径：&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="80"/>
+        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
         <source>Output path does not exist. Path: &apos;%1&apos;</source>
         <translation>输出路径不存在。路径： &apos;%1&apos;</translation>
     </message>
@@ -744,8 +744,8 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="154"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="216"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="257"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="218"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="259"/>
         <source>Open Directory</source>
         <translation>选择文件夹</translation>
     </message>
@@ -782,99 +782,104 @@ The full CAO experience. With profiles and patterns, you can fully customize how
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="292"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="293"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="299"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="300"/>
         <source>Output</source>
         <translation>输出设置</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="306"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="307"/>
         <source>Supporting CAO</source>
         <translation>支持作者</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="312"/>
-        <location filename="../../src/GUI/MainWindow.ui" line="346"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="97"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="313"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="347"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="99"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="331"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="332"/>
         <source>Enable dark theme</source>
         <translation>启用暗色主题</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="336"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="337"/>
         <source>Documentation</source>
         <translation>N网页面</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="341"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="342"/>
         <source>Discord</source>
         <translation>讨论交流</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="351"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="352"/>
         <source>About Qt</source>
         <translation>关于Qt</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="356"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="357"/>
         <source>Donate</source>
         <translation>捐赠</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="361"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="362"/>
         <source>Select GPU</source>
         <translation>选择 GPU</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="369"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="370"/>
         <source>Enable output redirection</source>
         <translation>启用自定义输出路径</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="374"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="375"/>
         <source>Set output path</source>
         <translation>设置输出路径</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.ui" line="379"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="380"/>
         <source>Change level</source>
         <translation>更改转制等级</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="140"/>
+        <location filename="../../src/GUI/MainWindow.ui" line="391"/>
+        <source>Delete empty directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/MainWindow.cpp" line="142"/>
         <source>Pattern not found</source>
         <translation>未找到该处理模式</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="141"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="143"/>
         <source>Couldn&apos;t find the pattern &apos;*&apos;. Please reinstall the application</source>
         <translation>找不到默认处理模式&apos;*&apos;。请尝试重新安装应用程序</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="342"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="344"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="357"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="359"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="358"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="360"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation>遇到异常，进程被迫停止：</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="397"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="399"/>
         <source>Welcome to %1 %2</source>
         <translation>欢迎使用 %1 %2</translation>
     </message>
