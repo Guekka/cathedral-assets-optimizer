@@ -44,7 +44,7 @@ CommandState TextureConvert::isApplicable(File &file) const
         return CommandState::NotRequired;
 
     //Cannot process very small textures
-    if (std::min(texResource->GetMetadata().width, texResource->GetMetadata().height) < 2)
+    if (std::min(texResource->GetMetadata().width, texResource->GetMetadata().height) < 4)
         return CommandState::NotRequired;
 
     const DXGI_FORMAT origFormat    = texResource->origFormat;
