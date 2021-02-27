@@ -27,6 +27,6 @@ public:
     virtual void setJSON(const nlohmann::json &j) { json_ = j; }
 
 protected:
-    mutable nlohmann::json json_; //TODO why mutable ?
+    nlohmann::json json_;
 };
 } // namespace CAO
