@@ -183,7 +183,7 @@ add_library(CAO_LIB STATIC ${SOURCES}
 
 #Unity build
 set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD true)
-set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD_BATCH_SIZE 0)
+set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD_BATCH_SIZE 6)
 
 
 #Include source

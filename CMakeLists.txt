@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 include_guard(GLOBAL)
 
 project(Cathedral_Assets_Optimizer VERSION 6.0.0 LANGUAGES CXX)
