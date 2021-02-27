@@ -62,6 +62,7 @@ void MeshesOptimizer::optimize(const QString &filepath)
     options.targetVersion.SetFile(Profiles::meshesFileVersion());
     options.targetVersion.SetStream(Profiles::meshesStream());
     options.targetVersion.SetUser(Profiles::meshesUser());
+    options.removeParallax = false;
 
     const ScanResult scanResult = scan(nif);
     const QString relativeFilePath = filepath.mid(filepath.indexOf("/meshes/", Qt::CaseInsensitive)
