@@ -13,8 +13,8 @@ const QStringList texturesAssets{"dds"};
 \brief List of standard assets. Includes uncompressable assets but does not include textures assets 
 */
 const QStringList standardAssets{"bgem", "bgsm", "bto", "btr", "btt", "dlodsettings", "dtl",
-                                 "egm",  "gid",  "hkx", "lod", "lst", "nif",          "pex",
-                                 "png",  "psc",  "seq", "swf", "tri", "txt"};
+                                 "egm",  "gid",  "hkx", "hkt", "lod", "lst",          "nif",
+                                 "pex",  "png",  "psc", "seq", "swf", "tri",          "txt"};
 /*!
 \brief List of uncompressable assets (sounds)
 */
