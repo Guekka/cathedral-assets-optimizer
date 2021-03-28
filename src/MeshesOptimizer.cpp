@@ -188,8 +188,13 @@ bool MeshesOptimizer::renameReferencedTexturesExtension(NifFile &file)
 std::tuple<bool, NifFile> MeshesOptimizer::loadMesh(const QString &filepath) const
 {
     PLOG_VERBOSE << "Loading mesh: " + filepath;
+
+    NifLoadOptions loadOptions;
+    loadOptions.isTerrain = (filepath.endsWith("btr", Qt::CaseInsensitive)
+                             || filepath.endsWith("bto", Qt::CaseInsensitive));
+
     NifFile nif;
-    if (nif.Load(filepath.toStdU16String())) {
+    if (nif.Load(filepath.toStdU16String(), loadOptions)) {
         PLOG_ERROR << "Cannot load mesh: " + filepath;
         return std::make_tuple(false, std::move(nif));
     }
