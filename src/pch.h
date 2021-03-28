@@ -60,9 +60,9 @@
 #include "Logger.h"
 #include "TexturesFormats.h"
 #include "libs/DirectXTex/DirectXTex.h"
-#include "libs/NIF/NifFile.h"
 #include "libs/hkxcmd/hkfutils.h"
 #include "libs/libbsarch/BSArchiveAuto.h"
+#include "libs/nifly/include/NifFile.hpp"
 /*----------------------*/
 
 #endif

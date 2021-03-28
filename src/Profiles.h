@@ -11,6 +11,8 @@
 
 constexpr double GigaByte = 1024 * 1024 * 1024;
 
+Q_DECLARE_METATYPE(nifly::NiFileVersion)
+
 class Profiles final : public QObject
 {
 public:
@@ -30,7 +32,6 @@ public:
 
     //Declaring enums to Qt system
     Q_ENUM(bsa_archive_type_e)
-    Q_ENUM(NiFileVersion)
     Q_ENUM(DXGI_FORMAT)
 
     //static getters
@@ -50,7 +51,10 @@ public:
     [[nodiscard]] static QString bsaTexturesSuffix() { return getInstance()._bsaTexturesSuffix; }
 
     [[nodiscard]] static bool meshesEnabled() { return getInstance()._meshesEnabled; }
-    [[nodiscard]] static NiFileVersion meshesFileVersion() { return getInstance()._meshesFileVersion; }
+    [[nodiscard]] static nifly::NiFileVersion meshesFileVersion()
+    {
+        return getInstance()._meshesFileVersion;
+    }
     [[nodiscard]] static uint meshesStream() { return getInstance()._meshesStream; }
     [[nodiscard]] static uint meshesUser() { return getInstance()._meshesUser; }
 
@@ -96,7 +100,7 @@ private:
     QString _bsaTexturesSuffix;
 
     bool _meshesEnabled;
-    NiFileVersion _meshesFileVersion;
+    nifly::NiFileVersion _meshesFileVersion;
     uint _meshesStream;
     uint _meshesUser;
 

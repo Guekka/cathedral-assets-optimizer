@@ -30,7 +30,7 @@ public:
    * \param nif The mesh to scan
    * \return An enum with the scan results
    */
-    ScanResult scan(NifFile &nif) const;
+    ScanResult scan(nifly::NifFile &nif) const;
     /*!
    * \brief Optimize the providen mesh according to its type
    * \param filePath The path of the mesh to optimize
@@ -47,10 +47,10 @@ public:
      * \brief If the mesh references a TGA texture, it will replace it with DDS. 
      * \param file The mesh to process
      */
-    bool renameReferencedTexturesExtension(NifFile &file);
+    bool renameReferencedTexturesExtension(nifly::NifFile &file);
 
-    std::tuple<bool, NifFile> loadMesh(const QString &filepath) const;
-    bool saveMesh(NifFile &nif, const QString &filepath) const;
+    std::tuple<bool, nifly::NifFile> loadMesh(const QString &filepath) const;
+    bool saveMesh(nifly::NifFile &nif, const QString &filepath) const;
 
 private:
     QStringList headparts;

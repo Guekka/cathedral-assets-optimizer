@@ -68,8 +68,8 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
         _ui->meshesUser->setItemData(0, 11);
         _ui->meshesUser->setItemData(1, 12);
 
-        _ui->meshesVersion->setItemData(0, V20_0_0_5);
-        _ui->meshesVersion->setItemData(1, V20_2_0_7);
+        _ui->meshesVersion->setItemData(0, nifly::V20_0_0_5);
+        _ui->meshesVersion->setItemData(1, nifly::V20_2_0_7);
 
         _ui->meshesStream->setItemData(0, 82);
         _ui->meshesStream->setItemData(1, 83);

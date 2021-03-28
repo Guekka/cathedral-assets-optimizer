@@ -6,6 +6,8 @@
 #include "MeshesOptimizer.h"
 #include "FilesystemOperations.h"
 
+using namespace nifly;
+
 MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel, bool resaveMeshes)
     : bMeshesHeadparts(processHeadparts), bMeshesResave(resaveMeshes),
       iMeshesOptimizationLevel(optimizationLevel)
@@ -16,19 +18,15 @@ ScanResult MeshesOptimizer::scan(NifFile &nif) const
     if (!nif.IsValid())
         return doNotProcess;
 
-    ScanResult result = good;
-
     NiVersion version;
     version.SetFile(Profiles::meshesFileVersion());
     version.SetStream(Profiles::meshesStream());
     version.SetUser(Profiles::meshesUser());
 
     if (!nif.IsSSECompatible() || version.IsSK())
-        result = criticalIssue;
+        return criticalIssue;
     else
-        result = doNotProcess;
-
-    return result;
+        return good;
 }
 
 void MeshesOptimizer::listHeadparts(const QString &directory)
@@ -88,18 +86,12 @@ void MeshesOptimizer::optimize(const QString &filepath)
         case good:
         case lightIssue:
             if (iMeshesOptimizationLevel >= 3) {
-                options.mandatoryOnly = false;
                 PLOG_INFO << "Optimizing: " + filepath + " due to full optimization";
-                nif.OptimizeFor(options);
-            } else if (iMeshesOptimizationLevel >= 2) {
-                options.mandatoryOnly = true;
-                PLOG_INFO << "Optimizing: " + filepath + " due to medium optimization";
                 nif.OptimizeFor(options);
             }
             break;
         case criticalIssue:
             if (iMeshesOptimizationLevel >= 1) {
-                options.mandatoryOnly = false;
                 PLOG_INFO << "Optimizing: " + filepath + " due to necessary optimization";
                 nif.OptimizeFor(options);
             }

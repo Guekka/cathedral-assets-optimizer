@@ -83,7 +83,7 @@ MainOptimizer::packBsa(const QString& folder)
         PLOG_INFO << "Creating BSA...";
         _bsaOpt.packAll(folder, _optOptions.bBsaLeastBSA);
         if (_optOptions.bBsaCreateDummies)
-          PluginsOperations::makeDummyPlugins(folder);
+            PluginsOperations::makeDummyPlugins(folder);
     }
 }
 

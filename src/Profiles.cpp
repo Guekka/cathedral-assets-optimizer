@@ -135,7 +135,8 @@ void Profiles::readFromIni()
     _profileSettings->endGroup();
     _profileSettings->beginGroup("Meshes");
     _meshesEnabled = _profileSettings->value("meshesEnabled").toBool();
-    _meshesFileVersion = static_cast<NiFileVersion>(_profileSettings->value("meshesFileVersion").toInt());
+    _meshesFileVersion = static_cast<nifly::NiFileVersion>(
+        _profileSettings->value("meshesFileVersion").toInt());
     _meshesStream = _profileSettings->value("meshesStream").toUInt();
     _meshesUser = _profileSettings->value("meshesUser").toUInt();
     _profileSettings->endGroup();
@@ -219,7 +220,7 @@ void Profiles::readFromUi(Ui::MainWindow *ui)
 
     _meshesUser = ui->meshesUser->currentData().toUInt();
     _meshesStream = ui->meshesStream->currentData().toUInt();
-    _meshesFileVersion = ui->meshesVersion->currentData().value<NiFileVersion>();
+    _meshesFileVersion = ui->meshesVersion->currentData().value<nifly::NiFileVersion>();
     //Animation format is not working currently, thus not added to UI
 
     _texturesFormat = ui->texturesOutputFormat->currentData().value<DXGI_FORMAT>();
