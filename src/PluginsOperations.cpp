@@ -17,8 +17,10 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
 
         it.next();
 
-        if (!checkIfBsaHasPlugin(it.filePath()) && it.fileName().endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
-        {
+        if (!it.fileName().endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
+            continue;
+
+        if (!checkIfBsaHasPlugin(it.filePath())) {
             if (it.fileName().contains(Profiles::bsaTexturesSuffix(), Qt::CaseInsensitive))
             {
                 espName = it.fileName().remove(Profiles::bsaTexturesSuffix(), Qt::CaseInsensitive) + ".esp";
@@ -37,52 +39,40 @@ void PluginsOperations::makeDummyPlugins(const QString &folderPath)
 
 QString PluginsOperations::findPlugin(const QString &folderPath, const BSAType &bsaType)
 {
+    const auto suffix = bsaType == BSAType::TexturesBsa ? Profiles::bsaTexturesSuffix()
+                                                        : Profiles::bsaSuffix();
+    QDir folder(folderPath);
+
+    QStringList espNames;
     QDirIterator it(folderPath);
-    QStringList espName;
-    QString bsaName;
-
-    while (it.hasNext())
-    {
+    while (it.hasNext()) {
         it.next();
-
-        if (it.fileName().contains(QRegularExpression("\\.es[plm]$")))
-            espName << it.fileName();
-
-        if (it.fileName().endsWith(Profiles::bsaSuffix(), Qt::CaseInsensitive)
-            && !it.fileName().endsWith(Profiles::bsaTexturesSuffix(), Qt::CaseInsensitive))
-        {
-            bsaName = it.fileName().chopped(4) + ".esp";
-        }
+        const QString espName = it.fileName().remove(QRegularExpression("\\.es[lmp]"));
+        if (espName == it.fileName() || espName.isEmpty())
+            continue;
+        espNames << espName;
     }
-    if (!bsaName.isEmpty() && espName.isEmpty())
-        espName << bsaName;
 
-    if (espName.isEmpty())
-        espName << QDir(folderPath).dirName() + ".esp";
+    if (espNames.isEmpty())
+        espNames << QDir(folderPath).dirName();
 
-    QString returnedEsp;
-    int counter = 0;
+    auto checkPlugin = [&](auto &&esp) {
+        const QString &bsaName = folder.filePath(esp + suffix);
+        return !QFile(bsaName).exists();
+    };
 
-    do
-    {
-        for (const auto &esp : espName)
-        {
-            const bool texturesBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaTexturesSuffix()).exists()
-                                         && bsaType == TexturesBsa;
+    for (const auto &esp : espNames) {
+        if (checkPlugin(esp))
+            return esp;
+    }
 
-            const bool standardBsaGood = !QFile(folderPath + "/" + esp.chopped(4) + Profiles::bsaSuffix()).exists()
-                                         && bsaType != TexturesBsa;
-
-            if (texturesBsaGood || standardBsaGood)
-                returnedEsp = esp;
-        }
-        if (returnedEsp.isEmpty())
-            espName << espName.last().chopped(4) + QString::number(counter) + ".esp";
-
-        ++counter;
-    } while (returnedEsp.isEmpty());
-
-    return returnedEsp.remove(QRegularExpression("\\.es[plm]$"));
+    const QString base = espNames.first();
+    for (size_t i = 0; i < 256; ++i) {
+        const QString &newEspName = base + QString::number(i);
+        if (checkPlugin(newEspName))
+            return newEspName;
+    }
+    throw std::runtime_error("No plugin name found after 256 tries.");
 }
 
 bool PluginsOperations::checkIfBsaHasPlugin(const QString &bsaPath)
