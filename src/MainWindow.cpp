@@ -77,9 +77,10 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
         _ui->meshesStream->setItemData(3, 130);
 
         _ui->texturesOutputFormat->setItemData(0, DXGI_FORMAT_BC7_UNORM);
-        _ui->texturesOutputFormat->setItemData(1, DXGI_FORMAT_BC3_UNORM);
-        _ui->texturesOutputFormat->setItemData(2, DXGI_FORMAT_BC1_UNORM);
-        _ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_R8G8B8A8_UNORM);
+        _ui->texturesOutputFormat->setItemData(1, DXGI_FORMAT_BC5_UNORM);
+        _ui->texturesOutputFormat->setItemData(2, DXGI_FORMAT_BC3_UNORM);
+        _ui->texturesOutputFormat->setItemData(3, DXGI_FORMAT_BC1_UNORM);
+        _ui->texturesOutputFormat->setItemData(4, DXGI_FORMAT_R8G8B8A8_UNORM);
     }
 
     //Connecting widgets
