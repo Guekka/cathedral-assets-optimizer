@@ -50,7 +50,7 @@ void BSAOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
 
-int BSAOptimizer::create(BSA &bsa) const
+int BSAOptimizer::create(BSA &bsa, bool allowCompression) const
 {
     auto rootPath = new QString(QFileInfo(bsa.path).path());
     const QDir bsaDir(*rootPath);
@@ -64,7 +64,7 @@ int BSAOptimizer::create(BSA &bsa) const
 
     BSArchiveAuto archive(*rootPath);
     archive.setShareData(true);
-    archive.setCompressed(true);
+    archive.setCompressed(allowCompression);
     archive.setDDSCallback(&BSAOptimizer::DDSCallback, rootPath);
 
     //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
@@ -114,8 +114,7 @@ int BSAOptimizer::create(BSA &bsa) const
     return 0;
 }
 
-void
-BSAOptimizer::packAll(const QString& folderPath, bool mergeBsa) const
+void BSAOptimizer::packAll(const QString &folderPath, bool mergeBsa, bool allowCompression) const
 {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
@@ -159,7 +158,7 @@ BSAOptimizer::packAll(const QString& folderPath, bool mergeBsa) const
     for (int i = 0; i < bsas.size(); ++i)
     {
         BSA::nameBsa({&bsas[i]}, folderPath);
-        create(bsas[i]);
+        create(bsas[i], allowCompression);
     }
 }
 

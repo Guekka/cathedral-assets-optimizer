@@ -41,6 +41,7 @@ public:
     bool bBsaLeastBSA = false;
     bool bBsaProcessContent = false;
     bool bBsaCreateDummies = true;
+    bool bBsaCompress = true;
 
     bool bAnimationsOptimization = false;
 

@@ -224,10 +224,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Process BSAs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size of the files in GB. Increasing it will increase the number of files stored per BSA, but you might reach the hard limit of BSA size, causing the game to crash.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -495,6 +491,18 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Save UI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extra</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compress BSAs</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -225,7 +225,7 @@
     </message>
     <message>
         <source>Process BSAs</source>
-        <translation>BSA 작업</translation>
+        <translation type="vanished">BSA 작업</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size of the files in GB. Increasing it will increase the number of files stored per BSA, but you might reach the hard limit of BSA size, causing the game to crash.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -511,6 +511,18 @@ Mozilla Public License를 참조하십시오.</translation>
     <message>
         <source>Save UI</source>
         <translation>UI 저장</translation>
+    </message>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extra</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compress BSAs</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
