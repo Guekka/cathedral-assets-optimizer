@@ -4,53 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "OptionsCAO.h"
 
-OptionsCAO::OptionsCAO()
-  : mutex(new QMutex)
-{}
-
-OptionsCAO::OptionsCAO(const OptionsCAO& other)
-  : bBsaExtract(other.bBsaExtract)
-  , bBsaCreate(other.bBsaCreate)
-  , bBsaDeleteBackup(other.bBsaDeleteBackup)
-  , bBsaProcessContent(other.bBsaProcessContent)
-  ,
-
-  bAnimationsOptimization(other.bAnimationsOptimization)
-  ,
-
-  bDryRun(other.bDryRun)
-  ,
-
-  iMeshesOptimizationLevel(other.iMeshesOptimizationLevel)
-  , bMeshesHeadparts(other.bMeshesHeadparts)
-  , bMeshesResave(other.bMeshesResave)
-  ,
-
-  bTexturesNecessary(other.bTexturesNecessary)
-  , bTexturesCompress(other.bTexturesCompress)
-  , bTexturesMipmaps(other.bTexturesMipmaps)
-  ,
-
-  bTexturesResizeSize(other.bTexturesResizeSize)
-  , iTexturesTargetHeight(other.iTexturesTargetHeight)
-  , iTexturesTargetWidth(other.iTexturesTargetWidth)
-  ,
-
-  bTexturesResizeRatio(other.bTexturesResizeRatio)
-  , iTexturesTargetWidthRatio(other.iTexturesTargetWidthRatio)
-  , iTexturesTargetHeightRatio(other.iTexturesTargetHeightRatio)
-  , bDebugLog(other.bDebugLog)
-  , mode(other.mode)
-  , userPath(other.userPath)
-  , mutex(new QMutex)
-
-{}
-
-void
-OptionsCAO::saveToIni(QSettings* settings)
+void OptionsCAO::saveToIni(QSettings *settings)
 {
-  QMutexLocker lock(mutex);
-
   // General
   settings->setValue("bDryRun", bDryRun);
   settings->setValue("bDebugLog", bDebugLog);
@@ -98,8 +53,6 @@ OptionsCAO::saveToIni(QSettings* settings)
 void
 OptionsCAO::readFromIni(QSettings* settings)
 {
-  QMutexLocker lock(mutex);
-
   if (!QFile(settings->fileName()).exists())
     return;
 
@@ -154,8 +107,6 @@ OptionsCAO::readFromIni(QSettings* settings)
 void
 OptionsCAO::saveToUi(Ui::MainWindow* ui)
 {
-  QMutexLocker lock(mutex);
-
   // BSA
   ui->bsaExtractCheckBox->setChecked(bBsaExtract);
   ui->bsaCreateCheckbox->setChecked(bBsaCreate);
@@ -229,8 +180,6 @@ OptionsCAO::saveToUi(Ui::MainWindow* ui)
 void
 OptionsCAO::readFromUi(Ui::MainWindow* ui)
 {
-  QMutexLocker lock(mutex);
-
   // BSA
   const bool bsaEnabled =
     ui->bsaTab->isEnabled() && ui->bsaBaseGroupBox->isEnabled();
@@ -297,8 +246,6 @@ OptionsCAO::readFromUi(Ui::MainWindow* ui)
 void
 OptionsCAO::parseArguments(const QStringList& args)
 {
-  QMutexLocker lock(mutex);
-
   if (args.count() < 4)
     throw std::runtime_error("Not enough arguments");
   QCommandLineParser parser;

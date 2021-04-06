@@ -20,9 +20,6 @@ namespace plog
 class OptionsCAO final : public QObject
 {
 public:
-    OptionsCAO();
-    OptionsCAO(const OptionsCAO &other);
-
     void parseArguments(const QStringList &args);
 
     void saveToIni(QSettings *settings);
@@ -83,7 +80,4 @@ public:
     */
     QString userPath;
     /*-----------END OF VARS---------------*/
-
-private:
-    QMutex *mutex;
 };
