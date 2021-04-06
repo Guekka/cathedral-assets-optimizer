@@ -451,11 +451,11 @@ Mozilla Public License를 참조하십시오.</translation>
     </message>
     <message>
         <source>Save unsaved changes</source>
-        <translation>저장되지 않은 파일 저장하기</translation>
+        <translation type="vanished">저장되지 않은 파일 저장하기</translation>
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>저장되지 않은 파일들이 있습니다. 파일을 저장할까요? &apos;모두 예(Yes to All)&apos; 를 눌러 자동 저장 기능을 활성화 할 수 있습니다.</translation>
+        <translation type="vanished">저장되지 않은 파일들이 있습니다. 파일을 저장할까요? &apos;모두 예(Yes to All)&apos; 를 눌러 자동 저장 기능을 활성화 할 수 있습니다.</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>

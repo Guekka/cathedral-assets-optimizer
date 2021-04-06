@@ -449,11 +449,11 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Save unsaved changes</source>
-        <translation>Save unsaved changes</translation>
+        <translation type="vanished">Save unsaved changes</translation>
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</translation>
+        <translation type="vanished">You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>

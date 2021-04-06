@@ -449,11 +449,11 @@ Zie de Mozilla Public License</translation>
     </message>
     <message>
         <source>Save unsaved changes</source>
-        <translation>Onopgeslagen aanpassingen opslaan</translation>
+        <translation type="vanished">Onopgeslagen aanpassingen opslaan</translation>
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>Je hebt onopgeslagen aanpassingen. Wil je ze opslaan? Je kunt op &apos;Ja voor alle&apos; klikken om altijd onopgeslagen aanpassingen op te slaan.</translation>
+        <translation type="vanished">Je hebt onopgeslagen aanpassingen. Wil je ze opslaan? Je kunt op &apos;Ja voor alle&apos; klikken om altijd onopgeslagen aanpassingen op te slaan.</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>

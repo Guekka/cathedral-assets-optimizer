@@ -448,11 +448,11 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     </message>
     <message>
         <source>Save unsaved changes</source>
-        <translation>Sauvegarder les changements</translation>
+        <translation type="vanished">Sauvegarder les changements</translation>
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>Vous avez des changements non sauvegardés. Voulez-vous les sauvegarder ? Vous pouvez aussi appuyer sur &quot;Oui pour tous&quot; pour qu&apos;ils soient toujours sauvegardés.</translation>
+        <translation type="vanished">Vous avez des changements non sauvegardés. Voulez-vous les sauvegarder ? Vous pouvez aussi appuyer sur &quot;Oui pour tous&quot; pour qu&apos;ils soient toujours sauvegardés.</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>

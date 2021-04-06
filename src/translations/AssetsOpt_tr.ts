@@ -449,11 +449,11 @@ Bu programın dağıtımı, yararlı olabilmesi adına yapılmıştır fakat Bİ
     </message>
     <message>
         <source>Save unsaved changes</source>
-        <translation>Kaydedilmemiş değişiklikleri kaydet</translation>
+        <translation type="vanished">Kaydedilmemiş değişiklikleri kaydet</translation>
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>Kaydedilmemiş değişiklikleriniz mevcut. Bu değişiklikleri kaydetmek ister misiniz? Ayrıca, her zaman kaydedilmemiş değişiklikleri kaydetmek için &apos;Hepsine evet&apos;e tıklayabilirsiniz.</translation>
+        <translation type="vanished">Kaydedilmemiş değişiklikleriniz mevcut. Bu değişiklikleri kaydetmek ister misiniz? Ayrıca, her zaman kaydedilmemiş değişiklikleri kaydetmek için &apos;Hepsine evet&apos;e tıklayabilirsiniz.</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>

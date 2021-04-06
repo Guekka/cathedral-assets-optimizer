@@ -449,11 +449,11 @@ G&apos;k制作
     </message>
     <message>
         <source>Save unsaved changes</source>
-        <translation>保存更改</translation>
+        <translation type="vanished">保存更改</translation>
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>您尚未保存更改。是否保存？ 您也可以选择“全部同意”以始终保存更改</translation>
+        <translation type="vanished">您尚未保存更改。是否保存？ 您也可以选择“全部同意”以始终保存更改</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>

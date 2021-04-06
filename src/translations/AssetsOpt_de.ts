@@ -449,11 +449,11 @@ Dieses Programm wird verteilt der Hoffnung dass es nützlich ist aber OHNE GEWÄ
     </message>
     <message>
         <source>Save unsaved changes</source>
-        <translation>Ungespeicherte Änderungen speichern</translation>
+        <translation type="vanished">Ungespeicherte Änderungen speichern</translation>
     </message>
     <message>
         <source>You have unsaved changes. Do you want to save them? You can also press &apos;Yes to all&apos; to always save unsaved changes</source>
-        <translation>Du hast umgespeicherte Änderungen. Willst du diese speichern? Du kannst auch &apos;ja zu allen&apos; sagen um immer ungespeicherte Änderung zu speichern.</translation>
+        <translation type="vanished">Du hast umgespeicherte Änderungen. Willst du diese speichern? Du kannst auch &apos;ja zu allen&apos; sagen um immer ungespeicherte Änderung zu speichern.</translation>
     </message>
     <message>
         <source>You are about to create a new profile. It will create a new directory in &apos;CAO/profiles&apos;. Please check it out after creation, some files will be created inside it.</source>

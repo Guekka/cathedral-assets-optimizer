@@ -10,40 +10,6 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
     _ui->setupUi(this);
     setAcceptDrops(true);
 
-    //Connecting all settings changes to a variable
-    {
-        const auto &checkbox = this->findChildren<QCheckBox *>();
-        const auto &radiobutton = this->findChildren<QRadioButton *>();
-        const auto &lineEdit = this->findChildren<QLineEdit *>();
-        const auto &list = this->findChildren<QListWidget *>();
-        const auto &comboBox = this->findChildren<QComboBox *>();
-        const auto &spinBox = this->findChildren<QDoubleSpinBox *>();
-        const auto &groupBox = this->findChildren<QGroupBox *>();
-
-        for (const auto &c : checkbox)
-            connect(c, &QAbstractButton::pressed, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &r : radiobutton)
-            connect(r, &QAbstractButton::pressed, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &l : lineEdit)
-            connect(l, &QLineEdit::textEdited, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &l : list)
-            connect(l, &QListWidget::itemChanged, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &c : comboBox)
-            connect(c, QOverload<int>::of(&QComboBox::activated), this, [this] {
-                this->_settingsChanged = true;
-            });
-
-        for (const auto &s : spinBox)
-            connect(s, &QDoubleSpinBox::editingFinished, this, [this] { this->_settingsChanged = true; });
-
-        for (const auto &g : groupBox)
-            connect(g, &QGroupBox::toggled, this, [this] { this->_settingsChanged = true; });
-    }
-
     //Setting data for widgets
 
     //Profiles
@@ -135,10 +101,7 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
                                                                    | QFileDialog::DontResolveSymlinks);
         if (!dir.isEmpty())
             _ui->userPathTextEdit->setText(dir);
-        this->_settingsChanged = true;
     });
-
-    connect(_ui->userPathTextEdit, &QLineEdit::textChanged, this, [this] { this->_settingsChanged = true; });
 
     connect(_ui->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
 
@@ -172,7 +135,6 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
         });
 
         connect(_ui->actionEnable_debug_log, &QAction::triggered, this, [this] {
-            this->_settingsChanged = true;
             this->saveUi();
         });
 
@@ -205,55 +167,24 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
         });
     }
 
+    loadUi();
+
     //Loading remembered settings
-    _settingsChanged = false;
     setGameMode(Profiles::currentProfile());
 
     firstStart();
-
-    _settingsChanged = false;
 }
 
 void MainWindow::saveUi()
 {
     Profiles::commonSettings()->setValue("bShowAdvancedSettings", _ui->advancedSettingsCheckbox->isChecked());
     Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
-    Profiles::commonSettings()->setValue("alwaysSaveSettings", _alwaysSaveSettings);
     Profiles::commonSettings()->setValue("showTutorial", _showTutorials);
-
-    if (!_settingsChanged)
-    {
-        _options.saveToUi(_ui); //Restoring previous settings in case an unregistered change happened
-        return;
-    }
-
-    if (!_alwaysSaveSettings)
-    {
-        QMessageBox box(QMessageBox::Information,
-                        tr("Save unsaved changes"),
-                        tr("You have unsaved changes. Do you want to save them? You can also press 'Yes to "
-                           "all' to always "
-                           "save unsaved changes"),
-                        QMessageBox::No | QMessageBox::Yes | QMessageBox::YesToAll);
-
-        box.exec();
-
-        if (box.result() == QMessageBox::No)
-        {
-            _options.saveToUi(_ui); //Restoring previous settings
-            return;
-        }
-
-        if (box.result() == QMessageBox::YesToAll)
-            _alwaysSaveSettings = true;
-    }
 
     _options.readFromUi(_ui);
     _options.saveToIni(Profiles::optionsSettings());
     Profiles::getInstance().readFromUi(_ui);
     Profiles::getInstance().saveToIni();
-
-    _settingsChanged = false;
 }
 
 void MainWindow::loadUi()
@@ -263,17 +194,13 @@ void MainWindow::loadUi()
         Profiles::commonSettings()->value("bShowAdvancedSettings").toBool());
     _ui->presets->setCurrentIndex(
         _ui->presets->findText(Profiles::commonSettings()->value("profile").toString()));
-    _alwaysSaveSettings = Profiles::commonSettings()->value("alwaysSaveSettings").toBool();
     _showTutorials = Profiles::commonSettings()->value("showTutorial", true).toBool();
     _ui->actionShow_tutorials->setChecked(_showTutorials);
 
     _options.readFromIni(Profiles::optionsSettings());
     _options.saveToUi(_ui);
 
-    if (_ui->advancedSettingsCheckbox->isChecked())
-        Profiles::getInstance().saveToUi(_ui);
-
-    _settingsChanged = false;
+    Profiles::getInstance().saveToUi(_ui);
 }
 
 void MainWindow::resetUi() const
@@ -338,7 +265,6 @@ void MainWindow::createProfile()
 void MainWindow::setDarkTheme(const bool &enabled)
 {
     _ui->actionEnableDarkTheme->setChecked(enabled);
-    _settingsChanged = true;
 
     if (enabled)
     {
@@ -385,6 +311,8 @@ void MainWindow::endProcess()
     _ui->processButton->setDisabled(false);
     _bLockVariables = false;
 
+    saveUi();
+
     if (_caoProcess)
         _caoProcess->disconnect();
 
@@ -410,8 +338,7 @@ void MainWindow::updateLog() const
 
 void MainWindow::setGameMode(const QString &mode)
 {
-    if (_settingsChanged)
-        saveUi();
+    saveUi();
 
     //Resetting the window
     resetUi();
@@ -452,7 +379,6 @@ void MainWindow::setAdvancedSettingsEnabled(const bool &value)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (_settingsChanged)
         saveUi();
     endProcess();
     event->accept();
@@ -469,10 +395,7 @@ void MainWindow::dropEvent(QDropEvent *e)
     const QString &fileName = e->mimeData()->urls().at(0).toLocalFile();
     QDir dir;
     if (dir.exists(fileName))
-    {
         _ui->userPathTextEdit->setText(QDir::cleanPath(fileName));
-        _settingsChanged = true;
-    }
 }
 
 void MainWindow::showTutorialWindow(const QString &title, const QString &text)
