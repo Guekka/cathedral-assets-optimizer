@@ -23,10 +23,8 @@ BSAOptimizer::BSAOptimizer()
     }
 }
 
-void BSAOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
+void BSAOptimizer::extract(const QString &bsaPath, const bool &deleteBackup) const
 {
-    bsaPath = backup(bsaPath);
-
     auto rootPath = new QString(QFileInfo(bsaPath).path());
 
     try
@@ -46,6 +44,8 @@ void BSAOptimizer::extract(QString bsaPath, const bool &deleteBackup) const
 
     if (deleteBackup)
         QFile::remove(bsaPath);
+    else
+        backup(bsaPath);
 
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }

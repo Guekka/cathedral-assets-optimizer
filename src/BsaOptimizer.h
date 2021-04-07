@@ -27,7 +27,7 @@ public:
    * \param bsaPath The path of the BSA to extract
    * \param deleteBackup Deletes the backup the existing bsa
    */
-    void extract(QString bsaPath, const bool &deleteBackup) const;
+    void extract(const QString &bsaPath, const bool &deleteBackup) const;
     /*!
    * \brief Creates a BSA containing all the files given as argument
    * \param bsa The BSA to create
