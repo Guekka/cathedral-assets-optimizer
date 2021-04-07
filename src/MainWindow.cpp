@@ -181,6 +181,9 @@ void MainWindow::saveUi()
     Profiles::commonSettings()->setValue("bDarkMode", _ui->actionEnableDarkTheme->isChecked());
     Profiles::commonSettings()->setValue("showTutorial", _showTutorials);
 
+    if (_bLockVariables)
+        return;
+
     _options.readFromUi(_ui);
     _options.saveToIni(Profiles::optionsSettings());
     Profiles::getInstance().readFromUi(_ui);
