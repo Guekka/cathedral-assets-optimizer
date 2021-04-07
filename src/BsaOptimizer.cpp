@@ -107,7 +107,7 @@ int BSAOptimizer::create(BSA &bsa, bool allowCompression) const
         return 2;
     }
 
-    PLOG_INFO << "BSA successfully compressed: " + bsa.path;
+    PLOG_INFO << "BSA successfully created: " + bsa.path;
     for (const auto &file : bsa.files)
         QFile::remove(file);
 
