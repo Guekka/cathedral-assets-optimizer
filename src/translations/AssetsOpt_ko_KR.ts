@@ -475,11 +475,11 @@ Mozilla Public License를 참조하십시오.</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">에러</translation>
+        <translation>에러</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">에러가 발생하여 처리가 중단되었습니다 :</translation>
+        <translation>에러가 발생하여 처리가 중단되었습니다 :</translation>
     </message>
     <message>
         <source>Done</source>

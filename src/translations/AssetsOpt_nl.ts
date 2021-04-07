@@ -473,11 +473,11 @@ Zie de Mozilla Public License</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">Fout</translation>
+        <translation>Fout</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">Er is een fout opgetreden en het proces was geforceerd om te stoppen:</translation>
+        <translation>Er is een fout opgetreden en het proces was geforceerd om te stoppen:</translation>
     </message>
     <message>
         <source>Done</source>

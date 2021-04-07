@@ -473,11 +473,11 @@ Bu programın dağıtımı, yararlı olabilmesi adına yapılmıştır fakat Bİ
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">Hata</translation>
+        <translation>Hata</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">Bir istisna meydana geldi ve işlem zorla durduruldu:</translation>
+        <translation>Bir istisna meydana geldi ve işlem zorla durduruldu:</translation>
     </message>
     <message>
         <source>Done</source>

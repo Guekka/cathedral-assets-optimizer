@@ -497,6 +497,14 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
         <source>Compress BSAs</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An exception has been encountered and the process was forced to stop: </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TexturesFormatSelectDialog</name>

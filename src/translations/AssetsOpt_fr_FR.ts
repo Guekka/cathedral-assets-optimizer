@@ -472,11 +472,11 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">Une exception a été rencontrée et le programme a été contraint de s&apos;arrêter:</translation>
+        <translation>Une exception a été rencontrée et le programme a été contraint de s&apos;arrêter:</translation>
     </message>
     <message>
         <source>Done</source>

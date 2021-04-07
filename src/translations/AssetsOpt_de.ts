@@ -473,11 +473,11 @@ Dieses Programm wird verteilt der Hoffnung dass es nützlich ist aber OHNE GEWÄ
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">Fehler</translation>
+        <translation>Fehler</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">Ein Fehler ist aufgetreten und der Prozess wurde beendet:</translation>
+        <translation>Ein Fehler ist aufgetreten und der Prozess wurde beendet:</translation>
     </message>
     <message>
         <source>Done</source>

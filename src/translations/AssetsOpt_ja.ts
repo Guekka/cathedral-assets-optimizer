@@ -473,11 +473,11 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">エラー</translation>
+        <translation>エラー</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">例外が発生し、処理は強制的に停止されました: </translation>
+        <translation>例外が発生し、処理は強制的に停止されました: </translation>
     </message>
     <message>
         <source>Done</source>

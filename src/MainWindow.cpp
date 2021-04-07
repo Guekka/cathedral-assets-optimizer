@@ -283,27 +283,21 @@ void MainWindow::initProcess()
     _ui->processButton->setDisabled(true);
     _bLockVariables = true;
 
-    /*try
-    {*/
-    _caoProcess.reset();
-    _caoProcess = std::make_unique<Manager>(_options);
-    connect(&*_caoProcess, &Manager::progressBarTextChanged, this,
-            &MainWindow::readProgress);
-    connect(&*_caoProcess, &Manager::progressBarTextChanged, this,
-            &MainWindow::updateLog);
-    connect(&*_caoProcess, &Manager::end, this, &MainWindow::endProcess);
-    QtConcurrent::run(&*_caoProcess, &Manager::runOptimization);
-    /*}
-    catch (const std::exception &e)
-    {
+    try {
+        _caoProcess.reset();
+        _caoProcess = std::make_unique<Manager>(_options);
+        connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
+        connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
+        connect(&*_caoProcess, &Manager::end, this, &MainWindow::endProcess);
+        QtConcurrent::run(&*_caoProcess, &Manager::runOptimization);
+    } catch (const std::exception &e) {
         QMessageBox box(QMessageBox::Critical,
                         tr("Error"),
-                        tr("An exception has been encountered and the process
-    was forced to stop: ")
+                        tr("An exception has been encountered and the process was forced to stop: ")
                             + QString(e.what()));
         box.exec();
         endProcess();
-    }*/
+    }
 }
 
 void MainWindow::endProcess()

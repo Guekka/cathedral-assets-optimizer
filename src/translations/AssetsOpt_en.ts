@@ -473,11 +473,11 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">Error</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">An exception has been encountered and the process was forced to stop: </translation>
+        <translation>An exception has been encountered and the process was forced to stop: </translation>
     </message>
     <message>
         <source>Done</source>

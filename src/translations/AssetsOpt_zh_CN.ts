@@ -473,11 +473,11 @@ G&apos;k制作
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">错误</translation>
+        <translation>错误</translation>
     </message>
     <message>
         <source>An exception has been encountered and the process was forced to stop: </source>
-        <translation type="vanished">遇到异常，进程被迫停止：</translation>
+        <translation>遇到异常，进程被迫停止：</translation>
     </message>
     <message>
         <source>Done</source>
