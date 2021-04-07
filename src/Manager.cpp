@@ -58,6 +58,11 @@ void Manager::printProgress(const int &total, const QString &text = "Processing 
 #endif
 }
 
+void Manager::cancelProcess()
+{
+    _isCancelled = true;
+}
+
 void Manager::listFiles()
 {
     _numberFiles = 0;
@@ -113,8 +118,10 @@ void Manager::runOptimization()
     MainOptimizer optimizer(_options);
 
     //Extracting BSAs
-    for (const auto &file : BSAs)
-    {
+    for (const auto &file : BSAs) {
+        if (_isCancelled)
+            return;
+
         optimizer.process(file);
         ++_numberCompletedFiles;
         printProgress(BSAs.size(), "Extracting BSAs");
@@ -130,8 +137,10 @@ void Manager::runOptimization()
     {
         optimizer.process(file);
         ++_numberCompletedFiles;
-        if (_numberCompletedFiles % 10 == 0)
-        {
+        if (_numberCompletedFiles % 10 == 0) {
+            if (_isCancelled)
+                return;
+
             time2 = QDateTime::currentDateTime();
             if (time2 > time1.addMSecs(3000))
             {
@@ -148,11 +157,13 @@ void Manager::runOptimization()
     if (_options.bBsaCreate)
         for (const auto &folder : _modsToProcess)
         {
-          optimizer.packBsa(folder);
-          ++_numberCompletedFiles;
-          printProgress(_modsToProcess.size(),
-                        "Packing BSAs - Folder:  " +
-                          QFileInfo(folder).fileName());
+            if (_isCancelled)
+                return;
+
+            optimizer.packBsa(folder);
+            ++_numberCompletedFiles;
+            printProgress(_modsToProcess.size(),
+                          "Packing BSAs - Folder:  " + QFileInfo(folder).fileName());
         }
 
     FilesystemOperations::deleteEmptyDirectories(_options.userPath);

@@ -310,8 +310,10 @@ void MainWindow::endProcess()
 
     saveUi();
 
-    if (_caoProcess)
+    if (_caoProcess) {
+        _caoProcess->cancelProcess();
         _caoProcess->disconnect();
+    }
 
     _ui->progressBar->setMaximum(100);
     _ui->progressBar->setValue(100);

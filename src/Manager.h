@@ -24,9 +24,11 @@ public:
    * \param text The text to display
    * \param total The total number of files to process
    */
-  void printProgress(const int& total, const QString& text);
+  void printProgress(const int &total, const QString &text);
 
-private:
+  void cancelProcess();
+
+  private:
   /*!
    * \brief Initializes the manager
    */
@@ -76,7 +78,10 @@ private:
    * \brief The BSAs to extract
    */
   QStringList BSAs;
-signals:
-    void progressBarTextChanged(QString, int, int);
-    void end();
+
+  bool _isCancelled = false;
+
+  signals:
+  void progressBarTextChanged(QString, int, int);
+  void end();
 };
