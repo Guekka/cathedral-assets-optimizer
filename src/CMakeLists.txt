@@ -71,8 +71,11 @@ if(GUI)
 endif()
 
 #Icon and qrc
-set(ICON_RC_PATH "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc")
-set(QRC_PATH "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc")
+set(RESOURCES
+    "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc"
+    "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.manifest"
+    "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc"
+    )
 
 #Generate translations
 set(TS_FILES
@@ -118,7 +121,7 @@ set(CMAKE_AUTORCC ON)
 
 #Build
 message("Adding CAO.exe")
-add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${ICON_RC_PATH} ${QRC_PATH} ${QM_FILES})
+add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${RESOURCES} ${QM_FILES})
 #Windows 7 compatibility
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     Qt5::Core Qt5::Widgets
