@@ -98,3 +98,9 @@ void BSArchiveAuto::setDDSCallback(bsa_file_dds_info_proc_t fileDDSInfoProc, voi
 {
     _archive.setDDSCallback(fileDDSInfoProc, context);
 }
+
+void BSArchiveAuto::removeFlag(uint32_t flags)
+{
+    auto current = bsa_archive_flags_get(_archive.getArchive());
+    bsa_archive_flags_set(_archive.getArchive(), current & ~flags);
+}

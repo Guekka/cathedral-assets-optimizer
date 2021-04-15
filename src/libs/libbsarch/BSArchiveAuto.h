@@ -77,6 +77,8 @@ public:
      */
     void setDDSCallback(bsa_file_dds_info_proc_t fileDDSInfoProc, void *context);
 
+    void removeFlag(uint32_t flags);
+
 private:
     /*!
      * \brief The key will store the "save as" path, while the value will hold the disk path

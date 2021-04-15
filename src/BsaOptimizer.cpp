@@ -98,6 +98,10 @@ int BSAOptimizer::create(BSA &bsa, bool allowCompression) const
     try
     {
         archive.create(bsa.path, bsa.format);
+        // Embed file names + Uncompressed textures archives + SSE = crash
+        if (bsa.type == BSAType::TexturesBsa && !allowCompression && bsa.format == baSSE)
+            archive.removeFlag(0x0100);
+
         archive.save();
     }
     catch (const std::exception &e)
