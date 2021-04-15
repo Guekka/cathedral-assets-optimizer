@@ -188,8 +188,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
                                  const std::optional<size_t> &tHeight)
 {
     PLOG_VERBOSE << "Processing arguments for: " << _name;
-    //Getting operations to perform. This will be repeated several times, since the texture will change after each operation
-    const auto options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
+    auto options = processArguments(bNecessary, bCompress, bMipmaps, tWidth, tHeight);
 
     DXGI_FORMAT targetFormat = _info.format;
 
@@ -215,6 +214,9 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
         PLOG_VERBOSE << "Resizing this texture.";
         if (!resize(options.tWidth, options.tHeight))
             return false;
+
+        options.bNeedsMipmaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber()
+                                && canHaveMipMaps();
     }
 
     //Generating mipmaps
@@ -456,8 +458,11 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
 
 bool TexturesOptimizer::canHaveMipMaps()
 {
-    return !((_name.contains("interface", Qt::CaseInsensitive) && !Profiles::texturesCompressInterface())
-             || DirectX::IsCompressed(_info.format) || _info.width < 4 || _info.height < 4);
+    const bool isInterface = _name.contains("interface", Qt::CaseInsensitive);
+    const bool interfaceOkay = !isInterface || Profiles::texturesCompressInterface();
+    const bool sizeOkay = _info.width >= 4 && _info.height >= 4;
+
+    return interfaceOkay && sizeOkay;
 }
 
 bool TexturesOptimizer::generateMipMaps()
