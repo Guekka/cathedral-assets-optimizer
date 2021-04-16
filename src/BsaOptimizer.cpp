@@ -50,8 +50,9 @@ void BSAOptimizer::extract(const QString &bsaPath, const bool &deleteBackup) con
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
 
-int BSAOptimizer::create(BSA &bsa, bool allowCompression) const
-{
+int BSAOptimizer::create(BSA& bsa,
+                         bool allowCompression,
+                         bool deleteSource) const {
     auto rootPath = new QString(QFileInfo(bsa.path).path());
     const QDir bsaDir(*rootPath);
 
@@ -112,14 +113,18 @@ int BSAOptimizer::create(BSA &bsa, bool allowCompression) const
     }
 
     PLOG_INFO << "BSA successfully created: " + bsa.path;
-    for (const auto &file : bsa.files)
-        QFile::remove(file);
+
+    if (deleteSource)
+        for (const auto& file : bsa.files)
+            QFile::remove(file);
 
     return 0;
 }
 
-void BSAOptimizer::packAll(const QString &folderPath, bool mergeBsa, bool allowCompression) const
-{
+void BSAOptimizer::packAll(const QString& folderPath,
+                           bool mergeBsa,
+                           bool allowCompression,
+                           bool deleteSource) const {
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
     QVector<BSA> bsas;
@@ -162,7 +167,7 @@ void BSAOptimizer::packAll(const QString &folderPath, bool mergeBsa, bool allowC
     for (int i = 0; i < bsas.size(); ++i)
     {
         BSA::nameBsa({&bsas[i]}, folderPath);
-        create(bsas[i], allowCompression);
+        create(bsas[i], allowCompression, deleteSource);
     }
 }
 

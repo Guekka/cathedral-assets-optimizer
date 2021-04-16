@@ -42,6 +42,7 @@ public:
     bool bBsaProcessContent = false;
     bool bBsaCreateDummies = true;
     bool bBsaCompress = true;
+    bool bBsaDeleteSource = true;
 
     bool bAnimationsOptimization = false;
 

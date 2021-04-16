@@ -21,6 +21,7 @@ void OptionsCAO::saveToIni(QSettings *settings)
   settings->setValue("bBsaProcessContent", bBsaProcessContent);
   settings->setValue("bBsaCreateDummies", bBsaCreateDummies);
   settings->setValue("bBsaCompress", bBsaCompress);
+  settings->setValue("bBsaDeleteSource", bBsaDeleteSource);
   settings->endGroup();
 
   // Textures
@@ -73,6 +74,7 @@ OptionsCAO::readFromIni(QSettings* settings)
   bBsaLeastBSA = settings->value("bBsaLeastBSA").toBool();
   bBsaCreateDummies = settings->value("bBsaCreateDummies").toBool();
   bBsaCompress = settings->value("bBsaCompress").toBool();
+  bBsaDeleteSource = settings->value("bBsaDeleteSource").toBool();
   settings->endGroup();
 
   // Textures
@@ -116,6 +118,7 @@ OptionsCAO::saveToUi(Ui::MainWindow* ui)
   ui->bsaLeastBsaCheckBox->setChecked(bBsaLeastBSA);
   ui->bsaCreateDummiesCheckbox->setChecked(bBsaCreateDummies);
   ui->bsaCompressBsaCheckbox->setChecked(bBsaCompress);
+  ui->bsaDeleteSourceCheckbox->setChecked(bBsaDeleteSource);
 
   // Textures
   const bool texturesOpt =
@@ -192,6 +195,7 @@ OptionsCAO::readFromUi(Ui::MainWindow* ui)
   bBsaLeastBSA = bsaEnabled && ui->bsaLeastBsaCheckBox->isChecked();
   bBsaCreateDummies = bsaEnabled && ui->bsaCreateDummiesCheckbox->isChecked();
   bBsaCompress = bsaEnabled && ui->bsaCompressBsaCheckbox->isChecked();
+  bBsaDeleteSource = bsaEnabled && ui->bsaDeleteSourceCheckbox->isChecked();
 
   // Textures
   const bool texturesEnabled =

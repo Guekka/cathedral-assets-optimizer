@@ -81,7 +81,9 @@ MainOptimizer::packBsa(const QString& folder)
     if (_optOptions.bBsaCreate && QDir(folder).exists())
     {
         PLOG_INFO << "Creating BSA...";
-        _bsaOpt.packAll(folder, _optOptions.bBsaLeastBSA, _optOptions.bBsaCompress);
+        _bsaOpt.packAll(folder, _optOptions.bBsaLeastBSA,
+                        _optOptions.bBsaCompress, _optOptions.bBsaDeleteSource);
+
         if (_optOptions.bBsaCreateDummies)
             PluginsOperations::makeDummyPlugins(folder);
     }
