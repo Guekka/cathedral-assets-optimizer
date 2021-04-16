@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>676</width>
-    <height>776</height>
+    <width>690</width>
+    <height>926</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -365,6 +365,9 @@
              <property name="text">
               <string>Create the least BSAs possible</string>
              </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item row="0" column="1">
@@ -372,12 +375,18 @@
              <property name="text">
               <string>Create dummy plugins</string>
              </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item row="0" column="2">
             <widget class="QCheckBox" name="bsaCompressBsaCheckbox">
              <property name="text">
               <string>Compress BSAs</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1333,8 +1342,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>676</width>
-     <height>20</height>
+     <width>690</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTools">
