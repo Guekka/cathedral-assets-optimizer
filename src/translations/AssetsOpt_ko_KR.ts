@@ -510,7 +510,7 @@ Mozilla Public License를 참조하십시오.</translation>
     </message>
     <message>
         <source>Save UI</source>
-        <translation>UI 저장</translation>
+        <translation type="vanished">UI 저장</translation>
     </message>
     <message>
         <source>Base</source>
@@ -522,6 +522,14 @@ Mozilla Public License를 참조하십시오.</translation>
     </message>
     <message>
         <source>Compress BSAs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete source files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

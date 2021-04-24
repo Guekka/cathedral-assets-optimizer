@@ -1356,7 +1356,7 @@
      <x>0</x>
      <y>0</y>
      <width>690</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTools">
@@ -1367,7 +1367,6 @@
     <addaction name="actionEnable_debug_log"/>
     <addaction name="actionShow_tutorials"/>
     <addaction name="actionOpen_log_file"/>
-    <addaction name="actionSave_UI"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1437,11 +1436,6 @@
   <action name="actionOpen_log_file">
    <property name="text">
     <string>Open log file</string>
-   </property>
-  </action>
-  <action name="actionSave_UI">
-   <property name="text">
-    <string>Save UI</string>
    </property>
   </action>
  </widget>

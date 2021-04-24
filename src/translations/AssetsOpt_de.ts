@@ -505,7 +505,7 @@ Dieses Programm wird verteilt der Hoffnung dass es nützlich ist aber OHNE GEWÄ
     </message>
     <message>
         <source>Save UI</source>
-        <translation>Benutzeroberflächeneinstellungen speichern</translation>
+        <translation type="vanished">Benutzeroberflächeneinstellungen speichern</translation>
     </message>
     <message>
         <source>Base</source>
@@ -517,6 +517,14 @@ Dieses Programm wird verteilt der Hoffnung dass es nützlich ist aber OHNE GEWÄ
     </message>
     <message>
         <source>Compress BSAs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete source files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

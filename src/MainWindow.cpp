@@ -160,11 +160,6 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
         connect(_ui->actionDiscord, &QAction::triggered, this, [&] {
             QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
         });
-
-        connect(_ui->actionSave_UI, &QAction::triggered, this, [this] {
-            saveUi();
-            loadUi();
-        });
     }
 
     loadUi();

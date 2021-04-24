@@ -504,7 +504,7 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     </message>
     <message>
         <source>Save UI</source>
-        <translation>Sauvegarder les paramètres</translation>
+        <translation type="vanished">Sauvegarder les paramètres</translation>
     </message>
     <message>
         <source>Base</source>
@@ -516,6 +516,14 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     </message>
     <message>
         <source>Compress BSAs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete source files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

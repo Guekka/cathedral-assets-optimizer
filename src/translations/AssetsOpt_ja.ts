@@ -505,7 +505,7 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Save UI</source>
-        <translation>UIのセーブ</translation>
+        <translation type="vanished">UIのセーブ</translation>
     </message>
     <message>
         <source>Base</source>
@@ -517,6 +517,14 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Compress BSAs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete source files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
