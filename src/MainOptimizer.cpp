@@ -46,16 +46,16 @@ void MainOptimizer::process(const QString &file)
             processTexture(file, TexturesOptimizer::DDS);
         else if (file.endsWith(".nif", Qt::CaseInsensitive))
             processNif(file);
-        else if (file.endsWith(".tga", Qt::CaseInsensitive) &&
-                 Profiles::texturesConvertTga())
+        else if (file.endsWith(".tga", Qt::CaseInsensitive) && Profiles::texturesConvertTga())
             processTexture(file, TexturesOptimizer::TGA);
-        else if (file.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
+        else if (!Profiles::bsaExtension().isEmpty()
+                 && file.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
             processBsa(file);
         else if (file.endsWith(".hkx", Qt::CaseInsensitive))
             processHkx(file);
         else
             PLOG_ERROR << "Cannot process: " + file;
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         PLOG_ERROR << "Cannot process: " + file
                    << "\nAn exception occurred: " << e.what();
     }
