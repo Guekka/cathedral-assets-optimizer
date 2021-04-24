@@ -23,4 +23,6 @@ public:
 private:
     bool hkxcmdFound = false;
     std::once_flag onceFlag;
+
+    constexpr static inline auto hkxcmdPath = "bin/hkxcmd.exe";
 };
