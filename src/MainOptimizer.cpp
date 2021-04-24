@@ -160,7 +160,7 @@ void MainOptimizer::processHkx(const QString &file)
     if (_optOptions.bAnimationsOptimization && _optOptions.bDryRun)
         PLOG_INFO << file + " would be converted to the appropriate format.";
     else if (_optOptions.bAnimationsOptimization)
-        _animOpt.convert(file, Profiles::animationFormat());
+        _animOpt.convert(file);
 }
 
 void MainOptimizer::processNif(const QString &file)

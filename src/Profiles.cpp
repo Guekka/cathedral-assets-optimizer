@@ -109,7 +109,6 @@ void Profiles::saveToIni()
     _profileSettings->endGroup();
     _profileSettings->beginGroup("Animations");
     _profileSettings->setValue("animationsEnabled", _animationsEnabled);
-    _profileSettings->setValue("animationFormat", _animationFormat);
     _profileSettings->endGroup();
     _profileSettings->beginGroup("Textures");
     _profileSettings->setValue("texturesEnabled", _texturesEnabled);
@@ -142,7 +141,6 @@ void Profiles::readFromIni()
     _profileSettings->endGroup();
     _profileSettings->beginGroup("Animations");
     _animationsEnabled = _profileSettings->value("animationsEnabled").toBool();
-    _animationFormat = static_cast<hkPackFormat>(_profileSettings->value("animationFormat").toInt());
     _profileSettings->endGroup();
     _profileSettings->beginGroup("Textures");
     _texturesEnabled = _profileSettings->value("texturesEnabled").toBool();

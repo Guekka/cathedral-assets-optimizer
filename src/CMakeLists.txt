@@ -100,9 +100,6 @@ add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
 #LibBsarch
 message("Adding Libbsarch library")
 add_subdirectory(libs/libbsarch)
-#hkxcmd
-message("Adding hkxcmd library")
-add_subdirectory(libs/hkxcmd)
 #Nif Library
 message("Adding nifly library")
 add_subdirectory(libs/nifly)
@@ -125,7 +122,7 @@ add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${RESOURCES} ${QM_FIL
 #Windows 7 compatibility
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     Qt5::Core Qt5::Widgets
-    hkxcmd plog nifly directxtex qlibbsarch)
+    plog nifly directxtex qlibbsarch)
 
 #Cotire (PCH)
 set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.h")

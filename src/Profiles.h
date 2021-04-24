@@ -59,7 +59,6 @@ public:
     [[nodiscard]] static uint meshesUser() { return getInstance()._meshesUser; }
 
     [[nodiscard]] static bool animationsEnabled() { return getInstance()._animationsEnabled; }
-    [[nodiscard]] static hkPackFormat animationFormat() { return getInstance()._animationFormat; }
 
     [[nodiscard]] static bool texturesEnabled() { return getInstance()._texturesEnabled; }
     [[nodiscard]] static DXGI_FORMAT texturesFormat() { return getInstance()._texturesFormat; }
@@ -105,7 +104,6 @@ private:
     uint _meshesUser;
 
     bool _animationsEnabled;
-    hkPackFormat _animationFormat;
 
     bool _texturesEnabled;
     DXGI_FORMAT _texturesFormat;

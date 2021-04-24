@@ -18,11 +18,9 @@ public:
    * \param filePath The path of the file to optimize
    * \param pkFormat The format to use
    */
-    void convert(const QString &filePath, const hkPackFormat &pkFormat);
+    void convert(const QString &filePath);
 
 private:
-    hkMemoryRouter *_memoryRouter;
-
     bool hkxcmdFound = false;
     std::once_flag onceFlag;
 };

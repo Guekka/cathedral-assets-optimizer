@@ -4,7 +4,7 @@
 
 #include "AnimationsOptimizer.h"
 
-void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &pkFormat)
+void AnimationsOptimizer::convert(const QString &filePath)
 {
     std::call_once(onceFlag, [this] {
         hkxcmdFound = QFile::exists("bin/hkxcmd.exe");
@@ -18,8 +18,6 @@ void AnimationsOptimizer::convert(const QString &filePath, const hkPackFormat &p
     if (!hkxcmdFound)
         return;
 
-    if (pkFormat != HKPF_AMD64)
-        return;
 
     QFile file(filePath);
     const QString tempHkx = "___tempAnimFile.hkx";
