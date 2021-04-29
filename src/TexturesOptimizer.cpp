@@ -317,7 +317,7 @@ bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
     {
     case TGA: hr = LoadFromTGAFile(fileName, &_info, *_image); break;
     case DDS:
-        const DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
+        const auto ddsFlags = DirectX::DDS_FLAGS_NONE;
         hr = LoadFromDDSFile(fileName, ddsFlags, &_info, *_image);
         if (FAILED(hr))
             return false;
@@ -356,7 +356,7 @@ bool TexturesOptimizer::open(const void *pSource, const size_t &size, const Text
     {
     case TGA: return LoadFromTGAMemory(pSource, size, &_info, *_image);
     case DDS:
-        const DWORD ddsFlags = DirectX::DDS_FLAGS_NONE;
+        const auto ddsFlags = DirectX::DDS_FLAGS_NONE;
         const HRESULT hr = LoadFromDDSMemory(pSource, size, ddsFlags, &_info, *_image);
         if (FAILED(hr))
             return false;
@@ -430,8 +430,7 @@ bool TexturesOptimizer::resize(size_t targetWidth, size_t targetHeight)
     // DirectX::Resize is dumb. If WIC is used, it will convert the image to
     // R32G32B32A32 It works for small image.. But will, for example, allocate
     // 1gb for a 8k picture. So disable WIC
-    const DWORD filter =
-        DirectX::TEX_FILTER_SEPARATE_ALPHA | DirectX::TEX_FILTER_FORCE_NON_WIC;
+    const auto filter = DirectX::TEX_FILTER_SEPARATE_ALPHA | DirectX::TEX_FILTER_FORCE_NON_WIC;
     const HRESULT hr = Resize(imgs, _image->GetImageCount(), _info, targetWidth,
                               targetHeight, filter, *timage);
     if (FAILED(hr))
@@ -492,7 +491,7 @@ bool TexturesOptimizer::generateMipMaps()
 
         for (size_t i = 0; i < _info.arraySize; ++i)
         {
-            const DWORD filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
+            const auto filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
             hr = CopyRectangle(*_image->GetImage(0, i, 0),
                                DirectX::Rect(0, 0, _info.width, _info.height),
                                *timage->GetImage(0, i, 0),
@@ -522,7 +521,7 @@ bool TexturesOptimizer::generateMipMaps()
         }
 
         //Forcing non wic since WIC won't work on my computer, and thus probably on other computers
-        const DWORD filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
+        const auto filter = DirectX::TEX_FILTER_SEPARATE_ALPHA;
         const HRESULT hr = GenerateMipMaps(_image->GetImages(),
                                            _image->GetImageCount(),
                                            _image->GetMetadata(),
@@ -598,7 +597,7 @@ bool TexturesOptimizer::convertWithoutCompression(const DXGI_FORMAT &format)
                                    _image->GetImageCount(),
                                    _image->GetMetadata(),
                                    format,
-                                   0,
+                                   DirectX::TEX_FILTER_FLAGS::TEX_FILTER_DEFAULT,
                                    DirectX::TEX_THRESHOLD_DEFAULT,
                                    *timage);
         if (FAILED(hr))

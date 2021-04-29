@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.12...3.20)
 
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE
+        "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "")
+endif()
+
 project(Cathedral_Assets_Optimizer VERSION 5.1.3 LANGUAGES CXX)
 
 #Setting version for C++ files
@@ -103,9 +109,10 @@ add_subdirectory(libs/libbsarch)
 #Nif Library
 message("Adding nifly library")
 add_subdirectory(libs/nifly)
-#DirectXTex library
-message("Adding DirectXTex library")
-add_subdirectory("libs/DirectXTex")
+# DirectXTex
+find_package(directxtex CONFIG REQUIRED)
+find_package(directx-headers CONFIG REQUIRED)
+find_package(directxmath CONFIG REQUIRED)
 
 
 # Instruct CMake to run moc automatically when needed
@@ -122,7 +129,7 @@ add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${RESOURCES} ${QM_FIL
 #Windows 7 compatibility
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     Qt5::Core Qt5::Widgets
-    plog nifly directxtex qlibbsarch)
+    plog nifly Microsoft::DirectXTex)
 
 #Cotire (PCH)
 set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.h")

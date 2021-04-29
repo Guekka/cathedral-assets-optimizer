@@ -57,9 +57,9 @@
 /*----------------------*/
 
 /*---CUSTOM FILES-----*/
+#include "DirectXTex.h"
 #include "Logger.h"
 #include "TexturesFormats.h"
-#include "libs/DirectXTex/DirectXTex.h"
 #include "libs/libbsarch/BSArchiveAuto.h"
 #include "libs/nifly/include/NifFile.hpp"
 /*----------------------*/
