@@ -68,7 +68,7 @@ public:
 
     bool resize(size_t targetWidth, size_t targetHeight);
 
-    static void fitPowerOfTwo(uint &resultX, uint &resultY);
+    static void fitPowerOfTwo(size_t &resultX, size_t &resultY);
     bool isPowerOfTwo() const;
 
     bool generateMipMaps();

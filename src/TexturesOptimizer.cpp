@@ -717,7 +717,7 @@ bool TexturesOptimizer::isIncompatible() const
     return badCubemap;
 }
 
-void TexturesOptimizer::fitPowerOfTwo(uint &resultX, uint &resultY)
+void TexturesOptimizer::fitPowerOfTwo(size_t &resultX, size_t &resultY)
 {
     //Finding nearest power of two
     uint x = 1;

@@ -6,7 +6,7 @@ if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
         CACHE STRING "")
 endif()
 
-project(Cathedral_Assets_Optimizer VERSION 5.2.3 LANGUAGES CXX)
+project(Cathedral_Assets_Optimizer VERSION 5.2.4 LANGUAGES CXX)
 
 #Setting version for C++ files
 configure_file (
