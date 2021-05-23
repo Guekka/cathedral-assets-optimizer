@@ -55,23 +55,6 @@ class PluginsOperations final : public QObject
 
 public:
     /*!
-   * \brief Try to find a plugin (.esp ; .esl ; .esm) in the given folder. It will always return an esp that isn't associated to a BSA OR a textures BSA.
-   * \param folderPath The folder to check
-   * \param bsaType The type of BSA to load.
-   * \return a QString containing the name of the plugin. If no plugin is found, it will return the name of the directory.
-   */
-    static QString findPlugin(const QString &folderPath, const BSAType &bsaType);
-    /*!
-   * \brief Create enough plugins to load all BSAs
-   * \param folderPath The folder to create plugins into
-   */
-    static void makeDummyPlugins(const QString &folderPath);
-    /*!
-   * \brief Check if a bsa already has a plugin to load it
-   * \param bsaPath The path of the bsa to check
-   */
-    static bool checkIfBsaHasPlugin(const QString &bsaPath);
-    /*!
    * \brief listHeadparts List all the headparts in a plugin file
    * \param filepath The path of the file to scan
    * \return The list of headparts

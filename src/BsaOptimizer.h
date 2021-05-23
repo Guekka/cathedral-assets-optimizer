@@ -10,6 +10,8 @@
 #include "TexturesOptimizer.h"
 #include "pch.h"
 
+class OptionsCAO;
+
 /*!
  * \brief Manages BSA : extract and create them
  */
@@ -38,9 +40,7 @@ public:
    * \brief Packs all the loose files in the directory into BSAs
    * \param folderPath The folder to process
    */
-    void packAll(const QString &folderPath, bool mergeBsa, bool allowCompression, bool deleteSource) const;
-
-    static void DDSCallback(bsa_archive_t archive, const wchar_t *file_path, bsa_dds_info_t *dds_info, void *context);
+    void packAll(const QString &folderPath, const OptionsCAO &options) const;
 
 private:
     /*!
@@ -52,18 +52,12 @@ private:
     QString backup(const QString &bsaPath) const;
     /*!
    * \brief Checks if the file is present in the list filesToNotPack
-   * \param filepath The file to check
-   * \return a bool indicating the state of the file. True if is ignored, false otherwise
+   * \return a bool indicating the state of the file. True if is allowed, false otherwise
    */
-    bool isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo) const;
+    bool isAllowedFile(const BSAUtil::path &dir,
+                       const std::filesystem::directory_entry &fileinfo) const;
     /*!
    * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
    */
-    QStringList filesToNotPack;
-    /*!
-   * \brief Checks if the selected file can be compressed (i.e. if it isn't a sound file)
-   * \param filename The file to check
-   * \return a bool indicating the state of the file. True if it can be compressed, false otherwise
-   */
-    static bool canBeCompressedFile(const QString &filename);
+    std::vector<BSAUtil::fs::path::string_type> filesToNotPack;
 };

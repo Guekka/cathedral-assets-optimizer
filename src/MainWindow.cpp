@@ -20,16 +20,10 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
         _ui->modeChooserComboBox->setItemData(1, OptionsCAO::SeveralMods);
 
         //Advanced BSA
-        _ui->bsaFormat->setItemData(0, baTES3);
-        _ui->bsaTexturesFormat->setItemData(0, baTES3);
-        _ui->bsaFormat->setItemData(1, baTES4);
-        _ui->bsaTexturesFormat->setItemData(1, baTES4);
-        _ui->bsaFormat->setItemData(2, baFO3);
-        _ui->bsaTexturesFormat->setItemData(2, baFO3);
-        _ui->bsaFormat->setItemData(3, baSSE);
-        _ui->bsaTexturesFormat->setItemData(3, baSSE);
-        _ui->bsaFormat->setItemData(4, baFO4);
-        _ui->bsaTexturesFormat->setItemData(4, baFO4dds);
+        _ui->bsaGame->setItemData(0, BSAUtil::Games::SLE);
+        _ui->bsaGame->setItemData(1, BSAUtil::Games::SSE);
+        _ui->bsaGame->setItemData(2, BSAUtil::Games::FO4);
+
         //Advanced meshes
         _ui->meshesUser->setItemData(0, 11);
         _ui->meshesUser->setItemData(1, 12);
@@ -358,7 +352,6 @@ void MainWindow::setGameMode(const QString &mode)
 void MainWindow::setAdvancedSettingsEnabled(const bool &value)
 {
     QWidgetList advancedSettings = {_ui->bsaAdvancedGroupBox,
-                                    _ui->bsaExpertGroupBox,
                                     _ui->meshesVeryAdvancedGroupBox,
                                     _ui->texturesAdvancedGroupBox,
                                     _ui->animationsAdvancedGroupBox};

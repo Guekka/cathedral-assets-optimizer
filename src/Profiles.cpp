@@ -92,14 +92,8 @@ void Profiles::saveToIni()
 {
     _profileSettings->beginGroup("BSA");
     _profileSettings->setValue("bsaEnabled", _bsaEnabled);
-    _profileSettings->setValue("bsaFormat", _bsaFormat);
-    _profileSettings->setValue("bsaTexturesFormat", _bsaTexturesFormat);
     _profileSettings->setValue("maxBsaUncompressedSize", _maxBsaUncompressedSize);
-    _profileSettings->setValue("hasBsaTextures", _hasBsaTextures);
-    _profileSettings->setValue("maxBsaTexturesSize", _maxBsaTexturesSize);
-    _profileSettings->setValue("bsaExtension", _bsaExtension);
-    _profileSettings->setValue("bsaSuffix", _bsaSuffix);
-    _profileSettings->setValue("bsaTexturesSuffix", _bsaTexturesSuffix);
+    _profileSettings->setValue("bsaGame", static_cast<int>(_bsaGame));
     _profileSettings->endGroup();
     _profileSettings->beginGroup("Meshes");
     _profileSettings->setValue("meshesEnabled", _meshesEnabled);
@@ -123,14 +117,8 @@ void Profiles::readFromIni()
 {
     _profileSettings->beginGroup("BSA");
     _bsaEnabled = _profileSettings->value("bsaEnabled").toBool();
-    _bsaFormat = static_cast<bsa_archive_type_t>(_profileSettings->value("bsaFormat").toInt());
-    _bsaTexturesFormat = static_cast<bsa_archive_type_t>(_profileSettings->value("bsaTexturesFormat").toInt());
     _maxBsaUncompressedSize = _profileSettings->value("maxBsaUncompressedSize").toDouble();
-    _hasBsaTextures = _profileSettings->value("hasBsaTextures").toBool();
-    _maxBsaTexturesSize = _profileSettings->value("maxBsaTexturesSize").toDouble();
-    _bsaExtension = _profileSettings->value("bsaExtension").toString();
-    _bsaSuffix = _profileSettings->value("bsaSuffix").toString();
-    _bsaTexturesSuffix = _profileSettings->value("bsaTexturesSuffix").toString();
+    _bsaGame = static_cast<BSAUtil::Games>(_profileSettings->value("bsaGame").toInt());
     _profileSettings->endGroup();
     _profileSettings->beginGroup("Meshes");
     _meshesEnabled = _profileSettings->value("meshesEnabled").toBool();
@@ -176,14 +164,8 @@ void Profiles::saveToUi(Ui::MainWindow *ui)
         }
     };
 
-    iterateComboBox(ui->bsaFormat, _bsaFormat);
-    iterateComboBox(ui->bsaTexturesFormat, _bsaTexturesFormat);
     ui->bsaMaximumSize->setValue(_maxBsaUncompressedSize / GigaByte);
-    ui->bsaTexturesAdvancedGroupBox->setChecked(_hasBsaTextures);
-    ui->bsaTexturesMaximumSize->setValue(_maxBsaTexturesSize / GigaByte);
-    ui->bsaExtension->setText(_bsaExtension);
-    ui->bsaSuffix->setText(_bsaSuffix);
-    ui->bsaTexturesSuffix->setText(_bsaTexturesSuffix);
+    iterateComboBox(ui->bsaGame, _bsaGame);
 
     iterateComboBox(ui->meshesUser, _meshesUser);
     iterateComboBox(ui->meshesStream, _meshesStream);
@@ -206,15 +188,8 @@ void Profiles::saveToUi(Ui::MainWindow *ui)
 
 void Profiles::readFromUi(Ui::MainWindow *ui)
 {
-    _bsaFormat = ui->bsaFormat->currentData().value<bsa_archive_type_e>();
-    _bsaTexturesFormat = ui->bsaTexturesFormat->currentData().value<bsa_archive_type_e>();
-
+    _bsaGame = static_cast<BSAUtil::Games>(ui->bsaGame->currentData().toInt());
     _maxBsaUncompressedSize = ui->bsaMaximumSize->value() * GigaByte;
-    _hasBsaTextures = ui->bsaTexturesAdvancedGroupBox->isChecked();
-    _maxBsaTexturesSize = ui->bsaTexturesMaximumSize->value() * GigaByte;
-    _bsaExtension = ui->bsaExtension->text();
-    _bsaSuffix = ui->bsaSuffix->text();
-    _bsaTexturesSuffix = ui->bsaTexturesSuffix->text();
 
     _meshesUser = ui->meshesUser->currentData().toUInt();
     _meshesStream = ui->meshesStream->currentData().toUInt();

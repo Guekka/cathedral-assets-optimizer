@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "BsaOptimizer.h"
+#include "OptionsCAO.h"
 #include "PluginsOperations.h"
 
 BSAOptimizer::BSAOptimizer()
@@ -13,162 +14,71 @@ BSAOptimizer::BSAOptimizer()
 
     QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
 
-    filesToNotPack = FilesystemOperations::readFile(filesToNotPackFile,
-                                                    [](QString &line) { line = QDir::fromNativeSeparators(line); });
-    if (filesToNotPack.isEmpty())
-    {
-        PLOG_ERROR << "FilesToNotPack.txt not found. This can cause a number of issues. For example, for Skyrim, "
+    auto lines = FilesystemOperations::readFile(filesToNotPackFile, [](QString &line) {
+        line = QDir::fromNativeSeparators(line);
+    });
+
+    for (auto &&line : lines)
+        filesToNotPack.emplace_back(std::move(line).toStdWString());
+
+    if (filesToNotPack.empty()) {
+        PLOG_ERROR << "FilesToNotPack.txt not found. This can cause a number of issues. For "
+                      "example, for Skyrim, "
                       "animations will be packed to BSA, preventing them from being detected "
                       "by FNIS and Nemesis.";
     }
 }
 
+BSAUtil::GameSettings getSettings()
+{
+    auto sets = BSAUtil::GameSettings::get(Profiles::bsaGame());
+    sets.maxSize = Profiles::maxBsaUncompressedSize();
+    return sets;
+}
+
 void BSAOptimizer::extract(const QString &bsaPath, const bool &deleteBackup) const
 {
-    auto rootPath = new QString(QFileInfo(bsaPath).path());
-
-    try
-    {
-        BSArchiveAuto archive(*rootPath);
-        archive.setDDSCallback(&BSAOptimizer::DDSCallback, rootPath);
-        archive.open(bsaPath);
-        archive.extractAll(*rootPath, false);
-    }
-    catch (const std::exception &e)
-    {
+    try {
+        BSAUtil::extract(bsaPath.toStdU16String(), deleteBackup, false);
+    } catch (const std::exception &e) {
         PLOG_ERROR << e.what();
-        PLOG_ERROR << "An error occured during the extraction of: " + bsaPath + 'n'
+        PLOG_ERROR << "An error occured during the extraction of: " + bsaPath + '\n'
                           + "Please extract it manually. The BSA was not deleted.";
         return;
     }
 
-    if (deleteBackup)
-        QFile::remove(bsaPath);
-    else
+    if (!deleteBackup)
         backup(bsaPath);
 
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
 
-int BSAOptimizer::create(BSA& bsa,
-                         bool allowCompression,
-                         bool deleteSource) const {
-    auto rootPath = new QString(QFileInfo(bsa.path).path());
-    const QDir bsaDir(*rootPath);
-
-    //Checking if a bsa already exists
-    if (QFile(bsa.path).exists())
-    {
-        PLOG_ERROR << "Cannot pack existing loose files: a BSA already exists.";
-        return 1;
-    }
-
-    BSArchiveAuto archive(*rootPath);
-    archive.setShareData(true);
-    archive.setCompressed(allowCompression);
-    archive.setDDSCallback(&BSAOptimizer::DDSCallback, rootPath);
-
-    //Detecting if BSA will contain sounds, since compressing BSA breaks sounds. Same for strings, Wrye Bash complains
-    if (bsa.type == BSAType::UncompressableBsa) {
-        archive.setCompressed(false);
-    } else {
-        for (const auto& file : bsa.files) {
-            if (!canBeCompressedFile(file)) {
-                archive.setCompressed(false);
-                break;
-            }
-        }
-    }
-
-    if (bsa.files.isEmpty())
-        return 3;
-
-    try
-    {
-        archive.addFileFromDiskRoot(bsa.files);
-    }
-    catch (const std::exception &e)
-    {
-        PLOG_ERROR << e.what() << "Cancelling packing of: " + bsa.path;
-        return 2;
-    }
-
-    PLOG_DEBUG << bsa;
-    //Creating the archive
-
-    try
-    {
-        archive.create(bsa.path, bsa.format);
-        // Embed file names + Uncompressed textures archives + SSE = crash
-        if (bsa.type == BSAType::TexturesBsa && !allowCompression && bsa.format == baSSE)
-            archive.removeFlag(0x0100);
-
-        archive.save();
-    }
-    catch (const std::exception &e)
-    {
-        PLOG_ERROR << e.what();
-        PLOG_ERROR << "Cancelling packing of: " + bsa.path;
-        return 2;
-    }
-
-    PLOG_INFO << "BSA successfully created: " + bsa.path;
-
-    if (deleteSource)
-        for (const auto& file : bsa.files)
-            QFile::remove(file);
-
-    return 0;
-}
-
-void BSAOptimizer::packAll(const QString& folderPath,
-                           bool mergeBsa,
-                           bool allowCompression,
-                           bool deleteSource) const {
+void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options) const
+{
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
-    QVector<BSA> bsas;
-    bsas.reserve(10000);
-    bsas << BSA::getBsa(StandardBsa) << BSA::getBsa(UncompressableBsa) << BSA::getBsa(TexturesBsa);
+    const auto game = getSettings();
+    const auto dir = BSAUtil::path(folderPath.toStdU16String());
 
-    auto *standardBsa = &bsas[0];
-    auto *uncompressableBsa = &bsas[1];
-    auto *texturesBsa = &bsas[2];
+    cleanDummyPlugins(dir, game);
 
-    QDirIterator it(folderPath, QDirIterator::Subdirectories);
-    while (it.hasNext())
-    {
-        it.next();
+    auto bsas = splitBSA(dir, options.bBsaLeastBSA, game);
 
-        if (isIgnoredFile(folderPath, it.filePath()) || !allAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive))
-            continue;
-
-        const bool isTexture = texturesAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive)
-                               && Profiles::hasBsaTextures();
-        const bool isUncompressable = uncompressableAssets.contains(it.fileInfo().suffix(), Qt::CaseInsensitive);
-
-        BSA **pBsa = isTexture ? &texturesBsa : &standardBsa;
-        pBsa = isUncompressable ? &uncompressableBsa : pBsa;
-
-        //adding files and sizes to list
-        (*pBsa)->files << it.filePath();
-        (*pBsa)->filesSize += it.fileInfo().size();
-
-        if ((*pBsa)->filesSize >= (*pBsa)->maxSize)
-        {
-            bsas << BSA::getBsa((*pBsa)->type);
-            *pBsa = &bsas.last();
+    for (auto const &bsa : bsas) {
+        try {
+            BSAUtil::create(dir, bsa, options.bBsaCompress, game);
+            if (options.bBsaDeleteSource)
+                std::for_each(bsa.files_.cbegin(), bsa.files_.cend(), [](auto &&f) {
+                    BSAUtil::fs::remove(f);
+                });
+        } catch (const std::exception &e) {
+            PLOG_ERROR << QString("An error occurred while processing '%1': \n%2")
+                              .arg(bsa.path_.wstring(), e.what());
         }
     }
 
-    // Merging BSAs that can be merged
-    BSA::mergeBsas(bsas, mergeBsa);
-
-    for (int i = 0; i < bsas.size(); ++i)
-    {
-        BSA::nameBsa({&bsas[i]}, folderPath);
-        create(bsas[i], allowCompression, deleteSource);
-    }
+    if (options.bBsaCreateDummies)
+        BSAUtil::makeDummyPlugins(dir, game);
 }
 
 QString BSAOptimizer::backup(const QString &bsaPath) const
@@ -178,8 +88,7 @@ QString BSAOptimizer::backup(const QString &bsaPath) const
 
     if (!bsaBackupFile.exists())
 
-        while (bsaBackupFile.exists())
-        {
+        while (bsaBackupFile.exists()) {
             if (bsaFile.size() == bsaBackupFile.size())
                 QFile::remove(bsaBackupFile.fileName());
             else
@@ -193,50 +102,48 @@ QString BSAOptimizer::backup(const QString &bsaPath) const
     return bsaBackupFile.fileName();
 }
 
-bool BSAOptimizer::isIgnoredFile(const QDir &bsaDir, const QFileInfo &fileinfo) const
+// Should put these algorithms somewhere else
+
+auto str_compare(bool caseSensitive = true)
 {
-    if (fileinfo.isDir())
-        return true;
+    return [caseSensitive](char ch1, char ch2) {
+        if (!caseSensitive) {
+            ch1 = std::toupper(ch1);
+            ch2 = std::toupper(ch2);
+        }
 
-    for (const auto &fileToNotPack : filesToNotPack)
-    {
-        if (fileinfo.absoluteFilePath().contains(fileToNotPack, Qt::CaseInsensitive))
-            return true;
-    }
-
-    //Removing files at the root directory, those cannot be packed
-    if (bsaDir.absoluteFilePath(fileinfo.fileName()) == fileinfo.absoluteFilePath())
-        return true;
-
-    return false;
+        return ch1 == ch2;
+    };
 }
 
-bool BSAOptimizer::canBeCompressedFile(const QString& filename) {
-    const bool cantBeCompressed =
-        uncompressableAssets.contains(QFileInfo(filename).suffix(),
-                                      Qt::CaseInsensitive) ||
-        filename.contains(QRegularExpression("^.+\\.[^.]*strings$"));
-    return !cantBeCompressed;
+template<class CharT>
+size_t str_find(std::basic_string<CharT> const &string,
+                std::basic_string<CharT> const &snippet,
+                bool caseSensitive = true,
+                size_t fromPos = 0)
+{
+    auto pred = str_compare(caseSensitive);
+    using namespace std;
+
+    if (cbegin(string) + fromPos > cend(string))
+        return std::string::npos;
+
+    auto it = search(cbegin(string) + fromPos, cend(string), cbegin(snippet), cend(snippet), pred);
+
+    if (it != cend(string))
+        return it - cbegin(string);
+    else
+        return std::string::npos; // not found
 }
 
-void BSAOptimizer::DDSCallback([[maybe_unused]] bsa_archive_t archive,
-                               const wchar_t *file_path,
-                               bsa_dds_info_t *dds_info,
-                               void *context)
+bool BSAOptimizer::isAllowedFile([[maybe_unused]] BSAUtil::path const &dir,
+                                 BSAUtil::fs::directory_entry const &fileinfo) const
 {
-    const QString &path = *static_cast<QString *>(context) + '/' + QString::fromWCharArray(file_path);
-
-    auto image = std::make_unique<DirectX::ScratchImage>();
-    DirectX::TexMetadata info;
-
-    const auto hr = LoadFromDDSFile(PREPARE_PATH_LIBBSARCH(path), DirectX::DDS_FLAGS_BAD_DXTN_TAILS, &info, *image);
-    if (FAILED(hr))
-    {
-        PLOG_ERROR << "Failed to open DDS when packing archive: " << path;
-        return;
+    for (const auto &fileToNotPack : filesToNotPack) {
+        const auto &path = fileinfo.path().native();
+        if (str_find(path, fileToNotPack, false))
+            return false;
     }
 
-    dds_info->width = info.width;
-    dds_info->height = info.height;
-    dds_info->mipmaps = info.mipLevels;
+    return true;
 }

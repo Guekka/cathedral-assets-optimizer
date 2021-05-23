@@ -69,19 +69,19 @@
     </message>
     <message>
         <source>Morrowind</source>
-        <translation>모로윈드</translation>
+        <translation type="vanished">모로윈드</translation>
     </message>
     <message>
         <source>Oblivion</source>
-        <translation>오블리비언</translation>
+        <translation type="vanished">오블리비언</translation>
     </message>
     <message>
         <source>Skyrim / Fallout 3 / Fallout New Vegas</source>
-        <translation>스카이림 / 폴아웃 3 / 폴아웃 뉴 베가스</translation>
+        <translation type="vanished">스카이림 / 폴아웃 3 / 폴아웃 뉴 베가스</translation>
     </message>
     <message>
         <source>Fallout 4</source>
-        <translation>폴아웃 4</translation>
+        <translation type="vanished">폴아웃 4</translation>
     </message>
     <message>
         <source>Maximum size</source>
@@ -89,11 +89,11 @@
     </message>
     <message>
         <source>Extension</source>
-        <translation>확장명</translation>
+        <translation type="vanished">확장명</translation>
     </message>
     <message>
         <source>Suffix</source>
-        <translation>파일 이름</translation>
+        <translation type="vanished">파일 이름</translation>
     </message>
     <message>
         <source>Meshes</source>
@@ -233,19 +233,19 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The extension of the bsa. Usually, this will be &amp;quot;.bsa&amp;quot; for Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BSA 파일의 확장명을 변경합니다. 일반적으로 스카이림의 경우 &amp;quot;.bsa&amp;quot; 이며, 폴아웃 4는 &amp;quot;.ba2&amp;quot; 를 사용합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;BSA 파일의 확장명을 변경합니다. 일반적으로 스카이림의 경우 &amp;quot;.bsa&amp;quot; 이며, 폴아웃 4는 &amp;quot;.ba2&amp;quot; 를 사용합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;폴아웃 4의 경우 - Main.ba2 .&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;폴아웃 4의 경우 - Main.ba2 .&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Create textures BSA</source>
-        <translation>텍스처를 개별 BSA로 압축</translation>
+        <translation type="vanished">텍스처를 개별 BSA로 압축</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;스카이림SE의 경우 - Textures.bsa .&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;스카이림SE의 경우 - Textures.bsa .&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Expert</source>
@@ -253,11 +253,11 @@
     </message>
     <message>
         <source>BSA Format</source>
-        <translation>BSA 형식</translation>
+        <translation type="vanished">BSA 형식</translation>
     </message>
     <message>
         <source>Textures BSA Format</source>
-        <translation>텍스처 BSA 형식</translation>
+        <translation type="vanished">텍스처 BSA 형식</translation>
     </message>
     <message>
         <source>Process meshes</source>
@@ -521,15 +521,27 @@ Mozilla Public License를 참조하십시오.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Compress BSAs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Delete source files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Game</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skyrim LE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FO4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow compression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

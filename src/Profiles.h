@@ -41,14 +41,11 @@ public:
     }
 
     [[nodiscard]] static bool bsaEnabled() { return getInstance()._bsaEnabled; }
-    [[nodiscard]] static bsa_archive_type_t bsaFormat() { return getInstance()._bsaFormat; }
-    [[nodiscard]] static bsa_archive_type_t bsaTexturesFormat() { return getInstance()._bsaTexturesFormat; }
-    [[nodiscard]] static double maxBsaUncompressedSize() { return getInstance()._maxBsaUncompressedSize; }
-    [[nodiscard]] static bool hasBsaTextures() { return getInstance()._hasBsaTextures; }
-    [[nodiscard]] static double maxBsaTexturesSize() { return getInstance()._maxBsaTexturesSize; }
-    [[nodiscard]] static QString bsaExtension() { return getInstance()._bsaExtension; }
-    [[nodiscard]] static QString bsaSuffix() { return getInstance()._bsaSuffix; }
-    [[nodiscard]] static QString bsaTexturesSuffix() { return getInstance()._bsaTexturesSuffix; }
+    [[nodiscard]] static double maxBsaUncompressedSize()
+    {
+        return getInstance()._maxBsaUncompressedSize;
+    }
+    [[nodiscard]] static BSAUtil::Games bsaGame() { return getInstance()._bsaGame; }
 
     [[nodiscard]] static bool meshesEnabled() { return getInstance()._meshesEnabled; }
     [[nodiscard]] static nifly::NiFileVersion meshesFileVersion()
@@ -89,14 +86,8 @@ private:
     size_t findProfiles(const QDir &dir);
 
     bool _bsaEnabled;
-    bsa_archive_type_t _bsaFormat;
-    bsa_archive_type_t _bsaTexturesFormat;
+    BSAUtil::Games _bsaGame;
     double _maxBsaUncompressedSize;
-    bool _hasBsaTextures;
-    double _maxBsaTexturesSize;
-    QString _bsaExtension;
-    QString _bsaSuffix;
-    QString _bsaTexturesSuffix;
 
     bool _meshesEnabled;
     nifly::NiFileVersion _meshesFileVersion;

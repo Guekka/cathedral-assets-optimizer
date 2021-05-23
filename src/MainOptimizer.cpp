@@ -41,6 +41,7 @@ void MainOptimizer::addLandscapeTextures()
 
 void MainOptimizer::process(const QString &file)
 {
+    const auto bsaExt = BSAUtil::GameSettings::get(Profiles::bsaGame()).extension;
     try {
         if (file.endsWith(".dds", Qt::CaseInsensitive))
             processTexture(file, TexturesOptimizer::DDS);
@@ -48,8 +49,7 @@ void MainOptimizer::process(const QString &file)
             processNif(file);
         else if (file.endsWith(".tga", Qt::CaseInsensitive) && Profiles::texturesConvertTga())
             processTexture(file, TexturesOptimizer::TGA);
-        else if (!Profiles::bsaExtension().isEmpty()
-                 && file.endsWith(Profiles::bsaExtension(), Qt::CaseInsensitive))
+        else if (file.endsWith(QString::fromStdU16String(bsaExt.u16string()), Qt::CaseInsensitive))
             processBsa(file);
         else if (file.endsWith(".hkx", Qt::CaseInsensitive))
             processHkx(file);
@@ -81,11 +81,7 @@ MainOptimizer::packBsa(const QString& folder)
     if (_optOptions.bBsaCreate && QDir(folder).exists())
     {
         PLOG_INFO << "Creating BSA...";
-        _bsaOpt.packAll(folder, _optOptions.bBsaLeastBSA,
-                        _optOptions.bBsaCompress, _optOptions.bBsaDeleteSource);
-
-        if (_optOptions.bBsaCreateDummies)
-            PluginsOperations::makeDummyPlugins(folder);
+        _bsaOpt.packAll(folder, _optOptions);
     }
 }
 

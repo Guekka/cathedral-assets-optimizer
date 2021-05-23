@@ -69,19 +69,19 @@
     </message>
     <message>
         <source>Morrowind</source>
-        <translation>Morrowind</translation>
+        <translation type="vanished">Morrowind</translation>
     </message>
     <message>
         <source>Oblivion</source>
-        <translation>Oblivion</translation>
+        <translation type="vanished">Oblivion</translation>
     </message>
     <message>
         <source>Skyrim / Fallout 3 / Fallout New Vegas</source>
-        <translation>Skyrim / Fallout 3 / Fallout New Vegas</translation>
+        <translation type="vanished">Skyrim / Fallout 3 / Fallout New Vegas</translation>
     </message>
     <message>
         <source>Fallout 4</source>
-        <translation>Fallout 4</translation>
+        <translation type="vanished">Fallout 4</translation>
     </message>
     <message>
         <source>Maximum size</source>
@@ -89,11 +89,11 @@
     </message>
     <message>
         <source>Extension</source>
-        <translation>Dateierweiterung</translation>
+        <translation type="vanished">Dateierweiterung</translation>
     </message>
     <message>
         <source>Suffix</source>
-        <translation>Suffix</translation>
+        <translation type="vanished">Suffix</translation>
     </message>
     <message>
         <source>Meshes</source>
@@ -233,19 +233,19 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The extension of the bsa. Usually, this will be &amp;quot;.bsa&amp;quot; for Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; die Dateierweiterung des BSA Archives. Normalerweise ist das &amp;quot;.bsa&amp;quot; für Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; die Dateierweiterung des BSA Archives. Normalerweise ist das &amp;quot;.bsa&amp;quot; für Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Beispiel: &amp;quot; - Main.ba2&amp;quot; für Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Beispiel: &amp;quot; - Main.ba2&amp;quot; für Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Create textures BSA</source>
-        <translation>Texturen BSA erstellen</translation>
+        <translation type="vanished">Texturen BSA erstellen</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Beispiel: &amp;quot; - Textures.bsa&amp;quot; für Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Beispiel: &amp;quot; - Textures.bsa&amp;quot; für Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Expert</source>
@@ -253,11 +253,11 @@
     </message>
     <message>
         <source>BSA Format</source>
-        <translation>BSA Format</translation>
+        <translation type="vanished">BSA Format</translation>
     </message>
     <message>
         <source>Textures BSA Format</source>
-        <translation>Texturen BSA Format</translation>
+        <translation type="vanished">Texturen BSA Format</translation>
     </message>
     <message>
         <source>Process meshes</source>
@@ -516,15 +516,27 @@ Dieses Programm wird verteilt der Hoffnung dass es nützlich ist aber OHNE GEWÄ
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Compress BSAs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Delete source files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Game</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skyrim LE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FO4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow compression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

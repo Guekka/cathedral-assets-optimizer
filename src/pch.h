@@ -59,9 +59,10 @@
 /*---CUSTOM FILES-----*/
 #include "DirectXTex.h"
 #include "Logger.h"
+#include "NifFile.hpp"
 #include "TexturesFormats.h"
-#include "libs/libbsarch/BSArchiveAuto.h"
-#include "libs/nifly/include/NifFile.hpp"
+#include "libs/BSAUtil/include/BSACreate.hpp"
+#include "libs/BSAUtil/include/BSAExtract.hpp"
 /*----------------------*/
 
 #endif

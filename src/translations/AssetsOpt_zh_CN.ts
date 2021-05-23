@@ -69,19 +69,19 @@
     </message>
     <message>
         <source>Morrowind</source>
-        <translation>晨风</translation>
+        <translation type="vanished">晨风</translation>
     </message>
     <message>
         <source>Oblivion</source>
-        <translation>湮没</translation>
+        <translation type="vanished">湮没</translation>
     </message>
     <message>
         <source>Skyrim / Fallout 3 / Fallout New Vegas</source>
-        <translation>天际 / 辐射 3 / 辐射：新维加斯</translation>
+        <translation type="vanished">天际 / 辐射 3 / 辐射：新维加斯</translation>
     </message>
     <message>
         <source>Fallout 4</source>
-        <translation>辐射 4</translation>
+        <translation type="vanished">辐射 4</translation>
     </message>
     <message>
         <source>Maximum size</source>
@@ -89,11 +89,11 @@
     </message>
     <message>
         <source>Extension</source>
-        <translation>扩展</translation>
+        <translation type="vanished">扩展</translation>
     </message>
     <message>
         <source>Suffix</source>
-        <translation>后缀名</translation>
+        <translation type="vanished">后缀名</translation>
     </message>
     <message>
         <source>Meshes</source>
@@ -233,19 +233,19 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The extension of the bsa. Usually, this will be &amp;quot;.bsa&amp;quot; for Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;修改BSA包的扩展名。通常来说，应该是&amp;quot;.bsa&amp;quot;对应天际，&amp;quot;.ba2&amp;quot;对应辐射4。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;修改BSA包的扩展名。通常来说，应该是&amp;quot;.bsa&amp;quot;对应天际，&amp;quot;.ba2&amp;quot;对应辐射4。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;例如: &amp;quot; - Main.ba2&amp;quot;对应辐射 4。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;例如: &amp;quot; - Main.ba2&amp;quot;对应辐射 4。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Create textures BSA</source>
-        <translation>为textures文件夹单独创建BSA</translation>
+        <translation type="vanished">为textures文件夹单独创建BSA</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;例如: &amp;quot; - Textures.bsa&amp;quot;对应天际SE。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;例如: &amp;quot; - Textures.bsa&amp;quot;对应天际SE。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Expert</source>
@@ -253,11 +253,11 @@
     </message>
     <message>
         <source>BSA Format</source>
-        <translation>BSA格式</translation>
+        <translation type="vanished">BSA格式</translation>
     </message>
     <message>
         <source>Textures BSA Format</source>
-        <translation>Textures.bsa的格式</translation>
+        <translation type="vanished">Textures.bsa的格式</translation>
     </message>
     <message>
         <source>Process meshes</source>
@@ -516,15 +516,27 @@ G&apos;k制作
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Compress BSAs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Delete source files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Game</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skyrim LE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FO4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow compression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

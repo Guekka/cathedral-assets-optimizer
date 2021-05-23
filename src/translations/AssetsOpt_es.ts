@@ -68,31 +68,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Morrowind</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Oblivion</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Skyrim / Fallout 3 / Fallout New Vegas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fallout 4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Maximum size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extension</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Suffix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -228,31 +204,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The extension of the bsa. Usually, this will be &amp;quot;.bsa&amp;quot; for Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create textures BSA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Expert</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>BSA Format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Textures BSA Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -490,10 +442,6 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Compress BSAs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -507,6 +455,22 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Delete source files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Game</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skyrim LE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FO4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow compression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

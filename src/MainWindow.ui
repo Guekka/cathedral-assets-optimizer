@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
-    <height>955</height>
+    <width>676</width>
+    <height>667</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -357,20 +357,20 @@
            <string>Extra</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="bsaCreateDummiesCheckbox">
+           <item row="0" column="2">
+            <widget class="QCheckBox" name="bsaCompressBsaCheckbox">
              <property name="text">
-              <string>Create dummy plugins</string>
+              <string>Allow compression</string>
              </property>
              <property name="checked">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QCheckBox" name="bsaCompressBsaCheckbox">
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="bsaCreateDummiesCheckbox">
              <property name="text">
-              <string>Compress BSAs</string>
+              <string>Create dummy plugins</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -435,130 +435,17 @@
             <widget class="QDoubleSpinBox" name="bsaMaximumSize"/>
            </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The extension of the bsa. Usually, this will be &amp;quot;.bsa&amp;quot; for Skyrim, &amp;quot;.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
+            <widget class="QLabel" name="label">
              <property name="text">
-              <string>Extension</string>
-             </property>
-             <property name="buddy">
-              <cstring>bsaExtension</cstring>
+              <string>Game</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QLineEdit" name="bsaExtension"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Main.ba2&amp;quot; for Fallout 4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Suffix</string>
-             </property>
-             <property name="buddy">
-              <cstring>bsaSuffix</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="bsaSuffix"/>
-           </item>
-           <item row="6" column="0" colspan="2">
-            <widget class="QGroupBox" name="bsaTexturesAdvancedGroupBox">
-             <property name="title">
-              <string>Create textures BSA</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <layout class="QFormLayout" name="formLayout_2">
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_7">
-                <property name="cursor">
-                 <cursorShape>WhatsThisCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Suffix</string>
-                </property>
-                <property name="buddy">
-                 <cstring>bsaTexturesSuffix</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="bsaTexturesSuffix"/>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label">
-                <property name="cursor">
-                 <cursorShape>WhatsThisCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum uncompressed size of the files in GB. Increasing it will increase the number of files stored per BSA, but you might reach the hard limit of BSA size, causing the game to crash.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Maximum size</string>
-                </property>
-                <property name="buddy">
-                 <cstring>bsaTexturesMaximumSize</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QDoubleSpinBox" name="bsaTexturesMaximumSize"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="bsaExpertGroupBox">
-          <property name="title">
-           <string>Expert</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout_4">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>BSA Format</string>
-             </property>
-             <property name="buddy">
-              <cstring>bsaFormat</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="bsaFormat">
-             <property name="editable">
-              <bool>false</bool>
-             </property>
+            <widget class="QComboBox" name="bsaGame">
              <item>
               <property name="text">
-               <string>Morrowind</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Oblivion</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Skyrim / Fallout 3 / Fallout New Vegas</string>
+               <string>Skyrim LE</string>
               </property>
              </item>
              <item>
@@ -568,46 +455,7 @@
              </item>
              <item>
               <property name="text">
-               <string>Fallout 4</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Textures BSA Format</string>
-             </property>
-             <property name="buddy">
-              <cstring>bsaTexturesFormat</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="bsaTexturesFormat">
-             <item>
-              <property name="text">
-               <string>Morrowind</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Oblivion</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Skyrim / Fallout 3 / Fallout New Vegas</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>SSE</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Fallout 4</string>
+               <string>FO4</string>
               </property>
              </item>
             </widget>
@@ -817,7 +665,7 @@
              </item>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="label_11">
              <property name="text">
               <string>Stream</string>
@@ -827,7 +675,7 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
+           <item row="2" column="1">
             <widget class="QComboBox" name="meshesStream">
              <item>
               <property name="text">
@@ -1167,9 +1015,6 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1" rowspan="2">
-            <widget class="QListWidget" name="texturesUnwantedFormatsList"/>
-           </item>
            <item row="1" column="1" colspan="2">
             <widget class="QComboBox" name="texturesOutputFormat">
              <item>
@@ -1225,6 +1070,9 @@
               <string>Edit</string>
              </property>
             </widget>
+           </item>
+           <item row="3" column="1" rowspan="2">
+            <widget class="QListWidget" name="texturesUnwantedFormatsList"/>
            </item>
           </layout>
          </widget>
@@ -1355,7 +1203,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>690</width>
+     <width>676</width>
      <height>20</height>
     </rect>
    </property>
