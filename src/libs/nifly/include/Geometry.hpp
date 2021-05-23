@@ -75,26 +75,15 @@ struct AdditionalDataBlock {
 class AdditionalGeomData : public NiCloneable<AdditionalGeomData, NiObject> {};
 
 class NiAdditionalGeometryData : public NiCloneableStreamable<NiAdditionalGeometryData, AdditionalGeomData> {
-protected:
-	uint32_t numBlockInfos = 0;
-	std::vector<AdditionalDataInfo> blockInfos;
-
-	uint32_t numBlocks = 0;
-	std::vector<AdditionalDataBlock> blocks;
-
 public:
 	uint16_t numVertices = 0;
+	NiSyncVector<AdditionalDataInfo> blockInfos;
+	NiSyncVector<AdditionalDataBlock> blocks;
 
 	static constexpr const char* BlockName = "NiAdditionalGeometryData";
 	const char* GetBlockName() override { return BlockName; }
 
 	void Sync(NiStreamReversible& stream);
-
-	std::vector<AdditionalDataInfo> GetBlockInfos() const;
-	void SetBlockInfos(const std::vector<AdditionalDataInfo>& adi);
-
-	std::vector<AdditionalDataBlock> GetBlocks() const;
-	void SetBlocks(const std::vector<AdditionalDataBlock>& adb);
 };
 
 struct BSPackedAdditionalDataBlock {
@@ -139,27 +128,18 @@ struct BSPackedAdditionalDataBlock {
 
 class BSPackedAdditionalGeometryData
 	: public NiCloneableStreamable<BSPackedAdditionalGeometryData, AdditionalGeomData> {
-protected:
-	uint32_t numBlockInfos = 0;
-	std::vector<AdditionalDataInfo> blockInfos;
-
-	uint32_t numBlocks = 0;
-	std::vector<BSPackedAdditionalDataBlock> blocks;
-
 public:
 	uint16_t numVertices = 0;
+	NiSyncVector<AdditionalDataInfo> blockInfos;
+	NiSyncVector<BSPackedAdditionalDataBlock> blocks;
 
 	static constexpr const char* BlockName = "BSPackedAdditionalGeometryData";
 	const char* GetBlockName() override { return BlockName; }
 
 	void Sync(NiStreamReversible& stream);
-
-	std::vector<AdditionalDataInfo> GetBlockInfos() const;
-	void SetBlockInfos(const std::vector<AdditionalDataInfo>& adi);
-
-	std::vector<BSPackedAdditionalDataBlock> GetBlocks() const;
-	void SetBlocks(const std::vector<BSPackedAdditionalDataBlock>& adb);
 };
+
+enum ConsistencyType : uint16_t { CT_MUTABLE = 0x0000, CT_STATIC = 0x4000, CT_VOLATILE = 0x8000 };
 
 class NiGeometryData : public NiCloneableStreamable<NiGeometryData, NiObject> {
 protected:
@@ -183,15 +163,15 @@ public:
 	uint32_t materialCRC = 0;
 
 	uint8_t keepFlags = 0;
-	uint16_t numUVSets = 0;
+	uint16_t dataFlags = 0;
 	std::vector<std::vector<Vector2>> uvSets;
 
-	uint16_t consistencyFlags = 0;
+	ConsistencyType consistencyFlags = CT_MUTABLE;
 	NiBlockRef<AdditionalGeomData> additionalDataRef;
 
 	void Sync(NiStreamReversible& stream);
 	void GetChildRefs(std::set<NiRef*>& refs) override;
-	void GetChildIndices(std::vector<int>& indices) override;
+	void GetChildIndices(std::vector<uint32_t>& indices) override;
 
 	void notifyVerticesDelete(const std::vector<uint16_t>& vertIndices) override;
 
@@ -206,10 +186,10 @@ public:
 	bool HasVertexColors() const { return hasVertexColors; }
 
 	void SetUVs(const bool enable);
-	bool HasUVs() const { return (numUVSets & (1 << 0)) != 0; }
+	bool HasUVs() const { return (dataFlags & (1 << 0)) != 0; }
 
 	void SetTangents(const bool enable);
-	bool HasTangents() const { return (numUVSets & (1 << 12)) != 0; }
+	bool HasTangents() const { return (dataFlags & (1 << 12)) != 0; }
 
 	virtual uint32_t GetNumTriangles() const;
 	virtual bool GetTriangles(std::vector<Triangle>& tris) const;
@@ -304,13 +284,13 @@ public:
 	std::vector<Vector3> particleNorms;
 	std::vector<Triangle> particleTris;
 
-	std::vector<Vector3> rawVertices;	// filled by GetRawVerts function and returned.
-	std::vector<Vector3> rawNormals;	// filled by GetNormalData function and returned.
-	std::vector<Vector3> rawTangents;	// filled by CalcTangentSpace function and returned.
-	std::vector<Vector3> rawBitangents; // filled in CalcTangentSpace
-	std::vector<Vector2> rawUvs;		// filled by GetUVData function and returned.
-	std::vector<Color4> rawColors;		// filled by GetColorData function and returned.
-	std::vector<float> rawEyeData;
+	std::vector<Vector3> rawVertices;	// temporary copy filled by UpdateRawVertices function
+	std::vector<Vector3> rawNormals;	// temporary copy filled by UpdateRawNormals function
+	std::vector<Vector3> rawTangents;	// temporary copy filled by UpdateRawTangents function
+	std::vector<Vector3> rawBitangents; // temporary copy filled by UpdateRawBitangents function
+	std::vector<Vector2> rawUvs;		// temporary copy filled by UpdateRawUvs function
+	std::vector<Color4> rawColors;		// temporary copy filled by UpdateRawColors function
+	std::vector<float> rawEyeData;		// temporary copy filled by UpdateRawEyeData function
 
 	std::vector<uint32_t> deletedTris; // temporary storage for BSSubIndexTriShape
 
@@ -325,7 +305,7 @@ public:
 	void Sync(NiStreamReversible& stream);
 	void notifyVerticesDelete(const std::vector<uint16_t>& vertIndices) override;
 	void GetChildRefs(std::set<NiRef*>& refs) override;
-	void GetChildIndices(std::vector<int>& indices) override;
+	void GetChildIndices(std::vector<uint32_t>& indices) override;
 
 	bool HasSkinInstance() const override { return !skinInstanceRef.IsEmpty(); }
 	NiBlockRef<NiBoneContainer>* SkinInstanceRef() override { return &skinInstanceRef; }
@@ -339,13 +319,13 @@ public:
 	NiBlockRef<NiAlphaProperty>* AlphaPropertyRef() override { return &alphaPropertyRef; }
 	const NiBlockRef<NiAlphaProperty>* AlphaPropertyRef() const override { return &alphaPropertyRef; }
 
-	std::vector<Vector3>* GetRawVerts();
-	std::vector<Vector3>* GetNormalData(bool xform = true);
-	std::vector<Vector3>* GetTangentData(bool xform = true);
-	std::vector<Vector3>* GetBitangentData(bool xform = true);
-	std::vector<Vector2>* GetUVData();
-	std::vector<Color4>* GetColorData();
-	std::vector<float>* GetEyeData();
+	std::vector<Vector3>& UpdateRawVertices();
+	std::vector<Vector3>& UpdateRawNormals();
+	std::vector<Vector3>& UpdateRawTangents();
+	std::vector<Vector3>& UpdateRawBitangents();
+	std::vector<Vector2>& UpdateRawUvs();
+	std::vector<Color4>& UpdateRawColors();
+	std::vector<float>& UpdateRawEyeData();
 
 	uint16_t GetNumVertices() const override;
 	void SetVertices(const bool enable) override;
@@ -554,11 +534,6 @@ public:
 				const std::vector<Vector3>* normals = nullptr) override;
 };
 
-struct MaterialInfo {
-	NiStringRef nameRef;
-	uint32_t extraData;
-};
-
 class NiSkinInstance;
 
 class NiGeometry : public NiCloneableStreamable<NiGeometry, NiShape> {
@@ -568,10 +543,10 @@ protected:
 	NiBlockRef<NiShader> shaderPropertyRef;
 	NiBlockRef<NiAlphaProperty> alphaPropertyRef;
 
-	uint32_t numMaterials = 0;
-	std::vector<MaterialInfo> materials;
-
 public:
+	NiSyncVector<NiStringRef> materialNames;
+	NiVector<uint32_t> materialExtraData;
+
 	int activeMaterial = 0;
 	uint8_t defaultMatNeedsUpdateFlag = 0;
 
@@ -582,12 +557,9 @@ public:
 	void Sync(NiStreamReversible& stream);
 	void GetStringRefs(std::vector<NiStringRef*>& refs) override;
 	void GetChildRefs(std::set<NiRef*>& refs) override;
-	void GetChildIndices(std::vector<int>& indices) override;
+	void GetChildIndices(std::vector<uint32_t>& indices) override;
 
 	bool IsSkinned() const override;
-
-	std::vector<MaterialInfo> GetMaterials() const;
-	void SetMaterials(const std::vector<MaterialInfo>& mi);
 
 	bool HasData() const override { return !dataRef.IsEmpty(); }
 	NiBlockRef<NiGeometryData>* DataRef() override { return &dataRef; }
@@ -674,7 +646,7 @@ public:
 class StripsInfo {
 public:
 	NiVector<uint16_t, uint16_t> stripLengths;
-	bool hasPoints = false;
+	bool hasPoints = true;
 	std::vector<std::vector<uint16_t>> points;
 
 	void Sync(NiStreamReversible& stream);

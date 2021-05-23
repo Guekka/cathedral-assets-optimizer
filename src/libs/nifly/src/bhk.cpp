@@ -54,7 +54,7 @@ void bhkNiCollisionObject::GetChildRefs(std::set<NiRef*>& refs) {
 	refs.insert(&bodyRef);
 }
 
-void bhkNiCollisionObject::GetChildIndices(std::vector<int>& indices) {
+void bhkNiCollisionObject::GetChildIndices(std::vector<uint32_t>& indices) {
 	NiCollisionObject::GetChildIndices(indices);
 
 	indices.push_back(bodyRef.index);
@@ -73,50 +73,20 @@ void bhkBlendCollisionObject::Sync(NiStreamReversible& stream) {
 
 
 bhkPhysicsSystem::bhkPhysicsSystem(const uint32_t size) {
-	numBytes = size;
 	data.resize(size);
 }
 
 void bhkPhysicsSystem::Sync(NiStreamReversible& stream) {
-	stream.Sync(numBytes);
-	data.resize(numBytes);
-	if (data.empty())
-		return;
-
-	stream.Sync(&data[0], numBytes);
-}
-
-std::vector<char> bhkPhysicsSystem::GetData() const {
-	return data;
-}
-
-void bhkPhysicsSystem::SetData(const std::vector<char>& dat) {
-	numBytes = dat.size();
-	data = dat;
+	data.SyncByteArray(stream);
 }
 
 
 bhkRagdollSystem::bhkRagdollSystem(const uint32_t size) {
-	numBytes = size;
 	data.resize(size);
 }
 
 void bhkRagdollSystem::Sync(NiStreamReversible& stream) {
-	stream.Sync(numBytes);
-	data.resize(numBytes);
-	if (data.empty())
-		return;
-
-	stream.Sync(&data[0], numBytes);
-}
-
-std::vector<char> bhkRagdollSystem::GetData() const {
-	return data;
-}
-
-void bhkRagdollSystem::SetData(const std::vector<char>& dat) {
-	numBytes = dat.size();
-	data = dat;
+	data.SyncByteArray(stream);
 }
 
 
@@ -171,7 +141,7 @@ void bhkConvexListShape::GetChildRefs(std::set<NiRef*>& refs) {
 	shapeRefs.GetIndexPtrs(refs);
 }
 
-void bhkConvexListShape::GetChildIndices(std::vector<int>& indices) {
+void bhkConvexListShape::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkShape::GetChildIndices(indices);
 
 	shapeRefs.GetIndices(indices);
@@ -207,7 +177,7 @@ void bhkTransformShape::GetChildRefs(std::set<NiRef*>& refs) {
 	refs.insert(&shapeRef);
 }
 
-void bhkTransformShape::GetChildIndices(std::vector<int>& indices) {
+void bhkTransformShape::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkShape::GetChildIndices(indices);
 
 	indices.push_back(shapeRef.index);
@@ -229,15 +199,13 @@ void bhkMoppBvTreeShape::Sync(NiStreamReversible& stream) {
 	stream.Sync(shapeCollection);
 	stream.Sync(code);
 	stream.Sync(scale);
-	stream.Sync(dataSize);
+	uint32_t sz = data.SyncSize(stream);
 	stream.Sync(offset);
 
 	if (stream.GetVersion().User() >= 12)
 		stream.Sync(buildType);
 
-	data.resize(dataSize);
-	for (uint32_t i = 0; i < dataSize; i++)
-		stream.Sync(data[i]);
+	data.SyncData(stream, sz);
 }
 
 void bhkMoppBvTreeShape::GetChildRefs(std::set<NiRef*>& refs) {
@@ -246,19 +214,10 @@ void bhkMoppBvTreeShape::GetChildRefs(std::set<NiRef*>& refs) {
 	refs.insert(&shapeRef);
 }
 
-void bhkMoppBvTreeShape::GetChildIndices(std::vector<int>& indices) {
+void bhkMoppBvTreeShape::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkBvTreeShape::GetChildIndices(indices);
 
 	indices.push_back(shapeRef.index);
-}
-
-std::vector<uint8_t> bhkMoppBvTreeShape::GetData() const {
-	return data;
-}
-
-void bhkMoppBvTreeShape::SetData(const std::vector<uint8_t>& dat) {
-	dataSize = dat.size();
-	data = dat;
 }
 
 
@@ -283,7 +242,7 @@ void bhkNiTriStripsShape::GetChildRefs(std::set<NiRef*>& refs) {
 	partRefs.GetIndexPtrs(refs);
 }
 
-void bhkNiTriStripsShape::GetChildIndices(std::vector<int>& indices) {
+void bhkNiTriStripsShape::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkShape::GetChildIndices(indices);
 
 	partRefs.GetIndices(indices);
@@ -306,7 +265,7 @@ void bhkListShape::GetChildRefs(std::set<NiRef*>& refs) {
 	subShapeRefs.GetIndexPtrs(refs);
 }
 
-void bhkListShape::GetChildIndices(std::vector<int>& indices) {
+void bhkListShape::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkShapeCollection::GetChildIndices(indices);
 
 	subShapeRefs.GetIndices(indices);
@@ -361,7 +320,7 @@ void bhkPackedNiTriStripsShape::GetChildRefs(std::set<NiRef*>& refs) {
 	refs.insert(&dataRef);
 }
 
-void bhkPackedNiTriStripsShape::GetChildIndices(std::vector<int>& indices) {
+void bhkPackedNiTriStripsShape::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkShapeCollection::GetChildIndices(indices);
 
 	indices.push_back(dataRef.index);
@@ -413,7 +372,7 @@ void bhkWorldObject::GetChildRefs(std::set<NiRef*>& refs) {
 	refs.insert(&shapeRef);
 }
 
-void bhkWorldObject::GetChildIndices(std::vector<int>& indices) {
+void bhkWorldObject::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkSerializable::GetChildIndices(indices);
 
 	indices.push_back(shapeRef.index);
@@ -438,8 +397,10 @@ void bhkRigidBody::Sync(NiStreamReversible& stream) {
 	stream.Sync(unusedByte1);
 	stream.Sync(processContactCallbackDelay);
 	stream.Sync(unkInt1);
+
 	stream.Sync(collisionFilterCopy);
 	stream.Sync(reinterpret_cast<char*>(unkShorts2), 12);
+
 	stream.Sync(translation);
 	stream.Sync(rotation);
 	stream.Sync(linearVelocity);
@@ -450,14 +411,16 @@ void bhkRigidBody::Sync(NiStreamReversible& stream) {
 	stream.Sync(linearDamping);
 	stream.Sync(angularDamping);
 
-	if (stream.GetVersion().User() >= 12) {
-		stream.Sync(timeFactor);
+	if (stream.GetVersion().Stream() > 34) {
+		if (stream.GetVersion().Stream() < 130)
+			stream.Sync(timeFactor);
+
 		stream.Sync(gravityFactor);
 	}
 
 	stream.Sync(friction);
 
-	if (stream.GetVersion().User() >= 12)
+	if (stream.GetVersion().Stream() > 34)
 		stream.Sync(rollingFrictionMult);
 
 	stream.Sync(restitution);
@@ -468,22 +431,24 @@ void bhkRigidBody::Sync(NiStreamReversible& stream) {
 	stream.Sync(deactivatorType);
 	stream.Sync(solverDeactivation);
 	stream.Sync(qualityType);
-	stream.Sync(autoRemoveLevel);
-	stream.Sync(responseModifierFlag);
-	stream.Sync(numShapeKeysInContactPointProps);
-	stream.Sync(forceCollideOntoPpu);
-	stream.Sync(unkInt2);
-	stream.Sync(unkInt3);
 
-	if (stream.GetVersion().User() >= 12)
-		stream.Sync(unkInt4);
+	if (stream.GetVersion().Stream() > 34) {
+		stream.Sync(autoRemoveLevel);
+		stream.Sync(responseModifierFlag);
+		stream.Sync(numShapeKeysInContactPointProps);
+		stream.Sync(forceCollideOntoPpu);
+	}
+
+	if (stream.GetVersion().IsFO4())
+		stream.Sync(reinterpret_cast<char*>(unusedBytes2), 3);
+	else
+		stream.Sync(reinterpret_cast<char*>(unusedInts1), 12);
 
 	constraintRefs.Sync(stream);
 
-	if (stream.GetVersion().User() <= 11)
-		stream.Sync(unkInt5);
-
-	if (stream.GetVersion().User() >= 12)
+	if (stream.GetVersion().Stream() < 76)
+		stream.Sync(bodyFlagsInt);
+	else
 		stream.Sync(bodyFlags);
 }
 
@@ -493,7 +458,7 @@ void bhkRigidBody::GetChildRefs(std::set<NiRef*>& refs) {
 	constraintRefs.GetIndexPtrs(refs);
 }
 
-void bhkRigidBody::GetChildIndices(std::vector<int>& indices) {
+void bhkRigidBody::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkEntity::GetChildIndices(indices);
 
 	constraintRefs.GetIndices(indices);
@@ -514,16 +479,12 @@ void bhkConstraint::GetPtrs(std::set<NiPtr*>& ptrs) {
 
 
 void bhkHingeConstraint::Sync(NiStreamReversible& stream) {
-	stream.Sync(hinge);
+	hinge.Sync(stream);
 }
 
 
 void bhkLimitedHingeConstraint::Sync(NiStreamReversible& stream) {
-	stream.Sync(limitedHinge.hinge);
-	stream.Sync(limitedHinge.minAngle);
-	stream.Sync(limitedHinge.maxAngle);
-	stream.Sync(limitedHinge.maxFriction);
-	limitedHinge.motorDesc.Sync(stream);
+	limitedHinge.Sync(stream);
 }
 
 
@@ -535,49 +496,19 @@ void ConstraintData::Sync(NiStreamReversible& stream) {
 
 	switch (type) {
 		case BallAndSocket: stream.Sync(reinterpret_cast<char*>(&desc1), 32); break;
-		case Hinge: stream.Sync(reinterpret_cast<char*>(&desc2), 128); break;
-		case LimitedHinge:
-			stream.Sync(desc3.hinge);
-			stream.Sync(desc3.minAngle);
-			stream.Sync(desc3.maxAngle);
-			stream.Sync(desc3.maxFriction);
-			desc3.motorDesc.Sync(stream);
-			break;
-		case Prismatic:
-			stream.Sync(desc4.slidingA);
-			stream.Sync(desc4.rotationA);
-			stream.Sync(desc4.planeA);
-			stream.Sync(desc4.pivotA);
-			stream.Sync(desc4.slidingB);
-			stream.Sync(desc4.rotationB);
-			stream.Sync(desc4.planeB);
-			stream.Sync(desc4.pivotB);
-			stream.Sync(desc4.minDistance);
-			stream.Sync(desc4.maxDistance);
-			stream.Sync(desc4.friction);
-			desc4.motorDesc.Sync(stream);
-			break;
-		case Ragdoll:
-			stream.Sync(desc5.twistA);
-			stream.Sync(desc5.planeA);
-			stream.Sync(desc5.motorA);
-			stream.Sync(desc5.pivotA);
-			stream.Sync(desc5.twistB);
-			stream.Sync(desc5.planeB);
-			stream.Sync(desc5.motorB);
-			stream.Sync(desc5.pivotB);
-			stream.Sync(desc5.coneMaxAngle);
-			stream.Sync(desc5.planeMinAngle);
-			stream.Sync(desc5.planeMaxAngle);
-			stream.Sync(desc5.twistMinAngle);
-			stream.Sync(desc5.twistMaxAngle);
-			stream.Sync(desc5.maxFriction);
-			desc5.motorDesc.Sync(stream);
-			break;
+		case Hinge: desc2.Sync(stream); break;
+		case LimitedHinge: desc3.Sync(stream); break;
+		case Prismatic: desc4.Sync(stream); break;
+		case Ragdoll: desc5.Sync(stream); break;
 		case StiffSpring: stream.Sync(reinterpret_cast<char*>(&desc6), 36); break;
 	}
 
-	stream.Sync(strength);
+	if (stream.GetVersion().File() <= NiFileVersion::V20_0_0_5) {
+		stream.Sync(tau);
+		stream.Sync(damping);
+	}
+	else if (stream.GetVersion().File() >= NiFileVersion::V20_2_0_7)
+		stream.Sync(strength);
 }
 
 void ConstraintData::GetPtrs(std::set<NiPtr*>& ptrs) {
@@ -598,21 +529,36 @@ void bhkBreakableConstraint::GetPtrs(std::set<NiPtr*>& ptrs) {
 
 
 void bhkRagdollConstraint::Sync(NiStreamReversible& stream) {
-	stream.Sync(ragdoll.twistA);
-	stream.Sync(ragdoll.planeA);
-	stream.Sync(ragdoll.motorA);
-	stream.Sync(ragdoll.pivotA);
-	stream.Sync(ragdoll.twistB);
-	stream.Sync(ragdoll.planeB);
-	stream.Sync(ragdoll.motorB);
-	stream.Sync(ragdoll.pivotB);
+	if (stream.GetVersion().Stream() <= 16) {
+		// OB/FO3
+		stream.Sync(ragdoll.pivotA);
+		stream.Sync(ragdoll.planeA);
+		stream.Sync(ragdoll.twistA);
+		stream.Sync(ragdoll.pivotB);
+		stream.Sync(ragdoll.planeB);
+		stream.Sync(ragdoll.twistB);
+	}
+	else {
+		// FO3 and later
+		stream.Sync(ragdoll.twistA);
+		stream.Sync(ragdoll.planeA);
+		stream.Sync(ragdoll.motorA);
+		stream.Sync(ragdoll.pivotA);
+		stream.Sync(ragdoll.twistB);
+		stream.Sync(ragdoll.planeB);
+		stream.Sync(ragdoll.motorB);
+		stream.Sync(ragdoll.pivotB);
+	}
+
 	stream.Sync(ragdoll.coneMaxAngle);
 	stream.Sync(ragdoll.planeMinAngle);
 	stream.Sync(ragdoll.planeMaxAngle);
 	stream.Sync(ragdoll.twistMinAngle);
 	stream.Sync(ragdoll.twistMaxAngle);
 	stream.Sync(ragdoll.maxFriction);
-	ragdoll.motorDesc.Sync(stream);
+
+	if (stream.GetVersion().Stream() > 16)
+		ragdoll.motorDesc.Sync(stream);
 }
 
 
@@ -624,18 +570,7 @@ void bhkStiffSpringConstraint::Sync(NiStreamReversible& stream) {
 
 
 void bhkPrismaticConstraint::Sync(NiStreamReversible& stream) {
-	stream.Sync(prismatic.slidingA);
-	stream.Sync(prismatic.rotationA);
-	stream.Sync(prismatic.planeA);
-	stream.Sync(prismatic.pivotA);
-	stream.Sync(prismatic.slidingB);
-	stream.Sync(prismatic.rotationB);
-	stream.Sync(prismatic.planeB);
-	stream.Sync(prismatic.pivotB);
-	stream.Sync(prismatic.minDistance);
-	stream.Sync(prismatic.maxDistance);
-	stream.Sync(prismatic.friction);
-	prismatic.motorDesc.Sync(stream);
+	prismatic.Sync(stream);
 }
 
 
@@ -700,59 +635,10 @@ void bhkCompressedMeshShapeData::Sync(NiStreamReversible& stream) {
 	transforms.Sync(stream);
 	bigVerts.Sync(stream);
 
-	stream.Sync(numBigTris);
-	bigTris.resize(numBigTris);
-	for (uint32_t i = 0; i < numBigTris; i++)
-		stream.Sync(reinterpret_cast<char*>(&bigTris[i]), 12);
-
-	stream.Sync(numChunks);
-	chunks.resize(numChunks);
-	for (uint32_t i = 0; i < numChunks; i++) {
-		stream.Sync(chunks[i].translation);
-		stream.Sync(chunks[i].matIndex);
-		stream.Sync(chunks[i].reference);
-		stream.Sync(chunks[i].transformIndex);
-
-		stream.Sync(chunks[i].numVerts);
-		chunks[i].verts.resize(chunks[i].numVerts);
-		for (uint32_t j = 0; j < chunks[i].numVerts; j++)
-			stream.Sync(chunks[i].verts[j]);
-
-		stream.Sync(chunks[i].numIndices);
-		chunks[i].indices.resize(chunks[i].numIndices);
-		for (uint32_t j = 0; j < chunks[i].numIndices; j++)
-			stream.Sync(chunks[i].indices[j]);
-
-		stream.Sync(chunks[i].numStrips);
-		chunks[i].strips.resize(chunks[i].numStrips);
-		for (uint32_t j = 0; j < chunks[i].numStrips; j++)
-			stream.Sync(chunks[i].strips[j]);
-
-		stream.Sync(chunks[i].numWeldingInfo);
-		chunks[i].weldingInfo.resize(chunks[i].numWeldingInfo);
-		for (uint32_t j = 0; j < chunks[i].numWeldingInfo; j++)
-			stream.Sync(chunks[i].weldingInfo[j]);
-	}
+	bigTris.Sync(stream);
+	chunks.Sync(stream);
 
 	stream.Sync(numConvexPieceA);
-}
-
-std::vector<bhkCMSDBigTris> bhkCompressedMeshShapeData::GetBigTris() const {
-	return bigTris;
-}
-
-void bhkCompressedMeshShapeData::SetBigTris(const std::vector<bhkCMSDBigTris>& bt) {
-	numBigTris = bt.size();
-	bigTris = bt;
-}
-
-std::vector<bhkCMSDChunk> bhkCompressedMeshShapeData::GetChunks() const {
-	return chunks;
-}
-
-void bhkCompressedMeshShapeData::SetChunks(const std::vector<bhkCMSDChunk>& bt) {
-	numChunks = bt.size();
-	chunks = bt;
 }
 
 
@@ -773,7 +659,7 @@ void bhkCompressedMeshShape::GetChildRefs(std::set<NiRef*>& refs) {
 	refs.insert(&dataRef);
 }
 
-void bhkCompressedMeshShape::GetChildIndices(std::vector<int>& indices) {
+void bhkCompressedMeshShape::GetChildIndices(std::vector<uint32_t>& indices) {
 	bhkShape::GetChildIndices(indices);
 
 	indices.push_back(dataRef.index);
@@ -788,11 +674,7 @@ void bhkCompressedMeshShape::GetPtrs(std::set<NiPtr*>& ptrs) {
 
 void bhkPoseArray::Sync(NiStreamReversible& stream) {
 	bones.Sync(stream);
-
-	stream.Sync(numPoses);
-	poses.resize(numPoses);
-	for (uint32_t i = 0; i < numPoses; i++)
-		poses[i].Sync(stream);
+	poses.Sync(stream);
 }
 
 void bhkPoseArray::GetStringRefs(std::vector<NiStringRef*>& refs) {
@@ -800,15 +682,6 @@ void bhkPoseArray::GetStringRefs(std::vector<NiStringRef*>& refs) {
 
 	for (auto& b : bones)
 		refs.emplace_back(&b);
-}
-
-std::vector<BonePose> bhkPoseArray::GetPoses() const {
-	return poses;
-}
-
-void bhkPoseArray::SetPoses(const std::vector<BonePose>& po) {
-	numPoses = po.size();
-	poses = po;
 }
 
 
@@ -822,7 +695,7 @@ void bhkRagdollTemplate::GetChildRefs(std::set<NiRef*>& refs) {
 	boneRefs.GetIndexPtrs(refs);
 }
 
-void bhkRagdollTemplate::GetChildIndices(std::vector<int>& indices) {
+void bhkRagdollTemplate::GetChildIndices(std::vector<uint32_t>& indices) {
 	NiExtraData::GetChildIndices(indices);
 
 	boneRefs.GetIndices(indices);
@@ -836,24 +709,11 @@ void bhkRagdollTemplateData::Sync(NiStreamReversible& stream) {
 	stream.Sync(friction);
 	stream.Sync(radius);
 	stream.Sync(material);
-
-	stream.Sync(numConstraints);
-	constraints.resize(numConstraints);
-	for (uint32_t i = 0; i < numConstraints; i++)
-		constraints[i].Sync(stream);
+	constraints.Sync(stream);
 }
 
 void bhkRagdollTemplateData::GetStringRefs(std::vector<NiStringRef*>& refs) {
 	NiObject::GetStringRefs(refs);
 
 	refs.emplace_back(&name);
-}
-
-std::vector<ConstraintData> bhkRagdollTemplateData::GetConstraints() const {
-	return constraints;
-}
-
-void bhkRagdollTemplateData::SetConstraints(const std::vector<ConstraintData>& cs) {
-	numConstraints = cs.size();
-	constraints = cs;
 }

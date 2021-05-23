@@ -151,26 +151,28 @@ void MeshesOptimizer::dryOptimize(const QString &filepath) const
 bool MeshesOptimizer::renameReferencedTexturesExtension(NifFile &file)
 {
     bool meshChanged = false;
-    constexpr int limit = 1000;
+    constexpr int limit = 10; // Only 10 slots
 
     for (auto shape : file.GetShapes()) {
-        auto shader = file.GetShader(shape);
-        if (shader) {
+        int texCounter = 0;
+        for (int i = 0; i < limit; ++i) {
             std::string tex;
-            int texCounter = 0;
-            while (file.GetTextureSlot(shader, tex, texCounter) && !tex.empty()) {
-                QString qsTex = QString::fromStdString(tex);
-                if (qsTex.contains(".tga", Qt::CaseInsensitive)) {
-                    qsTex.replace(".tga", ".dds", Qt::CaseInsensitive);
-                    tex = qsTex.toStdString();
-                    file.SetTextureSlot(shader, tex, texCounter);
-                    meshChanged = true;
-                }
-                if (++texCounter > limit) {
-                    PLOG_ERROR
-                        << "Failed to renamed referenced textures from TGA to DDS in this mesh";
-                    return false;
-                }
+            file.GetTextureSlot(shape, tex, texCounter);
+            if (tex.empty())
+                continue;
+
+            QString qsTex = QString::fromStdString(tex);
+            if (qsTex.contains(".tga", Qt::CaseInsensitive)) {
+                qsTex.replace(".tga", ".dds", Qt::CaseInsensitive);
+                tex = qsTex.toStdString();
+                file.SetTextureSlot(shape, tex, texCounter);
+                tex = qsTex.replace(".tga", ".dds", Qt::CaseInsensitive).toStdString();
+                meshChanged = true;
+            }
+            if (++texCounter > limit) {
+                PLOG_ERROR << "Failed to renamed referenced textures from TGA to "
+                              "DDS in this mesh";
+                return false;
             }
         }
     }
