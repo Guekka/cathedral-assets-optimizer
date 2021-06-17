@@ -17,6 +17,15 @@ MainOptimizer::MainOptimizer(const OptionsCAO &optOptions)
     addLandscapeTextures();
 }
 
+void handleBadFile(const QString &path)
+{
+    if (QFile::rename(path, path + ".caobad")) {
+        PLOG_ERROR << QString("%1 was renamed to %2").arg(path, path + ".caobad");
+    } else {
+        PLOG_ERROR << QString("Please remove %1").arg(path);
+    }
+}
+
 void MainOptimizer::addHeadparts()
 {
     _meshesOpt.listHeadparts(_optOptions.userPath);
@@ -58,6 +67,7 @@ void MainOptimizer::process(const QString &file)
     } catch (const std::exception &e) {
         PLOG_ERROR << "Cannot process: " + file
                    << "\nAn exception occurred: " << e.what();
+        handleBadFile(file);
     }
 }
 
@@ -96,6 +106,7 @@ void MainOptimizer::processTexture(const QString &file, const TexturesOptimizer:
     if (!_texturesOpt.open(file, type))
     {
         PLOG_ERROR << "Failed to open: " << file;
+        handleBadFile(file);
         return;
     }
 
@@ -167,5 +178,6 @@ void MainOptimizer::processNif(const QString &file)
     if (_optOptions.iMeshesOptimizationLevel >= 1 && _optOptions.bDryRun)
         _meshesOpt.dryOptimize(file);
     else if (_optOptions.iMeshesOptimizationLevel >= 1 && !_optOptions.bDryRun)
-        _meshesOpt.optimize(file);
+        if (!_meshesOpt.optimize(file))
+            handleBadFile(file);
 }
