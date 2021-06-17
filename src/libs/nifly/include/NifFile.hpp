@@ -7,6 +7,8 @@ See the included GPLv3 LICENSE file
 #pragma once
 
 #include "Factory.hpp"
+#include "Geometry.hpp"
+#include "Nodes.hpp"
 
 #include <filesystem>
 
@@ -213,6 +215,9 @@ public:
 	// Returns NiTexturingProperty pointer of the shape (or nullptr)
 	// Used by OB.
 	NiTexturingProperty* GetTexturingProperty(NiShape* shape) const;
+
+	// Returns references to all texture path strings of the shape
+	std::vector<std::reference_wrapper<std::string>> GetTexturePathRefs(NiShape* shape) const;
 
 	// Fills "outTexFile" with the texture path in the specified slot.
 	// Returns:

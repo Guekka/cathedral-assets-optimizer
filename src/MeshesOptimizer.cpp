@@ -49,12 +49,12 @@ void MeshesOptimizer::listHeadparts(const QString &directory)
     headparts.removeDuplicates();
 }
 
-void MeshesOptimizer::optimize(const QString &filepath)
+bool MeshesOptimizer::optimize(const QString &filepath)
 // Optimize the selected mesh
 {
     auto [loadResult, nif] = loadMesh(filepath);
     if (!loadResult)
-        return;
+        return false;
 
     OptOptions options;
     options.targetVersion.SetFile(Profiles::meshesFileVersion());
@@ -82,7 +82,7 @@ void MeshesOptimizer::optimize(const QString &filepath)
     } else {
         switch (scanResult) {
         case doNotProcess:
-            return;
+            return true;
         case good:
         case lightIssue:
             if (iMeshesOptimizationLevel >= 3) {
@@ -112,6 +112,7 @@ void MeshesOptimizer::optimize(const QString &filepath)
     if (modifiedMesh || renamedReferencedTextures || processedHeadpart)
         saveMesh(nif, filepath);
     PLOG_VERBOSE << "Closing mesh: " + filepath;
+    return true;
 }
 
 void MeshesOptimizer::dryOptimize(const QString &filepath) const
@@ -151,28 +152,16 @@ void MeshesOptimizer::dryOptimize(const QString &filepath) const
 bool MeshesOptimizer::renameReferencedTexturesExtension(NifFile &file)
 {
     bool meshChanged = false;
-    constexpr int limit = 10; // Only 10 slots
-
     for (auto shape : file.GetShapes()) {
-        int texCounter = 0;
-        for (int i = 0; i < limit; ++i) {
-            std::string tex;
-            file.GetTextureSlot(shape, tex, texCounter);
-            if (tex.empty())
+        for (auto tex : file.GetTexturePathRefs(shape)) {
+            if (tex.get().empty())
                 continue;
 
-            QString qsTex = QString::fromStdString(tex);
+            QString qsTex = QString::fromStdString(tex.get());
             if (qsTex.contains(".tga", Qt::CaseInsensitive)) {
                 qsTex.replace(".tga", ".dds", Qt::CaseInsensitive);
-                tex = qsTex.toStdString();
-                file.SetTextureSlot(shape, tex, texCounter);
-                tex = qsTex.replace(".tga", ".dds", Qt::CaseInsensitive).toStdString();
+                tex.get() = qsTex.toStdString();
                 meshChanged = true;
-            }
-            if (++texCounter > limit) {
-                PLOG_ERROR << "Failed to renamed referenced textures from TGA to "
-                              "DDS in this mesh";
-                return false;
             }
         }
     }

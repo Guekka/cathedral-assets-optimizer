@@ -35,7 +35,7 @@ public:
    * \brief Optimize the providen mesh according to its type
    * \param filePath The path of the mesh to optimize
    */
-    void optimize(const QString &filepath);
+    bool optimize(const QString &filepath);
     /*!
    * \brief Report the optimization that would be made on the file
    * \param filePath The path of the mesh to optimize
