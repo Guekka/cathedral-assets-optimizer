@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.12...3.20)
 
-if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE
-        "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        CACHE STRING "")
-endif()
-
 project(Cathedral_Assets_Optimizer VERSION 5.2.1 LANGUAGES CXX)
 
 #Setting version for C++ files
@@ -22,11 +16,9 @@ include(cotire)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #Qt
-set(Qt5_DIR "C:/IT/Qt/5.12.4/msvc2017/lib/cmake/Qt5")
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 #Qt Linguist
-set(QtBin "C:/IT/Qt/5.12.4/msvc2017/lib/cmake/Qt5LinguistTools")
-find_package(Qt5LinguistTools)
+find_package(Qt5LinguistTools REQUIRED)
 
 #Setting GUI
 #Comment out the next lines to create a CLI version instead (untested)
@@ -98,7 +90,7 @@ qt5_create_translation(QM_FILES ${TS_FILES} ${SOURCES})
 
 #plog
 message("Adding Plog library")
-add_subdirectory(libs/plog)
+find_path(PLOG_INCLUDE_DIRS "plog/Appenders/AndroidAppender.h")
 add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
 #LibBsarch
 add_subdirectory(libs/BSAUtil)
@@ -109,7 +101,6 @@ add_subdirectory(libs/nifly)
 find_package(directxtex CONFIG REQUIRED)
 find_package(directx-headers CONFIG REQUIRED)
 find_package(directxmath CONFIG REQUIRED)
-
 
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)
@@ -132,5 +123,5 @@ set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HE
 cotire(Cathedral_Assets_Optimizer)
 
 #C++17
-target_compile_features(Cathedral_Assets_Optimizer PUBLIC cxx_std_17)
+target_compile_features(Cathedral_Assets_Optimizer PUBLIC cxx_std_20)
 
