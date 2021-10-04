@@ -4,8 +4,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "BSA.h"
 #include "pch.h"
+
+#ifdef __GNUC__
+#define PACKED(datastructure) datastructure __attribute__((__packed__))
+#else
+#define PACKED(datastructure) __pragma(pack(push, 1)) datastructure __pragma(pack(pop))
+#endif
 
 PACKED(struct PluginHeader {
     char type[4];

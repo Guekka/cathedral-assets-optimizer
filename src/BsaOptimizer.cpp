@@ -29,9 +29,9 @@ BSAOptimizer::BSAOptimizer()
     }
 }
 
-BSAUtil::GameSettings getSettings()
+btu::bsa::Settings getSettings()
 {
-    auto sets = BSAUtil::GameSettings::get(Profiles::bsaGame());
+    auto sets = btu::bsa::Settings::get(Profiles::bsaGame());
     sets.maxSize = Profiles::maxBsaUncompressedSize();
     return sets;
 }
@@ -39,7 +39,7 @@ BSAUtil::GameSettings getSettings()
 void BSAOptimizer::extract(const QString &bsaPath, const bool &deleteBackup) const
 {
     try {
-        BSAUtil::extract(bsaPath.toStdU16String(), deleteBackup, false);
+        btu::bsa::unpack(btu::bsa::UnpackSettings{bsaPath.toStdU16String(), deleteBackup, false});
     } catch (const std::exception &e) {
         PLOG_ERROR << e.what();
         PLOG_ERROR << "An error occured during the extraction of: " + bsaPath + '\n'
@@ -58,27 +58,29 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
     const auto game = getSettings();
-    const auto dir = BSAUtil::path(folderPath.toStdU16String());
+    const auto dir = folderPath.toStdU16String();
 
-    cleanDummyPlugins(dir, game);
+    btu::bsa::clean_dummy_plugins(dir, game);
 
-    auto bsas = splitBSA(dir, options.bBsaLeastBSA, game);
+    auto bsas = btu::bsa::split(dir, game);
+    if (options.bBsaLeastBSA)
+        btu::bsa::merge(bsas);
 
-    for (auto const &bsa : bsas) {
+    for (auto &&bsa : bsas) {
         try {
-            BSAUtil::create(dir, bsa, options.bBsaCompress, game);
+            const auto files = std::vector(bsa.begin(), bsa.end());
+            btu::bsa::write(options.bBsaCompress, std::move(bsa), game, dir);
             if (options.bBsaDeleteSource)
-                std::for_each(bsa.files_.cbegin(), bsa.files_.cend(), [](auto &&f) {
-                    BSAUtil::fs::remove(f);
+                std::for_each(files.cbegin(), files.cend(), [](auto &&f) {
+                    btu::bsa::fs::remove(f);
                 });
         } catch (const std::exception &e) {
-            PLOG_ERROR << QString("An error occurred while processing '%1': \n%2")
-                              .arg(bsa.path_.wstring(), e.what());
+            PLOG_ERROR << QString("An error occurred while packing BSAs: \n%2").arg(e.what());
         }
     }
 
     if (options.bBsaCreateDummies)
-        BSAUtil::makeDummyPlugins(dir, game);
+        btu::bsa::make_dummy_plugins(dir, game);
 }
 
 QString BSAOptimizer::backup(const QString &bsaPath) const
@@ -136,8 +138,8 @@ size_t str_find(std::basic_string<CharT> const &string,
         return std::string::npos; // not found
 }
 
-bool BSAOptimizer::isAllowedFile([[maybe_unused]] BSAUtil::path const &dir,
-                                 BSAUtil::fs::directory_entry const &fileinfo) const
+bool BSAOptimizer::isAllowedFile([[maybe_unused]] btu::bsa::Path const &dir,
+                                 btu::bsa::fs::directory_entry const &fileinfo) const
 {
     for (const auto &fileToNotPack : filesToNotPack) {
         const auto &path = fileinfo.path().native();

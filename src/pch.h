@@ -61,8 +61,8 @@
 #include "Logger.h"
 #include "NifFile.hpp"
 #include "TexturesFormats.h"
-#include "libs/BSAUtil/include/BSACreate.hpp"
-#include "libs/BSAUtil/include/BSAExtract.hpp"
+#include "btu/bsa/pack.hpp"
+#include "btu/bsa/unpack.hpp"
 /*----------------------*/
 
 #endif

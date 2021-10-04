@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "BSA.h"
 #include "FilesystemOperations.h"
 #include "Profiles.h"
 #include "TexturesOptimizer.h"
@@ -34,7 +33,7 @@ public:
    * \brief Creates a BSA containing all the files given as argument
    * \param bsa The BSA to create
    */
-    int create(BSA &bsa, bool allowCompression, bool deleteSource) const;
+    int create(btu::bsa::ArchiveData &bsa, bool allowCompression, bool deleteSource) const;
 
     /*!
    * \brief Packs all the loose files in the directory into BSAs
@@ -54,10 +53,10 @@ private:
    * \brief Checks if the file is present in the list filesToNotPack
    * \return a bool indicating the state of the file. True if is allowed, false otherwise
    */
-    bool isAllowedFile(const BSAUtil::path &dir,
+    bool isAllowedFile(const btu::common::Path &dir,
                        const std::filesystem::directory_entry &fileinfo) const;
     /*!
    * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
    */
-    std::vector<BSAUtil::fs::path::string_type> filesToNotPack;
+    std::vector<btu::bsa::fs::path::string_type> filesToNotPack;
 };

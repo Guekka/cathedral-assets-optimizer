@@ -82,7 +82,7 @@ void Manager::listFiles()
             const bool animation = _options.bAnimationsOptimization
                                    && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            const auto bsaExt = BSAUtil::GameSettings::get(Profiles::bsaGame()).extension;
+            const auto bsaExt = btu::bsa::Settings::get(Profiles::bsaGame()).extension;
             const bool bsa = _options.bBsaExtract
                              && it.fileName().endsWith(QString::fromStdU16String(bsaExt.u16string()),
                                                        Qt::CaseInsensitive);

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12...3.20)
 
-project(Cathedral_Assets_Optimizer VERSION 5.2.1 LANGUAGES CXX)
+project(Cathedral_Assets_Optimizer VERSION 5.3.0 LANGUAGES CXX)
 
 #Setting version for C++ files
 configure_file (
@@ -93,7 +93,7 @@ message("Adding Plog library")
 find_path(PLOG_INCLUDE_DIRS "plog/Appenders/AndroidAppender.h")
 add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
 #LibBsarch
-add_subdirectory(libs/BSAUtil)
+find_package(bethutil-bsa CONFIG REQUIRED)
 #Nif Library
 message("Adding nifly library")
 add_subdirectory(libs/nifly)
@@ -116,7 +116,8 @@ add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${RESOURCES} ${QM_FIL
 #Windows 7 compatibility
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     Qt5::Core Qt5::Widgets
-    plog nifly Microsoft::DirectXTex BSAUtil)
+    nifly Microsoft::DirectXTex bethutil-bsa::bethutil-bsa)
+target_include_directories(Cathedral_Assets_Optimizer PRIVATE ${PLOG_INCLUDE_DIRS})
 
 #Cotire (PCH)
 set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.h")

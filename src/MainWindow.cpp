@@ -20,9 +20,9 @@ MainWindow::MainWindow() : _ui(new Ui::MainWindow)
         _ui->modeChooserComboBox->setItemData(1, OptionsCAO::SeveralMods);
 
         //Advanced BSA
-        _ui->bsaGame->setItemData(0, BSAUtil::Games::SLE);
-        _ui->bsaGame->setItemData(1, BSAUtil::Games::SSE);
-        _ui->bsaGame->setItemData(2, BSAUtil::Games::FO4);
+        _ui->bsaGame->setItemData(0, QVariant::fromValue(btu::common::Game::SLE));
+        _ui->bsaGame->setItemData(1, QVariant::fromValue(btu::common::Game::SSE));
+        _ui->bsaGame->setItemData(2, QVariant::fromValue(btu::common::Game::FO4));
 
         //Advanced meshes
         _ui->meshesUser->setItemData(0, 11);

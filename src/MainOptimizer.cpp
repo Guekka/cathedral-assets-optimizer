@@ -50,7 +50,7 @@ void MainOptimizer::addLandscapeTextures()
 
 void MainOptimizer::process(const QString &file)
 {
-    const auto bsaExt = BSAUtil::GameSettings::get(Profiles::bsaGame()).extension;
+    const auto bsaExt = btu::bsa::Settings::get(Profiles::bsaGame()).extension;
     try {
         if (file.endsWith(".dds", Qt::CaseInsensitive))
             processTexture(file, TexturesOptimizer::DDS);
