@@ -292,10 +292,11 @@ bool TexturesOptimizer::canBeCompressed() const
     const bool isInterface = _name.contains("interface", Qt::CaseInsensitive);
     const bool already = DirectX::IsCompressed(_info.format);
     const bool badSize = _info.width < 4 || _info.height < 4;
+    const bool notPow2 = _info.width % 2 != 0 || _info.height % 2 != 0;
 
     const bool interfaceOkay = Profiles::texturesCompressInterface() || !isInterface;
 
-    return interfaceOkay && !already && !badSize;
+    return interfaceOkay && !already && !badSize && !notPow2;
 }
 
 bool TexturesOptimizer::open(const QString &filePath, const TextureType &type)
@@ -712,9 +713,12 @@ bool TexturesOptimizer::isIncompatible() const
     const bool noAlpha = !DirectX::HasAlpha(fileFormat);
     const bool badAlpha = opaqueAlpha || noAlpha;
 
-    const bool badCubemap = isCubemap && uncompressed && badAlpha;
+    const bool isPow2 = _info.width % 2 == 0 && _info.width % 2 == 0;
 
-    return badCubemap;
+    const bool badCubemap = isCubemap && uncompressed && badAlpha;
+    const bool compressedAndNotPow2 = !uncompressed && !isPow2;
+
+    return badCubemap || compressedAndNotPow2;
 }
 
 void TexturesOptimizer::fitPowerOfTwo(size_t &resultX, size_t &resultY)
