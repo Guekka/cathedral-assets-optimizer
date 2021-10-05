@@ -62,7 +62,13 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
 
     btu::bsa::clean_dummy_plugins(dir, game);
 
-    auto bsas = btu::bsa::split(dir, game);
+    auto bsas = btu::bsa::split(
+        dir, game,
+        [this](const btu::bsa::Path& dir,
+               btu::bsa::fs::directory_entry const& fileinfo) {
+            return btu::bsa::defaultIsAllowedPath(dir, fileinfo) &&
+                   isAllowedFile(dir, fileinfo);
+        });
     if (options.bBsaLeastBSA)
         btu::bsa::merge(bsas);
 
