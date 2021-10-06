@@ -36,8 +36,12 @@ void NiGeometryData::Sync(NiStreamReversible& stream) {
 		stream.Sync(groupID);
 
 	stream.Sync(numVertices);
-	stream.Sync(keepFlags);
-	stream.Sync(compressFlags);
+
+	if (stream.GetVersion().File() >= NiFileVersion::V10_1_0_0) {
+		stream.Sync(keepFlags);
+		stream.Sync(compressFlags);
+	}
+
 	stream.Sync(hasVertices);
 
 	if (hasVertices && !isPSys) {
@@ -99,7 +103,9 @@ void NiGeometryData::Sync(NiStreamReversible& stream) {
 	}
 
 	stream.Sync(consistencyFlags);
-	additionalDataRef.Sync(stream);
+
+	if (stream.GetVersion().File() >= NiFileVersion::V20_0_0_4)
+		additionalDataRef.Sync(stream);
 }
 
 void NiGeometryData::GetChildRefs(std::set<NiRef*>& refs) {
@@ -1409,21 +1415,34 @@ void BSSubIndexTriShape::SetSegmentation(const NifSegmentationInfo& inf, const s
 	// Find first triangle of each partition
 	int j = 0;
 	std::vector<int> partTriInds(newPartID + 1);
+
 	for (int i = 0; i < static_cast<int>(triInds.size()); ++i)
 		while (triParts[triInds[i]] >= j)
 			partTriInds[j++] = i;
 
+	size_t lastFilledPart = 0;
+	for (size_t i = 0; i < partTriInds.size(); i++)
+		if (partTriInds[i] > 0)
+			lastFilledPart = i;
+
 	// Fill gaps for partitions that don't have any tris assigned
 	int maxInd = 0;
-	for (int& partTriInd : partTriInds) {
-		if (partTriInd == 0) {
-			if (maxInd != 0) {
-				partTriInd = maxInd;
-			}
+	for (size_t i = 0; i < partTriInds.size(); i++) {
+		int& partTriInd = partTriInds[i];
+
+		if (lastFilledPart > 0 && i > lastFilledPart) {
+			partTriInd = static_cast<int>(triInds.size());
 		}
 		else {
-			if (partTriInd > maxInd) {
-				maxInd = partTriInd;
+			if (partTriInd == 0) {
+				if (maxInd != 0) {
+					partTriInd = maxInd;
+				}
+			}
+			else {
+				if (partTriInd > maxInd) {
+					maxInd = partTriInd;
+				}
 			}
 		}
 	}

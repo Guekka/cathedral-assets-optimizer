@@ -124,7 +124,7 @@ void NiString::Write(NiOStream& stream, const int szSize) {
 
 
 void NiStringRef::Read(NiIStream& stream) {
-	if (stream.GetVersion().File() < V20_1_0_1) {
+	if (stream.GetVersion().File() < V20_1_0_3) {
 		std::array<char, 2048 + 1> buf{};
 
 		uint32_t sz = 0;
@@ -143,7 +143,7 @@ void NiStringRef::Read(NiIStream& stream) {
 }
 
 void NiStringRef::Write(NiOStream& stream) {
-	if (stream.GetVersion().File() < V20_1_0_1) {
+	if (stream.GetVersion().File() < V20_1_0_3) {
 		auto sz = uint32_t(str.length());
 		str.resize(sz);
 
@@ -267,7 +267,7 @@ void NiHeader::DeleteBlockByType(const std::string& blockTypeStr, const bool orp
 		if (blockTypeIndices[i] == blockTypeId)
 			indices.push_back(i);
 
-	for (size_t j = indices.size() - 1; j >= 0; j--)
+	for (uint32_t j = static_cast<uint32_t>(indices.size()) - 1; j != NIF_NPOS; j--)
 		if (!orphanedOnly || !IsBlockReferenced(indices[j]))
 			DeleteBlock(indices[j]);
 }
@@ -361,7 +361,7 @@ void NiHeader::FixBlockAlignment(const std::vector<NiObject*>& currentTree) {
 		std::swap(newBlocks[i.first], blocks->at(newIndex));
 	}
 
-	for (int i = numBlocks - 1; i >= 0; i--) {
+	for (uint32_t i = numBlocks - 1; i != NIF_NPOS; i--) {
 		blockTypeIndices[i] = newBlockTypeIndices[i];
 
 		if (version.File() >= V20_2_0_5)
