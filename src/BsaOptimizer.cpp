@@ -149,7 +149,7 @@ bool BSAOptimizer::isAllowedFile([[maybe_unused]] btu::bsa::Path const &dir,
 {
     for (const auto &fileToNotPack : filesToNotPack) {
         const auto &path = fileinfo.path().native();
-        if (str_find(path, fileToNotPack, false))
+        if (str_find(path, fileToNotPack, false) != std::string::npos)
             return false;
     }
 
