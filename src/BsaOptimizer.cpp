@@ -69,8 +69,8 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
             return btu::bsa::defaultIsAllowedPath(dir, fileinfo) &&
                    isAllowedFile(dir, fileinfo);
         });
-    if (options.bBsaLeastBSA)
-        btu::bsa::merge(bsas);
+    btu::bsa::merge(bsas, options.bBsaLeastBSA ? btu::bsa::MergeBoth
+                                               : btu::bsa::MergeIncompressible);
 
     for (auto &&bsa : bsas) {
         try {
