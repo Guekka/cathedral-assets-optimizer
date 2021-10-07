@@ -52,6 +52,19 @@ void BSAOptimizer::extract(const QString &bsaPath, const bool &deleteBackup) con
 
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
+// const std::vector<btu::bsa::Path>& files,
+void handle_errors(std::vector<std::pair<btu::bsa::Path, std::string>> errs) {
+    if (errs.empty())
+        return;
+
+    PLOG_WARNING << "The following files failed to be packed. They will be "
+                    "renamed to *.caobad:\n";
+    for (auto&& [file, err] : errs) {
+        PLOG_WARNING << file.native() << " : " << err;
+        std::filesystem::rename(file,
+                                file.native() + BETHUTIL_BSA_STR(".caobad"));
+    }
+}
 
 void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options) const
 {
@@ -75,12 +88,21 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
     for (auto &&bsa : bsas) {
         try {
             const auto files = std::vector(bsa.begin(), bsa.end());
-            btu::bsa::write(options.bBsaCompress, std::move(bsa), game, dir);
-            if (options.bBsaDeleteSource)
-                std::for_each(files.cbegin(), files.cend(), [](auto &&f) {
-                    btu::bsa::fs::remove(f);
+            const auto errs = btu::bsa::write(options.bBsaCompress,
+                                              std::move(bsa), game, dir);
+            handle_errors(errs);
+            if (options.bBsaDeleteSource) {
+                std::for_each(files.begin(), files.end(), [](auto&& p) {
+                    try {
+                        std::filesystem::remove(p);
+                    } catch (const std::exception& e) {
+                        PLOG_ERROR << "Failed to remove packed file: "
+                                   << p.native();
+                    }
                 });
-        } catch (const std::exception &e) {
+            }
+
+        } catch (const std::exception& e) {
             PLOG_ERROR << QString("An error occurred while packing BSAs: \n%2").arg(e.what());
         }
     }
