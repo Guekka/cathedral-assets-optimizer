@@ -206,7 +206,7 @@ int NifFile::Load(std::istream& file, const NifLoadOptions& options) {
 		}
 
 		NiVersion& version = stream.GetVersion();
-		if (!(version.IsOB() || version.IsFO3() || version.IsSK() || version.IsSSE() || version.IsFO4())) {
+		if (!(version.IsOB() || version.IsFO3() || version.IsSK() || version.IsSSE() || version.IsFO4() || version.IsSpecial())) {
 			// Unsupported file version
 			Clear();
 			return 2;
@@ -382,7 +382,7 @@ void NifFile::SortGraph(NiNode* root, std::vector<uint32_t>& newIndices, uint32_
 			auto peek = children.end() - 1;
 
 			// Put shapes at end of children
-			for (int i = children.GetSize() - 1; i >= 0; i--) {
+			for (uint32_t i = children.GetSize() - 1; i != NIF_NPOS; i--) {
 				auto shape = hdr.GetBlock<NiShape>(children.GetBlockRef(i));
 				if (shape) {
 					std::iter_swap(bookmark, peek);
@@ -538,7 +538,9 @@ bool NifFile::CanDeleteNode(NiNode* node) {
 	node->GetChildRefs(refs);
 
 	// Only delete if the node has no child refs
-	return std::all_of(refs.begin(), refs.end(), std::not_fn(&NiRef::IsEmpty));
+	return std::all_of(refs.cbegin(), refs.cend(), [](auto&& ref) {
+		return ref->IsEmpty();
+	});
 }
 
 bool NifFile::CanDeleteNode(const std::string& nodeName) const {
@@ -859,7 +861,7 @@ void NifFile::SetTextureSlot(NiShape* shape, std::string& inTexFile, uint32_t te
 }
 
 void NifFile::TrimTexturePaths() {
-	auto fTrimPath = [&isTerrain = isTerrain](std::string& tex) -> std::string& {
+	auto fTrimPath = [&hdr = hdr, &isTerrain = isTerrain](std::string& tex) -> std::string& {
 		if (!tex.empty()) {
 			tex = std::regex_replace(tex,
 									 std::regex("/+|\\\\+"),
@@ -868,10 +870,13 @@ void NifFile::TrimTexturePaths() {
 									 std::regex(R"(^(.*?)\\textures\\)", std::regex_constants::icase),
 									 ""); // Remove everything before the first occurence of "\textures\"
 			tex = std::regex_replace(tex, std::regex("^\\\\+"), ""); // Remove all backslashes from the front
-			tex = std::regex_replace(
-				tex,
-				std::regex("^(?!^textures\\\\)", std::regex_constants::icase),
-				"textures\\"); // If the path doesn't start with "textures\", add it to the front
+
+			if (!hdr.GetVersion().IsOB() && !hdr.GetVersion().IsSpecial()) {
+				tex = std::regex_replace(
+					tex,
+					std::regex("^(?!^textures\\\\)", std::regex_constants::icase),
+					"textures\\"); // If the path doesn't start with "textures\", add it to the front
+			}
 
 			if (isTerrain)
 				tex = std::regex_replace(tex,
@@ -3736,7 +3741,11 @@ void NifFile::DeleteShape(NiShape* shape) {
 	if (shape->HasData())
 		hdr.DeleteBlock(*shape->DataRef());
 
-	DeleteShader(shape);
+	if (shape->HasShaderProperty()) {
+		if (hdr.GetBlockRefCount(shape->ShaderPropertyRef()->index) == 1)
+			DeleteShader(shape);
+	}
+
 	DeleteSkinning(shape);
 
 	for (int i = shape->propertyRefs.GetSize() - 1; i >= 0; --i)
@@ -3752,8 +3761,10 @@ void NifFile::DeleteShape(NiShape* shape) {
 void NifFile::DeleteShader(NiShape* shape) {
 	auto shader = hdr.GetBlock(shape->ShaderPropertyRef());
 	if (shader) {
-		if (shader->HasTextureSet())
-			hdr.DeleteBlock(*shader->TextureSetRef());
+		if (shader->HasTextureSet()) {
+			if (hdr.GetBlockRefCount(shader->TextureSetRef()->index) == 1)
+				hdr.DeleteBlock(*shader->TextureSetRef());
+		}
 
 		hdr.DeleteBlock(shader->controllerRef);
 		hdr.DeleteBlock(*shape->ShaderPropertyRef());
@@ -3766,8 +3777,10 @@ void NifFile::DeleteShader(NiShape* shape) {
 		shader = hdr.GetBlock<NiShader>(shape->propertyRefs.GetBlockRef(i));
 		if (shader) {
 			if (shader->HasType<BSShaderPPLightingProperty>() || shader->HasType<NiMaterialProperty>()) {
-				if (shader->HasTextureSet())
-					hdr.DeleteBlock(*shader->TextureSetRef());
+				if (shader->HasTextureSet()) {
+					if (hdr.GetBlockRefCount(shader->TextureSetRef()->index) == 1)
+						hdr.DeleteBlock(*shader->TextureSetRef());
+				}
 
 				hdr.DeleteBlock(shader->controllerRef);
 				hdr.DeleteBlock(shape->propertyRefs.GetBlockRef(i));
@@ -3883,7 +3896,7 @@ bool NifFile::DeleteVertsForShape(NiShape* shape, const std::vector<uint16_t>& i
 			uint16_t mapSize = highestRemoved + 1;
 			std::vector<int> indexCollapse = GenerateIndexCollapseMap(indices, mapSize);
 
-			for (int i = integersData.size() - 1; i >= 0; i--) {
+			for (uint32_t i = integersData.size() - 1; i != NIF_NPOS; i--) {
 				auto& val = integersData[i];
 				if (val > highestRemoved) {
 					val -= static_cast<uint32_t>(indices.size());
