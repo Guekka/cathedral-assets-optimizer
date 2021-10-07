@@ -36,19 +36,21 @@ btu::bsa::Settings getSettings()
     return sets;
 }
 
-void BSAOptimizer::extract(const QString &bsaPath, const bool &deleteBackup) const
-{
+void BSAOptimizer::extract(QString bsaPath, const bool deleteBackup) const {
+    if (!deleteBackup)
+        bsaPath = backup(bsaPath);
+
+    PLOG_VERBOSE << bsaPath;
+
     try {
         btu::bsa::unpack(btu::bsa::UnpackSettings{bsaPath.toStdU16String(), deleteBackup, false});
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
         PLOG_ERROR << e.what();
-        PLOG_ERROR << "An error occured during the extraction of: " + bsaPath + '\n'
-                          + "Please extract it manually. The BSA was not deleted.";
+        PLOG_ERROR
+            << "An error occured during the extraction of: " + bsaPath + '\n' +
+                   "Please extract it manually. The BSA was not deleted.";
         return;
     }
-
-    if (!deleteBackup)
-        backup(bsaPath);
 
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
