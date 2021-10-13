@@ -241,7 +241,7 @@
     </message>
     <message>
         <source>Create textures BSA</source>
-        <translation type="vanished">为textures文件夹单独创建BSA</translation>
+        <translation>为textures文件夹单独创建BSA</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -497,11 +497,11 @@ G&apos;k制作
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : uncompressible, textures and standard. The uncompressible one contains sounds. If this option is checked, these three types of BSAs will be merged if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;CAO能创建三种类型的BSA：未压缩BSA，纹理BSA和标准BSA。 未压缩BSA包含语音文件。如果激活此选项，这三种类型的BSA将尽可能合并到一起。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;CAO能创建三种类型的BSA：未压缩BSA，纹理BSA和标准BSA。 未压缩BSA包含语音文件。如果激活此选项，这三种类型的BSA将尽可能合并到一起。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Create the least BSAs possible</source>
-        <translation>尽可能创建最少的BSA</translation>
+        <translation type="vanished">尽可能创建最少的BSA</translation>
     </message>
     <message>
         <source>Save UI</source>
@@ -537,6 +537,18 @@ G&apos;k制作
     </message>
     <message>
         <source>Allow compression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. This option will merge textures into standard if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. This option will merge incompressible into standard if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create incompressible BSA</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

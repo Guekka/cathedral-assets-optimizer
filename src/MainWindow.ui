@@ -153,6 +153,38 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="2">
+        <widget class="QCheckBox" name="advancedSettingsCheckbox">
+         <property name="text">
+          <string>Show advanced settings</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="processButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Run</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="2">
         <widget class="QComboBox" name="modeChooserComboBox">
          <property name="sizePolicy">
@@ -185,31 +217,6 @@
          </item>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="processButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Run</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QPushButton" name="userPathButton">
          <property name="sizePolicy">
@@ -232,13 +239,6 @@
          </property>
          <property name="text">
           <string>Open Directory</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QCheckBox" name="advancedSettingsCheckbox">
-         <property name="text">
-          <string>Show advanced settings</string>
          </property>
         </widget>
        </item>
@@ -357,17 +357,20 @@
            <string>Extra</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="2">
-            <widget class="QCheckBox" name="bsaCompressBsaCheckbox">
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="bsaDeleteSourceCheckbox">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
-              <string>Allow compression</string>
+              <string>Delete source files</string>
              </property>
              <property name="checked">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="0" column="2">
             <widget class="QCheckBox" name="bsaCreateDummiesCheckbox">
              <property name="text">
               <string>Create dummy plugins</string>
@@ -377,26 +380,36 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="bsaLeastBsaCheckBox">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : uncompressible, textures and standard. The uncompressible one contains sounds. If this option is checked, these three types of BSAs will be merged if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
+           <item row="0" column="3">
+            <widget class="QCheckBox" name="bsaCompressBsaCheckbox">
              <property name="text">
-              <string>Create the least BSAs possible</string>
+              <string>Allow compression</string>
              </property>
              <property name="checked">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="bsaDeleteSourceCheckbox">
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="bBsaCreateTexture">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Whether CAO will delete the files it packed into BSAs or leave them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. This option will merge textures into standard if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Delete source files</string>
+              <string>Create textures BSA</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QCheckBox" name="bBsaCreateIncompressible">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. This option will merge incompressible into standard if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Create incompressible BSA</string>
              </property>
              <property name="checked">
               <bool>true</bool>

@@ -77,22 +77,33 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
 
     btu::bsa::clean_dummy_plugins(dir, game);
 
-    auto bsas = btu::bsa::split(
-        dir, game,
-        [this](const btu::bsa::Path& dir,
-               btu::bsa::fs::directory_entry const& fileinfo) {
-            return btu::bsa::defaultIsAllowedPath(dir, fileinfo) &&
-                   isAllowedFile(dir, fileinfo);
-        });
-    btu::bsa::merge(bsas, options.bBsaLeastBSA ? btu::bsa::MergeBoth
-                                               : btu::bsa::MergeIncompressible);
+    auto bsas = btu::bsa::split(dir,
+                                game,
+                                [this](const btu::bsa::Path &dir,
+                                       btu::bsa::fs::directory_entry const &fileinfo) {
+                                    return btu::bsa::defaultIsAllowedPath(dir, fileinfo)
+                                           && isAllowedFile(dir, fileinfo);
+                                });
+
+    if (options.bBsaMergeIncomp || options.bBsaMergeTexture) {
+        const auto msets = [&] {
+            if (options.bBsaMergeIncomp && options.bBsaMergeTexture)
+                return btu::bsa::MergeBoth;
+            if (options.bBsaMergeIncomp)
+                return btu::bsa::MergeIncompressible;
+            if (options.bBsaMergeTexture)
+                return btu::bsa::MergeTextures;
+            throw std::runtime_error("unreachable");
+        }();
+        btu::bsa::merge(bsas, msets);
+    }
 
     for (auto &&bsa : bsas) {
         try {
             const auto files = std::vector(bsa.begin(), bsa.end());
             const auto errs = btu::bsa::write(options.bBsaCompress,
                                               std::move(bsa), game, dir);
-            handle_errors(errs);
+            handle_errors(std::move(errs));
             if (options.bBsaDeleteSource) {
                 std::for_each(files.begin(), files.end(), [](auto&& p) {
                     try {
@@ -173,8 +184,10 @@ bool BSAOptimizer::isAllowedFile([[maybe_unused]] btu::bsa::Path const &dir,
 {
     for (const auto &fileToNotPack : filesToNotPack) {
         const auto &path = fileinfo.path().native();
-        if (str_find(path, fileToNotPack, false) != std::string::npos)
+        if (str_find(path, fileToNotPack, false) != std::string::npos) {
+            PLOG_VERBOSE << path << " ignored because of filesToNotPack. Rule: " << fileToNotPack;
             return false;
+        }
     }
 
     return true;

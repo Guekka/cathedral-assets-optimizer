@@ -17,7 +17,8 @@ void OptionsCAO::saveToIni(QSettings *settings)
   settings->setValue("bBsaExtract", bBsaExtract);
   settings->setValue("bBsaCreate", bBsaCreate);
   settings->setValue("bBsaDeleteBackup", bBsaDeleteBackup);
-  settings->setValue("bBsaLeastBSA", bBsaLeastBSA);
+  settings->setValue("bBsaMergeIncomp", bBsaMergeIncomp);
+  settings->setValue("bBsaMergeTexture", bBsaMergeTexture);
   settings->setValue("bBsaProcessContent", bBsaProcessContent);
   settings->setValue("bBsaCreateDummies", bBsaCreateDummies);
   settings->setValue("bBsaCompress", bBsaCompress);
@@ -71,7 +72,8 @@ OptionsCAO::readFromIni(QSettings* settings)
   bBsaCreate = settings->value("bBsaCreate").toBool();
   bBsaDeleteBackup = settings->value("bBsaDeleteBackup").toBool();
   bBsaProcessContent = settings->value("bBsaProcessContent").toBool();
-  bBsaLeastBSA = settings->value("bBsaLeastBSA").toBool();
+  bBsaMergeIncomp = settings->value("bBsaMergeIncomp").toBool();
+  bBsaMergeTexture = settings->value("bBsaMergeTexture").toBool();
   bBsaCreateDummies = settings->value("bBsaCreateDummies").toBool();
   bBsaCompress = settings->value("bBsaCompress").toBool();
   bBsaDeleteSource = settings->value("bBsaDeleteSource").toBool();
@@ -115,7 +117,8 @@ OptionsCAO::saveToUi(Ui::MainWindow* ui)
   ui->bsaExtractCheckBox->setChecked(bBsaExtract);
   ui->bsaCreateCheckbox->setChecked(bBsaCreate);
   ui->bsaDeleteBackupsCheckbox->setChecked(bBsaDeleteBackup);
-  ui->bsaLeastBsaCheckBox->setChecked(bBsaLeastBSA);
+  ui->bBsaCreateIncompressible->setChecked(!bBsaMergeIncomp);
+  ui->bBsaCreateTexture->setChecked(!bBsaMergeTexture);
   ui->bsaCreateDummiesCheckbox->setChecked(bBsaCreateDummies);
   ui->bsaCompressBsaCheckbox->setChecked(bBsaCompress);
   ui->bsaDeleteSourceCheckbox->setChecked(bBsaDeleteSource);
@@ -192,7 +195,8 @@ OptionsCAO::readFromUi(Ui::MainWindow* ui)
   bBsaExtract = bsaEnabled && ui->bsaExtractCheckBox->isChecked();
   bBsaCreate = bsaEnabled && ui->bsaCreateCheckbox->isChecked();
   bBsaDeleteBackup = bsaEnabled && ui->bsaDeleteBackupsCheckbox->isChecked();
-  bBsaLeastBSA = bsaEnabled && ui->bsaLeastBsaCheckBox->isChecked();
+  bBsaMergeIncomp = bsaEnabled && !ui->bBsaCreateIncompressible->isChecked();
+  bBsaMergeTexture = bsaEnabled && !ui->bBsaCreateTexture->isChecked();
   bBsaCreateDummies = bsaEnabled && ui->bsaCreateDummiesCheckbox->isChecked();
   bBsaCompress = bsaEnabled && ui->bsaCompressBsaCheckbox->isChecked();
   bBsaDeleteSource = bsaEnabled && ui->bsaDeleteSourceCheckbox->isChecked();

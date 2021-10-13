@@ -38,7 +38,8 @@ public:
     bool bBsaExtract = false;
     bool bBsaCreate = false;
     bool bBsaDeleteBackup = false;
-    bool bBsaLeastBSA = false;
+    bool bBsaMergeIncomp = true;
+    bool bBsaMergeTexture = false;
     bool bBsaProcessContent = false;
     bool bBsaCreateDummies = true;
     bool bBsaCompress = true;
