@@ -32,7 +32,8 @@ BSAOptimizer::BSAOptimizer()
 btu::bsa::Settings getSettings()
 {
     auto sets = btu::bsa::Settings::get(Profiles::bsaGame());
-    sets.maxSize = Profiles::maxBsaUncompressedSize();
+    if (Profiles::maxBsaUncompressedSize() > sets.max_size)
+        sets.max_size = Profiles::maxBsaUncompressedSize();
     return sets;
 }
 
@@ -54,7 +55,7 @@ void BSAOptimizer::extract(QString bsaPath, const bool deleteBackup) const {
 
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
-// const std::vector<btu::bsa::Path>& files,
+
 void handle_errors(std::vector<std::pair<btu::bsa::Path, std::string>> errs) {
     if (errs.empty())
         return;
@@ -81,19 +82,18 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
                                 game,
                                 [this](const btu::bsa::Path &dir,
                                        btu::bsa::fs::directory_entry const &fileinfo) {
-                                    return btu::bsa::defaultIsAllowedPath(dir, fileinfo)
+                                    return btu::bsa::default_is_allowed_path(dir, fileinfo)
                                            && isAllowedFile(dir, fileinfo);
                                 });
 
     if (options.bBsaMergeIncomp || options.bBsaMergeTexture) {
         const auto msets = [&] {
-            if (options.bBsaMergeIncomp && options.bBsaMergeTexture)
-                return btu::bsa::MergeBoth;
+            btu::bsa::MergeSettings sets = static_cast<btu::bsa::MergeSettings>(0);
             if (options.bBsaMergeIncomp)
-                return btu::bsa::MergeIncompressible;
+                sets |= btu::bsa::MergeSettings::MergeIncompressible;
             if (options.bBsaMergeTexture)
-                return btu::bsa::MergeTextures;
-            throw std::runtime_error("unreachable");
+                sets |= btu::bsa::MergeSettings::MergeTextures;
+            return sets;
         }();
         btu::bsa::merge(bsas, msets);
     }

@@ -17,6 +17,11 @@ void Profiles::init()
     findProfiles(QDir("profiles"));
     const QString &mode = _commonSettings->value("profile").toString();
     loadProfile(mode);
+
+    auto sets = btu::bsa::Settings::get(Profiles::bsaGame());
+
+    if (_maxBsaUncompressedSize < sets.max_size)
+        _maxBsaUncompressedSize = sets.max_size;
 }
 
 size_t Profiles::findProfiles(const QDir &dir)

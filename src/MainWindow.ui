@@ -372,6 +372,16 @@
            </item>
            <item row="0" column="2">
             <widget class="QCheckBox" name="bsaCreateDummiesCheckbox">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dummy plugins are almost always necessary. Keep this checked unless you know what you are doing&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Create dummy plugins</string>
              </property>
@@ -382,6 +392,9 @@
            </item>
            <item row="0" column="3">
             <widget class="QCheckBox" name="bsaCompressBsaCheckbox">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compressed BSAs use less space on disk, but they might perform slightly worse in game&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Allow compression</string>
              </property>
@@ -392,11 +405,18 @@
            </item>
            <item row="1" column="1">
             <widget class="QCheckBox" name="bBsaCreateTexture">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+               <kerning>true</kerning>
+              </font>
+             </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. This option will merge textures into standard if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. &lt;/p&gt;&lt;p&gt;If enabled, this option will always &lt;span style=&quot; font-weight:600;&quot;&gt;separate textures into their own BSAs&lt;/span&gt;. Otherwise, they will be merged into the standard one if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Create textures BSA</string>
+              <string>Separate textures BSA</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -406,10 +426,10 @@
            <item row="1" column="2">
             <widget class="QCheckBox" name="bBsaCreateIncompressible">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. This option will merge incompressible into standard if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. &lt;/p&gt;&lt;p&gt;If enabled, this option will always &lt;span style=&quot; font-weight:600;&quot;&gt;separate incompressible files into their own BSAs&lt;/span&gt;. Otherwise, they will be merged into the standard one if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Create incompressible BSA</string>
+              <string>Separate incompressible BSA</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -730,6 +750,13 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+            <kerning>true</kerning>
+           </font>
+          </property>
           <property name="title">
            <string>Process textures</string>
           </property>
@@ -754,6 +781,13 @@
                <height>0</height>
               </size>
              </property>
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+               <kerning>true</kerning>
+              </font>
+             </property>
              <property name="cursor">
               <cursorShape>WhatsThisCursor</cursorShape>
              </property>
@@ -770,6 +804,13 @@
            </item>
            <item>
             <widget class="QCheckBox" name="texturesCompressCheckBox">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+               <kerning>true</kerning>
+              </font>
+             </property>
              <property name="cursor">
               <cursorShape>WhatsThisCursor</cursorShape>
              </property>
@@ -1137,8 +1178,8 @@
              </property>
              <property name="font">
               <font>
-               <weight>50</weight>
-               <bold>false</bold>
+               <weight>75</weight>
+               <bold>true</bold>
                <kerning>true</kerning>
               </font>
              </property>

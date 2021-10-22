@@ -241,7 +241,7 @@
     </message>
     <message>
         <source>Create textures BSA</source>
-        <translation>为textures文件夹单独创建BSA</translation>
+        <translation type="vanished">为textures文件夹单独创建BSA</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Example : &amp;quot; - Textures.bsa&amp;quot; for Skyrim SE.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -540,15 +540,27 @@ G&apos;k制作
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. This option will merge textures into standard if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dummy plugins are almost always necessary. Keep this checked unless you know what you are doing&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. This option will merge incompressible into standard if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compressed BSAs use less space on disk, but they might perform slightly worse in game&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create incompressible BSA</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. &lt;/p&gt;&lt;p&gt;If enabled, this option will always &lt;span style=&quot; font-weight:600;&quot;&gt;separate textures into their own BSAs&lt;/span&gt;. Otherwise, they will be merged into the standard one if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Separate textures BSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There are three types of BSAs CAO can create : incompressible, textures and standard. &lt;/p&gt;&lt;p&gt;If enabled, this option will always &lt;span style=&quot; font-weight:600;&quot;&gt;separate incompressible files into their own BSAs&lt;/span&gt;. Otherwise, they will be merged into the standard one if possible.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Separate incompressible BSA</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
