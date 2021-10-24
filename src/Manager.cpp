@@ -83,9 +83,12 @@ void Manager::listFiles()
                                    && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
             const auto bsaExt = btu::bsa::Settings::get(Profiles::bsaGame()).extension;
-            const bool bsa = _options.bBsaExtract
-                             && it.fileName().endsWith(QString::fromStdU16String(bsaExt.u16string()),
-                                                       Qt::CaseInsensitive);
+            const auto bsaExt2 = btu::common::as_ascii(bsaExt);
+            const bool bsa =
+                _options.bBsaExtract &&
+                it.fileName().endsWith(
+                    QString::fromUtf8(bsaExt2.data(), bsaExt2.size()),
+                    Qt::CaseInsensitive);
 
             auto addToList = [&](QStringList &list) {
                 ++_numberFiles;

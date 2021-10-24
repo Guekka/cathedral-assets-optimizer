@@ -108,7 +108,7 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
                 std::for_each(files.begin(), files.end(), [](auto&& p) {
                     try {
                         std::filesystem::remove(p);
-                    } catch (const std::exception& e) {
+                    } catch (const std::exception&) {
                         PLOG_ERROR << "Failed to remove packed file: "
                                    << p.native();
                     }
@@ -145,47 +145,16 @@ QString BSAOptimizer::backup(const QString &bsaPath) const
     return bsaBackupFile.fileName();
 }
 
-// Should put these algorithms somewhere else
-
-auto str_compare(bool caseSensitive = true)
-{
-    return [caseSensitive](char ch1, char ch2) {
-        if (!caseSensitive) {
-            ch1 = std::toupper(ch1);
-            ch2 = std::toupper(ch2);
-        }
-
-        return ch1 == ch2;
-    };
-}
-
-template<class CharT>
-size_t str_find(std::basic_string<CharT> const &string,
-                std::basic_string<CharT> const &snippet,
-                bool caseSensitive = true,
-                size_t fromPos = 0)
-{
-    auto pred = str_compare(caseSensitive);
-    using namespace std;
-
-    if (cbegin(string) + fromPos > cend(string))
-        return std::string::npos;
-
-    auto it = search(cbegin(string) + fromPos, cend(string), cbegin(snippet), cend(snippet), pred);
-
-    if (it != cend(string))
-        return it - cbegin(string);
-    else
-        return std::string::npos; // not found
-}
-
-bool BSAOptimizer::isAllowedFile([[maybe_unused]] btu::bsa::Path const &dir,
-                                 btu::bsa::fs::directory_entry const &fileinfo) const
-{
+bool BSAOptimizer::isAllowedFile(
+    [[maybe_unused]] btu::bsa::Path const& dir,
+    btu::bsa::fs::directory_entry const& fileinfo) const {
     for (const auto &fileToNotPack : filesToNotPack) {
-        const auto &path = fileinfo.path().native();
-        if (str_find(path, fileToNotPack, false) != std::string::npos) {
-            PLOG_VERBOSE << path << " ignored because of filesToNotPack. Rule: " << fileToNotPack;
+        const auto& path = fileinfo.path().u8string();
+        const auto f = btu::common::to_utf8(fileToNotPack);
+        if (btu::common::str_compare(path, f, false)) {
+            PLOG_VERBOSE << btu::common::as_ascii(path)
+                         << " ignored because of filesToNotPack. Rule: "
+                         << fileToNotPack;
             return false;
         }
     }
