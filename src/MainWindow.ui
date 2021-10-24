@@ -863,7 +863,7 @@
         <item>
          <widget class="QGroupBox" name="texturesResizingGroupBox">
           <property name="title">
-           <string>Resizing</string>
+           <string>Downsizing</string>
           </property>
           <property name="checkable">
            <bool>true</bool>
