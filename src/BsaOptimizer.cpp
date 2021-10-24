@@ -64,8 +64,7 @@ void handle_errors(std::vector<std::pair<btu::bsa::Path, std::string>> errs) {
                     "renamed to *.caobad:\n";
     for (auto&& [file, err] : errs) {
         PLOG_WARNING << file.native() << " : " << err;
-        std::filesystem::rename(file,
-                                file.native() + BETHUTIL_BSA_STR(".caobad"));
+        std::filesystem::rename(file, file.u8string() + u8".caobad");
     }
 }
 
