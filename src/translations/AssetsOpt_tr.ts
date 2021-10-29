@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Resizing</source>
-        <translation>Yeniden Boyutlandırma</translation>
+        <translation type="vanished">Yeniden Boyutlandırma</translation>
     </message>
     <message>
         <source>Height:</source>
@@ -553,6 +553,10 @@ Bu programın dağıtımı, yararlı olabilmesi adına yapılmıştır fakat Bİ
     </message>
     <message>
         <source>Separate incompressible BSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downsizing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

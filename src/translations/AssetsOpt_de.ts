@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Resizing</source>
-        <translation>Auflösung verändern</translation>
+        <translation type="vanished">Auflösung verändern</translation>
     </message>
     <message>
         <source>Height:</source>
@@ -561,6 +561,10 @@ Dieses Programm wird verteilt der Hoffnung dass es nützlich ist aber OHNE GEWÄ
     </message>
     <message>
         <source>Separate incompressible BSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downsizing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

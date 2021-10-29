@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Resizing</source>
-        <translation>调整大小</translation>
+        <translation type="vanished">调整大小</translation>
     </message>
     <message>
         <source>Height:</source>
@@ -561,6 +561,10 @@ G&apos;k制作
     </message>
     <message>
         <source>Separate incompressible BSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downsizing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

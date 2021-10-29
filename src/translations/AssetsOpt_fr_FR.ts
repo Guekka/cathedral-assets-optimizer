@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Resizing</source>
-        <translation>Redimensionnage</translation>
+        <translation type="vanished">Redimensionnage</translation>
     </message>
     <message>
         <source>Height:</source>
@@ -560,6 +560,10 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     </message>
     <message>
         <source>Separate incompressible BSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downsizing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

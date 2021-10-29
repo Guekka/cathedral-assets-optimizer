@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Resizing</source>
-        <translation>サイズ変更</translation>
+        <translation type="vanished">サイズ変更</translation>
     </message>
     <message>
         <source>Height:</source>
@@ -561,6 +561,10 @@ This program is distributed in the hope that it will be useful but WITHOUT ANY W
     </message>
     <message>
         <source>Separate incompressible BSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downsizing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

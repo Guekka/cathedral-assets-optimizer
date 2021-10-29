@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Resizing</source>
-        <translation>Grootte aanpassen</translation>
+        <translation type="vanished">Grootte aanpassen</translation>
     </message>
     <message>
         <source>Height:</source>
@@ -561,6 +561,10 @@ Zie de Mozilla Public License</translation>
     </message>
     <message>
         <source>Separate incompressible BSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downsizing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

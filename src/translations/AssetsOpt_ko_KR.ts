@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Resizing</source>
-        <translation>리사이즈</translation>
+        <translation type="vanished">리사이즈</translation>
     </message>
     <message>
         <source>Height:</source>
@@ -566,6 +566,10 @@ Mozilla Public License를 참조하십시오.</translation>
     </message>
     <message>
         <source>Separate incompressible BSA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downsizing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
