@@ -172,9 +172,8 @@ TexturesOptimizer::TexOptOptionsResult TexturesOptimizer::processArguments(const
     result.bNeedsResize =
         result.tHeight != _info.height || result.tWidth != _info.width;
 
-    result.bNeedsCompress = (bNecessary && (isIncompatible() || _type == TGA))
-                            || (bCompress && canBeCompressed()
-                                && _info.format != Profiles::texturesFormat());
+    result.bMayNeedCompress = (bNecessary && (isIncompatible() || _type == TGA))
+                              || (bCompress && _info.format != Profiles::texturesFormat());
 
     result.bNeedsMipmaps = bMipmaps && _info.mipLevels != calculateOptimalMipMapsNumber() && canHaveMipMaps();
 
@@ -194,8 +193,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
 
     PLOG_VERBOSE << "Processing texture: " << _name;
 
-    if (!options.bNeedsCompress && !options.bNeedsResize && !options.bNeedsMipmaps)
-    {
+    if (!options.bMayNeedCompress && !options.bNeedsResize && !options.bNeedsMipmaps) {
         PLOG_VERBOSE << "This texture does not need optimization.";
         return true;
     }
@@ -228,8 +226,7 @@ bool TexturesOptimizer::optimize(const bool &bNecessary,
     }
 
     //Converting to the new format, or the compressing back into the original format
-    if (options.bNeedsCompress)
-    {
+    if (options.bMayNeedCompress) {
         targetFormat = Profiles::texturesFormat();
         PLOG_VERBOSE << "Converting this texture to format: " << dxgiFormatToString(targetFormat);
     }
