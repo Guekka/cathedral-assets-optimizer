@@ -58,5 +58,5 @@ private:
     /*!
    * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
    */
-    std::vector<btu::bsa::fs::path::string_type> filesToNotPack;
+    std::vector<std::u8string> filesToNotPack;
 };
