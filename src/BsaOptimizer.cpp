@@ -14,12 +14,13 @@ BSAOptimizer::BSAOptimizer()
 
     QFile &&filesToNotPackFile = Profiles::getFile("FilesToNotPack.txt");
 
-    auto lines = FilesystemOperations::readFile(filesToNotPackFile, [](QString &line) {
-        line = QDir::fromNativeSeparators(line);
-    });
+    auto lines = FilesystemOperations::readFile(
+        filesToNotPackFile,
+        [](QString& line) { line = QDir::toNativeSeparators(line); });
 
     for (auto &&line : lines)
-        filesToNotPack.emplace_back(std::move(line).toStdWString());
+        filesToNotPack.emplace_back(
+            btu::common::as_utf8_string(std::move(line).toStdString()));
 
     if (filesToNotPack.empty()) {
         PLOG_ERROR << "FilesToNotPack.txt not found. This can cause a number of issues. For "
@@ -147,13 +148,12 @@ QString BSAOptimizer::backup(const QString &bsaPath) const
 bool BSAOptimizer::isAllowedFile(
     [[maybe_unused]] btu::bsa::Path const& dir,
     btu::bsa::fs::directory_entry const& fileinfo) const {
-    for (const auto &fileToNotPack : filesToNotPack) {
-        const auto& path = fileinfo.path().u8string();
-        const auto f = btu::common::to_utf8(fileToNotPack);
-        if (btu::common::str_compare(path, f, false)) {
+    const auto& path = fileinfo.path().u8string();
+    for (const auto& fileToNotPack : filesToNotPack) {
+        if (btu::common::str_contain(path, fileToNotPack, false)) {
             PLOG_VERBOSE << btu::common::as_ascii(path)
                          << " ignored because of filesToNotPack. Rule: "
-                         << fileToNotPack;
+                         << btu::common::as_ascii(fileToNotPack);
             return false;
         }
     }
