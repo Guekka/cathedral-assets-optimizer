@@ -91,8 +91,7 @@ add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
 #LibBsarch
 find_package(bethutil-bsa CONFIG REQUIRED)
 #Nif Library
-message("Adding nifly library")
-add_subdirectory(libs/nifly)
+find_package(nifly CONFIG REQUIRED)
 # DirectXTex
 find_package(directxtex CONFIG REQUIRED)
 find_package(directx-headers CONFIG REQUIRED)

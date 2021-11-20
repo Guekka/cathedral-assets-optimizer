@@ -4,6 +4,7 @@
   "dependencies": [
     "bethutil-bsa",
 	"directxtex",
+	"nifly",
 	"plog"
   ]
 }
