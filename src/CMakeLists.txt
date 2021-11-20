@@ -8,10 +8,6 @@ configure_file (
     "${PROJECT_SOURCE_DIR}/Version.h"
     )
 
-#Include Cotire
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
-include(cotire)
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -119,9 +115,8 @@ target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     nifly Microsoft::DirectXTex bethutil-bsa::bethutil-bsa)
 target_include_directories(Cathedral_Assets_Optimizer PRIVATE ${PLOG_INCLUDE_DIRS})
 
-#Cotire (PCH)
-set_target_properties(Cathedral_Assets_Optimizer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.h")
-cotire(Cathedral_Assets_Optimizer)
+# PCH
+target_precompile_headers(Cathedral_Assets_Optimizer PRIVATE "pch.h")
 
 #C++17
 target_compile_features(Cathedral_Assets_Optimizer PUBLIC cxx_std_20)
