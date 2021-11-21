@@ -86,7 +86,7 @@ public:
     struct TexOptOptionsResult
     {
         bool bNeedsResize;
-        bool bMayNeedCompress;
+        bool bNeedsCompress;
         bool bNeedsMipmaps;
         size_t tWidth;
         size_t tHeight;
