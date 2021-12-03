@@ -88,14 +88,12 @@ qt5_create_translation(QM_FILES ${TS_FILES} ${SOURCES})
 message("Adding Plog library")
 find_path(PLOG_INCLUDE_DIRS "plog/Appenders/AndroidAppender.h")
 add_compile_definitions(PLOG_OMIT_PLOG_DEFINES)
-#LibBsarch
-find_package(bethutil-bsa CONFIG REQUIRED)
+#bsa
+find_package(bethutil CONFIG REQUIRED)
 #Nif Library
 find_package(nifly CONFIG REQUIRED)
 # DirectXTex
 find_package(directxtex CONFIG REQUIRED)
-find_package(directx-headers CONFIG REQUIRED)
-find_package(directxmath CONFIG REQUIRED)
 
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)
@@ -111,7 +109,7 @@ add_executable(Cathedral_Assets_Optimizer WIN32 ${SOURCES} ${RESOURCES} ${QM_FIL
 #Windows 7 compatibility
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE
     Qt5::Core Qt5::Widgets
-    nifly Microsoft::DirectXTex bethutil-bsa::bethutil-bsa)
+    nifly Microsoft::DirectXTex btu::bethutil)
 target_include_directories(Cathedral_Assets_Optimizer PRIVATE ${PLOG_INCLUDE_DIRS})
 
 # PCH

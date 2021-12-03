@@ -2,7 +2,7 @@
   "name": "cao",
   "version-string": "1",
   "dependencies": [
-    "bethutil-bsa",
+    "bethutil",
 	"directxtex",
 	"nifly",
 	"plog"
