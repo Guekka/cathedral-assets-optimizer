@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12...3.20)
 
-project(Cathedral_Assets_Optimizer VERSION 5.3.6 LANGUAGES CXX)
+project(Cathedral_Assets_Optimizer VERSION 5.3.8 LANGUAGES CXX)
 
 #Setting version for C++ files
 configure_file (
@@ -115,6 +115,5 @@ target_include_directories(Cathedral_Assets_Optimizer PRIVATE ${PLOG_INCLUDE_DIR
 # PCH
 target_precompile_headers(Cathedral_Assets_Optimizer PRIVATE "pch.h")
 
-#C++17
 target_compile_features(Cathedral_Assets_Optimizer PUBLIC cxx_std_20)
 
