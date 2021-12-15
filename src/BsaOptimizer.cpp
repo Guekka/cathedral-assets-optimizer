@@ -71,12 +71,15 @@ void handle_errors(std::vector<std::pair<btu::bsa::Path, std::string>> errs) {
 
 void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options) const
 {
+    using dir_it = std::filesystem::directory_iterator;
+
     PLOG_VERBOSE << "Packing all loose files into BSAs";
 
     const auto game = getSettings();
-    const auto dir = folderPath.toStdU16String();
+    const std::filesystem::path dir = folderPath.toStdU16String();
 
-    btu::bsa::clean_dummy_plugins(dir, game);
+    auto plugins = btu::bsa::list_plugins(dir_it(dir), {}, game);
+    btu::bsa::clean_dummy_plugins(plugins, game);
 
     auto bsas = btu::bsa::split(dir,
                                 game,
@@ -98,30 +101,41 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
         btu::bsa::merge(bsas, msets);
     }
 
+    const auto default_plug = btu::bsa::FilePath(dir,
+                                                 dir.filename().u8string(),
+                                                 u8"",
+                                                 u8".esp",
+                                                 btu::bsa::FileTypes::Plugin);
+    if (plugins.empty()) // Used to find BSA name
+        plugins.emplace_back(default_plug);
+
     for (auto &&bsa : bsas) {
         try {
             const auto files = std::vector(bsa.begin(), bsa.end());
-            const auto errs = btu::bsa::write(options.bBsaCompress,
-                                              std::move(bsa), game, dir);
+            auto name = btu::bsa::find_archive_name(plugins, game, bsa.get_type());
+            bsa.set_out_path(std::move(name).full_path());
+
+            const auto errs = btu::bsa::write(options.bBsaCompress, std::move(bsa), dir);
             handle_errors(std::move(errs));
             if (options.bBsaDeleteSource) {
-                std::for_each(files.begin(), files.end(), [](auto&& p) {
+                std::for_each(files.begin(), files.end(), [](auto &&p) {
                     try {
                         std::filesystem::remove(p);
-                    } catch (const std::exception&) {
-                        PLOG_ERROR << "Failed to remove packed file: "
-                                   << p.native();
+                    } catch (const std::exception &) {
+                        PLOG_ERROR << "Failed to remove packed file: " << p.native();
                     }
                 });
             }
 
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             PLOG_ERROR << QString("An error occurred while packing BSAs: \n%2").arg(e.what());
         }
     }
 
-    if (options.bBsaCreateDummies)
-        btu::bsa::make_dummy_plugins(dir, game);
+    if (options.bBsaCreateDummies) {
+        const auto archives = btu::bsa::list_archive(dir_it(dir), {}, game);
+        btu::bsa::make_dummy_plugins(archives, game);
+    }
 }
 
 QString BSAOptimizer::backup(const QString &bsaPath) const
