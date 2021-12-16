@@ -6,9 +6,6 @@ add_subdirectory(plog)
 message("-- libbsarch")
 add_subdirectory(libbsarch)
 
-message("-- hkxcmd")
-add_subdirectory(hkxcmd)
-
 message("-- nif")
 add_subdirectory(NIF)
 
@@ -28,7 +25,6 @@ add_subdirectory(rx-ranges)
 function(getExternalLibrariesList list)
     set(${list}
         directxtex
-        hkxcmd
         libbsarch_OOP
         nif
         nlohmann_json::nlohmann_json

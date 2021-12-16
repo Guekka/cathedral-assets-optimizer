@@ -19,7 +19,6 @@
 #include "DirectXTex/DirectXTex.h"
 #include "Logger.hpp"
 #include "NIF/NifFile.h"
-#include "hkxcmd/hkfutils.h"
 #include "libbsarch/src/bsa_saver.hpp"
 #include "libbsarch/src/transform_archive.hpp"
 #include "rx/ranges.hpp"

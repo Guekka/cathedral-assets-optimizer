@@ -13,11 +13,6 @@
 #include "DirectXTex/DirectXTex.h"
 #include "NIF/NifFile.h"
 
-#include "hkxcmd/hkPackFormat.hpp"
-#include <Common/Base/Types/hkBaseTypes.h>
-#include <Common/Base/hkBase.h>
-#include <Common/Serialize/Resource/hkResource.h>
-
 #include "libbsarch/src/bsa_saver.hpp"
 #include "libbsarch/src/transform_archive.hpp"
 
@@ -71,9 +66,6 @@ struct BSAFolder
 
 struct Animation
 {
-    hkVariant root;
-    hkResource *resource;
-    hkPackFormat pkFormat;
 };
 } // namespace CAO::Resources
 

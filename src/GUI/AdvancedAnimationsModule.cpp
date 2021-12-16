@@ -31,7 +31,7 @@ void AdvancedAnimationsModule::connectAll(PatternSettings &pSets, [[maybe_unused
 
 bool AdvancedAnimationsModule::isSupportedGame(Games game)
 {
-    return GameSettings::get(game).eAnimationsFormat().has_value();
+    return GameSettings::get(game).bAnimationsConvert();
 }
 
 } // namespace CAO

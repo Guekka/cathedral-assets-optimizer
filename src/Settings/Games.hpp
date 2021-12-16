@@ -8,7 +8,6 @@
 #include "BaseTypes.hpp"
 #include "NIF/BasicTypes.h"
 #include "Settings.hpp"
-#include "hkxcmd/hkPackFormat.hpp"
 #include "libbsarch/src/libbsarch.h"
 
 namespace CAO {
@@ -46,7 +45,7 @@ private:
 
     REGISTER_SETTING(std::optional<NiVersion>, cMeshesVersion)
 
-    REGISTER_SETTING(std::optional<hkPackFormat>, eAnimationsFormat)
+    REGISTER_SETTING(bool, bAnimationsConvert)
 };
 
 #undef REGISTER_SETTING

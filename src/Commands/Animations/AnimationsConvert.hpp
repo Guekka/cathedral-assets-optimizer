@@ -14,6 +14,8 @@ namespace CAO {
 class AnimationsConvert final : public Command
 {
 public:
+    AnimationsConvert();
+
     CommandResult process(File &file) const override;
     CommandState isApplicable(File &file) const override;
 
@@ -21,6 +23,11 @@ public:
     bool isOptimization() const override { return true; }
     CommandType type() const override { return CommandType::Animation; };
     Priority priority() const override { return Medium; };
+
+private:
+    bool hkxcmdFound = false;
+
+    constexpr static inline auto hkxcmdPath = "bin/hkxcmd.exe";
 };
 
 REGISTER_COMMAND(AnimationsConvert)

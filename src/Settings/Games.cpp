@@ -54,7 +54,7 @@ const GameSettings &GameSettings::get(Games game)
                 sets.eBSATexturesFormat_ = std::nullopt;
                 sets.sBSATexturesSuffix_ = std::nullopt;
                 sets.cMeshesVersion_     = std::nullopt;
-                sets.eAnimationsFormat_  = std::nullopt;
+                sets.bAnimationsConvert_ = false;
             });
 
             return sets;
@@ -70,7 +70,7 @@ const GameSettings &GameSettings::get(Games game)
                 sets.eBSATexturesFormat_ = std::nullopt;
                 sets.sBSATexturesSuffix_ = std::nullopt;
                 sets.cMeshesVersion_     = std::nullopt;
-                sets.eAnimationsFormat_  = std::nullopt;
+                sets.bAnimationsConvert_ = false;
             });
 
             return sets;
@@ -91,7 +91,7 @@ const GameSettings &GameSettings::get(Games game)
                 //sets.eAnimationsFormat_  = hkPackFormat::HKPF_WIN32;
                 //But the used Havok SDK does not support it
 
-                sets.eAnimationsFormat_ = std::nullopt;
+                sets.bAnimationsConvert_ = false;
             });
 
             return sets;
@@ -107,7 +107,7 @@ const GameSettings &GameSettings::get(Games game)
                 sets.eBSATexturesFormat_ = baSSE;
                 sets.sBSATexturesSuffix_ = " - Textures.bsa";
                 sets.cMeshesVersion_     = NiVersion::getSSE();
-                sets.eAnimationsFormat_  = hkPackFormat::HKPF_AMD64;
+                sets.bAnimationsConvert_ = true;
             });
 
             return sets;
@@ -124,7 +124,7 @@ const GameSettings &GameSettings::get(Games game)
                 sets.eBSATexturesFormat_ = std::nullopt;
                 sets.sBSATexturesSuffix_ = std::nullopt;
                 sets.cMeshesVersion_     = std::nullopt;
-                sets.eAnimationsFormat_  = std::nullopt;
+                sets.bAnimationsConvert_ = false;
             });
 
             return sets;
@@ -140,7 +140,7 @@ const GameSettings &GameSettings::get(Games game)
                 sets.eBSATexturesFormat_ = baFO4dds;
                 sets.sBSATexturesSuffix_ = " - Textures.bsa";
                 sets.cMeshesVersion_     = std::nullopt;
-                sets.eAnimationsFormat_  = std::nullopt;
+                sets.bAnimationsConvert_ = false;
             });
 
             return sets;

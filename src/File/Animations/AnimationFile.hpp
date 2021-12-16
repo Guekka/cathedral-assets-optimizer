@@ -10,8 +10,6 @@ namespace CAO {
 class AnimationFile : public File
 {
 public:
-    AnimationFile();
-
     int loadFromDisk(const QString &filePath) override;
     int saveToDisk(const QString &filePath) override;
 
@@ -21,12 +19,5 @@ public:
     bool setFile(Resource &&file, bool optimizedFile = true) override;
 
     CommandType type() const override { return CommandType::Animation; }
-
-private:
-    hkMemoryRouter *_memoryRouter;
-    static inline bool initialized_ = false;
-
-    int commonLoadHelper(hkIstream &istream);
-    int commonSaveHelper(hkOstream &ostream) const;
 };
 } // namespace CAO
