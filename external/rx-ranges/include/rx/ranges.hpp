@@ -3,11 +3,14 @@
 
 #include <algorithm>
 #include <array>
+#include <iterator>
 #include <list>
 #include <map>
 #include <set>
+#include <stdexcept>
 #include <type_traits>
 #include <vector>
+
 
 // This override is provided to avoid name clashes in foreign codebases where `rx` already has a
 // different meaning.
@@ -54,6 +57,8 @@
 #define RX_UNLIKELY(cond) bool(cond)
 #endif
 
+#undef min
+#undef max
 
 /*!
     @brief rx::ranges library
