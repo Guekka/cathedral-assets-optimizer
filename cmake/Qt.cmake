@@ -1,5 +1,5 @@
 # NOTE: this will probably need to be changed on each computer
-set(Qt5_DIR "C:/IT/Qt/5.15.2/msvc2019/lib/cmake/Qt5")
+set(Qt5_DIR "C:/IT/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5")
 
 find_package(Qt5 COMPONENTS Core Widgets LinguistTools REQUIRED)
 
