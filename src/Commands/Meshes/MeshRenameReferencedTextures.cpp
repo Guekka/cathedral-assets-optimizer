@@ -15,25 +15,9 @@ CommandResult MeshRenameReferencedTextures::process(File &file) const
     if (!nif)
         return CommandResultFactory::getCannotCastFileResult();
 
-    for (NiShader *shader : getShaders(*nif))
-    {
-        std::string tex;
-        int texCounter = 0;
-
-        while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
-        {
-            if (ends_with(std::string_view(tex), std::string_view(".tga"), false))
-            {
-                replace_all(tex, std::string_view(".tga"), std::string_view(".dds"), false);
-                nif->SetTextureSlot(shader, tex, texCounter);
-            }
-            else if (++texCounter > limit)
-            {
-                return CommandResultFactory::getFailedResult(
-                    -1, "Failed to renamed referenced textures from TGA to DDS in mesh");
-            }
-        }
-    }
+    for (auto *shape : nif->GetShapes())
+        for (auto tex : nif->GetTexturePathRefs(shape))
+            replace_all(tex.get(), std::string_view(".tga"), std::string_view(".dds"), false);
 
     return CommandResultFactory::getSuccessfulResult();
 }
@@ -48,22 +32,14 @@ CommandState MeshRenameReferencedTextures::isApplicable(File &file) const
     if (!nif)
         return CommandState::NotRequired;
 
-    for (NiShader *shader : getShaders(*nif))
-    {
-        std::string tex;
-        int texCounter = 0;
-        while (nif->GetTextureSlot(shader, tex, texCounter) && !tex.empty())
-        {
-            if (ends_with(std::string_view(tex), std::string_view(".tga"), false))
-                return CommandState::Ready;
-            if (++texCounter > limit)
-                return CommandState::NotRequired;
-        }
-    }
+    for (auto *shape : nif->GetShapes())
+        for (auto tex : nif->GetTexturePathRefs(shape))
+            replace_all(tex.get(), std::string_view(".tga"), std::string_view(".dds"), false);
+
     return CommandState::NotRequired;
 }
 
-std::vector<NiShader *> MeshRenameReferencedTextures::getShaders(NifFile &nif) const
+std::vector<nifly::NiShader *> MeshRenameReferencedTextures::getShaders(nifly::NifFile &nif) const
 {
     return nif.GetShapes() | rx::transform([&nif](auto &&shape) { return nif.GetShader(shape); })
            | rx::filter([](auto &&shader) { return bool(shader); }) | rx::to_vector();

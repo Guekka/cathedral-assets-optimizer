@@ -1,34 +1,26 @@
-message("Configuring external libraries:")
-
-message("-- plog")
-add_subdirectory(plog)
-
-message("-- libbsarch")
+add_subdirectory(rx-ranges)
 add_subdirectory(libbsarch)
 
-message("-- nif")
-add_subdirectory(NIF)
+function(linkExternal target)
+    message("Configuring external libraries:")
 
-message("-- DirectXTex")
-add_subdirectory(DirectXTex)
+    find_package(directxtex CONFIG REQUIRED)
+    find_package(nlohmann_json CONFIG REQUIRED)
+    find_package(doctest CONFIG REQUIRED)
+    find_package(nifly CONFIG REQUIRED)
 
-message("-- nlohmann/json")
-add_subdirectory(json)
 
-message("-- doctest")
-add_library(doctest doctest/doctest.h)
-set_target_properties(doctest PROPERTIES LINKER_LANGUAGE CXX)
+    find_path(PLOG_INCLUDE_DIRS "plog/Appenders/AndroidAppender.h")
+    add_library(plog INTERFACE)
+    target_include_directories(plog INTERFACE ${PLOG_INCLUDE_DIRS})
 
-message("-- rx-ranges")
-add_subdirectory(rx-ranges)
 
-function(getExternalLibrariesList list)
-    set(${list}
-        directxtex
+    target_link_libraries(${target} PUBLIC
+        Microsoft::DirectXTex
         libbsarch_OOP
-        nif
+        nifly
         nlohmann_json::nlohmann_json
         plog
         rx-ranges
-        PARENT_SCOPE)
+        doctest::doctest)
 endfunction()

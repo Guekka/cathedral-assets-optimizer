@@ -85,7 +85,7 @@ const GameSettings &GameSettings::get(Games game)
                 sets.sDummyPlugin_->assign(std::begin(Dummy::Skyrim), std::end(Dummy::Skyrim));
                 sets.eBSATexturesFormat_ = std::nullopt;
                 sets.sBSATexturesSuffix_ = std::nullopt;
-                sets.cMeshesVersion_     = NiVersion::getSK();
+                sets.cMeshesVersion_     = nifly::NiVersion::getSK();
 
                 //In theory, the following should be used
                 //sets.eAnimationsFormat_  = hkPackFormat::HKPF_WIN32;
@@ -106,7 +106,7 @@ const GameSettings &GameSettings::get(Games game)
                 sets.sDummyPlugin_->assign(std::begin(Dummy::SkyrimSE), std::end(Dummy::SkyrimSE));
                 sets.eBSATexturesFormat_ = baSSE;
                 sets.sBSATexturesSuffix_ = " - Textures.bsa";
-                sets.cMeshesVersion_     = NiVersion::getSSE();
+                sets.cMeshesVersion_     = nifly::NiVersion::getSSE();
                 sets.bAnimationsConvert_ = true;
             });
 

@@ -20,7 +20,7 @@ public:
 
 private:
     static constexpr int limit = 1000;
-    std::vector<NiShader *> getShaders(NifFile &nif) const;
+    std::vector<nifly::NiShader *> getShaders(nifly::NifFile &nif) const;
 };
 REGISTER_COMMAND(MeshRenameReferencedTextures)
 } // namespace CAO

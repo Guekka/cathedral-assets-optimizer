@@ -6,9 +6,9 @@
 #pragma once
 
 #include "BaseTypes.hpp"
-#include "NIF/BasicTypes.h"
 #include "Settings.hpp"
 #include "libbsarch/src/libbsarch.h"
+#include <BasicTypes.hpp>
 
 namespace CAO {
 
@@ -43,7 +43,7 @@ private:
     REGISTER_SETTING(std::optional<bsa_archive_type_t>, eBSATexturesFormat)
     REGISTER_SETTING(std::optional<QString>, sBSATexturesSuffix)
 
-    REGISTER_SETTING(std::optional<NiVersion>, cMeshesVersion)
+    REGISTER_SETTING(std::optional<nifly::NiVersion>, cMeshesVersion)
 
     REGISTER_SETTING(bool, bAnimationsConvert)
 };

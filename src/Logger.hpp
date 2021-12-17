@@ -9,7 +9,7 @@
 
 #include <QString>
 
-#include "plog/Log.h"
+#include <plog/Log.h>
 
 namespace CAO {
 void initCustomLogger(const QString &logPath);

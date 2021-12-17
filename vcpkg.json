@@ -1,0 +1,11 @@
+{
+  "name": "cathedral-assets-optimizer",
+  "version-string": "6.0.4",
+  "dependencies": [
+	"directxtex",
+	"doctest",
+	"nlohmann-json",
+	"nifly",
+	"plog"
+  ]
+}

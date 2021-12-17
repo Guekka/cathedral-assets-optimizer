@@ -16,13 +16,13 @@
 
 /*---CUSTOM FILES-----*/
 #include "Commands/Textures/TextureFormats.hpp"
-#include "DirectXTex/DirectXTex.h"
 #include "Logger.hpp"
-#include "NIF/NifFile.h"
 #include "libbsarch/src/bsa_saver.hpp"
 #include "libbsarch/src/transform_archive.hpp"
 #include "rx/ranges.hpp"
-#include "json/include/nlohmann/json.hpp"
+#include <DirectXTex.h>
+#include <NifFile.hpp>
+#include <nlohmann/json.hpp>
 /*----------------------*/
 
 #endif

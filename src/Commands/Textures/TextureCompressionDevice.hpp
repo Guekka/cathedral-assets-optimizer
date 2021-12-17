@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "DirectXTex/DirectXTex.h"
+#include <DirectXTex.h>
 #include <wrl/client.h>
 
 #include <QString>

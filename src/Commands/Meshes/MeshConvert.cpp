@@ -31,15 +31,15 @@ CommandResult MeshConvert::process(File &file) const
 
     auto &sets          = currentProfile().getGeneralSettings();
     auto &game          = GameSettings::get(sets.eGame());
-    NiVersion targetVer = nif->GetHeader().GetVersion();
-    NiVersion gameVer   = game.cMeshesVersion().value();
+    nifly::NiVersion targetVer = nif->GetHeader().GetVersion();
+    nifly::NiVersion gameVer   = game.cMeshesVersion().value();
     targetVer.SetFile(gameVer.File());
     targetVer.SetStream(gameVer.Stream());
     targetVer.SetUser(gameVer.User());
 
-    OptOptions optOptions{.targetVersion  = targetVer,
-                          .headParts      = isHeadpart(file.getInputFilePath()),
-                          .removeParallax = false};
+    nifly::OptOptions optOptions{.targetVersion  = targetVer,
+                                 .headParts      = isHeadpart(file.getInputFilePath()),
+                                 .removeParallax = false};
 
     nif->OptimizeFor(optOptions);
 

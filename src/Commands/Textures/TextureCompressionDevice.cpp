@@ -7,7 +7,7 @@
 #include "Logger.hpp"
 #include "TextureCompressionDevice.hpp"
 
-#include "DirectXTex/DirectXTex.h"
+#include <DirectXTex.h>
 
 namespace CAO {
 TextureCompressionDevice::TextureCompressionDevice(int adapterIndex, bool allowSoftware)

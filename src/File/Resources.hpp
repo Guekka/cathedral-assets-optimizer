@@ -10,14 +10,14 @@
 #include <QObject>
 
 #include "Commands/Textures/TextureFormats.hpp"
-#include "DirectXTex/DirectXTex.h"
-#include "NIF/NifFile.h"
+#include <DirectXTex.h>
+#include <NifFile.hpp>
 
 #include "libbsarch/src/bsa_saver.hpp"
 #include "libbsarch/src/transform_archive.hpp"
 
 namespace CAO::Resources {
-class Mesh : public NifFile
+class Mesh : public nifly::NifFile
 {
 };
 class Texture : public DirectX::ScratchImage
@@ -79,5 +79,5 @@ using Resource = std::variant<std::monostate,
 
 } // namespace CAO
 
-Q_DECLARE_METATYPE(NiFileVersion)
+Q_DECLARE_METATYPE(nifly::NiFileVersion)
 Q_DECLARE_METATYPE(bsa_archive_type_e)

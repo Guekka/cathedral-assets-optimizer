@@ -199,8 +199,8 @@ target_compile_features(CAO_LIB PUBLIC cxx_std_20)
 target_include_directories(CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/src/CAO_LIB_autogen/include")
 
 #Link with external libraries
-getExternalLibrariesList(libs)
-target_link_libraries(CAO_LIB PUBLIC ${libs} Qt)
+linkExternal(CAO_LIB)
+target_link_libraries(CAO_LIB PUBLIC Qt)
 
 #Icon
 getIcon(icon)
@@ -214,4 +214,4 @@ add_executable(Cathedral_Assets_Optimizer WIN32
     ${icon}
     ${qm_files}
     )
-target_link_libraries(Cathedral_Assets_Optimizer CAO_LIB)
+target_link_libraries(Cathedral_Assets_Optimizer PRIVATE CAO_LIB)
