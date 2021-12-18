@@ -1,5 +1,9 @@
-# NOTE: this will probably need to be changed on each computer
-set(Qt5_DIR "C:/IT/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5")
+# Instruct CMake to run moc automatically when needed
+set(CMAKE_AUTOMOC ON)
+# Create code from a list of Qt designer ui files
+set(CMAKE_AUTOUIC ON)
+#Ressources
+set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 COMPONENTS Core Widgets LinguistTools REQUIRED)
 
@@ -17,9 +21,3 @@ target_link_libraries(Qt INTERFACE Qt5::Core Qt5::Widgets)
 # Qt support
 ###############################################################################
 
-# Instruct CMake to run moc automatically when needed
-set(CMAKE_AUTOMOC ON)
-# Create code from a list of Qt designer ui files
-set(CMAKE_AUTOUIC ON)
-#Ressources
-set(CMAKE_AUTORCC ON)
