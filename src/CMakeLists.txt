@@ -191,9 +191,12 @@ target_include_directories(CAO_LIB PUBLIC
     ${CMAKE_SOURCE_DIR}/external
     ${CMAKE_CURRENT_SOURCE_DIR})
 
-#C++20
-target_compile_features(CAO_LIB PUBLIC cxx_std_20)
-
+# Allow acess to ranges. See #1814 of STL repo
+if (MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.29.30129)
+    target_compile_features(CAO_LIB PUBLIC cxx_std_23) # /std:c++latest - unlocks the non stable cpp20 features. For new 16.11 versions
+else ()
+    target_compile_features(CAO_LIB PUBLIC cxx_std_20) # /std:c++latest for msvc and -std=c++20 for everyone else.
+endif ()
 #AUTOUIC
 #I don't know why, but ui files are not found if I do not manually include them
 target_include_directories(CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/src/CAO_LIB_autogen/include")
