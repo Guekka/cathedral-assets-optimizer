@@ -1,11 +1,7 @@
-cmake_minimum_required(VERSION 3.12...3.20)
-
-project(Cathedral_Assets_Optimizer VERSION 5.3.8 LANGUAGES CXX)
-
 #Setting version for C++ files
 configure_file (
-    "${PROJECT_SOURCE_DIR}/Version.h.in"
-    "${PROJECT_SOURCE_DIR}/Version.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Version.h.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Version.h"
     )
 
 # Find includes in corresponding build directories
@@ -24,61 +20,61 @@ set(GUI true)
 #SOURCES
 
 set(SOURCES
-    AnimationsOptimizer.cpp
-    AnimationsOptimizer.h
-    BSAOptimizer.cpp
-    BSAOptimizer.h
-    FilesystemOperations.cpp
-    FilesystemOperations.h
-    Logger.h
-    MainOptimizer.cpp
-    MainOptimizer.h
-    Manager.cpp
-    Manager.h
-    MeshesOptimizer.cpp
-    MeshesOptimizer.h
-    OptionsCAO.cpp
-    OptionsCAO.h
-    PluginsOperations.cpp
-    PluginsOperations.h
-    Profiles.cpp
-    Profiles.h
-    TexturesFormats.h
-    TexturesOptimizer.cpp
-    TexturesOptimizer.h
-    main.cpp
-    pch.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/AnimationsOptimizer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/AnimationsOptimizer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/BSAOptimizer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BSAOptimizer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/FilesystemOperations.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/FilesystemOperations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Logger.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/MainOptimizer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MainOptimizer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Manager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Manager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/MeshesOptimizer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MeshesOptimizer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/OptionsCAO.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/OptionsCAO.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/PluginsOperations.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PluginsOperations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Profiles.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Profiles.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/TexturesFormats.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/TexturesOptimizer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TexturesOptimizer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/pch.h
     )
 
 #Ui
 if(GUI)
     list (APPEND SOURCES
-        MainWindow.cpp
-        MainWindow.h
-        MainWindow.ui
-        TexturesFormatSelectDialog.cpp
-        TexturesFormatSelectDialog.h
-        TexturesFormatSelectDialog.ui)
+        ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/TexturesFormatSelectDialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/TexturesFormatSelectDialog.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/TexturesFormatSelectDialog.ui)
 endif()
 
 #Icon and qrc
 set(RESOURCES
-    "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc"
-    "${PROJECT_SOURCE_DIR}/Cathedral_Assets_Optimizer.manifest"
-    "${PROJECT_SOURCE_DIR}/styles/qdarkstyle/style.qrc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Cathedral_Assets_Optimizer.rc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Cathedral_Assets_Optimizer.manifest"
+    "${CMAKE_CURRENT_SOURCE_DIR}/styles/qdarkstyle/style.qrc"
     )
 
 #Generate translations
 set(TS_FILES
-    translations/AssetsOpt_de.ts
-    translations/AssetsOpt_en.ts
-    translations/AssetsOpt_es.ts
-    translations/AssetsOpt_fr_FR.ts
-    translations/AssetsOpt_ja.ts
-    translations/AssetsOpt_ko_KR.ts
-    translations/AssetsOpt_nl.ts
-    translations/AssetsOpt_tr.ts
-    translations/AssetsOpt_zh_CN.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_de.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_en.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_es.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_fr_FR.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_ja.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_ko_KR.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_nl.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_tr.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/AssetsOpt_zh_CN.ts
     )
 
 message("Updating translations files")
