@@ -7,6 +7,5 @@ meshes/actors/character/_1stperson/behaviors
 meshes/animationdatasinglefile.txt
 meshes/animationsetdatasinglefile.txt
 
-readme
+readme.txt
 CalienteTools/
-xml
