@@ -82,13 +82,13 @@ void Manager::listFiles()
             const bool animation = _options.bAnimationsOptimization
                                    && it.fileName().endsWith(".hkx", Qt::CaseInsensitive);
 
-            const auto bsaExt = btu::bsa::Settings::get(Profiles::bsaGame()).extension;
-            const auto bsaExt2 = btu::common::as_ascii(bsaExt);
-            const bool bsa =
-                _options.bBsaExtract &&
-                it.fileName().endsWith(
-                    QString::fromUtf8(bsaExt2.data(), bsaExt2.size()),
-                    Qt::CaseInsensitive);
+            const auto u8BsaExt = btu::bsa::Settings::get(Profiles::bsaGame()).extension;
+            const auto asciiBsaExt = btu::common::as_ascii(u8BsaExt);
+            const auto bsaExt = QString::fromUtf8(asciiBsaExt.data(),
+                                                  static_cast<int>(asciiBsaExt.size()));
+
+            const bool bsa = _options.bBsaExtract
+                             && it.fileName().endsWith(bsaExt, Qt::CaseInsensitive);
 
             auto addToList = [&](QStringList &list) {
                 ++_numberFiles;

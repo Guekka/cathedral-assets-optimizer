@@ -50,9 +50,9 @@ void MainOptimizer::addLandscapeTextures()
 
 void MainOptimizer::process(const QString &file)
 {
-    const auto rawBsaExt =
-        btu::bsa::Settings::get(Profiles::bsaGame()).extension;
-    const auto bsaExt = btu::common::as_ascii(rawBsaExt);
+    const auto u8BsaExt = btu::bsa::Settings::get(Profiles::bsaGame()).extension;
+    const auto asciiBsaExt = btu::common::as_ascii(u8BsaExt);
+    const auto bsaExt = QString::fromUtf8(asciiBsaExt.data(), static_cast<int>(asciiBsaExt.size()));
     try {
         if (file.endsWith(".dds", Qt::CaseInsensitive))
             processTexture(file, TexturesOptimizer::DDS);
@@ -60,8 +60,7 @@ void MainOptimizer::process(const QString &file)
             processNif(file);
         else if (file.endsWith(".tga", Qt::CaseInsensitive) && Profiles::texturesConvertTga())
             processTexture(file, TexturesOptimizer::TGA);
-        else if (file.endsWith(QString::fromUtf8(bsaExt.data(), bsaExt.size()),
-                               Qt::CaseInsensitive))
+        else if (file.endsWith(bsaExt), Qt::CaseInsensitive)
             processBsa(file);
         else if (file.endsWith(".hkx", Qt::CaseInsensitive))
             processHkx(file);
