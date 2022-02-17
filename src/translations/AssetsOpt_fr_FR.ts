@@ -293,7 +293,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Génère des mipmaps pour les textures, améliorant les performances mais augmentant l&apos;utilisation du disque et de la vram.</translation>
+        <translation type="vanished">Génère des mipmaps pour les textures, améliorant les performances mais augmentant l&apos;utilisation du disque et de la vram.</translation>
     </message>
     <message>
         <source>Generate mipmaps</source>
@@ -564,6 +564,10 @@ Ce programme est distribué dans le but qu&apos;il soit utile, mais SANS AUCUNE 
     </message>
     <message>
         <source>Downsizing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Mipmaps are smaller copies of textures embedded in the same file which get used when things are small or far away and a pixel on screen covers several pixels in the texture.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;They reduce VRAM usage at the cost of a 33% increase of disk usage.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
