@@ -8,6 +8,24 @@
 
 using namespace nifly;
 
+std::string to_string(const std::vector<std::string> &source)
+{
+    std::string res = "[";
+    bool first = true;
+    for (const auto &s : source) {
+        if (!first)
+            res += ", ";
+        res += s;
+        first = false;
+    }
+    return res;
+}
+
+std::string to_string(bool source)
+{
+    return source ? "true" : "false";
+}
+
 MeshesOptimizer::MeshesOptimizer(bool processHeadparts, int optimizationLevel, bool resaveMeshes)
     : bMeshesHeadparts(processHeadparts), bMeshesResave(resaveMeshes),
       iMeshesOptimizationLevel(optimizationLevel)
@@ -66,6 +84,19 @@ bool MeshesOptimizer::optimize(const QString &filepath)
     const QString relativeFilePath = filepath.mid(filepath.indexOf("/meshes/", Qt::CaseInsensitive)
                                                   + 1);
 
+    auto print_res = [](nifly::OptResult res) {
+        std::string str = "Details of mesh optimization:";
+#define PRINT(x) str += "\n" #x ": " + to_string(x);
+        PRINT(res.dupesRenamed);
+        PRINT(res.shapesNormalsRemoved);
+        PRINT(res.shapesParallaxRemoved);
+        PRINT(res.shapesVColorsRemoved);
+        PRINT(res.shapesPartTriangulated);
+        PRINT(res.shapesTangentsAdded);
+        PLOGV << str;
+#undef PRINT
+    };
+
     bool processedHeadpart = false;
     //Headparts have to get a special optimization
     if (iMeshesOptimizationLevel >= 1
@@ -75,7 +106,7 @@ bool MeshesOptimizer::optimize(const QString &filepath)
             options.headParts = true;
             PLOG_INFO << "Optimizing: " + filepath
                              + " as an headpart due to necessary optimization";
-            nif.OptimizeFor(options);
+            print_res(nif.OptimizeFor(options));
             processedHeadpart = true;
         } else
             PLOG_VERBOSE << "Headpart mesh ignored: " + filepath;
@@ -87,13 +118,13 @@ bool MeshesOptimizer::optimize(const QString &filepath)
         case lightIssue:
             if (iMeshesOptimizationLevel >= 3) {
                 PLOG_INFO << "Optimizing: " + filepath + " due to full optimization";
-                nif.OptimizeFor(options);
+                print_res(nif.OptimizeFor(options));
             }
             break;
         case criticalIssue:
             if (iMeshesOptimizationLevel >= 1) {
                 PLOG_INFO << "Optimizing: " + filepath + " due to necessary optimization";
-                nif.OptimizeFor(options);
+                print_res(nif.OptimizeFor(options));
             }
             break;
         }
