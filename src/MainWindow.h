@@ -59,4 +59,5 @@ private:
     std::unique_ptr<Manager> _caoProcess;
     bool _showTutorials;
     TexturesFormatSelectDialog *texturesFormatDialog;
+    QTimer logTimer;
 };

@@ -279,7 +279,8 @@ void MainWindow::initProcess()
         _caoProcess.reset();
         _caoProcess = std::make_unique<Manager>(_options);
         connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::readProgress);
-        connect(&*_caoProcess, &Manager::progressBarTextChanged, this, &MainWindow::updateLog);
+        connect(&logTimer, &QTimer::timeout, this, &MainWindow::updateLog);
+        logTimer.start(5000); // Refresh log every 5 seconds
         connect(&*_caoProcess, &Manager::end, this, &MainWindow::endProcess);
         QtConcurrent::run(&*_caoProcess, &Manager::runOptimization);
     } catch (const std::exception &e) {
@@ -312,11 +313,9 @@ void MainWindow::endProcess()
 
 void MainWindow::updateLog() const
 {
-    _ui->logTextEdit->clear();
-
     QFile log(Profiles::logPath());
-    if (log.open(QFile::Text | QFile::ReadOnly))
-    {
+    if (log.open(QFile::Text | QFile::ReadOnly)) {
+        _ui->logTextEdit->clear();
         QTextStream ts(&log);
         ts.setCodec(QTextCodec::codecForName("UTF-8"));
         while (!ts.atEnd())

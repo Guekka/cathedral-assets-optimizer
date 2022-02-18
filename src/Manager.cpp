@@ -136,6 +136,8 @@ void Manager::runOptimization()
     //Listing newly extracted files
     listFiles();
 
+    printProgress(_numberFiles);
+
     //Using time in order to prevent printing progress too often
     QDateTime time1 = QDateTime::currentDateTime();
     QDateTime time2;
@@ -143,16 +145,13 @@ void Manager::runOptimization()
     {
         optimizer.process(file);
         ++_numberCompletedFiles;
-        if (_numberCompletedFiles % 10 == 0) {
-            if (_isCancelled)
-                return;
+        if (_isCancelled)
+            return;
 
-            time2 = QDateTime::currentDateTime();
-            if (time2 > time1.addMSecs(3000))
-            {
-                printProgress(_numberFiles);
-                time1 = time2;
-            }
+        time2 = QDateTime::currentDateTime();
+        if (time2 > time1.addMSecs(2000)) {
+            printProgress(_numberFiles);
+            time1 = time2;
         }
     }
 
