@@ -53,8 +53,7 @@ private:
    * \brief Checks if the file is present in the list filesToNotPack
    * \return a bool indicating the state of the file. True if is allowed, false otherwise
    */
-    bool isAllowedFile(const btu::common::Path &dir,
-                       const std::filesystem::directory_entry &fileinfo) const;
+    bool isAllowedFile(const btu::Path &dir, const std::filesystem::directory_entry &fileinfo) const;
     /*!
    * \brief A list containing the files present in filesToNotPack.txt. If a filename contains a member of this list, it won't be added to the BSA.
    */

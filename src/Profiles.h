@@ -13,7 +13,7 @@ constexpr double GigaByte = 1024 * 1024 * 1024;
 
 Q_DECLARE_METATYPE(nifly::NiFileVersion)
 Q_DECLARE_METATYPE(DXGI_FORMAT)
-Q_DECLARE_METATYPE(btu::common::Game)
+Q_DECLARE_METATYPE(btu::Game)
 
 class Profiles final : public QObject
 {
@@ -34,7 +34,7 @@ public:
 
     //Declaring enums to Qt system
     Q_ENUM(btu::bsa::ArchiveVersion)
-    Q_ENUM(btu::common::Game)
+    Q_ENUM(btu::Game)
     Q_ENUM(DXGI_FORMAT)
 
     //static getters
@@ -48,7 +48,7 @@ public:
     {
         return getInstance()._maxBsaUncompressedSize;
     }
-    [[nodiscard]] static btu::common::Game bsaGame() { return getInstance()._bsaGame; }
+    [[nodiscard]] static btu::Game bsaGame() { return getInstance()._bsaGame; }
 
     [[nodiscard]] static bool meshesEnabled() { return getInstance()._meshesEnabled; }
     [[nodiscard]] static nifly::NiFileVersion meshesFileVersion()
@@ -89,7 +89,7 @@ private:
     size_t findProfiles(const QDir &dir);
 
     bool _bsaEnabled;
-    btu::common::Game _bsaGame;
+    btu::Game _bsaGame;
     double _maxBsaUncompressedSize;
 
     bool _meshesEnabled;

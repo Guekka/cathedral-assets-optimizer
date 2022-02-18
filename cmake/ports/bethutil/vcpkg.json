@@ -10,15 +10,17 @@
       "name": "vcpkg-cmake-config",
       "host": true
     },
+	"libflow",
+	"nifly",
     "utf8h",
-	"rsm-bsa"
+	"rsm-bsa",
+	"tl-expected"
   ],
   "features": {
     "tex": {
       "description": "Build texture part. Windows only",
       "dependencies": [
-        "directxtex",
-        "tl-expected"
+        "directxtex"
       ]
     },
     "hkx": {

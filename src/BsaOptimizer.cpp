@@ -57,7 +57,8 @@ void BSAOptimizer::extract(QString bsaPath, const bool deleteBackup) const {
     PLOG_INFO << "BSA successfully extracted: " + bsaPath;
 }
 
-void handle_errors(std::vector<std::pair<btu::bsa::Path, std::string>> errs) {
+void handle_errors(std::vector<std::pair<btu::Path, std::string>> errs)
+{
     if (errs.empty())
         return;
 
@@ -83,8 +84,8 @@ void BSAOptimizer::packAll(const QString &folderPath, const OptionsCAO &options)
 
     auto bsas = btu::bsa::split(dir,
                                 game,
-                                [this](const btu::bsa::Path &dir,
-                                       btu::bsa::fs::directory_entry const &fileinfo) {
+                                [this](const btu::Path &dir,
+                                       btu::fs::directory_entry const &fileinfo) {
                                     return btu::bsa::default_is_allowed_path(dir, fileinfo)
                                            && isAllowedFile(dir, fileinfo);
                                 });
@@ -159,9 +160,9 @@ QString BSAOptimizer::backup(const QString &bsaPath) const
     return bsaBackupFile.fileName();
 }
 
-bool BSAOptimizer::isAllowedFile(
-    [[maybe_unused]] btu::bsa::Path const& dir,
-    btu::bsa::fs::directory_entry const& fileinfo) const {
+bool BSAOptimizer::isAllowedFile([[maybe_unused]] btu::Path const &dir,
+                                 btu::fs::directory_entry const &fileinfo) const
+{
     const auto& path = fileinfo.path().u8string();
     for (const auto& fileToNotPack : filesToNotPack) {
         if (btu::common::str_contain(path, fileToNotPack, false)) {

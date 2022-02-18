@@ -123,7 +123,7 @@ void Profiles::readFromIni()
     _profileSettings->beginGroup("BSA");
     _bsaEnabled = _profileSettings->value("bsaEnabled").toBool();
     _maxBsaUncompressedSize = _profileSettings->value("maxBsaUncompressedSize").toDouble();
-    _bsaGame = static_cast<btu::common::Game>(_profileSettings->value("bsaGame").toInt());
+    _bsaGame = static_cast<btu::Game>(_profileSettings->value("bsaGame").toInt());
     _profileSettings->endGroup();
     _profileSettings->beginGroup("Meshes");
     _meshesEnabled = _profileSettings->value("meshesEnabled").toBool();
@@ -193,7 +193,7 @@ void Profiles::saveToUi(Ui::MainWindow *ui)
 
 void Profiles::readFromUi(Ui::MainWindow *ui)
 {
-    _bsaGame = static_cast<btu::bsa::Game>(ui->bsaGame->currentData().toInt());
+    _bsaGame = static_cast<btu::Game>(ui->bsaGame->currentData().toInt());
     _maxBsaUncompressedSize = ui->bsaMaximumSize->value() * GigaByte;
 
     _meshesUser = ui->meshesUser->currentData().toUInt();

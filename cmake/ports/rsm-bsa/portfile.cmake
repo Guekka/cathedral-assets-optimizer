@@ -1,4 +1,3 @@
-vcpkg_fail_port_install(ON_TARGET "OSX" "UWP" ON_ARCH "x86")
 vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
 
 vcpkg_from_github(
@@ -7,9 +6,9 @@ vcpkg_from_github(
   REPO
   Ryan-rsm-McKenzie/bsa
   REF
-  63c8065d0b007158ccb10da70811c1c96736a840
+  4.0.2
   SHA512
-  5aa79c60d606739d12e3f9cd06348c612ecf469ddd1225ca878ec610813d55e5f885703a0a3a2baf9d3b574f0cb9b07bde06d81e1fc66be21f05131234db8318
+  075a8c3ec9cdd74d9346defa0d9f96cd776f945816cdff2dd39d3964623d68899afe2d73664aa1990fc7f97d756f813cf7ef29aba568cdc235b8d76172df49ca
   HEAD_REF
   master)
 
