@@ -60,7 +60,7 @@ void MainOptimizer::process(const QString &file)
             processNif(file);
         else if (file.endsWith(".tga", Qt::CaseInsensitive) && Profiles::texturesConvertTga())
             processTexture(file, TexturesOptimizer::TGA);
-        else if (file.endsWith(bsaExt), Qt::CaseInsensitive)
+        else if (file.endsWith(bsaExt, Qt::CaseInsensitive))
             processBsa(file);
         else if (file.endsWith(".hkx", Qt::CaseInsensitive))
             processHkx(file);
