@@ -18,7 +18,7 @@ std::string to_string(const std::vector<std::string> &source)
         res += s;
         first = false;
     }
-    return res;
+    return res + "]";
 }
 
 std::string to_string(bool source)
