@@ -9,3 +9,5 @@ meshes/animationsetdatasinglefile.txt
 
 readme.txt
 CalienteTools/
+
+dialogueviews/
