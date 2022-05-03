@@ -53,10 +53,13 @@ void MainOptimizer::process(const QString &file)
     const auto u8BsaExt = btu::bsa::Settings::get(Profiles::bsaGame()).extension;
     const auto asciiBsaExt = btu::common::as_ascii(u8BsaExt);
     const auto bsaExt = QString::fromUtf8(asciiBsaExt.data(), static_cast<int>(asciiBsaExt.size()));
+    const bool nif = file.endsWith(".nif", Qt::CaseInsensitive)
+                     || file.endsWith(".btr", Qt::CaseInsensitive)
+                     || file.endsWith(".bto", Qt::CaseInsensitive);
     try {
         if (file.endsWith(".dds", Qt::CaseInsensitive))
             processTexture(file, TexturesOptimizer::DDS);
-        else if (file.endsWith(".nif", Qt::CaseInsensitive))
+        else if (nif)
             processNif(file);
         else if (file.endsWith(".tga", Qt::CaseInsensitive) && Profiles::texturesConvertTga())
             processTexture(file, TexturesOptimizer::TGA);

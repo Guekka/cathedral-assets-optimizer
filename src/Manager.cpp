@@ -76,7 +76,9 @@ void Manager::listFiles()
         {
             it.next();
 
-            const bool mesh = it.fileName().endsWith(".nif", Qt::CaseInsensitive);
+            const bool mesh = it.fileName().endsWith(".nif", Qt::CaseInsensitive)
+                              || it.fileName().endsWith(".btr", Qt::CaseInsensitive)
+                              || it.fileName().endsWith(".bto", Qt::CaseInsensitive);
             const bool textureDDS = it.fileName().endsWith(".dds", Qt::CaseInsensitive);
             const bool textureTGA = it.fileName().endsWith(".tga", Qt::CaseInsensitive);
             const bool animation = _options.bAnimationsOptimization
