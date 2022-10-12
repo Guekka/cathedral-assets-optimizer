@@ -568,7 +568,7 @@ Zie de Mozilla Public License</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Mipmaps are smaller copies of textures embedded in the same file which get used when things are small or far away and a pixel on screen covers several pixels in the texture.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;They reduce VRAM usage at the cost of a 33% increase of disk usage.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Mipmaps are smaller copies of textures embedded in the same file which get used when things are small or far away and a pixel on screen covers several pixels in the texture. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;They improve visual quality with a small performance cost.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

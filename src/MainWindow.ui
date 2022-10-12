@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>676</width>
-    <height>667</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -374,7 +374,6 @@
             <widget class="QCheckBox" name="bsaCreateDummiesCheckbox">
              <property name="font">
               <font>
-               <weight>75</weight>
                <bold>true</bold>
                <kerning>true</kerning>
               </font>
@@ -407,7 +406,6 @@
             <widget class="QCheckBox" name="bBsaCreateTexture">
              <property name="font">
               <font>
-               <weight>75</weight>
                <bold>true</bold>
                <kerning>true</kerning>
               </font>
@@ -537,7 +535,6 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
                <bold>true</bold>
                <kerning>true</kerning>
               </font>
@@ -752,7 +749,6 @@
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
             <kerning>true</kerning>
            </font>
@@ -783,7 +779,6 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
                <bold>true</bold>
                <kerning>true</kerning>
               </font>
@@ -806,7 +801,6 @@
             <widget class="QCheckBox" name="texturesCompressCheckBox">
              <property name="font">
               <font>
-               <weight>50</weight>
                <bold>false</bold>
                <kerning>true</kerning>
               </font>
@@ -838,7 +832,6 @@
              </property>
              <property name="font">
               <font>
-               <weight>50</weight>
                <bold>true</bold>
                <kerning>true</kerning>
               </font>
@@ -847,7 +840,7 @@
               <cursorShape>WhatsThisCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Mipmaps are smaller copies of textures embedded in the same file which get used when things are small or far away and a pixel on screen covers several pixels in the texture.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;They reduce VRAM usage at the cost of a 33% increase of disk usage.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Mipmaps are smaller copies of textures embedded in the same file which get used when things are small or far away and a pixel on screen covers several pixels in the texture. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;They improve visual quality with a small performance cost.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Generate mipmaps</string>
@@ -1178,7 +1171,6 @@
              </property>
              <property name="font">
               <font>
-               <weight>75</weight>
                <bold>true</bold>
                <kerning>true</kerning>
               </font>
@@ -1258,7 +1250,7 @@
      <x>0</x>
      <y>0</y>
      <width>676</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTools">
