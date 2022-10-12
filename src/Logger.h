@@ -7,7 +7,10 @@
 
 #pragma once
 #include "pch.h"
-#include "plog/Log.h"
+
+#include <plog/Appenders/RollingFileAppender.h>
+#include <plog/Initializers/RollingFileInitializer.h>
+#include <plog/Log.h>
 
 namespace plog {
 class CustomDebugFormatter
