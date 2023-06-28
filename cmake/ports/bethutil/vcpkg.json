@@ -1,0 +1,39 @@
+{
+  "name": "bethutil",
+  "version-string": "1",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    },
+	"libflow",
+	"nifly",
+    "utf8h",
+	"rsm-bsa",
+	"tl-expected"
+  ],
+  "features": {
+    "tex": {
+      "description": "Build texture part. Windows only",
+      "dependencies": [
+        "directxtex"
+      ]
+    },
+    "hkx": {
+      "description": "Build hkx part. Windows only",
+      "dependencies": [
+        "reproc"
+      ]
+    },
+    "tests": {
+      "description": "Build tests",
+      "dependencies": [
+        "catch2"
+      ]
+    }
+  }
+}

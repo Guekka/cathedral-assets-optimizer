@@ -1,7 +1,9 @@
+
 {
   "name": "cathedral-assets-optimizer",
-  "version-string": "6.0.4",
+  "version-string": "7.0.a",
   "dependencies": [
+    "bethutil",
 	"directxtex",
 	"doctest",
 	"nlohmann-json",
