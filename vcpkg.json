@@ -8,6 +8,13 @@
 	"doctest",
 	"nlohmann-json",
 	"nifly",
-	"plog"
+	"plog",
+    {
+      "name": "qt5",
+      "default-features": false,
+        "features": [
+            "translations"
+        ]
+    }
   ]
 }

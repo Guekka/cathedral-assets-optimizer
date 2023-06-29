@@ -2,12 +2,10 @@ vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Guekka/bethutil
-    REF 81f882ed4d3fbb3c04b0c90658a94b3b2eaade02
-    SHA512 4c0e6ce892bd292972832e8e808ee8761a331a73c9062adc4b4655f2e531c2a8afd67163cc1995fbae2968e632b9b1e6caf9f651fb560926c9987e2312f44ce6
+    REF b38f5ca14083161443109df4106fb980ac919e11
+    SHA512 af6b65c3ed603c27cf8d1c40b94a89d57c98e8e1dda846661f489a517de5cdc3798288e5a4aff20d19617f2a8dfcfd248f71ca9780948aaea0aca80ea9dd4f49
     HEAD_REF main
 )
-
-set(SOURCE_PATH "C:/IT/Code_perso/bethutil")
 
 vcpkg_cmake_configure(
 	SOURCE_PATH "${SOURCE_PATH}"

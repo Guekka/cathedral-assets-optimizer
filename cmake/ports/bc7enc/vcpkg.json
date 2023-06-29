@@ -1,0 +1,16 @@
+{
+  "name": "bc7enc",
+  "version-semver": "1.0.0",
+  "description": "bc7enc",
+  "homepage": "https://github.com/Guekka/bc7enc_rdo",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
