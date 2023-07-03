@@ -3,13 +3,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include <QInputDialog>
-#include <QMessageBox>
-
 #include "PatternsManagerWindow.hpp"
+
 #include "Settings/Profile.hpp"
 #include "Utils.hpp"
 #include "ui_PatternsManagerWindow.h"
+
+#include <QInputDialog>
+#include <QMessageBox>
 
 namespace CAO {
 PatternsManagerWindow::PatternsManagerWindow(Profile &profile_, QWidget *parent)

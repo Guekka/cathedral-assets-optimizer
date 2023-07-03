@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Games.hpp"
+
 #include "Utils/CallOnce.hpp"
 
 namespace CAO {
@@ -43,7 +44,8 @@ const GameSettings &GameSettings::get(Games game)
 {
     switch (game)
     {
-        case Games::Morrowind: {
+        case Games::Morrowind:
+        {
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {
@@ -59,7 +61,8 @@ const GameSettings &GameSettings::get(Games game)
 
             return sets;
         }
-        case Games::Oblivion: {
+        case Games::Oblivion:
+        {
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {
@@ -75,7 +78,8 @@ const GameSettings &GameSettings::get(Games game)
 
             return sets;
         }
-        case Games::SkyrimLE: {
+        case Games::SkyrimLE:
+        {
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {
@@ -96,7 +100,8 @@ const GameSettings &GameSettings::get(Games game)
 
             return sets;
         }
-        case Games::SkyrimSE: {
+        case Games::SkyrimSE:
+        {
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {
@@ -113,7 +118,8 @@ const GameSettings &GameSettings::get(Games game)
             return sets;
         }
         case Games::Fallout3:
-        case Games::FalloutNewVegas: {
+        case Games::FalloutNewVegas:
+        {
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {
@@ -129,7 +135,8 @@ const GameSettings &GameSettings::get(Games game)
 
             return sets;
         }
-        case Games::Fallout4: {
+        case Games::Fallout4:
+        {
             static GameSettings sets;
             static CallOnce callOnce;
             callOnce.call([] {

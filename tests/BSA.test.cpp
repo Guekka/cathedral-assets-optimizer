@@ -3,11 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include <random>
+#include "Commands/BSA/Utils/BSA.hpp"
 
 #include "utils.hpp"
 
-#include "Commands/BSA/Utils/BSA.hpp"
+#include <random>
 
 using namespace CAO;
 

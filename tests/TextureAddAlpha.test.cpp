@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Commands/Textures/TextureAddAlpha.hpp"
+
 #include "utils.hpp"
 
 using namespace CAO;

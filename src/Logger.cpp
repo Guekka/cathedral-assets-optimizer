@@ -3,13 +3,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include <QDir>
-
 #include "Logger.hpp"
+
 #include "Utils/Algorithms.hpp"
 #include "plog/Appenders/RollingFileAppender.h"
 #include "plog/Formatters/TxtFormatter.h"
 #include "plog/Init.h"
+
+#include <QDir>
 
 namespace CAO {
 void initCustomLogger(const QString &logPath)

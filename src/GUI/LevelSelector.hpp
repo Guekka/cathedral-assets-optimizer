@@ -4,12 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <array>
+#include "Settings/BaseTypes.hpp"
 
 #include <QCoreApplication>
 #include <QDialog>
-
-#include "Settings/BaseTypes.hpp"
+#include <array>
 
 namespace Ui {
 class LevelSelector;

@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Commands/Textures/TextureResize.hpp"
+
 #include "utils.hpp"
 
 using namespace CAO;
@@ -15,9 +16,9 @@ TEST_CASE_FIXTURE(TextureResize, "Target resizing in ratio way yields good resul
     info.height = 1024;
 
     PatternSettings sets;
-    sets.eTexturesResizingMode          = ByRatio;
-    sets.iTexturesResizingWidth         = 8;
-    sets.iTexturesResizingHeight        = 8;
+    sets.eTexturesResizingMode   = ByRatio;
+    sets.iTexturesResizingWidth  = 8;
+    sets.iTexturesResizingHeight = 8;
 
     auto tinfo = calculateTargetDimensions(info, sets);
 
@@ -32,9 +33,9 @@ TEST_CASE_FIXTURE(TextureResize, "Target resizing in fixed size way yields good 
     info.height = 1024;
 
     PatternSettings sets;
-    sets.eTexturesResizingMode         = BySize;
-    sets.iTexturesResizingWidth        = 128;
-    sets.iTexturesResizingHeight       = 128;
+    sets.eTexturesResizingMode   = BySize;
+    sets.iTexturesResizingWidth  = 128;
+    sets.iTexturesResizingHeight = 128;
 
     auto tinfo = calculateTargetDimensions(info, sets);
 

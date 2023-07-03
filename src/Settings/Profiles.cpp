@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Settings/Profiles.hpp"
+
 #include "Manager.hpp"
 #include "Utils/Filesystem.hpp"
 

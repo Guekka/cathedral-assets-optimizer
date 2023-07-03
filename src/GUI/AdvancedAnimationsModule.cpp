@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "AdvancedAnimationsModule.hpp"
+
 #include "Settings/Games.hpp"
 #include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"

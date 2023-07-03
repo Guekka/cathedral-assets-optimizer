@@ -4,11 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <QObject>
-#include <QString>
-
 #include "ModFolder.hpp"
 #include "Settings/BaseTypes.hpp"
+
+#include <QObject>
+#include <QString>
 
 namespace CAO {
 class Manager final : public QObject

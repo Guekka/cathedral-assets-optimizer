@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Commands/CommandType.hpp"
+
 #include <QObject>
 
 namespace CAO {

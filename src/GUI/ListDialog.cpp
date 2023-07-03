@@ -3,10 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include <QInputDialog>
-
 #include "ListDialog.hpp"
+
 #include "ui_ListDialog.h"
+
+#include <QInputDialog>
 
 namespace CAO {
 ListDialog::ListDialog(bool sortByText, QWidget *parent)
@@ -46,7 +47,7 @@ void ListDialog::addItem(QListWidgetItem *item)
 
 void ListDialog::addUserItem()
 {
-    bool ok             = false;
+    bool ok = false;
     const QString &text = QInputDialog::getText(this, tr("New item"), tr("Name:"), QLineEdit::Normal, "", &ok);
     if (!ok || text.isEmpty())
         return;

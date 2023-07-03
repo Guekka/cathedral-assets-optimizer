@@ -4,13 +4,13 @@
  * file= You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <QDirIterator>
-#include <QSettings>
-
 #include "Settings/BaseTypes.hpp"
 #include "Settings/Profiles.hpp"
 #include "Utils/Algorithms.hpp"
 #include "Utils/Filesystem.hpp"
+
+#include <QDirIterator>
+#include <QSettings>
 
 namespace CAO {
 

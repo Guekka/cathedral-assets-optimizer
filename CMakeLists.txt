@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.18)
 include_guard(GLOBAL)
 
-project(Cathedral_Assets_Optimizer VERSION 6.0.0 LANGUAGES CXX)
+project(
+  Cathedral_Assets_Optimizer
+  VERSION 6.0.0
+  LANGUAGES CXX)
 
-#Setting version for C++ files
-configure_file (src/Version.hpp.in src/Version.hpp)
+# Setting version for C++ files
+configure_file(src/Version.hpp.in src/Version.hpp)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -16,8 +19,8 @@ add_subdirectory(external)
 add_subdirectory(src)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
-    add_subdirectory(tests)
+  add_subdirectory(tests)
 endif()
 
-#PCH
+# PCH
 target_precompile_headers(Cathedral_Assets_Optimizer PUBLIC "src/pch.hpp")

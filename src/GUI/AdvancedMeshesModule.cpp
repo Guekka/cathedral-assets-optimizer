@@ -3,14 +3,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include <QButtonGroup>
-
 #include "AdvancedMeshesModule.hpp"
+
 #include "Settings/Games.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
 #include "ui_AdvancedMeshesModule.h"
+
+#include <QButtonGroup>
 
 namespace CAO {
 AdvancedMeshesModule::AdvancedMeshesModule(QWidget *parent)

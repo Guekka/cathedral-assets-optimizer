@@ -4,10 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <QCoreApplication>
-
 #include "Settings.hpp"
 #include "Utils/QJSONValueWrapper.hpp"
+
+#include <QCoreApplication>
 
 #define REGISTER_SETTING(type, name, key) \
     QJSONValueWrapper<type> name{json_, nlohmann::json_pointer<nlohmann::json>{key}};

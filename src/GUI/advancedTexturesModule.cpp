@@ -3,18 +3,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include <QListWidgetItem>
-
-#include <QDebug>
-
-#include "ui_AdvancedTexturesModule.h"
-
 #include "AdvancedTexturesModule.hpp"
+
 #include "ListDialog.hpp"
 #include "Settings/GeneralSettings.hpp"
 #include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
 #include "Utils/Algorithms.hpp"
+#include "ui_AdvancedTexturesModule.h"
+
+#include <QDebug>
+#include <QListWidgetItem>
 
 namespace CAO {
 AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
@@ -93,9 +92,9 @@ void AdvancedTexturesModule::connectAll(PatternSettings &pSets, [[maybe_unused]]
 
     //Resizing
     const auto updateResizeMode = [&pSets, this](int index) {
-        const auto data = ui_->resizingBox->isChecked()
-                              ? ui_->resizingMode->itemData(index).value<TextureResizingMode>()
-                              : None;
+        const auto data             = ui_->resizingBox->isChecked()
+                                          ? ui_->resizingMode->itemData(index).value<TextureResizingMode>()
+                                          : None;
         pSets.eTexturesResizingMode = data;
     };
 

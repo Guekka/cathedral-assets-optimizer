@@ -8,6 +8,7 @@
 #include "BaseTypes.hpp"
 #include "Settings.hpp"
 #include "libbsarch/src/libbsarch.h"
+
 #include <BasicTypes.hpp>
 
 namespace CAO {
@@ -17,7 +18,10 @@ private:                             \
     type name##_ = type{};           \
                                      \
 public:                              \
-    const type &name() const { return name##_; }
+    const type &name() const         \
+    {                                \
+        return name##_;              \
+    }
 
 class GameSettings final
 {
@@ -31,7 +35,7 @@ private:
     GameSettings(GameSettings &&)      = delete;
 
     GameSettings &operator=(const GameSettings &) = delete;
-    GameSettings &operator=(GameSettings &&) = delete;
+    GameSettings &operator=(GameSettings &&)      = delete;
 
     REGISTER_SETTING(bsa_archive_type_t, eBSAFormat)
 

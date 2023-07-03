@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "Utils/TemplateMetaProgramming.hpp"
+
 #include <QAbstractButton>
 #include <QAction>
 #include <QComboBox>
@@ -14,11 +16,8 @@
 #include <QListView>
 #include <QSpinBox>
 #include <QStandardItemModel>
-
 #include <functional>
 #include <stdexcept>
-
-#include "Utils/TemplateMetaProgramming.hpp"
 
 namespace CAO {
 class UiException : public std::runtime_error
@@ -97,7 +96,7 @@ auto connectWrapper(QAction &uiEl, Wrapper &wrapper, ValueType fallback = ValueT
 }
 
 template<typename... UiElements>
-void connectGroupBox(QGroupBox *box, UiElements *... uiEls)
+void connectGroupBox(QGroupBox *box, UiElements *...uiEls)
 {
     struct Functor
     {
@@ -116,13 +115,13 @@ void connectGroupBox(QGroupBox *box, UiElements *... uiEls)
 }
 
 template<typename... UiElements>
-void setEnabled(bool state, UiElements &... uiEls)
+void setEnabled(bool state, UiElements &...uiEls)
 {
     (std::invoke(&QWidget::setEnabled, uiEls, state), ...);
 }
 
 template<typename... UiElements>
-void setEnabled(bool state, UiElements *... uiEls)
+void setEnabled(bool state, UiElements *...uiEls)
 {
     (std::invoke(&QWidget::setEnabled, uiEls, state), ...);
 }

@@ -4,10 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "doctest/doctest.h"
-
 #include "File/Textures/TextureFile.hpp"
 #include "Settings/Profiles.hpp"
+#include "doctest/doctest.h"
 
 static void setSettings(const CAO::PatternSettings &pSets, const CAO::GeneralSettings &gSets)
 {

@@ -4,9 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <QCoreApplication>
-
 #include "GUI/IWindowModule.hpp"
+
+#include <QCoreApplication>
 
 namespace Ui {
 class AdvancedTexturesModule;

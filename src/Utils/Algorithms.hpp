@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Utils/TemplateMetaProgramming.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <iterator>

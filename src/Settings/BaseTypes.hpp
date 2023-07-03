@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Commands/Textures/TextureFormats.hpp"
+
 #include <QObject>
 
 constexpr double GigaByte = 1024 * 1024 * 1024;
@@ -54,5 +55,4 @@ Q_DECLARE_METATYPE(CAO::OptimizationMode)
 Q_DECLARE_METATYPE(CAO::TextureResizingMode)
 Q_DECLARE_METATYPE(CAO::GuiMode)
 Q_DECLARE_METATYPE(CAO::GuiTheme)
-Q_DECLARE_METATYPE(CAO::Games)
 Q_DECLARE_METATYPE(DXGI_FORMAT)

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "IWindowModule.hpp"
+
 #include "Settings/GeneralSettings.hpp"
 
 namespace CAO {

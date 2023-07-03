@@ -6,8 +6,9 @@
 #pragma once
 
 #include "ui_SelectGPUWindow.h"
-#include <optional>
+
 #include <QDialog>
+#include <optional>
 
 namespace Ui {
 class SelectGPUWindow;

@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include <QWidget>
-
 #include "plog/Severity.h"
+
+#include <QWidget>
 
 class QCloseEvent;
 class QTextStream;

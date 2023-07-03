@@ -4,10 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <QObject>
-
 #include "Settings/JSON.hpp"
 #include "Utils/TemplateMetaProgramming.hpp"
+
+#include <QObject>
 
 namespace CAO {
 
@@ -29,8 +29,8 @@ public:
 
     QJSONValueWrapper(const QJSONValueWrapper &other) = delete;
     QJSONValueWrapper(QJSONValueWrapper &&other)      = delete;
-    void operator=(const QJSONValueWrapper &other) = delete;
-    void operator=(QJSONValueWrapper &&other) = delete;
+    void operator=(const QJSONValueWrapper &other)    = delete;
+    void operator=(QJSONValueWrapper &&other)         = delete;
 
     void setValue(const Type &newValue)
     {
@@ -43,7 +43,8 @@ public:
     [[nodiscard]] Type value() const { return JSON::getValue<Type>(json_, key_); }
 
     template<typename U = T>
-    [[nodiscard]] const Type &value() const requires is_vector_v<U>
+    [[nodiscard]] const Type &value() const
+        requires is_vector_v<U>
     {
         return JSON::getRef<Type>(json_, key_);
     }
@@ -51,7 +52,8 @@ public:
     [[nodiscard]] Type operator()() const { return value(); }
 
     template<typename U = T>
-    [[nodiscard]] const Type &operator()() const requires is_vector_v<U>
+    [[nodiscard]] const Type &operator()() const
+        requires is_vector_v<U>
     {
         return value();
     }

@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "LevelSelector.hpp"
+
 #include "GUI/AdvancedAnimationsModule.hpp"
 #include "GUI/AdvancedBSAModule.hpp"
 #include "GUI/AdvancedMeshesModule.hpp"

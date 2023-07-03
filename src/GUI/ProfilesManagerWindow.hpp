@@ -5,10 +5,10 @@
 
 #pragma once
 
+#include "Settings/BaseTypes.hpp"
+
 #include <QCoreApplication>
 #include <QDialog>
-
-#include "Settings/BaseTypes.hpp"
 
 namespace Ui {
 class ProfilesManagerWindow;

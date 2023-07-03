@@ -10,32 +10,22 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/ModFolder.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Version.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Algorithms.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/CallOnce.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/CallOnce.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ScopeGuard.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/TemplateMetaProgramming.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Utils/TypeConvert.hpp
-
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Command.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandBook.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandBook.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandResult.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandResult.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/CommandType.hpp
-
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Animations/AnimationsConvert.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Animations/AnimationsConvert.hpp
-
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSACreate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSACreate.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSAExtract.cpp
@@ -47,16 +37,13 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/Utils/BSASplit.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSATransform.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/BSA/BSATransform.cpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Meshes/Mesh.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Meshes/MeshConvert.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Meshes/MeshConvert.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Meshes/MeshRenameReferencedTextures.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Meshes/MeshRenameReferencedTextures.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Plugins/PluginsOperations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Plugins/PluginsOperations.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/Texture.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureAddAlpha.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureAddAlpha.hpp
@@ -71,12 +58,10 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureGenerateMipmaps.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureResize.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Commands/Textures/TextureResize.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/File/File.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/File.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/FileFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/FileFactory.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Resources.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Animations/AnimationFile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Animations/AnimationFile.hpp
@@ -88,7 +73,6 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Meshes/MeshFile.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Textures/TextureFile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/File/Textures/TextureFile.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/BaseTypes.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/CommonSettings.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/JSON.cpp
@@ -111,110 +95,89 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Profile.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Settings/Utils/QJSONValueWrapper.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.ui
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.cpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils.hpp
-
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/ConnectionWrapper.hpp)
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/ConnectionWrapper.hpp
-    )
+# Resources
+getresources(resources)
 
-#Resources
-getResources(resources)
+# Main library
+add_library(CAO_LIB STATIC ${SOURCES} ${resources})
 
-
-#Main library
-add_library(CAO_LIB STATIC ${SOURCES}
-    ${resources}
-    )
-
-
-#Unity build
+# Unity build
 set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD true)
 set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD_BATCH_SIZE 6)
 
-
-#Include source
-target_include_directories(CAO_LIB PUBLIC
-    ${CMAKE_SOURCE_DIR}/external
-    ${CMAKE_CURRENT_SOURCE_DIR})
+# Include source
+target_include_directories(CAO_LIB PUBLIC ${CMAKE_SOURCE_DIR}/external
+                                          ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Allow acess to ranges. See #1814 of STL repo
-if (MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.29.30129)
-    target_compile_features(CAO_LIB PUBLIC cxx_std_23) # /std:c++latest - unlocks the non stable cpp20 features. For new 16.11 versions
-else ()
-    target_compile_features(CAO_LIB PUBLIC cxx_std_20) # /std:c++latest for msvc and -std=c++20 for everyone else.
-endif ()
-#AUTOUIC
-#I don't know why, but ui files are not found if I do not manually include them
-target_include_directories(CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/src/CAO_LIB_autogen/include")
+if(MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.29.30129)
+  target_compile_features(
+    CAO_LIB PUBLIC cxx_std_23) # /std:c++latest - unlocks the non stable cpp20
+                               # features. For new 16.11 versions
+else()
+  target_compile_features(
+    CAO_LIB PUBLIC cxx_std_20) # /std:c++latest for msvc and -std=c++20 for
+                               # everyone else.
+endif()
+# AUTOUIC I don't know why, but ui files are not found if I do not manually
+# include them
+target_include_directories(
+  CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/src/CAO_LIB_autogen/include")
 
-#Link with external libraries
-linkExternal(CAO_LIB)
+# Link with external libraries
+linkexternal(CAO_LIB)
 target_link_libraries(CAO_LIB PUBLIC Qt)
 
-#Icon
-getIcon(icon)
+# Icon
+geticon(icon)
 
-#Translations
-generateTranslations("${SOURCES}" qm_files)
+# Translations
+generatetranslations("${SOURCES}" qm_files)
 
-#Main exe
+# Main exe
 add_executable(Cathedral_Assets_Optimizer WIN32
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    ${icon}
-    ${qm_files}
-    )
+               ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${icon} ${qm_files})
 target_link_libraries(Cathedral_Assets_Optimizer PRIVATE CAO_LIB)

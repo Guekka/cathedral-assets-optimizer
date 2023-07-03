@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "SelectGPUWindow.hpp"
+
 #include "Commands/Textures/TextureCompressionDevice.hpp"
 
 #include <QRadioButton>

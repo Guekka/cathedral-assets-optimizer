@@ -5,7 +5,6 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
-
 #include "utils.hpp"
 
 int main(int argc, char **argv)
@@ -13,7 +12,7 @@ int main(int argc, char **argv)
     initSettings();
 
     doctest::Context context;
-    int res = context.run(); // run
+    int res = context.run();  // run
 
     if (context.shouldExit()) // important - query flags (and --exit) rely on the user doing this
         return res;           // propagate the result of the tests

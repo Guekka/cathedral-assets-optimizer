@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <QString>
-
 #include <plog/Log.h>
+
+#include <QString>
 
 namespace CAO {
 void initCustomLogger(const QString &logPath);

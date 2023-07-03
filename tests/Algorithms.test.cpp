@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Utils/Algorithms.hpp"
+
 #include "utils.hpp"
 
 TEST_CASE("String find")
@@ -52,7 +53,10 @@ TEST_CASE("String ends with")
         CHECK_FALSE(ends_with(value, std::string_view("XYZ")));
         CHECK_FALSE(ends_with(value, std::string_view("abc")));
     }
-    SUBCASE("Case insensitive") { CHECK(ends_with(value, std::string_view("XYZ"), false)); }
+    SUBCASE("Case insensitive")
+    {
+        CHECK(ends_with(value, std::string_view("XYZ"), false));
+    }
 }
 
 TEST_CASE("String starts with")
@@ -65,5 +69,8 @@ TEST_CASE("String starts with")
         CHECK_FALSE(starts_with(value, std::string_view("ABC")));
         CHECK_FALSE(starts_with(value, std::string_view("xyz")));
     }
-    SUBCASE("Case insensitive") { CHECK(starts_with(value, std::string_view("ABC"), false)); }
+    SUBCASE("Case insensitive")
+    {
+        CHECK(starts_with(value, std::string_view("ABC"), false));
+    }
 }

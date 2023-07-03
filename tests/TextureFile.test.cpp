@@ -11,7 +11,10 @@ SCENARIO("Saving and loading a dds file to the disk")
         {
             const QString filePath = QDir::currentPath() + "/image.dds";
             file->saveToDisk(filePath);
-            THEN("The file should be correctly saved") { CHECK(QFile::exists(filePath)); }
+            THEN("The file should be correctly saved")
+            {
+                CHECK(QFile::exists(filePath));
+            }
             WHEN("The file is loaded from disk")
             {
                 THEN("The loaded file should be identical to the saved file")

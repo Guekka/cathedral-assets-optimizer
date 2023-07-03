@@ -6,9 +6,9 @@
 #pragma once
 
 #include "../Utils.hpp"
+
 #include <QMetaObject>
 #include <QObject>
-
 #include <vector>
 
 namespace CAO {
@@ -30,7 +30,7 @@ public:
     }
 
     RAIIConnection &operator=(const RAIIConnection &) = delete;
-    RAIIConnection &operator=(RAIIConnection &&) = delete;
+    RAIIConnection &operator=(RAIIConnection &&)      = delete;
 
     ~RAIIConnection() { QObject::disconnect(connection_); }
 };
@@ -43,13 +43,13 @@ public:
 
 protected:
     template<typename... Args>
-    void connect(Args &&... args)
+    void connect(Args &&...args)
     {
         connections_.emplace_back(QObject::connect(std::forward<Args>(args)...));
     }
 
     template<typename... Args>
-    void connectWrapper(Args &&... args)
+    void connectWrapper(Args &&...args)
     {
         connections_.emplace_back(CAO::connectWrapper(std::forward<Args>(args)...));
     }

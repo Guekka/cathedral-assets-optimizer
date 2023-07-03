@@ -5,8 +5,9 @@
 #pragma once
 
 #include "nlohmann/json.hpp"
-#include <optional>
+
 #include <QString>
+#include <optional>
 
 namespace CAO {
 class Settings
@@ -21,7 +22,7 @@ public:
     virtual ~Settings()        = default;
 
     Settings &operator=(const Settings &) = delete;
-    Settings &operator=(Settings &&) = delete;
+    Settings &operator=(Settings &&)      = delete;
 
     virtual nlohmann::json getJSON() const { return json_; }
     virtual void setJSON(const nlohmann::json &j) { json_ = j; }

@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "MainOptimizer.hpp"
+
 #include "BSAMemoryCallback.hpp"
 #include "Commands/Animations/Animation.hpp"
 #include "Commands/BSA/BSA.hpp"

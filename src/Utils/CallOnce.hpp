@@ -16,7 +16,7 @@ public:
     CallOnce(CallOnce &&)      = default;
 
     CallOnce &operator=(const CallOnce &) = delete;
-    CallOnce &operator=(CallOnce &&) = delete;
+    CallOnce &operator=(CallOnce &&)      = delete;
 
     ~CallOnce() = default;
 

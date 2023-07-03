@@ -3,6 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "Utils/Filesystem.hpp"
+
+#include "Commands/Plugins/PluginsOperations.hpp"
+#include "Settings/FileTypes.hpp"
+
 #include <QCryptographicHash>
 #include <QDir>
 #include <QDirIterator>
@@ -12,10 +17,6 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <QVariant>
-
-#include "Utils/Filesystem.hpp"
-#include "Commands/Plugins/PluginsOperations.hpp"
-#include "Settings/FileTypes.hpp"
 
 namespace CAO::Filesystem {
 QByteArray fileChecksum(QFile &&file, QCryptographicHash::Algorithm hashAlgorithm);

@@ -5,9 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <vector>
-
 #include <QDialog>
+#include <vector>
 
 namespace Ui {
 class ListDialog;

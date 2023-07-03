@@ -4,8 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "PatternMap.hpp"
+
 #include "Utils/Algorithms.hpp"
 #include "Utils/wildcards.hpp"
+
 #include <string>
 
 namespace CAO {

@@ -14,17 +14,26 @@ SCENARIO("Optimizing a file")
         TextureFile file;
         WHEN("The File is unchanged")
         {
-            THEN("optimizedCurrentFile should be false") { CHECK(file.optimizedCurrentFile() == false); }
+            THEN("optimizedCurrentFile should be false")
+            {
+                CHECK(file.optimizedCurrentFile() == false);
+            }
         }
         WHEN("The TextureFile is changed with 'optimizedFile' set to false")
         {
             auto file2 = getStandardTextureFile(PatternSettings{}, false);
-            THEN("optimizedCurrentFile should be false") { CHECK(file2->optimizedCurrentFile() == false); }
+            THEN("optimizedCurrentFile should be false")
+            {
+                CHECK(file2->optimizedCurrentFile() == false);
+            }
         }
         WHEN("The TextureFile is changed with default arguments")
         {
             auto file3 = getStandardTextureFile(PatternSettings{});
-            THEN("optimizedCurrentFile should be true") { CHECK(file3->optimizedCurrentFile() == true); }
+            THEN("optimizedCurrentFile should be true")
+            {
+                CHECK(file3->optimizedCurrentFile() == true);
+            }
         }
     }
 }
