@@ -24,7 +24,7 @@ IntermediateModeModule::IntermediateModeModule(QWidget *parent)
 
 auto IntermediateModeModule::name() const noexcept -> QString
 {
-    return tr("Intermediate Mode");
+    return QObject::tr("Intermediate Mode");
 }
 
 void IntermediateModeModule::set_ui_data(const Settings &settings)

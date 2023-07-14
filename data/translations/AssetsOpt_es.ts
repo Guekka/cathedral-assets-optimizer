@@ -1034,6 +1034,24 @@ La experiencia completa de CAO. Con perfiles y patrones, puedes personalizar com
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="53"/>
+        <source>BSA (General)</source>
+        <translation type="unfinished">BSA (General)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="41"/>
+        <source>Animations (Patterns)</source>
+        <translation type="unfinished">Animaciones (Patrones)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="27"/>
+        <source>Intermediate Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SelectGPUWindow</name>
     <message>
         <location filename="../../src/GUI/SelectGPUWindow.ui" line="14"/>
@@ -1049,19 +1067,12 @@ La experiencia completa de CAO. Con perfiles y patrones, puedes personalizar com
 <context>
     <name>cao</name>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="53"/>
         <source>BSA (General)</source>
-        <translation type="unfinished">BSA (General)</translation>
+        <translation type="obsolete">BSA (General)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="41"/>
         <source>Animations (Patterns)</source>
-        <translation type="unfinished">Animaciones (Patrones)</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="27"/>
-        <source>Intermediate Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Animaciones (Patrones)</translation>
     </message>
 </context>
 <context>
@@ -1149,32 +1160,32 @@ La experiencia completa de CAO. Con perfiles y patrones, puedes personalizar com
 <context>
     <name>cao::PatternsManagerWindow</name>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="45"/>
         <source>New Pattern</source>
         <translation type="unfinished">Nuevo patrón</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="45"/>
         <source>Name:</source>
         <translation type="unfinished">Nombre:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="56"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="57"/>
         <source>Base pattern</source>
         <translation type="unfinished">Patrón base</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="57"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="58"/>
         <source>Which pattern do you want to use as a base?</source>
         <translation type="unfinished">Qué patrón quieres usar como base?</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="78"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="79"/>
         <source>Remove Pattern</source>
         <translation type="unfinished">Eliminar patrón</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="79"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="80"/>
         <source>Are you sure you want to remove Pattern &apos;%1&apos;? This action cannot be undone</source>
         <translation type="unfinished">Estás seguro de que quieres eliminar el Patrón &apos;%1&apos;? Esta acción no puede revertirse.</translation>
     </message>

@@ -1033,6 +1033,24 @@ CAOの全機能を使用。プロファイルとパターンを使用するこ�
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="53"/>
+        <source>BSA (General)</source>
+        <translation type="unfinished">BSA (全般)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="41"/>
+        <source>Animations (Patterns)</source>
+        <translation type="unfinished">アニメーション (パターン)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="27"/>
+        <source>Intermediate Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SelectGPUWindow</name>
     <message>
         <location filename="../../src/GUI/SelectGPUWindow.ui" line="14"/>
@@ -1048,19 +1066,12 @@ CAOの全機能を使用。プロファイルとパターンを使用するこ�
 <context>
     <name>cao</name>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="53"/>
         <source>BSA (General)</source>
-        <translation type="unfinished">BSA (全般)</translation>
+        <translation type="obsolete">BSA (全般)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="41"/>
         <source>Animations (Patterns)</source>
-        <translation type="unfinished">アニメーション (パターン)</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="27"/>
-        <source>Intermediate Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">アニメーション (パターン)</translation>
     </message>
 </context>
 <context>
@@ -1148,32 +1159,32 @@ CAOの全機能を使用。プロファイルとパターンを使用するこ�
 <context>
     <name>cao::PatternsManagerWindow</name>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="45"/>
         <source>New Pattern</source>
         <translation type="unfinished">新しいパターン</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="45"/>
         <source>Name:</source>
         <translation type="unfinished">名前:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="56"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="57"/>
         <source>Base pattern</source>
         <translation type="unfinished">ベースパターン</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="57"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="58"/>
         <source>Which pattern do you want to use as a base?</source>
         <translation type="unfinished">どのパターンをベースとして使用しますか？</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="78"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="79"/>
         <source>Remove Pattern</source>
         <translation type="unfinished">パターンを削除</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="79"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="80"/>
         <source>Are you sure you want to remove Pattern &apos;%1&apos;? This action cannot be undone</source>
         <translation type="unfinished">&apos;%1&apos; のパターンを削除してしまってもよろしいですか？ この操作を行った場合、元に戻すことはできません。</translation>
     </message>

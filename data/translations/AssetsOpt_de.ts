@@ -1000,6 +1000,24 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="53"/>
+        <source>BSA (General)</source>
+        <translation type="unfinished">BSA (???)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="41"/>
+        <source>Animations (Patterns)</source>
+        <translation type="unfinished">Animationen (Muster)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="27"/>
+        <source>Intermediate Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SelectGPUWindow</name>
     <message>
         <location filename="../../src/GUI/SelectGPUWindow.ui" line="14"/>
@@ -1015,19 +1033,12 @@ The full CAO experience. With profiles and patterns, you can fully customize how
 <context>
     <name>cao</name>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="53"/>
         <source>BSA (General)</source>
-        <translation type="unfinished">BSA (???)</translation>
+        <translation type="obsolete">BSA (???)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="41"/>
         <source>Animations (Patterns)</source>
-        <translation type="unfinished">Animationen (Muster)</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="27"/>
-        <source>Intermediate Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Animationen (Muster)</translation>
     </message>
 </context>
 <context>
@@ -1115,32 +1126,32 @@ The full CAO experience. With profiles and patterns, you can fully customize how
 <context>
     <name>cao::PatternsManagerWindow</name>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="45"/>
         <source>New Pattern</source>
         <translation type="unfinished">Neues Muster</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="45"/>
         <source>Name:</source>
         <translation type="unfinished">Name:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="56"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="57"/>
         <source>Base pattern</source>
         <translation type="unfinished">Muster Vorlage</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="57"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="58"/>
         <source>Which pattern do you want to use as a base?</source>
         <translation type="unfinished">Welches Muster willst du als Vorlage benutzen?</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="78"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="79"/>
         <source>Remove Pattern</source>
         <translation type="unfinished">Muster entfernen</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="79"/>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="80"/>
         <source>Are you sure you want to remove Pattern &apos;%1&apos;? This action cannot be undone</source>
         <translation type="unfinished"></translation>
     </message>
