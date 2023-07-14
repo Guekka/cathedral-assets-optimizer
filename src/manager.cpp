@@ -12,6 +12,9 @@
 
 #include <btu/bsa/settings.hpp>
 #include <btu/modmanager/mod_manager.hpp>
+#include <fmt/format.h>
+
+#include <QDateTime>
 
 namespace cao {
 

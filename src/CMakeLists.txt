@@ -71,10 +71,6 @@ getresources(resources)
 # Main library
 add_library(CAO_LIB STATIC ${SOURCES} ${resources})
 
-# Unity build
-set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD true)
-set_target_properties(CAO_LIB PROPERTIES UNITY_BUILD_BATCH_SIZE 6)
-
 # Include source
 target_include_directories(CAO_LIB PUBLIC ${CMAKE_SOURCE_DIR}/external
         ${CMAKE_CURRENT_SOURCE_DIR})

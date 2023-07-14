@@ -7,6 +7,7 @@
 
 #include "Utils.hpp"
 #include "settings/profile.hpp"
+#include "settings/settings.hpp"
 #include "ui_PatternsManagerWindow.h"
 
 #include <QInputDialog>
