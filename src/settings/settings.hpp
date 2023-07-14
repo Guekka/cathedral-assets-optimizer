@@ -9,15 +9,15 @@
 namespace cao {
 struct GuiSettings
 {
-    GuiTheme gui_theme;
-    bool remember_gui_mode;
-    GuiMode gui_mode;
+    GuiTheme gui_theme     = GuiTheme::Dark;
+    bool remember_gui_mode = false;
+    GuiMode gui_mode       = GuiMode::QuickOptimize;
 
-    bool first_run;
-    bool show_tutorial;
+    bool first_run     = true;
+    bool show_tutorial = true;
 
-    int gpu_index;
-    bool delete_empty_folders;
+    int gpu_index             = 0;
+    bool delete_empty_folders = false; // TODO: implement
 };
 
 class Settings
@@ -38,7 +38,7 @@ public:
     [[nodiscard]] static auto data_directory() noexcept -> std::filesystem::path;
     [[nodiscard]] static auto config_directory() noexcept -> std::filesystem::path;
 
-    GuiSettings gui;
+    GuiSettings gui{};
 
 private:
     std::vector<Profile> profiles_;
