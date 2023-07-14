@@ -22,25 +22,27 @@
         pkgs = nixpkgs.legacyPackages.${system};
         vcpkg = vcpkg-repo.legacyPackages.${system}.vcpkg;
       in {
-        default = devenv.lib.mkShell {
-          inherit inputs pkgs;
-          modules = [
-            {
-              packages = with pkgs; [
+        default = pkgs.mkShell {
+              nativeBuildInputs = with pkgs; [
                 cmake
+                makeWrapper
                 ninja
-                pkg-config
                 gcc
                 vcpkg
                 libsForQt5.qt5.qtbase
                 libsForQt5.qt5.qttools
+                libsForQt5.wrapQtAppsHook
               ];
 
-              enterShell = ''
+              shellHook = ''
                 export VCPKG_INSTALLATION_ROOT=$(vcpkg --root-for-nix-usage)
+
+                # set required environment variables for Qt
+                setQtEnvironment=$(mktemp --suffix .setQtEnvironment.sh)
+                makeShellWrapper "$(type -p sh)" "$setQtEnvironment" "''${qtWrapperArgs[@]}"
+                sed "/^exec/d" -i "$setQtEnvironment"
+                source "$setQtEnvironment"
               '';
-            }
-          ];
         };
       });
   };
