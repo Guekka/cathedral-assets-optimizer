@@ -11,7 +11,7 @@
 #include <QFile>
 #include <QTextStream>
 
-namespace CAO {
+namespace cao {
 ProgressWindow::ProgressWindow(const QString &logFilePath, QWidget *parent)
     : QWidget(parent)
     , logFilePath_(logFilePath)
@@ -206,4 +206,4 @@ ProgressWindow::LogEntry::LogEntry(const QString &line)
     formatedText = beginColor + line + QStringLiteral("</font>");
 }
 
-} // namespace CAO
+} // namespace cao

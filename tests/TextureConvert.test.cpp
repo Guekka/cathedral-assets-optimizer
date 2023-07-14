@@ -8,12 +8,12 @@
 #include "Commands/CommandBook.hpp"
 #include "utils.hpp"
 
-using namespace CAO;
+using namespace cao;
 
 SCENARIO("Converting a texture")
 {
     TextureConvert convert;
-    PatternSettings sets;
+    PerFileSettings sets;
     sets.slTextureUnwantedFormats = {DXGI_FORMAT_B5G6R5_UNORM};
 
     GIVEN("An unmodified image using an incompatible format, and settings with "

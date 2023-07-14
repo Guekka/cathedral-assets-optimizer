@@ -5,50 +5,75 @@
 
 #include "Logger.hpp"
 
-#include "Utils/Algorithms.hpp"
-#include "plog/Appenders/RollingFileAppender.h"
-#include "plog/Formatters/TxtFormatter.h"
-#include "plog/Init.h"
+#include <fmt/format.h>
+#include <plog/Appenders/RollingFileAppender.h>
+#include <plog/Formatters/TxtFormatter.h>
+#include <plog/Init.h>
 
-#include <QDir>
+#include <QDateTime>
+#include <filesystem>
+#include <fstream>
 
-namespace CAO {
-void initCustomLogger(const QString &logPath)
+namespace cao {
+
+class CustomFormatter
 {
-    //Cancelling if logger is already ready
-    if (plog::get())
-        return;
+public:
+    [[nodiscard]] static auto header() -> plog::util::nstring;
+    [[nodiscard]] static auto format(const plog::Record &record) -> plog::util::nstring;
+};
 
-    //Creating log folder
-    const QDir dir;
-    if (!dir.mkpath(QFileInfo(logPath).path()))
-        throw std::runtime_error("Cannot make log path: " + QFileInfo(logPath).path().toStdString());
-
-    //Creating log file
-    QFile file(logPath);
-
-    if (!file.open(QFile::ReadWrite | QFile::Append))
-        throw std::runtime_error("Cannot open log file: " + logPath.toStdString());
-
-    static plog::RollingFileAppender<plog::CustomFormatter> appender(qPrintable(logPath), 1'000'000, 20);
-    plog::init(plog::Severity::verbose, &appender);
-}
-} // namespace CAO
-
-namespace plog {
-util::nstring CustomFormatter::header()
+[[nodiscard]] auto get_log_name() -> std::string
 {
-    return TxtFormatter::header();
+    // TODO: use chrono and format (GCC 13.1)
+    const auto &date_time = QDateTime::currentDateTime().toString("yy_MM_dd_hh'h'mm'm'");
+    return fmt::format("cao_{}.log", date_time.toStdString());
 }
 
-plog::util::nstring plog::CustomFormatter::format(const plog::Record &record)
+[[nodiscard]] auto get_appender(const std::filesystem::path &log_file_path) noexcept -> plog::IAppender *
+{
+    constexpr size_t max_file_size = 1'000'000; // 1MB
+    constexpr size_t keep_files    = 20;
+    // plog requires a static appender
+    static auto appender = plog::RollingFileAppender<CustomFormatter>(log_file_path.string().c_str(),
+                                                                      max_file_size,
+                                                                      keep_files);
+
+    return &appender;
+}
+
+[[nodiscard]] auto init_logging(const std::filesystem::path &log_directory) noexcept -> bool
+{
+    // Cancelling if logger is already ready
+    if (plog::get() != nullptr)
+        return true;
+
+    // Creating log folder
+    if (!std::filesystem::exists(log_directory))
+        std::filesystem::create_directories(log_directory);
+
+    // Creating log file
+    const auto log_file_path = log_directory / get_log_name();
+    std::ofstream file(log_file_path, std::ios::app);
+    if (!file.is_open())
+        return false;
+
+    plog::init(plog::Severity::verbose, get_appender(log_file_path));
+}
+
+auto CustomFormatter::header() -> plog::util::nstring
+{
+    return plog::TxtFormatter::header();
+}
+
+auto CustomFormatter::format(const plog::Record &record) -> plog::util::nstring
 {
     tm t{};
-    util::localtime_s(&t, &record.getTime().time);
+    plog::util::localtime_s(&t, &record.getTime().time);
 
-    util::nostringstream ss;
+    plog::util::nostringstream ss;
     ss
-        //Time
+        // Time
         << t.tm_year + 1900 << "-" << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mon + 1
         << PLOG_NSTR("-") << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_mday << PLOG_NSTR(" ")
         << std::setfill(PLOG_NSTR('0')) << std::setw(2) << t.tm_hour << PLOG_NSTR(":")
@@ -57,12 +82,12 @@ plog::util::nstring plog::CustomFormatter::format(const plog::Record &record)
         << std::setfill(PLOG_NSTR('0')) << std::setw(3) << record.getTime().millitm << PLOG_NSTR(" ")
         << std::setfill(PLOG_NSTR(' ')) << std::setw(5)
         << std::left
-        //Actual message
+        // Actual message
         << severityToString(record.getSeverity()) << PLOG_NSTR(" ") << PLOG_NSTR("[") << record.getTid()
         << PLOG_NSTR("] ") << PLOG_NSTR("[") << record.getFunc() << PLOG_NSTR("@") << record.getLine()
-        << PLOG_NSTR("] ") << record.getMessage() << PLOG_NSTR('|') //Makes life easier for parsers
+        << PLOG_NSTR("] ") << record.getMessage() << PLOG_NSTR('|') // Makes life easier for parsers
         << PLOG_NSTR("\n");
 
     return ss.str();
 }
-} // namespace plog
+} // namespace cao

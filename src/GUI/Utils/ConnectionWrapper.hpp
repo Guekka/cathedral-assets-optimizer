@@ -11,7 +11,7 @@
 #include <QObject>
 #include <vector>
 
-namespace CAO {
+namespace cao {
 namespace detail {
 class RAIIConnection
 {
@@ -51,10 +51,10 @@ protected:
     template<typename... Args>
     void connectWrapper(Args &&...args)
     {
-        connections_.emplace_back(CAO::connectWrapper(std::forward<Args>(args)...));
+        connections_.emplace_back(cao::connectWrapper(std::forward<Args>(args)...));
     }
 
 private:
     std::vector<detail::RAIIConnection> connections_;
 };
-} // namespace CAO
+} // namespace cao

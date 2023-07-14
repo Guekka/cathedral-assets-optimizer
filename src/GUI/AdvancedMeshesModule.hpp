@@ -11,26 +11,24 @@ namespace Ui {
 class AdvancedMeshesModule;
 }
 
-namespace CAO {
+namespace cao {
 class AdvancedMeshesModule : public IWindowModule
 {
     Q_OBJECT
 public:
     explicit AdvancedMeshesModule(QWidget *parent = nullptr);
-    ~AdvancedMeshesModule();
+    ~AdvancedMeshesModule() override;
 
-    QString name() override;
+    [[nodiscard]] auto name() const noexcept -> QString override;
 
 private:
     std::unique_ptr<Ui::AdvancedMeshesModule> ui_;
 
-private:
+    void set_ui_data(const Settings &settings) override;
+    void ui_to_settings(Settings &settings) const override;
+    auto is_supported_game(btu::Game game) const noexcept -> bool override;
+
     using ConnectionWrapper::connect;
     using ConnectionWrapper::connectWrapper;
-
-    void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets) override;
-
-    void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
-    bool isSupportedGame(Games game) override;
 };
-} // namespace CAO
+} // namespace cao

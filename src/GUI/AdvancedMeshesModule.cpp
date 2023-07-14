@@ -5,15 +5,13 @@
 
 #include "AdvancedMeshesModule.hpp"
 
-#include "Settings/Games.hpp"
-#include "Settings/GeneralSettings.hpp"
-#include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
+#include "settings/per_file_settings.hpp"
 #include "ui_AdvancedMeshesModule.h"
 
 #include <QButtonGroup>
 
-namespace CAO {
+namespace cao {
 AdvancedMeshesModule::AdvancedMeshesModule(QWidget *parent)
     : IWindowModule(parent)
     , ui_(std::make_unique<Ui::AdvancedMeshesModule>())
@@ -27,50 +25,52 @@ AdvancedMeshesModule::AdvancedMeshesModule(QWidget *parent)
 
 AdvancedMeshesModule::~AdvancedMeshesModule() = default;
 
-void AdvancedMeshesModule::setUIData(const PatternSettings &pSets,
-                                     [[maybe_unused]] const GeneralSettings &gSets)
-{
-    ui_->mainGroupBox->setChecked(pSets.iMeshesOptimizationLevel() != 0);
-}
-
-void AdvancedMeshesModule::connectAll(PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets)
-{
-    auto *buttonGroup = new QButtonGroup(this);
-    buttonGroup->addButton(ui_->necessaryOptimizationRadioButton, 1);
-    buttonGroup->addButton(ui_->fullOptimizationRadioButton, 2);
-
-    connect(ui_->mainGroupBox,
-            &QGroupBox::toggled,
-            &pSets.iMeshesOptimizationLevel,
-            [&pSets, buttonGroup](bool state) {
-                //The default is the last, no idea why
-                if (state)
-                    buttonGroup->button(1)->setChecked(true);
-
-                pSets.iMeshesOptimizationLevel = state ? buttonGroup->checkedId() : 0;
-            });
-
-    connect(buttonGroup,
-            QOverload<QAbstractButton *>::of(&QButtonGroup::buttonPressed),
-            this,
-            [&pSets, buttonGroup](QAbstractButton *button) {
-                pSets.iMeshesOptimizationLevel = buttonGroup->id(button);
-            });
-
-    if (pSets.iMeshesOptimizationLevel() != 0)
-        buttonGroup->button(pSets.iMeshesOptimizationLevel())->setChecked(true);
-
-    connectWrapper(*ui_->ignoreHeadpartsCheckBox, pSets.bMeshesIgnoreHeadparts);
-}
-
-bool AdvancedMeshesModule::isSupportedGame(Games game)
-{
-    return GameSettings::get(game).cMeshesVersion().has_value();
-}
-
-QString AdvancedMeshesModule::name()
+QString AdvancedMeshesModule::name() const noexcept
 {
     return tr("Meshes (Patterns)");
 }
 
-} // namespace CAO
+void AdvancedMeshesModule::set_ui_data(const Settings &settings)
+{
+    /*
+     ui_->mainGroupBox->setChecked(pSets.iMeshesOptimizationLevel() != 0);
+
+auto *buttonGroup = new QButtonGroup(this);
+buttonGroup->addButton(ui_->necessaryOptimizationRadioButton, 1);
+buttonGroup->addButton(ui_->fullOptimizationRadioButton, 2);
+
+connect(ui_->mainGroupBox,
+   &QGroupBox::toggled,
+   &pSets.iMeshesOptimizationLevel,
+   [&pSets, buttonGroup](bool state) {
+       //The default is the last, no idea why
+       if (state)
+           buttonGroup->button(1)->setChecked(true);
+
+pSets.iMeshesOptimizationLevel = state ? buttonGroup->checkedId() : 0;
+});
+
+connect(buttonGroup,
+QOverload<QAbstractButton *>::of(&QButtonGroup::buttonPressed),
+this,
+[&pSets, buttonGroup](QAbstractButton *button) {
+   pSets.iMeshesOptimizationLevel = buttonGroup->id(button);
+});
+
+if (pSets.iMeshesOptimizationLevel() != 0)
+buttonGroup->button(pSets.iMeshesOptimizationLevel())->setChecked(true);
+
+connectWrapper(*ui_->ignoreHeadpartsCheckBox, pSets.bMeshesIgnoreHeadparts);
+
+     TODO
+     */
+}
+
+void AdvancedMeshesModule::ui_to_settings(Settings &settings) const {}
+
+bool AdvancedMeshesModule::is_supported_game(btu::Game game) const noexcept
+{
+    return game == btu::Game::SSE || game == btu::Game::SLE; // TODO: check if this is correct
+}
+
+} // namespace cao

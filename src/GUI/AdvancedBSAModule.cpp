@@ -5,14 +5,13 @@
 
 #include "AdvancedBSAModule.hpp"
 
-#include "Settings/GeneralSettings.hpp"
-#include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
+#include "settings/per_file_settings.hpp"
 #include "ui_AdvancedBSAModule.h"
 
 #include <QButtonGroup>
 
-namespace CAO {
+namespace cao {
 AdvancedBSAModule::AdvancedBSAModule(QWidget *parent)
     : IWindowModule(parent)
     , ui_(std::make_unique<Ui::AdvancedBSAModule>())
@@ -24,64 +23,34 @@ AdvancedBSAModule::AdvancedBSAModule(QWidget *parent)
 
 AdvancedBSAModule::~AdvancedBSAModule() = default;
 
-void AdvancedBSAModule::setUIData([[maybe_unused]] const PatternSettings &pSets, const GeneralSettings &gSets)
+void AdvancedBSAModule::set_ui_data(const cao::Settings &settings)
 {
-    ui_->BSAExtract->setChecked(!gSets.bBSACreate());
-    ui_->BSACreate->setChecked(gSets.bBSACreate());
-    ui_->BSAProcessContent->setChecked(gSets.bBSAProcessContent());
+    /* TODO
+    ui_->BSAExtract->setChecked(!gSets.bsa_create());
+    ui_->BSACreate->setChecked(gSets.bsa_create());
+    ui_->BSAProcessContent->setChecked(gSets.bsa_process_content());
+    */
 }
 
-void AdvancedBSAModule::connectAll([[maybe_unused]] PatternSettings &pSets, GeneralSettings &gSets)
-{
-    auto *bsaButtonGroup = new QButtonGroup(this);
-    bsaButtonGroup->addButton(ui_->BSACreate);
-    bsaButtonGroup->addButton(ui_->BSAExtract);
-    bsaButtonGroup->addButton(ui_->BSAProcessContent);
-
-    connect(bsaButtonGroup,
-            QOverload<QAbstractButton *>::of(&QButtonGroup::buttonPressed),
-            this,
-            [this, &gSets](QAbstractButton *button) {
-                gSets.bBSACreate         = false;
-                gSets.bBSAExtract        = false;
-                gSets.bBSAProcessContent = false;
-
-                if (button == ui_->BSACreate)
-                    gSets.bBSACreate = true;
-                else if (button == ui_->BSAExtract)
-                    gSets.bBSAExtract = true;
-                else if (button == ui_->BSAProcessContent)
-                    gSets.bBSAProcessContent = true;
-                else
-                    throw UiException("Unknown BSA button pressed");
-            });
-
-    connectWrapper(*ui_->dontMergeIncompressible, gSets.bBSADontMergeIncomp);
-    connectWrapper(*ui_->dontMergeTextures, gSets.bBSADontMergeTextures);
-    connectWrapper(*ui_->dontMakeLoaded, gSets.bBSADontMakeLoaded);
-    connectWrapper(*ui_->disallowCompression, gSets.bBSADontCompress);
-    connectWrapper(*ui_->maxStandardSize, gSets.iBSAMaxSize);
-    connectWrapper(*ui_->maxTexturesSize, gSets.iBSATexturesMaxSize);
-}
-
-bool AdvancedBSAModule::isSupportedGame(Games game)
+auto AdvancedBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
 {
     switch (game)
     {
-        case Games::Morrowind:
-        case Games::Oblivion:
-        case Games::SkyrimLE:
-        case Games::SkyrimSE:
-        case Games::Fallout3:
-        case Games::FalloutNewVegas:
-        case Games::Fallout4: return true;
+        case btu::Game::TES3:
+        case btu::Game::TES4:
+        case btu::Game::SLE:
+        case btu::Game::SSE:
+
+        case btu::Game::FNV:
+        case btu::Game::FO4: return true;
+        case btu::Game::Custom: return false;
     }
     return false;
 }
 
-QString AdvancedBSAModule::name()
+auto AdvancedBSAModule::name() const noexcept -> QString
 {
     return tr("BSA (General)");
 }
 
-} // namespace CAO
+} // namespace cao

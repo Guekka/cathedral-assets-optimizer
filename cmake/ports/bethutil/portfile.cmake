@@ -2,8 +2,8 @@ vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
 vcpkg_from_github(
         OUT_SOURCE_PATH SOURCE_PATH
         REPO Guekka/bethutil
-        REF b38f5ca14083161443109df4106fb980ac919e11
-        SHA512 af6b65c3ed603c27cf8d1c40b94a89d57c98e8e1dda846661f489a517de5cdc3798288e5a4aff20d19617f2a8dfcfd248f71ca9780948aaea0aca80ea9dd4f49
+        REF 431173dff958e0e3f8b2a33d2fe274fbd58d802b
+        SHA512 deb418ab74315dc4d1b109a3fc1d155627614acf76d1c38bfd1ca4369750c8f7c736a7f551ea568276079d63411603e6fdd78d14c2607de41b4dba175163a604
         HEAD_REF main
 )
 

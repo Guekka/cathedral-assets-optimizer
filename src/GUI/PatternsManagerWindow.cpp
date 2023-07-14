@@ -5,15 +5,15 @@
 
 #include "PatternsManagerWindow.hpp"
 
-#include "Settings/Profile.hpp"
 #include "Utils.hpp"
+#include "settings/profile.hpp"
 #include "ui_PatternsManagerWindow.h"
 
 #include <QInputDialog>
 #include <QMessageBox>
 
-namespace CAO {
-PatternsManagerWindow::PatternsManagerWindow(Profile &profile_, QWidget *parent)
+namespace cao {
+PatternsManagerWindow::PatternsManagerWindow(Settings profile_, QWidget *parent)
     : QDialog(parent)
     , ui_(std::make_unique<Ui::PatternsManagerWindow>())
     , profile(profile_)
@@ -30,9 +30,11 @@ PatternsManagerWindow::~PatternsManagerWindow() = default;
 
 void PatternsManagerWindow::updatePatterns(QComboBox &box)
 {
+    /*
     box.clear();
     box.addItems(profile.getPatterns().list());
     selectText(box, profile.getGeneralSettings().sCurrentPattern());
+     */
 }
 
 void PatternsManagerWindow::createPattern()
@@ -60,11 +62,11 @@ void PatternsManagerWindow::createPattern()
 
     if (!ok)
         return;
-
-    PatternSettings newSets = profile.getPatterns().getSettingsByName(basePattern);
+    /*
+    PerFileSettings newSets = profile.getPatterns().getSettingsByName(basePattern);
     newSets.pattern         = patName.toStdString();
     profile.getPatterns().addPattern(newSets);
-
+*/
     updatePatterns(*ui_->patterns);
 }
 
@@ -79,9 +81,9 @@ void PatternsManagerWindow::deleteCurrentPattern()
 
     if (button != QMessageBox::Yes)
         return;
-
+    /*
     profile.getPatterns().remove(current);
-
+*/
     updatePatterns(*ui_->patterns);
 }
 
@@ -91,4 +93,4 @@ void PatternsManagerWindow::setPattern(const QString &name)
     ui_->patterns->setCurrentIndex(ui_->patterns->findText(name));
 }
 
-} // namespace CAO
+} // namespace cao

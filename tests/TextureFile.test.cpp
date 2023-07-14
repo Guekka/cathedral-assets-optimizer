@@ -1,12 +1,12 @@
 #include "utils.hpp"
 
-using namespace CAO;
+using namespace cao;
 
 SCENARIO("Saving and loading a dds file to the disk")
 {
     GIVEN("A valid TextureFile and a valid path")
     {
-        auto file = getStandardTextureFile(PatternSettings{}, false);
+        auto file = getStandardTextureFile(PerFileSettings{}, false);
         WHEN("The file is saved to disk")
         {
             const QString filePath = QDir::currentPath() + "/image.dds";

@@ -4,7 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Settings/BaseTypes.hpp"
+#include "settings/base_types.hpp"
+#include "settings/settings.hpp"
 
 #include <QCoreApplication>
 #include <QDialog>
@@ -14,43 +15,44 @@ namespace Ui {
 class LevelSelector;
 }
 
-namespace CAO {
+namespace cao {
 class MainWindow;
 class LevelSelector : private QDialog
 {
     Q_DECLARE_TR_FUNCTIONS(LevelSelector)
 public:
-    explicit LevelSelector();
+    explicit LevelSelector(Settings settings);
     ~LevelSelector();
-    bool runSelection(MainWindow &window);
-    void setHandler(MainWindow &mw);
+
+    auto run_selection(MainWindow &window) -> bool;
+    void set_handler(MainWindow &mw);
 
 private:
-    //QSlider does not support custom values. Mapping enum to contingent ints
-    static constexpr inline std::array guiModes = {std::pair{1, GuiMode::QuickAutoPort},
-                                                   std::pair{2, GuiMode::Medium},
-                                                   std::pair{3, GuiMode::Advanced}};
+    std::unique_ptr<Ui::LevelSelector> ui_;
+    Settings settings_;
 
-    constexpr GuiMode toGuiMode(int mode)
+    // QSlider does not support custom values. Mapping enum to contingent ints
+    static constexpr inline std::array gui_modes = {std::pair{1, GuiMode::QuickOptimize},
+                                                    std::pair{2, GuiMode::Medium},
+                                                    std::pair{3, GuiMode::Advanced}};
+
+    [[nodiscard]] static auto to_gui_mode(int mode)
     {
-        for (const auto &val : guiModes)
+        for (const auto &val : gui_modes)
             if (val.first == mode)
                 return val.second;
-        return GuiMode::Invalid;
+        throw std::runtime_error("Invalid mode");
     }
-    constexpr int toInt(GuiMode mode)
+    [[nodiscard]] static auto to_int(GuiMode mode)
     {
-        for (const auto &val : guiModes)
+        for (const auto &val : gui_modes)
             if (val.second == mode)
                 return val.first;
         return 0;
     }
 
-    QString getHelpText(GuiMode level);
+    [[nodiscard]] static auto get_help_text(GuiMode level) noexcept -> QString;
 
-    void setupWindow(MainWindow &mw, GuiMode level);
-
-private:
-    std::unique_ptr<Ui::LevelSelector> ui_;
+    void setup_window(MainWindow &mw, GuiMode level);
 };
-} // namespace CAO
+} // namespace cao

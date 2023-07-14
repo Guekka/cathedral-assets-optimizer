@@ -5,35 +5,37 @@
 #pragma once
 
 #include "Utils/TypeConvert.hpp"
-#include "pch.hpp"
 
-//Custom serialization for Qt
-namespace nlohmann {
-template<>
-struct adl_serializer<QString>
-{
-    static void to_json(json &j, const QString &str) { j = str.toStdString(); }
-    static void from_json(const json &j, QString &str) { str = QString::fromStdString(j.get<std::string>()); }
-};
+#include <nlohmann/json.hpp>
 
-template<>
-struct adl_serializer<QStringList>
-{
-    static void to_json(json &j, const QStringList &strList) { j = CAO::toStringVector(strList); }
-    static void from_json(const json &j, QStringList &strList)
-    {
-        strList = CAO::toStringList(j.get<std::vector<std::string>>());
-    }
-};
-} // namespace nlohmann
+#include <fstream>
 
-namespace CAO {
-namespace JSON {
+namespace cao::json {
 
 using json_pointer = nlohmann::json_pointer<nlohmann::json>;
 
-void readFromFile(nlohmann::json &json, const QString &filepath);
-void saveToFile(const nlohmann::json &json, const QString &filepath);
+template<typename T>
+[[nodiscard]] inline auto read_from_file(const std::filesystem::path &filepath) -> T
+{
+    std::fstream stream(filepath, std::fstream::in);
+    if (!stream)
+        return T{};
+
+    nlohmann::json json;
+    stream >> json;
+
+    return json.get<T>();
+}
+
+[[nodiscard]] inline auto save_to_file(const nlohmann::json &json, const std::filesystem::path &filepath)
+    -> bool
+{
+    std::fstream stream(filepath, std::fstream::out);
+    if (!stream)
+        return false;
+
+    stream << json.dump(4);
+}
 
 void removeDuplicates(const nlohmann::json &master, std::vector<nlohmann::json> &jsons);
 
@@ -44,7 +46,6 @@ json_pointer getPointer(const std::string &key);
 template<typename T, typename ValueType = typename T::value_type>
 bool contains(const nlohmann::json &json, const ValueType &val)
 {
-    static_assert(is_vector_v<T>, "Type must be a vector");
     auto ref = json.get_ref<T>();
 
     return std::any_of(ref.cbegin(), ref.cend(), [&val](const ValueType &el) { return el == val; });
@@ -94,7 +95,6 @@ inline T getValue(const nlohmann::json &json, const json_pointer &key)
 template<class T>
 T &getRef(const nlohmann::json &json, const std::string &key)
 {
-    static_assert(is_vector_v<T>, "Type must be a vector");
     return json.get_ref<T>();
 }
 
@@ -112,5 +112,4 @@ inline void setValue(nlohmann::json &json, const std::string &key, const T &valu
     setValue(json[pointer], value);
 }
 
-}; // namespace JSON
-} // namespace CAO
+} // namespace cao::json

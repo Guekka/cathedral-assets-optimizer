@@ -11,27 +11,25 @@ namespace Ui {
 class AdvancedBSAModule;
 }
 
-namespace CAO {
+namespace cao {
 class AdvancedBSAModule : public IWindowModule
 {
     Q_OBJECT
+    
 public:
     explicit AdvancedBSAModule(QWidget *parent = nullptr);
-    ~AdvancedBSAModule();
+    ~AdvancedBSAModule() override;
 
-    QString name() override;
+    [[nodiscard]] auto name() const noexcept -> QString override;
 
 private:
     std::unique_ptr<Ui::AdvancedBSAModule> ui_;
 
-private:
     using ConnectionWrapper::connect;
     using ConnectionWrapper::connectWrapper;
 
-    void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets) override;
+    void set_ui_data(const Settings &settings) override;
 
-    void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
-
-    bool isSupportedGame(Games game) override;
+    [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
 };
-} // namespace CAO
+} // namespace cao

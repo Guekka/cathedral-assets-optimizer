@@ -15,12 +15,8 @@ include(cmake/Qt.cmake)
 include(cmake/BuildType.cmake)
 
 add_subdirectory(data)
-add_subdirectory(external)
 add_subdirectory(src)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()
-
-# PCH
-target_precompile_headers(Cathedral_Assets_Optimizer PUBLIC "src/pch.hpp")

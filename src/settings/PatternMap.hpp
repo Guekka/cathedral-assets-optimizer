@@ -4,22 +4,23 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Settings/PatternSettings.hpp"
-#include "Utils/TypeConvert.hpp"
+#include "settings/per_file_settings.hpp"
 
-namespace CAO {
+#include <nlohmann/json.hpp>
+
+namespace cao {
 class PatternMap
 {
 public:
     void listPatterns(const nlohmann::json &json);
-    void addPattern(PatternSettings pattern);
+    void addPattern(PerFileSettings pattern);
 
-    PatternSettings getSettings(const QString &filePath) const;
+    PerFileSettings getSettings(const QString &filePath) const;
 
-    const PatternSettings &getDefaultSettings() const;
-    PatternSettings &getDefaultSettings();
+    const PerFileSettings &getDefaultSettings() const;
+    PerFileSettings &getDefaultSettings();
 
-    PatternSettings &getSettingsByName(const QString &name);
+    PerFileSettings &getSettingsByName(const QString &name);
 
     QStringList list();
     void remove(const QString &patternName);
@@ -30,8 +31,8 @@ public:
     const auto &get() const { return patterns_; }
 
 private:
-    std::vector<PatternSettings> patterns_;
+    std::vector<PerFileSettings> patterns_;
 
     void updatePatternsPriority();
 };
-} // namespace CAO
+} // namespace cao

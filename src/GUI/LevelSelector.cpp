@@ -11,77 +11,71 @@
 #include "GUI/AdvancedTexturesModule.hpp"
 #include "GUI/IntermediateModeModule.hpp"
 #include "MainWindow.hpp"
-#include "Settings/Profiles.hpp"
+#include "settings/settings.hpp"
 #include "ui_LevelSelector.h"
 
-namespace CAO {
-LevelSelector::LevelSelector()
+namespace cao {
+LevelSelector::LevelSelector(Settings settings)
     : QDialog(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
     , ui_(std::make_unique<Ui::LevelSelector>())
+    , settings_(std::move(settings))
 {
     ui_->setupUi(this);
 
-    auto &sets            = getProfiles().commonSettings();
-    const GuiMode curMode = sets.bRememberGUIMode() ? sets.eGUIMode() : GuiMode::QuickAutoPort;
+    const GuiMode cur_mode = settings_.gui.remember_gui_mode ? settings.gui.gui_mode : GuiMode::QuickOptimize;
 
-    ui_->levelSlider->setValue(toInt(curMode));
-    ui_->label->setText(getHelpText(curMode));
+    ui_->levelSlider->setValue(to_int(cur_mode));
+    ui_->label->setText(get_help_text(cur_mode));
 
     connect(ui_->levelSlider, &QSlider::valueChanged, this, [this](int val) {
-        const GuiMode mode = toGuiMode(val);
-        ui_->label->setText(getHelpText(mode));
+        const GuiMode mode = to_gui_mode(val);
+        ui_->label->setText(get_help_text(mode));
     });
 }
 
 LevelSelector::~LevelSelector() = default;
 
-bool LevelSelector::runSelection(MainWindow &window)
+auto LevelSelector::run_selection(cao::MainWindow &window) -> bool
 {
-    if (getProfiles().commonSettings().bRememberGUIMode())
+    if (settings_.gui.remember_gui_mode)
     {
-        setupWindow(window, getProfiles().commonSettings().eGUIMode());
+        setup_window(window, settings_.gui.gui_mode);
         return true;
     }
 
     if (QDialog::exec() != QDialog::Accepted)
         return false;
 
-    const GuiMode selectedValue = toGuiMode(ui_->levelSlider->value());
-    setupWindow(window, selectedValue);
+    const GuiMode selected_value = to_gui_mode(ui_->levelSlider->value());
+    setup_window(window, selected_value);
 
-    auto &sets = getProfiles().commonSettings(); //In case they were changed in setupWindow
-
-    if (ui_->rememberChoice->isChecked())
-    {
-        sets.bRememberGUIMode = true;
-        sets.eGUIMode         = selectedValue;
-    }
-    else
-    {
-        sets.bRememberGUIMode = false;
-    }
+    settings_.gui.gui_mode          = selected_value;
+    settings_.gui.remember_gui_mode = ui_->rememberChoice->isChecked();
 
     return true;
 }
 
-void LevelSelector::setHandler(MainWindow &mw)
+void LevelSelector::set_handler(MainWindow &mw)
 {
     mw.setLevelSelectorHandler([this, &mw] {
         mw.hide();
-        getProfiles().commonSettings().bRememberGUIMode = false;
-        runSelection(mw);
-        mw.show();
+        settings_.gui.remember_gui_mode = false;
+        if (run_selection(mw))
+            mw.show();
+        else
+            QCoreApplication::quit(); // TODO: Do not quit the app
     });
 }
 
-void LevelSelector::setupWindow(MainWindow &mw, GuiMode level)
+void LevelSelector::setup_window(MainWindow &mw, GuiMode level)
 {
     mw.clearModules();
+    /* FIXME
     switch (level)
     {
-        case GuiMode::QuickAutoPort:
+        case GuiMode::QuickOptimize:
         {
-            getProfiles() = Profiles(QDir(Profiles::QuickAutoPortProfilesDir));
+            getProfiles() = Profiles(QDir(Settings::QuickOptimizeProfilesDir));
             mw.setPatternsEnabled(false);
             mw.initSettings();
             break;
@@ -105,13 +99,14 @@ void LevelSelector::setupWindow(MainWindow &mw, GuiMode level)
         }
         case GuiMode::Invalid: throw std::runtime_error("This level does not exist.");
     }
+    */
 }
 
-QString LevelSelector::getHelpText(GuiMode level)
+auto LevelSelector::get_help_text(cao::GuiMode level) noexcept -> QString
 {
     switch (level)
     {
-        case GuiMode::QuickAutoPort:
+        case GuiMode::QuickOptimize:
         {
             return tr("Quick Auto Port\n"
                       "Quick Auto Port uses default settings for porting a mod between LE and SSE.\n"
@@ -131,11 +126,7 @@ QString LevelSelector::getHelpText(GuiMode level)
                       "The full CAO experience. With profiles and patterns, you can fully customize "
                       "how CAO will optimize your files.");
         }
-        case GuiMode::Invalid:
-        {
-            throw std::runtime_error("This level does not exist.");
-        }
     }
     return tr("Unknown mode");
 }
-} // namespace CAO
+} // namespace cao

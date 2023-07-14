@@ -7,28 +7,31 @@
 
 #include "IWindowModule.hpp"
 
+#include <btu/common/games.hpp>
+
 namespace Ui {
 class AdvancedAnimationsModule;
 }
 
-namespace CAO {
+namespace cao {
 class AdvancedAnimationsModule : public IWindowModule
 {
     Q_OBJECT
+
 public:
     explicit AdvancedAnimationsModule(QWidget *parent = nullptr);
-    ~AdvancedAnimationsModule();
+    ~AdvancedAnimationsModule() override;
 
-    QString name() override;
+    [[nodiscard]] auto name() const noexcept -> QString override;
 
 private:
     std::unique_ptr<Ui::AdvancedAnimationsModule> ui_;
 
-private:
+    void set_ui_data(const Settings &settings) override;
+    void ui_to_settings(Settings &settings) const override;
+    [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
+
     using ConnectionWrapper::connect;
     using ConnectionWrapper::connectWrapper;
-
-    void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
-    bool isSupportedGame(Games game) override;
 };
-} // namespace CAO
+} // namespace cao

@@ -10,7 +10,7 @@
 #include <QApplication>
 #include <QFile>
 
-namespace CAO {
+namespace cao {
 
 QString getDarkStyleSheet()
 {
@@ -40,4 +40,4 @@ bool setTheme(GuiTheme theme)
     }
     return true;
 }
-} // namespace CAO
+} // namespace cao

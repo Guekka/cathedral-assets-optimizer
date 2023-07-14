@@ -7,7 +7,7 @@
 #include <QString>
 #include <QStringList>
 
-namespace CAO {
+namespace cao {
 
 inline QString toQString(const std::string &str)
 {
@@ -29,7 +29,7 @@ inline QStringList toStringList(Container &&cont)
         stringList.push_back(toQString(std::forward<decltype(elem)>(elem)));
 
     return stringList;
-} // namespace CAO
+}
 
 template<typename Container>
 inline std::vector<std::string> toStringVector(Container &&cont)
@@ -42,4 +42,4 @@ inline std::vector<std::string> toStringVector(Container &&cont)
 
     return stringVec;
 }
-} // namespace CAO
+} // namespace cao

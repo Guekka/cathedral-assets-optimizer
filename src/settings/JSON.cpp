@@ -4,29 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "JSON.hpp"
 
-namespace CAO {
-namespace JSON {
-
-void saveToFile(const nlohmann::json &json, const QString &filepath)
-{
-    std::fstream stream(std::filesystem::u8path(filepath.toStdString()), std::fstream::out);
-    if (!stream.is_open())
-        return;
-
-    stream << json.dump(4);
-}
-
-void readFromFile(nlohmann::json &json, const QString &filepath)
-{
-    std::fstream stream(std::filesystem::u8path(filepath.toStdString()), std::fstream::in);
-    if (!stream.is_open())
-        return;
-
-    stream >> json;
-}
+namespace cao::json {
 
 void removeDuplicates(const nlohmann::json &master, std::vector<nlohmann::json> &jsons)
 {
+    /*
     auto flatMaster = master.flatten();
     jsons           = jsons | rx::transform([](auto &&j) { return j.flatten(); }) | rx::to_vector();
 
@@ -37,6 +19,8 @@ void removeDuplicates(const nlohmann::json &master, std::vector<nlohmann::json> 
 
     jsons = jsons | rx::filter([](auto &&j) { return !j.empty(); })
             | rx::transform([](auto &&j) { return j.unflatten(); }) | rx::to_vector();
+            FIXME
+            */
 }
 
 json_pointer getPointer(const std::string &key)
@@ -58,5 +42,4 @@ bool contains(const nlohmann::json &master, const nlohmann::json &subset)
             return false;
     return true;
 }
-} // namespace JSON
-} // namespace CAO
+} // namespace cao::json

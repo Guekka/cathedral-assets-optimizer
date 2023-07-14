@@ -5,7 +5,9 @@
 
 #pragma once
 
-#include "Settings/BaseTypes.hpp"
+#include "settings/base_types.hpp"
+
+#include <btu/common/games.hpp>
 
 #include <QCoreApplication>
 #include <QDialog>
@@ -16,24 +18,24 @@ class ProfilesManagerWindow;
 
 class QComboBox;
 
-namespace CAO {
-class Profiles;
+namespace cao {
+class Settings;
 class ProfilesManagerWindow : public QDialog
 {
     Q_DECLARE_TR_FUNCTIONS(ProfilesManagerWindow)
 
 public:
-    explicit ProfilesManagerWindow(Profiles &profiles, QWidget *parent = nullptr);
+    explicit ProfilesManagerWindow(Settings &profiles, QWidget *parent = nullptr);
     ~ProfilesManagerWindow(); // = default
 
     QString getSelectedProfile();
     void setEnabledProfile(const QString &name);
-    void setAllowedGames(const std::vector<Games> &games);
+    void setAllowedGames(const std::vector<btu::Game> &games);
 
     void updateProfiles(QComboBox &box);
 
 private:
-    Profiles &profiles;
+    Settings &profiles;
     std::unique_ptr<Ui::ProfilesManagerWindow> ui_;
 
     void createProfile();
@@ -44,4 +46,4 @@ private:
 
     void selectRightGame(const QString &profileName);
 };
-} // namespace CAO
+} // namespace cao

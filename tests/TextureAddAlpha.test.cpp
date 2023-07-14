@@ -7,11 +7,11 @@
 
 #include "utils.hpp"
 
-using namespace CAO;
+using namespace cao;
 
 TEST_CASE("Detecting if TextureAddAlpha is applicable by settings")
 {
-    PatternSettings sets;
+    PerFileSettings sets;
     sets.bTexturesLandscapeAlpha = true;
     auto file                    = getStandardTextureFile(sets);
 
@@ -27,7 +27,7 @@ TEST_CASE("Detecting if TextureAddAlpha is applicable by settings")
 TEST_CASE("r")
 {
 
-    PatternSettings sets;
+    PerFileSettings sets;
     sets.bTexturesLandscapeAlpha = true;
     auto file                    = getStandardTextureFile(sets);
 

@@ -12,25 +12,25 @@ namespace Ui {
 class PatternsManagerWindow;
 }
 
-namespace CAO {
-class Profile;
+namespace cao {
+class Settings;
 class PatternsManagerWindow : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit PatternsManagerWindow(Profile &profile, QWidget *parent = nullptr);
+    explicit PatternsManagerWindow(Settings profile, QWidget *parent = nullptr);
     ~PatternsManagerWindow(); // = default
 
     void updatePatterns(QComboBox &box);
 
 private:
     std::unique_ptr<Ui::PatternsManagerWindow> ui_;
-    Profile &profile;
+    Settings &profile;
 
     void createPattern();
     void setPattern(const QString &name);
 
     void deleteCurrentPattern();
 };
-} // namespace CAO
+} // namespace cao

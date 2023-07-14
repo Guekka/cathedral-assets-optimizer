@@ -3,21 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "MainOptimizer.hpp"
+#include "main_process.hpp"
 
-#include "BSAMemoryCallback.hpp"
-#include "Commands/Animations/Animation.hpp"
-#include "Commands/BSA/BSA.hpp"
-#include "Commands/Meshes/Mesh.hpp"
-#include "Commands/Plugins/PluginsOperations.hpp"
-#include "Commands/Textures/Texture.hpp"
-#include "File/BSA/BSAFolder.hpp"
-#include "Settings/Games.hpp"
-#include "Settings/Profiles.hpp"
-#include "Settings/Settings.hpp"
-
-namespace CAO {
-void MainOptimizer::process(File &file, bool dryRun, MemoryData memoryData)
+/*
+namespace cao {
+void MainOptimizer::process(File &file, bool dryRun)
 {
     emit processingFile(file.type());
     try
@@ -80,7 +70,7 @@ bool MainOptimizer::processBSA(File &file, bool dryRun = false)
 
     const auto &games = GameSettings::get(currentProfile().getGeneralSettings().eGame());
 
-    bsaFile->callback = BSAMemoryCallback(games.sBSAExtension(), *this, dryRun);
+    bsaFile->callback = BSAMemoryCallback(btu::Game.sBSAExtension(), *this, dryRun);
 
     PLOG_VERBOSE << "Processing BSA: " + file.getInputFilePath();
 
@@ -129,7 +119,7 @@ void MainOptimizer::packBsa(const QString &folder)
     if (!saveFile(bsa))
         return;
 
-    if (!currentProfile().getGeneralSettings().bBSADontMakeLoaded())
+    if (!currentProfile().getGeneralSettings().bsa_make_dummy_plugins())
         PluginsOperations::makeDummyPlugins(folder, currentProfile().getGeneralSettings());
 }
 
@@ -240,4 +230,5 @@ bool MainOptimizer::saveFile(File &file, std::vector<std::byte> *out)
     return true;
 }
 
-} // namespace CAO
+} // namespace cao
+*/

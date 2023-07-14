@@ -5,13 +5,11 @@
 
 #include "FileTypes.hpp"
 
-#include "Utils/Algorithms.hpp"
-#include "Utils/wildcards.hpp"
-
-namespace CAO {
+namespace cao {
 
 std::optional<QString> FileTypes::isValid() const
 {
+    /*
     std::vector<std::string> allBSA = rx::chain(slBSAStandardFiles(),
                                                 slBSATextureFiles(),
                                                 slBSAUncompressibleFiles())
@@ -24,6 +22,9 @@ std::optional<QString> FileTypes::isValid() const
                   "files.\n"
                   "They cannot contain the same pattern");
 
+     */
+
+    // FIXME
     return std::nullopt;
 }
 
@@ -53,16 +54,18 @@ FileTypes &FileTypes::operator=(FileTypes &&other) noexcept
     return *this;
 }
 
-bool FileTypes::match(const std::vector<std::string> &patterns, const QString &str) const
+bool FileTypes::match(const std::vector<std::u8string> &patterns, const std::u8string &str) const
 {
+    /*
     auto name = str.toStdString();
 
     auto match = [&name](const std::string &str) {
-        using namespace wildcards;
         return isMatch(name, pattern{str}, case_insensitive);
     };
 
     return any_of(patterns, match);
+*/
+    return false; // FIXME
 }
 
-} // namespace CAO
+} // namespace cao

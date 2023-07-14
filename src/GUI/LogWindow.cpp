@@ -5,11 +5,11 @@
 
 #include "ProgressWindow.hpp"
 
-namespace CAO {
+namespace cao {
 ProgressWindow::ProgressWindow(QWidget *parent)
     : QWidget(parent)
     , ui(std::make_unique<Ui::ProgressWindow>())
 {
     ui->setupUi(this);
 }
-} // namespace CAO
+} // namespace cao

@@ -5,36 +5,36 @@
 #pragma once
 
 #include "File/Textures/TextureFile.hpp"
-#include "Settings/Profiles.hpp"
+#include "settings/settings.hpp"
 #include "doctest/doctest.h"
 
-static void setSettings(const CAO::PatternSettings &pSets, const CAO::GeneralSettings &gSets)
+static void setSettings(const cao::PerFileSettings &pSets, const cao::GeneralSettings &gSets)
 {
-    CAO::currentProfile().getPatterns().get().clear();
-    CAO::currentProfile().getPatterns().addPattern(pSets);
-    CAO::currentProfile().getGeneralSettings() = gSets;
-    CAO::currentProfile().saveToJSON();
+    cao::currentProfile().getPatterns().get().clear();
+    cao::currentProfile().getPatterns().addPattern(pSets);
+    cao::currentProfile().getGeneralSettings() = gSets;
+    cao::currentProfile().saveToJSON();
 }
 
 static void initSettings()
 {
     const QString &profileName = "TestingProfile";
-    CAO::getProfiles().create(profileName);
-    CAO::getProfiles().setCurrent(profileName);
+    cao::getProfiles().create_profile(profileName);
+    cao::getProfiles().setCurrent(profileName);
 
     //Resetting
-    setSettings(CAO::PatternSettings{}, CAO::GeneralSettings{});
+    setSettings(cao::PerFileSettings{}, cao::GeneralSettings{});
 }
 
-static std::unique_ptr<CAO::TextureFile> getStandardTextureFile(
-    const CAO::PatternSettings &pSets,
+static std::unique_ptr<cao::TextureFile> getStandardTextureFile(
+    const cao::PerFileSettings &pSets,
     const bool optimizedFile          = true,
     const DXGI_FORMAT &format         = DXGI_FORMAT_A8_UNORM,
-    const CAO::GeneralSettings &gSets = CAO::GeneralSettings{})
+    const cao::GeneralSettings &gSets = cao::GeneralSettings{})
 {
     setSettings(pSets, gSets);
 
-    CAO::Resources::Texture textureResource;
+    cao::Resources::Texture textureResource;
     textureResource.Initialize2D(format, 16, 16, 1, 1);
     textureResource.origFormat = format;
 
@@ -44,12 +44,12 @@ static std::unique_ptr<CAO::TextureFile> getStandardTextureFile(
         textureResource.origFormat = format == DXGI_FORMAT_BC7_UNORM ? DXGI_FORMAT_A8_UNORM
                                                                      : DXGI_FORMAT_BC7_UNORM;
 
-    auto file = std::make_unique<CAO::TextureFile>();
+    auto file = std::make_unique<cao::TextureFile>();
     file->setFile(std::move(textureResource), optimizedFile);
     file->setInputFilePath("TextureTest");
 
     //Checking that the file is valid
-    const auto *res = file->getFile<CAO::Resources::Texture>();
+    const auto *res = file->getFile<cao::Resources::Texture>();
     REQUIRE(res);
     REQUIRE(res->GetImages());
 
@@ -74,9 +74,9 @@ struct StringMaker<std::vector<T>>
 };
 
 template<>
-struct StringMaker<std::vector<CAO::PatternSettings>>
+struct StringMaker<std::vector<cao::PerFileSettings>>
 {
-    static String convert(const std::vector<CAO::PatternSettings> &in)
+    static String convert(const std::vector<cao::PerFileSettings> &in)
     {
         std::ostringstream oss;
 

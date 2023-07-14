@@ -3,11 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https,//mozilla.org/MPL/2.0/. */
 
-#include "Settings/JSON.hpp"
+#include "settings/JSON.hpp"
 
 #include "doctest/doctest.h"
 
-using namespace CAO;
+using namespace cao;
 
 TEST_CASE("Removing duplicates between several JSONs")
 {
@@ -26,7 +26,7 @@ TEST_CASE("Removing duplicates between several JSONs")
                 {"bBSATexturesEnabled", true},
                 {"eBSAFormat", 4},
                 {"eBSATexturesFormat", 4},
-                {"iBSAMaxSize", 2100000000},
+                {"bsa_max_size", 2100000000},
                 {"iBSATexturesMaxSize", 2544768122.88}
             }},
             {"Meshes",

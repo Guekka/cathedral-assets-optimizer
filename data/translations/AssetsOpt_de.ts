@@ -194,302 +194,264 @@
 <context>
     <name>AdvancedTexturesModule</name>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="14"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="26"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="26"/>
         <source>Process textures</source>
         <translation>Texturen verarbeiten</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="60"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="60"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="63"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="63"/>
         <source>Generate mipmaps</source>
         <translation>Mip Maps erstellen</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="88"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to convert and fix any textures that would crash the game.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; versucht alle Texturen zu konvertieren und zu berichtigen, die das Spiel zum Absturz bringen würden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="91"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="91"/>
         <source>Necessary optimization</source>
         <translation>Notwendige Optimierungen</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="110"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="113"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="113"/>
         <source>Compress textures</source>
         <translation>Texturen komprimieren</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="129"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add an alpha layer to landscape textures. Required for SSE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="132"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="132"/>
         <source>Add alpha to landscape textures</source>
         <translation>Füge den Alpha Channel zu Landschafts Texturen hinzu</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="145"/>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="267"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="145"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="267"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="148"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="148"/>
         <source>Resizing</source>
         <translation>Größe ändern</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="166"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="166"/>
         <source>Width</source>
         <translation>Breite</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="179"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="179"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="219"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="219"/>
         <source>By ratio</source>
         <translation>Mit Multiplikator</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="224"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="224"/>
         <source>By fixed size</source>
         <translation>Mit fester Größe</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="270"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="270"/>
         <source>Minimum size:</source>
         <translation>Minimale Größe:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="280"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="280"/>
         <source>Advanced</source>
         <translation>Erweitert</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="289"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="289"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="292"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="292"/>
         <source>Force convert</source>
         <translation>Erzwinge Konvertierung</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="299"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="299"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be converted to the configured output format, no matter their current state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="302"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="302"/>
         <source>Enable forced conversion</source>
         <translation>Aktiviere erzwungene Konvertierung</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="312"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="315"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="315"/>
         <source>Output format</source>
         <translation>Ausgabe Format</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="322"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="322"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The output format used for modified textures&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="326"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="326"/>
         <source>BC7 (BC7_UNORM)</source>
         <translation>BC7 (BC7_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="331"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="45"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="331"/>
         <source>BC5 (BC5_UNORM)</source>
         <translation>BC5 (BC5_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="336"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="46"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="336"/>
         <source>BC3 (BC3_UNORM)</source>
         <translation>BC3 (BC3_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="341"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="47"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="341"/>
         <source>BC1 (BC1_UNORM)</source>
         <translation>BC1 (BC1_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="346"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="48"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="346"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation>Uncompressed (R8G8B8A8_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="357"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="357"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="360"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="360"/>
         <source>Unwanted formats</source>
         <translation>Ungewollte Formate</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="373"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unwanted formats are formats that will always be converted to the configured output format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="376"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="376"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="140"/>
         <source>Textures (Patterns)</source>
-        <translation>Texturen (Muster)</translation>
+        <translation type="vanished">Texturen (Muster)</translation>
     </message>
 </context>
 <context>
     <name>CAO::AdvancedAnimationsModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="24"/>
         <source>Animations (Patterns)</source>
-        <translation>Animationen (Muster)</translation>
+        <translation type="vanished">Animationen (Muster)</translation>
     </message>
 </context>
 <context>
     <name>CAO::AdvancedBSAModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="83"/>
         <source>BSA (General)</source>
-        <translation>BSA (???)</translation>
+        <translation type="vanished">BSA (???)</translation>
     </message>
 </context>
 <context>
     <name>CAO::AdvancedMeshesModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.cpp" line="72"/>
         <source>Meshes (Patterns)</source>
-        <translation>Polygonnetz (Muster)</translation>
+        <translation type="vanished">Polygonnetz (Muster)</translation>
     </message>
 </context>
 <context>
     <name>CAO::IntermediateModeModule</name>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="20"/>
         <source>Disabled</source>
-        <translation>Deaktiviert</translation>
+        <translation type="vanished">Deaktiviert</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="21"/>
         <source>By ratio</source>
-        <translation>Mit Multiplikator</translation>
+        <translation type="vanished">Mit Multiplikator</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="22"/>
         <source>By fixed size</source>
-        <translation>Mit fester Größe</translation>
+        <translation type="vanished">Mit fester Größe</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="95"/>
         <source>Intermediate mode</source>
-        <translation>Mittlerer Modus</translation>
+        <translation type="vanished">Mittlerer Modus</translation>
     </message>
 </context>
 <context>
     <name>CAO::ListDialog</name>
     <message>
-        <location filename="../../src/GUI/ListDialog.cpp" line="50"/>
         <source>New item</source>
-        <translation>Neues Objekt</translation>
+        <translation type="vanished">Neues Objekt</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ListDialog.cpp" line="50"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation type="vanished">Name:</translation>
     </message>
 </context>
 <context>
     <name>CAO::PatternsManagerWindow</name>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="41"/>
         <source>New Pattern</source>
-        <translation>Neues Muster</translation>
+        <translation type="vanished">Neues Muster</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="41"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation type="vanished">Name:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="53"/>
         <source>Base pattern</source>
-        <translation>Muster Vorlage</translation>
+        <translation type="vanished">Muster Vorlage</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="54"/>
         <source>Which pattern do you want to use as a base?</source>
-        <translation>Welches Muster willst du als Vorlage benutzen?</translation>
+        <translation type="vanished">Welches Muster willst du als Vorlage benutzen?</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="75"/>
         <source>Remove Pattern</source>
-        <translation>Muster entfernen</translation>
-    </message>
-    <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="76"/>
-        <source>Are you sure you want to remove Pattern &apos;%1&apos;? This action cannot be undone</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Muster entfernen</translation>
     </message>
 </context>
 <context>
     <name>CAO::ProgressWindow</name>
     <message>
-        <location filename="../../src/GUI/ProgressWindow.cpp" line="47"/>
         <source>Done</source>
-        <translation>Fertig</translation>
+        <translation type="vanished">Fertig</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProgressWindow.cpp" line="65"/>
         <source>Cannot open log file</source>
-        <translation>Kann die Protokoll Datei nicht öffnen</translation>
-    </message>
-</context>
-<context>
-    <name>FileTypes</name>
-    <message>
-        <location filename="../../src/Settings/FileTypes.cpp" line="22"/>
-        <source>slBSAStandardFiles, slBSATextureFiles and slBSATextureFiles have to contain different files.
-They cannot contain the same pattern</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Kann die Protokoll Datei nicht öffnen</translation>
     </message>
 </context>
 <context>
@@ -499,36 +461,20 @@ They cannot contain the same pattern</source>
         <translation type="vanished">Maximale BSA Größe kann nicht negativ sein</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
-        <source>BSA Max size cannot be smaller than 0.5Gb</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
         <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
-        <translation>Dieser Pfad ist kürzer als 5 Buchstaben: Pfad: &apos;%1&apos;</translation>
+        <translation type="vanished">Dieser Pfad ist kürzer als 5 Buchstaben: Pfad: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
         <source>Input path does not exist. Path: &apos;%1&apos;</source>
-        <translation>Eingabe Pfad existiert nicht. Pfad: &apos;%1&apos;</translation>
+        <translation type="vanished">Eingabe Pfad existiert nicht. Pfad: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
-        <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
- If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
-Path: &apos;%2&apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
         <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
-        <translation>&apos;Einzel Mod&apos; Modus ist aktiviert, aber dieser Pfad scheint nicht von einem Modmanager verwaltet zu werden. Pfad: &apos;%1&apos;</translation>
+        <translation type="vanished">&apos;Einzel Mod&apos; Modus ist aktiviert, aber dieser Pfad scheint nicht von einem Modmanager verwaltet zu werden. Pfad: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
         <source>Output path does not exist. Path: &apos;%1&apos;</source>
-        <translation>Ausgabepfad existiert nicht. Pfad: &apos;%1&apos;</translation>
+        <translation type="vanished">Ausgabepfad existiert nicht. Pfad: &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -653,7 +599,7 @@ Path: &apos;%2&apos;</source>
         <translation>Meine Entscheidung speichern</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="115"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="111"/>
         <source>Quick Auto Port
 Quick Auto Port uses default settings for porting a mod between LE and SSE.
 It will work for most of the cases and is the recommended way to port a mod.
@@ -661,19 +607,19 @@ It is safe to apply it on a mod, and it is recommended to apply it to your whole
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="123"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="119"/>
         <source>Intermediate mode
 Intermediate mode offers default settings for most use cases, as well as being a bit more customizable than Quick Auto Port.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="129"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="125"/>
         <source>Advanced mode
 The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="138"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="130"/>
         <source>Unknown mode</source>
         <translation>Unbekannter Modus</translation>
     </message>
@@ -737,8 +683,6 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="154"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="218"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="259"/>
         <source>Open Directory</source>
         <translation>Verzeichnis öffnen</translation>
     </message>
@@ -759,13 +703,13 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="251"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="35"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="47"/>
         <source>One mod</source>
         <translation>Einzel Mod&lt;br&gt;</translation>
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="256"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="36"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="48"/>
         <source>Several mods</source>
         <translation>Mehrere Mods</translation>
     </message>
@@ -792,7 +736,7 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="313"/>
         <location filename="../../src/GUI/MainWindow.ui" line="347"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="99"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="110"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
@@ -847,32 +791,32 @@ The full CAO experience. With profiles and patterns, you can fully customize how
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="142"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="155"/>
         <source>Pattern not found</source>
         <translation>Muster nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="143"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="156"/>
         <source>Couldn&apos;t find the pattern &apos;*&apos;. Please reinstall the application</source>
         <translation>Konnte das Muster &apos;*&apos; nicht finden. Bitte installieren Sie das Programm neu</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="344"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="366"/>
         <source>Done</source>
         <translation>Fertig</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="359"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="381"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="360"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="382"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation>Ein Fehler ist aufgetreten und der Prozess wurde beendet:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="399"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="418"/>
         <source>Welcome to %1 %2</source>
         <translation>Willkommen zum %1 %2</translation>
     </message>
@@ -880,19 +824,8 @@ The full CAO experience. With profiles and patterns, you can fully customize how
 <context>
     <name>PatternSettings</name>
     <message>
-        <location filename="../../src/Settings/PatternSettings.cpp" line="72"/>
-        <source>Textures resizing minimum size has to be a power of two</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Settings/PatternSettings.cpp" line="75"/>
-        <source>Textures resizing target has to be a power of two</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Settings/PatternSettings.cpp" line="78"/>
         <source>This meshes optimization level does not exist. Level: %1</source>
-        <translation>Dieses Polygonnetz Optimierungslevel existiert nicht. Level: %1</translation>
+        <translation type="vanished">Dieses Polygonnetz Optimierungslevel existiert nicht. Level: %1</translation>
     </message>
 </context>
 <context>
@@ -952,105 +885,90 @@ The full CAO experience. With profiles and patterns, you can fully customize how
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="59"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="24"/>
         <source>Morrowind</source>
         <translation>Morrowind</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="64"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="25"/>
         <source>Oblivion</source>
         <translation>Oblivion</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="69"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="26"/>
         <source>Skyrim LE (2011)</source>
         <translation>Skyrim LE (2011)</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="74"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="27"/>
         <source>Skyrim SE (2016)</source>
         <translation>Skyrim SE (2016)</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="79"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="28"/>
         <source>Fallout 3</source>
         <translation>Fallout 3</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="84"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="29"/>
         <source>Fallout New Vegas</source>
         <translation>Fallout New Vegas</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="89"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="30"/>
         <source>Fallout 4</source>
         <translation>Fallout 4</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="91"/>
         <source>New profile</source>
         <translation>Neues Profil</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="91"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="98"/>
         <source>Base profile</source>
-        <translation>Profil Vorlage</translation>
+        <translation type="vanished">Profil Vorlage</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="99"/>
         <source>Which profile do you want to use as a base?</source>
-        <translation>Welches Profil willst du als Vorlage verwenden?</translation>
+        <translation type="vanished">Welches Profil willst du als Vorlage verwenden?</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="123"/>
         <source>Remove profile</source>
-        <translation>Profil löschen</translation>
+        <translation type="vanished">Profil löschen</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="124"/>
         <source>Are you sure you want to remove profile &apos;%1&apos;? This action cannot be undone</source>
-        <translation>Bist du dir sicher dass du das Profil &apos;%1&apos; löschen willst? Diese Aktion kann nicht rückgängig gemacht werden</translation>
+        <translation type="vanished">Bist du dir sicher dass du das Profil &apos;%1&apos; löschen willst? Diese Aktion kann nicht rückgängig gemacht werden</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
         <source>Removal failed</source>
-        <translation>Löschen fehlgeschlagen</translation>
+        <translation type="vanished">Löschen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
         <source>Failed to delete profile: %1</source>
-        <translation>Konnte nicht das Profil %1 löschen</translation>
+        <translation type="vanished">Konnte nicht das Profil %1 löschen</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="146"/>
         <source>Rename profile</source>
         <translation>Profil umbenennen</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="146"/>
         <source>New name:</source>
         <translation>Neuer Name:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
         <source>Renaming failed</source>
-        <translation>Umbenennen ist fehlgeschlagen</translation>
+        <translation type="vanished">Umbenennen ist fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
         <source>Failed to rename profile: %1</source>
-        <translation>Konnte nicht das Profil %1 umbenennen</translation>
+        <translation type="vanished">Konnte nicht das Profil %1 umbenennen</translation>
     </message>
 </context>
 <context>
@@ -1092,6 +1010,152 @@ The full CAO experience. With profiles and patterns, you can fully customize how
         <location filename="../../src/GUI/SelectGPUWindow.ui" line="20"/>
         <source>GPU</source>
         <translation>Grafikkarte</translation>
+    </message>
+</context>
+<context>
+    <name>cao</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="53"/>
+        <source>BSA (General)</source>
+        <translation type="unfinished">BSA (???)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="41"/>
+        <source>Animations (Patterns)</source>
+        <translation type="unfinished">Animationen (Muster)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="27"/>
+        <source>Intermediate Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>cao::AdvancedMeshesModule</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedMeshesModule.cpp" line="30"/>
+        <source>Meshes (Patterns)</source>
+        <translation type="unfinished">Polygonnetz (Muster)</translation>
+    </message>
+</context>
+<context>
+    <name>cao::AdvancedTexturesModule</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="40"/>
+        <source>By ratio</source>
+        <translation type="unfinished">Mit Multiplikator</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="41"/>
+        <source>By fixed size</source>
+        <translation type="unfinished">Mit fester Größe</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="43"/>
+        <source>BC7 (BC7_UNORM)</source>
+        <translation type="unfinished">BC7 (BC7_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="44"/>
+        <source>BC5 (BC5_UNORM)</source>
+        <translation type="unfinished">BC5 (BC5_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="45"/>
+        <source>BC3 (BC3_UNORM)</source>
+        <translation type="unfinished">BC3 (BC3_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="46"/>
+        <source>BC1 (BC1_UNORM)</source>
+        <translation type="unfinished">BC1 (BC1_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="47"/>
+        <source>Uncompressed (R8G8B8A8_UNORM)</source>
+        <translation type="unfinished">Uncompressed (R8G8B8A8_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="68"/>
+        <source>Textures (Patterns)</source>
+        <translation type="unfinished">Texturen (Muster)</translation>
+    </message>
+</context>
+<context>
+    <name>cao::IntermediateModeModule</name>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="20"/>
+        <source>Disabled</source>
+        <translation type="unfinished">Deaktiviert</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="21"/>
+        <source>By ratio</source>
+        <translation type="unfinished">Mit Multiplikator</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="22"/>
+        <source>By fixed size</source>
+        <translation type="unfinished">Mit fester Größe</translation>
+    </message>
+</context>
+<context>
+    <name>cao::ListDialog</name>
+    <message>
+        <location filename="../../src/GUI/ListDialog.cpp" line="51"/>
+        <source>New item</source>
+        <translation type="unfinished">Neues Objekt</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ListDialog.cpp" line="51"/>
+        <source>Name:</source>
+        <translation type="unfinished">Name:</translation>
+    </message>
+</context>
+<context>
+    <name>cao::PatternsManagerWindow</name>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <source>New Pattern</source>
+        <translation type="unfinished">Neues Muster</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <source>Name:</source>
+        <translation type="unfinished">Name:</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="56"/>
+        <source>Base pattern</source>
+        <translation type="unfinished">Muster Vorlage</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="57"/>
+        <source>Which pattern do you want to use as a base?</source>
+        <translation type="unfinished">Welches Muster willst du als Vorlage benutzen?</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="78"/>
+        <source>Remove Pattern</source>
+        <translation type="unfinished">Muster entfernen</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="79"/>
+        <source>Are you sure you want to remove Pattern &apos;%1&apos;? This action cannot be undone</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>cao::ProgressWindow</name>
+    <message>
+        <location filename="../../src/GUI/ProgressWindow.cpp" line="48"/>
+        <source>Done</source>
+        <translation type="unfinished">Fertig</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProgressWindow.cpp" line="66"/>
+        <source>Cannot open log file</source>
+        <translation type="unfinished">Kann die Protokoll Datei nicht öffnen</translation>
     </message>
 </context>
 </TS>

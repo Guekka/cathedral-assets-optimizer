@@ -5,12 +5,10 @@
 
 #include "PatternMap.hpp"
 
-#include "Utils/Algorithms.hpp"
-#include "Utils/wildcards.hpp"
-
 #include <string>
 
-namespace CAO {
+namespace cao {
+/*
 void PatternMap::listPatterns(const nlohmann::json &json)
 {
     patterns_.clear();
@@ -20,16 +18,16 @@ void PatternMap::listPatterns(const nlohmann::json &json)
         if (!value.is_object())
             continue;
 
-        addPattern(PatternSettings(value));
+        addPattern(PerFileSettings(value));
     }
 
-    const bool hasDefault = any_of(patterns_, [](auto &&pSets) { return pSets.pattern == "*"; });
+    const bool has_default = std::ranges::any_of(patterns_, [](auto &&pSets) { return pSets.pattern == "*"; });
 
-    if (!hasDefault)
-        addPattern(PatternSettings{0, "*"});
+    if (!has_default)
+        addPattern(PerFileSettings{0, "*"});
 }
 
-void PatternMap::addPattern(PatternSettings pattern)
+void PatternMap::addPattern(PerFileSettings pattern)
 {
     size_t idx = pattern.priority;
     if (idx > patterns_.size())
@@ -44,7 +42,7 @@ void PatternMap::addPattern(PatternSettings pattern)
     }
 }
 
-PatternSettings PatternMap::getSettings(const QString &filePath) const
+PerFileSettings PatternMap::getSettings(const QString &filePath) const
 {
     assert(!patterns_.empty());
 
@@ -60,15 +58,19 @@ PatternSettings PatternMap::getSettings(const QString &filePath) const
         if (matchWildcard(patternSettings.pattern))
             merged.merge_patch(patternSettings.getJSON());
 
-    return PatternSettings{merged};
+    return PerFileSettings{merged};
+
+     FIXME
+
+return getDefaultSettings();
 }
 
-const PatternSettings &PatternMap::getDefaultSettings() const
+const PerFileSettings &PatternMap::getDefaultSettings() const
 {
     return *patterns_.begin();
 }
 
-PatternSettings &PatternMap::getDefaultSettings()
+PerFileSettings &PatternMap::getDefaultSettings()
 {
     return *patterns_.begin();
 }
@@ -90,13 +92,14 @@ nlohmann::json PatternMap::getUnifiedJSON() const
     JSON::removeDuplicates(master, jsons);
     jsons.insert(jsons.begin(), master);
 
-    jsons = jsons | rx::filter([](auto &&j) { return !PatternSettings::removeMeta(j).empty(); })
+    jsons = jsons | rx::filter([](auto &&j) { return !PerFileSettings::removeMeta(j).empty(); })
             | rx::to_vector();
 
     return jsons;
+    return {};
 }
 
-PatternSettings &PatternMap::getSettingsByName(const QString &name)
+PerFileSettings &PatternMap::getSettingsByName(const QString &name)
 {
     const std::string sName = name.toStdString();
     auto it                 = std::find_if(patterns_.begin(), patterns_.end(), [&sName](auto pSets) {
@@ -127,4 +130,5 @@ void PatternMap::remove(const QString &patternName)
     if (it != patterns_.end())
         patterns_.erase(it);
 }
-} // namespace CAO
+FIXME */
+} // namespace cao

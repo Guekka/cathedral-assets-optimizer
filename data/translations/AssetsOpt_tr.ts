@@ -194,302 +194,276 @@
 <context>
     <name>AdvancedTexturesModule</name>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="14"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="14"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="26"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="26"/>
         <source>Process textures</source>
         <translation>Dokuları işle</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="60"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="60"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates mipmaps for textures, improving the performance at the cost of higher disk and vram usage.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Doku dosyaları için mipmap oluşturarak daha yüksek disk ve vram kullanımı karşılığında performansı iyileştirir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="63"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="63"/>
         <source>Generate mipmaps</source>
         <translation>Mipmap oluştur</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="88"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempts to convert and fix any textures that would crash the game.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Oyunun kesin olarak çökmesine sebep olacak dokuları dönüştürmeye ve onarmaya çalışır.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="91"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="91"/>
         <source>Necessary optimization</source>
         <translation>Gerekli Optimizasyon</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="110"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compresses uncompressed textures to the configured output format. It is recommended for SSE and FO4, but may highly decrease quality for other games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sıkıştırılmamış dosyaları, yapılandırılan çıktı formatında sıkıştırır. SSE ve FO4 için önerilir fakat diğer oyunlarda kaliteyi gözle görülür ölçüde düşürebilir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="113"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="113"/>
         <source>Compress textures</source>
         <translation>Dokuları sıkıştır</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="129"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add an alpha layer to landscape textures. Required for SSE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Yatay dokulara alfa katmanı ekler. SSE için gereklidir.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="132"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="132"/>
         <source>Add alpha to landscape textures</source>
         <translation>Yatay dokulara alfa katmanı ekle</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="145"/>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="267"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="145"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="267"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resizes texture dimensions to the given sizes. Must result in texture dimensions expressed in powers of two, no less than 4x4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dosyayı yazılı değerleri kullanarak yeniden boyutlandırır. Boyutlandırılan dosya, yeniden boyutlandırıldığında, 4x4&apos;den küçük olmamalı ve ikinin katı bir boyuta sahip olmalıdır..&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="148"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="148"/>
         <source>Resizing</source>
         <translation>Yeniden Boyutlandırma</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="166"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="166"/>
         <source>Width</source>
         <translation>Genişlik</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="179"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="179"/>
         <source>Height</source>
         <translation>Yükseklik</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="219"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="41"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="219"/>
         <source>By ratio</source>
         <translation>Orana Göre</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="224"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="42"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="224"/>
         <source>By fixed size</source>
         <translation>Belirlenen Boyuta Göre</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="270"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="270"/>
         <source>Minimum size:</source>
         <translation>Minimum Boyut:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="280"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="280"/>
         <source>Advanced</source>
         <translation>Gelişmiş</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="289"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="289"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will convert TGAs to a compatible DDS format if option is selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;İşaretlenirse, TGA dosyalarını uyumlu bir DDS formatına dönüştürür.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="292"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="292"/>
         <source>Force convert</source>
         <translation>Zorla dönüştür</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="299"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="299"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, textures will always be converted to the configured output format, no matter their current state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Etkinleştirilirse, dokular, şu anki halleri farketmeksizin belirlenen çıktı formatına dönüştürülür.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="302"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="302"/>
         <source>Enable forced conversion</source>
         <translation>Zorla dönüştürmeyi etkinleştir</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="312"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Output format for uncompressed textures, modified textures, and converted TGA files. BC7 should only be used for SSE or FO4.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sıkıştırılmamış, düzenlenmiş doku dosyalarının ve donüştürülmüş TGA dosyalarının çıktı formatı. SSE ve FO4 için BC7 kullanılmalıdır.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="315"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="315"/>
         <source>Output format</source>
         <translation>Çıktı Formatı</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="322"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="322"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The output format used for modified textures&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Düzenlenmiş dokularda kullanılacak çıktı formatı&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="326"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="44"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="326"/>
         <source>BC7 (BC7_UNORM)</source>
         <translation>BC7 (BC7_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="331"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="45"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="331"/>
         <source>BC5 (BC5_UNORM)</source>
         <translation>BC5 (BC5_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="336"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="46"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="336"/>
         <source>BC3 (BC3_UNORM)</source>
         <translation>BC3 (BC3_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="341"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="47"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="341"/>
         <source>BC1 (BC1_UNORM)</source>
         <translation>BC1 (BC1_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="346"/>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="48"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="346"/>
         <source>Uncompressed (R8G8B8A8_UNORM)</source>
         <translation>Sıkıştırılmamış (R8G8B8A8_UNORM)</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="357"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="357"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Textures using these formats will be converted to a supported format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;Bu formattaki tüm dokular desteklenen bir formata dönüştürülür.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="360"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="360"/>
         <source>Unwanted formats</source>
         <translation>İstenmeyen Formatlar</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="373"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="373"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unwanted formats are formats that will always be converted to the configured output format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;İstenmeyen formatlar her daim belirlenen çıktı formatına dönüştürülecek olan formatlardır.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.ui" line="376"/>
+        <location filename="../../src/GUI/AdvancedTexturesModule.ui" line="376"/>
         <source>Edit</source>
         <translation>Düzenle</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/advancedTexturesModule.cpp" line="140"/>
         <source>Textures (Patterns)</source>
-        <translation>Dokular (Şablonlar)</translation>
+        <translation type="vanished">Dokular (Şablonlar)</translation>
     </message>
 </context>
 <context>
     <name>CAO::AdvancedAnimationsModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="24"/>
         <source>Animations (Patterns)</source>
-        <translation>Animasyonlar (Şablonlar)</translation>
+        <translation type="vanished">Animasyonlar (Şablonlar)</translation>
     </message>
 </context>
 <context>
     <name>CAO::AdvancedBSAModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="83"/>
         <source>BSA (General)</source>
-        <translation>BSA (Genel)</translation>
+        <translation type="vanished">BSA (Genel)</translation>
     </message>
 </context>
 <context>
     <name>CAO::AdvancedMeshesModule</name>
     <message>
-        <location filename="../../src/GUI/AdvancedMeshesModule.cpp" line="72"/>
         <source>Meshes (Patterns)</source>
-        <translation>Meshler (Şablonlar)</translation>
+        <translation type="vanished">Meshler (Şablonlar)</translation>
     </message>
 </context>
 <context>
     <name>CAO::IntermediateModeModule</name>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="20"/>
         <source>Disabled</source>
-        <translation>Devre Dışı</translation>
+        <translation type="vanished">Devre Dışı</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="21"/>
         <source>By ratio</source>
-        <translation>Orana Göre</translation>
+        <translation type="vanished">Orana Göre</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="22"/>
         <source>By fixed size</source>
-        <translation>Belirlenen Boyuta Göre</translation>
+        <translation type="vanished">Belirlenen Boyuta Göre</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="95"/>
         <source>Intermediate mode</source>
-        <translation>Orta Seviye Mod</translation>
+        <translation type="vanished">Orta Seviye Mod</translation>
     </message>
 </context>
 <context>
     <name>CAO::ListDialog</name>
     <message>
-        <location filename="../../src/GUI/ListDialog.cpp" line="50"/>
         <source>New item</source>
-        <translation>Yeni Öğe</translation>
+        <translation type="vanished">Yeni Öğe</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ListDialog.cpp" line="50"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation type="vanished">Name:</translation>
     </message>
 </context>
 <context>
     <name>CAO::PatternsManagerWindow</name>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="41"/>
         <source>New Pattern</source>
-        <translation>Yeni Şablon</translation>
+        <translation type="vanished">Yeni Şablon</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="41"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation type="vanished">Name:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="53"/>
         <source>Base pattern</source>
-        <translation>Taban Şablon</translation>
+        <translation type="vanished">Taban Şablon</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="54"/>
         <source>Which pattern do you want to use as a base?</source>
-        <translation>Hangi şablonu taban almak istiyorsunuz?</translation>
+        <translation type="vanished">Hangi şablonu taban almak istiyorsunuz?</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="75"/>
         <source>Remove Pattern</source>
-        <translation>Şablonu Sil</translation>
+        <translation type="vanished">Şablonu Sil</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="76"/>
         <source>Are you sure you want to remove Pattern &apos;%1&apos;? This action cannot be undone</source>
-        <translation>&apos;%1&apos; şablonunu silmek istediğinize emin misiniz? Bu işlem geri alınamaz</translation>
+        <translation type="vanished">&apos;%1&apos; şablonunu silmek istediğinize emin misiniz? Bu işlem geri alınamaz</translation>
     </message>
 </context>
 <context>
     <name>CAO::ProgressWindow</name>
     <message>
-        <location filename="../../src/GUI/ProgressWindow.cpp" line="47"/>
         <source>Done</source>
-        <translation>Tamamlandı</translation>
+        <translation type="vanished">Tamamlandı</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProgressWindow.cpp" line="65"/>
         <source>Cannot open log file</source>
-        <translation>Günlük dosyası açılamadı</translation>
+        <translation type="vanished">Günlük dosyası açılamadı</translation>
     </message>
 </context>
 <context>
     <name>FileTypes</name>
     <message>
-        <location filename="../../src/Settings/FileTypes.cpp" line="22"/>
         <source>slBSAStandardFiles, slBSATextureFiles and slBSATextureFiles have to contain different files.
 They cannot contain the same pattern</source>
-        <translation>slBSAStandardFiles, slBSATextureFiles ve slBSATextureFiles farklı dosyalara sahip olmalılar.
+        <translation type="vanished">slBSAStandardFiles, slBSATextureFiles ve slBSATextureFiles farklı dosyalara sahip olmalılar.
 Aynı şablona sahip olamazlar</translation>
     </message>
 </context>
@@ -500,38 +474,28 @@ Aynı şablona sahip olamazlar</translation>
         <translation type="vanished">Maksimum BSA boyutu negatif olamaz</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="45"/>
-        <source>BSA Max size cannot be smaller than 0.5Gb</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="48"/>
         <source>This path is shorter than 5 characters: Path: &apos;%1&apos;</source>
-        <translation>Dosya yolu 5 karakterden daha kısa: Dosya Yolu: &apos;%1&apos;</translation>
+        <translation type="vanished">Dosya yolu 5 karakterden daha kısa: Dosya Yolu: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="53"/>
         <source>Input path does not exist. Path: &apos;%1&apos;</source>
-        <translation>Girdi yolu mevcut değil. Girdi Yolu: &apos;%1&apos;</translation>
+        <translation type="vanished">Girdi yolu mevcut değil. Girdi Yolu: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="59"/>
         <source>&apos;Several mods&apos; mode is enabled, but this path does not seem to be handled by a mod manager.
  If you are sure you want to process this folder, please create a file named &apos;%1&apos; in this folder. This is a necessary evil to ensure safety for your mods.
 Path: &apos;%2&apos;</source>
-        <translation>&quot;Birden fazla Mod&quot; seçeneği etkinleştirilmiş fakat seçili yol bir mod programı tarafından kontrol edilmiyor.
+        <translation type="vanished">&quot;Birden fazla Mod&quot; seçeneği etkinleştirilmiş fakat seçili yol bir mod programı tarafından kontrol edilmiyor.
 Bu klasöü işlemek istiyorsanız lütfen bu klasör içinde &apos;%1&apos; isminde bir dosya oluşturun. Bu tüm modlarınızın güvenliği açısından gereklidir.
 Dosya yolu: &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="69"/>
         <source>&apos;Single mod&apos; mode is enabled, but this path seems to be handled by a mod manager. Path: &apos;%1&apos;</source>
-        <translation>&quot;Tek Mod&quot; seçeneği etkin fakat seçili yol bir mod programı tarafından kontrol ediliypr. Dosya yolu: &apos;%1&apos;</translation>
+        <translation type="vanished">&quot;Tek Mod&quot; seçeneği etkin fakat seçili yol bir mod programı tarafından kontrol ediliypr. Dosya yolu: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/GeneralSettings.cpp" line="79"/>
         <source>Output path does not exist. Path: &apos;%1&apos;</source>
-        <translation>Çıktı yolu mevcut değil. Çıktı Yolu: &apos;%1&apos;</translation>
+        <translation type="vanished">Çıktı yolu mevcut değil. Çıktı Yolu: &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -656,7 +620,7 @@ Dosya yolu: &apos;%2&apos;</translation>
         <translation>Seçimimi hatırla</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="115"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="111"/>
         <source>Quick Auto Port
 Quick Auto Port uses default settings for porting a mod between LE and SSE.
 It will work for most of the cases and is the recommended way to port a mod.
@@ -667,21 +631,21 @@ Hızlı Oto Port LE ve SSE modlarını birbirlerine portlamak için varsayılan 
 Tek bir moda uygulamak güvenlidir. Çökmeler yaşıyorsanız tüm mod listenize uygulamanız önerilir.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="123"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="119"/>
         <source>Intermediate mode
 Intermediate mode offers default settings for most use cases, as well as being a bit more customizable than Quick Auto Port.</source>
         <translation>Orta Düzey
 Orta Mod. Hızlı Oto Porttan daha fazla seçenek sunmanın yanı sıra çoğu durumda işinize yarayacak varsayılan ayarları size sunmaktadır.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="129"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="125"/>
         <source>Advanced mode
 The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.</source>
         <translation>Uzman Modu
 CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&apos;nun dosyalarınızı nasıl optimize edeceğini ayarlayabilirsiniz.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="138"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="130"/>
         <source>Unknown mode</source>
         <translation>Bilinmeyen mod</translation>
     </message>
@@ -745,8 +709,6 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="154"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="218"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="259"/>
         <source>Open Directory</source>
         <translation>Dizini Aç</translation>
     </message>
@@ -767,13 +729,13 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="251"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="35"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="47"/>
         <source>One mod</source>
         <translation>Tek Mod</translation>
     </message>
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="256"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="36"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="48"/>
         <source>Several mods</source>
         <translation>Birden fazla Mod</translation>
     </message>
@@ -800,7 +762,7 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
     <message>
         <location filename="../../src/GUI/MainWindow.ui" line="313"/>
         <location filename="../../src/GUI/MainWindow.ui" line="347"/>
-        <location filename="../../src/GUI/MainWindow.cpp" line="99"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="110"/>
         <source>About</source>
         <translation>Hakkında</translation>
     </message>
@@ -855,32 +817,32 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="142"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="155"/>
         <source>Pattern not found</source>
         <translation>Şablon bulunamadı</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="143"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="156"/>
         <source>Couldn&apos;t find the pattern &apos;*&apos;. Please reinstall the application</source>
         <translation>&apos;*&apos; şablonu bulunamadı. Lütfen uygulamayı yeniden yükleyin.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="344"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="366"/>
         <source>Done</source>
         <translation>Tamamlandı</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="359"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="381"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="360"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="382"/>
         <source>An exception has been encountered and the process was forced to stop: </source>
         <translation>Bir istisna meydana geldi ve işlem zorla durduruldu:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/MainWindow.cpp" line="399"/>
+        <location filename="../../src/GUI/MainWindow.cpp" line="418"/>
         <source>Welcome to %1 %2</source>
         <translation>%1&apos;a Hoş geldiniz. Sürüm: %2</translation>
     </message>
@@ -888,19 +850,16 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
 <context>
     <name>PatternSettings</name>
     <message>
-        <location filename="../../src/Settings/PatternSettings.cpp" line="72"/>
         <source>Textures resizing minimum size has to be a power of two</source>
-        <translation>Yeniden boyutlandırılan dokuların minimum boyutu ikinin bir kuvveti olmalı</translation>
+        <translation type="vanished">Yeniden boyutlandırılan dokuların minimum boyutu ikinin bir kuvveti olmalı</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/PatternSettings.cpp" line="75"/>
         <source>Textures resizing target has to be a power of two</source>
-        <translation>Yeniden boyutlandırılan dokuların hedef boyutu ikinin bir kuvveti olmalı</translation>
+        <translation type="vanished">Yeniden boyutlandırılan dokuların hedef boyutu ikinin bir kuvveti olmalı</translation>
     </message>
     <message>
-        <location filename="../../src/Settings/PatternSettings.cpp" line="78"/>
         <source>This meshes optimization level does not exist. Level: %1</source>
-        <translation>Mesh optimizasyon düzeyi mevcut değil. Düzey: %1</translation>
+        <translation type="vanished">Mesh optimizasyon düzeyi mevcut değil. Düzey: %1</translation>
     </message>
 </context>
 <context>
@@ -960,105 +919,90 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="59"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="24"/>
         <source>Morrowind</source>
         <translation>Morrowind</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="64"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="25"/>
         <source>Oblivion</source>
         <translation>Oblivion</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="69"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="26"/>
         <source>Skyrim LE (2011)</source>
         <translation>Skyrim LE (2011)</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="74"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="27"/>
         <source>Skyrim SE (2016)</source>
         <translation>Skyrim SE (2016)</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="79"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="28"/>
         <source>Fallout 3</source>
         <translation>Fallout 3</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="84"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="29"/>
         <source>Fallout New Vegas</source>
         <translation>Fallout New Vegas</translation>
     </message>
     <message>
         <location filename="../../src/GUI/ProfilesManagerWindow.ui" line="89"/>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="30"/>
         <source>Fallout 4</source>
         <translation>Fallout 4</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="91"/>
         <source>New profile</source>
         <translation>Yeni Profil</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="86"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="91"/>
         <source>Name:</source>
         <translation>İsim:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="98"/>
         <source>Base profile</source>
-        <translation>Taban Alınacak Profil</translation>
+        <translation type="vanished">Taban Alınacak Profil</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="99"/>
         <source>Which profile do you want to use as a base?</source>
-        <translation>Hangi profili taban almak istiyorsunuz?</translation>
+        <translation type="vanished">Hangi profili taban almak istiyorsunuz?</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="123"/>
         <source>Remove profile</source>
-        <translation>Profili sil</translation>
+        <translation type="vanished">Profili sil</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="124"/>
         <source>Are you sure you want to remove profile &apos;%1&apos;? This action cannot be undone</source>
-        <translation>&apos;%1&apos; profilini silmek istediğinize emin misiniz? Bu işlem geri alınamaz</translation>
+        <translation type="vanished">&apos;%1&apos; profilini silmek istediğinize emin misiniz? Bu işlem geri alınamaz</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
         <source>Removal failed</source>
-        <translation>Silme işlemi başarısız</translation>
+        <translation type="vanished">Silme işlemi başarısız</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="131"/>
         <source>Failed to delete profile: %1</source>
-        <translation>%1 isimli profili silme işlemi başarısız</translation>
+        <translation type="vanished">%1 isimli profili silme işlemi başarısız</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="146"/>
         <source>Rename profile</source>
         <translation>Profili yeniden adlandır</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="138"/>
+        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="146"/>
         <source>New name:</source>
         <translation>Yeni isim:</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
         <source>Renaming failed</source>
-        <translation>Yeniden adlandırma işlemi başarısız</translation>
+        <translation type="vanished">Yeniden adlandırma işlemi başarısız</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/ProfilesManagerWindow.cpp" line="145"/>
         <source>Failed to rename profile: %1</source>
-        <translation>%1 isimli profili yeniden adlandırma işlemi başarısız</translation>
+        <translation type="vanished">%1 isimli profili yeniden adlandırma işlemi başarısız</translation>
     </message>
 </context>
 <context>
@@ -1100,6 +1044,152 @@ CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&ap
         <location filename="../../src/GUI/SelectGPUWindow.ui" line="20"/>
         <source>GPU</source>
         <translation>GPU</translation>
+    </message>
+</context>
+<context>
+    <name>cao</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedBSAModule.cpp" line="53"/>
+        <source>BSA (General)</source>
+        <translation type="unfinished">BSA (Genel)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedAnimationsModule.cpp" line="41"/>
+        <source>Animations (Patterns)</source>
+        <translation type="unfinished">Animasyonlar (Şablonlar)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="27"/>
+        <source>Intermediate Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>cao::AdvancedMeshesModule</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedMeshesModule.cpp" line="30"/>
+        <source>Meshes (Patterns)</source>
+        <translation type="unfinished">Meshler (Şablonlar)</translation>
+    </message>
+</context>
+<context>
+    <name>cao::AdvancedTexturesModule</name>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="40"/>
+        <source>By ratio</source>
+        <translation type="unfinished">Orana Göre</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="41"/>
+        <source>By fixed size</source>
+        <translation type="unfinished">Belirlenen Boyuta Göre</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="43"/>
+        <source>BC7 (BC7_UNORM)</source>
+        <translation type="unfinished">BC7 (BC7_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="44"/>
+        <source>BC5 (BC5_UNORM)</source>
+        <translation type="unfinished">BC5 (BC5_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="45"/>
+        <source>BC3 (BC3_UNORM)</source>
+        <translation type="unfinished">BC3 (BC3_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="46"/>
+        <source>BC1 (BC1_UNORM)</source>
+        <translation type="unfinished">BC1 (BC1_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="47"/>
+        <source>Uncompressed (R8G8B8A8_UNORM)</source>
+        <translation type="unfinished">Sıkıştırılmamış (R8G8B8A8_UNORM)</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/AdvancedTexturesModule.cpp" line="68"/>
+        <source>Textures (Patterns)</source>
+        <translation type="unfinished">Dokular (Şablonlar)</translation>
+    </message>
+</context>
+<context>
+    <name>cao::IntermediateModeModule</name>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="20"/>
+        <source>Disabled</source>
+        <translation type="unfinished">Devre Dışı</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="21"/>
+        <source>By ratio</source>
+        <translation type="unfinished">Orana Göre</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/IntermediateModeModule.cpp" line="22"/>
+        <source>By fixed size</source>
+        <translation type="unfinished">Belirlenen Boyuta Göre</translation>
+    </message>
+</context>
+<context>
+    <name>cao::ListDialog</name>
+    <message>
+        <location filename="../../src/GUI/ListDialog.cpp" line="51"/>
+        <source>New item</source>
+        <translation type="unfinished">Yeni Öğe</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ListDialog.cpp" line="51"/>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>cao::PatternsManagerWindow</name>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <source>New Pattern</source>
+        <translation type="unfinished">Yeni Şablon</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="44"/>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="56"/>
+        <source>Base pattern</source>
+        <translation type="unfinished">Taban Şablon</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="57"/>
+        <source>Which pattern do you want to use as a base?</source>
+        <translation type="unfinished">Hangi şablonu taban almak istiyorsunuz?</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="78"/>
+        <source>Remove Pattern</source>
+        <translation type="unfinished">Şablonu Sil</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/PatternsManagerWindow.cpp" line="79"/>
+        <source>Are you sure you want to remove Pattern &apos;%1&apos;? This action cannot be undone</source>
+        <translation type="unfinished">&apos;%1&apos; şablonunu silmek istediğinize emin misiniz? Bu işlem geri alınamaz</translation>
+    </message>
+</context>
+<context>
+    <name>cao::ProgressWindow</name>
+    <message>
+        <location filename="../../src/GUI/ProgressWindow.cpp" line="48"/>
+        <source>Done</source>
+        <translation type="unfinished">Tamamlandı</translation>
+    </message>
+    <message>
+        <location filename="../../src/GUI/ProgressWindow.cpp" line="66"/>
+        <source>Cannot open log file</source>
+        <translation type="unfinished">Günlük dosyası açılamadı</translation>
     </message>
 </context>
 </TS>

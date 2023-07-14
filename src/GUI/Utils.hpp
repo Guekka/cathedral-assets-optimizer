@@ -4,8 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Utils/TemplateMetaProgramming.hpp"
-
 #include <QAbstractButton>
 #include <QAction>
 #include <QComboBox>
@@ -19,7 +17,7 @@
 #include <functional>
 #include <stdexcept>
 
-namespace CAO {
+namespace cao {
 class UiException : public std::runtime_error
 {
 public:
@@ -40,8 +38,6 @@ auto connectWrapper(UiElement &uiEl,
                     UiSaveFunc &&saveFunc,
                     ValueType fallback = ValueType{})
 {
-    using wrapperType = std::remove_reference_t<decltype(wrapper)>;
-
     //Init data
     std::invoke(std::forward<UiSaveFunc>(saveFunc), uiEl, wrapper.value_or(fallback));
     //Connect
@@ -147,7 +143,7 @@ int findData(const QComboBox &box, const Data &data)
 template<typename Data>
 bool selectData(QComboBox &box, const Data &data)
 {
-    int idx = box.findData(data);
+    int idx = 0; // FIXME box.findData(data);
     if (idx == -1)
         return false;
 
@@ -180,4 +176,4 @@ inline void setItemEnabled(QComboBox &box, int idx, bool state)
     item->setFlags(flags);
 }
 
-} // namespace CAO
+} // namespace cao

@@ -6,11 +6,11 @@
 #include "GUI/LevelSelector.hpp"
 #include "GUI/MainWindow.hpp"
 #include "GUI/Utils/SetTheme.hpp"
-#include "Manager.hpp"
-#include "Settings/MigrateProfiles.hpp"
-#include "Settings/Profiles.hpp"
 #include "Version.hpp"
+#include "manager.hpp"
+#include "settings/settings.hpp"
 
+#include <QApplication>
 #include <QCommandLineParser>
 #include <QDir>
 #include <QMessageBox>
@@ -46,7 +46,7 @@ void displayError(bool cli, const std::string &err)
         QMessageBox box(QMessageBox::Critical, "Unknown error", QString::fromStdString(err));
         box.exec();
     }
-    PLOG_FATAL << err;
+    // PLOG_FATAL << err;
 }
 
 void displayInfo(bool cli, const std::string &text)
@@ -60,12 +60,13 @@ void displayInfo(bool cli, const std::string &text)
         QMessageBox box(QMessageBox::Information, "Information", QString::fromStdString(text));
         box.exec();
     }
-    PLOG_INFO << text;
+    // PLOG_INFO << text;
 }
 
 void migrateProfiles(bool cli)
 {
-    const auto &migratedProfiles = CAO::migrateProfiles(QDir("importedProfiles"), QDir("profiles"));
+    /*
+    const auto &migratedProfiles = cao::migrateProfiles(QDir("importedProfiles"), QDir("profiles")); FIXME
     if (migratedProfiles.empty())
         return;
 
@@ -74,9 +75,11 @@ void migrateProfiles(bool cli)
                                                       "assigned the right game. This process in not perfect")
                               .arg(migratedProfiles.join('\n'));
 
-    CAO::getProfiles().update(true);
+    cao::getProfiles().update(true);
 
     displayInfo(cli, text.toStdString());
+     FIXME
+        */
 }
 
 int main(int argc, char *argv[])
@@ -106,21 +109,28 @@ int main(int argc, char *argv[])
 
         if (cli)
         {
-            CAO::getProfiles().setCurrent(parser.positionalArguments().at(0));
+            auto settings = cao::load_settings();
 
-            CAO::Manager manager;
-            manager.runOptimization();
+            const auto profile_name = parser.positionalArguments().value(0);
+
+            auto idx = settings.find_profile(btu::common::as_utf8_string(profile_name.toStdString()));
+            if (!idx)
+                throw std::runtime_error("Profile not found");
+
+            cao::Manager manager(settings);
+            manager.run_optimization();
         }
         else
         {
-            auto window = std::make_unique<CAO::MainWindow>();
+            auto window   = std::make_unique<cao::MainWindow>();
+            auto settings = cao::load_settings();
 
-            CAO::LevelSelector selector;
-            if (!selector.runSelection(*window))
+            cao::LevelSelector selector(settings);
+            if (!selector.run_selection(*window))
                 return 0;
 
             window->show();
-            selector.setHandler(*window);
+            selector.set_handler(*window);
 
             return app->exec();
         }

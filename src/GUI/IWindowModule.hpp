@@ -4,13 +4,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Settings/BaseTypes.hpp"
 #include "Utils/ConnectionWrapper.hpp"
+#include "settings/base_types.hpp"
+#include "settings/settings.hpp"
 
-namespace CAO {
+#include <btu/common/games.hpp>
 
-class PatternSettings;
-class GeneralSettings;
+namespace cao {
 
 class IWindowModule : public QWidget, public ConnectionWrapper
 {
@@ -19,14 +19,13 @@ class IWindowModule : public QWidget, public ConnectionWrapper
 public:
     explicit IWindowModule(QWidget *parent);
 
-    void setup(PatternSettings &pSets, GeneralSettings &gSets);
-    virtual QString name() = 0;
+    void setup(const Settings &settings);
+    [[nodiscard]] virtual auto name() const noexcept -> QString = 0;
 
 private:
-    virtual void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets);
+    virtual void set_ui_data(const Settings &settings)    = 0;
+    virtual void ui_to_settings(Settings &settings) const = 0;
 
-    virtual void connectAll(PatternSettings &pSets, GeneralSettings &gSets) = 0;
-
-    virtual bool isSupportedGame(Games game) = 0;
+    [[nodiscard]] virtual auto is_supported_game(btu::Game game) const noexcept -> bool = 0;
 };
-} // namespace CAO
+} // namespace cao

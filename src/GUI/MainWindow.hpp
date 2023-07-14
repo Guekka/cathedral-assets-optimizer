@@ -6,26 +6,27 @@
 
 #include "IWindowModule.hpp"
 #include "ProgressWindow.hpp"
-#include "Settings/BaseTypes.hpp"
-#include "pch.hpp"
-#include "ui_mainWindow.h"
+#include "settings/base_types.hpp"
+#include "settings/settings.hpp"
+
+#include <QCoreApplication>
+#include <QMainWindow>
 
 namespace Ui {
 class MainWindow;
 }
 
-namespace CAO {
+namespace cao {
 class Manager;
-class GeneralSettings;
-class Profile;
-class Profiles;
+class Settings;
 
 class MainWindow final : public QMainWindow, ConnectionWrapper
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
-    MainWindow();
+    MainWindow() noexcept;
+    ~MainWindow() override;
 
     void addModule(IWindowModule *module);
     void clearModules();
@@ -33,16 +34,15 @@ public:
     void setPatternsEnabled(bool state);
     void setLevelSelectorHandler(const std::function<void()> &callback);
 
-    void initSettings();
-
 private:
+    Settings settings_;
+
     std::unique_ptr<Ui::MainWindow> ui_;
     std::unique_ptr<Manager> caoProcess_;
     std::unique_ptr<ProgressWindow> progressWindow_;
 
     std::vector<IWindowModule *> getModules();
 
-private:
     using ConnectionWrapper::connect;
     using ConnectionWrapper::connectWrapper;
 
@@ -54,9 +54,6 @@ private:
     void disconnectThis();
     void reconnectThis();
 
-    void updateProfiles();
-    void updatePatterns();
-
     void resetUi();
     void loadUi();
 
@@ -67,9 +64,9 @@ private:
 
     void firstStart();
 
-    //Qt override
+    // Qt override
     void closeEvent(QCloseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *e) override;
     void dropEvent(QDropEvent *e) override;
 };
-} // namespace CAO
+} // namespace cao

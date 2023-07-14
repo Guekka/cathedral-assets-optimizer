@@ -5,7 +5,7 @@
 
 #include "utils.hpp"
 
-using namespace CAO;
+using namespace cao;
 
 SCENARIO("Optimizing a file")
 {
@@ -21,7 +21,7 @@ SCENARIO("Optimizing a file")
         }
         WHEN("The TextureFile is changed with 'optimizedFile' set to false")
         {
-            auto file2 = getStandardTextureFile(PatternSettings{}, false);
+            auto file2 = getStandardTextureFile(PerFileSettings{}, false);
             THEN("optimizedCurrentFile should be false")
             {
                 CHECK(file2->optimizedCurrentFile() == false);
@@ -29,7 +29,7 @@ SCENARIO("Optimizing a file")
         }
         WHEN("The TextureFile is changed with default arguments")
         {
-            auto file3 = getStandardTextureFile(PatternSettings{});
+            auto file3 = getStandardTextureFile(PerFileSettings{});
             THEN("optimizedCurrentFile should be true")
             {
                 CHECK(file3->optimizedCurrentFile() == true);

@@ -6,31 +6,23 @@
 
 #include "IWindowModule.hpp"
 
-#include "Settings/GeneralSettings.hpp"
-
-namespace CAO {
+namespace cao {
 
 IWindowModule::IWindowModule(QWidget *parent)
     : QWidget(parent)
 {
 }
 
-void IWindowModule::setup(PatternSettings &pSets, GeneralSettings &gSets)
+void IWindowModule::setup(const Settings &settings)
 {
-    if (!isSupportedGame(gSets.eGame()))
+    if (!is_supported_game(settings.current_profile().target_game))
     {
         this->setDisabled(true);
         return;
     }
     this->setEnabled(true);
 
-    setUIData(pSets, gSets);
-    connectAll(pSets, gSets);
+    set_ui_data(settings);
 }
 
-void IWindowModule::setUIData([[maybe_unused]] const PatternSettings &pSets,
-                              [[maybe_unused]] const GeneralSettings &gSets)
-{
-}
-
-} // namespace CAO
+} // namespace cao

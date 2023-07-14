@@ -5,34 +5,34 @@
 
 #include "ProfilesManagerWindow.hpp"
 
-#include "Settings/BaseTypes.hpp"
-#include "Settings/Profiles.hpp"
 #include "Utils.hpp"
+#include "settings/base_types.hpp"
+#include "settings/settings.hpp"
 #include "ui_ProfilesManagerWindow.h"
 
 #include <QInputDialog>
 #include <QMessageBox>
 
-namespace CAO {
-ProfilesManagerWindow::ProfilesManagerWindow(Profiles &profiles_, QWidget *parent)
+namespace cao {
+ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles_, QWidget *parent)
     : QDialog(parent)
     , profiles(profiles_)
     , ui_(std::make_unique<Ui::ProfilesManagerWindow>())
 {
     ui_->setupUi(this);
-
+    /*
     auto &games = *ui_->games;
-    setData(games, tr("Morrowind"), Games::Morrowind);
-    setData(games, tr("Oblivion"), Games::Oblivion);
-    setData(games, tr("Skyrim LE (2011)"), Games::SkyrimLE);
-    setData(games, tr("Skyrim SE (2016)"), Games::SkyrimSE);
-    setData(games, tr("Fallout 3"), Games::Fallout3);
-    setData(games, tr("Fallout New Vegas"), Games::FalloutNewVegas);
-    setData(games, tr("Fallout 4"), Games::Fallout4);
+     FIXME
+    setData(games, tr("Morrowind"), btu::Game::TES3);
+    setData(games, tr("Oblivion"), btu::Game::TES4);
+    setData(games, tr("Skyrim LE (2011)"), btu::Game::SLE);
+    setData(games, tr("Skyrim SE (2016)"), btu::Game::SSE);
+    setData(games, tr("Fallout New Vegas"), btu::Game::FNV);
+    setData(games, tr("Fallout 4"), btu::Game::FO4);
 
     connect(ui_->games, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
-        auto &profile                      = profiles.get(ui_->profiles->currentText());
-        profile.getGeneralSettings().eGame = ui_->games->itemData(idx).value<Games>();
+        // auto &profile = profiles.get(ui_->profiles->currentText());
+        // FIXME        profile.getGeneralSettings().eGame = ui_->games->itemData(idx).value<btu::Game>();
     });
 
     connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
@@ -45,6 +45,7 @@ ProfilesManagerWindow::ProfilesManagerWindow(Profiles &profiles_, QWidget *paren
 
     updateProfiles(*ui_->profiles);
     selectRightGame(ui_->profiles->currentText());
+     */
 }
 
 ProfilesManagerWindow::~ProfilesManagerWindow() = default;
@@ -52,21 +53,24 @@ ProfilesManagerWindow::~ProfilesManagerWindow() = default;
 void ProfilesManagerWindow::updateProfiles(QComboBox &box)
 {
     box.clear();
+    /*
     box.addItems(profiles.list());
     selectText(box, profiles.currentProfileName());
+     */
 }
 
 QString ProfilesManagerWindow::getSelectedProfile()
 {
-    return ui_->profiles->currentText();
+    //    return ui_->profiles->currentText();
+    return "";
 }
 
 void ProfilesManagerWindow::setEnabledProfile(const QString &name)
 {
-    selectText(*ui_->profiles, name);
+    //    selectText(*ui_->profiles, name);
 }
 
-void ProfilesManagerWindow::setAllowedGames(const std::vector<Games> &games)
+void ProfilesManagerWindow::setAllowedGames(const std::vector<btu::Game> &games)
 {
     auto &gameBox = ui_->games;
 
@@ -75,8 +79,8 @@ void ProfilesManagerWindow::setAllowedGames(const std::vector<Games> &games)
 
     for (auto game : games)
     {
-        int idx = findData(*gameBox, game);
-        setItemEnabled(*gameBox, idx, false);
+        // FIXME        int idx = findData(*gameBox, game);
+        //        setItemEnabled(*gameBox, idx, false);
     }
 }
 
@@ -91,6 +95,7 @@ void ProfilesManagerWindow::createProfile()
     //Choosing base profile
 
     QStringList profilesList;
+    /*
     auto &profilesBox = ui_->profiles;
     for (int i = 0; i < profilesBox->count(); ++i)
         profilesList.push_back(profilesBox->itemText(i));
@@ -106,20 +111,22 @@ void ProfilesManagerWindow::createProfile()
     if (!ok)
         return;
 
-    this->profiles.create(text, baseProfile);
+    this->profiles.create_profile(text, baseProfile);
+    */
     setProfile(text);
 }
 
 void ProfilesManagerWindow::setProfile(const QString &name)
 {
-    updateProfiles(*ui_->profiles);
-    ui_->profiles->setCurrentIndex(ui_->profiles->findText(name));
+    //    updateProfiles(*ui_->profiles);
+    //   ui_->profiles->setCurrentIndex(ui_->profiles->findText(name));
 }
 
 void ProfilesManagerWindow::deleteCurrentProfile()
 {
-    const QString &current = ui_->profiles->currentText();
-    const auto button      = QMessageBox::warning(
+    /*
+        const QString &current = ui_->profiles->currentText();
+    const auto button = QMessageBox::warning(
         this,
         tr("Remove profile"),
         tr("Are you sure you want to remove profile '%1'? This action cannot be undone").arg(current),
@@ -127,11 +134,11 @@ void ProfilesManagerWindow::deleteCurrentProfile()
 
     if (button != QMessageBox::Yes)
         return;
+*/
+    //    if (!profiles.remove(current))
+    //      QMessageBox::critical(this, tr("Removal failed"), tr("Failed to delete profile: %1").arg(current));
 
-    if (!profiles.remove(current))
-        QMessageBox::critical(this, tr("Removal failed"), tr("Failed to delete profile: %1").arg(current));
-
-    updateProfiles(*ui_->profiles);
+    // updateProfiles(*ui_->profiles);
 }
 
 void ProfilesManagerWindow::renameCurrentProfile()
@@ -140,21 +147,24 @@ void ProfilesManagerWindow::renameCurrentProfile()
 
     if (text.isEmpty())
         return;
-
+    /*
     const QString &current = ui_->profiles->currentText();
     if (!profiles.rename(current, text))
         QMessageBox::critical(this, tr("Renaming failed"), tr("Failed to rename profile: %1").arg(current));
 
     updateProfiles(*ui_->profiles);
+    */
 }
 
 void ProfilesManagerWindow::selectRightGame(const QString &profileName)
 {
+    /*
     if (!profiles.exists(profileName))
         return;
 
     auto &profile = profiles.get(profileName);
     selectData(*ui_->games, profile.getGeneralSettings().eGame());
+     */
 }
 
-} // namespace CAO
+} // namespace cao

@@ -210,7 +210,8 @@
       "inputs": {
         "devenv": "devenv",
         "nixpkgs": "nixpkgs_2",
-        "systems": "systems"
+        "systems": "systems",
+        "vcpkg-repo": "vcpkg-repo"
       }
     },
     "systems": {
@@ -225,6 +226,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "vcpkg-repo": {
+      "locked": {
+        "lastModified": 1688049374,
+        "narHash": "sha256-hXIZySQe39jWCqAEHQMZ+fopI+xVo2wySG/3f22YjBM=",
+        "owner": "Guekka",
+        "repo": "nixpkgs",
+        "rev": "89e92d9349b73462f29f72de633df8b4a4addd13",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Guekka",
+        "ref": "vcpkg",
+        "repo": "nixpkgs",
         "type": "github"
       }
     }

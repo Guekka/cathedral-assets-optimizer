@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    vcpkg-repo.url = "github:Guekka/nixpkgs/vcpkg";
     systems.url = "github:nix-systems/default";
     devenv.url = "github:cachix/devenv";
   };
@@ -8,6 +9,7 @@
   outputs = {
     self,
     nixpkgs,
+    vcpkg-repo,
     devenv,
     systems,
     ...
@@ -18,8 +20,7 @@
       forEachSystem
       (system: let
         pkgs = nixpkgs.legacyPackages.${system};
-        cmrc = pkgs.callPackage ./nix/cmrc.nix {};
-        vcpkg = pkgs.callPackage ./nix/vcpkg.nix {inherit cmrc;};
+        vcpkg = vcpkg-repo.legacyPackages.${system}.vcpkg;
       in {
         default = devenv.lib.mkShell {
           inherit inputs pkgs;

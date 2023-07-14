@@ -3,11 +3,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "Profile.hpp"
+#include "profile.hpp"
 
 #include <QDateTime>
 
-namespace CAO {
+namespace cao {
+/*
 Profile::Profile(QDir profileDir)
     : profileDir_(std::move(profileDir))
 {
@@ -60,7 +61,7 @@ QString Profile::fileTypesPath() const
     return profileDir_.absoluteFilePath(fileTypesFilename);
 }
 
-PatternSettings Profile::getSettings(const QString &filePath) const
+PerFileSettings Profile::getSettings(const QString &filePath) const
 {
     return patternSettings_.getSettings(filePath);
 }
@@ -105,4 +106,5 @@ void Profile::saveToJSON()
     nlohmann::json patternJSON = patternSettings_.getUnifiedJSON();
     JSON::saveToFile(patternJSON, patternSettingsPath());
 }
-} // namespace CAO
+ FIXME */
+} // namespace cao

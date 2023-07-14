@@ -9,7 +9,7 @@
 
 #include <QInputDialog>
 
-namespace CAO {
+namespace cao {
 ListDialog::ListDialog(bool sortByText, QWidget *parent)
     : QDialog(parent)
     , ui_(new Ui::ListDialog)
@@ -132,4 +132,4 @@ void ListDialog::setCheckedItems(const QString &text, bool addMissingItems)
     }
 }
 
-} // namespace CAO
+} // namespace cao

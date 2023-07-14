@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "Settings/BaseTypes.hpp"
+#include "settings/base_types.hpp"
 
-namespace CAO {
+namespace cao {
 bool setTheme(GuiTheme theme);
 }

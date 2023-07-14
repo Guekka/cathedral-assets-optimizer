@@ -5,6 +5,7 @@
 #pragma once
 
 #include <QStringList>
+#include <fstream>
 #include <functional>
 
 class QDir;
@@ -12,7 +13,7 @@ class QDirIterator;
 class QString;
 class QFile;
 
-namespace CAO {
+namespace cao {
 
 class FileTypes;
 /*!
@@ -58,4 +59,4 @@ std::fstream openBinaryFile(const QString &filepath);
 bool compareFiles(const QString &filepath1, const QString &filepath2);
 
 }; // namespace Filesystem
-} // namespace CAO
+} // namespace cao

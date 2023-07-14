@@ -5,43 +5,15 @@
 
 #include "GeneralSettings.hpp"
 
+#include <flow.hpp>
+
 #include <QDir>
 
-namespace CAO {
-GeneralSettings::GeneralSettings(nlohmann::json j)
-{
-    setJSON(std::move(j));
-}
-
-GeneralSettings::GeneralSettings(const GeneralSettings &other)
-{
-    json_ = other.json_;
-}
-
-GeneralSettings::GeneralSettings(GeneralSettings &&other) noexcept
-{
-    json_ = std::move(other.json_);
-}
-
-GeneralSettings &GeneralSettings::operator=(const GeneralSettings &other)
-{
-    if (this != &other)
-        json_ = other.json_;
-
-    return *this;
-}
-
-GeneralSettings &GeneralSettings::operator=(GeneralSettings &&other) noexcept
-{
-    if (this != &other)
-        json_ = std::move(other.json_);
-
-    return *this;
-}
-
+namespace cao {
+/*
 std::optional<QString> GeneralSettings::isValid() const
 {
-    if (iBSAMaxSize() < 0.5 || iBSATexturesMaxSize() < 0.5)
+    if (bsa_max_size() < 0.5 || iBSATexturesMaxSize() < 0.5)
         return tr("BSA Max size cannot be smaller than 0.5Gb");
 
     if (sInputPath().size() < 5)
@@ -84,25 +56,8 @@ std::optional<QString> GeneralSettings::isValid() const
 
 GeneralSettings::ModManager GeneralSettings::findManager(const QDir &dir) const
 {
-    /* Manual forced */
-    if (dir.exists(forceProcessFolder))
-        return ModManager::ManualForced;
-
-    /* Vortex */
-    if (dir.exists("__vortex_staging_folder"))
-        return ModManager::Vortex;
-
-    /* MO2 */
-    //Checking 10 dirs should be enough. One of them should be enough actually, but...better be safe
-    auto first10Dirs = QDir(dir).entryList(QDir::NoDotAndDotDot | QDir::Dirs) | rx::take(10)
-                       | rx::to_vector();
-
-    for (const QString &dirName : first10Dirs)
-        if (QDir(dirName).exists("meta.ini"))
-            return ModManager::MO2;
-
-    //Kortex not yet handled
-
+    // FIXME
     return ModManager::None;
 }
-} // namespace CAO
+*/
+} // namespace cao

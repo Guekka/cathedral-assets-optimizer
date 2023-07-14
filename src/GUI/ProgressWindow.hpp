@@ -16,7 +16,7 @@ namespace Ui {
 class ProgressWindow;
 }
 
-namespace CAO {
+namespace cao {
 
 class ProgressWindow : public QWidget
 {
@@ -68,4 +68,4 @@ private:
     void addEntry(LogEntry &&entry);
     bool isAllowed(const ProgressWindow::LogEntry &entry);
 };
-} // namespace CAO
+} // namespace cao

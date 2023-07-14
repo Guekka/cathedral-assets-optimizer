@@ -7,7 +7,7 @@
 
 #include "utils.hpp"
 
-using namespace CAO;
+using namespace cao;
 
 TEST_CASE_FIXTURE(TextureResize, "Target resizing in ratio way yields good results")
 {
@@ -15,7 +15,7 @@ TEST_CASE_FIXTURE(TextureResize, "Target resizing in ratio way yields good resul
     info.width  = 1024;
     info.height = 1024;
 
-    PatternSettings sets;
+    PerFileSettings sets;
     sets.eTexturesResizingMode   = ByRatio;
     sets.iTexturesResizingWidth  = 8;
     sets.iTexturesResizingHeight = 8;
@@ -32,7 +32,7 @@ TEST_CASE_FIXTURE(TextureResize, "Target resizing in fixed size way yields good 
     info.width  = 1024;
     info.height = 1024;
 
-    PatternSettings sets;
+    PerFileSettings sets;
     sets.eTexturesResizingMode   = BySize;
     sets.iTexturesResizingWidth  = 128;
     sets.iTexturesResizingHeight = 128;

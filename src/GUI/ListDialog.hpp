@@ -14,9 +14,11 @@ class ListDialog;
 
 class QListWidgetItem;
 
-namespace CAO {
+namespace cao {
 class ListDialog : public QDialog
 {
+    Q_OBJECT
+    
 public:
     static constexpr bool doSortByText   = true;
     static constexpr bool dontSortByText = false;
@@ -42,4 +44,4 @@ private:
     std::unique_ptr<Ui::ListDialog> ui_;
     bool sortByText_ = false;
 };
-} // namespace CAO
+} // namespace cao

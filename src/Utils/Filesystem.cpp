@@ -5,8 +5,7 @@
 
 #include "Utils/Filesystem.hpp"
 
-#include "Commands/Plugins/PluginsOperations.hpp"
-#include "Settings/FileTypes.hpp"
+#include <Logger.hpp>
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -18,10 +17,10 @@
 #include <QTextStream>
 #include <QVariant>
 
-namespace CAO::Filesystem {
+namespace cao::Filesystem {
 QByteArray fileChecksum(QFile &&file, QCryptographicHash::Algorithm hashAlgorithm);
 
-void deleteEmptyDirectories(const QString &folderPath, const FileTypes &filetypes)
+void deleteEmptyDirectories(const QString &folderPath)
 {
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     QMap<int, QStringList> dirs;
@@ -32,9 +31,8 @@ void deleteEmptyDirectories(const QString &folderPath, const FileTypes &filetype
         int size     = path.size();
 
         const bool alreadyExist = dirs[size].contains(path);
-        const bool isAllowed    = !filetypes.match(filetypes.slModsBlacklist(), dirIt.filePath());
 
-        if (!alreadyExist && isAllowed)
+        if (!alreadyExist)
             dirs[size].append(path);
     }
 
@@ -83,8 +81,8 @@ void copyDir(const QDir &source, QDir destination, const bool overwriteExisting)
 {
     QDirIterator it(source, QDirIterator::Subdirectories);
 
-    PLOG_DEBUG << QString("Copying directory: '%1' into '%2'\nOverwrite existing:%3")
-                      .arg(source.path(), destination.path(), QVariant(overwriteExisting).toString());
+    //PLOG_DEBUG << QString("Copying directory: '%1' into '%2'\nOverwrite existing:%3")
+    // FIXME                 .arg(source.path(), destination.path(), QVariant(overwriteExisting).toString());
 
     QStringList oldFiles;
 
@@ -159,7 +157,7 @@ QString backupFile(const QString &filePath)
     }
 
     QFile::copy(filePath, backupFile.fileName());
-    PLOG_VERBOSE << QString("Backup-ed file: '%1' to '%2'").arg(filePath, backupFile.fileName());
+    // FIXME PLOG_VERBOSE << QString("Backup-ed file: '%1' to '%2'").arg(filePath, backupFile.fileName());
     return backupFile.fileName();
 }
 
@@ -212,4 +210,4 @@ std::fstream openBinaryFile(const QString &filepath)
     file.open(fs::u8path(filepath.toStdString()), std::ios::binary | std::ios::in);
     return file;
 }
-} // namespace CAO::Filesystem
+} // namespace cao::Filesystem

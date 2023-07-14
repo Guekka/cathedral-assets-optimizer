@@ -9,7 +9,7 @@
 
 #include <random>
 
-using namespace CAO;
+using namespace cao;
 
 //Sorting to allow permutations
 void sort(std::vector<BSA> &bsas)

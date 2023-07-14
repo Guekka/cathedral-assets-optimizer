@@ -7,25 +7,28 @@
 
 #include "ui_SelectGPUWindow.h"
 
+#include <btu/tex/compression_device.hpp>
+
 #include <QDialog>
 #include <optional>
 
 namespace Ui {
 class SelectGPUWindow;
-}
+} // namespace Ui
 
-namespace CAO {
+namespace cao {
 class SelectGPUWindow : public QDialog
 {
     Q_OBJECT
 
 public:
-    static inline constexpr auto propertyKey = "Index";
+    static inline constexpr auto property_key = "Index";
     explicit SelectGPUWindow(QWidget *parent = nullptr);
     std::optional<uint> getSelectedIndex();
     void setSelectedIndex(uint val);
 
 private:
     std::unique_ptr<Ui::SelectGPUWindow> ui;
+    std::vector<btu::tex::CompressionDevice> devices_;
 };
-} // namespace CAO
+} // namespace cao

@@ -5,12 +5,11 @@
 
 #include "AdvancedAnimationsModule.hpp"
 
-#include "Settings/Games.hpp"
-#include "Settings/PatternSettings.hpp"
 #include "Utils.hpp"
+#include "settings/per_file_settings.hpp"
 #include "ui_AdvancedAnimationsModule.h"
 
-namespace CAO {
+namespace cao {
 AdvancedAnimationsModule::AdvancedAnimationsModule(QWidget *parent)
     : IWindowModule(parent)
     , ui_(std::make_unique<Ui::AdvancedAnimationsModule>())
@@ -20,19 +19,26 @@ AdvancedAnimationsModule::AdvancedAnimationsModule(QWidget *parent)
 
 AdvancedAnimationsModule::~AdvancedAnimationsModule() = default;
 
-QString AdvancedAnimationsModule::name()
+void AdvancedAnimationsModule::set_ui_data(const Settings &settings)
+{
+    /* TODO
+     connectWrapper(*ui_->necessaryOpt, pSets.bAnimationsOptimization);
+     */
+}
+
+void AdvancedAnimationsModule::ui_to_settings(Settings &settings) const
+{
+    // TODO
+}
+
+bool AdvancedAnimationsModule::is_supported_game(btu::Game game) const noexcept
+{
+    return game == btu::Game::SSE || game == btu::Game::SLE;
+}
+
+auto AdvancedAnimationsModule::name() const noexcept -> QString
 {
     return tr("Animations (Patterns)");
 }
 
-void AdvancedAnimationsModule::connectAll(PatternSettings &pSets, [[maybe_unused]] GeneralSettings &gSets)
-{
-    connectWrapper(*ui_->necessaryOpt, pSets.bAnimationsOptimization);
-}
-
-bool AdvancedAnimationsModule::isSupportedGame(Games game)
-{
-    return GameSettings::get(game).bAnimationsConvert();
-}
-
-} // namespace CAO
+} // namespace cao

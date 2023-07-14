@@ -8,26 +8,23 @@
 #include "IWindowModule.hpp"
 #include "ui_IntermediateModeModule.h"
 
-namespace CAO {
+namespace cao {
 class IntermediateModeModule : public IWindowModule
 {
     Q_OBJECT
 
 public:
     explicit IntermediateModeModule(QWidget *parent = nullptr);
-
-    QString name() override;
+    [[nodiscard]] auto name() const noexcept -> QString override;
 
 private:
     std::unique_ptr<Ui::IntermediateModeModule> ui_;
 
-private:
+    void set_ui_data(const Settings &settings) override;
+    void ui_to_settings(Settings &settings) const override;
+    [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
+
     using ConnectionWrapper::connect;
     using ConnectionWrapper::connectWrapper;
-
-    void setUIData(const PatternSettings &pSets, const GeneralSettings &gSets) override;
-
-    void connectAll(PatternSettings &pSets, GeneralSettings &gSets) override;
-    bool isSupportedGame(Games game) override;
 };
-} // namespace CAO
+} // namespace cao
