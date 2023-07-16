@@ -1,65 +1,59 @@
 set(SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/Logger.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Logger.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/logger.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/logger.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/main_process.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/main_process.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/manager.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/manager.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Version.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Utils/CallOnce.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Utils/CallOnce.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ScopeGuard.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/Utils/TypeConvert.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/version.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/base_types.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/json.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/per_file_settings.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/settings.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/settings.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/profile.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/LevelSelector.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProgressWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/MainWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IntermediateModeModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedAnimationsModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedMeshesModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedBSAModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/AdvancedTexturesModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ProfilesManagerWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/PatternsManagerWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/SelectGPUWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/IWindowModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/SetTheme.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/GUI/Utils/ConnectionWrapper.hpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ListDialog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ListDialog.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ListDialog.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/LevelSelector.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/LevelSelector.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/LevelSelector.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProgressWindow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProgressWindow.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProgressWindow.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/MainWindow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/MainWindow.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/MainWindow.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IntermediateModeModule.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IntermediateModeModule.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IntermediateModeModule.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedAnimationsModule.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedAnimationsModule.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedAnimationsModule.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedMeshesModule.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedMeshesModule.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedMeshesModule.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedBSAModule.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedBSAModule.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedBSAModule.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedTexturesModule.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedTexturesModule.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedTexturesModule.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProfilesManagerWindow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProfilesManagerWindow.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProfilesManagerWindow.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/PatternsManagerWindow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/PatternsManagerWindow.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/PatternsManagerWindow.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/SelectGPUWindow.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/SelectGPUWindow.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/SelectGPUWindow.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IWindowModule.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IWindowModule.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/utils.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/set_theme.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/set_theme.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/ConnectionWrapper.hpp)
 
 # Resources
 getresources(resources)

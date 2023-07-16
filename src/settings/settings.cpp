@@ -5,9 +5,7 @@
 
 #include "settings/settings.hpp"
 
-#include "Utils/Filesystem.hpp"
 #include "json.hpp"
-#include "manager.hpp"
 
 #include <sago/platform_folders.h>
 

@@ -5,10 +5,10 @@
 
 #include "PatternsManagerWindow.hpp"
 
-#include "Utils.hpp"
 #include "settings/profile.hpp"
 #include "settings/settings.hpp"
 #include "ui_PatternsManagerWindow.h"
+#include "utils/utils.hpp"
 
 #include <QInputDialog>
 #include <QMessageBox>

@@ -5,9 +5,9 @@
 
 #include "AdvancedAnimationsModule.hpp"
 
-#include "Utils.hpp"
 #include "settings/per_file_settings.hpp"
 #include "ui_AdvancedAnimationsModule.h"
+#include "utils/utils.hpp"
 
 namespace cao {
 AdvancedAnimationsModule::AdvancedAnimationsModule(QWidget *parent)

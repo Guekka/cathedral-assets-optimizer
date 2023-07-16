@@ -4,9 +4,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Utils/ConnectionWrapper.hpp"
 #include "settings/base_types.hpp"
 #include "settings/settings.hpp"
+#include "utils/ConnectionWrapper.hpp"
 
 #include <btu/common/games.hpp>
 

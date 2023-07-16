@@ -5,8 +5,8 @@
 
 #include "IntermediateModeModule.hpp"
 
-#include "Utils.hpp"
 #include "settings/per_file_settings.hpp"
+#include "utils/utils.hpp"
 
 #include <QButtonGroup>
 

@@ -3,27 +3,26 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "SetTheme.hpp"
-
-#include "Logger.hpp"
+#include "logger.hpp"
+#include "set_theme.hpp"
 
 #include <QApplication>
 #include <QFile>
 
 namespace cao {
 
-QString getDarkStyleSheet()
+auto get_dark_style_sheet() -> QString
 {
     QFile f(":qdarkstyle/style.qss");
     if (!f.open(QFile::ReadOnly | QFile::Text))
     {
         PLOG_ERROR << "Cannot set darkstyle";
-        return QString();
+        return {};
     }
-    return QString(f.readAll());
+    return f.readAll();
 }
 
-bool setTheme(GuiTheme theme)
+auto set_theme(GuiTheme theme) -> bool
 {
     if (theme == GuiTheme::Light)
     {
@@ -31,12 +30,12 @@ bool setTheme(GuiTheme theme)
     }
     else if (theme == GuiTheme::Dark)
     {
-        static const QString darkSheet = getDarkStyleSheet();
+        static const QString dark_sheet = get_dark_style_sheet();
 
-        if (darkSheet.isEmpty())
+        if (dark_sheet.isEmpty())
             return false;
 
-        qApp->setStyleSheet(darkSheet);
+        qApp->setStyleSheet(dark_sheet);
     }
     return true;
 }

@@ -5,10 +5,10 @@
 
 #include "ProfilesManagerWindow.hpp"
 
-#include "Utils.hpp"
 #include "settings/base_types.hpp"
 #include "settings/settings.hpp"
 #include "ui_ProfilesManagerWindow.h"
+#include "utils/utils.hpp"
 
 #include <QInputDialog>
 #include <QMessageBox>

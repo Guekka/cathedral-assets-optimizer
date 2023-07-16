@@ -6,9 +6,9 @@
 #include "AdvancedTexturesModule.hpp"
 
 #include "ListDialog.hpp"
-#include "Utils.hpp"
 #include "settings/per_file_settings.hpp"
 #include "ui_AdvancedTexturesModule.h"
+#include "utils/utils.hpp"
 
 #include <btu/common/algorithms.hpp>
 

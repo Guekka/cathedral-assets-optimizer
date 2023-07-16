@@ -5,9 +5,9 @@
 
 #include "AdvancedMeshesModule.hpp"
 
-#include "Utils.hpp"
 #include "settings/per_file_settings.hpp"
 #include "ui_AdvancedMeshesModule.h"
+#include "utils/utils.hpp"
 
 #include <QButtonGroup>
 

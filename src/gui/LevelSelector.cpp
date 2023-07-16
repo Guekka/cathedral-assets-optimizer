@@ -5,12 +5,12 @@
 
 #include "LevelSelector.hpp"
 
-#include "GUI/AdvancedAnimationsModule.hpp"
-#include "GUI/AdvancedBSAModule.hpp"
-#include "GUI/AdvancedMeshesModule.hpp"
-#include "GUI/AdvancedTexturesModule.hpp"
-#include "GUI/IntermediateModeModule.hpp"
 #include "MainWindow.hpp"
+#include "gui/AdvancedAnimationsModule.hpp"
+#include "gui/AdvancedBSAModule.hpp"
+#include "gui/AdvancedMeshesModule.hpp"
+#include "gui/AdvancedTexturesModule.hpp"
+#include "gui/IntermediateModeModule.hpp"
 #include "settings/settings.hpp"
 #include "ui_LevelSelector.h"
 

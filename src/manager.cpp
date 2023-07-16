@@ -5,8 +5,7 @@
 
 #include "manager.hpp"
 
-#include "Logger.hpp"
-#include "Utils/Filesystem.hpp"
+#include "logger.hpp"
 #include "main_process.hpp"
 #include "settings/settings.hpp"
 

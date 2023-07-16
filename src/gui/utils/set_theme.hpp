@@ -8,5 +8,5 @@
 #include "settings/base_types.hpp"
 
 namespace cao {
-bool setTheme(GuiTheme theme);
+auto set_theme(GuiTheme theme) -> bool;
 }

@@ -5,14 +5,14 @@
 
 #include "MainWindow.hpp"
 
-#include "GUI/Utils/SetTheme.hpp"
 #include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
-#include "Utils.hpp"
+#include "gui/utils/set_theme.hpp"
 #include "manager.hpp"
 #include "settings/settings.hpp"
 #include "ui_MainWindow.h"
+#include "utils/utils.hpp"
 
 #include <QDesktopServices>
 #include <QDragEnterEvent>
@@ -64,13 +64,13 @@ MainWindow::MainWindow() noexcept
     auto &common_settings = settings_.gui;
 
     ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
-    setTheme(common_settings.gui_theme);
+    set_theme(common_settings.gui_theme);
 
     QObject::connect(ui_->actionEnableDarkTheme, &QAction::triggered, [this, &common_settings](bool state) {
         const GuiTheme theme      = state ? GuiTheme::Dark : GuiTheme::Light;
         common_settings.gui_theme = theme;
         ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
-        setTheme(theme);
+        set_theme(theme);
     });
 
     // connectWrapper(*ui_->actionDelete_empty_directories, commonSettings.bDeleteEmptyFolders);
@@ -333,7 +333,7 @@ void MainWindow::updatePatterns()
 
 void MainWindow::loadUi()
 {
-    setTheme(settings_.gui.gui_theme);
+    set_theme(settings_.gui.gui_theme);
 
     //    ui_->profiles->setCurrentIndex(ui_->profiles->findText(getProfiles().currentProfileName())); FIXME
 }

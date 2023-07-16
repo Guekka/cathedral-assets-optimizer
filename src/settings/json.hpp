@@ -4,8 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "Utils/TypeConvert.hpp"
-
 #include <nlohmann/json.hpp>
 
 #include <fstream>

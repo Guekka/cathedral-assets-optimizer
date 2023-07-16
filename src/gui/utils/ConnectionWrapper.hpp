@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../Utils.hpp"
+#include "../utils/utils.hpp"
 
 #include <QMetaObject>
 #include <QObject>

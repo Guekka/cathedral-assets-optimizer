@@ -3,11 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "GUI/LevelSelector.hpp"
-#include "GUI/MainWindow.hpp"
-#include "Version.hpp"
+#include "gui/LevelSelector.hpp"
+#include "gui/MainWindow.hpp"
 #include "manager.hpp"
 #include "settings/settings.hpp"
+#include "version.hpp"
 
 #include <plog/Log.h>
 
