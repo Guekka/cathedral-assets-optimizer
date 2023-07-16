@@ -7,7 +7,6 @@
 #include <QObject>
 
 namespace cao {
-constexpr double GigaByte = 1024 * 1024 * 1024;
 
 enum OptimizationMode
 {

@@ -620,7 +620,7 @@ Ruta: &apos;%2&apos;</translation>
         <translation>Recordar mi elección</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="111"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="112"/>
         <source>Quick Auto Port
 Quick Auto Port uses default settings for porting a mod between LE and SSE.
 It will work for most of the cases and is the recommended way to port a mod.
@@ -631,21 +631,21 @@ Funcionará en la mayoría de los casos y es la forma recomendada de portar un m
 Es seguro aplicarlo a un mod, y se recomienda aplicarlo a toda la lista de mods si se produce un fallo.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="119"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="120"/>
         <source>Intermediate mode
 Intermediate mode offers default settings for most use cases, as well as being a bit more customizable than Quick Auto Port.</source>
         <translation>Modo intermedio
 El modo intermedio ofrece configuraciones predeterminadas para la mayoría de los casos de uso, además de ser un poco más personalizable que el Puerto Automático Rápido.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="125"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="126"/>
         <source>Advanced mode
 The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.</source>
         <translation>Modo avanzado
 La experiencia completa de CAO. Con perfiles y patrones, puedes personalizar completamente la forma en que CAO optimizará tus archivos.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="130"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="131"/>
         <source>Unknown mode</source>
         <translation>Modo desconocido</translation>
     </message>

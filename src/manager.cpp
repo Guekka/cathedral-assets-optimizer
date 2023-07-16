@@ -22,7 +22,7 @@ Manager::Manager(Settings settings)
     : settings_(std::move(settings))
 {
     // Preparing logging
-    if (!init_logging(settings_.data_directory()))
+    if (!init_logging(Settings::data_directory()))
         throw std::runtime_error("Failed to initialize logging.");
 }
 
@@ -40,9 +40,22 @@ void Manager::run_optimization()
     const auto file_count = flow::from(mods).count(); // should take a while, but worth it for the progress bar
     emit file_counted(file_count);
 
-    flow::for_each(mods, [this](btu::modmanager::ModFile &&mod_file) {
-        std::cout << mod_file.get_relative_path() << '\n';
-        emit file_processed(mod_file.get_relative_path());
+    flow::for_each(mods, [this](btu::modmanager::ModFolder &&mod) {
+        mod.transform([this](btu::modmanager::ModFolder::ModFile &&file) {
+            auto path = file.relative_path;
+            auto ret  = process_file(std::move(file), settings_);
+
+            if (!ret)
+            {
+                PLOG_ERROR << fmt::format("Failed to process file {}: {}",
+                                          btu::common::as_ascii(path.u8string()),
+                                          ret.error().message());
+            }
+
+            emit file_processed(path);
+
+            return *ret;
+        });
     });
 
     const auto end_time     = QDateTime::currentDateTime();

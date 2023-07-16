@@ -6,6 +6,8 @@
 
 #include "profile.hpp"
 
+#include <nlohmann/json.hpp>
+
 namespace cao {
 struct GuiSettings
 {

@@ -5,230 +5,78 @@
 
 #include "main_process.hpp"
 
-/*
+#include <btu/common/filesystem.hpp>
+#include <btu/hkx/anim.hpp>
+#include <btu/nif/mesh.hpp>
+#include <btu/nif/optimize.hpp>
+#include <btu/tex/optimize.hpp>
+#include <btu/tex/texture.hpp>
+
 namespace cao {
-void MainOptimizer::process(File &file, bool dryRun)
+auto guess_file_type(const std::filesystem::path &path) noexcept -> FileType
 {
-    emit processingFile(file.type());
-    try
-    {
-        if (!loadFile(file, memoryData.pSource, memoryData.sourceSize))
-        {
-            return;
-        }
-        if (file.type() == CommandType::BSAFile)
-        {
-            if (!processBSA(file, dryRun))
-                return;
-        }
-
-        else if (!(dryRun ? processDry(file) : processReal(file, memoryData.out)))
-        {
-            return;
-        }
-    }
-    catch (const std::exception &e)
-    {
-        PLOG_ERROR << "An exception was caught while processing '" << file.getInputFilePath() << "'\n"
-                   << "Error message was: '" << e.what() << "'\n"
-                   << "You can probably assume this file is broken";
-        return;
-    }
-
-    PLOG_INFO << "Successfully optimized " << file.getInputFilePath();
+    const auto extension = path.extension().u8string();
+    if (extension == u8".nif")
+        return FileType::Mesh;
+    if (extension == u8".dds" || extension == u8".tga")
+        return FileType::Texture;
+    if (extension == u8".hkx")
+        return FileType::Animation;
 }
 
-bool MainOptimizer::processReal(File &file, std::vector<std::byte> *out)
+[[nodiscard]] auto process_mesh(btu::modmanager::ModFolder::ModFile &&file,
+                                const btu::nif::Settings &settings) noexcept
+    -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-    PLOG_VERBOSE << "Processing: " << file.getInputFilePath();
-    if (!runCommands(file))
-        return false;
-
-    if (!file.optimizedCurrentFile())
-        return false;
-
-    if (!saveFile(file, out))
-        return false;
-
-    return true;
+    return btu::nif::load(std::move(file.relative_path), file.content)
+        .and_then([&](auto &&nif) {
+            auto steps = btu::nif::compute_optimization_steps(nif, settings);
+            return btu::nif::optimize(BTU_FWD(nif), steps);
+        })
+        .and_then([](auto &&nif) { return btu::nif::save(BTU_FWD(nif)); });
 }
 
-bool MainOptimizer::processDry(File &file)
+[[nodiscard]] auto process_texture(btu::modmanager::ModFolder::ModFile &&file,
+                                   const btu::tex::Settings &settings) noexcept
+    -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-    PLOG_INFO << "Processing: " << file.getInputFilePath() << '\n';
-    if (!runCommands(file, true))
-        return false;
+    static auto thread_local compression_device = btu::tex::CompressionDevice::make(
+        0); // TODO: make this configurable
 
-    return true;
+    return btu::tex::load(std::move(file.relative_path), file.content)
+        .and_then([&](auto &&tex) {
+            auto steps = btu::tex::compute_optimization_steps(tex, settings);
+            return btu::tex::optimize(BTU_FWD(tex), steps, compression_device);
+        })
+        .and_then([](auto &&tex) { return btu::tex::save(BTU_FWD(tex)); });
 }
 
-bool MainOptimizer::processBSA(File &file, bool dryRun = false)
+[[nodiscard]] auto process_animation(btu::modmanager::ModFolder::ModFile &&file,
+                                     std::optional<btu::Game> hkx_target) noexcept
+    -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-    auto *bsaFile = file.getFile<Resources::BSAFile>(true);
-    if (!bsaFile)
-        return false;
+#ifdef _WIN32
+    if (!hkx_target)
+        return {};                         // TODO
 
-    const auto &games = GameSettings::get(currentProfile().getGeneralSettings().eGame());
-
-    bsaFile->callback = BSAMemoryCallback(btu::Game.sBSAExtension(), *this, dryRun);
-
-    PLOG_VERBOSE << "Processing BSA: " + file.getInputFilePath();
-
-    if (!runCommands(file))
-        return false;
-
-    if (!file.optimizedCurrentFile())
-        return false;
-
-    return true;
+    return btu::hkx::AnimExe::make("data") // TODO: make this configurable
+        .and_then([&](btu::hkx::AnimExe &&exe) { return exe.convert(*hkx_target, file.content); });
+#else
+    return tl::make_unexpected(btu::common::Error(std::make_error_code(std::errc::not_supported)));
+#endif
 }
 
-void MainOptimizer::packBsa(const QString &folder)
+auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &settings) noexcept
+    -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-    assert(!folder.isEmpty());
-
-    BSAFolder bsa;
-    bsa.setInputFilePath(folder);
-
-    if (!loadFile(bsa))
-        return;
-
-    auto command = CommandBook::getCommand<BSACreate *>();
-    if (!command)
+    const auto type       = guess_file_type(file.relative_path);
+    const auto &file_sets = settings.current_profile().get_per_file_settings(file.relative_path);
+    switch (type)
     {
-        PLOG_ERROR << "BSA Create command was not registered";
-        return;
+        case FileType::Mesh: return process_mesh(std::move(file), file_sets.nif);
+        case FileType::Texture: return process_texture(std::move(file), file_sets.tex);
+        case FileType::Animation: return process_animation(std::move(file), file_sets.hkx_target);
     }
-
-    if (command->isApplicable(bsa) != CommandState::Ready)
-        return;
-
-    PLOG_INFO << "Creating BSA...";
-
-    try
-    {
-        if (!runCommand(*command, bsa))
-            return;
-    }
-    catch (const std::exception &e)
-    {
-        PLOG_ERROR << e.what();
-        return;
-    }
-
-    if (!saveFile(bsa))
-        return;
-
-    if (!currentProfile().getGeneralSettings().bsa_make_dummy_plugins())
-        PluginsOperations::makeDummyPlugins(folder, currentProfile().getGeneralSettings());
+    assert(false && "process_file: unreachable");
 }
-
-bool MainOptimizer::runCommands(File &file, bool dryRun)
-{
-    const auto commands = CommandBook::getCommands(file.type());
-
-    bool isReady = false;
-    for (const auto command : commands)
-    {
-        const auto res = command->isApplicable(file);
-
-        if ((res == CommandState::PendingPreviousSteps || res == CommandState::Ready)
-            && command->isOptimization())
-        {
-            isReady = true;
-            break;
-        }
-    }
-
-    if (isReady)
-        for (const auto command : commands)
-            if (!runCommand(*command, file, dryRun))
-                return false;
-
-    return true;
-}
-
-bool MainOptimizer::runCommand(const Command &command, File &file, bool dryRun)
-{
-    const auto applicable = command.isApplicable(file);
-    if (applicable == CommandState::NotRequired)
-    {
-        PLOG_VERBOSE << QString("%1: %2").arg(command.name(), "unnecessary");
-        return true;
-    }
-    else if (applicable == CommandState::PendingPreviousSteps)
-    { //This should not happen
-        PLOG_ERROR << QString("%1: %2").arg(command.name(),
-                                            "was not applied because it was pending previous steps");
-        return false;
-    }
-    //Else : ready
-
-    const auto result = command.process(file);
-
-    if (!result.hasError())
-    {
-        const plog::Severity &sev = dryRun ? plog::Severity::info : plog::Severity::verbose;
-        const QString &message    = dryRun ? "would be applied" : "applied";
-
-        PLOG(sev) << QString("%1: %2").arg(command.name(), message);
-        return true;
-    }
-    else
-    {
-        PLOG_ERROR << QString("%1: error. Code: '%2'. Message: '%3'")
-                          .arg(command.name(), QString::number(result.errorCode, 16), result.errorMessage);
-        return false;
-    }
-    return true;
-}
-
-bool MainOptimizer::loadFile(File &file, void *pSource, size_t size)
-{
-    if (pSource)
-    {
-        if (file.loadFromMemory(pSource, size, file.getInputFilePath()))
-        {
-            PLOG_ERROR << "Cannot load file from memory: " << file.getInputFilePath();
-            return false;
-        }
-    }
-    else
-    {
-        if (file.loadFromDisk())
-        {
-            PLOG_ERROR << "Cannot load file from disk: " << file.getInputFilePath();
-            return false;
-        }
-    }
-    return true;
-}
-
-bool MainOptimizer::saveFile(File &file, std::vector<std::byte> *out)
-{
-    auto error = [&file](int errCode) {
-        PLOG_ERROR << QString("Cannot save file to disk: '%1'\nError code: '%2'")
-                          .arg(file.getOutputFilePath(), QString::number(errCode));
-    };
-
-    if (out)
-    {
-        if (int err = file.saveToMemory(*out); err)
-        {
-            error(err);
-            return false;
-        }
-    }
-    else
-    {
-        if (int err = file.saveToDisk(); err)
-        {
-            error(err);
-            return false;
-        }
-    }
-    return true;
-}
-
 } // namespace cao
-*/

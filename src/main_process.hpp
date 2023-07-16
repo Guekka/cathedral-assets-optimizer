@@ -4,20 +4,20 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "settings/settings.hpp"
+
 #include <btu/modmanager/mod_folder.hpp>
 
-[[nodiscard]] auto process_file(const btu::modmanager::ModFile &file) -> btu::modmanager::ModFile
+namespace cao {
+enum class FileType
 {
-    return file;
-}
+    Mesh,
+    Texture,
+    Animation,
+};
 
-[[nodiscard]] auto process_mod(const btu::modmanager::ModFolder &mod) -> btu::modmanager::ModFolder
-{
-    return mod;
-}
+[[nodiscard]] auto guess_file_type(const std::filesystem::path &path) noexcept -> FileType;
 
-[[nodiscard]] auto process_mods(const std::vector<btu::modmanager::ModFolder> &mods)
-    -> std::vector<btu::modmanager::ModFolder>
-{
-    return mods;
-}
+[[nodiscard]] auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &settings) noexcept
+    -> tl::expected<std::vector<std::byte>, btu::common::Error>;
+} // namespace cao

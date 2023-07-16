@@ -620,7 +620,7 @@ Dosya yolu: &apos;%2&apos;</translation>
         <translation>Seçimimi hatırla</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="111"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="112"/>
         <source>Quick Auto Port
 Quick Auto Port uses default settings for porting a mod between LE and SSE.
 It will work for most of the cases and is the recommended way to port a mod.
@@ -631,21 +631,21 @@ Hızlı Oto Port LE ve SSE modlarını birbirlerine portlamak için varsayılan 
 Tek bir moda uygulamak güvenlidir. Çökmeler yaşıyorsanız tüm mod listenize uygulamanız önerilir.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="119"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="120"/>
         <source>Intermediate mode
 Intermediate mode offers default settings for most use cases, as well as being a bit more customizable than Quick Auto Port.</source>
         <translation>Orta Düzey
 Orta Mod. Hızlı Oto Porttan daha fazla seçenek sunmanın yanı sıra çoğu durumda işinize yarayacak varsayılan ayarları size sunmaktadır.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="125"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="126"/>
         <source>Advanced mode
 The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.</source>
         <translation>Uzman Modu
 CAO&apos;nun tüm ayarları açıktır. Şablonlar ve profiller sayesinde CAO&apos;nun dosyalarınızı nasıl optimize edeceğini ayarlayabilirsiniz.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="130"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="131"/>
         <source>Unknown mode</source>
         <translation>Bilinmeyen mod</translation>
     </message>

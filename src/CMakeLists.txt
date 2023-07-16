@@ -13,14 +13,10 @@ set(SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Filesystem.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Utils/TypeConvert.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/base_types.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/JSON.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/JSON.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/settings/json.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/per_file_settings.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/PatternMap.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/PatternMap.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/settings.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/settings.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/Profile.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/settings/profile.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/GUI/ListDialog.hpp

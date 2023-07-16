@@ -619,7 +619,7 @@ Path: &apos;%2&apos;</source>
         <translation>记住选择</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="111"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="112"/>
         <source>Quick Auto Port
 Quick Auto Port uses default settings for porting a mod between LE and SSE.
 It will work for most of the cases and is the recommended way to port a mod.
@@ -630,21 +630,21 @@ It is safe to apply it on a mod, and it is recommended to apply it to your whole
 它能安全地转制您的mod，所以我们推荐您使用该级别来转制会导致您游戏崩溃的模组</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="119"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="120"/>
         <source>Intermediate mode
 Intermediate mode offers default settings for most use cases, as well as being a bit more customizable than Quick Auto Port.</source>
         <translation>标准级
 大部分为默认配置，但比快速级CAO的自由度更高。</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="125"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="126"/>
         <source>Advanced mode
 The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.</source>
         <translation>专业级
 开放所有CAO选项，包括配置方案和处理模式。您可以自由定义CAO对模组的转制。</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="130"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="131"/>
         <source>Unknown mode</source>
         <translation>未知转制等级</translation>
     </message>

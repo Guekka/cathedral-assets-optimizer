@@ -580,7 +580,7 @@
         <translation>Запомнить мой выбор</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="111"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="112"/>
         <source>Quick Auto Port
 Quick Auto Port uses default settings for porting a mod between LE and SSE.
 It will work for most of the cases and is the recommended way to port a mod.
@@ -591,21 +591,21 @@ Quick Auto Port использует настройки по умолчанию 
 Этот метод можно безопасно применять на модах и это рекомендуемый способ для использования на всём списке модов если случаются вылеты из игры.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="119"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="120"/>
         <source>Intermediate mode
 Intermediate mode offers default settings for most use cases, as well as being a bit more customizable than Quick Auto Port.</source>
         <translation>Промежуточный режим
 Этот режим использует параметры по умолчанию для большинства случаев, но является более настраиваемым в отличие от Quick Auto Port.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="125"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="126"/>
         <source>Advanced mode
 The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.</source>
         <translation>Расширенный режим
 Все возможности CAO. Используя профили и шаблоны вы сможете полностью настроить как CAO будет оптимизировать ваши файлы.</translation>
     </message>
     <message>
-        <location filename="../../src/GUI/LevelSelector.cpp" line="130"/>
+        <location filename="../../src/GUI/LevelSelector.cpp" line="131"/>
         <source>Unknown mode</source>
         <translation>Неизвестный режим</translation>
     </message>

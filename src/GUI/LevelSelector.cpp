@@ -22,7 +22,8 @@ LevelSelector::LevelSelector(Settings settings)
 {
     ui_->setupUi(this);
 
-    const GuiMode cur_mode = settings_.gui.remember_gui_mode ? settings.gui.gui_mode : GuiMode::QuickOptimize;
+    const GuiMode cur_mode = settings_.gui.remember_gui_mode ? settings_.gui.gui_mode
+                                                             : GuiMode::QuickOptimize;
 
     ui_->levelSlider->setValue(to_int(cur_mode));
     ui_->label->setText(get_help_text(cur_mode));

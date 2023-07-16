@@ -4,11 +4,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "PatternMap.hpp"
+#include "base_types.hpp"
+#include "per_file_settings.hpp"
+
+#include <btu/common/games.hpp>
+#include <btu/common/path.hpp>
 
 namespace cao {
-struct Profile
+class Profile
 {
+public:
     bool bsa_create;
     bool bsa_extract;
     bool bsa_make_dummy_plugins;
@@ -23,5 +28,19 @@ struct Profile
     btu::Path input_path;
 
     std::vector<std::u8string> mods_blacklist;
+
+    std::vector<PerFileSettings> per_file_settings;
+
+    [[nodiscard]] inline auto get_per_file_settings(const std::filesystem::path &path) const noexcept
+        -> PerFileSettings
+    {
+        for (const auto &perf : per_file_settings)
+            if (std::ranges::any_of(perf.patterns,
+                                    [&path](const auto &pattern) { return pattern.matches(path); }))
+                return perf;
+
+        assert(false && "get_per_file_settings: unreachable"); // TODO: handle this case
+    }
 };
+
 } // namespace cao
