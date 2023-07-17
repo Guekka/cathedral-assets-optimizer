@@ -373,7 +373,7 @@ void MainWindow::initProcess()
 
         freezeModules();
 
-        QtConcurrent::run(caoProcess_.get(), &Manager::run_optimization);
+        QtConcurrent::run(&Manager::run_optimization, caoProcess_.get());
     }
     catch (const std::exception &e)
     {

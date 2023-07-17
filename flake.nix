@@ -29,9 +29,9 @@
                 ninja
                 gcc
                 vcpkg
-                libsForQt5.qt5.qtbase
-                libsForQt5.qt5.qttools
-                libsForQt5.wrapQtAppsHook
+                qt6.qtbase
+                qt6.qttools
+                qt6.wrapQtAppsHook
               ];
 
               shellHook = ''

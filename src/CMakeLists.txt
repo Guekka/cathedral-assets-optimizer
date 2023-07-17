@@ -1,100 +1,115 @@
-set(SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/logger.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/logger.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/main_process.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/main_process.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/manager.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/manager.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/version.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/base_types.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/json.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/per_file_settings.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/settings.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/settings.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/settings/profile.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ListDialog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ListDialog.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ListDialog.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/LevelSelector.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/LevelSelector.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/LevelSelector.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProgressWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProgressWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProgressWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/MainWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/MainWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/MainWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IntermediateModeModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IntermediateModeModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IntermediateModeModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedAnimationsModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedAnimationsModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedAnimationsModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedMeshesModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedMeshesModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedMeshesModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedBSAModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedBSAModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedBSAModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedTexturesModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedTexturesModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/AdvancedTexturesModule.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProfilesManagerWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProfilesManagerWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/ProfilesManagerWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/PatternsManagerWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/PatternsManagerWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/PatternsManagerWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/SelectGPUWindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/SelectGPUWindow.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/SelectGPUWindow.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IWindowModule.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/IWindowModule.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/utils.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/set_theme.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/set_theme.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/ConnectionWrapper.hpp)
+set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
+set(SOURCE_DIR ${ROOT_DIR}/src)
+set(DATA_DIR ${ROOT_DIR}/data)
+message(hey ${DATA_DIR})
 
-# Resources
-getresources(resources)
+# Instruct CMake to run moc automatically when needed
+set(CMAKE_AUTOMOC ON)
+# Create code from a list of Qt designer ui files
+set(CMAKE_AUTOUIC ON)
+#Ressources
+set(CMAKE_AUTORCC ON)
+
+set(SOURCES
+        ${SOURCE_DIR}/logger.cpp
+        ${SOURCE_DIR}/logger.hpp
+        ${SOURCE_DIR}/main_process.cpp
+        ${SOURCE_DIR}/main_process.hpp
+        ${SOURCE_DIR}/manager.cpp
+        ${SOURCE_DIR}/manager.hpp
+        ${SOURCE_DIR}/version.hpp
+        ${SOURCE_DIR}/settings/base_types.hpp
+        ${SOURCE_DIR}/settings/json.hpp
+        ${SOURCE_DIR}/settings/per_file_settings.hpp
+        ${SOURCE_DIR}/settings/settings.cpp
+        ${SOURCE_DIR}/settings/settings.hpp
+        ${SOURCE_DIR}/settings/profile.hpp
+        ${SOURCE_DIR}/gui/ListDialog.cpp
+        ${SOURCE_DIR}/gui/ListDialog.hpp
+        ${SOURCE_DIR}/gui/ListDialog.ui
+        ${SOURCE_DIR}/gui/LevelSelector.cpp
+        ${SOURCE_DIR}/gui/LevelSelector.hpp
+        ${SOURCE_DIR}/gui/LevelSelector.ui
+        ${SOURCE_DIR}/gui/ProgressWindow.cpp
+        ${SOURCE_DIR}/gui/ProgressWindow.hpp
+        ${SOURCE_DIR}/gui/ProgressWindow.ui
+        ${SOURCE_DIR}/gui/MainWindow.cpp
+        ${SOURCE_DIR}/gui/MainWindow.hpp
+        ${SOURCE_DIR}/gui/MainWindow.ui
+        ${SOURCE_DIR}/gui/IntermediateModeModule.cpp
+        ${SOURCE_DIR}/gui/IntermediateModeModule.hpp
+        ${SOURCE_DIR}/gui/IntermediateModeModule.ui
+        ${SOURCE_DIR}/gui/AdvancedAnimationsModule.cpp
+        ${SOURCE_DIR}/gui/AdvancedAnimationsModule.hpp
+        ${SOURCE_DIR}/gui/AdvancedAnimationsModule.ui
+        ${SOURCE_DIR}/gui/AdvancedMeshesModule.cpp
+        ${SOURCE_DIR}/gui/AdvancedMeshesModule.hpp
+        ${SOURCE_DIR}/gui/AdvancedMeshesModule.ui
+        ${SOURCE_DIR}/gui/AdvancedBSAModule.cpp
+        ${SOURCE_DIR}/gui/AdvancedBSAModule.hpp
+        ${SOURCE_DIR}/gui/AdvancedBSAModule.ui
+        ${SOURCE_DIR}/gui/AdvancedTexturesModule.cpp
+        ${SOURCE_DIR}/gui/AdvancedTexturesModule.hpp
+        ${SOURCE_DIR}/gui/AdvancedTexturesModule.ui
+        ${SOURCE_DIR}/gui/ProfilesManagerWindow.cpp
+        ${SOURCE_DIR}/gui/ProfilesManagerWindow.hpp
+        ${SOURCE_DIR}/gui/ProfilesManagerWindow.ui
+        ${SOURCE_DIR}/gui/PatternsManagerWindow.cpp
+        ${SOURCE_DIR}/gui/PatternsManagerWindow.hpp
+        ${SOURCE_DIR}/gui/PatternsManagerWindow.ui
+        ${SOURCE_DIR}/gui/SelectGPUWindow.cpp
+        ${SOURCE_DIR}/gui/SelectGPUWindow.hpp
+        ${SOURCE_DIR}/gui/SelectGPUWindow.ui
+        ${SOURCE_DIR}/gui/IWindowModule.hpp
+        ${SOURCE_DIR}/gui/IWindowModule.cpp
+        ${SOURCE_DIR}/gui/utils/utils.hpp
+        ${SOURCE_DIR}/gui/utils/set_theme.hpp
+        ${SOURCE_DIR}/gui/utils/set_theme.cpp
+        ${SOURCE_DIR}/gui/utils/ConnectionWrapper.hpp)
+
+set(TS_FILES
+        ${DATA_DIR}/translations/AssetsOpt_de.ts
+        ${DATA_DIR}/translations/AssetsOpt_en.ts
+        ${DATA_DIR}/translations/AssetsOpt_es.ts
+        ${DATA_DIR}/translations/AssetsOpt_fr_FR.ts
+        ${DATA_DIR}/translations/AssetsOpt_ja.ts
+        ${DATA_DIR}/translations/AssetsOpt_ko_KR.ts
+        ${DATA_DIR}/translations/AssetsOpt_nl.ts
+        ${DATA_DIR}/translations/AssetsOpt_ru.ts
+        ${DATA_DIR}/translations/AssetsOpt_tr.ts
+        ${DATA_DIR}/translations/AssetsOpt_zh_CN.ts)
 
 # Main library
-add_library(CAO_LIB STATIC ${SOURCES} ${resources})
+add_library(CAO_LIB INTERFACE)
+target_sources(CAO_LIB INTERFACE ${SOURCES} ${TS_FILES})
 
 # Include source
-target_include_directories(CAO_LIB PUBLIC ${CMAKE_SOURCE_DIR}/external
-        ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(CAO_LIB INTERFACE ${SOURCE_DIR})
 
-target_compile_features(CAO_LIB PUBLIC cxx_std_20)
-
-# AUTOUIC I don't know why, but ui files are not found if I do not manually
-# include them
-target_include_directories(
-        CAO_LIB PUBLIC "${CMAKE_BINARY_DIR}/src/CAO_LIB_autogen/include")
+# Set C++ 20
+target_compile_features(CAO_LIB INTERFACE cxx_std_20)
 
 # Link with external libraries
-target_link_libraries(CAO_LIB PUBLIC Qt)
-
 find_package(nlohmann_json CONFIG REQUIRED)
-target_link_libraries(CAO_LIB PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(CAO_LIB INTERFACE nlohmann_json::nlohmann_json)
 
 find_package(bethutil CONFIG REQUIRED)
-target_link_libraries(CAO_LIB PUBLIC btu::bethutil)
+target_link_libraries(CAO_LIB INTERFACE btu::bethutil)
 
 find_package(platform_folders CONFIG REQUIRED)
-target_link_libraries(CAO_LIB PRIVATE sago::platform_folders)
+target_link_libraries(CAO_LIB INTERFACE sago::platform_folders)
 
 find_package(fmt CONFIG REQUIRED)
-target_link_libraries(CAO_LIB PRIVATE fmt::fmt)
+target_link_libraries(CAO_LIB INTERFACE fmt::fmt)
 
-
-# Icon
-geticon(icon)
-
-# Translations
-generatetranslations("${SOURCES}" qm_files)
+find_package(Qt6 COMPONENTS Core Widgets Gui LinguistTools Concurrent REQUIRED)
+target_link_libraries(CAO_LIB INTERFACE Qt6::Core Qt6::Widgets Qt6::Gui Qt6::Concurrent)
 
 # Main exe
 add_executable(Cathedral_Assets_Optimizer WIN32
-        ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${icon} ${qm_files})
-target_link_libraries(Cathedral_Assets_Optimizer PRIVATE CAO_LIB)
+        ${SOURCE_DIR}/main.cpp
+        ${DATA_DIR}/styles/Cathedral_Assets_Optimizer.rc
+        ${DATA_DIR}/styles/qdarkstyle/style.qrc
+        )
+
+target_link_libraries(Cathedral_Assets_Optimizer PUBLIC CAO_LIB)

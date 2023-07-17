@@ -19,8 +19,6 @@
 
 void init()
 {
-    Q_INIT_RESOURCE(style);
-
     QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
     QCoreApplication::setApplicationVersion(CAO_VERSION);
 }
@@ -32,7 +30,7 @@ void init_translations()
     if (qt_translator.load(QLocale::system(),
                            "qtbase",
                            "_",
-                           QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+                           QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
     {
         QCoreApplication::installTranslator(&qt_translator);
     }
