@@ -59,6 +59,8 @@ public:
         return false;
 
     plog::init(plog::Severity::verbose, get_appender(log_file_path));
+
+    return true;
 }
 
 auto CustomFormatter::header() -> plog::util::nstring

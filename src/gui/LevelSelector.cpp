@@ -58,6 +58,7 @@ auto LevelSelector::run_selection(cao::MainWindow &window) -> bool
 
 void LevelSelector::set_handler(MainWindow &mw)
 {
+    /*
     mw.setLevelSelectorHandler([this, &mw] {
         mw.hide();
         settings_.gui.remember_gui_mode = false;
@@ -65,42 +66,36 @@ void LevelSelector::set_handler(MainWindow &mw)
             mw.show();
         else
             QCoreApplication::quit(); // TODO: Do not quit the app
-    });
+    });*/
 }
 
 void LevelSelector::setup_window(MainWindow &mw, GuiMode level)
 {
-    mw.clearModules();
-    /* FIXME
+    mw.clear_modules();
+
     switch (level)
     {
         case GuiMode::QuickOptimize:
         {
-            getProfiles() = Profiles(QDir(Settings::QuickOptimizeProfilesDir));
-            mw.setPatternsEnabled(false);
-            mw.initSettings();
+            mw.set_patterns_enabled(false);
             break;
         }
         case GuiMode::Medium:
         {
-            mw.addModule(new IntermediateModeModule);
-            mw.setPatternsEnabled(false);
-            mw.initSettings();
+            mw.add_module(new IntermediateModeModule);
+            mw.set_patterns_enabled(false);
             break;
         }
         case GuiMode::Advanced:
         {
-            mw.addModule(new AdvancedBSAModule);
-            mw.addModule(new AdvancedMeshesModule);
-            mw.addModule(new AdvancedTexturesModule);
-            mw.addModule(new AdvancedAnimationsModule);
-            mw.setPatternsEnabled(true);
-            mw.initSettings();
+            mw.add_module(new AdvancedBSAModule);
+            mw.add_module(new AdvancedMeshesModule);
+            mw.add_module(new AdvancedTexturesModule);
+            mw.add_module(new AdvancedAnimationsModule);
+            mw.set_patterns_enabled(true);
             break;
         }
-        case GuiMode::Invalid: throw std::runtime_error("This level does not exist.");
     }
-    */
 }
 
 auto LevelSelector::get_help_text(cao::GuiMode level) noexcept -> QString

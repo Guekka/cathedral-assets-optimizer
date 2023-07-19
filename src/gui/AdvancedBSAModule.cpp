@@ -32,6 +32,11 @@ void AdvancedBSAModule::set_ui_data(const cao::Settings &settings)
     */
 }
 
+void AdvancedBSAModule::ui_to_settings(Settings &settings) const
+{
+    // TODO
+}
+
 auto AdvancedBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
 {
     switch (game)

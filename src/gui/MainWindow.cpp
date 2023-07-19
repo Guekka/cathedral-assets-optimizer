@@ -8,11 +8,12 @@
 #include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
-#include "gui/utils/set_theme.hpp"
 #include "manager.hpp"
 #include "settings/settings.hpp"
 #include "ui_MainWindow.h"
 #include "utils/utils.hpp"
+
+#include <plog/Log.h>
 
 #include <QDesktopServices>
 #include <QDragEnterEvent>
@@ -23,6 +24,35 @@
 #include <QtConcurrent/QtConcurrent>
 
 namespace cao {
+
+auto get_dark_style_sheet() -> QString
+{
+    QFile f(":qdarkstyle/style.qss");
+    if (!f.open(QFile::ReadOnly | QFile::Text))
+    {
+        PLOG_ERROR << "Cannot set dark style";
+        return {};
+    }
+    return f.readAll();
+}
+
+auto set_theme(GuiTheme theme) -> bool
+{
+    if (theme == GuiTheme::Light)
+    {
+        qApp->setStyleSheet("");
+    }
+    else if (theme == GuiTheme::Dark)
+    {
+        static const QString dark_sheet = get_dark_style_sheet();
+
+        if (dark_sheet.isEmpty())
+            return false;
+
+        qApp->setStyleSheet(dark_sheet);
+    }
+    return true;
+}
 
 void ui_to_settings(const Ui::MainWindow &ui, Settings &settings)
 {
@@ -43,12 +73,11 @@ MainWindow::MainWindow() noexcept
     // Init UI view
     ui_->tabWidget->setHidden(true);
 
-    //Setting data for widgets
-    setData(*ui_->modeChooserComboBox, tr("One mod"), SingleMod);
-    setData(*ui_->modeChooserComboBox, tr("Several mods"), SeveralMods);
+    // Setting data for widgets
+    set_data(*ui_->modeChooserComboBox, tr("One mod"), SingleMod);
+    set_data(*ui_->modeChooserComboBox, tr("Several mods"), SeveralMods);
 
-    //Connecting widgets that do not depend on current profile
-
+    // Connecting widgets that do not depend on current profile
     QObject::connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
         ProfilesManagerWindow profiles_manager(settings_);
         profiles_manager.exec();
@@ -62,7 +91,6 @@ MainWindow::MainWindow() noexcept
     });
 
     auto &common_settings = settings_.gui;
-
     ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
     set_theme(common_settings.gui_theme);
 
@@ -73,17 +101,15 @@ MainWindow::MainWindow() noexcept
         set_theme(theme);
     });
 
-    // connectWrapper(*ui_->actionDelete_empty_directories, commonSettings.bDeleteEmptyFolders);
-
     QObject::connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
         if (!settings_.set_current_profile(idx))
             return; // TODO: error message
-        reconnectThis();
+                    //   reconnect_this(); TODO
     });
 
     QObject::connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
 
-    //Menu buttons
+    // Menu buttons
     QObject::connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
         QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
     });
@@ -98,7 +124,8 @@ MainWindow::MainWindow() noexcept
 
     QObject::connect(ui_->actionAbout, &QAction::triggered, this, [this] {
         constexpr auto message =
-            R"(Made by G'k
+            R"(%1 %2
+            Made by G'k
             This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTY.
             See the Mozilla Public License)";
 
@@ -117,44 +144,31 @@ MainWindow::MainWindow() noexcept
 
 MainWindow::~MainWindow() = default;
 
-void MainWindow::addModule(IWindowModule *module)
+void MainWindow::add_module(IWindowModule *module)
 {
     auto *tabs = ui_->tabWidget;
 
     tabs->addTab(module, module->name());
     tabs->setCurrentIndex(0);
 
-    connectModule(*module);
-
     tabs->setHidden(false);
 }
 
-void MainWindow::clearModules()
+void MainWindow::clear_modules()
 {
     auto &tabs = ui_->tabWidget;
-    //Iterating backwards as tabs are contained in a stack
-    for (int i = tabs->count() - 1; i > -1; --i)
-    {
-        tabs->widget(0)->deleteLater();
-        tabs->removeTab(0);
-    }
+
+    tabs->clear();
     tabs->setHidden(true);
 }
 
-void MainWindow::setPatternsEnabled(bool state)
+void MainWindow::set_patterns_enabled(bool state)
 {
     const std::array patterns_object = std::to_array<QWidget *>({
         ui_->patterns,
         ui_->managePatterns,
         ui_->patternsLabel,
     });
-
-    if (!selectText(*ui_->patterns, "*"))
-    {
-        QMessageBox::critical(this,
-                              tr("Pattern not found"),
-                              tr("Couldn't find the pattern '*'. Please reinstall the application"));
-    }
 
     for (auto *widget : patterns_object)
     {
@@ -163,58 +177,24 @@ void MainWindow::setPatternsEnabled(bool state)
     }
 }
 
-void MainWindow::setLevelSelectorHandler(const std::function<void()> &callback)
+std::vector<IWindowModule *> MainWindow::get_modules()
 {
-    QObject::connect(ui_->actionChange_level, &QAction::triggered, this, callback);
-}
-/*
-void MainWindow::initSettings()
-{
-    const QString targetProfile = getProfiles().commonSettings().profile;
-    updateProfiles();
-    updatePatterns();
-    selectText(*ui_->Settings, targetProfile);
-}
- */
-
-std::vector<IWindowModule *> MainWindow::getModules()
-{
-    std::vector<IWindowModule *> modules;
-    for (int i = 0; i < ui_->tabWidget->count(); i++)
-        if (auto mod = dynamic_cast<IWindowModule *>(ui_->tabWidget->widget(i)); mod)
-            modules.emplace_back(mod);
-
-    return modules;
+    const auto children = ui_->tabWidget->findChildren<IWindowModule *>();
+    return {children.begin(), children.end()};
 }
 
-void MainWindow::connectModule(IWindowModule &mod)
+void MainWindow::reconnect_modules()
 {
-    /*
-    const auto currentPattern = currentProfile().getGeneralSettings().sCurrentPattern.value_or("*");
-    auto &pattern             = currentProfile().getPatterns().getSettingsByName(currentPattern);
-    mod.setup(pattern, currentProfile().getGeneralSettings());
-     FIXME
-    */
-}
-
-void MainWindow::reconnectModules()
-{
-    for (auto *mod : getModules())
+    for (auto *mod : get_modules())
     {
         mod->disconnectAll();
-        connectModule(*mod);
+        mod->setup(settings_);
     }
 }
 
-void MainWindow::freezeModules(bool state)
-{
-    for (auto *mod : getModules())
-        mod->setDisabled(state);
-}
-
+/*
 void MainWindow::connectThis()
 {
-    /*
     auto &generalSettings = currentProfile().getGeneralSettings();
 
     connect(ui_->actionSelect_GPU, &QAction::triggered, this, [] {
@@ -290,7 +270,7 @@ void MainWindow::connectThis()
         generalSettings.sOutputPath = dir;
     });
      FIXME
-     */
+
 }
 
 void MainWindow::disconnectThis()
@@ -304,7 +284,7 @@ void MainWindow::reconnectThis()
     connectThis();
     reconnectModules();
 }
-/*
+
 void MainWindow::updateProfiles()
 {
     auto *profiles              = ui_->Settings;
@@ -353,7 +333,7 @@ void MainWindow::initProcess()
     try
     {
         caoProcess_     = std::make_unique<Manager>(settings_);
-        progressWindow_ = std::make_unique<ProgressWindow>(""); // FIXME: log path
+        progressWindow_ = std::make_unique<ProgressWindow>(LogReader("")); // FIXME: log path
 
         connect(caoProcess_.get(),
                 &Manager::file_processed,
@@ -367,11 +347,9 @@ void MainWindow::initProcess()
         });
 
         connect(caoProcess_.get(), &Manager::end, this, &MainWindow::endProcess);
-        connect(progressWindow_.get(), &ProgressWindow::closed, this, &MainWindow::endProcess);
+        connect(progressWindow_.get(), &ProgressWindow::cancelled, this, &MainWindow::endProcess);
 
         progressWindow_->show();
-
-        freezeModules();
 
         QtConcurrent::run(&Manager::run_optimization, caoProcess_.get());
     }
@@ -398,8 +376,6 @@ void MainWindow::endProcess()
         progressWindow_->end();
         progressWindow_->disconnect();
     }
-
-    freezeModules(false);
 }
 
 void MainWindow::firstStart()
@@ -438,8 +414,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 void MainWindow::dropEvent(QDropEvent *e)
 {
     const QString &fileName = e->mimeData()->urls().at(0).toLocalFile();
-    QDir dir;
-    if (dir.exists(fileName))
+    if (std::filesystem::is_directory(fileName.toStdString()))
         ui_->inputDirTextEdit->setText(QDir::cleanPath(fileName));
 }
 

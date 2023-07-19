@@ -14,10 +14,24 @@
    <string>Progress</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="4">
+   <item row="3" column="0" colspan="3">
+    <widget class="QProgressBar" name="progressBar">
+     <property name="value">
+      <number>24</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Log level:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
     <widget class="QPushButton" name="clearLog">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -27,54 +41,27 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QCheckBox" name="errorCheckbox">
-     <property name="text">
-      <string>Error</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
-    <widget class="QCheckBox" name="infoCheckbox">
-     <property name="text">
-      <string>Info</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
+    <widget class="QComboBox" name="logLevel">
+     <item>
+      <property name="text">
+       <string>Verbose</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Info</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Error</string>
+      </property>
+     </item>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QCheckBox" name="debugCheckbox">
-     <property name="text">
-      <string>Debug</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="5">
-    <widget class="QPlainTextEdit" name="text">
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-     <property name="plainText">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="5">
-    <widget class="QProgressBar" name="progressBar">
-     <property name="value">
-      <number>24</number>
-     </property>
-    </widget>
+   <item row="2" column="0" colspan="3">
+    <widget class="QListWidget" name="log"/>
    </item>
   </layout>
  </widget>

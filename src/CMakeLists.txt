@@ -63,8 +63,6 @@ set(SOURCES
         ${SOURCE_DIR}/gui/IWindowModule.hpp
         ${SOURCE_DIR}/gui/IWindowModule.cpp
         ${SOURCE_DIR}/gui/utils/utils.hpp
-        ${SOURCE_DIR}/gui/utils/set_theme.hpp
-        ${SOURCE_DIR}/gui/utils/set_theme.cpp
         ${SOURCE_DIR}/gui/utils/ConnectionWrapper.hpp)
 
 set(TS_FILES

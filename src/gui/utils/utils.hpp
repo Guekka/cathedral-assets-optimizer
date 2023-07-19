@@ -123,7 +123,7 @@ void setEnabled(bool state, UiElements *...uiEls)
 }
 
 template<typename Data>
-void setData(QComboBox &box, const QString &text, const Data &data)
+void set_data(QComboBox &box, const QString &text, const Data &data)
 {
     const auto pos = box.findText(text, Qt::MatchFlag::MatchExactly);
     if (pos == -1)

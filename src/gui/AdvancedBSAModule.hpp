@@ -15,7 +15,7 @@ namespace cao {
 class AdvancedBSAModule : public IWindowModule
 {
     Q_OBJECT
-    
+
 public:
     explicit AdvancedBSAModule(QWidget *parent = nullptr);
     ~AdvancedBSAModule() override;
@@ -29,6 +29,7 @@ private:
     using ConnectionWrapper::connectWrapper;
 
     void set_ui_data(const Settings &settings) override;
+    void ui_to_settings(Settings &settings) const override;
 
     [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
 };

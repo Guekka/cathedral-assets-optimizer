@@ -28,11 +28,10 @@ public:
     MainWindow() noexcept;
     ~MainWindow() override;
 
-    void addModule(IWindowModule *module);
-    void clearModules();
+    void add_module(IWindowModule *module);
+    void clear_modules();
 
-    void setPatternsEnabled(bool state);
-    void setLevelSelectorHandler(const std::function<void()> &callback);
+    void set_patterns_enabled(bool state);
 
 private:
     Settings settings_;
@@ -41,18 +40,17 @@ private:
     std::unique_ptr<Manager> caoProcess_;
     std::unique_ptr<ProgressWindow> progressWindow_;
 
-    std::vector<IWindowModule *> getModules();
+    std::vector<IWindowModule *> get_modules();
 
     using ConnectionWrapper::connect;
     using ConnectionWrapper::connectWrapper;
 
-    void connectModule(IWindowModule &);
-    void reconnectModules();
-    void freezeModules(bool state = true);
+    void connect_module(IWindowModule &);
+    void reconnect_modules();
 
-    void connectThis();
-    void disconnectThis();
-    void reconnectThis();
+    void connect_this();
+    void disconnect_this();
+    void reconnect_this();
 
     void resetUi();
     void loadUi();

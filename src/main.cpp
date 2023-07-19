@@ -96,14 +96,7 @@ int main(int argc, char *argv[])
         else
         {
             auto window = cao::MainWindow{};
-
-            cao::LevelSelector selector(settings);
-            if (!selector.run_selection(window))
-                return 0;
-
             window.show();
-            selector.set_handler(window);
-
             return app->exec();
         }
     }
