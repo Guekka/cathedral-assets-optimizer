@@ -25,10 +25,12 @@ class MainWindow final : public QMainWindow, ConnectionWrapper
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
+    void set_level(GuiMode mode);
+    
     MainWindow() noexcept;
     ~MainWindow() override;
 
-    void add_module(IWindowModule *module);
+    void add_module(std::unique_ptr<IWindowModule> mod);
     void clear_modules();
 
     void set_patterns_enabled(bool state);
@@ -40,8 +42,6 @@ private:
     std::unique_ptr<Manager> caoProcess_;
     std::unique_ptr<ProgressWindow> progressWindow_;
 
-    std::vector<IWindowModule *> get_modules();
-
     using ConnectionWrapper::connect;
     using ConnectionWrapper::connectWrapper;
 
@@ -51,6 +51,8 @@ private:
     void connect_this();
     void disconnect_this();
     void reconnect_this();
+
+    std::vector<IWindowModule *> get_modules();
 
     void resetUi();
     void loadUi();

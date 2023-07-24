@@ -16,43 +16,30 @@ class LevelSelector;
 }
 
 namespace cao {
-class MainWindow;
+class IWindowModule;
+
 class LevelSelector : private QDialog
 {
     Q_DECLARE_TR_FUNCTIONS(LevelSelector)
 public:
-    explicit LevelSelector(Settings settings);
-    ~LevelSelector();
+    explicit LevelSelector(GuiSettings settings);
 
-    auto run_selection(MainWindow &window) -> bool;
-    void set_handler(MainWindow &mw);
+    LevelSelector(const LevelSelector &) = delete;
+    LevelSelector(LevelSelector &&)      = delete;
+
+    auto operator=(const LevelSelector &) -> LevelSelector & = delete;
+    auto operator=(LevelSelector &&) -> LevelSelector      & = delete;
+
+    ~LevelSelector() override;
+
+    [[nodiscard]] auto run_selection() noexcept -> GuiSettings;
+
+    auto eventFilter(QObject *obj, QEvent *event) noexcept -> bool override;
 
 private:
+    constexpr static inline auto k_button_property_name = "name";
+
     std::unique_ptr<Ui::LevelSelector> ui_;
-    Settings settings_;
-
-    // QSlider does not support custom values. Mapping enum to contingent ints
-    static constexpr inline std::array gui_modes = {std::pair{1, GuiMode::QuickOptimize},
-                                                    std::pair{2, GuiMode::Medium},
-                                                    std::pair{3, GuiMode::Advanced}};
-
-    [[nodiscard]] static auto to_gui_mode(int mode)
-    {
-        for (const auto &val : gui_modes)
-            if (val.first == mode)
-                return val.second;
-        throw std::runtime_error("Invalid mode");
-    }
-    [[nodiscard]] static auto to_int(GuiMode mode)
-    {
-        for (const auto &val : gui_modes)
-            if (val.second == mode)
-                return val.first;
-        return 0;
-    }
-
-    [[nodiscard]] static auto get_help_text(GuiMode level) noexcept -> QString;
-
-    void setup_window(MainWindow &mw, GuiMode level);
+    GuiSettings settings_;
 };
 } // namespace cao

@@ -11,118 +11,94 @@
 #include "gui/AdvancedMeshesModule.hpp"
 #include "gui/AdvancedTexturesModule.hpp"
 #include "gui/IntermediateModeModule.hpp"
-#include "settings/settings.hpp"
 #include "ui_LevelSelector.h"
 
 namespace cao {
-LevelSelector::LevelSelector(Settings settings)
+
+[[nodiscard]] auto get_help_text(GuiMode level) noexcept -> QString
+{
+    switch (level)
+    {
+        case GuiMode::QuickOptimize:
+        {
+            return QObject::tr(
+                R"(QuickOptimize
+
+                Uses default settings for porting a mod between LE and SSE.
+                It will work for most of the cases and is the recommended way to port a mod.
+                It is safe to apply it on a mod, and it is recommended to apply it to your whole mod list if you experience crashes.)");
+        }
+        case GuiMode::Medium:
+        {
+            return QObject::tr(
+                R"(Intermediate mode)
+
+                Offers default settings for most use cases, as well as being a bit more customizable than QuickOptimize.)");
+        }
+        case GuiMode::Advanced:
+        {
+            return QObject::tr(
+                R"(Advanced mode
+
+                The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.)");
+        }
+    }
+    return QObject::tr("Unknown mode");
+}
+
+LevelSelector::LevelSelector(GuiSettings settings)
     : QDialog(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
     , ui_(std::make_unique<Ui::LevelSelector>())
-    , settings_(std::move(settings))
+    , settings_(settings)
 {
     ui_->setupUi(this);
 
-    const GuiMode cur_mode = settings_.gui.remember_gui_mode ? settings_.gui.gui_mode
-                                                             : GuiMode::QuickOptimize;
+    const GuiMode cur_mode = settings_.remember_gui_mode ? settings_.gui_mode : GuiMode::QuickOptimize;
 
-    ui_->levelSlider->setValue(to_int(cur_mode));
     ui_->label->setText(get_help_text(cur_mode));
 
-    connect(ui_->levelSlider, &QSlider::valueChanged, this, [this](int val) {
-        const GuiMode mode = to_gui_mode(val);
-        ui_->label->setText(get_help_text(mode));
-    });
+    auto setup_button = [this](QPushButton *button, GuiMode mode) {
+        button->installEventFilter(this);
+        button->setProperty(k_button_property_name, QVariant::fromValue(mode));
+        connect(button, &QPushButton::clicked, this, [this, mode] {
+            settings_.gui_mode = mode;
+            accept();
+        });
+    };
+
+    setup_button(ui_->quick_optimize, GuiMode::QuickOptimize);
+    setup_button(ui_->medium, GuiMode::Medium);
+    setup_button(ui_->advanced, GuiMode::Advanced);
 }
 
 LevelSelector::~LevelSelector() = default;
 
-auto LevelSelector::run_selection(cao::MainWindow &window) -> bool
+auto LevelSelector::run_selection() noexcept -> GuiSettings
 {
-    if (settings_.gui.remember_gui_mode)
-    {
-        setup_window(window, settings_.gui.gui_mode);
-        return true;
-    }
+    if (settings_.remember_gui_mode)
+        return settings_;
 
     if (QDialog::exec() != QDialog::Accepted)
-        return false;
+        return settings_;
 
-    const GuiMode selected_value = to_gui_mode(ui_->levelSlider->value());
-    setup_window(window, selected_value);
+    settings_.remember_gui_mode = ui_->rememberChoice->isChecked();
 
-    settings_.gui.gui_mode          = selected_value;
-    settings_.gui.remember_gui_mode = ui_->rememberChoice->isChecked();
-
-    return true;
+    return settings_;
 }
 
-void LevelSelector::set_handler(MainWindow &mw)
+auto LevelSelector::eventFilter(QObject *obj, QEvent *event) noexcept -> bool
 {
-    /*
-    mw.setLevelSelectorHandler([this, &mw] {
-        mw.hide();
-        settings_.gui.remember_gui_mode = false;
-        if (run_selection(mw))
-            mw.show();
-        else
-            QCoreApplication::quit(); // TODO: Do not quit the app
-    });*/
-}
-
-void LevelSelector::setup_window(MainWindow &mw, GuiMode level)
-{
-    mw.clear_modules();
-
-    switch (level)
+    if (event->type() == QEvent::HoverEnter)
     {
-        case GuiMode::QuickOptimize:
+        auto *button = qobject_cast<QPushButton *>(obj);
+        if (button != nullptr)
         {
-            mw.set_patterns_enabled(false);
-            break;
+            auto level = button->property(k_button_property_name).value<GuiMode>();
+            ui_->label->setText(get_help_text(level));
         }
-        case GuiMode::Medium:
-        {
-            mw.add_module(new IntermediateModeModule);
-            mw.set_patterns_enabled(false);
-            break;
-        }
-        case GuiMode::Advanced:
-        {
-            mw.add_module(new AdvancedBSAModule);
-            mw.add_module(new AdvancedMeshesModule);
-            mw.add_module(new AdvancedTexturesModule);
-            mw.add_module(new AdvancedAnimationsModule);
-            mw.set_patterns_enabled(true);
-            break;
-        }
+        return true;
     }
+    return QDialog::eventFilter(obj, event);
 }
 
-auto LevelSelector::get_help_text(cao::GuiMode level) noexcept -> QString
-{
-    switch (level)
-    {
-        case GuiMode::QuickOptimize:
-        {
-            return tr("Quick Auto Port\n"
-                      "Quick Auto Port uses default settings for porting a mod between LE and SSE.\n"
-                      "It will work for most of the cases and is the recommended way to port a mod.\n"
-                      "It is safe to apply it on a mod, and it is recommended to apply it to your whole "
-                      "mod list if you experience crashes.");
-        }
-        case GuiMode::Medium:
-        {
-            return tr("Intermediate mode\n"
-                      "Intermediate mode offers default settings for most use cases, as well as being a bit "
-                      "more customizable than Quick Auto Port.");
-        }
-        case GuiMode::Advanced:
-        {
-            return tr("Advanced mode\n"
-                      "The full CAO experience. With profiles and patterns, you can fully customize "
-                      "how CAO will optimize your files.");
-        }
-    }
-    return tr("Unknown mode");
-}
 } // namespace cao

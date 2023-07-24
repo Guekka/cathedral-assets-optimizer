@@ -5,6 +5,12 @@
 
 #include "MainWindow.hpp"
 
+#include "AdvancedAnimationsModule.hpp"
+#include "AdvancedBSAModule.hpp"
+#include "AdvancedMeshesModule.hpp"
+#include "AdvancedTexturesModule.hpp"
+#include "IntermediateModeModule.hpp"
+#include "LevelSelector.hpp"
 #include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
@@ -59,9 +65,10 @@ void ui_to_settings(const Ui::MainWindow &ui, Settings &settings)
     // TODO
 }
 
-void settings_to_ui(const Settings &settings, Ui::MainWindow &ui)
+void settings_to_ui(const Settings &settings, MainWindow &mw)
 {
     // TODO
+    mw.set_level(settings.gui.gui_mode);
 }
 
 MainWindow::MainWindow() noexcept
@@ -81,13 +88,13 @@ MainWindow::MainWindow() noexcept
     QObject::connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
         ProfilesManagerWindow profiles_manager(settings_);
         profiles_manager.exec();
-        settings_to_ui(settings_, *ui_);
+        settings_to_ui(settings_, *this);
     });
 
     QObject::connect(ui_->managePatterns, &QPushButton::pressed, this, [this] {
         PatternsManagerWindow patterns_manager(settings_);
         patterns_manager.exec();
-        settings_to_ui(settings_, *ui_);
+        settings_to_ui(settings_, *this);
     });
 
     auto &common_settings = settings_.gui;
@@ -110,6 +117,13 @@ MainWindow::MainWindow() noexcept
     QObject::connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
 
     // Menu buttons
+    QObject::connect(ui_->actionChange_level, &QAction::triggered, this, [this] {
+        auto level_selector = LevelSelector(settings_.gui);
+        settings_.gui       = level_selector.run_selection();
+
+        settings_to_ui(settings_, *this);
+    });
+
     QObject::connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
         QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
     });
@@ -141,14 +155,42 @@ MainWindow::MainWindow() noexcept
 
     firstStart();
 }
+void MainWindow::set_level(GuiMode level)
+{
+    clear_modules();
+    set_patterns_enabled(false);
+
+    switch (level)
+    {
+        case GuiMode::QuickOptimize:
+        {
+            break;
+            // TODO
+        }
+        case GuiMode::Medium:
+        {
+            add_module(std::make_unique<IntermediateModeModule>());
+            break;
+        }
+        case GuiMode::Advanced:
+        {
+            add_module(std::make_unique<AdvancedBSAModule>());
+            add_module(std::make_unique<AdvancedMeshesModule>());
+            add_module(std::make_unique<AdvancedTexturesModule>());
+            add_module(std::make_unique<AdvancedAnimationsModule>());
+            set_patterns_enabled(true);
+            break;
+        }
+    }
+}
 
 MainWindow::~MainWindow() = default;
 
-void MainWindow::add_module(IWindowModule *module)
+void MainWindow::add_module(std::unique_ptr<IWindowModule> mod)
 {
     auto *tabs = ui_->tabWidget;
 
-    tabs->addTab(module, module->name());
+    tabs->addTab(mod.release(), mod->name()); // ownership is transferred to tabs
     tabs->setCurrentIndex(0);
 
     tabs->setHidden(false);
