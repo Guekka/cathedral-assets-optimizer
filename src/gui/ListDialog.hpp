@@ -18,7 +18,7 @@ namespace cao {
 class ListDialog : public QDialog
 {
     Q_OBJECT
-    
+
 public:
     static constexpr bool doSortByText   = true;
     static constexpr bool dontSortByText = false;

@@ -26,7 +26,7 @@ class MainWindow final : public QMainWindow, ConnectionWrapper
 
 public:
     void set_level(GuiMode mode);
-    
+
     MainWindow() noexcept;
     ~MainWindow() override;
 
