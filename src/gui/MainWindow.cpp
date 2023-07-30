@@ -107,10 +107,29 @@ void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) no
     }
 }
 
-void ui_to_settings(const Ui::MainWindow &ui, Settings &settings) noexcept
+void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_display, Settings &settings) noexcept
 {
-    // TODO
-}
+    settings.gui = {
+        .gui_theme         = ui.actionEnableDarkTheme->isChecked() ? GuiTheme::Dark : GuiTheme::Light,
+        .remember_gui_mode = settings.gui.remember_gui_mode, // changed by level selector
+        .gui_mode          = settings.gui.gui_mode,
+        .first_run         = false,                         // if we are here, it's not the first run anymore
+        .selected_pattern  = settings.gui.selected_pattern, // TODO
+        .gpu_index         = settings.gui.gpu_index,        // changed by gpu selector
+    };
+
+    settings.current_profile().input_path        = ui.inputDirTextEdit->text().toStdString();
+    settings.current_profile().dry_run           = false; // TODO
+    settings.current_profile().mods_blacklist    = {};    // TODO
+    settings.current_profile().optimization_mode = ui.modeChooserComboBox->currentData()
+                                                       .value<OptimizationMode>();
+    settings.current_profile().target_game = btu::Game::SSE; // TODO
+
+    // has to be last because may rely on GuiSettings being already filled
+    for (const auto *module : module_display.get_modules())
+        module->ui_to_settings(settings);
+
+} // namespace cao
 
 void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display) noexcept
 {
@@ -149,9 +168,6 @@ MainWindow::MainWindow()
     : ui_(std::make_unique<Ui::MainWindow>())
 {
     ui_->setupUi(this);
-
-    run_gui_selector();
-
     module_display_.set_tab_widget(ui_->tabWidget);
 
     setAcceptDrops(true);
@@ -205,6 +221,7 @@ MainWindow::MainWindow()
     connect(ui_->actionAbout_Qt, &QAction::triggered, this, &QApplication::aboutQt);
 
     first_start(settings_.gui.first_run);
+    run_gui_selector();
 }
 
 /// @brief Checks if the settings are valid. Displays a message box if they are not.

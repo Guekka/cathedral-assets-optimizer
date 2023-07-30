@@ -22,14 +22,14 @@ public:
 
     [[nodiscard]] auto name() const noexcept -> QString override;
 
+    void ui_to_settings(Settings &settings) const override;
+
 private:
     std::unique_ptr<Ui::AdvancedBSAModule> ui_;
-
     using ConnectionWrapper::connect;
-    using ConnectionWrapper::connectWrapper;
 
+    using ConnectionWrapper::connectWrapper;
     void set_ui_data(const Settings &settings) override;
-    void ui_to_settings(Settings &settings) const override;
 
     [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
 };

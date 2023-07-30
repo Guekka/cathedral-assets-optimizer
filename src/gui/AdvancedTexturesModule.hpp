@@ -25,12 +25,13 @@ public:
 
     [[nodiscard]] auto name() const noexcept -> QString override;
 
+    void ui_to_settings(Settings &settings) const override;
+
 private:
     std::unique_ptr<Ui::AdvancedTexturesModule> ui_;
     std::unique_ptr<ListDialog> textureFormatDialog_;
 
     void set_ui_data(const Settings &settings) override;
-    void ui_to_settings(Settings &settings) const override;
     [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
 
     using ConnectionWrapper::connect;

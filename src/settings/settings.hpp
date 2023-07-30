@@ -15,11 +15,11 @@ struct GuiSettings
     bool remember_gui_mode = false;
     GuiMode gui_mode       = GuiMode::QuickOptimize;
 
-    bool first_run     = true;
-    bool show_tutorial = true;
+    bool first_run = true;
 
-    int gpu_index             = 0;
-    bool delete_empty_folders = false; // TODO: implement
+    Pattern selected_pattern;
+
+    int gpu_index = 0;
 };
 
 class Settings

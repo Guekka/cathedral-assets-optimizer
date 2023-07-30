@@ -24,9 +24,9 @@ public:
     void add_module(std::unique_ptr<IWindowModule> mod);
     void clear_modules();
 
+    [[nodiscard]] auto get_modules() const noexcept -> std::vector<const IWindowModule *>;
+
 private:
     QTabWidget *tab_widget_;
-
-    auto get_modules() -> std::vector<IWindowModule *>;
 };
 } // namespace cao

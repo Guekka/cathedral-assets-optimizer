@@ -18,8 +18,6 @@ public:
     bool bsa_extract            = false;
     bool bsa_make_dummy_plugins = false;
 
-    bool is_base_profile = false;
-
     bool dry_run = false; // TODO: implement
 
     OptimizationMode optimization_mode = OptimizationMode::SingleMod;

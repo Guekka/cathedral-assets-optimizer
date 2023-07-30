@@ -22,9 +22,10 @@ public:
     void setup(const Settings &settings);
     [[nodiscard]] virtual auto name() const noexcept -> QString = 0;
 
-private:
-    virtual void set_ui_data(const Settings &settings)    = 0;
     virtual void ui_to_settings(Settings &settings) const = 0;
+
+private:
+    virtual void set_ui_data(const Settings &settings) = 0;
 
     [[nodiscard]] virtual auto is_supported_game(btu::Game game) const noexcept -> bool = 0;
 };
