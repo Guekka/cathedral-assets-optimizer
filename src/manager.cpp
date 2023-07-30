@@ -71,8 +71,6 @@ void Manager::run_optimization()
             auto path         = file.relative_path;
             auto path_for_log = btu::common::as_ascii_string(path.u8string());
 
-            auto dbg_file_orig_size    = file.content.size();
-            auto dbg_file_orig_content = file.content;
             PLOG_INFO << fmt::format("Processing file {}", path_for_log);
 
             auto ret = process_file(std::move(file), settings_);
@@ -91,25 +89,6 @@ void Manager::run_optimization()
                 // TODO: rename bad files
 
                 return std::nullopt;
-            }
-
-            auto dbg_file_new_size = ret->size();
-            auto dbg_file_ratio    = static_cast<double>(dbg_file_new_size)
-                                  / static_cast<double>(dbg_file_orig_size);
-
-            PLOGE_IF(dbg_file_ratio > 9) << fmt::format("File {} was enlarged by {:.2f}%: {} -> {}",
-                                                        path_for_log,
-                                                        (dbg_file_ratio - 1.0) * 100.0,
-                                                        dbg_file_orig_size,
-                                                        dbg_file_new_size);
-
-            if (dbg_file_ratio > 9)
-            {
-                PLOGE << "Wrote file to disk for debugging purposes: " << path_for_log << "to "
-                      << btu::fs::absolute(path.filename()).string();
-                btu::common::write_file(path.filename(), ret.value());
-                btu::common::write_file(path.filename().replace_extension(".orig" + path.extension().string()),
-                                        dbg_file_orig_content);
             }
 
             return std::move(*ret);
