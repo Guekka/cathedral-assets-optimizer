@@ -31,6 +31,7 @@ public:
     struct LogEntry
     {
         explicit LogEntry(QString line);
+        LogEntry(QString line, plog::Severity severity);
 
         QString text;
         plog::Severity severity;
@@ -57,9 +58,17 @@ class ProgressWindow : public QWidget
     Q_OBJECT
 public:
     explicit ProgressWindow(LogReader log_reader, QWidget *parent = nullptr);
+
+    ProgressWindow(const ProgressWindow &)            = delete;
+    ProgressWindow &operator=(const ProgressWindow &) = delete;
+
+    ProgressWindow(ProgressWindow &&)            = delete;
+    ProgressWindow &operator=(ProgressWindow &&) = delete;
+
     ~ProgressWindow() override; // = default
 
-    void update(const QString &text, int max, int value);
+    void set_maximum(int max);
+    void step(std::optional<QString> text = std::nullopt);
     void end();
 
 signals:

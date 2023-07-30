@@ -1,1 +1,3 @@
-#define CAO_VERSION "@PROJECT_VERSION@"
+#pragma once
+
+constexpr auto k_cao_version = "@PROJECT_VERSION@";

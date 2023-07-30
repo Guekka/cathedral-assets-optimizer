@@ -24,36 +24,68 @@ public:
         Regex,
     };
 
-    Pattern(std::u8string pattern, Type type)
-        : pattern_(std::move(pattern))
-        , type_(type)
+    explicit Pattern(std::u8string pattern, Type type = Type::Wildcard)
     {
+        switch (type)
+        {
+            case Type::Wildcard:
+            {
+                pattern_ = BTU_MOV(pattern);
+                break;
+            }
+            case Type::Regex:
+            {
+                pattern_ = std::regex{btu::common::as_ascii_string(pattern),
+                                      std::regex::optimize | std::regex::icase};
+                break;
+            }
+        }
     }
 
     [[nodiscard]] auto matches(const std::filesystem::path &path) const noexcept -> bool
     {
-        switch (type_)
-        {
-            case Type::Wildcard: return btu::common::str_match(path.u8string(), pattern_);
-            case Type::Regex:
-                return std::regex_match(btu::common::as_ascii_string(path.u8string()),
-                                        std::regex(btu::common::as_ascii_string(pattern_)));
-        }
-        assert(false && "Pattern::matches: unreachable");
+        assert(!pattern_.valueless_by_exception());
+
+        auto str           = BTU_MOV(path).u8string();
+        const auto visitor = btu::common::overload{
+            [&str](const std::u8string &pattern) { return btu::common::str_match(str, pattern); },
+            [&str](const std::regex &regex) {
+                return std::regex_match(btu::common::as_ascii_string(str), regex);
+            },
+        };
+
+        return std::visit(visitor, pattern_);
     }
 
 private:
-    std::u8string pattern_;
-    Type type_;
+    std::variant<std::u8string, std::regex> pattern_;
 };
 
 struct PerFileSettings
 {
-    btu::tex::Settings tex;
-    btu::nif::Settings nif;
-    std::optional<btu::Game> hkx_target;
+    btu::tex::Settings tex              = btu::tex::Settings::get(btu::Game::SSE);
+    btu::nif::Settings nif              = btu::nif::Settings::get(btu::Game::SSE);
+    std::optional<btu::Game> hkx_target = btu::Game::SSE;
 
-    std::vector<Pattern> patterns;
+    std::vector<Pattern> patterns = {Pattern{u8"*"}};
+
+    [[nodiscard]] inline auto matches(const std::filesystem::path &path) const noexcept -> bool
+    {
+        return std::ranges::any_of(patterns, [&path](const auto &pattern) { return pattern.matches(path); });
+    }
+
+    [[nodiscard]] static auto make_base(btu::Game game) noexcept -> PerFileSettings
+    {
+        PerFileSettings settings{
+            .tex        = btu::tex::Settings::get(game),
+            .nif        = btu::nif::Settings::get(game),
+            .hkx_target = game,
+        };
+        
+        settings.patterns.emplace_back(u8"*");
+
+        return settings;
+    }
 };
 
 } // namespace cao

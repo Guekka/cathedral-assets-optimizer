@@ -26,14 +26,19 @@ class Settings
 {
 public:
     void create_profile(const std::u8string &profile_name);
-    void create_profile_from_base(const std::u8string &profile_name, const std::u8string &base_profile_name);
+    void create_profile_from_base(const std::u8string &profile_name, const Profile &base_profile);
 
-    [[nodiscard]] auto current_profile() const noexcept -> Profile;
+    [[nodiscard]] auto current_profile() const noexcept -> const Profile &;
+    [[nodiscard]] auto current_profile() noexcept -> Profile &;
+
     [[nodiscard]] auto set_current_profile(size_t index) noexcept -> bool;
 
+    [[nodiscard]] auto list_profiles() const noexcept -> std::vector<std::u8string_view>;
     [[nodiscard]] auto find_profile(std::u8string_view profile_name) const noexcept -> std::optional<size_t>;
 
     void remove(size_t index) noexcept;
+
+    [[nodiscard]] static auto make_base() noexcept -> Settings;
 
     static constexpr auto k_app_name = "cathedral_assets_optimizer";
 
@@ -43,7 +48,8 @@ public:
     GuiSettings gui{};
 
 private:
-    std::vector<Profile> profiles_;
+    std::vector<std::pair<std::u8string, Profile>> profiles_;
+
     size_t current_profile_index_ = 0;
 };
 

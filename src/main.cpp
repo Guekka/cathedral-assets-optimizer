@@ -5,6 +5,7 @@
 
 #include "gui/LevelSelector.hpp"
 #include "gui/MainWindow.hpp"
+#include "logger.hpp"
 #include "manager.hpp"
 #include "settings/settings.hpp"
 #include "version.hpp"
@@ -20,7 +21,7 @@
 void init()
 {
     QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
-    QCoreApplication::setApplicationVersion(CAO_VERSION);
+    QCoreApplication::setApplicationVersion(k_cao_version);
 }
 
 void init_translations()
@@ -80,6 +81,9 @@ int main(int argc, char *argv[])
 
     try
     {
+        if (!cao::init_logging(cao::Settings::data_directory()))
+            throw std::runtime_error("Failed to initialize logging.");
+
         auto settings = cao::load_settings();
 
         if (cli)

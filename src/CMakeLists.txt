@@ -1,14 +1,14 @@
 set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
 set(SOURCE_DIR ${ROOT_DIR}/src)
 set(DATA_DIR ${ROOT_DIR}/data)
-message(hey ${DATA_DIR})
 
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)
 # Create code from a list of Qt designer ui files
 set(CMAKE_AUTOUIC ON)
-#Ressources
+# Resources
 set(CMAKE_AUTORCC ON)
+
 
 set(SOURCES
         ${SOURCE_DIR}/logger.cpp
@@ -17,7 +17,6 @@ set(SOURCES
         ${SOURCE_DIR}/main_process.hpp
         ${SOURCE_DIR}/manager.cpp
         ${SOURCE_DIR}/manager.hpp
-        ${SOURCE_DIR}/version.hpp
         ${SOURCE_DIR}/settings/base_types.hpp
         ${SOURCE_DIR}/settings/json.hpp
         ${SOURCE_DIR}/settings/per_file_settings.hpp
@@ -36,6 +35,10 @@ set(SOURCES
         ${SOURCE_DIR}/gui/MainWindow.cpp
         ${SOURCE_DIR}/gui/MainWindow.hpp
         ${SOURCE_DIR}/gui/MainWindow.ui
+
+        ${SOURCE_DIR}/gui/ModuleDisplay.cpp
+        ${SOURCE_DIR}/gui/ModuleDisplay.hpp
+
         ${SOURCE_DIR}/gui/IntermediateModeModule.cpp
         ${SOURCE_DIR}/gui/IntermediateModeModule.hpp
         ${SOURCE_DIR}/gui/IntermediateModeModule.ui
@@ -83,6 +86,10 @@ target_sources(CAO_LIB INTERFACE ${SOURCES} ${TS_FILES})
 
 # Include source
 target_include_directories(CAO_LIB INTERFACE ${SOURCE_DIR})
+
+# Set version file
+configure_file(${SOURCE_DIR}/version.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/version/version.hpp @ONLY)
+target_include_directories(CAO_LIB INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/version)
 
 # Set C++ 20
 target_compile_features(CAO_LIB INTERFACE cxx_std_20)

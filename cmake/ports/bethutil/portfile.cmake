@@ -7,6 +7,8 @@ vcpkg_from_github(
         HEAD_REF main
 )
 
+set(SOURCE_PATH "/home/edgar/code/btu")
+
 vcpkg_cmake_configure(
         SOURCE_PATH "${SOURCE_PATH}"
         OPTIONS

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "IWindowModule.hpp"
+#include "ModuleDisplay.hpp"
 #include "ProgressWindow.hpp"
 #include "settings/base_types.hpp"
 #include "settings/settings.hpp"
@@ -14,59 +15,43 @@
 
 namespace Ui {
 class MainWindow;
-}
+} // namespace Ui
 
 namespace cao {
 class Manager;
 class Settings;
 
-class MainWindow final : public QMainWindow, ConnectionWrapper
+class MainWindow final : public QMainWindow
 {
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
-    void set_level(GuiMode mode);
+    MainWindow();
 
-    MainWindow() noexcept;
+    MainWindow(const MainWindow &) = delete;
+    MainWindow(MainWindow &&)      = delete;
+
+    auto operator=(const MainWindow &) -> MainWindow & = delete;
+    auto operator=(MainWindow &&) -> MainWindow      & = delete;
+
     ~MainWindow() override;
-
-    void add_module(std::unique_ptr<IWindowModule> mod);
-    void clear_modules();
-
-    void set_patterns_enabled(bool state);
 
 private:
     Settings settings_;
 
     std::unique_ptr<Ui::MainWindow> ui_;
-    std::unique_ptr<Manager> caoProcess_;
-    std::unique_ptr<ProgressWindow> progressWindow_;
+    std::unique_ptr<Manager> cao_process_;
+    std::unique_ptr<ProgressWindow> progress_window_;
+    ModuleDisplay module_display_{};
 
-    using ConnectionWrapper::connect;
-    using ConnectionWrapper::connectWrapper;
+    void init_process();
+    void end_process();
 
-    void connect_module(IWindowModule &);
-    void reconnect_modules();
-
-    void connect_this();
-    void disconnect_this();
-    void reconnect_this();
-
-    std::vector<IWindowModule *> get_modules();
-
-    void resetUi();
-    void loadUi();
-
-    void initProcess();
-    void endProcess();
-
-    void showTutorialWindow(const QString &title, const QString &text);
-
-    void firstStart();
+    void about() noexcept;
 
     // Qt override
-    void closeEvent(QCloseEvent *event) override;
-    void dragEnterEvent(QDragEnterEvent *e) override;
-    void dropEvent(QDropEvent *e) override;
+    [[maybe_unused]] void closeEvent(QCloseEvent *event) override;
+    [[maybe_unused]] void dragEnterEvent(QDragEnterEvent *e) override;
+    [[maybe_unused]] void dropEvent(QDropEvent *e) override;
 };
 } // namespace cao

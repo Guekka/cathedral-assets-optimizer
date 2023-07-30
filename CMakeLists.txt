@@ -3,11 +3,9 @@ include_guard(GLOBAL)
 
 project(
         Cathedral_Assets_Optimizer
-        VERSION 6.0.0
+        VERSION 7.0.0
         LANGUAGES CXX)
 
-# Setting version for C++ files
-configure_file(src/version.hpp.in src/version.hpp)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

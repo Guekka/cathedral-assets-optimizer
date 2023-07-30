@@ -30,7 +30,8 @@ auto LogReader::update() -> std::vector<LogEntry>
     log_file.open(QFile::ReadOnly);
 
     if (!log_file.isOpen())
-        return {};
+        return {{QString("Failed to open log file: %1").arg(QString::fromStdString(log_file_path_.string())),
+                 plog::error}};
 
     auto log_stream = QTextStream(&log_file);
     advance_to_last_read(log_stream);
@@ -91,10 +92,15 @@ LogReader::LogEntry::LogEntry(QString line)
 {
     // We know our CustomFormatter is used. Time always uses the same number of chars, 24
     constexpr int time_length = 24;
-    const auto level_end      = line.indexOf(' ', time_length) - time_length;
-    const auto line_severity  = line.mid(time_length, level_end);
+    const auto level_end      = text.indexOf(' ', time_length) - time_length;
+    const auto line_severity  = text.mid(time_length, level_end);
 
     severity = plog::severityFromString(qPrintable(line_severity));
+}
+LogReader::LogEntry::LogEntry(QString line, plog::Severity severity)
+    : text(BTU_MOV(line))
+    , severity(severity)
+{
 }
 
 ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
@@ -104,6 +110,8 @@ ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
 {
     ui_->setupUi(this);
     setWindowModality(Qt::WindowModal); // Prevents user from interacting with the main window
+
+    ui_->log->setWordWrap(true);
 
     set_data(*ui_->logLevel, "Verbose", plog::verbose);
     set_data(*ui_->logLevel, "Info", plog::info);
@@ -118,10 +126,19 @@ ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
 
 ProgressWindow::~ProgressWindow() = default;
 
-void ProgressWindow::update(const QString &text, int max, int value)
+void ProgressWindow::set_maximum(int max)
 {
-    update_progress_bar(text, max, value);
-    update_log(ui_->logLevel->currentData().value<plog::Severity>());
+    ui_->progressBar->setMaximum(max);
+}
+
+void ProgressWindow::step(std::optional<QString> text)
+{
+    if (text)
+        update_progress_bar(*text, ui_->progressBar->maximum(), ui_->progressBar->value() + 1);
+    else
+        ui_->progressBar->setValue(ui_->progressBar->value() + 1);
+
+    update_log(ui_->logLevel->itemData(ui_->logLevel->currentIndex()).value<plog::Severity>());
 }
 
 void ProgressWindow::end()
@@ -167,8 +184,9 @@ void ProgressWindow::update_log(plog::Severity log_severity)
 
     for (int i = 0; i < ui_->log->count(); ++i)
     {
-        auto *item = ui_->log->item(i);
-        item->setHidden(item->data(Qt::UserRole).value<plog::Severity>() < log_severity);
+        auto *item      = ui_->log->item(i);
+        const bool hide = item->data(Qt::UserRole).value<plog::Severity>() > log_severity;
+        item->setHidden(hide);
     }
 
     constexpr int max_log_entries = 2000;
@@ -177,6 +195,8 @@ void ProgressWindow::update_log(plog::Severity log_severity)
         auto *model = ui_->log->model();
         model->removeRows(0, ui_->log->count() - max_log_entries);
     }
+
+    ui_->log->scrollToBottom();
 }
 
 void ProgressWindow::closeEvent(QCloseEvent *event)

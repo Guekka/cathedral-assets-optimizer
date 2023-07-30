@@ -14,6 +14,7 @@
 #include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
+#include "logger.hpp"
 #include "manager.hpp"
 #include "settings/settings.hpp"
 #include "ui_MainWindow.h"
@@ -30,8 +31,11 @@
 #include <QtConcurrent/QtConcurrent>
 
 namespace cao {
+constexpr static inline auto k_discord_url = "https://discord.gg/SwfTzHGQcy";
+constexpr static inline auto k_nexus_url   = "https://www.nexusmods.com/skyrimspecialedition/mods/23316";
+constexpr static inline auto k_kofi_url    = "https://ko-fi.com/guekka";
 
-auto get_dark_style_sheet() -> QString
+auto get_dark_style_sheet() noexcept -> QString
 {
     QFile f(":qdarkstyle/style.qss");
     if (!f.open(QFile::ReadOnly | QFile::Text))
@@ -42,7 +46,7 @@ auto get_dark_style_sheet() -> QString
     return f.readAll();
 }
 
-auto set_theme(GuiTheme theme) -> bool
+auto set_theme(GuiTheme theme) noexcept -> bool
 {
     if (theme == GuiTheme::Light)
     {
@@ -60,156 +64,12 @@ auto set_theme(GuiTheme theme) -> bool
     return true;
 }
 
-void ui_to_settings(const Ui::MainWindow &ui, Settings &settings)
-{
-    // TODO
-}
-
-void settings_to_ui(const Settings &settings, MainWindow &mw)
-{
-    // TODO
-    mw.set_level(settings.gui.gui_mode);
-}
-
-MainWindow::MainWindow() noexcept
-    : ui_(std::make_unique<Ui::MainWindow>())
-{
-    ui_->setupUi(this);
-    setAcceptDrops(true);
-
-    // Init UI view
-    ui_->tabWidget->setHidden(true);
-
-    // Setting data for widgets
-    set_data(*ui_->modeChooserComboBox, tr("One mod"), SingleMod);
-    set_data(*ui_->modeChooserComboBox, tr("Several mods"), SeveralMods);
-
-    // Connecting widgets that do not depend on current profile
-    QObject::connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
-        ProfilesManagerWindow profiles_manager(settings_);
-        profiles_manager.exec();
-        settings_to_ui(settings_, *this);
-    });
-
-    QObject::connect(ui_->managePatterns, &QPushButton::pressed, this, [this] {
-        PatternsManagerWindow patterns_manager(settings_);
-        patterns_manager.exec();
-        settings_to_ui(settings_, *this);
-    });
-
-    auto &common_settings = settings_.gui;
-    ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
-    set_theme(common_settings.gui_theme);
-
-    QObject::connect(ui_->actionEnableDarkTheme, &QAction::triggered, [this, &common_settings](bool state) {
-        const GuiTheme theme      = state ? GuiTheme::Dark : GuiTheme::Light;
-        common_settings.gui_theme = theme;
-        ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
-        set_theme(theme);
-    });
-
-    QObject::connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
-        if (!settings_.set_current_profile(idx))
-            return; // TODO: error message
-                    //   reconnect_this(); TODO
-    });
-
-    QObject::connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::initProcess);
-
-    // Menu buttons
-    QObject::connect(ui_->actionChange_level, &QAction::triggered, this, [this] {
-        auto level_selector = LevelSelector(settings_.gui);
-        settings_.gui       = level_selector.run_selection();
-
-        settings_to_ui(settings_, *this);
-    });
-
-    QObject::connect(ui_->actionDocumentation, &QAction::triggered, this, [&] {
-        QDesktopServices::openUrl(QUrl("https://www.nexusmods.com/skyrimspecialedition/mods/23316"));
-    });
-
-    QObject::connect(ui_->actionDiscord, &QAction::triggered, this, [&] {
-        QDesktopServices::openUrl(QUrl("https://discordapp.com/invite/B9abN8d"));
-    });
-
-    QObject::connect(ui_->actionDonate, &QAction::triggered, this, [] {
-        QDesktopServices::openUrl(QUrl("https://ko-fi.com/guekka"));
-    });
-
-    QObject::connect(ui_->actionAbout, &QAction::triggered, this, [this] {
-        constexpr auto message =
-            R"(%1 %2
-            Made by G'k
-            This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTY.
-            See the Mozilla Public License)";
-
-        const QString text = QString("%1 %2 %3")
-                                 .arg(QCoreApplication::applicationName(),
-                                      QCoreApplication::applicationVersion(),
-                                      tr(message));
-
-        QMessageBox::about(this, tr("About"), text);
-    });
-
-    QObject::connect(ui_->actionAbout_Qt, &QAction::triggered, this, [this] { QMessageBox::aboutQt(this); });
-
-    firstStart();
-}
-void MainWindow::set_level(GuiMode level)
-{
-    clear_modules();
-    set_patterns_enabled(false);
-
-    switch (level)
-    {
-        case GuiMode::QuickOptimize:
-        {
-            break;
-            // TODO
-        }
-        case GuiMode::Medium:
-        {
-            add_module(std::make_unique<IntermediateModeModule>());
-            break;
-        }
-        case GuiMode::Advanced:
-        {
-            add_module(std::make_unique<AdvancedBSAModule>());
-            add_module(std::make_unique<AdvancedMeshesModule>());
-            add_module(std::make_unique<AdvancedTexturesModule>());
-            add_module(std::make_unique<AdvancedAnimationsModule>());
-            set_patterns_enabled(true);
-            break;
-        }
-    }
-}
-
-MainWindow::~MainWindow() = default;
-
-void MainWindow::add_module(std::unique_ptr<IWindowModule> mod)
-{
-    auto *tabs = ui_->tabWidget;
-
-    tabs->addTab(mod.release(), mod->name()); // ownership is transferred to tabs
-    tabs->setCurrentIndex(0);
-
-    tabs->setHidden(false);
-}
-
-void MainWindow::clear_modules()
-{
-    auto &tabs = ui_->tabWidget;
-
-    tabs->clear();
-    tabs->setHidden(true);
-}
-
-void MainWindow::set_patterns_enabled(bool state)
+void set_patterns_enabled(Ui::MainWindow &ui, bool state) noexcept
 {
     const std::array patterns_object = std::to_array<QWidget *>({
-        ui_->patterns,
-        ui_->managePatterns,
-        ui_->patternsLabel,
+        ui.patterns,
+        ui.managePatterns,
+        ui.patternsLabel,
     });
 
     for (auto *widget : patterns_object)
@@ -219,20 +79,151 @@ void MainWindow::set_patterns_enabled(bool state)
     }
 }
 
-std::vector<IWindowModule *> MainWindow::get_modules()
+void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) noexcept
 {
-    const auto children = ui_->tabWidget->findChildren<IWindowModule *>();
-    return {children.begin(), children.end()};
-}
+    modules.clear_modules();
+    set_patterns_enabled(ui, /*state=*/false);
 
-void MainWindow::reconnect_modules()
-{
-    for (auto *mod : get_modules())
+    switch (level)
     {
-        mod->disconnectAll();
-        mod->setup(settings_);
+        case GuiMode::QuickOptimize:
+        {
+            break;
+        }
+        case GuiMode::Medium:
+        {
+            modules.add_module(std::make_unique<IntermediateModeModule>());
+            break;
+        }
+        case GuiMode::Advanced:
+        {
+            modules.add_module(std::make_unique<AdvancedBSAModule>());
+            modules.add_module(std::make_unique<AdvancedMeshesModule>());
+            modules.add_module(std::make_unique<AdvancedTexturesModule>());
+            modules.add_module(std::make_unique<AdvancedAnimationsModule>());
+            set_patterns_enabled(ui, /*state=*/true);
+            break;
+        }
     }
 }
+
+void ui_to_settings(const Ui::MainWindow &ui, Settings &settings) noexcept
+{
+    // TODO
+}
+
+void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display) noexcept
+{
+    set_theme(settings.gui.gui_theme);
+
+    // TODO
+
+    set_gui_level(module_display, ui, settings.gui.gui_mode);
+
+    ui.profiles->clear();
+    for (const auto &profile : settings.list_profiles())
+        ui.profiles->addItem(QString::fromUtf8(profile.data(), static_cast<qsizetype>(profile.size())));
+}
+
+void first_start(bool &first_run) noexcept
+{
+    constexpr auto welcome
+        = R"(It appears you are running CAO for the first time. All options have tooltips explaining what
+          they do. If you need help, you can also <a href="%1">join us on Discord</a>.<br>
+          <br>
+          If you like my work, <a href="%2">please consider supporting me</a>.<br>
+          Thanks for using CAO!)";
+
+    if (std::exchange(first_run, true))
+    {
+        QMessageBox box(QMessageBox::Information,
+                        QObject::tr("Welcome to %1 %2")
+                            .arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
+                        QObject::tr(welcome).arg(k_discord_url, k_kofi_url));
+        box.setTextFormat(Qt::TextFormat::RichText);
+        box.exec();
+    }
+}
+
+MainWindow::MainWindow()
+    : ui_(std::make_unique<Ui::MainWindow>())
+{
+    ui_->setupUi(this);
+
+    // TODO: remove that
+    ui_->inputDirTextEdit->setText("/home/edgar/Downloads/Immersive Weapons-27644-1-5");
+
+    module_display_.set_tab_widget(ui_->tabWidget);
+
+    setAcceptDrops(true);
+
+    // Setting data for widgets
+    set_data(*ui_->modeChooserComboBox, tr("One mod"), OptimizationMode::SingleMod);
+    set_data(*ui_->modeChooserComboBox, tr("Several mods"), OptimizationMode::SeveralMods);
+
+    // Connecting widgets that do not depend on current profile
+    connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
+        ProfilesManagerWindow profiles_manager(settings_);
+        profiles_manager.exec();
+        settings_to_ui(settings_, *ui_, module_display_);
+    });
+
+    connect(ui_->managePatterns, &QPushButton::pressed, this, [this] {
+        PatternsManagerWindow patterns_manager(settings_);
+        patterns_manager.exec();
+        settings_to_ui(settings_, *ui_, module_display_);
+    });
+
+    auto &common_settings = settings_.gui;
+    ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
+    set_theme(common_settings.gui_theme);
+
+    connect(ui_->actionEnableDarkTheme, &QAction::triggered, [this, &common_settings](bool state) {
+        const GuiTheme theme      = state ? GuiTheme::Dark : GuiTheme::Light;
+        common_settings.gui_theme = theme;
+        ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
+        set_theme(theme);
+    });
+
+    connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
+        if (!settings_.set_current_profile(idx))
+            return; // TODO: error message
+        // TODO
+    });
+
+    connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::init_process);
+
+    // Menu buttons
+    connect(ui_->actionChange_level, &QAction::triggered, this, [this] {
+        auto level_selector = LevelSelector(settings_.gui);
+        settings_.gui       = level_selector.run_selection();
+        settings_to_ui(settings_, *ui_, module_display_);
+    });
+
+    auto url_opener = [](const char *url) { return [url] { QDesktopServices::openUrl(QUrl(url)); }; };
+
+    connect(ui_->actionDocumentation, &QAction::triggered, this, url_opener(k_nexus_url));
+    connect(ui_->actionDiscord, &QAction::triggered, this, url_opener(k_discord_url));
+    connect(ui_->actionDonate, &QAction::triggered, this, url_opener(k_kofi_url));
+
+    connect(ui_->actionAbout, &QAction::triggered, this, &MainWindow::about);
+    connect(ui_->actionAbout_Qt, &QAction::triggered, this, &QApplication::aboutQt);
+
+    first_start(settings_.gui.first_run);
+}
+
+/// @brief Checks if the settings are valid. Displays a message box if they are not.
+/// @param settings Settings to check
+/// @return True if the settings are valid, false otherwise
+[[nodiscard]] auto check_settings(const Settings &settings) noexcept -> bool
+{
+    // TODO
+
+    // trick to avoid always true warning. This is UB, but we don't care
+    return reinterpret_cast<std::uintptr_t>(&settings) != 0;
+}
+
+MainWindow::~MainWindow() = default;
 
 /*
 void MainWindow::connectThis()
@@ -315,18 +306,6 @@ void MainWindow::connectThis()
 
 }
 
-void MainWindow::disconnectThis()
-{
-    ConnectionWrapper::disconnectAll();
-}
-
-void MainWindow::reconnectThis()
-{
-    disconnectThis();
-    connectThis();
-    reconnectModules();
-}
-
 void MainWindow::updateProfiles()
 {
     auto *profiles              = ui_->Settings;
@@ -353,111 +332,117 @@ void MainWindow::updatePatterns()
     reconnectThis();
 }*/
 
-void MainWindow::loadUi()
+void MainWindow::init_process()
 {
-    set_theme(settings_.gui.gui_theme);
+    auto settings = settings_;
+    ui_to_settings(*ui_, settings);
 
-    //    ui_->profiles->setCurrentIndex(ui_->profiles->findText(getProfiles().currentProfileName())); FIXME
-}
+    // TODO: remove this
+    settings                              = Settings::make_base();
+    settings.current_profile().input_path = ui_->inputDirTextEdit->text().toStdString();
+    settings.current_profile().base_per_file_settings.tex.compress = false;
+    settings.current_profile().base_per_file_settings.tex.resize   = btu::tex::Dimension{
+          .w = 512,
+          .h = 512,
+    };
 
-void MainWindow::resetUi()
-{
-    ui_->tabWidget->clear();
-}
+    if (!check_settings(settings))
+        return;
 
-void MainWindow::initProcess()
-{
-    if (!save_settings(settings_))
-        ; // TODO: error
-
-    ui_->processButton->setDisabled(true);
+    if (!save_settings(settings))
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Your settings could not be saved to disk. Aborting."));
+        return;
+    }
 
     try
     {
-        caoProcess_     = std::make_unique<Manager>(settings_);
-        progressWindow_ = std::make_unique<ProgressWindow>(LogReader("")); // FIXME: log path
+        cao_process_     = std::make_unique<Manager>(settings);
+        progress_window_ = std::make_unique<ProgressWindow>(LogReader(Settings::data_directory()
+                                                                      / k_log_file_name),
+                                                            this);
 
-        connect(caoProcess_.get(),
+        connect(cao_process_.get(),
+                &Manager::files_counted,
+                progress_window_.get(),
+                &ProgressWindow::set_maximum);
+
+        connect(cao_process_.get(),
                 &Manager::file_processed,
-                progressWindow_.get(),
+                progress_window_.get(),
                 [this](const std::filesystem::path &file) {
-                    // TODO
+                    const auto text = QString("Processing %1").arg(QString::fromStdString(file.string()));
+                    progress_window_->step(std::optional(text));
                 });
 
-        connect(caoProcess_.get(), &Manager::end, progressWindow_.get(), [this] {
-            progressWindow_->update(tr("Done"), 1, 1);
-        });
+        connect(cao_process_.get(), &Manager::end, progress_window_.get(), &ProgressWindow::end);
+        connect(cao_process_.get(), &Manager::end, this, &MainWindow::end_process);
 
-        connect(caoProcess_.get(), &Manager::end, this, &MainWindow::endProcess);
-        connect(progressWindow_.get(), &ProgressWindow::cancelled, this, &MainWindow::endProcess);
+        connect(progress_window_.get(), &ProgressWindow::cancelled, this, &MainWindow::end_process);
 
-        progressWindow_->show();
+        progress_window_->show();
 
-        QtConcurrent::run(&Manager::run_optimization, caoProcess_.get());
+        // we don't care about the future, we just want to run the process in another thread
+        [[maybe_unused]] auto future = QtConcurrent::run(&Manager::run_optimization, cao_process_.get());
     }
     catch (const std::exception &e)
     {
         QMessageBox box(QMessageBox::Critical,
                         tr("Error"),
-                        tr("An exception has been encountered and the process was forced to stop: ")
-                            + QString(e.what()));
+                        tr("An exception has been encountered and the process was forced to stop: %1")
+                            .arg(e.what()));
         box.exec();
-        endProcess();
+        end_process();
     }
 }
 
-void MainWindow::endProcess()
+void MainWindow::end_process()
 {
     ui_->processButton->setDisabled(false);
 
-    if (caoProcess_)
-        caoProcess_->disconnect();
+    if (cao_process_)
+        cao_process_->disconnect();
 
-    if (progressWindow_)
+    if (progress_window_)
     {
-        progressWindow_->end();
-        progressWindow_->disconnect();
+        progress_window_->end();
+        progress_window_->disconnect();
     }
 }
 
-void MainWindow::firstStart()
+void MainWindow::about() noexcept
 {
-    constexpr auto welcome
-        = R"(It appears you are running CAO for the first time. All options have tooltips explaining what
-          they do. If you need help, you can also <a href="https://discordapp.com/invite/B9abN8d">join us
-          on Discord</a>. A dark theme is also available.
+    constexpr auto message =
+        R"(%1 %2
+            Made by G'k
+            This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTY.
+            See the Mozilla Public License)";
 
-          If you like my work, <a href="https://ko-fi.com/guekka">please consider supporting me</a>.
-          Thanks for using CAO!)";
+    const QString text = QString("%1 %2 %3")
+                             .arg(QCoreApplication::applicationName(),
+                                  QCoreApplication::applicationVersion(),
+                                  tr(message));
 
-    if (std::exchange(settings_.gui.first_run, true))
-    {
-        QMessageBox box(QMessageBox::Information,
-                        tr("Welcome to %1 %2")
-                            .arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
-                        tr(welcome));
-        box.setTextFormat(Qt::TextFormat::RichText);
-        box.exec();
-    }
+    QMessageBox::about(this, tr("About"), text);
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+[[maybe_unused]] void MainWindow::closeEvent(QCloseEvent *event)
 {
-    endProcess();
+    end_process();
     event->accept();
 }
 
-void MainWindow::dragEnterEvent(QDragEnterEvent *e)
+[[maybe_unused]] void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 {
     if (e->mimeData()->hasUrls())
         e->acceptProposedAction();
 }
 
-void MainWindow::dropEvent(QDropEvent *e)
+[[maybe_unused]] void MainWindow::dropEvent(QDropEvent *e)
 {
-    const QString &fileName = e->mimeData()->urls().at(0).toLocalFile();
-    if (std::filesystem::is_directory(fileName.toStdString()))
-        ui_->inputDirTextEdit->setText(QDir::cleanPath(fileName));
+    const QString &file_name = e->mimeData()->urls().at(0).toLocalFile();
+    if (std::filesystem::is_directory(file_name.toStdString()))
+        ui_->inputDirTextEdit->setText(QDir::cleanPath(file_name));
 }
 
 } // namespace cao

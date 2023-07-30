@@ -26,7 +26,7 @@ private:
     Settings settings_;
 
 signals:
-    void file_counted(size_t count);
+    void files_counted(size_t count);
     void file_processed(std::filesystem::path relative_path);
     void end();
 };

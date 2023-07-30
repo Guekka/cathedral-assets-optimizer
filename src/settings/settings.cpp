@@ -7,6 +7,7 @@
 
 #include "json.hpp"
 
+#include <flow.hpp>
 #include <sago/platform_folders.h>
 
 namespace cao {
@@ -16,16 +17,21 @@ void Settings::create_profile(const std::u8string &profile_name)
     // TODO
 }
 
-void Settings::create_profile_from_base(const std::u8string &profile_name,
-                                        const std::u8string &base_profile_name)
+void Settings::create_profile_from_base(const std::u8string &profile_name, const Profile &base_profile)
 {
     // TODO
 }
 
-auto Settings::current_profile() const noexcept -> Profile
+auto Settings::current_profile() const noexcept -> const Profile &
 {
-    // TODO
+    return profiles_.at(current_profile_index_).second;
 }
+
+auto Settings::current_profile() noexcept -> Profile &
+{
+    return profiles_.at(current_profile_index_).second;
+}
+
 void Settings::remove(size_t index) noexcept
 {
     // TODO
@@ -39,6 +45,18 @@ auto Settings::find_profile(std::u8string_view profile_name) const noexcept -> s
 auto Settings::set_current_profile(size_t index) noexcept -> bool
 {
     return false; // TODO
+}
+
+auto Settings::make_base() noexcept -> Settings
+{
+    Settings settings;
+    settings.profiles_ = {
+        {u8"SSE", Profile::make_base(btu::Game::SSE)},
+        {u8"SLE", Profile::make_base(btu::Game::SLE)},
+    };
+    settings.current_profile_index_ = 0;
+
+    return settings;
 }
 
 using SagoFunction = std::string (*)();
@@ -69,6 +87,13 @@ auto Settings::data_directory() noexcept -> std::filesystem::path
 auto Settings::config_directory() noexcept -> std::filesystem::path
 {
     return any_directory(&sago::getConfigHome, "config");
+}
+
+auto Settings::list_profiles() const noexcept -> std::vector<std::u8string_view>
+{
+    return flow::from(profiles_)
+        .map([](const auto &pair) -> std::u8string_view { return pair.first; })
+        .to_vector();
 }
 
 auto load_settings() -> Settings

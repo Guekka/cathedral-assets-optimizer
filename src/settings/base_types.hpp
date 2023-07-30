@@ -8,19 +8,18 @@
 
 namespace cao {
 
-enum OptimizationMode
+enum class OptimizationMode
 {
     SingleMod   = 0,
     SeveralMods = 1
 };
-enum TextureResizingMode
+enum class TextureResizingMode
 {
     None,
     ByRatio,
     BySize
 };
 
-//Leaving place for intermediate levels
 enum class GuiMode
 {
     QuickOptimize,

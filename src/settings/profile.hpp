@@ -14,32 +14,43 @@ namespace cao {
 class Profile
 {
 public:
-    bool bsa_create;
-    bool bsa_extract;
-    bool bsa_make_dummy_plugins;
+    bool bsa_create             = false;
+    bool bsa_extract            = false;
+    bool bsa_make_dummy_plugins = false;
 
-    bool is_base_profile;
+    bool is_base_profile = false;
 
-    // bool dry_run; TODO
+    bool dry_run = false; // TODO: implement
 
-    OptimizationMode optimization_mode;
-    btu::Game target_game;
+    OptimizationMode optimization_mode = OptimizationMode::SingleMod;
+    btu::Game target_game              = btu::Game::SSE;
 
     btu::Path input_path;
 
     std::vector<std::u8string> mods_blacklist;
 
+    PerFileSettings base_per_file_settings;
     std::vector<PerFileSettings> per_file_settings;
 
     [[nodiscard]] inline auto get_per_file_settings(const std::filesystem::path &path) const noexcept
         -> PerFileSettings
     {
-        for (const auto &perf : per_file_settings)
-            if (std::ranges::any_of(perf.patterns,
-                                    [&path](const auto &pattern) { return pattern.matches(path); }))
-                return perf;
+        auto it = std::ranges::find_if(per_file_settings,
+                                       [&path](const auto &settings) { return settings.matches(path); });
 
-        assert(false && "get_per_file_settings: unreachable"); // TODO: handle this case
+        if (it == per_file_settings.end())
+            return base_per_file_settings;
+        return *it;
+    }
+
+    [[nodiscard]] static inline auto make_base(btu::Game game) noexcept -> Profile
+    {
+        Profile profile;
+        profile.is_base_profile        = true;
+        profile.target_game            = game;
+        profile.base_per_file_settings = PerFileSettings::make_base(game);
+
+        return profile;
     }
 };
 

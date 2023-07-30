@@ -5,7 +5,6 @@
 
 #include "logger.hpp"
 
-#include <fmt/format.h>
 #include <plog/Appenders/RollingFileAppender.h>
 #include <plog/Formatters/TxtFormatter.h>
 #include <plog/Init.h>
@@ -23,13 +22,6 @@ public:
     [[nodiscard]] static auto format(const plog::Record &record) -> plog::util::nstring;
 };
 
-[[nodiscard]] auto get_log_name() -> std::string
-{
-    // TODO: use chrono and format (GCC 13.1)
-    const auto &date_time = QDateTime::currentDateTime().toString("yy_MM_dd_hh'h'mm'm'");
-    return fmt::format("cao_{}.log", date_time.toStdString());
-}
-
 [[nodiscard]] auto get_appender(const std::filesystem::path &log_file_path) noexcept -> plog::IAppender *
 {
     constexpr size_t max_file_size = 1'000'000; // 1MB
@@ -38,6 +30,8 @@ public:
     static auto appender = plog::RollingFileAppender<CustomFormatter>(log_file_path.string().c_str(),
                                                                       max_file_size,
                                                                       keep_files);
+
+    appender.rollLogFiles(); // Roll log files on every start
 
     return &appender;
 }
@@ -53,13 +47,14 @@ public:
         std::filesystem::create_directories(log_directory);
 
     // Creating log file
-    const auto log_file_path = log_directory / get_log_name();
+    const auto log_file_path = log_directory / k_log_file_name;
     std::ofstream file(log_file_path, std::ios::app);
     if (!file.is_open())
         return false;
 
     plog::init(plog::Severity::verbose, get_appender(log_file_path));
 
+    PLOGV << "cao started at " << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString();
     return true;
 }
 

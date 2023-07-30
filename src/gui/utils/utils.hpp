@@ -128,7 +128,7 @@ void set_data(QComboBox &box, const QString &text, const Data &data)
     const auto pos = box.findText(text, Qt::MatchFlag::MatchExactly);
     if (pos == -1)
         throw UiException(QString("UI was different than expected. Element '%1' not found").arg(text));
-    box.setItemData(pos, data);
+    box.setItemData(pos, QVariant::fromValue(data));
 }
 
 template<typename Data>
