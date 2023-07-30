@@ -174,8 +174,7 @@ auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &se
     const auto &file_sets = settings.current_profile().get_per_file_settings(file.relative_path);
 
     if (!type)
-        return tl::make_unexpected(
-            btu::common::Error(std::make_error_code(std::errc::not_supported))); // TODO: better error
+        return tl::make_unexpected(btu::common::Error(k_error_no_work_required)); // TODO: better error
 
     switch (type.value())
     {
