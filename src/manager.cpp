@@ -12,11 +12,13 @@
 #include <btu/bsa/settings.hpp>
 #include <btu/common/filesystem.hpp>
 #include <btu/common/string.hpp>
+#include <btu/esp/functions.hpp>
 #include <btu/modmanager/mod_manager.hpp>
 #include <fmt/format.h>
 
 #include <QDateTime>
 #include <filesystem>
+#include <mutex>
 
 namespace cao {
 
@@ -49,6 +51,74 @@ void rename_bad_file(const std::filesystem::path &file_path)
     }
 }
 
+struct PluginInfo
+{
+    std::vector<std::u8string> headparts;
+    std::vector<std::u8string> landscape_textures;
+};
+
+[[nodiscard]] auto get_plugin_info(const btu::modmanager::ModFolder &mod) -> PluginInfo
+{
+    PluginInfo result;
+    std::mutex mutex;
+
+    mod.iterate(
+        [&result, &mutex](const btu::Path &loose_path) {
+            static constexpr auto k_plugin_exts = std::to_array({".esp", ".esm", ".esl"});
+            if (!btu::common::contains(k_plugin_exts, loose_path.extension()))
+                return;
+
+            PLOG_INFO << fmt::format("Parsing plugin {}", loose_path.string());
+
+            auto headparts          = btu::esp::list_headparts(loose_path);
+            auto landscape_textures = btu::esp::list_landscape_textures(loose_path);
+
+            if (!headparts && !landscape_textures)
+            {
+                PLOG_ERROR << fmt::format("Failed to parse plugin {}", loose_path.string());
+                rename_bad_file(loose_path);
+                return;
+            }
+
+            const auto lock = std::scoped_lock(mutex);
+
+            if (headparts)
+                result.headparts.insert(result.headparts.end(), headparts->begin(), headparts->end());
+
+            if (landscape_textures)
+                result.landscape_textures.insert(result.landscape_textures.end(),
+                                                 landscape_textures->begin(),
+                                                 landscape_textures->end());
+        },
+        // plugins cannot be in archives
+        [](const btu::Path &, const btu::bsa::Archive &) {});
+
+    return result;
+}
+
+void apply_plugin_info(PerFileSettings &sets, const PluginInfo &info)
+{
+    sets.nif.headpart_meshes.insert(sets.nif.headpart_meshes.end(),
+                                    info.headparts.begin(),
+                                    info.headparts.end());
+
+    btu::common::remove_duplicates(sets.nif.headpart_meshes);
+
+    sets.tex.landscape_textures.insert(sets.tex.landscape_textures.end(),
+                                       info.landscape_textures.begin(),
+                                       info.landscape_textures.end());
+
+    btu::common::remove_duplicates(sets.tex.landscape_textures);
+}
+
+void apply_plugin_info(Settings &sets, const PluginInfo &info)
+{
+    auto &profile = sets.current_profile();
+
+    apply_plugin_info(profile.base_per_file_settings, info);
+    std::ranges::for_each(profile.per_file_settings, [&info](auto &sets) { apply_plugin_info(sets, info); });
+}
+
 // TODO: use std::chrono (GCC 13.1) instead of QDateTime
 void Manager::run_optimization()
 {
@@ -61,10 +131,12 @@ void Manager::run_optimization()
     auto mod      = btu::modmanager::ModFolder(settings_.current_profile().input_path, bsa_sets);
 
     PLOG_INFO << "Counting files...";
-
     PLOG_INFO << fmt::format("Found {} files", mod.size());
-
     emit files_counted(mod.size());
+
+    PLOG_INFO << "Parsing plugins...";
+    auto plugin_info = get_plugin_info(mod);
+    apply_plugin_info(settings_, plugin_info);
 
     mod.transform(
         [this](btu::modmanager::ModFolder::ModFile &&file) -> std::optional<std::vector<std::byte>> {
