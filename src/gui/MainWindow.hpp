@@ -47,6 +47,8 @@ private:
     void init_process();
     void end_process();
 
+    void run_gui_selector();
+
     void about() noexcept;
 
     // Qt override

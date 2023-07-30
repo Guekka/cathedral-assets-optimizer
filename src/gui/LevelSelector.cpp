@@ -31,7 +31,7 @@ namespace cao {
         case GuiMode::Medium:
         {
             return QObject::tr(
-                R"(Intermediate mode)
+                R"(Intermediate mode
 
                 Offers default settings for most use cases, as well as being a bit more customizable than QuickOptimize.)");
         }

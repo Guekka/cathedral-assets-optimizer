@@ -116,7 +116,8 @@ void apply_plugin_info(Settings &sets, const PluginInfo &info)
     auto &profile = sets.current_profile();
 
     apply_plugin_info(profile.base_per_file_settings, info);
-    std::ranges::for_each(profile.per_file_settings, [&info](auto &sets) { apply_plugin_info(sets, info); });
+    std::ranges::for_each(profile.per_file_settings,
+                          [&info](auto &per_file_sets) { apply_plugin_info(per_file_sets, info); });
 }
 
 // TODO: use std::chrono (GCC 13.1) instead of QDateTime
@@ -143,7 +144,7 @@ void Manager::run_optimization()
             auto path         = file.relative_path;
             auto path_for_log = btu::common::as_ascii_string(path.u8string());
 
-            PLOG_INFO << fmt::format("Processing file {}", path_for_log);
+            PLOG_VERBOSE << fmt::format("Processing file {}", path_for_log);
 
             auto ret = process_file(std::move(file), settings_);
 

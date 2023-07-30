@@ -150,8 +150,7 @@ MainWindow::MainWindow()
 {
     ui_->setupUi(this);
 
-    // TODO: remove that
-    ui_->inputDirTextEdit->setText("/home/edgar/Downloads/Immersive Weapons-27644-1-5");
+    run_gui_selector();
 
     module_display_.set_tab_widget(ui_->tabWidget);
 
@@ -194,11 +193,7 @@ MainWindow::MainWindow()
     connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::init_process);
 
     // Menu buttons
-    connect(ui_->actionChange_level, &QAction::triggered, this, [this] {
-        auto level_selector = LevelSelector(settings_.gui);
-        settings_.gui       = level_selector.run_selection();
-        settings_to_ui(settings_, *ui_, module_display_);
-    });
+    connect(ui_->actionChange_level, &QAction::triggered, this, &MainWindow::run_gui_selector);
 
     auto url_opener = [](const char *url) { return [url] { QDesktopServices::openUrl(QUrl(url)); }; };
 
@@ -408,6 +403,13 @@ void MainWindow::end_process()
         progress_window_->end();
         progress_window_->disconnect();
     }
+}
+
+void MainWindow::run_gui_selector()
+{
+    auto level_selector = LevelSelector(settings_.gui);
+    settings_.gui       = level_selector.run_selection();
+    settings_to_ui(settings_, *ui_, module_display_);
 }
 
 void MainWindow::about() noexcept
