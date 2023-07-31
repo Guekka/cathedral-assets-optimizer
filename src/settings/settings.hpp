@@ -17,7 +17,7 @@ struct GuiSettings
 
     bool first_run = true;
 
-    Pattern selected_pattern;
+    std::u8string selected_pattern;
 
     int gpu_index = 0;
 };
@@ -52,6 +52,9 @@ private:
 
     size_t current_profile_index_ = 0;
 };
+
+[[nodiscard]] auto current_per_file_settings(Settings &sets) noexcept -> PerFileSettings &;
+[[nodiscard]] auto current_per_file_settings(const Settings &sets) noexcept -> const PerFileSettings &;
 
 void to_json(nlohmann::json &j, const Settings &settings);
 void from_json(const nlohmann::json &j, Settings &settings);

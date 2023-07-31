@@ -26,10 +26,8 @@ public:
 
 private:
     std::unique_ptr<Ui::AdvancedBSAModule> ui_;
-    using ConnectionWrapper::connect;
 
-    using ConnectionWrapper::connectWrapper;
-    void set_ui_data(const Settings &settings) override;
+    void settings_to_ui(const Settings &settings) override;
 
     [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
 };

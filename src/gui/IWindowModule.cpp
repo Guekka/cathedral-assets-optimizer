@@ -21,7 +21,7 @@ void IWindowModule::setup(const Settings &settings)
     }
     this->setEnabled(true);
 
-    set_ui_data(settings);
+    settings_to_ui(settings);
 }
 
 } // namespace cao

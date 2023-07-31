@@ -17,6 +17,13 @@ class AdvancedMeshesModule : public IWindowModule
     Q_OBJECT
 public:
     explicit AdvancedMeshesModule(QWidget *parent = nullptr);
+
+    AdvancedMeshesModule(const AdvancedMeshesModule &)                     = delete;
+    auto operator=(const AdvancedMeshesModule &) -> AdvancedMeshesModule & = delete;
+
+    AdvancedMeshesModule(AdvancedMeshesModule &&)                     = delete;
+    auto operator=(AdvancedMeshesModule &&) -> AdvancedMeshesModule & = delete;
+
     ~AdvancedMeshesModule() override;
 
     [[nodiscard]] auto name() const noexcept -> QString override;
@@ -26,10 +33,7 @@ public:
 private:
     std::unique_ptr<Ui::AdvancedMeshesModule> ui_;
 
-    void set_ui_data(const Settings &settings) override;
+    void settings_to_ui(const Settings &settings) override;
     [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
-
-    using ConnectionWrapper::connect;
-    using ConnectionWrapper::connectWrapper;
 };
 } // namespace cao

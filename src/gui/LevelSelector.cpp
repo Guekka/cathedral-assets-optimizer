@@ -5,12 +5,6 @@
 
 #include "LevelSelector.hpp"
 
-#include "MainWindow.hpp"
-#include "gui/AdvancedAnimationsModule.hpp"
-#include "gui/AdvancedBSAModule.hpp"
-#include "gui/AdvancedMeshesModule.hpp"
-#include "gui/AdvancedTexturesModule.hpp"
-#include "gui/IntermediateModeModule.hpp"
 #include "ui_LevelSelector.h"
 
 namespace cao {

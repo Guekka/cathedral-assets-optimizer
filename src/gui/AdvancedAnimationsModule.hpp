@@ -29,11 +29,8 @@ public:
 private:
     std::unique_ptr<Ui::AdvancedAnimationsModule> ui_;
 
-    void set_ui_data(const Settings &settings) override;
+    void settings_to_ui(const Settings &settings) override;
 
     [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
-
-    using ConnectionWrapper::connect;
-    using ConnectionWrapper::connectWrapper;
 };
 } // namespace cao

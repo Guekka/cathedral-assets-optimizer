@@ -18,23 +18,38 @@ AdvancedBSAModule::AdvancedBSAModule(QWidget *parent)
 {
     ui_->setupUi(this);
 
-    connectGroupBox(ui_->createTexturesBSAGroupBox, ui_->maxTexturesSize);
+    connect_group_box(ui_->baseGroupBox, ui_->BSACreate, ui_->BSAExtract);
+
+    auto *button_group = new QButtonGroup(this); // NOLINT(cppcoreguidelines-owning-memory)
+    button_group->addButton(ui_->BSACreate);
+    button_group->addButton(ui_->BSAExtract);
 }
 
 AdvancedBSAModule::~AdvancedBSAModule() = default;
 
-void AdvancedBSAModule::set_ui_data(const cao::Settings &settings)
+void AdvancedBSAModule::settings_to_ui(const cao::Settings &settings)
 {
-    /* TODO
-    ui_->BSAExtract->setChecked(!gSets.bsa_create());
-    ui_->BSACreate->setChecked(gSets.bsa_create());
-    ui_->BSAProcessContent->setChecked(gSets.bsa_process_content());
-    */
+    ui_->baseGroupBox->setChecked(true);
+    switch (settings.current_profile().bsa_operation)
+    {
+        case BsaOperation::None: ui_->baseGroupBox->setChecked(false); break;
+        case BsaOperation::Create: ui_->BSACreate->setChecked(true); break;
+        case BsaOperation::Extract: ui_->BSAExtract->setChecked(true); break;
+    }
+
+    ui_->dontMakeLoaded->setChecked(!settings.current_profile().bsa_make_dummy_plugins);
 }
 
 void AdvancedBSAModule::ui_to_settings(Settings &settings) const
 {
-    // TODO
+    if (ui_->BSAExtract->isChecked())
+        settings.current_profile().bsa_operation = BsaOperation::Extract;
+    else if (ui_->BSACreate->isChecked())
+        settings.current_profile().bsa_operation = BsaOperation::Create;
+    else
+        settings.current_profile().bsa_operation = BsaOperation::None;
+
+    settings.current_profile().bsa_make_dummy_plugins = !ui_->dontMakeLoaded->isChecked();
 }
 
 auto AdvancedBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
@@ -45,7 +60,6 @@ auto AdvancedBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
         case btu::Game::TES4:
         case btu::Game::SLE:
         case btu::Game::SSE:
-
         case btu::Game::FNV:
         case btu::Game::FO4: return true;
         case btu::Game::Custom: return false;

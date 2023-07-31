@@ -9,14 +9,12 @@
 #include "AdvancedBSAModule.hpp"
 #include "AdvancedMeshesModule.hpp"
 #include "AdvancedTexturesModule.hpp"
-#include "IntermediateModeModule.hpp"
 #include "LevelSelector.hpp"
 #include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
 #include "logger.hpp"
 #include "manager.hpp"
-#include "settings/settings.hpp"
 #include "ui_MainWindow.h"
 #include "utils/utils.hpp"
 
@@ -24,7 +22,6 @@
 
 #include <QDesktopServices>
 #include <QDragEnterEvent>
-#include <QDropEvent>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QUrl>
@@ -92,7 +89,8 @@ void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) no
         }
         case GuiMode::Medium:
         {
-            modules.add_module(std::make_unique<IntermediateModeModule>());
+            modules.add_module(std::make_unique<AdvancedBSAModule>());
+            modules.add_module(std::make_unique<AdvancedTexturesModule>());
             break;
         }
         case GuiMode::Advanced:
@@ -119,8 +117,8 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
     };
 
     settings.current_profile().input_path        = ui.inputDirTextEdit->text().toStdString();
-    settings.current_profile().dry_run           = false; // TODO
-    settings.current_profile().mods_blacklist    = {};    // TODO
+    settings.current_profile().dry_run           = ui.dryRunCheckBox->isChecked();
+    settings.current_profile().mods_blacklist    = {}; // TODO
     settings.current_profile().optimization_mode = ui.modeChooserComboBox->currentData()
                                                        .value<OptimizationMode>();
     settings.current_profile().target_game = btu::Game::SSE; // TODO
@@ -347,7 +345,7 @@ void MainWindow::updatePatterns()
 void MainWindow::init_process()
 {
     auto settings = settings_;
-    ui_to_settings(*ui_, settings);
+    ui_to_settings(*ui_, module_display_, settings);
 
     // TODO: remove this
     settings                              = Settings::make_base();

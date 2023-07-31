@@ -171,6 +171,7 @@ void Manager::run_optimization()
             {
                 case btu::modmanager::ModFolder::ArchiveTooLargeState::BeforeProcessing:
                 {
+                    // FIXME: this is likely broken as the archive is still open when this is called
                     PLOG_ERROR << fmt::format("Found archive {} that is too large", archive_path.string());
                     rename_bad_file(archive_path);
                     break;

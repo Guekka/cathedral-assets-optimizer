@@ -39,9 +39,6 @@ set(SOURCES
         ${SOURCE_DIR}/gui/ModuleDisplay.cpp
         ${SOURCE_DIR}/gui/ModuleDisplay.hpp
 
-        ${SOURCE_DIR}/gui/IntermediateModeModule.cpp
-        ${SOURCE_DIR}/gui/IntermediateModeModule.hpp
-        ${SOURCE_DIR}/gui/IntermediateModeModule.ui
         ${SOURCE_DIR}/gui/AdvancedAnimationsModule.cpp
         ${SOURCE_DIR}/gui/AdvancedAnimationsModule.hpp
         ${SOURCE_DIR}/gui/AdvancedAnimationsModule.ui
@@ -65,8 +62,7 @@ set(SOURCES
         ${SOURCE_DIR}/gui/SelectGPUWindow.ui
         ${SOURCE_DIR}/gui/IWindowModule.hpp
         ${SOURCE_DIR}/gui/IWindowModule.cpp
-        ${SOURCE_DIR}/gui/utils/utils.hpp
-        ${SOURCE_DIR}/gui/utils/ConnectionWrapper.hpp)
+        ${SOURCE_DIR}/gui/utils/utils.hpp)
 
 set(TS_FILES
         ${DATA_DIR}/translations/AssetsOpt_de.ts
@@ -115,6 +111,6 @@ add_executable(Cathedral_Assets_Optimizer WIN32
         ${SOURCE_DIR}/main.cpp
         ${DATA_DIR}/styles/Cathedral_Assets_Optimizer.rc
         ${DATA_DIR}/styles/qdarkstyle/style.qrc
-        )
+)
 
 target_link_libraries(Cathedral_Assets_Optimizer PUBLIC CAO_LIB)

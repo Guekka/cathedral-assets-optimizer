@@ -80,19 +80,30 @@ private:
     std::variant<std::u8string, Regex> pattern_;
 };
 
-const auto k_default_pattern = Pattern{u8"*"};
+const auto k_default_pattern = Pattern{u8"*"}; // NOLINT(cert-err58-cpp)
+
+enum class OptimizeType
+{
+    None,
+    Normal,
+    Forced,
+};
 
 struct PerFileSettings
 {
-    btu::tex::Settings tex              = btu::tex::Settings::get(btu::Game::SSE);
-    btu::nif::Settings nif              = btu::nif::Settings::get(btu::Game::SSE);
+    OptimizeType tex_optimize = OptimizeType::Normal;
+    btu::tex::Settings tex    = btu::tex::Settings::get(btu::Game::SSE);
+
+    OptimizeType nif_optimize = OptimizeType::Normal;
+    btu::nif::Settings nif    = btu::nif::Settings::get(btu::Game::SSE);
+
     std::optional<btu::Game> hkx_target = btu::Game::SSE;
 
-    std::vector<Pattern> patterns = {k_default_pattern};
+    Pattern pattern = k_default_pattern;
 
     [[nodiscard]] inline auto matches(const std::filesystem::path &path) const noexcept -> bool
     {
-        return std::ranges::any_of(patterns, [&path](const auto &pattern) { return pattern.matches(path); });
+        return pattern.matches(path);
     }
 
     [[nodiscard]] static auto make_base(btu::Game game) noexcept -> PerFileSettings
@@ -103,7 +114,7 @@ struct PerFileSettings
             .hkx_target = game,
         };
 
-        settings.patterns = {k_default_pattern};
+        settings.pattern = k_default_pattern;
 
         return settings;
     }

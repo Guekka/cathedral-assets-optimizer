@@ -6,13 +6,14 @@
 
 #include "settings/base_types.hpp"
 #include "settings/settings.hpp"
-#include "utils/ConnectionWrapper.hpp"
 
 #include <btu/common/games.hpp>
 
+#include <QWidget>
+
 namespace cao {
 
-class IWindowModule : public QWidget, public ConnectionWrapper
+class IWindowModule : public QWidget
 {
     Q_OBJECT
 
@@ -25,7 +26,7 @@ public:
     virtual void ui_to_settings(Settings &settings) const = 0;
 
 private:
-    virtual void set_ui_data(const Settings &settings) = 0;
+    virtual void settings_to_ui(const Settings &settings) = 0;
 
     [[nodiscard]] virtual auto is_supported_game(btu::Game game) const noexcept -> bool = 0;
 };

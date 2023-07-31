@@ -29,12 +29,9 @@ public:
 
 private:
     std::unique_ptr<Ui::AdvancedTexturesModule> ui_;
-    std::unique_ptr<ListDialog> textureFormatDialog_;
+    std::unique_ptr<ListDialog> texture_format_dialog_;
 
-    void set_ui_data(const Settings &settings) override;
+    void settings_to_ui(const Settings &settings) override;
     [[nodiscard]] auto is_supported_game(btu::Game game) const noexcept -> bool override;
-
-    using ConnectionWrapper::connect;
-    using ConnectionWrapper::connectWrapper;
 };
 } // namespace cao

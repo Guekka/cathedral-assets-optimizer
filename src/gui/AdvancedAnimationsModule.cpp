@@ -19,19 +19,25 @@ AdvancedAnimationsModule::AdvancedAnimationsModule(QWidget *parent)
 
 AdvancedAnimationsModule::~AdvancedAnimationsModule() = default;
 
-void AdvancedAnimationsModule::set_ui_data(const Settings &settings)
+void AdvancedAnimationsModule::settings_to_ui(const Settings &settings)
 {
-    /* TODO
-     connectWrapper(*ui_->necessaryOpt, pSets.bAnimationsOptimization);
-     */
+    const auto &pfs = current_per_file_settings(settings);
+    ui_->necessaryOpt->setChecked(pfs.hkx_target.has_value());
 }
 
 void AdvancedAnimationsModule::ui_to_settings(Settings &settings) const
 {
-    // TODO
+    // We have basically nothing to do here. The only thing we need to do is to set the hkx_target
+    // If we are here, we already know that the game is supported
+
+    auto &hkx_target = current_per_file_settings(settings).hkx_target;
+
+    hkx_target = std::nullopt;
+    if (ui_->necessaryOpt->isChecked())
+        hkx_target = settings.current_profile().target_game;
 }
 
-bool AdvancedAnimationsModule::is_supported_game(btu::Game game) const noexcept
+auto AdvancedAnimationsModule::is_supported_game(btu::Game game) const noexcept -> bool
 {
     return game == btu::Game::SSE || game == btu::Game::SLE;
 }

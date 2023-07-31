@@ -118,4 +118,28 @@ void to_json(nlohmann::json &j, const Settings &settings)
     // TODO
 }
 
+auto current_per_file_settings(Settings &sets) noexcept -> PerFileSettings &
+{
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+    return const_cast<PerFileSettings &>(current_per_file_settings(std::as_const(sets)));
+}
+
+auto current_per_file_settings(const Settings &sets) noexcept -> const PerFileSettings &
+{
+    const auto &profile          = sets.current_profile();
+    const auto &selected_pattern = sets.gui.selected_pattern;
+
+    if (profile.base_per_file_settings.pattern.text() == selected_pattern)
+        return profile.base_per_file_settings;
+
+    auto it = std::ranges::find_if(profile.per_file_settings, [&selected_pattern](const auto &pfs) {
+        return pfs.pattern.text() == selected_pattern;
+    });
+
+    if (it != profile.per_file_settings.end())
+        return *it;
+
+    return profile.base_per_file_settings;
+}
+
 } // namespace cao

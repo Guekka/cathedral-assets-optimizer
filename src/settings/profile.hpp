@@ -11,11 +11,17 @@
 #include <btu/common/path.hpp>
 
 namespace cao {
+enum class BsaOperation
+{
+    None,
+    Create,
+    Extract,
+};
+
 class Profile
 {
 public:
-    bool bsa_create             = false;
-    bool bsa_extract            = false;
+    BsaOperation bsa_operation  = BsaOperation::None;
     bool bsa_make_dummy_plugins = false;
 
     bool dry_run = false; // TODO: implement
@@ -44,7 +50,6 @@ public:
     [[nodiscard]] static inline auto make_base(btu::Game game) noexcept -> Profile
     {
         Profile profile;
-        profile.is_base_profile        = true;
         profile.target_game            = game;
         profile.base_per_file_settings = PerFileSettings::make_base(game);
 

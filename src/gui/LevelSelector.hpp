@@ -16,7 +16,6 @@ class LevelSelector;
 }
 
 namespace cao {
-class IWindowModule;
 
 class LevelSelector : private QDialog
 {

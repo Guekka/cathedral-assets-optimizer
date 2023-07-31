@@ -48,7 +48,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <kerning>true</kerning>
          </font>
@@ -89,28 +88,6 @@
         </property>
         <property name="text">
          <string>Extensive</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="advancedGroupBox">
-     <property name="title">
-      <string>Advanced</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
-      <item>
-       <widget class="QCheckBox" name="ignoreHeadpartsCheckBox">
-        <property name="cursor">
-         <cursorShape>WhatsThisCursor</cursorShape>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, headparts are ignored. It is recommended to enable this option when processing already converted mods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Ignore headparts</string>
         </property>
        </widget>
       </item>

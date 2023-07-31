@@ -19,140 +19,134 @@ namespace cao {
 AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
     : IWindowModule(parent)
     , ui_(std::make_unique<Ui::AdvancedTexturesModule>())
-    , textureFormatDialog_(std::make_unique<ListDialog>(ListDialog::doSortByText))
+    , texture_format_dialog_(std::make_unique<ListDialog>(ListDialog::doSortByText))
 {
     ui_->setupUi(this);
 
-    connectGroupBox(ui_->mainBox,
-                    ui_->mainNecessary,
-                    ui_->mainCompress,
-                    ui_->mainMipMaps,
-                    ui_->mainAlphaLandscape);
+    connect_group_box(ui_->mainBox, ui_->mainCompress, ui_->mainMipMaps);
 
-    connectGroupBox(ui_->resizingBox,
-                    ui_->resizingMode,
-                    ui_->resizingMinimumCheckBox,
-                    ui_->resizingMinimumWidth,
-                    ui_->resizingMinimumHeight,
-                    ui_->resizingWidth,
-                    ui_->resizingHeight);
+    connect_group_box(ui_->resizingBox,
+                      ui_->resizingMode,
+                      ui_->resizingMinimumCheckBox,
+                      ui_->resizingMinimumWidth,
+                      ui_->resizingMinimumHeight,
+                      ui_->resizingWidth,
+                      ui_->resizingHeight);
 
     set_data(*ui_->resizingMode, "By ratio", TextureResizingMode::ByRatio);
     set_data(*ui_->resizingMode, "By fixed size", TextureResizingMode::BySize);
 
-    set_data(*ui_->outputFormat, "BC7 (BC7_UNORM)", DXGI_FORMAT_BC7_UNORM);
-    set_data(*ui_->outputFormat, "BC5 (BC5_UNORM)", DXGI_FORMAT_BC5_UNORM);
-    set_data(*ui_->outputFormat, "BC3 (BC3_UNORM)", DXGI_FORMAT_BC3_UNORM);
-    set_data(*ui_->outputFormat, "BC1 (BC1_UNORM)", DXGI_FORMAT_BC1_UNORM);
-    set_data(*ui_->outputFormat, "Uncompressed (R8G8B8A8_UNORM)", DXGI_FORMAT_R8G8B8A8_UNORM);
+    // link w and h together if ratio is selected
+    connect(ui_->resizingWidth, &QSpinBox::valueChanged, [this](int value) {
+        if (ui_->resizingMode->currentData().value<TextureResizingMode>() == TextureResizingMode::ByRatio)
+            ui_->resizingHeight->setValue(value);
+    });
+    connect(ui_->resizingHeight, &QSpinBox::valueChanged, [this](int value) {
+        if (ui_->resizingMode->currentData().value<TextureResizingMode>() == TextureResizingMode::ByRatio)
+            ui_->resizingWidth->setValue(value);
+    });
 
-    //Init unwanted formats
-    textureFormatDialog_->setUserAddItemVisible(false);
+    const auto force_pow2 = [](QSpinBox *box) {
+        connect(box, &QSpinBox::editingFinished, [box] {
+            const int x   = box->value();
+            int next_pow2 = 1;
+            while (next_pow2 < x)
+                next_pow2 *= 2;
 
-    /*
-    for (const auto &value : Detail::DxgiFormats)
-    {
-        auto item = new QListWidgetItem(value.name);
-        item->setData(Qt::UserRole, value.format);
+            box->setValue(next_pow2);
+        });
+    };
 
-        textureFormatDialog_->addItem(item);
-    }
-     FIXME
-     */
+    force_pow2(ui_->resizingWidth);
+    force_pow2(ui_->resizingHeight);
+    force_pow2(ui_->resizingMinimumWidth);
+    force_pow2(ui_->resizingMinimumHeight);
+
+    // disable minimum size if not by ratio
+    const auto update_min_size = [this] {
+        const auto mode     = ui_->resizingMode->currentData().value<TextureResizingMode>();
+        const bool is_ratio = mode == TextureResizingMode::ByRatio;
+
+        ui_->resizingMinimumCheckBox->setEnabled(is_ratio);
+        if (!is_ratio)
+            ui_->resizingMinimumCheckBox->setChecked(false);
+
+        ui_->resizingMinimumWidth->setEnabled(is_ratio && ui_->resizingMinimumCheckBox->isChecked());
+        ui_->resizingMinimumHeight->setEnabled(is_ratio && ui_->resizingMinimumCheckBox->isChecked());
+    };
+
+    connect(ui_->resizingMode, &QComboBox::currentIndexChanged, update_min_size);
+    connect(ui_->resizingMinimumCheckBox, &QCheckBox::stateChanged, update_min_size);
 }
 
 AdvancedTexturesModule::~AdvancedTexturesModule() = default;
 
-QString AdvancedTexturesModule::name() const noexcept
+auto AdvancedTexturesModule::name() const noexcept -> QString
 {
     return tr("Textures (Patterns)");
 }
 
-void AdvancedTexturesModule::set_ui_data(const Settings &settings)
+void AdvancedTexturesModule::settings_to_ui(const Settings &settings)
 {
-    /* FIXME
-    ui_->mainBox->setChecked(pSets.bTexturesNecessary() || pSets.bTexturesCompress()
-                             || pSets.bTexturesMipmaps() || pSets.bTexturesLandscapeAlpha());
+    const auto &pfs = current_per_file_settings(settings);
 
-    //Resizing
-    selectData(*ui_->resizingMode, pSets.eTexturesResizingMode());
-    ui_->resizingBox->setChecked(pSets.eTexturesResizingMode() != None);
+    // Main
+    ui_->mainBox->setChecked(pfs.tex_optimize != OptimizeType::None);
+    ui_->mainCompress->setChecked(pfs.tex.compress);
+    ui_->mainMipMaps->setChecked(pfs.tex.mipmaps);
 
-    // selectData(*ui_->outputFormat, pSets.eTexturesFormat());
+    // Resizing
+    ui_->resizingBox->setChecked(true);
+    std::visit(btu::common::overload{[this](std::monostate) { ui_->resizingBox->setChecked(false); },
+                                     [this](btu::tex::util::ResizeRatio ratio) {
+                                         select_data(*ui_->resizingMode, TextureResizingMode::ByRatio);
+                                         ui_->resizingWidth->setValue(ratio.ratio);
+                                         ui_->resizingHeight->setValue(ratio.ratio);
 
-    //Unwanted formats (note: very inefficient algorithm but dataset is small)
-    const auto unwantedFormats = pSets.slTextureUnwantedFormats();
-    for (auto *item : textureFormatDialog_->items())
-    {
-
-        const auto checkState = btu::common::contains(unwantedFormats, item->data(Qt::UserRole).value<DXGI_FORMAT>())
-                                    ? Qt::Checked
-                                    : Qt::Unchecked;
-
-
-
-        //         item->setCheckState(checkState);
-    }
-
-     //Base
-// connectWrapper(*ui_->mainNecessary, pSets.bTexturesNecessary);
-// connectWrapper(*ui_->mainCompress, pSets.bTexturesCompress);
-// connectWrapper(*ui_->mainMipMaps, pSets.bTexturesMipmaps);
-// connectWrapper(*ui_->mainAlphaLandscape, pSets.bTexturesLandscapeAlpha);
-
-//Resizing
-const auto update_resize_mode = [&pSets, this](int index) {
-const auto data = ui_->resizingBox->isChecked()
-                     ? ui_->resizingMode->itemData(index).value<TextureResizingMode>()
-                     : None;
-//pSets. = data; FIXME
-};
-
-connect(ui_->resizingMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, update_resize_mode);
-
-connect(ui_->resizingBox, &QGroupBox::toggled, this, [this, update_resize_mode]() {
-update_resize_mode(ui_->resizingMode->currentIndex());
-});
-
-// connectWrapper(*ui_->resizingWidth, pSets.iTexturesResizingWidth);
-// connectWrapper(*ui_->resizingHeight, pSets.iTexturesResizingHeight);
-
-// connectWrapper(*ui_->resizingMinimumCheckBox, pSets.bTexturesResizeMinimum);
-// connectWrapper(*ui_->resizingMinimumWidth, pSets.iTexturesMinimumWidth);
-// connectWrapper(*ui_->resizingMinimumHeight, pSets.iTexturesMinimumHeight);
-
-// connectWrapper(*ui_->forceConversion, pSets.bTexturesForceConvert);
-
-
-connect(ui_->outputFormat,
-   QOverload<int>::of(&QComboBox::currentIndexChanged),
-   &pSets.eTexturesFormat,
-   [&pSets, this](int idx) {
-       const auto data       = ui_->outputFormat->itemData(idx);
-       pSets.eTexturesFormat = data.value<DXGI_FORMAT>();
-   });
-FIXME
-
-
-    connect(ui_->texturesUnwantedFormatsEdit,
-            &QPushButton::pressed,
-            textureFormatDialog_.get(),
-            &ListDialog::open);
-
-connect(textureFormatDialog_.get(), &QDialog::finished, this, [&pSets, this] {
-pSets.slTextureUnwantedFormats = textureFormatDialog_->getChoices() | rx::transform([](auto *item) {
-                                    return item->data(Qt::UserRole).template value<DXGI_FORMAT>();
-                                })
-                                | rx::to_vector();
-});
-FIXME
-
-    */
+                                         ui_->resizingMinimumWidth->setValue(static_cast<int>(ratio.min.w));
+                                         ui_->resizingMinimumHeight->setValue(static_cast<int>(ratio.min.h));
+                                     },
+                                     [this](btu::tex::Dimension) {
+                                         select_data(*ui_->resizingMode, TextureResizingMode::BySize);
+                                     }},
+               pfs.tex.resize);
 }
 
-void AdvancedTexturesModule::ui_to_settings(Settings &settings) const {}
+void AdvancedTexturesModule::ui_to_settings(Settings &settings) const
+{
+    auto &pfs = current_per_file_settings(settings);
 
-auto AdvancedTexturesModule::is_supported_game(btu::Game game) const noexcept -> bool
+    // Main
+    pfs.tex_optimize = ui_->mainBox->isChecked() ? OptimizeType::Normal : OptimizeType::None;
+    pfs.tex.compress = ui_->mainCompress->isChecked();
+    pfs.tex.mipmaps  = ui_->mainMipMaps->isChecked();
+
+    // Resizing
+    pfs.tex.resize = std::monostate{};
+    if (ui_->resizingBox->isChecked())
+    {
+        switch (ui_->resizingMode->currentData().value<TextureResizingMode>())
+        {
+            case TextureResizingMode::ByRatio:
+                pfs.tex.resize = btu::tex::util::ResizeRatio{
+                    .ratio = static_cast<uint8_t>(ui_->resizingWidth->value()),
+                    .min   = ui_->resizingMinimumCheckBox->isChecked()
+                                 ? btu::tex::Dimension{static_cast<size_t>(ui_->resizingMinimumWidth->value()),
+                                                     static_cast<size_t>(ui_->resizingMinimumHeight->value())}
+                                 : btu::tex::Dimension{0, 0}};
+                break;
+
+            case TextureResizingMode::BySize:
+                pfs.tex.resize = btu::tex::Dimension{.w = static_cast<size_t>(ui_->resizingWidth->value()),
+                                                     .h = static_cast<size_t>(ui_->resizingHeight->value())};
+                break;
+
+            case TextureResizingMode::None: break;
+        }
+    }
+}
+
+auto AdvancedTexturesModule::is_supported_game(btu::Game /*game*/) const noexcept -> bool
 {
     return true; // even if the game is not supported, the module is probably still useful
 }
