@@ -110,18 +110,25 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
 }
 
 [[nodiscard]] auto process_mesh(btu::modmanager::ModFolder::ModFile &&file,
-                                const btu::nif::Settings &settings) noexcept
+                                const btu::nif::Settings &settings,
+                                const OptimizeType type) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
+    if (type == OptimizeType::None)
+        return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
+
     return btu::nif::load(std::move(file.relative_path), file.content)
         .and_then([&](auto &&nif) -> tl::expected<btu::nif::Mesh, btu::common::Error> {
-            const auto steps = btu::nif::compute_optimization_steps(nif, settings);
+            auto steps = btu::nif::compute_optimization_steps(nif, settings);
 
             if (steps_are_empty(steps))
             {
                 PLOG_INFO << "No work required";
                 return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
             }
+
+            if (type == OptimizeType::Forced)
+                steps.format = std::optional(settings.game); // force conversion
 
             log_steps(steps);
             return btu::nif::optimize(BTU_FWD(nif), steps);
@@ -130,21 +137,28 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
 }
 
 [[nodiscard]] auto process_texture(btu::modmanager::ModFolder::ModFile &&file,
-                                   const btu::tex::Settings &settings) noexcept
+                                   const btu::tex::Settings &settings,
+                                   const OptimizeType type) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
     static auto thread_local compression_device = btu::tex::CompressionDevice::make(
         0); // TODO: make this configurable
 
+    if (type == OptimizeType::None)
+        return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
+
     return btu::tex::load(std::move(file.relative_path), file.content)
         .and_then([&](auto &&tex) -> tl::expected<btu::tex::Texture, btu::common::Error> {
-            const auto steps = btu::tex::compute_optimization_steps(tex, settings);
+            auto steps = btu::tex::compute_optimization_steps(tex, settings);
 
             if (steps_are_empty(steps))
             {
                 PLOG_INFO << "No work required";
                 return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
             }
+
+            if (type == OptimizeType::Forced)
+                steps.convert = true;
 
             log_steps(steps);
             return btu::tex::optimize(BTU_FWD(tex), steps, compression_device);
@@ -178,8 +192,9 @@ auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &se
 
     switch (type.value())
     {
-        case FileType::Mesh: return process_mesh(std::move(file), file_sets.nif);
-        case FileType::Texture: return process_texture(std::move(file), file_sets.tex);
+        case FileType::Mesh: return process_mesh(std::move(file), file_sets.nif, file_sets.nif_optimize);
+        case FileType::Texture:
+            return process_texture(std::move(file), file_sets.tex, file_sets.tex_optimize);
         case FileType::Animation: return process_animation(std::move(file), file_sets.hkx_target);
     }
     assert(false && "process_file: unreachable");
