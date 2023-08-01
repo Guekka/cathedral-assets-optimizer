@@ -14,12 +14,18 @@ namespace cao {
 
 void Settings::create_profile(const std::u8string &profile_name)
 {
-    // TODO
+    if (find_profile(profile_name))
+        return;
+
+    profiles_.emplace_back(profile_name, Profile::make_base(current_profile().target_game));
 }
 
 void Settings::create_profile_from_base(const std::u8string &profile_name, const Profile &base_profile)
 {
-    // TODO
+    if (find_profile(profile_name))
+        return;
+
+    profiles_.emplace_back(profile_name, base_profile);
 }
 
 auto Settings::current_profile() const noexcept -> const Profile &
@@ -34,17 +40,33 @@ auto Settings::current_profile() noexcept -> Profile &
 
 void Settings::remove(size_t index) noexcept
 {
-    // TODO
+    if (index >= profiles_.size())
+        return;
+
+    profiles_.erase(profiles_.begin() + index);
+    if (index < current_profile_index_)
+        current_profile_index_ -= 1;
+    else if (index == current_profile_index_)
+        current_profile_index_ = 0;
 }
 
 auto Settings::find_profile(std::u8string_view profile_name) const noexcept -> std::optional<size_t>
 {
-    return 0; // TODO
+    auto it = std::ranges::find_if(profiles_,
+                                   [profile_name](const auto &p) { return p.first == profile_name; });
+    if (it == profiles_.end())
+        return std::nullopt;
+
+    return std::distance(profiles_.begin(), it);
 }
 
 auto Settings::set_current_profile(size_t index) noexcept -> bool
 {
-    return false; // TODO
+    if (index >= profiles_.size())
+        return false;
+
+    current_profile_index_ = index;
+    return true;
 }
 
 auto Settings::make_base() noexcept -> Settings
@@ -99,7 +121,8 @@ auto Settings::list_profiles() const noexcept -> std::vector<std::u8string_view>
 auto load_settings() -> Settings
 {
     const auto settings_file = Settings::config_directory() / "settings.json";
-    return json::read_from_file<Settings>(settings_file);
+    // TODO return json::read_from_file<Settings>(settings_file);
+    return Settings::make_base();
 }
 
 auto save_settings(const Settings &settings) -> bool
