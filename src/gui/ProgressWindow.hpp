@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QMetaType>
 #include <QProgressDialog>
+#include <QTimer>
 #include <QWidget>
 
 class QCloseEvent;
@@ -78,11 +79,16 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
+    int current_value_{0};
+    std::optional<QString> last_text_;
+    QTimer timer_;
+
     LogReader log_reader_;
+    std::unique_ptr<Ui::ProgressWindow> ui_;
+
+    void update_all();
 
     void update_progress_bar(const QString &text, int max, int value);
     void update_log(plog::Severity log_severity);
-
-    std::unique_ptr<Ui::ProgressWindow> ui_;
 };
 } // namespace cao

@@ -129,16 +129,16 @@ ProgressWindow::~ProgressWindow() = default;
 void ProgressWindow::set_maximum(int max)
 {
     ui_->progressBar->setMaximum(max);
+
+    timer_.setSingleShot(false);
+    timer_.start(1000);
+    connect(&timer_, &QTimer::timeout, this, &ProgressWindow::update_all);
 }
 
 void ProgressWindow::step(std::optional<QString> text)
 {
-    if (text)
-        update_progress_bar(*text, ui_->progressBar->maximum(), ui_->progressBar->value() + 1);
-    else
-        ui_->progressBar->setValue(ui_->progressBar->value() + 1);
-
-    update_log(ui_->logLevel->itemData(ui_->logLevel->currentIndex()).value<plog::Severity>());
+    current_value_++;
+    last_text_ = std::move(text);
 }
 
 void ProgressWindow::end()
@@ -146,6 +146,16 @@ void ProgressWindow::end()
     auto &progress_bar = ui_->progressBar;
     progress_bar->setValue(progress_bar->maximum());
     progress_bar->setFormat(tr("Done"));
+}
+
+void ProgressWindow::update_all()
+{
+    if (last_text_)
+        update_progress_bar(*last_text_, ui_->progressBar->maximum(), current_value_);
+    else
+        ui_->progressBar->setValue(current_value_);
+
+    update_log(ui_->logLevel->itemData(ui_->logLevel->currentIndex()).value<plog::Severity>());
 }
 
 void ProgressWindow::update_progress_bar(const QString &text, int max, int value)
@@ -189,7 +199,7 @@ void ProgressWindow::update_log(plog::Severity log_severity)
         item->setHidden(hide);
     }
 
-    constexpr int max_log_entries = 2000;
+    constexpr int max_log_entries = 500;
     if (ui_->log->count() > max_log_entries)
     {
         auto *model = ui_->log->model();
