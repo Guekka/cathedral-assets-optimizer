@@ -29,6 +29,10 @@
                 ninja
                 gcc
                 vcpkg
+
+                # profiling
+                linuxPackages_latest.perf
+
                 qt6.qtbase
                 qt6.qttools
                 qt6.wrapQtAppsHook
