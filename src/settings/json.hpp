@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <btu/tex/detail/formats_string.hpp> // TODO: make this header public
 #include <nlohmann/json.hpp>
 
 #include <fstream>

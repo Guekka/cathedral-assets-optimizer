@@ -17,7 +17,7 @@ void Settings::create_profile(std::u8string profile_name, Profile base_profile) 
     if (get_profile(profile_name))
         return;
 
-    profiles_.emplace_back(profile_name, Profile::make_base(current_profile().target_game));
+    profiles_.emplace_back(std::move(profile_name), std::move(base_profile));
 }
 
 auto Settings::current_profile() const noexcept -> const Profile &
@@ -122,25 +122,21 @@ auto Settings::list_profiles() const noexcept -> std::vector<std::u8string_view>
 
 auto load_settings() -> Settings
 {
-    const auto settings_file = Settings::config_directory() / "settings.json";
-    // TODO return json::read_from_file<Settings>(settings_file);
-    return Settings::make_base();
+    try
+    {
+        const auto settings_file = Settings::config_directory() / "settings.json";
+        return json::read_from_file<Settings>(settings_file);
+    }
+    catch (const std::exception &)
+    {
+        return Settings::make_base();
+    }
 }
 
 auto save_settings(const Settings &settings) -> bool
 {
     const auto settings_file = Settings::config_directory() / "settings.json";
     return json::save_to_file(settings, settings_file);
-}
-
-void from_json(const nlohmann::json &j, Settings &settings)
-{
-    // TODO
-}
-
-void to_json(nlohmann::json &j, const Settings &settings)
-{
-    // TODO
 }
 
 auto current_per_file_settings(Settings &sets) noexcept -> PerFileSettings &

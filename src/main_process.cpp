@@ -12,7 +12,6 @@
 #include <btu/nif/detail/common.hpp>
 #include <btu/nif/mesh.hpp>
 #include <btu/nif/optimize.hpp>
-#include <btu/tex/detail/formats_string.hpp> // TODO: make this header public
 #include <btu/tex/optimize.hpp>
 #include <btu/tex/texture.hpp>
 #include <fmt/core.h>

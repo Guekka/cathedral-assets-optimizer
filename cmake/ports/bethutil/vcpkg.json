@@ -15,6 +15,7 @@
     "flux",
     "mpsc-channel",
     "nifly",
+    "nlohmann-json",
     "utf8h",
     "rsm-bsa",
     "tl-expected"

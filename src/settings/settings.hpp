@@ -22,6 +22,9 @@ struct GuiSettings
     int gpu_index = 0;
 };
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+    GuiSettings, gui_theme, remember_gui_mode, gui_mode, first_run, selected_pattern, gpu_index)
+
 class Settings
 {
 public:
@@ -51,15 +54,19 @@ public:
 private:
     std::vector<std::pair<std::u8string, Profile>> profiles_;
     size_t current_profile_index_ = 0;
+
+public:
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Settings, gui, profiles_, current_profile_index_)
 };
 
 [[nodiscard]] auto current_per_file_settings(Settings &sets) noexcept -> PerFileSettings &;
 [[nodiscard]] auto current_per_file_settings(const Settings &sets) noexcept -> const PerFileSettings &;
 
-void to_json(nlohmann::json &j, const Settings &settings);
-void from_json(const nlohmann::json &j, Settings &settings);
-
 [[nodiscard]] auto save_settings(const Settings &settings) -> bool;
+
+/// @brief Loads settings from the default location.
+/// @return The loaded settings or a default-constructed Settings object if the file could not be
+/// loaded.
 [[nodiscard]] auto load_settings() -> Settings;
 
 } // namespace cao

@@ -9,6 +9,7 @@
 
 #include <btu/common/games.hpp>
 #include <btu/common/path.hpp>
+#include <nlohmann/json.hpp>
 
 namespace cao {
 enum class BsaOperation
@@ -56,5 +57,21 @@ public:
         return profile;
     }
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM(BsaOperation,
+                             {{BsaOperation::None, nullptr},
+                              {BsaOperation::Create, "create"},
+                              {BsaOperation::Extract, "extract"}})
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Profile,
+                                   bsa_operation,
+                                   bsa_make_dummy_plugins,
+                                   dry_run,
+                                   optimization_mode,
+                                   target_game,
+                                   input_path,
+                                   mods_blacklist,
+                                   base_per_file_settings,
+                                   per_file_settings)
 
 } // namespace cao

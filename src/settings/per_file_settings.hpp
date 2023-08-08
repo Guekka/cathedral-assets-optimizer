@@ -80,6 +80,16 @@ private:
     std::variant<std::u8string, Regex> pattern_;
 };
 
+[[maybe_unused]] inline void to_json(nlohmann::json &j, const Pattern &p)
+{
+    j = p.text();
+}
+
+[[maybe_unused]] inline void from_json(const nlohmann::json &j, Pattern &p)
+{
+    p = Pattern{j.get<std::u8string>()};
+}
+
 const auto k_default_pattern = Pattern{u8"*"}; // NOLINT(cert-err58-cpp)
 
 enum class OptimizeType
@@ -119,5 +129,7 @@ struct PerFileSettings
         return settings;
     }
 };
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PerFileSettings, tex_optimize, tex, nif_optimize, nif, hkx_target, pattern)
 
 } // namespace cao

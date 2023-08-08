@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <nlohmann/json.hpp>
+
 #include <QObject>
 
 namespace cao {
@@ -32,6 +34,22 @@ enum class GuiTheme
     Dark,
     Light
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM(cao::OptimizationMode,
+                             {{cao::OptimizationMode::SingleMod, "SingleMod"},
+                              {cao::OptimizationMode::SeveralMods, "SeveralMods"}})
+
+NLOHMANN_JSON_SERIALIZE_ENUM(cao::TextureResizingMode,
+                             {{cao::TextureResizingMode::None, "None"},
+                              {cao::TextureResizingMode::ByRatio, "ByRatio"},
+                              {cao::TextureResizingMode::BySize, "BySize"}})
+
+NLOHMANN_JSON_SERIALIZE_ENUM(cao::GuiMode,
+                             {{cao::GuiMode::QuickOptimize, "QuickOptimize"},
+                              {cao::GuiMode::Medium, "Medium"},
+                              {cao::GuiMode::Advanced, "Advanced"}})
+
+NLOHMANN_JSON_SERIALIZE_ENUM(cao::GuiTheme, {{cao::GuiTheme::Dark, "Dark"}, {cao::GuiTheme::Light, "Light"}})
 
 } // namespace cao
 
