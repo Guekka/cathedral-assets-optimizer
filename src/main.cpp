@@ -5,6 +5,7 @@
 
 #include "gui/LevelSelector.hpp"
 #include "gui/MainWindow.hpp"
+#include "gui/utils/utils.hpp"
 #include "logger.hpp"
 #include "manager.hpp"
 #include "settings/settings.hpp"
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
         {
             const auto profile_name = parser.positionalArguments().value(0);
 
-            auto idx = settings.find_profile(btu::common::as_utf8_string(profile_name.toStdString()));
+            auto idx = settings.find_profile(cao::to_u8string(profile_name));
             if (!idx)
                 throw std::runtime_error("Profile not found");
 

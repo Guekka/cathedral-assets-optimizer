@@ -89,29 +89,15 @@ bool select_data(QComboBox &box, const Data &data)
     return true;
 }
 
-inline bool selectText(QComboBox &box, const QString &text)
+[[nodiscard]] inline auto to_qstring(std::u8string_view u) -> QString
 {
-    int idx = box.findText(text);
-    if (idx == -1)
-        return false;
-
-    box.setCurrentIndex(idx);
-    return true;
+    return QString::fromUtf8(reinterpret_cast<const char *>(u.data()), u.size());
 }
 
-inline void setItemEnabled(QComboBox &box, int idx, bool state)
+[[nodiscard]] inline auto to_u8string(QString u) -> std::u8string
 {
-    auto *model = qobject_cast<QStandardItemModel *>(box.model());
-    auto *view  = qobject_cast<QListView *>(box.view());
-
-    if (!model || !view)
-        throw UiException("Couldn't get model / view of QComboBox");
-
-    view->setRowHidden(idx, !state);
-    QStandardItem *item = model->item(idx);
-
-    const auto flags = state ? item->flags() & ~Qt::ItemIsEnabled : item->flags() | Qt::ItemIsEnabled;
-    item->setFlags(flags);
+    auto data = u.toUtf8();
+    return {reinterpret_cast<const char8_t *>(data.constData()), static_cast<size_t>(data.size())};
 }
 
 } // namespace cao

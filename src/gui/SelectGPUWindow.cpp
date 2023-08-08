@@ -5,6 +5,8 @@
 
 #include "SelectGPUWindow.hpp"
 
+#include "gui/utils/utils.hpp"
+
 #include <btu/common/string.hpp>
 
 #include <QRadioButton>
@@ -31,7 +33,7 @@ SelectGPUWindow::SelectGPUWindow(QWidget *parent)
     for (uint i = 0; i <= last_gpu; i++)
     {
         auto *button = new QRadioButton;
-        button->setText(QString::fromStdString(btu::common::as_ascii_string(devices_[i].gpu_name())));
+        button->setText(to_qstring(devices_[i].gpu_name()));
         button->setProperty(property_key, i);
         layout->addWidget(button);
     }
