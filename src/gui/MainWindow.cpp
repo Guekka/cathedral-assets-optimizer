@@ -81,6 +81,8 @@ void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) no
     modules.clear_modules();
     set_patterns_enabled(ui, /*state=*/false);
 
+    ui.manageProfiles->setHidden(level == GuiMode::QuickOptimize);
+
     switch (level)
     {
         case GuiMode::QuickOptimize:
@@ -107,20 +109,30 @@ void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) no
 
 void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_display, Settings &settings) noexcept
 {
-    settings.gui = {
-        .gui_theme         = ui.actionEnableDarkTheme->isChecked() ? GuiTheme::Dark : GuiTheme::Light,
-        .remember_gui_mode = settings.gui.remember_gui_mode, // changed by level selector
-        .gui_mode          = settings.gui.gui_mode,
-        .first_run         = false,                         // if we are here, it's not the first run anymore
-        .selected_pattern  = settings.gui.selected_pattern, // TODO
-        .gpu_index         = settings.gui.gpu_index,        // changed by gpu selector
-    };
+    settings.gui.gui_theme = ui.actionEnableDarkTheme->isChecked() ? GuiTheme::Dark : GuiTheme::Light;
+
+    switch (settings.gui.gui_mode)
+    {
+        case GuiMode::QuickOptimize:
+        {
+            if (ui.profiles->currentText() == "SLE")
+                settings.current_profile() = Profile::make_base(btu::Game::SLE);
+            else if (ui.profiles->currentText() == "SSE")
+                settings.current_profile() = Profile::make_base(btu::Game::SSE);
+            else
+                throw UiException("Invalid profile selected");
+            break;
+        }
+        case GuiMode::Medium: break;   // TODO
+        case GuiMode::Advanced: break; // TODO
+    }
 
     settings.current_profile().input_path        = ui.inputDirTextEdit->text().toStdString();
     settings.current_profile().dry_run           = ui.dryRunCheckBox->isChecked();
     settings.current_profile().mods_blacklist    = {}; // TODO
     settings.current_profile().optimization_mode = ui.modeChooserComboBox->currentData()
                                                        .value<OptimizationMode>();
+
     settings.current_profile().target_game = btu::Game::SSE; // TODO
 
     // has to be last because may rely on GuiSettings being already filled
@@ -138,8 +150,24 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     set_gui_level(module_display, ui, settings.gui.gui_mode);
 
     ui.profiles->clear();
-    for (const auto &profile : settings.list_profiles())
-        ui.profiles->addItem(QString::fromUtf8(profile.data(), static_cast<qsizetype>(profile.size())));
+
+    switch (settings.gui.gui_mode)
+    {
+        case GuiMode::QuickOptimize:
+        {
+            ui.profiles->addItem("SLE");
+            ui.profiles->addItem("SSE");
+            break;
+        }
+        case GuiMode::Medium: [[fallthrough]];
+        case GuiMode::Advanced:
+        {
+            for (const auto &profile : settings.list_profiles())
+                ui.profiles->addItem(
+                    QString::fromUtf8(profile.data(), static_cast<qsizetype>(profile.size())));
+            break;
+        }
+    }
 }
 
 void first_start(bool &first_run) noexcept
@@ -189,6 +217,21 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         settings_to_ui(settings_, *ui_, module_display_);
     });
 
+    connect(ui_->userPathButton, &QPushButton::pressed, this, [this] {
+        const auto &current_path = settings_.current_profile().input_path;
+
+        const QString dir = QFileDialog::getExistingDirectory(this,
+                                                              tr("Open Directory"),
+                                                              to_qstring(current_path.u8string()),
+                                                              QFileDialog::ShowDirsOnly
+                                                                  | QFileDialog::DontResolveSymlinks);
+
+        if (dir.isEmpty())
+            return;
+
+        ui_->inputDirTextEdit->setText(dir);
+    });
+
     auto &common_settings = settings_.gui;
     ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
     set_theme(common_settings.gui_theme);
@@ -200,8 +243,8 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         set_theme(theme);
     });
 
-    connect(ui_->profiles, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
-        if (!settings_.set_current_profile(idx))
+    connect(ui_->profiles, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+        if (!settings_.set_current_profile(to_u8string(text)))
             return; // TODO: error message
         // TODO
     });
@@ -254,22 +297,6 @@ void MainWindow::connectThis()
         }
     });
 
-    connect(ui_->userPathButton, &QPushButton::pressed, this, [&generalSettings, this] {
-        const QString &currentPath = generalSettings.sInputPath.value_or(QDir::currentPath());
-
-        const QString &dir = QFileDialog::getExistingDirectory(this,
-                                                               tr("Open Directory"),
-                                                               currentPath,
-                                                               QFileDialog::ShowDirsOnly
-                                                                   | QFileDialog::DontResolveSymlinks);
-
-        if (dir.isEmpty())
-            return;
-
-        generalSettings.sInputPath = dir;
-        ui_->inputDirTextEdit->setText(dir);
-    });
-
     selectText(*ui_->patterns, generalSettings.sCurrentPattern.value_or("*"));
     connect(ui_->patterns,
             QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -317,32 +344,7 @@ void MainWindow::connectThis()
      FIXME
 
 }
-
-void MainWindow::updateProfiles()
-{
-    auto *profiles              = ui_->Settings;
-    const QString &previousText = profiles->currentText();
-
-    {
-        QSignalBlocker blocker(profiles);
-        ProfilesManagerWindow(getProfiles()).updateProfiles(*profiles);
-    }
-    selectText(*profiles, previousText);
-    reconnectThis();
-}
-
-void MainWindow::updatePatterns()
-{
-    auto *patterns              = ui_->patterns;
-    const QString &previousText = patterns->currentText();
-
-    {
-        QSignalBlocker blocker(patterns);
-        PatternsManagerWindow(currentProfile()).updatePatterns(*ui_->patterns);
-    }
-    selectText(*patterns, previousText);
-    reconnectThis();
-}*/
+*/
 
 void MainWindow::init_process()
 {

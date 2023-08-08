@@ -78,10 +78,21 @@ int find_data(const QComboBox &box, const Data &data)
     return -1;
 };
 
+// TODO use exceptions
 template<typename Data>
 bool select_data(QComboBox &box, const Data &data)
 {
     int idx = box.findData(QVariant::fromValue(data));
+    if (idx == -1)
+        return false;
+
+    box.setCurrentIndex(idx);
+    return true;
+}
+
+inline bool select_text(QComboBox &box, const QString &text)
+{
+    int idx = box.findText(text, Qt::MatchFlag::MatchExactly);
     if (idx == -1)
         return false;
 

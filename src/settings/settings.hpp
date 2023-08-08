@@ -25,18 +25,19 @@ struct GuiSettings
 class Settings
 {
 public:
-    void create_profile(const std::u8string &profile_name);
-    void create_profile_from_base(const std::u8string &profile_name, const Profile &base_profile);
+    void create_profile(std::u8string profile_name, Profile base_profile) noexcept;
 
     [[nodiscard]] auto current_profile() const noexcept -> const Profile &;
     [[nodiscard]] auto current_profile() noexcept -> Profile &;
 
-    [[nodiscard]] auto set_current_profile(size_t index) noexcept -> bool;
+    [[nodiscard]] auto current_profile_name() const noexcept -> std::u8string_view;
+
+    [[nodiscard]] auto set_current_profile(std::u8string_view profile) noexcept -> bool;
+    [[nodiscard]] auto get_profile(std::u8string_view profile_name) const noexcept -> std::optional<Profile>;
 
     [[nodiscard]] auto list_profiles() const noexcept -> std::vector<std::u8string_view>;
-    [[nodiscard]] auto find_profile(std::u8string_view profile_name) const noexcept -> std::optional<size_t>;
 
-    void remove(size_t index) noexcept;
+    void remove(std::u8string_view profile) noexcept;
 
     [[nodiscard]] static auto make_base() noexcept -> Settings;
 
@@ -49,7 +50,6 @@ public:
 
 private:
     std::vector<std::pair<std::u8string, Profile>> profiles_;
-
     size_t current_profile_index_ = 0;
 };
 

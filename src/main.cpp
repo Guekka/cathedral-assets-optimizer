@@ -91,8 +91,8 @@ int main(int argc, char *argv[])
         {
             const auto profile_name = parser.positionalArguments().value(0);
 
-            auto idx = settings.find_profile(cao::to_u8string(profile_name));
-            if (!idx)
+            auto profile = settings.get_profile(cao::to_u8string(profile_name));
+            if (!profile)
                 throw std::runtime_error("Profile not found");
 
             cao::Manager manager(settings);

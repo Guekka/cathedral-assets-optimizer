@@ -20,30 +20,32 @@ class QComboBox;
 
 namespace cao {
 class Settings;
+
+// TODO: add export/import profiles
 class ProfilesManagerWindow : public QDialog
 {
     Q_DECLARE_TR_FUNCTIONS(ProfilesManagerWindow)
 
 public:
     explicit ProfilesManagerWindow(Settings &profiles, QWidget *parent = nullptr);
-    ~ProfilesManagerWindow(); // = default
 
-    QString getSelectedProfile();
-    void setEnabledProfile(const QString &name);
-    void setAllowedGames(const std::vector<btu::Game> &games);
+    ProfilesManagerWindow(const ProfilesManagerWindow &)                     = delete;
+    auto operator=(const ProfilesManagerWindow &) -> ProfilesManagerWindow & = delete;
 
-    void updateProfiles(QComboBox &box);
+    ProfilesManagerWindow(ProfilesManagerWindow &&)                     = delete;
+    auto operator=(ProfilesManagerWindow &&) -> ProfilesManagerWindow & = delete;
+
+    ~ProfilesManagerWindow() override; // = default
 
 private:
-    Settings &profiles;
+    Settings &profiles_;
     std::unique_ptr<Ui::ProfilesManagerWindow> ui_;
+    void create_profile();
 
-    void createProfile();
-    void setProfile(const QString &name);
+    void delete_current_profile();
 
-    void deleteCurrentProfile();
-    void renameCurrentProfile();
+    void rename_current_profile();
 
-    void selectRightGame(const QString &profileName);
+    void update_profiles(QComboBox &box);
 };
 } // namespace cao
