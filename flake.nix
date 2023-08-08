@@ -39,7 +39,7 @@
               ];
 
               shellHook = ''
-                export VCPKG_INSTALLATION_ROOT=$(vcpkg --root-for-nix-usage)
+                export VCPKG_ROOT="$HOME/.local/share/vcpkg/root"
 
                 # set required environment variables for Qt
                 setQtEnvironment=$(mktemp --suffix .setQtEnvironment.sh)
