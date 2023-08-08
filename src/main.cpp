@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            auto window = cao::MainWindow{};
+            auto window = cao::MainWindow{settings};
             window.show();
             return app->exec();
         }

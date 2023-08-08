@@ -162,8 +162,10 @@ void first_start(bool &first_run) noexcept
     }
 }
 
-MainWindow::MainWindow()
-    : ui_(std::make_unique<Ui::MainWindow>())
+MainWindow::MainWindow(Settings settings, QWidget *parent)
+    : QMainWindow(parent)
+    , settings_(std::move(settings))
+    , ui_(std::make_unique<Ui::MainWindow>())
 {
     ui_->setupUi(this);
     module_display_.set_tab_widget(ui_->tabWidget);

@@ -26,7 +26,7 @@ class MainWindow final : public QMainWindow
     Q_DECLARE_TR_FUNCTIONS(MainWindow)
 
 public:
-    MainWindow();
+    MainWindow(Settings settings, QWidget *parent = nullptr);
 
     MainWindow(const MainWindow &) = delete;
     MainWindow(MainWindow &&)      = delete;
