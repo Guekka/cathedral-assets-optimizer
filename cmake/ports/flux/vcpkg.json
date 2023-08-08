@@ -1,6 +1,6 @@
 {
-  "name": "libflow",
-  "version-semver": "0.0.1",
+  "name": "flux",
+  "version": "2023-08-01",
   "description": "Rust iterators",
   "homepage": "https://github.com/tcbrindle/libflow",
   "dependencies": [

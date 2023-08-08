@@ -7,7 +7,7 @@
 
 #include "json.hpp"
 
-#include <flow.hpp>
+#include <flux.hpp>
 #include <sago/platform_folders.h>
 
 namespace cao {
@@ -113,9 +113,9 @@ auto Settings::config_directory() noexcept -> std::filesystem::path
 
 auto Settings::list_profiles() const noexcept -> std::vector<std::u8string_view>
 {
-    return flow::from(profiles_)
+    return flux::ref(profiles_)
         .map([](const auto &pair) -> std::u8string_view { return pair.first; })
-        .to_vector();
+        .to<std::vector>();
 }
 
 auto load_settings() -> Settings
