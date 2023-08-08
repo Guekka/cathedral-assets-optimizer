@@ -316,7 +316,7 @@ void MainWindow::init_process()
     try
     {
         cao_process_     = std::make_unique<Manager>(settings);
-        progress_window_ = std::make_unique<ProgressWindow>(LogReader(Settings::data_directory()
+        progress_window_ = std::make_unique<ProgressWindow>(LogReader(Settings::state_directory()
                                                                       / k_log_file_name),
                                                             this);
 

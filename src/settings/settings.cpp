@@ -113,6 +113,11 @@ auto Settings::config_directory() noexcept -> std::filesystem::path
     return any_directory(&sago::getConfigHome, "config");
 }
 
+auto Settings::state_directory() noexcept -> std::filesystem::path
+{
+    return any_directory(&sago::getStateDir, "state");
+}
+
 auto Settings::list_profiles() const noexcept -> std::vector<std::u8string_view>
 {
     return flux::ref(profiles_)

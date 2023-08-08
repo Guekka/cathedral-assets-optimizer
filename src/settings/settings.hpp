@@ -48,6 +48,7 @@ public:
 
     [[nodiscard]] static auto data_directory() noexcept -> std::filesystem::path;
     [[nodiscard]] static auto config_directory() noexcept -> std::filesystem::path;
+    [[nodiscard]] static auto state_directory() noexcept -> std::filesystem::path;
 
     GuiSettings gui{};
 

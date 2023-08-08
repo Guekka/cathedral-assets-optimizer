@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        if (!cao::init_logging(cao::Settings::data_directory()))
+        if (!cao::init_logging(cao::Settings::state_directory()))
             throw std::runtime_error("Failed to initialize logging.");
 
         auto settings = cao::load_settings();
