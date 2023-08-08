@@ -168,6 +168,9 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
             break;
         }
     }
+
+    for (auto *module : module_display.get_modules())
+        module->setup(settings);
 }
 
 void first_start(bool &first_run) noexcept

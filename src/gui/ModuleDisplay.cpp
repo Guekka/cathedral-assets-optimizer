@@ -27,9 +27,15 @@ void ModuleDisplay::clear_modules()
     tab_widget_->setHidden(true);
 }
 
-auto ModuleDisplay::get_modules() const noexcept -> std::vector<const IWindowModule *>
+auto ModuleDisplay::get_modules() noexcept -> std::vector<IWindowModule *>
 {
     const auto children = tab_widget_->findChildren<IWindowModule *>();
+    return {children.begin(), children.end()};
+}
+
+auto ModuleDisplay::get_modules() const noexcept -> std::vector<const IWindowModule *>
+{
+    const auto children = tab_widget_->findChildren<const IWindowModule *>();
     return {children.begin(), children.end()};
 }
 

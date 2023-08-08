@@ -24,6 +24,7 @@ public:
     void add_module(std::unique_ptr<IWindowModule> mod);
     void clear_modules();
 
+    [[nodiscard]] auto get_modules() noexcept -> std::vector<IWindowModule *>;
     [[nodiscard]] auto get_modules() const noexcept -> std::vector<const IWindowModule *>;
 
 private:
