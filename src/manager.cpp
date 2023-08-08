@@ -9,7 +9,10 @@
 #include "main_process.hpp"
 #include "settings/settings.hpp"
 
+#include <btu/bsa/pack.hpp>
+#include <btu/bsa/plugin.hpp>
 #include <btu/bsa/settings.hpp>
+#include <btu/bsa/unpack.hpp>
 #include <btu/common/filesystem.hpp>
 #include <btu/common/string.hpp>
 #include <btu/esp/functions.hpp>
@@ -120,6 +123,55 @@ void apply_plugin_info(Settings &sets, const PluginInfo &info)
                           [&info](auto &per_file_sets) { apply_plugin_info(per_file_sets, info); });
 }
 
+void Manager::unpack_directory(const std::filesystem::path &directory_path) const
+{
+    PLOG_INFO << fmt::format("Extracting archives in {}", directory_path.string());
+
+    auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
+
+    auto dir_it  = std::filesystem::directory_iterator(directory_path);
+    auto plugins = btu::bsa::list_plugins(dir_it, {}, bsa_sets);
+
+    std::vector files(btu::fs::directory_iterator(directory_path), btu::fs::directory_iterator{});
+    erase_if(files, [](const auto &file) {
+        return !btu::common::contains(btu::bsa::k_archive_extensions, file.path().extension());
+    });
+
+    emit files_counted(files.size());
+
+    std::ranges::for_each(files, [this](const auto &path) {
+        btu::bsa::unpack(btu::bsa::UnpackSettings{
+            .file_path                = path,
+            .remove_arch              = true,
+            .overwrite_existing_files = false,
+            .root_opt                 = nullptr,
+        });
+
+        emit file_processed(path);
+    });
+}
+
+// TODO: think about deleting packed files
+void Manager::pack_directory(const std::filesystem::path &directory_path) const
+{
+    PLOG_INFO << fmt::format("Packing directory {}", directory_path.string());
+
+    auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
+
+    auto dir_it  = std::filesystem::directory_iterator(directory_path);
+    auto plugins = btu::bsa::list_plugins(dir_it, {}, bsa_sets);
+
+    btu::bsa::pack(btu::bsa::PackSettings{
+                       .input_dir     = directory_path,
+                       .game_settings = bsa_sets,
+                       .compress      = btu::bsa::Compression::Yes,
+                   })
+        .for_each([&plugins, &bsa_sets](auto &&archive) {
+            btu::bsa::FilePath name = btu::bsa::find_archive_name(plugins, bsa_sets, archive.type());
+            std::move(archive).write(name.full_path());
+        });
+}
+
 // TODO: use std::chrono (GCC 13.1) instead of QDateTime
 void Manager::run_optimization()
 {
@@ -138,6 +190,9 @@ void Manager::run_optimization()
     PLOG_INFO << "Parsing plugins...";
     auto plugin_info = get_plugin_info(mod);
     apply_plugin_info(settings_, plugin_info);
+
+    if (settings_.current_profile().bsa_operation == BsaOperation::Extract)
+        unpack_directory(mod.path());
 
     mod.transform(
         [this](btu::modmanager::ModFolder::ModFile &&file) -> std::optional<std::vector<std::byte>> {
@@ -185,6 +240,9 @@ void Manager::run_optimization()
             }
             return btu::modmanager::ModFolder::ArchiveTooLargeAction::Skip;
         });
+
+    if (settings_.current_profile().bsa_operation == BsaOperation::Create)
+        pack_directory(mod.path());
 
     const auto end_time     = QDateTime::currentDateTime();
     const auto elapsed_time = start_time.secsTo(end_time);

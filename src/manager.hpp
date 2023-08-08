@@ -25,9 +25,12 @@ public:
 private:
     Settings settings_;
 
+    void unpack_directory(const std::filesystem::path &directory_path) const;
+    void pack_directory(const std::filesystem::path &directory_path) const;
+
 signals:
-    void files_counted(size_t count);
-    void file_processed(std::filesystem::path relative_path);
-    void end();
+    void files_counted(size_t count) const;
+    void file_processed(std::filesystem::path relative_path) const;
+    void end() const;
 };
 } // namespace cao
