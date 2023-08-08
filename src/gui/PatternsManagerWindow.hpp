@@ -14,6 +14,7 @@ class PatternsManagerWindow;
 
 namespace cao {
 class Settings;
+// FIXME
 class PatternsManagerWindow : public QDialog
 {
     Q_OBJECT

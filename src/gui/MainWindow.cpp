@@ -217,6 +217,16 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         settings_to_ui(settings_, *ui_, module_display_);
     });
 
+    connect(ui_->actionSelect_GPU, &QAction::triggered, this, [this] {
+        auto window = SelectGPUWindow();
+        window.setSelectedIndex(settings_.gui.gpu_index);
+        window.exec();
+
+        auto idx = window.getSelectedIndex();
+        if (window.result() == QDialog::Accepted && idx.has_value())
+            settings_.gui.gpu_index = idx.value();
+    });
+
     connect(ui_->userPathButton, &QPushButton::pressed, this, [this] {
         const auto &current_path = settings_.current_profile().input_path;
 
@@ -279,72 +289,6 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 }
 
 MainWindow::~MainWindow() = default;
-
-/*
-void MainWindow::connectThis()
-{
-    auto &generalSettings = currentProfile().getGeneralSettings();
-
-    connect(ui_->actionSelect_GPU, &QAction::triggered, this, [] {
-        SelectGPUWindow window;
-        window.setSelectedIndex(getProfiles().commonSettings().iGPUIndex());
-        window.exec();
-        if (window.result() == QDialog::Accepted)
-        {
-            auto idx = window.getSelectedIndex();
-            if (idx.has_value())
-                getProfiles().commonSettings().iGPUIndex = idx.value();
-        }
-    });
-
-    selectText(*ui_->patterns, generalSettings.sCurrentPattern.value_or("*"));
-    connect(ui_->patterns,
-            QOverload<int>::of(&QComboBox::currentIndexChanged),
-            &generalSettings.sCurrentPattern,
-            [this, &generalSettings](int idx) {
-                generalSettings.sCurrentPattern = ui_->patterns->itemText(idx);
-                reconnectThis();
-            });
-
-    const int currentModeIndex = ui_->modeChooserComboBox->findData(generalSettings.eMode());
-    ui_->modeChooserComboBox->setCurrentIndex(currentModeIndex);
-
-    connect(ui_->modeChooserComboBox,
-            QOverload<int>::of(&QComboBox::currentIndexChanged),
-            &generalSettings.eMode,
-            [&generalSettings, this](int idx) {
-                const auto data       = ui_->modeChooserComboBox->itemData(idx);
-                generalSettings.eMode = data.value<OptimizationMode>();
-            });
-
-    // connectWrapper(*ui_->dryRunCheckBox, generalSettings.bDryRun);
-    // connectWrapper(*ui_->inputDirTextEdit, generalSettings.sInputPath);
-    // connectWrapper(*ui_->actionRedirect_output, generalSettings.bEnableOutputPath);
-
-    connect(ui_->actionSet_output_path, &QAction::triggered, this, [&generalSettings, this] {
-        const QString &inPath      = generalSettings.sInputPath.value_or(QDir::currentPath());
-        const QString &currentPath = generalSettings.sOutputPath.value_or(inPath);
-
-        const QString &dir = QFileDialog::getExistingDirectory(this,
-                                                               tr("Open Directory"),
-                                                               currentPath,
-                                                               QFileDialog::ShowDirsOnly
-                                                                   | QFileDialog::DontResolveSymlinks);
-
-        if (dir.isEmpty())
-            return;
-
-        //Creating an empty file in order to mark the dir as "not empty"
-        //This will prevent CAO from deleting the root output dir if there's no output
-        QFile file(dir + "/__cao_output_dir");
-        file.open(QFile::WriteOnly);
-
-        generalSettings.sOutputPath = dir;
-    });
-     FIXME
-
-}
-*/
 
 void MainWindow::init_process()
 {
