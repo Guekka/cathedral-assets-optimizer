@@ -18,15 +18,10 @@
     "nlohmann-json",
     "utf8h",
     "rsm-bsa",
-    "tl-expected"
+    "tl-expected",
+    "reproc"
   ],
   "features": {
-    "hkx": {
-      "description": "Build hkx part. Windows only",
-      "dependencies": [
-        "reproc"
-      ]
-    },
     "tests": {
       "description": "Build tests",
       "dependencies": [

@@ -169,15 +169,11 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
                                      [[maybe_unused]] std::optional<btu::Game> hkx_target) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-#ifdef _WIN32
     if (!hkx_target)
         return {}; // TODO
 
     return btu::hkx::AnimExe::make("data") // TODO: make this configurable
         .and_then([&](btu::hkx::AnimExe &&exe) { return exe.convert(*hkx_target, *file.content); });
-#else
-    return tl::make_unexpected(btu::common::Error(std::make_error_code(std::errc::not_supported)));
-#endif
 }
 
 auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &settings) noexcept
