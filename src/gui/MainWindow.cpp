@@ -142,10 +142,11 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
 void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display) noexcept
 {
     set_theme(settings.gui.gui_theme);
-
-    // TODO
-
     set_gui_level(module_display, ui, settings.gui.gui_mode);
+
+    ui.inputDirTextEdit->setText(to_qstring(settings.current_profile().input_path.u8string()));
+    ui.dryRunCheckBox->setChecked(settings.current_profile().dry_run);
+    select_data(*ui.modeChooserComboBox, settings.current_profile().optimization_mode);
 
     ui.profiles->clear();
 
