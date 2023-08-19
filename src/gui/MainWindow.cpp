@@ -123,7 +123,7 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
                 throw UiException("Invalid profile selected");
             break;
         }
-        case GuiMode::Medium: break;   // TODO
+        case GuiMode::Medium: break;   // nothing to do
         case GuiMode::Advanced: break; // TODO
     }
 
@@ -132,8 +132,6 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
     settings.current_profile().mods_blacklist    = {}; // TODO
     settings.current_profile().optimization_mode = ui.modeChooserComboBox->currentData()
                                                        .value<OptimizationMode>();
-
-    settings.current_profile().target_game = btu::Game::SSE; // TODO
 
     // has to be last because may rely on GuiSettings being already filled
     for (const auto *module : module_display.get_modules())
@@ -163,8 +161,7 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
         case GuiMode::Advanced:
         {
             for (const auto &profile : settings.list_profiles())
-                ui.profiles->addItem(
-                    QString::fromUtf8(profile.data(), static_cast<qsizetype>(profile.size())));
+                ui.profiles->addItem(to_qstring(profile));
             break;
         }
     }
@@ -295,30 +292,14 @@ MainWindow::~MainWindow() = default;
 
 void MainWindow::init_process()
 {
-    auto settings = settings_;
-    ui_to_settings(*ui_, module_display_, settings);
+    save_settings();
 
-    // TODO: remove this
-    settings                              = Settings::make_base();
-    settings.current_profile().input_path = ui_->inputDirTextEdit->text().toStdString();
-    settings.current_profile().base_per_file_settings.tex.compress = false;
-    settings.current_profile().base_per_file_settings.tex.resize   = btu::tex::Dimension{
-          .w = 512,
-          .h = 512,
-    };
-
-    if (!check_settings(settings))
+    if (!check_settings(settings_))
         return;
-
-    if (!save_settings(settings))
-    {
-        QMessageBox::critical(this, tr("Error"), tr("Your settings could not be saved to disk. Aborting."));
-        return;
-    }
 
     try
     {
-        cao_process_     = std::make_unique<Manager>(settings);
+        cao_process_     = std::make_unique<Manager>(settings_);
         progress_window_ = std::make_unique<ProgressWindow>(LogReader(Settings::state_directory()
                                                                       / k_log_file_name),
                                                             this);
@@ -362,12 +343,27 @@ void MainWindow::end_process()
     ui_->processButton->setDisabled(false);
 
     if (cao_process_)
+    {
         cao_process_->disconnect();
+        cao_process_.reset();
+    }
 
     if (progress_window_)
     {
         progress_window_->end();
         progress_window_->disconnect();
+        progress_window_.reset();
+    }
+}
+
+void MainWindow::save_settings() noexcept
+{
+    ui_to_settings(*ui_, module_display_, settings_);
+
+    if (!cao::save_settings(settings_))
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Your settings could not be saved to disk. Aborting."));
+        return;
     }
 }
 
@@ -396,8 +392,27 @@ void MainWindow::about() noexcept
 
 [[maybe_unused]] void MainWindow::closeEvent(QCloseEvent *event)
 {
-    end_process();
-    event->accept();
+    const bool process_running = cao_process_ != nullptr;
+    if (process_running)
+    {
+        end_process();
+        event->accept();
+        return; // the settings were already saved when the process started
+    }
+
+    const auto reply = QMessageBox::question(this,
+                                             tr("Save settings"),
+                                             tr("Do you want to save your settings before closing?"),
+                                             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+                                             QMessageBox::Yes);
+
+    if (reply == QMessageBox::Yes)
+        save_settings();
+
+    if (reply == QMessageBox::Cancel)
+        event->ignore();
+    else
+        event->accept();
 }
 
 [[maybe_unused]] void MainWindow::dragEnterEvent(QDragEnterEvent *e)
