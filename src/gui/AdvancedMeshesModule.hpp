@@ -9,7 +9,7 @@
 
 namespace Ui {
 class AdvancedMeshesModule;
-}
+} // namespace Ui
 
 namespace cao {
 class AdvancedMeshesModule : public IWindowModule

@@ -14,49 +14,54 @@
 #include <QMessageBox>
 
 namespace cao {
-PatternsManagerWindow::PatternsManagerWindow(Settings profile_, QWidget *parent)
+PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent)
     : QDialog(parent)
     , ui_(std::make_unique<Ui::PatternsManagerWindow>())
-    , profile(profile_)
+    , settings_(settings)
 {
     ui_->setupUi(this);
 
-    connect(ui_->newPushButton, &QPushButton::pressed, this, &PatternsManagerWindow::createPattern);
-    connect(ui_->removePushButton, &QPushButton::pressed, this, &PatternsManagerWindow::deleteCurrentPattern);
+    connect(ui_->newPushButton, &QPushButton::pressed, this, &PatternsManagerWindow::create_pattern);
+    connect(ui_->removePushButton,
+            &QPushButton::pressed,
+            this,
+            &PatternsManagerWindow::delete_current_pattern);
 
-    updatePatterns(*ui_->patterns);
+    update_patterns(*ui_->patterns);
 }
 
 PatternsManagerWindow::~PatternsManagerWindow() = default;
 
-void PatternsManagerWindow::updatePatterns(QComboBox &box)
+void PatternsManagerWindow::update_patterns(QComboBox &box)
 {
-    /*
     box.clear();
-    box.addItems(profile.getPatterns().list());
-    selectText(box, profile.getGeneralSettings().sCurrentPattern());
-     */
+
+    for (const auto &pfs : settings_.current_profile().per_file_settings)
+        box.addItem(to_qstring(pfs.pattern.text()));
+
+    const bool success = select_text(box, to_qstring(current_per_file_settings(settings_).pattern.text()));
+    assert(success);
 }
 
-void PatternsManagerWindow::createPattern()
+void PatternsManagerWindow::create_pattern()
 {
     bool ok = false;
-    const QString &patName
+    const QString &pat_name
         = QInputDialog::getText(this, tr("New Pattern"), tr("Name:"), QLineEdit::Normal, "", &ok);
-    if (!ok || patName.isEmpty())
+    if (!ok || pat_name.isEmpty())
         return;
 
     //Choosing base Pattern
 
-    QStringList PatternsList;
+    QStringList patterns_list;
     auto &patterns = ui_->patterns;
     for (int i = 0; i < patterns->count(); ++i)
-        PatternsList.push_back(patterns->itemText(i));
+        patterns_list.push_back(patterns->itemText(i));
 
     const QString &basePattern = QInputDialog::getItem(this,
                                                        tr("Base pattern"),
                                                        tr("Which pattern do you want to use as a base?"),
-                                                       PatternsList,
+                                                       patterns_list,
                                                        patterns->currentIndex(),
                                                        false,
                                                        &ok);
@@ -68,10 +73,10 @@ void PatternsManagerWindow::createPattern()
     newSets.pattern         = patName.toStdString();
     profile.getPatterns().addPattern(newSets);
 */
-    updatePatterns(*ui_->patterns);
+    update_patterns(*ui_->patterns);
 }
 
-void PatternsManagerWindow::deleteCurrentPattern()
+void PatternsManagerWindow::delete_current_pattern()
 {
     const QString &current = ui_->patterns->currentText();
     const auto button      = QMessageBox::warning(
@@ -85,12 +90,12 @@ void PatternsManagerWindow::deleteCurrentPattern()
     /*
     profile.getPatterns().remove(current);
 */
-    updatePatterns(*ui_->patterns);
+    update_patterns(*ui_->patterns);
 }
 
-void PatternsManagerWindow::setPattern(const QString &name)
+void PatternsManagerWindow::set_pattern(const QString &name)
 {
-    updatePatterns(*ui_->patterns);
+    update_patterns(*ui_->patterns);
     ui_->patterns->setCurrentIndex(ui_->patterns->findText(name));
 }
 

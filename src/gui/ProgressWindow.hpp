@@ -20,7 +20,7 @@ class QTextStream;
 
 namespace Ui {
 class ProgressWindow;
-}
+} // namespace Ui
 
 Q_DECLARE_METATYPE(plog::Severity)
 
@@ -60,11 +60,11 @@ class ProgressWindow : public QWidget
 public:
     explicit ProgressWindow(LogReader log_reader, QWidget *parent = nullptr);
 
-    ProgressWindow(const ProgressWindow &)            = delete;
-    ProgressWindow &operator=(const ProgressWindow &) = delete;
+    ProgressWindow(const ProgressWindow &)                     = delete;
+    auto operator=(const ProgressWindow &) -> ProgressWindow & = delete;
 
-    ProgressWindow(ProgressWindow &&)            = delete;
-    ProgressWindow &operator=(ProgressWindow &&) = delete;
+    ProgressWindow(ProgressWindow &&)                     = delete;
+    auto operator=(ProgressWindow &&) -> ProgressWindow & = delete;
 
     ~ProgressWindow() override; // = default
 
@@ -76,7 +76,7 @@ signals:
     void cancelled();
 
 protected:
-    void closeEvent(QCloseEvent *event) override;
+    [[maybe_unused]] void closeEvent(QCloseEvent *event) override;
 
 private:
     int current_value_{0};

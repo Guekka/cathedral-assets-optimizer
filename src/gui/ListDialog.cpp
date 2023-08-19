@@ -10,31 +10,31 @@
 #include <QInputDialog>
 
 namespace cao {
-ListDialog::ListDialog(bool sortByText, QWidget *parent)
+ListDialog::ListDialog(Sorting sorting, QWidget *parent)
     : QDialog(parent)
     , ui_(new Ui::ListDialog)
-    , sortByText_(sortByText)
+    , sorting_(sorting)
 {
     ui_->setupUi(this);
-    connect(ui_->lineEdit, &QLineEdit::textEdited, this, &ListDialog::filterView);
-    connect(ui_->addItemButton, &QPushButton::clicked, this, [this] { this->addUserItem(); });
+    connect(ui_->lineEdit, &QLineEdit::textEdited, this, &ListDialog::filter_view);
+    connect(ui_->addItemButton, &QPushButton::clicked, this, &ListDialog::add_user_item);
     connect(ui_->closeButton, &QPushButton::clicked, this, &QDialog::accept);
 
     //Always keeping checked items at the top
     connect(ui_->listWidget, &QListWidget::itemChanged, this, [this](auto *item) {
-        auto *extractedItem = ui_->listWidget->takeItem(ui_->listWidget->row(item));
-        ui_->listWidget->insertItem(findInsertPos(extractedItem), extractedItem);
+        auto *extracted_item = ui_->listWidget->takeItem(ui_->listWidget->row(item));
+        ui_->listWidget->insertItem(find_insert_pos(extracted_item), extracted_item);
     });
 }
 
 ListDialog::~ListDialog() = default;
 
-void ListDialog::setUserAddItemVisible(bool visible)
+void ListDialog::set_user_add_item_visible(bool visible)
 {
     ui_->addItemButton->setVisible(visible);
 }
 
-void ListDialog::addItem(QListWidgetItem *item)
+void ListDialog::add_item(QListWidgetItem *item)
 {
     item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 
@@ -42,22 +42,22 @@ void ListDialog::addItem(QListWidgetItem *item)
     if (item->checkState() != Qt::Checked)
         item->setCheckState(Qt::Unchecked);
 
-    ui_->listWidget->insertItem(findInsertPos(item), item);
+    ui_->listWidget->insertItem(find_insert_pos(item), item);
 }
 
-void ListDialog::addUserItem()
+void ListDialog::add_user_item()
 {
     bool ok = false;
     const QString &text = QInputDialog::getText(this, tr("New item"), tr("Name:"), QLineEdit::Normal, "", &ok);
     if (!ok || text.isEmpty())
         return;
 
-    auto item = new QListWidgetItem(text);
+    auto *item = new QListWidgetItem(text, ui_->listWidget); //NOLINT(cppcoreguidelines-owning-memory)
     item->setCheckState(Qt::Checked);
     ui_->listWidget->addItem(item);
 }
 
-void ListDialog::filterView(const QString &text)
+void ListDialog::filter_view(const QString &text)
 {
     for (int i = 0; i < ui_->listWidget->count(); ++i)
         ui_->listWidget->item(i)->setHidden(true);
@@ -67,7 +67,7 @@ void ListDialog::filterView(const QString &text)
         item->setHidden(false);
 }
 
-int ListDialog::findInsertPos(const QListWidgetItem *item)
+auto ListDialog::find_insert_pos(const QListWidgetItem *item) -> int
 {
     auto *list = ui_->listWidget;
 
@@ -77,7 +77,7 @@ int ListDialog::findInsertPos(const QListWidgetItem *item)
         if (other->checkState() != item->checkState())
             continue;
 
-        if (!sortByText_)
+        if (sorting_ == Sorting::Insertion)
             return i;
 
         if (item > other)
@@ -87,7 +87,7 @@ int ListDialog::findInsertPos(const QListWidgetItem *item)
     return 0;
 }
 
-std::vector<const QListWidgetItem *> ListDialog::getChoices()
+auto ListDialog::get_choices() -> std::vector<const QListWidgetItem *>
 {
     std::vector<const QListWidgetItem *> items;
 
@@ -100,7 +100,7 @@ std::vector<const QListWidgetItem *> ListDialog::getChoices()
     return items;
 }
 
-std::vector<QListWidgetItem *> ListDialog::items()
+auto ListDialog::items() -> std::vector<QListWidgetItem *>
 {
     std::vector<QListWidgetItem *> result;
     result.reserve(ui_->listWidget->count());
@@ -111,24 +111,24 @@ std::vector<QListWidgetItem *> ListDialog::items()
     return result;
 }
 
-void ListDialog::setCheckedItems(const QStringList &textList, bool addMissingItems)
+void ListDialog::set_checked_items(const QStringList &text_list, bool add_missing_items)
 {
-    for (const QString &string : textList)
-        setCheckedItems(string, addMissingItems);
+    for (const QString &string : text_list)
+        set_checked_items(string, add_missing_items);
 }
 
-void ListDialog::setCheckedItems(const QString &text, bool addMissingItems)
+void ListDialog::set_checked_items(const QString &text, bool add_missing_items)
 {
     const auto &list = ui_->listWidget->findItems(text, Qt::MatchExactly);
 
-    for (auto &item : list)
+    for (const auto &item : list)
         item->setCheckState(Qt::Checked);
 
-    if (list.isEmpty() && addMissingItems)
+    if (list.isEmpty() && add_missing_items)
     {
-        auto newItem = new QListWidgetItem();
-        newItem->setCheckState(Qt::Checked);
-        ui_->listWidget->addItem(text);
+        auto *new_item = new QListWidgetItem(text, ui_->listWidget); //NOLINT(cppcoreguidelines-owning-memory)
+        new_item->setCheckState(Qt::Checked);
+        ui_->listWidget->addItem(new_item);
     }
 }
 

@@ -103,11 +103,6 @@ using SagoFunction = std::string (*)();
     }
 }
 
-auto Settings::data_directory() noexcept -> std::filesystem::path
-{
-    return any_directory(&sago::getDataHome, "data");
-}
-
 auto Settings::config_directory() noexcept -> std::filesystem::path
 {
     return any_directory(&sago::getConfigHome, "config");

@@ -221,10 +221,10 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 
     connect(ui_->actionSelect_GPU, &QAction::triggered, this, [this] {
         auto window = SelectGPUWindow();
-        window.setSelectedIndex(settings_.gui.gpu_index);
+        window.set_selected_index(settings_.gui.gpu_index);
         window.exec();
 
-        auto idx = window.getSelectedIndex();
+        auto idx = window.get_selected_index();
         if (window.result() == QDialog::Accepted && idx.has_value())
             settings_.gui.gpu_index = idx.value();
     });

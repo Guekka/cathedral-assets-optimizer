@@ -5,7 +5,6 @@
 
 #include "AdvancedMeshesModule.hpp"
 
-#include "settings/per_file_settings.hpp"
 #include "ui_AdvancedMeshesModule.h"
 #include "utils/utils.hpp"
 

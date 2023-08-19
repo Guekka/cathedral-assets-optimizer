@@ -19,7 +19,7 @@ struct GuiSettings
 
     std::u8string selected_pattern = k_default_pattern.text();
 
-    int gpu_index = 0;
+    size_t gpu_index = 0;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
@@ -46,10 +46,10 @@ public:
 
     static constexpr auto k_app_name = "cathedral_assets_optimizer";
 
-    [[nodiscard]] static auto data_directory() noexcept -> std::filesystem::path;
     [[nodiscard]] static auto config_directory() noexcept -> std::filesystem::path;
     [[nodiscard]] static auto state_directory() noexcept -> std::filesystem::path;
 
+    // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
     GuiSettings gui{};
 
 private:

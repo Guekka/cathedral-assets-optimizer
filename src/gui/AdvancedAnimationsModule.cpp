@@ -5,7 +5,6 @@
 
 #include "AdvancedAnimationsModule.hpp"
 
-#include "settings/per_file_settings.hpp"
 #include "ui_AdvancedAnimationsModule.h"
 #include "utils/utils.hpp"
 

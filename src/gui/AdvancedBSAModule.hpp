@@ -9,7 +9,7 @@
 
 namespace Ui {
 class AdvancedBSAModule;
-}
+} // namespace Ui
 
 namespace cao {
 class AdvancedBSAModule : public IWindowModule
@@ -18,6 +18,13 @@ class AdvancedBSAModule : public IWindowModule
 
 public:
     explicit AdvancedBSAModule(QWidget *parent = nullptr);
+
+    AdvancedBSAModule(const AdvancedBSAModule &) = delete;
+    AdvancedBSAModule(AdvancedBSAModule &&)      = delete;
+
+    auto operator=(const AdvancedBSAModule &) -> AdvancedBSAModule & = delete;
+    auto operator=(AdvancedBSAModule &&) -> AdvancedBSAModule      & = delete;
+
     ~AdvancedBSAModule() override;
 
     [[nodiscard]] auto name() const noexcept -> QString override;

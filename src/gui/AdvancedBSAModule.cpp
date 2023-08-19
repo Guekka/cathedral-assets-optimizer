@@ -5,7 +5,6 @@
 
 #include "AdvancedBSAModule.hpp"
 
-#include "settings/per_file_settings.hpp"
 #include "ui_AdvancedBSAModule.h"
 #include "utils/utils.hpp"
 

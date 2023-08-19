@@ -11,7 +11,7 @@
 
 namespace Ui {
 class AdvancedAnimationsModule;
-}
+} // namespace Ui
 
 namespace cao {
 class AdvancedAnimationsModule : public IWindowModule
@@ -20,6 +20,13 @@ class AdvancedAnimationsModule : public IWindowModule
 
 public:
     explicit AdvancedAnimationsModule(QWidget *parent = nullptr);
+
+    AdvancedAnimationsModule(const AdvancedAnimationsModule &) = delete;
+    AdvancedAnimationsModule(AdvancedAnimationsModule &&)      = delete;
+
+    AdvancedAnimationsModule &operator=(const AdvancedAnimationsModule &) = delete;
+    AdvancedAnimationsModule &operator=(AdvancedAnimationsModule &&)      = delete;
+
     ~AdvancedAnimationsModule() override;
 
     [[nodiscard]] auto name() const noexcept -> QString override;

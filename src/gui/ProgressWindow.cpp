@@ -209,7 +209,7 @@ void ProgressWindow::update_log(plog::Severity log_severity)
     ui_->log->scrollToBottom();
 }
 
-void ProgressWindow::closeEvent(QCloseEvent *event)
+[[maybe_unused]] void ProgressWindow::closeEvent(QCloseEvent *event)
 {
     emit cancelled();
     event->accept();

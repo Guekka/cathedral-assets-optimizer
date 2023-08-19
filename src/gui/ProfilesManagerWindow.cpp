@@ -5,7 +5,6 @@
 
 #include "ProfilesManagerWindow.hpp"
 
-#include "settings/base_types.hpp"
 #include "settings/settings.hpp"
 #include "ui_ProfilesManagerWindow.h"
 #include "utils/utils.hpp"

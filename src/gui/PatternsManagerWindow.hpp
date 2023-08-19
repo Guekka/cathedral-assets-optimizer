@@ -10,7 +10,7 @@ class QComboBox;
 
 namespace Ui {
 class PatternsManagerWindow;
-}
+} // namespace Ui
 
 namespace cao {
 class Settings;
@@ -20,18 +20,25 @@ class PatternsManagerWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit PatternsManagerWindow(Settings profile, QWidget *parent = nullptr);
-    ~PatternsManagerWindow(); // = default
+    explicit PatternsManagerWindow(Settings &settings, QWidget *parent = nullptr);
 
-    void updatePatterns(QComboBox &box);
+    PatternsManagerWindow(const PatternsManagerWindow &) = delete;
+    PatternsManagerWindow(PatternsManagerWindow &&)      = delete;
+
+    auto operator=(const PatternsManagerWindow &) -> PatternsManagerWindow & = delete;
+    auto operator=(PatternsManagerWindow &&) -> PatternsManagerWindow      & = delete;
+
+    ~PatternsManagerWindow() override; // = default
+
+    void update_patterns(QComboBox &box);
 
 private:
     std::unique_ptr<Ui::PatternsManagerWindow> ui_;
-    Settings &profile;
+    Settings &settings_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 
-    void createPattern();
-    void setPattern(const QString &name);
+    void create_pattern();
+    void set_pattern(const QString &name);
 
-    void deleteCurrentPattern();
+    void delete_current_pattern();
 };
 } // namespace cao

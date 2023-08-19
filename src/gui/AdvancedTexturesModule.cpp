@@ -19,7 +19,7 @@ namespace cao {
 AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
     : IWindowModule(parent)
     , ui_(std::make_unique<Ui::AdvancedTexturesModule>())
-    , texture_format_dialog_(std::make_unique<ListDialog>(ListDialog::doSortByText))
+    , texture_format_dialog_(std::make_unique<ListDialog>(ListDialog::Sorting::Text))
 {
     ui_->setupUi(this);
 
@@ -48,12 +48,8 @@ AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
 
     const auto force_pow2 = [](QSpinBox *box) {
         connect(box, &QSpinBox::editingFinished, [box] {
-            const int x   = box->value();
-            int next_pow2 = 1;
-            while (next_pow2 < x)
-                next_pow2 *= 2;
-
-            box->setValue(next_pow2);
+            const auto upper = btu::tex::util::upper_pow2(box->value());
+            box->setValue(static_cast<int>(upper));
         });
     };
 

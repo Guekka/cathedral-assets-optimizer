@@ -18,8 +18,8 @@ namespace cao {
 class CustomFormatter
 {
 public:
-    [[nodiscard]] static auto header() -> plog::util::nstring;
-    [[nodiscard]] static auto format(const plog::Record &record) -> plog::util::nstring;
+    [[maybe_unused]] [[nodiscard]] static auto header() -> plog::util::nstring;
+    [[maybe_unused]] [[nodiscard]] static auto format(const plog::Record &record) -> plog::util::nstring;
 };
 
 [[nodiscard]] auto get_appender(const std::filesystem::path &log_file_path) noexcept -> plog::IAppender *
@@ -58,12 +58,12 @@ public:
     return true;
 }
 
-auto CustomFormatter::header() -> plog::util::nstring
+[[maybe_unused]] auto CustomFormatter::header() -> plog::util::nstring
 {
     return plog::TxtFormatter::header();
 }
 
-auto CustomFormatter::format(const plog::Record &record) -> plog::util::nstring
+[[maybe_unused]] auto CustomFormatter::format(const plog::Record &record) -> plog::util::nstring
 {
     tm t{};
     plog::util::localtime_s(&t, &record.getTime().time);

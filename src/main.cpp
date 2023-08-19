@@ -3,7 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "gui/LevelSelector.hpp"
 #include "gui/MainWindow.hpp"
 #include "gui/utils/utils.hpp"
 #include "logger.hpp"
@@ -49,7 +48,7 @@ void display_error(bool cli, const std::string &err)
 {
     if (cli)
     {
-        std::cerr << err << std::endl;
+        std::cerr << err << '\n' << std::flush;
     }
     else
     {
@@ -59,7 +58,7 @@ void display_error(bool cli, const std::string &err)
     PLOG_FATAL << err;
 }
 
-int main(int argc, char *argv[])
+auto main(int argc, char *argv[]) -> int
 {
     auto app = std::make_unique<QCoreApplication>(argc, argv);
 

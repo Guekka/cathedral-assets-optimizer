@@ -70,17 +70,7 @@ void set_data(QComboBox &box, const QString &text, const Data &data)
 }
 
 template<typename Data>
-int find_data(const QComboBox &box, const Data &data)
-{
-    for (int i = 0; i < box.count(); ++i)
-        if (box.itemData(i).value<Data>() == data)
-            return i;
-    return -1;
-};
-
-// TODO use exceptions
-template<typename Data>
-bool select_data(QComboBox &box, const Data &data)
+[[nodiscard]] auto select_data(QComboBox &box, const Data &data) -> bool
 {
     int idx = box.findData(QVariant::fromValue(data));
     if (idx == -1)
@@ -90,9 +80,9 @@ bool select_data(QComboBox &box, const Data &data)
     return true;
 }
 
-inline bool select_text(QComboBox &box, const QString &text)
+[[nodiscard]] inline auto select_text(QComboBox &box, const QString &text) -> bool
 {
-    int idx = box.findText(text, Qt::MatchFlag::MatchExactly);
+    const int idx = box.findText(text, Qt::MatchFlag::MatchExactly);
     if (idx == -1)
         return false;
 
@@ -102,10 +92,10 @@ inline bool select_text(QComboBox &box, const QString &text)
 
 [[nodiscard]] inline auto to_qstring(std::u8string_view u) -> QString
 {
-    return QString::fromUtf8(reinterpret_cast<const char *>(u.data()), u.size());
+    return QString::fromUtf8(reinterpret_cast<const char *>(u.data()), static_cast<qsizetype>(u.size()));
 }
 
-[[nodiscard]] inline auto to_u8string(QString u) -> std::u8string
+[[nodiscard]] inline auto to_u8string(QStringView u) -> std::u8string
 {
     auto data = u.toUtf8();
     return {reinterpret_cast<const char8_t *>(data.constData()), static_cast<size_t>(data.size())};

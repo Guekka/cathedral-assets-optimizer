@@ -7,6 +7,8 @@
 
 #include "ui_LevelSelector.h"
 
+#include <utility>
+
 namespace cao {
 
 [[nodiscard]] auto get_help_text(GuiMode level) noexcept -> QString
@@ -43,7 +45,7 @@ namespace cao {
 LevelSelector::LevelSelector(GuiSettings settings)
     : QDialog(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
     , ui_(std::make_unique<Ui::LevelSelector>())
-    , settings_(settings)
+    , settings_(std::move(settings))
 {
     ui_->setupUi(this);
 
@@ -80,7 +82,7 @@ auto LevelSelector::run_selection() noexcept -> GuiSettings
     return settings_;
 }
 
-auto LevelSelector::eventFilter(QObject *obj, QEvent *event) noexcept -> bool
+[[maybe_unused]] auto LevelSelector::eventFilter(QObject *obj, QEvent *event) noexcept -> bool
 {
     if (event->type() == QEvent::HoverEnter)
     {

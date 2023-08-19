@@ -10,7 +10,7 @@
 
 namespace Ui {
 class ListDialog;
-}
+} // namespace Ui
 
 class QListWidgetItem;
 
@@ -20,28 +20,38 @@ class ListDialog : public QDialog
     Q_OBJECT
 
 public:
-    static constexpr bool doSortByText   = true;
-    static constexpr bool dontSortByText = false;
+    enum class Sorting
+    {
+        Text,
+        Insertion
+    };
 
-    explicit ListDialog(bool sortByText, QWidget *parent = nullptr);
-    ~ListDialog();
+    explicit ListDialog(Sorting sort_by, QWidget *parent = nullptr);
 
-    void addItem(QListWidgetItem *item);
+    ListDialog(const ListDialog &) = delete;
+    ListDialog(ListDialog &&)      = delete;
 
-    std::vector<const QListWidgetItem *> getChoices();
-    std::vector<QListWidgetItem *> items();
+    auto operator=(const ListDialog &) -> ListDialog & = delete;
+    auto operator=(ListDialog &&) -> ListDialog      & = delete;
 
-    void setUserAddItemVisible(bool visible);
+    ~ListDialog() override;
 
-    void setCheckedItems(const QString &text, bool addMissingItems = true);
-    void setCheckedItems(const QStringList &textList, bool addMissingItems = true);
+    void add_item(QListWidgetItem *item);
+
+    [[nodiscard]] auto get_choices() -> std::vector<const QListWidgetItem *>;
+    [[nodiscard]] auto items() -> std::vector<QListWidgetItem *>;
+
+    void set_user_add_item_visible(bool visible);
+
+    void set_checked_items(const QString &text, bool add_missing_items = true);
+    void set_checked_items(const QStringList &text_list, bool add_missing_items = true);
 
 private:
-    void addUserItem();
-    void filterView(const QString &text);
-    int findInsertPos(const QListWidgetItem *item);
+    void add_user_item();
+    void filter_view(const QString &text);
+    [[nodiscard]] auto find_insert_pos(const QListWidgetItem *item) -> int;
 
     std::unique_ptr<Ui::ListDialog> ui_;
-    bool sortByText_ = false;
+    Sorting sorting_ = Sorting::Insertion;
 };
 } // namespace cao

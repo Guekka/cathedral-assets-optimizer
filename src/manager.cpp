@@ -129,17 +129,14 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
 
     auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
 
-    auto dir_it  = std::filesystem::directory_iterator(directory_path);
-    auto plugins = btu::bsa::list_plugins(dir_it, {}, bsa_sets);
-
-    std::vector files(btu::fs::directory_iterator(directory_path), btu::fs::directory_iterator{});
-    erase_if(files, [](const auto &file) {
+    std::vector archives(btu::fs::directory_iterator(directory_path), btu::fs::directory_iterator{});
+    erase_if(archives, [](const auto &file) {
         return !btu::common::contains(btu::bsa::k_archive_extensions, file.path().extension());
     });
 
-    emit files_counted(files.size());
+    emit files_counted(archives.size());
 
-    std::ranges::for_each(files, [this](const auto &path) {
+    std::ranges::for_each(archives, [this](const auto &path) {
         btu::bsa::unpack(btu::bsa::UnpackSettings{
             .file_path                = path,
             .remove_arch              = true,
@@ -166,8 +163,8 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
                        .game_settings = bsa_sets,
                        .compress      = btu::bsa::Compression::Yes,
                    })
-        .for_each([&plugins, &bsa_sets](auto &&archive) {
-            btu::bsa::FilePath name = btu::bsa::find_archive_name(plugins, bsa_sets, archive.type());
+        .for_each([&plugins, &bsa_sets](btu::bsa::Archive &&archive) {
+            const btu::bsa::FilePath name = btu::bsa::find_archive_name(plugins, bsa_sets, archive.type());
             std::move(archive).write(name.full_path());
         });
 }

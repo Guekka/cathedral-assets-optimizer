@@ -25,7 +25,7 @@
 template<>
 struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
 {
-    auto format(const btu::Game &game, format_context &ctx)
+    [[maybe_unused]] auto format(const btu::Game &game, format_context &ctx)
     {
         const auto *game_str = [game] {
             switch (game)
@@ -48,7 +48,7 @@ struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
 template<>
 struct fmt::formatter<DXGI_FORMAT> : fmt::formatter<std::string_view>
 {
-    auto format(const DXGI_FORMAT &format, format_context &ctx)
+    [[maybe_unused]] auto format(const DXGI_FORMAT &format, format_context &ctx)
     {
         return fmt::formatter<std::string_view>::format(btu::common::as_ascii(btu::tex::to_string(format)),
                                                         ctx);

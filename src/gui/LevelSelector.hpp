@@ -33,7 +33,7 @@ public:
 
     [[nodiscard]] auto run_selection() noexcept -> GuiSettings;
 
-    auto eventFilter(QObject *obj, QEvent *event) noexcept -> bool override;
+    [[maybe_unused]] auto eventFilter(QObject *obj, QEvent *event) noexcept -> bool override;
 
 private:
     constexpr static inline auto k_button_property_name = "name";

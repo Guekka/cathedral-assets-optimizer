@@ -24,11 +24,12 @@ class SelectGPUWindow : public QDialog
 public:
     static inline constexpr auto property_key = "Index";
     explicit SelectGPUWindow(QWidget *parent = nullptr);
-    std::optional<uint> getSelectedIndex();
-    void setSelectedIndex(uint val);
+
+    [[nodiscard]] auto get_selected_index() -> std::optional<size_t>;
+    void set_selected_index(size_t val);
 
 private:
-    std::unique_ptr<Ui::SelectGPUWindow> ui;
+    std::unique_ptr<Ui::SelectGPUWindow> ui_;
     std::vector<btu::tex::CompressionDevice> devices_;
 };
 } // namespace cao

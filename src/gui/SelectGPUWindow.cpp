@@ -16,48 +16,44 @@ using btu::tex::CompressionDevice;
 
 SelectGPUWindow::SelectGPUWindow(QWidget *parent)
     : QDialog(parent)
-    , ui(std::make_unique<Ui::SelectGPUWindow>())
+    , ui_(std::make_unique<Ui::SelectGPUWindow>())
 {
-    ui->setupUi(this);
+    ui_->setupUi(this);
 
-    uint32_t last_gpu = 0;
-    auto dev          = CompressionDevice::make(last_gpu);
+    auto dev = CompressionDevice::make(0);
     while (dev)
     {
         devices_.emplace_back(*std::move(dev));
-        last_gpu++;
-        dev = CompressionDevice::make(last_gpu);
+        dev = CompressionDevice::make(devices_.size());
     }
 
-    auto *layout = new QVBoxLayout;
-    for (uint i = 0; i <= last_gpu; i++)
+    auto *layout = new QVBoxLayout(this); // NOLINT(cppcoreguidelines-owning-memory
+    for (size_t i = 0; i <= devices_.size(); i++)
     {
-        auto *button = new QRadioButton;
+        auto *button = new QRadioButton(this); // NOLINT(cppcoreguidelines-owning-memory)
         button->setText(to_qstring(devices_[i].gpu_name()));
-        button->setProperty(property_key, i);
+        button->setProperty(property_key, QVariant::fromValue(i));
         layout->addWidget(button);
     }
-    ui->groupBox->setLayout(layout);
+    ui_->groupBox->setLayout(layout);
 }
 
-std::optional<uint> SelectGPUWindow::getSelectedIndex()
+auto SelectGPUWindow::get_selected_index() -> std::optional<size_t>
 {
-    auto buttons  = ui->groupBox->findChildren<QRadioButton *>();
-    auto selected = std::find_if(std::cbegin(buttons), std::cend(buttons), [](QRadioButton *button) {
-        return button->isChecked();
-    });
+    const auto buttons  = ui_->groupBox->findChildren<QRadioButton *>();
+    const auto selected = std::ranges::find_if(buttons, &QRadioButton::isChecked);
 
     if (selected != std::cend(buttons))
-        return (*selected)->property(property_key).value<uint>();
+        return (*selected)->property(property_key).value<size_t>();
 
     return std::nullopt;
 }
 
-void SelectGPUWindow::setSelectedIndex(uint val)
+void SelectGPUWindow::set_selected_index(size_t val)
 {
-    auto buttons  = ui->groupBox->findChildren<QRadioButton *>();
+    auto buttons  = ui_->groupBox->findChildren<QRadioButton *>();
     auto selected = std::find_if(std::cbegin(buttons), std::cend(buttons), [val](QRadioButton *button) {
-        return button->property(property_key).value<uint>() == val;
+        return button->property(property_key).value<size_t>() == val;
     });
 
     if (selected != std::cend(buttons))
