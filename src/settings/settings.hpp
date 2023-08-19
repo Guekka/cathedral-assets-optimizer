@@ -17,7 +17,7 @@ struct GuiSettings
 
     bool first_run = true;
 
-    std::u8string selected_pattern;
+    std::u8string selected_pattern = k_default_pattern.text();
 
     int gpu_index = 0;
 };
