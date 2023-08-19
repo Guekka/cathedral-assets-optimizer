@@ -179,8 +179,9 @@ void first_start(bool &first_run) noexcept
           If you like my work, <a href="%2">please consider supporting me</a>.<br>
           Thanks for using CAO!)";
 
-    if (std::exchange(first_run, true))
+    if (first_run)
     {
+        first_run = false;
         QMessageBox box(QMessageBox::Information,
                         QObject::tr("Welcome to %1 %2")
                             .arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
