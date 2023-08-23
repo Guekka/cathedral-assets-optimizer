@@ -150,17 +150,16 @@ auto current_per_file_settings(const Settings &sets) noexcept -> const PerFileSe
     const auto &profile          = sets.current_profile();
     const auto &selected_pattern = sets.gui.selected_pattern;
 
-    if (profile.base_per_file_settings.pattern.text() == selected_pattern)
-        return profile.base_per_file_settings;
+    auto per_file_settings = profile.per_file_settings();
 
-    auto it = std::ranges::find_if(profile.per_file_settings, [&selected_pattern](const auto &pfs) {
-        return pfs.pattern.text() == selected_pattern;
+    auto it = std::ranges::find_if(per_file_settings, [selected_pattern](const auto *pfs) {
+        return pfs->pattern.text() == selected_pattern;
     });
 
-    if (it != profile.per_file_settings.end())
-        return *it;
+    if (it == per_file_settings.end())
+        throw std::logic_error("This should never happen");
 
-    return profile.base_per_file_settings;
+    return **it;
 }
 
 } // namespace cao

@@ -42,8 +42,8 @@ void PatternsManagerWindow::update_patterns(QComboBox &box)
 
     box.addItem(to_qstring(k_default_pattern.text()));
 
-    for (const auto &pfs : settings_.current_profile().per_file_settings)
-        box.addItem(to_qstring(pfs.pattern.text()));
+    for (const auto *pfs : settings_.current_profile().per_file_settings())
+        box.addItem(to_qstring(pfs->pattern.text()));
 
     const bool success = select_text(box, to_qstring(current_per_file_settings(settings_).pattern.text()));
     assert(success);
@@ -77,13 +77,14 @@ void PatternsManagerWindow::create_pattern()
 
     const auto base_pfs = to_u8string(base_pfs_qs);
 
-    auto new_pfs = *std::ranges::find(settings_.current_profile().per_file_settings,
-                                      base_pfs,
-                                      [](const PerFileSettings &pfs) { return pfs.pattern.text(); });
+    auto all_pfs            = settings_.current_profile().per_file_settings();
+    PerFileSettings new_pfs = **std::ranges::find(all_pfs, base_pfs, [](const PerFileSettings *pfs) {
+        return pfs->pattern.text();
+    });
 
     new_pfs.pattern = Pattern{base_pfs};
 
-    settings_.current_profile().per_file_settings.emplace_back(std::move(new_pfs));
+    settings_.current_profile().add_per_file_settings(std::move(new_pfs));
     update_patterns(*ui_->patterns);
 }
 
@@ -99,10 +100,7 @@ void PatternsManagerWindow::delete_current_pattern()
     if (button != QMessageBox::Yes)
         return;
 
-    std::erase_if(settings_.current_profile().per_file_settings, [&current](const PerFileSettings &pfs) {
-        return pfs.pattern.text() == to_u8string(current);
-    });
-
+    settings_.current_profile().remove_per_file_settings(to_u8string(current));
     update_patterns(*ui_->patterns);
 }
 

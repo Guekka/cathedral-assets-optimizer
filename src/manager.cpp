@@ -118,9 +118,8 @@ void apply_plugin_info(Settings &sets, const PluginInfo &info)
 {
     auto &profile = sets.current_profile();
 
-    apply_plugin_info(profile.base_per_file_settings, info);
-    std::ranges::for_each(profile.per_file_settings,
-                          [&info](auto &per_file_sets) { apply_plugin_info(per_file_sets, info); });
+    std::ranges::for_each(profile.per_file_settings(),
+                          [&info](auto &per_file_sets) { apply_plugin_info(*per_file_sets, info); });
 }
 
 void Manager::unpack_directory(const std::filesystem::path &directory_path) const
