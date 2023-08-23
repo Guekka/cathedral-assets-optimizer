@@ -161,7 +161,11 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     }();
 
     set_items(*ui.profiles, profiles, to_qstring);
-    
+
+    set_items(*ui.patterns, settings.current_profile().per_file_settings(), [](const auto *pfs) {
+        return to_qstring(pfs->pattern.text());
+    });
+
     success = select_text(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
     assert(success);
 
