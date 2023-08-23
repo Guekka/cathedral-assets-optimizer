@@ -146,7 +146,8 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
 
     ui.inputDirTextEdit->setText(to_qstring(settings.current_profile().input_path.u8string()));
     ui.dryRunCheckBox->setChecked(settings.current_profile().dry_run);
-    select_data(*ui.modeChooserComboBox, settings.current_profile().optimization_mode);
+    bool success = select_data(*ui.modeChooserComboBox, settings.current_profile().optimization_mode);
+    assert(success);
 
     ui.profiles->clear();
 
@@ -276,7 +277,11 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     connect(ui_->actionAbout_Qt, &QAction::triggered, this, &QApplication::aboutQt);
 
     first_start(settings_.gui.first_run);
-    run_gui_selector();
+
+    if (settings_.gui.remember_gui_mode)
+        settings_to_ui(settings_, *ui_, module_display_);
+    else
+        run_gui_selector();
 }
 
 /// @brief Checks if the settings are valid. Displays a message box if they are not.

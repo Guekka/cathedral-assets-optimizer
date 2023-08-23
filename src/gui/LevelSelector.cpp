@@ -49,9 +49,7 @@ LevelSelector::LevelSelector(GuiSettings settings)
 {
     ui_->setupUi(this);
 
-    const GuiMode cur_mode = settings_.remember_gui_mode ? settings_.gui_mode : GuiMode::QuickOptimize;
-
-    ui_->label->setText(get_help_text(cur_mode));
+    ui_->label->setText(get_help_text(settings_.gui_mode));
 
     auto setup_button = [this](QPushButton *button, GuiMode mode) {
         button->installEventFilter(this);
@@ -71,9 +69,6 @@ LevelSelector::~LevelSelector() = default;
 
 auto LevelSelector::run_selection() noexcept -> GuiSettings
 {
-    if (settings_.remember_gui_mode)
-        return settings_;
-
     if (QDialog::exec() != QDialog::Accepted)
         return settings_;
 
