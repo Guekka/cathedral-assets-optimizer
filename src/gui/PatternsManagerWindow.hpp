@@ -14,7 +14,6 @@ class PatternsManagerWindow;
 
 namespace cao {
 class Settings;
-// FIXME
 class PatternsManagerWindow : public QDialog
 {
     Q_OBJECT
@@ -37,7 +36,6 @@ private:
     Settings &settings_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 
     void create_pattern();
-    void set_pattern(const QString &name);
 
     void delete_current_pattern();
 };

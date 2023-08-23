@@ -28,6 +28,10 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
             &PatternsManagerWindow::delete_current_pattern);
 
     update_patterns(*ui_->patterns);
+
+    const bool success = select_text(*ui_->patterns,
+                                     to_qstring(current_per_file_settings(settings_).pattern.text()));
+    assert(success);
 }
 
 PatternsManagerWindow::~PatternsManagerWindow() = default;
@@ -35,6 +39,8 @@ PatternsManagerWindow::~PatternsManagerWindow() = default;
 void PatternsManagerWindow::update_patterns(QComboBox &box)
 {
     box.clear();
+
+    box.addItem(to_qstring(k_default_pattern.text()));
 
     for (const auto &pfs : settings_.current_profile().per_file_settings)
         box.addItem(to_qstring(pfs.pattern.text()));
@@ -58,28 +64,33 @@ void PatternsManagerWindow::create_pattern()
     for (int i = 0; i < patterns->count(); ++i)
         patterns_list.push_back(patterns->itemText(i));
 
-    const QString &basePattern = QInputDialog::getItem(this,
-                                                       tr("Base pattern"),
-                                                       tr("Which pattern do you want to use as a base?"),
-                                                       patterns_list,
-                                                       patterns->currentIndex(),
-                                                       false,
-                                                       &ok);
+    const QString base_pfs_qs = QInputDialog::getItem(this,
+                                                      tr("Base pattern"),
+                                                      tr("Which pattern do you want to use as a base?"),
+                                                      patterns_list,
+                                                      patterns->currentIndex(),
+                                                      false,
+                                                      &ok);
 
     if (!ok)
         return;
-    /*
-    PerFileSettings newSets = profile.getPatterns().getSettingsByName(basePattern);
-    newSets.pattern         = patName.toStdString();
-    profile.getPatterns().addPattern(newSets);
-*/
+
+    const auto base_pfs = to_u8string(base_pfs_qs);
+
+    auto new_pfs = *std::ranges::find(settings_.current_profile().per_file_settings,
+                                      base_pfs,
+                                      [](const PerFileSettings &pfs) { return pfs.pattern.text(); });
+
+    new_pfs.pattern = Pattern{base_pfs};
+
+    settings_.current_profile().per_file_settings.emplace_back(std::move(new_pfs));
     update_patterns(*ui_->patterns);
 }
 
 void PatternsManagerWindow::delete_current_pattern()
 {
-    const QString &current = ui_->patterns->currentText();
-    const auto button      = QMessageBox::warning(
+    const QString current = ui_->patterns->currentText();
+    const auto button     = QMessageBox::warning(
         this,
         tr("Remove Pattern"),
         tr("Are you sure you want to remove Pattern '%1'? This action cannot be undone").arg(current),
@@ -87,16 +98,12 @@ void PatternsManagerWindow::delete_current_pattern()
 
     if (button != QMessageBox::Yes)
         return;
-    /*
-    profile.getPatterns().remove(current);
-*/
-    update_patterns(*ui_->patterns);
-}
 
-void PatternsManagerWindow::set_pattern(const QString &name)
-{
+    std::erase_if(settings_.current_profile().per_file_settings, [&current](const PerFileSettings &pfs) {
+        return pfs.pattern.text() == to_u8string(current);
+    });
+
     update_patterns(*ui_->patterns);
-    ui_->patterns->setCurrentIndex(ui_->patterns->findText(name));
 }
 
 } // namespace cao
