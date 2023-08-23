@@ -76,19 +76,22 @@ public:
         return std::visit(visitor, pattern_);
     }
 
+    NLOHMANN_JSON_SERIALIZE_ENUM(Type, {{Type::Wildcard, "wildcard"}, {Type::Regex, "regex"}})
+
+    [[maybe_unused]] friend void to_json(nlohmann::json &j, const Pattern &p)
+    {
+        j["pattern"] = p.text();
+        j["type"]    = p.pattern_.index() == 0 ? Type::Wildcard : Type::Regex;
+    }
+
+    [[maybe_unused]] friend void from_json(const nlohmann::json &j, Pattern &p)
+    {
+        p = Pattern{j.at("pattern").get<std::u8string>(), j.at("type").get<Type>()};
+    }
+
 private:
     std::variant<std::u8string, Regex> pattern_;
 };
-
-[[maybe_unused]] inline void to_json(nlohmann::json &j, const Pattern &p)
-{
-    j = p.text();
-}
-
-[[maybe_unused]] inline void from_json(const nlohmann::json &j, Pattern &p)
-{
-    p = Pattern{j.get<std::u8string>()};
-}
 
 const auto k_default_pattern = Pattern{u8"*"}; // NOLINT(cert-err58-cpp)
 
