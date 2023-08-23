@@ -34,9 +34,10 @@ ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles, QWidget *parent
     });
 
     connect(ui_->profiles, &QComboBox::currentTextChanged, this, [this](const QString &text) {
-        const bool success = profiles_.set_current_profile(to_u8string(text));
+        bool success = profiles_.set_current_profile(to_u8string(text));
         assert(success);
-        select_data(*ui_->games, profiles_.current_profile().target_game);
+        success = select_data(*ui_->games, profiles_.current_profile().target_game);
+        assert(success);
     });
 
     connect(ui_->newPushButton, &QPushButton::pressed, this, &ProfilesManagerWindow::create_profile);
@@ -46,13 +47,9 @@ ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles, QWidget *parent
             this,
             &ProfilesManagerWindow::delete_current_profile);
 
-    connect(ui_->renamePushButton,
-            &QPushButton::pressed,
-            this,
-            &ProfilesManagerWindow::rename_current_profile);
-
     update_profiles(*ui_->profiles);
-    select_data(*ui_->games, profiles_.current_profile().target_game);
+    const bool success = select_data(*ui_->games, profiles_.current_profile().target_game);
+    assert(success);
 }
 
 ProfilesManagerWindow::~ProfilesManagerWindow() = default;
@@ -66,7 +63,8 @@ void ProfilesManagerWindow::update_profiles(QComboBox &box)
                         .to<QList>();
 
     box.addItems(profiles);
-    select_text(box, to_qstring(profiles_.current_profile_name()));
+    const bool success = select_text(box, to_qstring(profiles_.current_profile_name()));
+    assert(success);
 }
 
 void ProfilesManagerWindow::create_profile()
@@ -117,22 +115,6 @@ void ProfilesManagerWindow::delete_current_profile()
         return;
 
     profiles_.remove(to_u8string(current));
-    update_profiles(*ui_->profiles);
-}
-
-void ProfilesManagerWindow::rename_current_profile()
-{
-    const QString &text = QInputDialog::getText(this, tr("Rename profile"), tr("New name:"));
-    if (text.isEmpty())
-        return;
-
-    const QString &current = ui_->profiles->currentText();
-
-    auto current_data = profiles_.get_profile(to_u8string(current)).value();
-
-    profiles_.remove(to_u8string(current));
-    profiles_.create_profile(to_u8string(text), std::move(current_data));
-
     update_profiles(*ui_->profiles);
 }
 
