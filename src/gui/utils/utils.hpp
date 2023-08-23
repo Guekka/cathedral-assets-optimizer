@@ -90,6 +90,14 @@ template<typename Data>
     return true;
 }
 
+template<typename Collection, typename Proj>
+void set_items(QComboBox &box, const Collection &collection, Proj proj = std::identity{})
+{
+    box.clear();
+    for (const auto &item : collection)
+        box.addItem(proj(item));
+}
+
 [[nodiscard]] inline auto to_qstring(std::u8string_view u) -> QString
 {
     return QString::fromUtf8(reinterpret_cast<const char *>(u.data()), static_cast<qsizetype>(u.size()));

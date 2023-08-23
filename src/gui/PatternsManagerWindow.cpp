@@ -38,12 +38,9 @@ PatternsManagerWindow::~PatternsManagerWindow() = default;
 
 void PatternsManagerWindow::update_patterns(QComboBox &box)
 {
-    box.clear();
-
-    box.addItem(to_qstring(k_default_pattern.text()));
-
-    for (const auto *pfs : settings_.current_profile().per_file_settings())
-        box.addItem(to_qstring(pfs->pattern.text()));
+    set_items(box, settings_.current_profile().per_file_settings(), [](const PerFileSettings *pfs) {
+        return to_qstring(pfs->pattern.text());
+    });
 
     const bool success = select_text(box, to_qstring(current_per_file_settings(settings_).pattern.text()));
     assert(success);

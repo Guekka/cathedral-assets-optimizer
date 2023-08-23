@@ -149,24 +149,21 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     bool success = select_data(*ui.modeChooserComboBox, settings.current_profile().optimization_mode);
     assert(success);
 
-    ui.profiles->clear();
+    auto profiles = [&settings]() -> std::vector<std::u8string_view> {
+        using namespace std::literals;
 
-    switch (settings.gui.gui_mode)
-    {
-        case GuiMode::QuickOptimize:
+        switch (settings.gui.gui_mode)
         {
-            ui.profiles->addItem("SLE");
-            ui.profiles->addItem("SSE");
-            break;
+            case GuiMode::QuickOptimize: return {u8"SLE"sv, u8"SSE"sv};
+            case GuiMode::Medium: [[fallthrough]];
+            case GuiMode::Advanced: return settings.list_profiles();
         }
-        case GuiMode::Medium: [[fallthrough]];
-        case GuiMode::Advanced:
-        {
-            for (const auto &profile : settings.list_profiles())
-                ui.profiles->addItem(to_qstring(profile));
-            break;
-        }
-    }
+    }();
+
+    set_items(*ui.profiles, profiles, to_qstring);
+    
+    success = select_text(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
+    assert(success);
 
     for (auto *module : module_display.get_modules())
         module->setup(settings);
