@@ -45,5 +45,8 @@ private:
     void delete_current_profile();
 
     void update_profiles(QComboBox &box);
+
+    void import_profile();
+    void export_selected_profile();
 };
 } // namespace cao
