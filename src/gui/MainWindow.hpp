@@ -12,6 +12,7 @@
 
 #include <QCoreApplication>
 #include <QMainWindow>
+#include <future>
 
 namespace Ui {
 class MainWindow;
@@ -43,6 +44,8 @@ private:
     std::unique_ptr<Manager> cao_process_;
     std::unique_ptr<ProgressWindow> progress_window_;
     ModuleDisplay module_display_{};
+
+    std::future<void> cao_process_future_;
 
     void init_process();
     void end_process();

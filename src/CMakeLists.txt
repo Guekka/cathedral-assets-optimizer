@@ -103,8 +103,8 @@ target_link_libraries(CAO_LIB INTERFACE sago::platform_folders)
 find_package(fmt CONFIG REQUIRED)
 target_link_libraries(CAO_LIB INTERFACE fmt::fmt)
 
-find_package(Qt6 COMPONENTS Core Widgets Gui LinguistTools Concurrent REQUIRED)
-target_link_libraries(CAO_LIB INTERFACE Qt6::Core Qt6::Widgets Qt6::Gui Qt6::Concurrent)
+find_package(Qt6 COMPONENTS Core Widgets Gui LinguistTools REQUIRED)
+target_link_libraries(CAO_LIB INTERFACE Qt6::Core Qt6::Widgets Qt6::Gui)
 
 # Main exe
 add_executable(Cathedral_Assets_Optimizer WIN32

@@ -25,7 +25,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QUrl>
-#include <QtConcurrent/QtConcurrent>
 
 namespace cao {
 constexpr static inline auto k_discord_url = "https://discord.gg/SwfTzHGQcy";
@@ -332,8 +331,7 @@ void MainWindow::init_process()
 
         progress_window_->show();
 
-        // we don't care about the future, we just want to run the process in another thread
-        [[maybe_unused]] auto future = QtConcurrent::run(&Manager::run_optimization, cao_process_.get());
+        cao_process_future_ = std::async(&Manager::run_optimization, cao_process_.get());
     }
     catch (const std::exception &e)
     {
