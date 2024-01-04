@@ -167,16 +167,16 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1691328192,
-        "narHash": "sha256-w59N1zyDQ7SupfMJLFvtms/SIVbdryqlw5AS4+DiH+Y=",
+        "lastModified": 1704194953,
+        "narHash": "sha256-RtDKd8Mynhe5CFnVT8s0/0yqtWFMM9LmCzXv/YKxnq4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "61676e4dcfeeb058f255294bcb08ea7f3bc3ce56",
+        "rev": "bd645e8668ec6612439a9ee7e71f7eac4099d4f6",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-23.05",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -213,8 +213,7 @@
       "inputs": {
         "devenv": "devenv",
         "nixpkgs": "nixpkgs_2",
-        "systems": "systems_2",
-        "vcpkg-repo": "vcpkg-repo"
+        "systems": "systems_2"
       }
     },
     "systems": {
@@ -244,22 +243,6 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
-        "type": "github"
-      }
-    },
-    "vcpkg-repo": {
-      "locked": {
-        "lastModified": 1691440099,
-        "narHash": "sha256-sJSs6yCiyLKRv21kJ7aqtQz+hpwVifdZZOzQwde+fvE=",
-        "owner": "Guekka",
-        "repo": "nixpkgs",
-        "rev": "2b422ee0af7e4bea5d63a6d7dc15a1e3b2345982",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Guekka",
-        "ref": "vcpkg",
-        "repo": "nixpkgs",
         "type": "github"
       }
     }
