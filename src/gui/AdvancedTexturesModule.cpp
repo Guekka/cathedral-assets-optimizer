@@ -95,7 +95,8 @@ void AdvancedTexturesModule::settings_to_ui(const Settings &settings)
     ui_->resizingBox->setChecked(true);
     std::visit(btu::common::overload{[this](std::monostate) { ui_->resizingBox->setChecked(false); },
                                      [this](btu::tex::util::ResizeRatio ratio) {
-                                         select_data(*ui_->resizingMode, TextureResizingMode::ByRatio);
+                                         const bool success = select_data(*ui_->resizingMode, TextureResizingMode::ByRatio);
+                                         assert(success);
 
                                          ui_->resizingWidth->setValue(ratio.ratio);
                                          ui_->resizingHeight->setValue(ratio.ratio);
@@ -106,7 +107,8 @@ void AdvancedTexturesModule::settings_to_ui(const Settings &settings)
                                          ui_->resizingMinimumHeight->setValue(static_cast<int>(ratio.min.h));
                                      },
                                      [this](btu::tex::Dimension dim) {
-                                         select_data(*ui_->resizingMode, TextureResizingMode::BySize);
+                                         const bool success = select_data(*ui_->resizingMode, TextureResizingMode::BySize);
+                                         assert(success);
 
                                          ui_->resizingWidth->setValue(static_cast<int>(dim.w));
                                          ui_->resizingHeight->setValue(static_cast<int>(dim.h));

@@ -24,6 +24,7 @@
 #include <QDragEnterEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QUrl>
 
 namespace cao {
@@ -106,7 +107,7 @@ void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) no
     }
 }
 
-void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_display, Settings &settings) noexcept
+void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_display, Settings &settings)
 {
     settings.gui.gui_theme = ui.actionEnableDarkTheme->isChecked() ? GuiTheme::Dark : GuiTheme::Light;
 
@@ -155,7 +156,8 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
         {
             case GuiMode::QuickOptimize: return {u8"SLE"sv, u8"SSE"sv};
             case GuiMode::Medium: [[fallthrough]];
-            case GuiMode::Advanced: return settings.list_profiles();
+            case GuiMode::Advanced: [[fallthrough]];
+            default: return settings.list_profiles();
         }
     }();
 

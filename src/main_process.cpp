@@ -37,8 +37,13 @@ struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
                 case btu::Game::SSE: return "Skyrim SE";
                 case btu::Game::FO4: return "Fallout 4";
                 case btu::Game::Custom: return "Custom";
+                default:
+                {
+                    assert(false && "formatter<btu::Game>: unreachable");
+                    return "Invalid";
+                }
             }
-            assert(false && "formatter<btu::Game>: unreachable");
+            
         }();
 
         return fmt::formatter<std::string_view>::format(game_str, ctx);
@@ -192,6 +197,6 @@ auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &se
             return process_texture(std::move(file), file_sets.tex, file_sets.tex_optimize);
         case FileType::Animation: return process_animation(std::move(file), file_sets.hkx_target);
     }
-    assert(false && "process_file: unreachable");
+    return tl::make_unexpected(btu::common::Error(k_unreachable));
 }
 } // namespace cao

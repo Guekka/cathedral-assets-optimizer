@@ -24,7 +24,7 @@ SelectGPUWindow::SelectGPUWindow(QWidget *parent)
     while (dev)
     {
         devices_.emplace_back(*std::move(dev));
-        dev = CompressionDevice::make(devices_.size());
+        dev = CompressionDevice::make(static_cast<uint32_t>(devices_.size()));
     }
 
     auto *layout = new QVBoxLayout(this); // NOLINT(cppcoreguidelines-owning-memory

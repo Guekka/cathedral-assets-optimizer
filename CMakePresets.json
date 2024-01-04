@@ -7,14 +7,6 @@
           "type": "BOOL",
           "value": "ON"
         },
-        "BETHUTIL_BUILD_DOCS": {
-          "type": "BOOL",
-          "value": "ON"
-        },
-        "BETHUTIL_BUILD_EXAMPLES": {
-          "type": "BOOL",
-          "value": "ON"
-        },
         "CMAKE_BUILD_TYPE": {
           "type": "STRING",
           "value": "Debug"

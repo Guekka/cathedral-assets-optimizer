@@ -132,13 +132,13 @@ auto save_settings(const Settings &settings) -> bool
     return json::save_to_file(settings, settings_file);
 }
 
-auto current_per_file_settings(Settings &sets) noexcept -> PerFileSettings &
+auto current_per_file_settings(Settings &sets) -> PerFileSettings &
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
     return const_cast<PerFileSettings &>(current_per_file_settings(std::as_const(sets)));
 }
 
-auto current_per_file_settings(const Settings &sets) noexcept -> const PerFileSettings &
+auto current_per_file_settings(const Settings &sets) -> const PerFileSettings &
 {
     const auto &profile          = sets.current_profile();
     const auto &selected_pattern = sets.gui.selected_pattern;

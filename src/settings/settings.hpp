@@ -60,8 +60,8 @@ public:
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Settings, gui, profiles_, current_profile_index_)
 };
 
-[[nodiscard]] auto current_per_file_settings(Settings &sets) noexcept -> PerFileSettings &;
-[[nodiscard]] auto current_per_file_settings(const Settings &sets) noexcept -> const PerFileSettings &;
+[[nodiscard]] auto current_per_file_settings(Settings &sets) -> PerFileSettings &;
+[[nodiscard]] auto current_per_file_settings(const Settings &sets) -> const PerFileSettings &;
 
 [[nodiscard]] auto save_settings(const Settings &settings) -> bool;
 

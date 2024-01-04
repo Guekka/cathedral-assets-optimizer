@@ -126,8 +126,6 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
 {
     PLOG_INFO << fmt::format("Extracting archives in {}", directory_path.string());
 
-    auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
-
     std::vector archives(btu::fs::directory_iterator(directory_path), btu::fs::directory_iterator{});
     erase_if(archives, [](const auto &file) {
         return !btu::common::contains(btu::bsa::k_archive_extensions, file.path().extension());
@@ -135,15 +133,15 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
 
     emit files_counted(archives.size());
 
-    std::ranges::for_each(archives, [this](const auto &path) {
+    std::ranges::for_each(archives, [this](const auto &entry) {
         btu::bsa::unpack(btu::bsa::UnpackSettings{
-            .file_path                = path,
+            .file_path                = entry.path(),
             .remove_arch              = true,
             .overwrite_existing_files = false,
             .root_opt                 = nullptr,
         });
 
-        emit file_processed(path);
+        emit file_processed(entry.path());
     });
 }
 
@@ -171,7 +169,7 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
 // TODO: use std::chrono (GCC 13.1) instead of QDateTime
 void Manager::run_optimization()
 {
-    PLOG_INFO << "Processing: " << settings_.current_profile().input_path;
+    PLOG_INFO << fmt::format("Processing: {}", settings_.current_profile().input_path.string());
 
     const auto start_time = QDateTime::currentDateTime();
     PLOG_INFO << fmt::format("Beginning. Start time: {}", start_time.toString("hh'h'mm'm'").toStdString());
