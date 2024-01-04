@@ -43,6 +43,10 @@
         "VCPKG_OVERLAY_PORTS": {
           "type": "STRING",
           "value": "${sourceDir}/cmake/ports"
+        },
+		"VCPKG_OVERLAY_TRIPLETS": {
+          "type": "STRING",
+          "value": "${sourceDir}/cmake/triplets"
         }
       },
       "hidden": true,
@@ -60,7 +64,7 @@
         },
         "VCPKG_TARGET_TRIPLET": {
           "type": "STRING",
-          "value": "x64-windows-static-md"
+          "value": "x64-windows-static-md-coroutine-abi2"
         }
       },
       "hidden": true,

@@ -11,8 +11,20 @@
     "platform-folders",
     "plog",
     {
-      "name": "qt",
-      "default-features": false
+      "name": "qtbase",
+      "default-features": false,
+      "features": [
+        "gui",
+        "png",
+        "widgets"
+      ]
+    },
+    {
+      "name": "qttools",
+      "features": [
+        "linguist"
+      ]
     }
-  ]
+  ],
+  "builtin-baseline": "83972272512ce4ede5fc3b2ba98f6468b179f192"
 }
