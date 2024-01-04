@@ -122,15 +122,8 @@ auto Settings::list_profiles() const noexcept -> std::vector<std::u8string_view>
 
 auto load_settings() -> Settings
 {
-    try
-    {
-        const auto settings_file = Settings::config_directory() / "settings.json";
-        return json::read_from_file<Settings>(settings_file);
-    }
-    catch (const std::exception &)
-    {
-        return Settings::make_base();
-    }
+    const auto settings_file = Settings::config_directory() / "settings.json";
+    return json::read_from_file<Settings>(settings_file).value_or(Settings::make_base());
 }
 
 auto save_settings(const Settings &settings) -> bool

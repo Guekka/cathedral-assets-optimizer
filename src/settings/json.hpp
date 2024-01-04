@@ -12,16 +12,21 @@
 namespace cao::json {
 
 template<typename T>
-[[nodiscard]] inline auto read_from_file(const std::filesystem::path &filepath) -> T
+[[nodiscard]] inline auto read_from_file(const std::filesystem::path &filepath) -> std::optional<T>
 {
-    std::fstream stream(filepath, std::fstream::in);
-    if (!stream)
-        return T{};
+    try
+    {
+        std::fstream stream(filepath, std::fstream::in);
+        if (!stream)
+            return {};
 
-    nlohmann::json json;
-    stream >> json;
+        nlohmann::json json;
+        stream >> json;
 
-    return json.get<T>();
+        return json.get<T>();
+    } catch (const std::exception &) {
+        return {};
+    }
 }
 
 [[nodiscard]] inline auto save_to_file(const nlohmann::json &json, const std::filesystem::path &filepath)
