@@ -1,0 +1,16 @@
+{
+  "name": "mpsc-channel",
+  "version-semver": "1.0.0",
+  "description": "mpsc-channel",
+  "homepage": "https://github.com/liuchibing/mpsc-channel-in-cxx/tree/master",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

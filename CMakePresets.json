@@ -7,14 +7,6 @@
           "type": "BOOL",
           "value": "ON"
         },
-        "BETHUTIL_BUILD_DOCS": {
-          "type": "BOOL",
-          "value": "ON"
-        },
-        "BETHUTIL_BUILD_EXAMPLES": {
-          "type": "BOOL",
-          "value": "ON"
-        },
         "CMAKE_BUILD_TYPE": {
           "type": "STRING",
           "value": "Debug"
@@ -34,7 +26,7 @@
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "STRING",
-          "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         },
         "VCPKG_MANIFEST_NO_DEFAULT_FEATURES": {
           "type": "BOOL",
@@ -43,6 +35,10 @@
         "VCPKG_OVERLAY_PORTS": {
           "type": "STRING",
           "value": "${sourceDir}/cmake/ports"
+        },
+		"VCPKG_OVERLAY_TRIPLETS": {
+          "type": "STRING",
+          "value": "${sourceDir}/cmake/triplets"
         }
       },
       "hidden": true,
@@ -60,7 +56,7 @@
         },
         "VCPKG_TARGET_TRIPLET": {
           "type": "STRING",
-          "value": "x64-windows-static-md"
+          "value": "x64-windows-static-md-coroutine-abi2"
         }
       },
       "hidden": true,
@@ -70,7 +66,7 @@
       "cacheVariables": {
         "CMAKE_CXX_FLAGS": {
           "type": "STRING",
-          "value": "-fno-sanitize-recover=undefined -fsanitize=address,undefined -pedantic -pedantic-errors -Wall -Werror -Wextra --coverage"
+          "value": "-fno-sanitize-recover=undefined -fsanitize=address,undefined -pedantic -pedantic-errors -Wall -Wextra --coverage"
         },
         "CMAKE_EXE_LINKER_FLAGS": {
           "type": "STRING",

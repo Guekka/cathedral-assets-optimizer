@@ -1,20 +1,29 @@
-
 {
   "name": "cathedral-assets-optimizer",
   "version-string": "7.0.a",
   "dependencies": [
     "bethutil",
-	"directxtex",
-	"doctest",
-	"nlohmann-json",
-	"nifly",
-	"plog",
+    "directxtex",
+    "doctest",
+    "fmt",
+    "nlohmann-json",
+    "nifly",
+    "platform-folders",
+    "plog",
     {
-      "name": "qt5",
+      "name": "qtbase",
       "default-features": false,
-        "features": [
-            "translations"
-        ]
+      "features": [
+        "gui",
+        "png",
+        "widgets"
+      ]
+    },
+    {
+      "name": "qttools",
+      "features": [
+        "linguist"
+      ]
     }
   ]
 }

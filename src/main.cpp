@@ -3,43 +3,52 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "gui/MainWindow.hpp"
+#include "gui/utils/utils.hpp"
+#include "logger.hpp"
+#include "manager.hpp"
+#include "settings/settings.hpp"
+#include "version.hpp"
+
+#include <plog/Log.h>
+
+#include <QApplication>
 #include <QCommandLineParser>
-#include <QDir>
+#include <QLibraryInfo>
 #include <QMessageBox>
 #include <QTranslator>
 
-#include "GUI/LevelSelector.hpp"
-#include "GUI/MainWindow.hpp"
-#include "GUI/Utils/SetTheme.hpp"
-#include "Manager.hpp"
-#include "Settings/MigrateProfiles.hpp"
-#include "Settings/Profiles.hpp"
-#include "Version.hpp"
-
 void init()
 {
-    Q_INIT_RESOURCE(style);
-
     QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
-    QCoreApplication::setApplicationVersion(CAO_VERSION);
+    QCoreApplication::setApplicationVersion(k_cao_version);
 }
 
-void initTranslations()
+void init_translations()
 {
-    static QTranslator qtTranslator;
-    qtTranslator.load(QLocale(), "qt", "_", "translations");
-    QCoreApplication::installTranslator(&qtTranslator);
+    // Qt translations
+    static QTranslator qt_translator;
+    if (qt_translator.load(QLocale::system(),
+                           "qtbase",
+                           "_",
+                           QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+    {
+        QCoreApplication::installTranslator(&qt_translator);
+    }
 
-    static QTranslator AssetsOptTranslator;
-    AssetsOptTranslator.load(QLocale(), "AssetsOpt", "_", "translations");
-    QCoreApplication::installTranslator(&AssetsOptTranslator);
+    // CAO translations
+    static QTranslator assets_opt_translator;
+    if (qt_translator.load(QLocale::system(), "AssetsOpt", "_", "translations"))
+    {
+        QCoreApplication::installTranslator(&assets_opt_translator);
+    }
 }
 
-void displayError(bool cli, const std::string &err)
+void display_error(bool cli, const std::string &err)
 {
     if (cli)
     {
-        std::cerr << err << std::endl;
+        std::cerr << err << '\n' << std::flush;
     }
     else
     {
@@ -49,39 +58,9 @@ void displayError(bool cli, const std::string &err)
     PLOG_FATAL << err;
 }
 
-void displayInfo(bool cli, const std::string &text)
+auto main(int argc, char *argv[]) -> int
 {
-    if (cli)
-    {
-        std::cout << text << std::endl;
-    }
-    else
-    {
-        QMessageBox box(QMessageBox::Information, "Information", QString::fromStdString(text));
-        box.exec();
-    }
-    PLOG_INFO << text;
-}
-
-void migrateProfiles(bool cli)
-{
-    const auto &migratedProfiles = CAO::migrateProfiles(QDir("importedProfiles"), QDir("profiles"));
-    if (migratedProfiles.empty())
-        return;
-
-    const QString &text = QCoreApplication::translate("main",
-                                                      "Migrated profiles:\n%1. Please check that they were "
-                                                      "assigned the right game. This process in not perfect")
-                              .arg(migratedProfiles.join('\n'));
-
-    CAO::getProfiles().update(true);
-
-    displayInfo(cli, text.toStdString());
-}
-
-int main(int argc, char *argv[])
-{
-    std::unique_ptr<QCoreApplication> app = std::make_unique<QCoreApplication>(argc, argv);
+    auto app = std::make_unique<QCoreApplication>(argc, argv);
 
     init();
 
@@ -94,40 +73,40 @@ int main(int argc, char *argv[])
 
     if (!cli)
     {
-        app = nullptr;
+        app.reset(); // Destroying the QCoreApplication before creating a QApplication is required
         app = std::make_unique<QApplication>(argc, argv);
     }
 
-    initTranslations();
+    init_translations();
 
     try
     {
-        migrateProfiles(cli);
+        if (!cao::init_logging(cao::Settings::state_directory()))
+            throw std::runtime_error("Failed to initialize logging.");
+
+        auto settings = cao::load_settings();
 
         if (cli)
         {
-            CAO::getProfiles().setCurrent(parser.positionalArguments().at(0));
+            const auto profile_name = parser.positionalArguments().value(0);
 
-            CAO::Manager manager;
-            manager.runOptimization();
+            auto profile = settings.get_profile(cao::to_u8string(profile_name));
+            if (!profile)
+                throw std::runtime_error("Profile not found");
+
+            cao::Manager manager(settings);
+            manager.run_optimization();
         }
         else
         {
-            auto window = std::make_unique<CAO::MainWindow>();
-
-            CAO::LevelSelector selector;
-            if (!selector.runSelection(*window))
-                return 0;
-
-            window->show();
-            selector.setHandler(*window);
-
+            auto window = cao::MainWindow{settings};
+            window.show();
             return app->exec();
         }
     }
     catch (const std::exception &e)
     {
-        displayError(cli, e.what());
+        display_error(cli, e.what());
         return 1;
     }
 
