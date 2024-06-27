@@ -9,6 +9,7 @@
 #include <plog/Appenders/RollingFileAppender.h>
 #include <plog/Formatters/TxtFormatter.h>
 #include <plog/Init.h>
+#include <plog/Log.h>
 
 #include <filesystem>
 #include <fstream>

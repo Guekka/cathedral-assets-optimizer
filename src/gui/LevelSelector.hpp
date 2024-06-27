@@ -17,7 +17,7 @@ class LevelSelector;
 
 namespace cao {
 
-class LevelSelector : private QDialog
+class LevelSelector final : QDialog
 {
     Q_DECLARE_TR_FUNCTIONS(LevelSelector)
 public:
@@ -36,7 +36,7 @@ public:
     [[maybe_unused]] auto eventFilter(QObject *obj, QEvent *event) noexcept -> bool override;
 
 private:
-    constexpr static inline auto k_button_property_name = "name";
+    constexpr static auto k_button_property_name = "name";
 
     std::unique_ptr<Ui::LevelSelector> ui_;
     GuiSettings settings_;

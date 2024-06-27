@@ -10,10 +10,10 @@
 #include <QInputDialog>
 
 namespace cao {
-ListDialog::ListDialog(Sorting sorting, QWidget *parent)
+ListDialog::ListDialog(Sorting sort_by, QWidget *parent)
     : QDialog(parent)
     , ui_(new Ui::ListDialog)
-    , sorting_(sorting)
+    , sorting_(sort_by)
 {
     ui_->setupUi(this);
     connect(ui_->lineEdit, &QLineEdit::textEdited, this, &ListDialog::filter_view);
@@ -69,11 +69,11 @@ void ListDialog::filter_view(const QString &text)
 
 auto ListDialog::find_insert_pos(const QListWidgetItem *item) -> int
 {
-    auto *list = ui_->listWidget;
+    const auto *list = ui_->listWidget;
 
     for (int i = 0, count = list->count(); i < count; ++i)
     {
-        auto *other = list->item(i);
+        const auto *other = list->item(i);
         if (other->checkState() != item->checkState())
             continue;
 

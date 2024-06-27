@@ -14,7 +14,7 @@
 
 namespace Ui {
 class ProfilesManagerWindow;
-}
+} // namespace Ui
 
 class QComboBox;
 
@@ -22,7 +22,7 @@ namespace cao {
 class Settings;
 
 // TODO: add export/import profiles
-class ProfilesManagerWindow : public QDialog
+class ProfilesManagerWindow final : public QDialog
 {
     Q_DECLARE_TR_FUNCTIONS(ProfilesManagerWindow)
 

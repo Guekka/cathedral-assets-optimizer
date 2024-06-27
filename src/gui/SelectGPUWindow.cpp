@@ -51,8 +51,8 @@ auto SelectGPUWindow::get_selected_index() -> std::optional<size_t>
 
 void SelectGPUWindow::set_selected_index(size_t val)
 {
-    auto buttons  = ui_->groupBox->findChildren<QRadioButton *>();
-    auto selected = std::find_if(std::cbegin(buttons), std::cend(buttons), [val](QRadioButton *button) {
+    const auto buttons  = ui_->groupBox->findChildren<QRadioButton *>();
+    const auto selected = std::ranges::find_if(buttons, [val](QRadioButton *button) {
         return button->property(property_key).value<size_t>() == val;
     });
 

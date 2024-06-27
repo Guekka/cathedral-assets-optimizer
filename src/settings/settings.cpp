@@ -37,12 +37,11 @@ auto Settings::current_profile_name() const noexcept -> std::u8string_view
 
 void Settings::remove(std::u8string_view profile) noexcept
 {
-    auto it = std::ranges::find_if(profiles_, [profile](const auto &p) { return p.first == profile; });
+    const auto it = std::ranges::find_if(profiles_, [profile](const auto &p) { return p.first == profile; });
     if (it == profiles_.end())
         return;
 
-    auto current_profile = current_profile_name();
-    if (current_profile == profile)
+    if (const auto current_profile = current_profile_name(); current_profile == profile)
         current_profile_index_ = 0;
 
     profiles_.erase(it);
@@ -53,7 +52,7 @@ void Settings::remove(std::u8string_view profile) noexcept
 
 auto Settings::set_current_profile(std::u8string_view profile) noexcept -> bool
 {
-    auto it = std::ranges::find_if(profiles_, [profile](const auto &p) { return p.first == profile; });
+    const auto it = std::ranges::find_if(profiles_, [profile](const auto &p) { return p.first == profile; });
     if (it == profiles_.end())
         return false;
 
@@ -63,8 +62,8 @@ auto Settings::set_current_profile(std::u8string_view profile) noexcept -> bool
 
 auto Settings::get_profile(std::u8string_view profile_name) const noexcept -> std::optional<Profile>
 {
-    auto it = std::ranges::find_if(profiles_,
-                                   [profile_name](const auto &p) { return p.first == profile_name; });
+    const auto it = std::ranges::find_if(profiles_,
+                                         [profile_name](const auto &p) { return p.first == profile_name; });
     if (it == profiles_.end())
         return std::nullopt;
 
@@ -85,12 +84,12 @@ auto Settings::make_base() noexcept -> Settings
 
 using SagoFunction = std::string (*)();
 
-[[nodiscard]] auto any_directory(SagoFunction func, std::filesystem::path default_path) noexcept
+[[nodiscard]] auto any_directory(SagoFunction func, const std::filesystem::path &default_path) noexcept
     -> std::filesystem::path
 {
     try
     {
-        auto base = std::filesystem::path(func());
+        const auto base = std::filesystem::path(func());
 
         auto path = base / Settings::k_app_name;
         std::filesystem::create_directories(path);
@@ -145,7 +144,7 @@ auto current_per_file_settings(const Settings &sets) -> const PerFileSettings &
 
     auto per_file_settings = profile.per_file_settings();
 
-    auto it = std::ranges::find_if(per_file_settings, [selected_pattern](const auto *pfs) {
+    const auto it = std::ranges::find_if(per_file_settings, [selected_pattern](const auto *pfs) {
         return pfs->pattern.text() == selected_pattern;
     });
 

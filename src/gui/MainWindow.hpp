@@ -7,7 +7,6 @@
 #include "IWindowModule.hpp"
 #include "ModuleDisplay.hpp"
 #include "ProgressWindow.hpp"
-#include "settings/base_types.hpp"
 #include "settings/settings.hpp"
 
 #include <QCoreApplication>

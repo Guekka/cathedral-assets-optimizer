@@ -149,7 +149,7 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     bool success = select_data(*ui.modeChooserComboBox, settings.current_profile().optimization_mode);
     assert(success);
 
-    auto profiles = [&settings]() -> std::vector<std::u8string_view> {
+    const auto profiles = [&settings]() -> std::vector<std::u8string_view> {
         using namespace std::literals;
 
         switch (settings.gui.gui_mode)
@@ -176,6 +176,9 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
 
 void first_start(bool &first_run) noexcept
 {
+    if (!first_run)
+        return;
+
     constexpr auto welcome
         = R"(It appears you are running CAO for the first time. All options have tooltips explaining what
           they do. If you need help, you can also <a href="%1">join us on Discord</a>.<br>
@@ -183,16 +186,13 @@ void first_start(bool &first_run) noexcept
           If you like my work, <a href="%2">please consider supporting me</a>.<br>
           Thanks for using CAO!)";
 
-    if (first_run)
-    {
-        first_run = false;
-        QMessageBox box(QMessageBox::Information,
-                        QObject::tr("Welcome to %1 %2")
-                            .arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
-                        QObject::tr(welcome).arg(k_discord_url, k_kofi_url));
-        box.setTextFormat(Qt::TextFormat::RichText);
-        box.exec();
-    }
+    first_run = false;
+    QMessageBox box(QMessageBox::Information,
+                    QObject::tr("Welcome to %1 %2")
+                        .arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion()),
+                    QObject::tr(welcome).arg(k_discord_url, k_kofi_url));
+    box.setTextFormat(Qt::TextFormat::RichText);
+    box.exec();
 }
 
 MainWindow::MainWindow(Settings settings, QWidget *parent)
@@ -227,7 +227,7 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         window.set_selected_index(settings_.gui.gpu_index);
         window.exec();
 
-        auto idx = window.get_selected_index();
+        const auto idx = window.get_selected_index();
         if (window.result() == QDialog::Accepted && idx.has_value())
             settings_.gui.gpu_index = idx.value();
     });
@@ -260,7 +260,10 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 
     connect(ui_->profiles, &QComboBox::currentTextChanged, this, [this](const QString &text) {
         if (!settings_.set_current_profile(to_u8string(text)))
-            return; // TODO: error message
+        {
+            // TODO: improve error message
+            QMessageBox::critical(this, tr("Error"), tr("Could not set the current profile"));
+        }
         // TODO
     });
 
@@ -351,17 +354,10 @@ void MainWindow::end_process()
     ui_->processButton->setDisabled(false);
 
     if (cao_process_)
-    {
-        cao_process_->disconnect();
         cao_process_.reset();
-    }
 
     if (progress_window_)
-    {
-        progress_window_->end();
-        progress_window_->disconnect();
         progress_window_.reset();
-    }
 }
 
 void MainWindow::save_settings() noexcept
@@ -370,8 +366,7 @@ void MainWindow::save_settings() noexcept
 
     if (!cao::save_settings(settings_))
     {
-        QMessageBox::critical(this, tr("Error"), tr("Your settings could not be saved to disk. Aborting."));
-        return;
+        QMessageBox::critical(this, tr("Error"), tr("Your settings could not be saved to disk."));
     }
 }
 
@@ -400,8 +395,7 @@ void MainWindow::about() noexcept
 
 [[maybe_unused]] void MainWindow::closeEvent(QCloseEvent *event)
 {
-    const bool process_running = cao_process_ != nullptr;
-    if (process_running)
+    if (const bool process_running = cao_process_ != nullptr; process_running)
     {
         end_process();
         event->accept();

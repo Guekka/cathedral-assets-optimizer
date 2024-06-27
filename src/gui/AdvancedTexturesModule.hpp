@@ -21,6 +21,13 @@ class AdvancedTexturesModule final : public IWindowModule
 
 public:
     explicit AdvancedTexturesModule(QWidget *parent = nullptr);
+
+    AdvancedTexturesModule(const AdvancedTexturesModule &) = delete;
+    AdvancedTexturesModule(AdvancedTexturesModule &&)      = delete;
+
+    auto operator=(const AdvancedTexturesModule &) -> AdvancedTexturesModule & = delete;
+    auto operator=(AdvancedTexturesModule &&) -> AdvancedTexturesModule      & = delete;
+
     ~AdvancedTexturesModule() override;
 
     [[nodiscard]] auto name() const noexcept -> QString override;

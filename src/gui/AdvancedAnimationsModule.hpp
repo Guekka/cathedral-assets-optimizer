@@ -14,7 +14,7 @@ class AdvancedAnimationsModule;
 } // namespace Ui
 
 namespace cao {
-class AdvancedAnimationsModule : public IWindowModule
+class AdvancedAnimationsModule final : public IWindowModule
 {
     Q_OBJECT
 
@@ -24,8 +24,8 @@ public:
     AdvancedAnimationsModule(const AdvancedAnimationsModule &) = delete;
     AdvancedAnimationsModule(AdvancedAnimationsModule &&)      = delete;
 
-    AdvancedAnimationsModule &operator=(const AdvancedAnimationsModule &) = delete;
-    AdvancedAnimationsModule &operator=(AdvancedAnimationsModule &&)      = delete;
+    auto operator=(const AdvancedAnimationsModule &) -> AdvancedAnimationsModule & = delete;
+    auto operator=(AdvancedAnimationsModule &&) -> AdvancedAnimationsModule      & = delete;
 
     ~AdvancedAnimationsModule() override;
 

@@ -12,7 +12,7 @@ class AdvancedBSAModule;
 } // namespace Ui
 
 namespace cao {
-class AdvancedBSAModule : public IWindowModule
+class AdvancedBSAModule final : public IWindowModule
 {
     Q_OBJECT
 

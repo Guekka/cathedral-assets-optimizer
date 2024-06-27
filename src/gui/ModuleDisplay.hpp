@@ -28,6 +28,6 @@ public:
     [[nodiscard]] auto get_modules() const noexcept -> std::vector<const IWindowModule *>;
 
 private:
-    QTabWidget *tab_widget_;
+    QTabWidget *tab_widget_ = nullptr;
 };
 } // namespace cao

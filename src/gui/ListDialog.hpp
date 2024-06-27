@@ -15,12 +15,12 @@ class ListDialog;
 class QListWidgetItem;
 
 namespace cao {
-class ListDialog : public QDialog
+class ListDialog final : public QDialog
 {
     Q_OBJECT
 
 public:
-    enum class Sorting
+    enum class Sorting : std::uint8_t
     {
         Text,
         Insertion

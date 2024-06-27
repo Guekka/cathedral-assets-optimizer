@@ -9,7 +9,7 @@
 #include <btu/modmanager/mod_folder.hpp>
 
 namespace cao {
-enum class FileType
+enum class FileType : std::uint8_t
 {
     Mesh,
     Texture,

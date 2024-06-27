@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include <btu/tex/detail/formats_string.hpp> // TODO: make this header public
 #include <nlohmann/json.hpp>
 
 #include <fstream>
@@ -12,7 +11,7 @@
 namespace cao::json {
 
 template<typename T>
-[[nodiscard]] inline auto read_from_file(const std::filesystem::path &filepath) -> std::optional<T>
+[[nodiscard]] auto read_from_file(const std::filesystem::path &filepath) -> std::optional<T>
 {
     try
     {
@@ -24,7 +23,9 @@ template<typename T>
         stream >> json;
 
         return json.get<T>();
-    } catch (const std::exception &) {
+    }
+    catch (const std::exception &)
+    {
         return {};
     }
 }

@@ -57,7 +57,7 @@ void PatternsManagerWindow::create_pattern()
     //Choosing base Pattern
 
     QStringList patterns_list;
-    auto &patterns = ui_->patterns;
+    const auto &patterns = ui_->patterns;
     for (int i = 0; i < patterns->count(); ++i)
         patterns_list.push_back(patterns->itemText(i));
 

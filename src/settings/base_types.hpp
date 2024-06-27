@@ -10,26 +10,26 @@
 
 namespace cao {
 
-enum class OptimizationMode
+enum class OptimizationMode : std::uint8_t
 {
     SingleMod   = 0,
     SeveralMods = 1
 };
-enum class TextureResizingMode
+enum class TextureResizingMode : std::uint8_t
 {
     None,
     ByRatio,
     BySize
 };
 
-enum class GuiMode
+enum class GuiMode : std::uint8_t
 {
     QuickOptimize,
     Medium,
     Advanced,
 };
 
-enum class GuiTheme
+enum class GuiTheme : std::uint8_t
 {
     Dark,
     Light

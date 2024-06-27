@@ -124,7 +124,10 @@ ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
     });
 }
 
-ProgressWindow::~ProgressWindow() = default;
+ProgressWindow::~ProgressWindow()
+{
+    end();
+}
 
 void ProgressWindow::set_maximum(int max)
 {
@@ -143,7 +146,7 @@ void ProgressWindow::step(std::optional<QString> text)
 
 void ProgressWindow::end()
 {
-    auto &progress_bar = ui_->progressBar;
+    const auto &progress_bar = ui_->progressBar;
     progress_bar->setValue(progress_bar->maximum());
     progress_bar->setFormat(tr("Done"));
 }
@@ -160,7 +163,7 @@ void ProgressWindow::update_all()
 
 void ProgressWindow::update_progress_bar(const QString &text, int max, int value)
 {
-    auto &progress_bar = ui_->progressBar;
+    const auto &progress_bar = ui_->progressBar;
     progress_bar->setFormat(text);
     progress_bar->setMaximum(max);
     progress_bar->setValue(value);

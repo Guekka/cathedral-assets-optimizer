@@ -12,9 +12,6 @@
 
 #include <btu/common/algorithms.hpp>
 
-#include <QDebug>
-#include <QListWidgetItem>
-
 namespace cao {
 AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
     : IWindowModule(parent)

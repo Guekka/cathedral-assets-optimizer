@@ -12,7 +12,7 @@ class AdvancedMeshesModule;
 } // namespace Ui
 
 namespace cao {
-class AdvancedMeshesModule : public IWindowModule
+class AdvancedMeshesModule final : public IWindowModule
 {
     Q_OBJECT
 public:

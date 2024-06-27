@@ -26,7 +26,7 @@ AdvancedBSAModule::AdvancedBSAModule(QWidget *parent)
 
 AdvancedBSAModule::~AdvancedBSAModule() = default;
 
-void AdvancedBSAModule::settings_to_ui(const cao::Settings &settings)
+void AdvancedBSAModule::settings_to_ui(const Settings &settings)
 {
     ui_->baseGroupBox->setChecked(true);
     switch (settings.current_profile().bsa_operation)
@@ -60,7 +60,8 @@ auto AdvancedBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
         case btu::Game::SLE:
         case btu::Game::SSE:
         case btu::Game::FNV:
-        case btu::Game::FO4: return true;
+        case btu::Game::FO4:
+        case btu::Game::Starfield: return true;
         case btu::Game::Custom: return false;
     }
     return false;

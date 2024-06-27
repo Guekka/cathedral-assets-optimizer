@@ -54,7 +54,7 @@ private:
     btu::Path log_file_path_;
 };
 
-class ProgressWindow : public QWidget
+class ProgressWindow final : public QWidget
 {
     Q_OBJECT
 public:

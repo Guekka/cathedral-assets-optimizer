@@ -58,7 +58,7 @@ void ProfilesManagerWindow::update_profiles(QComboBox &box)
 {
     box.clear();
 
-    auto profiles = flux::from(profiles_.list_profiles())
+    const auto profiles = flux::from(profiles_.list_profiles())
                         .map([](const auto &p) { return QString::fromUtf8(p.data(), p.size()); })
                         .to<QList>();
 
@@ -78,7 +78,7 @@ void ProfilesManagerWindow::create_profile()
     // Choosing base profile
 
     QStringList profiles_list;
-    auto &profiles_box = ui_->profiles;
+    const auto &profiles_box = ui_->profiles;
     for (int i = 0; i < profiles_box->count(); ++i)
         profiles_list.push_back(profiles_box->itemText(i));
 
@@ -116,6 +116,13 @@ void ProfilesManagerWindow::delete_current_profile()
 
     profiles_.remove(to_u8string(current));
     update_profiles(*ui_->profiles);
+}
+
+void ProfilesManagerWindow::import_profile() {}
+
+void ProfilesManagerWindow::export_selected_profile()
+{
+    // use qfiledialog
 }
 
 } // namespace cao

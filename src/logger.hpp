@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include <plog/Log.h>
-
 #include <filesystem>
 
 namespace cao {

@@ -4,8 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
-#include "base_types.hpp"
-
 #include <btu/hkx/anim.hpp>
 #include <btu/nif/optimize.hpp>
 #include <btu/tex/optimize.hpp>
@@ -24,13 +22,13 @@ class Pattern
     };
 
 public:
-    enum class Type
+    enum class Type : std::uint8_t
     {
         Wildcard,
         Regex,
     };
 
-    explicit Pattern(std::u8string pattern, Type type = Type::Wildcard)
+    explicit Pattern(std::u8string pattern, const Type type = Type::Wildcard)
     {
         switch (type)
         {
@@ -95,7 +93,7 @@ private:
 
 const auto k_default_pattern = Pattern{u8"*"}; // NOLINT(cert-err58-cpp)
 
-enum class OptimizeType
+enum class OptimizeType : std::uint8_t
 {
     None,
     Normal,
@@ -114,7 +112,7 @@ struct PerFileSettings
 
     Pattern pattern = k_default_pattern;
 
-    [[nodiscard]] inline auto matches(const std::filesystem::path &path) const noexcept -> bool
+    [[nodiscard]] auto matches(const std::filesystem::path &path) const noexcept -> bool
     {
         return pattern.matches(path);
     }

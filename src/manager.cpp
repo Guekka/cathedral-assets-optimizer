@@ -18,6 +18,7 @@
 #include <btu/esp/functions.hpp>
 #include <btu/modmanager/mod_manager.hpp>
 #include <fmt/chrono.h>
+#include <plog/Log.h>
 
 #include <filesystem>
 #include <mutex>
@@ -151,8 +152,8 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
 
     auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
 
-    auto dir_it  = std::filesystem::directory_iterator(directory_path);
-    auto plugins = btu::bsa::list_plugins(dir_it, {}, bsa_sets);
+    const auto dir_it = std::filesystem::directory_iterator(directory_path);
+    auto plugins      = btu::bsa::list_plugins(dir_it, {}, bsa_sets);
 
     btu::bsa::pack(btu::bsa::PackSettings{
                        .input_dir     = directory_path,
@@ -172,15 +173,15 @@ void Manager::run_optimization()
     const auto start_time = std::chrono::high_resolution_clock::now();
     PLOG_INFO << fmt::format("Beginning. Start time: {}", start_time);
 
-    auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
-    auto mod      = btu::modmanager::ModFolder(settings_.current_profile().input_path, bsa_sets);
+    const auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
+    auto mod            = btu::modmanager::ModFolder(settings_.current_profile().input_path, bsa_sets);
 
     PLOG_INFO << "Counting files...";
     PLOG_INFO << fmt::format("Found {} files", mod.size());
     emit files_counted(mod.size());
 
     PLOG_INFO << "Parsing plugins...";
-    auto plugin_info = get_plugin_info(mod);
+    const auto plugin_info = get_plugin_info(mod);
     apply_plugin_info(settings_, plugin_info);
 
     if (settings_.current_profile().bsa_operation == BsaOperation::Extract)
@@ -188,7 +189,7 @@ void Manager::run_optimization()
 
     mod.transform(
         [this](btu::modmanager::ModFolder::ModFile &&file) -> std::optional<std::vector<std::byte>> {
-            auto path         = file.relative_path;
+            const auto path   = file.relative_path;
             auto path_for_log = btu::common::as_ascii_string(path.u8string());
 
             PLOG_VERBOSE << fmt::format("Processing file {}", path_for_log);

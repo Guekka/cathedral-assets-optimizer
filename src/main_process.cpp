@@ -20,7 +20,6 @@
 #include <tl/expected.hpp>
 
 #include <string_view>
-#include <system_error>
 
 template<>
 struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
@@ -43,7 +42,6 @@ struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
                     return "Invalid";
                 }
             }
-            
         }();
 
         return fmt::formatter<std::string_view>::format(game_str, ctx);
@@ -121,7 +119,7 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
     if (type == OptimizeType::None)
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
 
-    return btu::nif::load(std::move(file.relative_path), *file.content)
+    return btu::nif::load(std::move(file.relative_path), *std::move(file.content))
         .and_then([&](auto &&nif) -> tl::expected<btu::nif::Mesh, btu::common::Error> {
             auto steps = btu::nif::compute_optimization_steps(nif, settings);
 
@@ -145,8 +143,8 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
                                    const OptimizeType type) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-    static auto thread_local compression_device = btu::tex::CompressionDevice::make(
-        0); // TODO: make this configurable
+    // TODO: make this configurable
+    auto thread_local compression_device = btu::tex::CompressionDevice::make(0);
 
     if (type == OptimizeType::None)
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
@@ -178,7 +176,7 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
         return {}; // TODO
 
     return btu::hkx::AnimExe::make("data") // TODO: make this configurable
-        .and_then([&](btu::hkx::AnimExe &&exe) { return exe.convert(*hkx_target, *file.content); });
+        .and_then([&](const btu::hkx::AnimExe &exe) { return exe.convert(*hkx_target, *file.content); });
 }
 
 auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &settings) noexcept

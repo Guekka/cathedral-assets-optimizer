@@ -5,20 +5,15 @@
 #pragma once
 
 #include <QAbstractButton>
-#include <QAction>
 #include <QComboBox>
 #include <QDialog>
-#include <QDoubleSpinBox>
 #include <QGroupBox>
 #include <QLineEdit>
-#include <QListView>
-#include <QSpinBox>
-#include <QStandardItemModel>
 #include <functional>
 #include <stdexcept>
 
 namespace cao {
-class UiException : public std::runtime_error
+class UiException final : public std::runtime_error
 {
 public:
     explicit UiException(const QString &str)
@@ -72,7 +67,7 @@ void set_data(QComboBox &box, const QString &text, const Data &data)
 template<typename Data>
 [[nodiscard]] auto select_data(QComboBox &box, const Data &data) -> bool
 {
-    int idx = box.findData(QVariant::fromValue(data));
+    const int idx = box.findData(QVariant::fromValue(data));
     if (idx == -1)
         return false;
 
@@ -105,7 +100,7 @@ void set_items(QComboBox &box, const Collection &collection, Proj proj = std::id
 
 [[nodiscard]] inline auto to_u8string(QStringView u) -> std::u8string
 {
-    auto data = u.toUtf8();
+    const auto data = u.toUtf8();
     return {reinterpret_cast<const char8_t *>(data.constData()), static_cast<size_t>(data.size())};
 }
 

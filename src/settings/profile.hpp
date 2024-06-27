@@ -12,7 +12,7 @@
 #include <nlohmann/json.hpp>
 
 namespace cao {
-enum class BsaOperation
+enum class BsaOperation : std::uint8_t
 {
     None,
     Create,
@@ -34,7 +34,7 @@ public:
 
     std::vector<std::u8string> mods_blacklist;
 
-    [[nodiscard]] inline auto per_file_settings() noexcept -> std::vector<PerFileSettings *>
+    [[nodiscard]] auto per_file_settings() noexcept -> std::vector<PerFileSettings *>
     {
         std::vector<PerFileSettings *> result;
         for (auto &settings : per_file_settings_)
@@ -45,7 +45,7 @@ public:
         return result;
     }
 
-    [[nodiscard]] inline auto per_file_settings() const noexcept -> std::vector<const PerFileSettings *>
+    [[nodiscard]] auto per_file_settings() const noexcept -> std::vector<const PerFileSettings *>
     {
         std::vector<const PerFileSettings *> result;
         for (const auto &settings : per_file_settings_)
@@ -56,17 +56,17 @@ public:
         return result;
     }
 
-    inline void add_per_file_settings(PerFileSettings settings) noexcept
+    void add_per_file_settings(PerFileSettings settings) noexcept
     {
         per_file_settings_.emplace_back(std::move(settings));
     }
 
-    inline auto remove_per_file_settings(std::u8string_view text) noexcept -> bool
+    auto remove_per_file_settings(std::u8string_view text) noexcept -> bool
     {
-        auto it = std::ranges::find(per_file_settings_, text, [](const auto &pfs) {
+        const auto it = std::ranges::find(per_file_settings_, text, [](const auto &pfs) {
             return pfs.pattern.text();
         });
-        
+
         if (it == per_file_settings_.end())
             return false;
 
@@ -74,11 +74,12 @@ public:
         return true;
     }
 
-    [[nodiscard]] inline auto get_per_file_settings(const std::filesystem::path &path) const noexcept
+    [[nodiscard]] auto get_per_file_settings(const std::filesystem::path &path) const noexcept
         -> PerFileSettings
     {
-        auto it = std::ranges::find_if(per_file_settings_,
-                                       [&path](const auto &settings) { return settings.matches(path); });
+        const auto it = std::ranges::find_if(per_file_settings_, [&path](const auto &settings) {
+            return settings.matches(path);
+        });
 
         if (it == per_file_settings_.end())
             return base_per_file_settings_;
@@ -86,7 +87,7 @@ public:
         return *it;
     }
 
-    [[nodiscard]] static inline auto make_base(btu::Game game) noexcept -> Profile
+    [[nodiscard]] static auto make_base(btu::Game game) noexcept -> Profile
     {
         Profile profile;
         profile.target_game             = game;

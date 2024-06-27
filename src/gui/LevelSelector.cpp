@@ -74,7 +74,7 @@ LevelSelector::~LevelSelector() = default;
 
 auto LevelSelector::run_selection() noexcept -> GuiSettings
 {
-    if (QDialog::exec() != QDialog::Accepted)
+    if (QDialog::exec() != Accepted)
         return settings_;
 
     settings_.remember_gui_mode = ui_->rememberChoice->isChecked();
@@ -86,10 +86,9 @@ auto LevelSelector::run_selection() noexcept -> GuiSettings
 {
     if (event->type() == QEvent::HoverEnter)
     {
-        auto *button = qobject_cast<QPushButton *>(obj);
-        if (button != nullptr)
+        if (const auto *button = qobject_cast<QPushButton *>(obj); button != nullptr)
         {
-            auto level = button->property(k_button_property_name).value<GuiMode>();
+            const auto level = button->property(k_button_property_name).value<GuiMode>();
             ui_->label->setText(get_help_text(level));
         }
         return true;

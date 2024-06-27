@@ -17,12 +17,12 @@ class SelectGPUWindow;
 } // namespace Ui
 
 namespace cao {
-class SelectGPUWindow : public QDialog
+class SelectGPUWindow final : public QDialog
 {
     Q_OBJECT
 
 public:
-    static inline constexpr auto property_key = "Index";
+    static constexpr auto property_key = "Index";
     explicit SelectGPUWindow(QWidget *parent = nullptr);
 
     [[nodiscard]] auto get_selected_index() -> std::optional<size_t>;
