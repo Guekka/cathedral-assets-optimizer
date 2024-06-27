@@ -21,7 +21,6 @@ class QComboBox;
 namespace cao {
 class Settings;
 
-// TODO: add export/import profiles
 class ProfilesManagerWindow final : public QDialog
 {
     Q_DECLARE_TR_FUNCTIONS(ProfilesManagerWindow)
@@ -40,6 +39,7 @@ public:
 private:
     Settings &profiles_;
     std::unique_ptr<Ui::ProfilesManagerWindow> ui_;
+
     void create_profile();
 
     void delete_current_profile();

@@ -5,12 +5,14 @@
 
 #include "ProfilesManagerWindow.hpp"
 
+#include "settings/json.hpp"
 #include "settings/settings.hpp"
 #include "ui_ProfilesManagerWindow.h"
 #include "utils/utils.hpp"
 
 #include <flux.hpp>
 
+#include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
 namespace cao {
@@ -47,6 +49,9 @@ ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles, QWidget *parent
             this,
             &ProfilesManagerWindow::delete_current_profile);
 
+    connect(ui_->importPushButton, &QPushButton::pressed, this, &ProfilesManagerWindow::import_profile);
+    connect(ui_->exportPushButton, &QPushButton::pressed, this, &ProfilesManagerWindow::export_selected_profile);
+
     update_profiles(*ui_->profiles);
     const bool success = select_data(*ui_->games, profiles_.current_profile().target_game);
     assert(success);
@@ -59,8 +64,8 @@ void ProfilesManagerWindow::update_profiles(QComboBox &box)
     box.clear();
 
     const auto profiles = flux::from(profiles_.list_profiles())
-                        .map([](const auto &p) { return QString::fromUtf8(p.data(), p.size()); })
-                        .to<QList>();
+                              .map([](const auto &p) { return QString::fromUtf8(p.data(), p.size()); })
+                              .to<QList>();
 
     box.addItems(profiles);
     const bool success = select_text(box, to_qstring(profiles_.current_profile_name()));
@@ -118,11 +123,40 @@ void ProfilesManagerWindow::delete_current_profile()
     update_profiles(*ui_->profiles);
 }
 
-void ProfilesManagerWindow::import_profile() {}
+void ProfilesManagerWindow::import_profile()
+{
+    const auto raw_path = QFileDialog::getOpenFileName(this,
+                                                       tr("Import profile"),
+                                                       QString(),
+                                                       tr("Profiles (*.json)"));
+
+    const auto path = btu::Path(to_u8string(raw_path));
+
+    auto profile = json::read_from_file<Profile>(path);
+    if (!profile)
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Failed to load profile"));
+        return;
+    }
+
+    const auto name = path.filename().u8string();
+    profiles_.create_profile(name, *std::move(profile));
+}
 
 void ProfilesManagerWindow::export_selected_profile()
 {
-    // use qfiledialog
+    const auto path = QFileDialog::getSaveFileName(this,
+                                                   tr("Export profile"),
+                                                   QString(),
+                                                   tr("Profiles (*.json)"));
+    if (path.isEmpty())
+        return;
+
+    const auto &current = ui_->profiles->currentText();
+    const auto& profile = profiles_.get_profile(to_u8string(current)).value();
+
+    if (!json::save_to_file(profile, to_u8string(path)))
+        QMessageBox::critical(this, tr("Error"), tr("Failed to save profile"));
 }
 
 } // namespace cao
