@@ -54,7 +54,7 @@ public:
         assert(!pattern_.valueless_by_exception());
 
         auto str           = BTU_MOV(path).u8string();
-        const auto visitor = btu::common::overload{
+        const auto visitor = btu::common::Overload{
             [&str](const std::u8string &pattern) { return btu::common::str_match(str, pattern); },
             [&str](const Regex &regex) {
                 return std::regex_match(btu::common::as_ascii_string(str), regex.regex);
@@ -68,7 +68,7 @@ public:
     {
         assert(!pattern_.valueless_by_exception());
 
-        const auto visitor = btu::common::overload{
+        const auto visitor = btu::common::Overload{
             [](const std::u8string &pattern) { return pattern; },
             [](const Regex &regex) { return regex.original; },
         };

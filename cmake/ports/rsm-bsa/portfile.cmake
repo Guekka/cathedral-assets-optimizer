@@ -5,15 +5,11 @@ vcpkg_from_github(
   REPO
   Ryan-rsm-McKenzie/bsa
   REF
-  938c6b5c960f5ba9c4f457f34a41665fd38023e0
+  starfield
   SHA512
-  f00508678be91302b597c19b91968960c9d1aefbfdaded68b9d1f6648a1955170eb56d7c4a55d3a159d54158181a9b6dfbf0a34c958b2cd494e1674ad1766f2a
+  bb91206c3469fc7d896df77272305660ddd71b20f0ae4ddd61b08c11e8618355a3a1d234903adfebffbc91c7b1dea336c1e288acba832bd1bd036ebfc7ec5065
   HEAD_REF
   master)
-
-if(VCPKG_TARGET_IS_LINUX)
-  message(WARNING "Build ${PORT} requires at least gcc 10.")
-endif()
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS FEATURES xmem
                      BSA_SUPPORT_XMEM)

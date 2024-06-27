@@ -5,9 +5,9 @@ vcpkg_from_github(
   REPO
   tcbrindle/flux
   REF
-  caa30bd4925d25f5bfed7973e265e8eb142d909d
+  d88fd970d26ec6fc297965ce1dd60b81a5b2def1
   SHA512
-  bcaf31df73aca84afdfaafb54afb5bdcf34cf299c575a636c1d05c4ec00b33fada4b18137dd21532e7de129f92c6fa628f031de1a53a95731180ec79f9b71b57
+  d390f586d45b69dbad7f8c099382e1bec436b7d864b3797b97c7b69ade7d510c375b763cdd3dbf63356358cc500dad8260df1538e8f0d942119f440ae53f4bd3
   HEAD_REF
   main)
 
@@ -19,6 +19,6 @@ file(
   PATTERN "*.hpp")
 
 file(
-        INSTALL "${SOURCE_PATH}/LICENSE_1_0.txt"
-        DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
-        RENAME copyright)
+  INSTALL "${SOURCE_PATH}/LICENSE_1_0.txt"
+  DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
+  RENAME copyright)
