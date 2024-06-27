@@ -5,7 +5,6 @@
 
 #include "manager.hpp"
 
-#include "logger.hpp"
 #include "main_process.hpp"
 #include "settings/settings.hpp"
 
@@ -149,21 +148,38 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
 void Manager::pack_directory(const std::filesystem::path &directory_path) const
 {
     PLOG_INFO << fmt::format("Packing directory {}", directory_path.string());
+    emit files_counted(1);
 
     auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
 
     const auto dir_it = std::filesystem::directory_iterator(directory_path);
     auto plugins      = btu::bsa::list_plugins(dir_it, {}, bsa_sets);
 
-    btu::bsa::pack(btu::bsa::PackSettings{
-                       .input_dir     = directory_path,
-                       .game_settings = bsa_sets,
-                       .compress      = btu::bsa::Compression::Yes,
-                   })
-        .for_each([&plugins, &bsa_sets](btu::bsa::Archive &&archive) {
-            const btu::bsa::FilePath name = btu::bsa::find_archive_name(plugins, bsa_sets, archive.type());
-            std::move(archive).write(name.full_path());
+    pack(btu::bsa::PackSettings{
+             .input_dir     = directory_path,
+             .game_settings = bsa_sets,
+             .compress      = btu::bsa::Compression::Yes,
+         })
+        .for_each([&plugins, &bsa_sets, &directory_path](btu::bsa::Archive &&archive) {
+            try
+            {
+                // TODO: upstream
+                const auto archive_path = [&] {
+                    if (!plugins.empty())
+                        return find_archive_name(plugins, bsa_sets, archive.type()).full_path();
+
+                    return directory_path / (directory_path.filename().u8string() + bsa_sets.extension);
+                }();
+
+                std::move(archive).write(archive_path);
+            }
+            catch (const std::exception &e)
+            {
+                PLOG_ERROR << fmt::format("Failed to pack archive: {}", e.what());
+            }
         });
+
+    emit file_processed(directory_path);
 }
 
 void Manager::run_optimization()
