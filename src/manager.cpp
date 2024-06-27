@@ -17,9 +17,8 @@
 #include <btu/common/string.hpp>
 #include <btu/esp/functions.hpp>
 #include <btu/modmanager/mod_manager.hpp>
-#include <fmt/format.h>
+#include <fmt/chrono.h>
 
-#include <QDateTime>
 #include <filesystem>
 #include <mutex>
 
@@ -166,13 +165,12 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
         });
 }
 
-// TODO: use std::chrono (GCC 13.1) instead of QDateTime
 void Manager::run_optimization()
 {
     PLOG_INFO << fmt::format("Processing: {}", settings_.current_profile().input_path.string());
 
-    const auto start_time = QDateTime::currentDateTime();
-    PLOG_INFO << fmt::format("Beginning. Start time: {}", start_time.toString("hh'h'mm'm'").toStdString());
+    const auto start_time = std::chrono::high_resolution_clock::now();
+    PLOG_INFO << fmt::format("Beginning. Start time: {}", start_time);
 
     auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
     auto mod      = btu::modmanager::ModFolder(settings_.current_profile().input_path, bsa_sets);
@@ -238,11 +236,9 @@ void Manager::run_optimization()
     if (settings_.current_profile().bsa_operation == BsaOperation::Create)
         pack_directory(mod.path());
 
-    const auto end_time     = QDateTime::currentDateTime();
-    const auto elapsed_time = start_time.secsTo(end_time);
-    PLOG_INFO << fmt::format("Finished. End time: {}. Elapsed time: {}s",
-                             end_time.toString("hh'h'mm'm'").toStdString(),
-                             elapsed_time);
+    const auto end_time     = std::chrono::high_resolution_clock::now();
+    const auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
+    PLOG_INFO << fmt::format("Finished. End time: {}. Elapsed time: {}s", end_time, elapsed_time);
     emit end();
 }
 } // namespace cao

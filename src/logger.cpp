@@ -5,11 +5,11 @@
 
 #include "logger.hpp"
 
+#include <fmt/chrono.h>
 #include <plog/Appenders/RollingFileAppender.h>
 #include <plog/Formatters/TxtFormatter.h>
 #include <plog/Init.h>
 
-#include <QDateTime>
 #include <filesystem>
 #include <fstream>
 
@@ -54,7 +54,7 @@ public:
 
     plog::init(plog::Severity::verbose, get_appender(log_file_path));
 
-    PLOGV << "cao started at " << QDateTime::currentDateTime().toString(Qt::ISODate).toStdString();
+    PLOGV << fmt::format("Logging initialized at time: {}", std::chrono::system_clock::now());
     return true;
 }
 
