@@ -36,7 +36,9 @@ namespace cao {
             return QObject::tr(
                 R"(Advanced mode
 
-                The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.)");
+                The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.
+
+                This mode is still in development and may not work as expected. Use it at your own risk.)");
         }
     }
     return QObject::tr("Unknown mode");
@@ -62,7 +64,10 @@ LevelSelector::LevelSelector(GuiSettings settings)
 
     setup_button(ui_->quick_optimize, GuiMode::QuickOptimize);
     setup_button(ui_->medium, GuiMode::Medium);
-    setup_button(ui_->advanced, GuiMode::Advanced);
+
+    // Advanced mode is not ready yet
+    // setup_button(ui_->advanced, GuiMode::Advanced);
+    ui_->advanced->setEnabled(false);
 }
 
 LevelSelector::~LevelSelector() = default;
