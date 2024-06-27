@@ -294,10 +294,35 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 /// @return True if the settings are valid, false otherwise
 [[nodiscard]] auto check_settings(const Settings &settings) noexcept -> bool
 {
-    // TODO
+    const auto &profile = settings.current_profile();
 
-    // trick to avoid always true warning. This is UB, but we don't care
-    return reinterpret_cast<std::uintptr_t>(&settings) != 0;
+    if (profile.input_path.empty())
+    {
+        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("The input path is empty"));
+        return false;
+    }
+
+    if (!exists(profile.input_path))
+    {
+        QMessageBox::critical(nullptr,
+                              QObject::tr("Error"),
+                              QObject::tr("The input path %1 does not exist")
+                                  .arg(to_qstring(profile.input_path.u8string())));
+        return false;
+    }
+
+    if (profile.per_file_settings().empty())
+    {
+        QMessageBox::critical(nullptr,
+                              QObject::tr("Error"),
+                              QObject::tr("Per file settings are empty. If you don't know how to fix this "
+                                          "issue, reset CAO by deleting %1")
+                                  .arg(to_qstring(Settings::state_directory().u8string())));
+        return false;
+    }
+
+    // TODO: refactor to increase extensibility and add more checks. The more, the better.
+    return true;
 }
 
 MainWindow::~MainWindow() = default;
