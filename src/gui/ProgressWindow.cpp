@@ -164,7 +164,7 @@ void ProgressWindow::update_all()
 void ProgressWindow::update_progress_bar(const QString &text, int max, int value)
 {
     const auto &progress_bar = ui_->progressBar;
-    progress_bar->setFormat(text);
+    progress_bar->setFormat(text + " %p%");
     progress_bar->setMaximum(max);
     progress_bar->setValue(value);
 }
