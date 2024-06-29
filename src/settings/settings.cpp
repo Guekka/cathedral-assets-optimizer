@@ -76,6 +76,8 @@ auto Settings::make_base() noexcept -> Settings
     settings.profiles_ = {
         {u8"SSE", Profile::make_base(btu::Game::SSE)},
         {u8"SLE", Profile::make_base(btu::Game::SLE)},
+        {u8"FO4NG", Profile::make_base(btu::Game::FO4)},
+        {u8"Starfield", Profile::make_base(btu::Game::Starfield)},
     };
     settings.current_profile_index_ = 0;
 

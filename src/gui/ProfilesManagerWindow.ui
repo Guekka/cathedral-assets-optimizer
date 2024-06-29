@@ -65,7 +65,12 @@
      </item>
      <item>
       <property name="text">
-       <string>Fallout 4</string>
+       <string>Fallout 4 NG</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Starfield</string>
       </property>
      </item>
     </widget>

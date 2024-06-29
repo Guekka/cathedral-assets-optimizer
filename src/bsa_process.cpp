@@ -69,6 +69,7 @@ auto remove_files_from_directory(const btu::Path &directory, std::span<const btu
         count += btu::fs::remove(real_path, ec) ? 1 : 0;
 
         // Remove the parent directory if it is empty
+        // TODO: improve this: sometimes empty dirs are left
         if (auto parent_dir = real_path.parent_path(); btu::fs::is_empty(parent_dir))
             btu::fs::remove(parent_dir, ec);
     }
