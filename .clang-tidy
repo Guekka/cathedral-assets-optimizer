@@ -10,6 +10,7 @@
 # - hicpp-braces-around-statements: Same as above
 # - llvm-header-guard: We use #pragma once
 # - llvmlibc: checks only relevant for LLVM libc
+# - misc-include-cleaner: good idea but too much bother in practice
 # - misc-non-private-member-variables-in-classes: I like using structs
 # - readability-braces-around-statements: Same as above
 # - readability-identifier-length: Who decided that 1 letter variable names are bad? It depends on the context
@@ -28,6 +29,7 @@ Checks: >-
   -hicpp-braces-around-statements,
   -llvm-header-guard,
   -llvmlibc-*,
+  -misc-include-cleaner,
   -misc-non-private-member-variables-in-classes,
   -readability-braces-around-statements, 
   -readability-identifier-length, 
@@ -131,8 +133,6 @@ CheckOptions:
     value: lower_case
   - key: readability-identifier-naming.NamespaceCase
     value: lower_case
-  - key: NamespaceIgnoredRegexp
-    value: ^Ui$ # Ignore Qt UI namespace
   - key: readability-identifier-naming.ParameterCase
     value: lower_case
   - key: readability-identifier-naming.ParameterPackCase
