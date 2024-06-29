@@ -28,7 +28,7 @@ SelectGPUWindow::SelectGPUWindow(QWidget *parent)
     }
 
     auto *layout = new QVBoxLayout(this); // NOLINT(cppcoreguidelines-owning-memory
-    for (size_t i = 0; i <= devices_.size(); i++)
+    for (size_t i = 0; i < devices_.size(); i++)
     {
         auto *button = new QRadioButton(this); // NOLINT(cppcoreguidelines-owning-memory)
         button->setText(to_qstring(devices_[i].gpu_name()));
@@ -38,22 +38,22 @@ SelectGPUWindow::SelectGPUWindow(QWidget *parent)
     ui_->groupBox->setLayout(layout);
 }
 
-auto SelectGPUWindow::get_selected_index() -> std::optional<size_t>
+auto SelectGPUWindow::get_selected_index() -> std::optional<uint32_t>
 {
     const auto buttons  = ui_->groupBox->findChildren<QRadioButton *>();
     const auto selected = std::ranges::find_if(buttons, &QRadioButton::isChecked);
 
     if (selected != std::cend(buttons))
-        return (*selected)->property(property_key).value<size_t>();
+        return (*selected)->property(property_key).value<uint32_t>();
 
     return std::nullopt;
 }
 
-void SelectGPUWindow::set_selected_index(size_t val)
+void SelectGPUWindow::set_selected_index(uint32_t val)
 {
     const auto buttons  = ui_->groupBox->findChildren<QRadioButton *>();
     const auto selected = std::ranges::find_if(buttons, [val](QRadioButton *button) {
-        return button->property(property_key).value<size_t>() == val;
+        return button->property(property_key).value<uint32_t>() == val;
     });
 
     if (selected != std::cend(buttons))

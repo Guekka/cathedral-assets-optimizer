@@ -152,11 +152,11 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
 
 [[nodiscard]] auto process_texture(btu::modmanager::ModFolder::ModFile &&file,
                                    const btu::tex::Settings &settings,
-                                   const OptimizeType type) noexcept
+                                   const OptimizeType type,
+                                   uint32_t gpu_index) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-    // TODO: make this configurable
-    auto thread_local compression_device = btu::tex::CompressionDevice::make(0);
+    auto thread_local compression_device = btu::tex::CompressionDevice::make(gpu_index);
 
     if (type == OptimizeType::None)
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
@@ -231,7 +231,10 @@ auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &se
         case FileType::Mesh:
             return process_mesh(std::move(file), file_sets.nif, get_optimize_type(file_sets.nif_optimize));
         case FileType::Texture:
-            return process_texture(std::move(file), file_sets.tex, get_optimize_type(file_sets.tex_optimize));
+            return process_texture(std::move(file),
+                                   file_sets.tex,
+                                   get_optimize_type(file_sets.tex_optimize),
+                                   settings.current_profile().gpu_index);
         case FileType::Animation:
             return process_animation(std::move(file),
                                      file_sets.hkx_target,

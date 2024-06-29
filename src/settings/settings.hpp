@@ -18,12 +18,10 @@ struct GuiSettings
     bool first_run = true;
 
     std::u8string selected_pattern = k_default_pattern.text();
-
-    size_t gpu_index = 0;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
-    GuiSettings, gui_theme, remember_gui_mode, gui_mode, first_run, selected_pattern, gpu_index)
+    GuiSettings, gui_theme, remember_gui_mode, gui_mode, first_run, selected_pattern)
 
 class Settings
 {

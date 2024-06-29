@@ -25,8 +25,8 @@ public:
     static constexpr auto property_key = "Index";
     explicit SelectGPUWindow(QWidget *parent = nullptr);
 
-    [[nodiscard]] auto get_selected_index() -> std::optional<size_t>;
-    void set_selected_index(size_t val);
+    [[nodiscard]] auto get_selected_index() -> std::optional<uint32_t>;
+    void set_selected_index(uint32_t val);
 
 private:
     std::unique_ptr<Ui::SelectGPUWindow> ui_;

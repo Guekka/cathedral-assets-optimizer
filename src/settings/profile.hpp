@@ -29,6 +29,8 @@ public:
     // TODO: think about removing this and letting the UI handle it
     bool dry_run = false;
 
+    uint32_t gpu_index;
+
     OptimizationMode optimization_mode = OptimizationMode::SingleMod;
     btu::Game target_game              = btu::Game::SSE;
 
