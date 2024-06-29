@@ -11,6 +11,8 @@ set(CMAKE_AUTORCC ON)
 
 
 set(SOURCES
+        ${SOURCE_DIR}/bsa_process.cpp
+        ${SOURCE_DIR}/bsa_process.hpp
         ${SOURCE_DIR}/logger.cpp
         ${SOURCE_DIR}/logger.hpp
         ${SOURCE_DIR}/main_process.cpp
@@ -111,6 +113,7 @@ add_executable(Cathedral_Assets_Optimizer WIN32
         ${SOURCE_DIR}/main.cpp
         ${DATA_DIR}/styles/Cathedral_Assets_Optimizer.rc
         ${DATA_DIR}/styles/qdarkstyle/style.qrc
+        bsa_process.hpp bsa_process.cpp
 )
 
 target_link_libraries(Cathedral_Assets_Optimizer PUBLIC CAO_LIB)
