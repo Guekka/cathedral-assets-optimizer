@@ -233,11 +233,11 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     });
 
     connect(ui_->userPathButton, &QPushButton::pressed, this, [this] {
-        const auto &current_path = settings_.current_profile().input_path;
+        const auto &current_path = ui_->inputDirTextEdit->text();
 
         const QString dir = QFileDialog::getExistingDirectory(this,
                                                               tr("Open Directory"),
-                                                              to_qstring(current_path.u8string()),
+                                                              current_path,
                                                               QFileDialog::ShowDirsOnly
                                                                   | QFileDialog::DontResolveSymlinks);
 
