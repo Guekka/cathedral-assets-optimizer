@@ -46,16 +46,10 @@ void init_translations()
 
 void display_error(bool cli, const std::string &err)
 {
-    if (cli)
-    {
-        std::cerr << err << '\n' << std::flush;
-    }
-    else
-    {
-        QMessageBox box(QMessageBox::Critical, "Unknown error", QString::fromStdString(err));
-        box.exec();
-    }
+    std::cerr << err << '\n' << std::flush;
     PLOG_FATAL << err;
+    if (!cli)
+        QMessageBox::critical(nullptr, "Unknown error", QString::fromStdString(err));
 }
 
 auto main(int argc, char *argv[]) -> int
