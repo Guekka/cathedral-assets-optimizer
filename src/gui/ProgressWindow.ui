@@ -14,33 +14,6 @@
    <string>Progress</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="0" colspan="3">
-    <widget class="QProgressBar" name="progressBar">
-     <property name="value">
-      <number>24</number>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Log level:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="clearLog">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Clear log</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
     <widget class="QComboBox" name="logLevel">
      <item>
@@ -60,8 +33,42 @@
      </item>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Log level:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="clearLog">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Clear log</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
     <widget class="QListWidget" name="log"/>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QProgressBar" name="progressBar">
+     <property name="value">
+      <number>24</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="openLogFile">
+     <property name="text">
+      <string>Open log file</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

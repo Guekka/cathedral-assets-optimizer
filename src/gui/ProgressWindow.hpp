@@ -42,6 +42,8 @@ public:
 
     [[nodiscard]] auto update() -> std::vector<LogEntry>;
 
+    [[nodiscard]] auto get_log_path() const noexcept -> btu::Path;
+
 private:
     void advance_to_last_read(QTextStream &log_stream);
     void update_last_read(QTextStream &ts);

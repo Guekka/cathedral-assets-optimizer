@@ -12,6 +12,7 @@
 #include <btu/common/metaprogramming.hpp>
 
 #include <QCloseEvent>
+#include <QDesktopServices>
 #include <QFile>
 #include <QTextStream>
 #include <utility>
@@ -46,6 +47,11 @@ auto LogReader::update() -> std::vector<LogEntry>
     update_last_read(log_stream);
 
     return entries;
+}
+
+auto LogReader::get_log_path() const noexcept -> btu::Path
+{
+    return log_file_path_;
 }
 
 auto LogReader::read_line(QTextStream &log_stream) -> LogEntry
@@ -120,6 +126,12 @@ ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
     set_data(*ui_->logLevel, "Error", plog::error);
 
     connect(ui_->clearLog, &QPushButton::clicked, this, [this] { ui_->log->clear(); });
+
+    connect(ui_->openLogFile, &QPushButton::clicked, this, [this] {
+        const auto path = to_qstring(btu::fs::absolute(log_reader_.get_log_path()).u8string());
+        qDebug() << "opening " << path;
+        QDesktopServices::openUrl(QUrl("file:///" + path));
+    });
 
     connect(ui_->logLevel, &QComboBox::currentIndexChanged, this, [this](int index) {
         update_log(ui_->logLevel->itemData(index).value<plog::Severity>());
