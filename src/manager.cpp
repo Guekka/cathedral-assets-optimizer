@@ -133,7 +133,7 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
     emit files_counted(archives.size());
 
     std::ranges::for_each(archives, [this](const auto &entry) {
-        btu::bsa::unpack(btu::bsa::UnpackSettings{
+        const auto res = unpack(btu::bsa::UnpackSettings{
             .file_path                = entry.path(),
             .remove_arch              = true,
             .overwrite_existing_files = false,
@@ -141,6 +141,17 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
         });
 
         emit file_processed(entry.path());
+
+        switch (res)
+        {
+            case btu::bsa::UnpackResult::Success: break;
+            case btu::bsa::UnpackResult::UnreadableArchive:
+                PLOGE << "Unreadable archive: " << entry.path().string();
+                break;
+            case btu::bsa::UnpackResult::FailedToDeleteArchive:
+                PLOGE << "Failed to delete archive: " << entry.path().string();
+                break;
+        }
     });
 }
 
