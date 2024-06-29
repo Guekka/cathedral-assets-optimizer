@@ -24,6 +24,7 @@ class Profile
 public:
     BsaOperation bsa_operation  = BsaOperation::None;
     bool bsa_make_dummy_plugins = false;
+    bool bsa_remove_files       = true;
 
     bool dry_run = false; // TODO: implement
 
