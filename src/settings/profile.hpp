@@ -26,7 +26,8 @@ public:
     bool bsa_make_dummy_plugins = false;
     bool bsa_remove_files       = true;
 
-    bool dry_run = false; // TODO: implement
+    // TODO: think about removing this and letting the UI handle it
+    bool dry_run = false;
 
     OptimizationMode optimization_mode = OptimizationMode::SingleMod;
     btu::Game target_game              = btu::Game::SSE;

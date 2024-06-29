@@ -189,6 +189,7 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
     emit file_processed(directory_path);
 }
 
+// TODO: handle several mods at once
 void Manager::run_optimization()
 {
     PLOG_INFO << fmt::format("Processing: {}", settings_.current_profile().input_path.string());
