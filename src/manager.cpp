@@ -190,6 +190,9 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
             }
         });
 
+    if (settings_.current_profile().bsa_make_dummy_plugins)
+        make_dummy_plugins(directory_path, bsa_sets);
+
     emit file_processed(directory_path);
 }
 
