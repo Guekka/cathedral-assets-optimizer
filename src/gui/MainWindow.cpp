@@ -251,7 +251,7 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
     set_theme(common_settings.gui_theme);
 
-    connect(ui_->actionEnableDarkTheme, &QAction::triggered, [this, &common_settings](bool state) {
+    connect(ui_->actionEnableDarkTheme, &QAction::triggered, this, [this, &common_settings](bool state) {
         const GuiTheme theme      = state ? GuiTheme::Dark : GuiTheme::Light;
         common_settings.gui_theme = theme;
         ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
@@ -337,9 +337,8 @@ void MainWindow::init_process()
     try
     {
         cao_process_     = std::make_unique<Manager>(settings_);
-        progress_window_ = std::make_unique<ProgressWindow>(LogReader(Settings::state_directory()
-                                                                      / k_log_file_name),
-                                                            this);
+        progress_window_ = std::make_unique<ProgressWindow>(
+            LogReader(Settings::state_directory() / k_log_file_name));
 
         connect(cao_process_.get(),
                 &Manager::files_counted,
@@ -347,7 +346,7 @@ void MainWindow::init_process()
                 &ProgressWindow::set_maximum);
 
         connect(cao_process_.get(),
-                &Manager::file_processed,
+                &Manager::files_processed,
                 progress_window_.get(),
                 [this](const std::filesystem::path &file) {
                     const auto text = QString("Processing %1").arg(QString::fromStdString(file.string()));
@@ -357,11 +356,13 @@ void MainWindow::init_process()
         connect(cao_process_.get(), &Manager::end, progress_window_.get(), &ProgressWindow::end);
         connect(cao_process_.get(), &Manager::end, this, &MainWindow::end_process);
 
-        connect(progress_window_.get(), &ProgressWindow::cancelled, this, &MainWindow::end_process);
-
         progress_window_->show();
 
+        connect(progress_window_.get(), &ProgressWindow::cancelled, this, &MainWindow::end_process);
+
         cao_process_future_ = std::async(&Manager::run_optimization, cao_process_.get());
+
+        ui_->processButton->setDisabled(true);
     }
     catch (const std::exception &e)
     {
@@ -380,9 +381,6 @@ void MainWindow::end_process()
 
     if (cao_process_)
         cao_process_.reset();
-
-    if (progress_window_)
-        progress_window_.reset();
 }
 
 void MainWindow::save_settings() noexcept

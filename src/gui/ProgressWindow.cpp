@@ -18,6 +18,8 @@
 
 namespace cao {
 
+constexpr int k_max_log_entries = 5000;
+
 LogReader::LogReader(btu::Path log_file_path)
     : log_file_path_(BTU_MOV(log_file_path))
 {
@@ -122,6 +124,10 @@ ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
     connect(ui_->logLevel, &QComboBox::currentIndexChanged, this, [this](int index) {
         update_log(ui_->logLevel->itemData(index).value<plog::Severity>());
     });
+
+    timer_.setSingleShot(false);
+    timer_.start(1000);
+    connect(&timer_, &QTimer::timeout, this, &ProgressWindow::update_all);
 }
 
 ProgressWindow::~ProgressWindow()
@@ -132,23 +138,27 @@ ProgressWindow::~ProgressWindow()
 void ProgressWindow::set_maximum(int max)
 {
     ui_->progressBar->setMaximum(max);
-
-    timer_.setSingleShot(false);
-    timer_.start(1000);
-    connect(&timer_, &QTimer::timeout, this, &ProgressWindow::update_all);
 }
 
-void ProgressWindow::step(std::optional<QString> text)
+void ProgressWindow::step(std::optional<QString> text, int n)
 {
-    current_value_++;
+    current_value_ += n;
     last_text_ = std::move(text);
 }
 
 void ProgressWindow::end()
 {
     const auto &progress_bar = ui_->progressBar;
+
+    if (progress_bar->maximum() == 0)
+        progress_bar->setMaximum(1); // avoid busy indicator
+
+    update_all();
+
     progress_bar->setValue(progress_bar->maximum());
     progress_bar->setFormat(tr("Done"));
+
+    timer_.stop();
 }
 
 void ProgressWindow::update_all()
@@ -202,11 +212,10 @@ void ProgressWindow::update_log(plog::Severity log_severity)
         item->setHidden(hide);
     }
 
-    constexpr int max_log_entries = 500;
-    if (ui_->log->count() > max_log_entries)
+    if (ui_->log->count() > k_max_log_entries)
     {
         auto *model = ui_->log->model();
-        model->removeRows(0, ui_->log->count() - max_log_entries);
+        model->removeRows(0, k_max_log_entries / 2);
     }
 
     ui_->log->scrollToBottom();

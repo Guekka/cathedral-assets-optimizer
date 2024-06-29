@@ -49,9 +49,12 @@ public:
 
     // Creating log file
     const auto log_file_path = log_directory / k_log_file_name;
-    std::ofstream file(log_file_path, std::ios::app);
-    if (!file.is_open())
-        return false;
+
+    {
+        std::ofstream file(log_file_path, std::ios::app);
+        if (!file.is_open())
+            return false;
+    }
 
     plog::init(plog::Severity::verbose, get_appender(log_file_path));
 

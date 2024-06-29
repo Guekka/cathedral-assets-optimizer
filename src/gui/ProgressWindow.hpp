@@ -69,7 +69,7 @@ public:
     ~ProgressWindow() override; // = default
 
     void set_maximum(int max);
-    void step(std::optional<QString> text = std::nullopt);
+    void step(std::optional<QString> text = std::nullopt, int n = 1);
     void end();
 
 signals:

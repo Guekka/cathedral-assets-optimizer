@@ -27,9 +27,14 @@ private:
     void unpack_directory(const std::filesystem::path &directory_path) const;
     void pack_directory(const std::filesystem::path &directory_path) const;
 
+    void emit_progress_rate_limited(const btu::Path &path);
+    // TODO: would a mutex be better?
+    std::atomic<std::chrono::steady_clock::time_point> last_emission_;
+    std::atomic_uint32_t files_processed_since_last_emissions_;
+
 signals:
     void files_counted(size_t count) const;
-    void file_processed(std::filesystem::path relative_path) const;
+    void files_processed(std::filesystem::path last_relative_path, size_t count_since_last) const;
     void end() const;
 };
 } // namespace cao
