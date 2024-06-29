@@ -119,7 +119,10 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
     if (type == OptimizeType::None)
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
 
-    return btu::nif::load(std::move(file.relative_path), *std::move(file.content))
+    return file.content
+        ->and_then([&file](std::vector<std::byte> content) {
+            return btu::nif::load(std::move(file.relative_path), content);
+        })
         .and_then([&](auto &&nif) -> tl::expected<btu::nif::Mesh, btu::common::Error> {
             auto steps = btu::nif::compute_optimization_steps(nif, settings);
 
@@ -149,7 +152,8 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
     if (type == OptimizeType::None)
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
 
-    return btu::tex::load(std::move(file.relative_path), *file.content)
+    return file.content
+        ->and_then([&file](auto &&content) { return btu::tex::load(std::move(file.relative_path), content); })
         .and_then([&](auto &&tex) -> tl::expected<btu::tex::Texture, btu::common::Error> {
             auto steps = btu::tex::compute_optimization_steps(tex, settings);
 
@@ -175,8 +179,12 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
     if (!hkx_target)
         return {}; // TODO
 
-    return btu::hkx::AnimExe::make("data") // TODO: make this configurable
-        .and_then([&](const btu::hkx::AnimExe &exe) { return exe.convert(*hkx_target, *file.content); });
+    auto exe = btu::hkx::AnimExe::make("data"); // TODO: make this configurable
+    if (!exe)
+        return tl::make_unexpected(exe.error());
+
+    return file.content->and_then(
+        [&](std::vector<std::byte> content) { return exe->convert(*hkx_target, content); });
 }
 
 auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &settings) noexcept
