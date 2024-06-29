@@ -9,7 +9,6 @@
 #include <btu/tex/optimize.hpp>
 
 #include <optional>
-#undef __pre // TODO: move that to btu/common
 #include <regex>
 
 namespace cao {
@@ -108,7 +107,7 @@ struct PerFileSettings
     OptimizeType nif_optimize = OptimizeType::Normal;
     btu::nif::Settings nif    = btu::nif::Settings::get(btu::Game::SSE);
 
-    std::optional<btu::Game> hkx_target = btu::Game::SSE;
+    std::optional<btu::Game> hkx_target = std::nullopt; // FIXME crashes
 
     Pattern pattern = k_default_pattern;
 
