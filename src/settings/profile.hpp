@@ -29,7 +29,7 @@ public:
     // TODO: think about removing this and letting the UI handle it
     bool dry_run = false;
 
-    uint32_t gpu_index;
+    uint32_t gpu_index{0};
 
     OptimizationMode optimization_mode = OptimizationMode::SingleMod;
     btu::Game target_game              = btu::Game::SSE;
@@ -109,6 +109,7 @@ public:
                                    bsa_operation,
                                    bsa_make_dummy_plugins,
                                    dry_run,
+                                   gpu_index,
                                    optimization_mode,
                                    target_game,
                                    input_path,
