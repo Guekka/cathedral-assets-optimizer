@@ -95,6 +95,7 @@ const auto k_default_pattern = Pattern{u8"*"}; // NOLINT(cert-err58-cpp)
 enum class OptimizeType : std::uint8_t
 {
     None,
+    DryRun,
     Normal,
     Forced,
 };
@@ -107,7 +108,8 @@ struct PerFileSettings
     OptimizeType nif_optimize = OptimizeType::Normal;
     btu::nif::Settings nif    = btu::nif::Settings::get(btu::Game::SSE);
 
-    std::optional<btu::Game> hkx_target = std::nullopt; // FIXME crashes
+    OptimizeType hkx_optimize           = OptimizeType::Normal;
+    btu::Game hkx_target                = btu::Game::SSE;
 
     Pattern pattern = k_default_pattern;
 
@@ -130,6 +132,7 @@ struct PerFileSettings
     }
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PerFileSettings, tex_optimize, tex, nif_optimize, nif, hkx_target, pattern)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+    PerFileSettings, tex_optimize, tex, nif_optimize, nif, hkx_optimize, hkx_target, pattern)
 
 } // namespace cao

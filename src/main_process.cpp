@@ -136,9 +136,18 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
                 steps.format = std::optional(settings.game); // force conversion
 
             log_steps(steps);
+
+            if (type == OptimizeType::DryRun)
+                return nif;
+
             return btu::nif::optimize(BTU_FWD(nif), steps);
         })
-        .and_then([](auto &&nif) { return btu::nif::save(BTU_FWD(nif)); });
+        .and_then([type](auto &&nif) -> tl::expected<std::vector<std::byte>, btu::common::Error> {
+            if (type == OptimizeType::DryRun)
+                return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
+
+            return btu::nif::save(BTU_FWD(nif));
+        });
 }
 
 [[nodiscard]] auto process_texture(btu::modmanager::ModFolder::ModFile &&file,
@@ -167,24 +176,41 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
                 steps.convert = true;
 
             log_steps(steps);
+
+            if (type == OptimizeType::DryRun)
+                return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
+
             return btu::tex::optimize(BTU_FWD(tex), steps, compression_device);
         })
-        .and_then([](auto &&tex) { return btu::tex::save(BTU_FWD(tex)); });
+        .and_then([type](auto &&tex) -> tl::expected<std::vector<std::byte>, btu::common::Error> {
+            if (type == OptimizeType::DryRun)
+                return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
+
+            return btu::tex::save(BTU_FWD(tex));
+        });
 }
 
-[[nodiscard]] auto process_animation([[maybe_unused]] btu::modmanager::ModFolder::ModFile &&file,
-                                     [[maybe_unused]] std::optional<btu::Game> hkx_target) noexcept
+[[nodiscard]] auto process_animation(btu::modmanager::ModFolder::ModFile &&file,
+                                     btu::Game hkx_target,
+                                     OptimizeType type) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-    if (!hkx_target)
-        return {}; // TODO
+    if (type == OptimizeType::None)
+        return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
 
     auto exe = btu::hkx::AnimExe::make("data"); // TODO: make this configurable
     if (!exe)
         return tl::make_unexpected(exe.error());
 
+    // TODO: better dry run?
+    if (type == OptimizeType::DryRun)
+    {
+        PLOGI << std::format("{} might be optimized", file.relative_path.string());
+        return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
+    }
+
     return file.content->and_then(
-        [&](std::vector<std::byte> content) { return exe->convert(*hkx_target, content); });
+        [&](std::vector<std::byte> content) { return exe->convert(hkx_target, content); });
 }
 
 auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &settings) noexcept
@@ -196,12 +222,20 @@ auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &se
     if (!type)
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required)); // TODO: better error
 
+    const auto get_optimize_type = [settings](OptimizeType opt_type) {
+        return settings.current_profile().dry_run ? OptimizeType::DryRun : opt_type;
+    };
+
     switch (type.value())
     {
-        case FileType::Mesh: return process_mesh(std::move(file), file_sets.nif, file_sets.nif_optimize);
+        case FileType::Mesh:
+            return process_mesh(std::move(file), file_sets.nif, get_optimize_type(file_sets.nif_optimize));
         case FileType::Texture:
-            return process_texture(std::move(file), file_sets.tex, file_sets.tex_optimize);
-        case FileType::Animation: return process_animation(std::move(file), file_sets.hkx_target);
+            return process_texture(std::move(file), file_sets.tex, get_optimize_type(file_sets.tex_optimize));
+        case FileType::Animation:
+            return process_animation(std::move(file),
+                                     file_sets.hkx_target,
+                                     get_optimize_type(file_sets.hkx_optimize));
     }
     return tl::make_unexpected(btu::common::Error(k_unreachable));
 }
