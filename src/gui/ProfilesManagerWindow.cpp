@@ -50,7 +50,10 @@ ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles, QWidget *parent
             &ProfilesManagerWindow::delete_current_profile);
 
     connect(ui_->importPushButton, &QPushButton::pressed, this, &ProfilesManagerWindow::import_profile);
-    connect(ui_->exportPushButton, &QPushButton::pressed, this, &ProfilesManagerWindow::export_selected_profile);
+    connect(ui_->exportPushButton,
+            &QPushButton::pressed,
+            this,
+            &ProfilesManagerWindow::export_selected_profile);
 
     update_profiles(*ui_->profiles);
     const bool success = select_data(*ui_->games, profiles_.current_profile().target_game);
@@ -153,7 +156,7 @@ void ProfilesManagerWindow::export_selected_profile()
         return;
 
     const auto &current = ui_->profiles->currentText();
-    const auto& profile = profiles_.get_profile(to_u8string(current)).value();
+    const auto profile  = profiles_.get_profile(to_u8string(current)).value();
 
     if (!json::save_to_file(profile, to_u8string(path)))
         QMessageBox::critical(this, tr("Error"), tr("Failed to save profile"));
