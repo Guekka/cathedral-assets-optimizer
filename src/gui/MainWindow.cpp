@@ -232,6 +232,11 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
             settings_.current_profile().gpu_index = idx.value();
     });
 
+    connect(ui_->actionOpen_config_dir, &QAction::triggered, this, [this] {
+        const auto dir = to_qstring(btu::fs::absolute(settings_.config_directory()).u8string());
+        QDesktopServices::openUrl(QUrl("file:///" + dir));
+    });
+
     connect(ui_->userPathButton, &QPushButton::pressed, this, [this] {
         const auto &current_path = ui_->inputDirTextEdit->text();
 
