@@ -15,6 +15,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+
 namespace cao {
 ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles, QWidget *parent)
     : QDialog(parent)
@@ -29,7 +30,8 @@ ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles, QWidget *parent
     set_data(games, "Skyrim LE (2011)", btu::Game::SLE);
     set_data(games, "Skyrim SE (2016)", btu::Game::SSE);
     set_data(games, "Fallout New Vegas", btu::Game::FNV);
-    set_data(games, "Fallout 4", btu::Game::FO4);
+    set_data(games, "Fallout 4 NG", btu::Game::FO4);
+    set_data(games, "Starfield", btu::Game::Starfield);
 
     connect(ui_->games, &QComboBox::currentIndexChanged, this, [this] {
         profiles_.current_profile().target_game = ui_->games->currentData().value<btu::Game>();

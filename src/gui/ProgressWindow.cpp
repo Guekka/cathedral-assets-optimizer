@@ -129,7 +129,6 @@ ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
 
     connect(ui_->openLogFile, &QPushButton::clicked, this, [this] {
         const auto path = to_qstring(btu::fs::absolute(log_reader_.get_log_path()).u8string());
-        qDebug() << "opening " << path;
         QDesktopServices::openUrl(QUrl("file:///" + path));
     });
 
