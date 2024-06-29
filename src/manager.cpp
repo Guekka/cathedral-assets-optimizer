@@ -117,7 +117,7 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
             .root_opt                 = nullptr,
         });
 
-        emit file_processed(entry.path());
+        emit files_processed(entry.path(), 1);
 
         switch (res)
         {
@@ -159,7 +159,8 @@ void apply_plugin_info(Settings &sets, const PluginInfo &info)
 void Manager::pack_directory(const std::filesystem::path &directory_path) const
 {
     PLOG_INFO << fmt::format("Packing directory {}", directory_path.string());
-    emit files_counted(1);
+    emit files_counted(0);
+    emit files_processed("archive packing", 0);
 
     auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
 
@@ -175,7 +176,6 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
                                      std::move(archive),
                                      bsa_sets,
                                      settings_.current_profile().bsa_remove_files);
-                emit file_processed(directory_path);
             }
             catch (const std::exception &e)
             {
@@ -185,8 +185,18 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
 
     if (settings_.current_profile().bsa_make_dummy_plugins)
         make_dummy_plugins(directory_path, bsa_sets);
+}
 
-    emit file_processed(directory_path);
+void Manager::emit_progress_rate_limited(const btu::Path &path)
+{
+    constexpr auto emit_every = std::chrono::milliseconds(500);
+
+    const auto now = std::chrono::steady_clock::now();
+    if ((now - last_emission_.load()) > emit_every)
+    {
+        last_emission_.store(now);
+        emit files_processed(path, ++files_processed_since_last_emissions_);
+    }
 }
 
 // TODO: handle several mods at once
@@ -220,7 +230,7 @@ void Manager::run_optimization()
 
             auto ret = process_file(std::move(file), settings_);
 
-            emit file_processed(path);
+            emit_progress_rate_limited(path);
 
             if (!ret)
             {
