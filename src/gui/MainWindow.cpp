@@ -420,26 +420,9 @@ void MainWindow::about() noexcept
 
 [[maybe_unused]] void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (const bool process_running = cao_process_ != nullptr; process_running)
-    {
-        end_process();
-        event->accept();
-        return; // the settings were already saved when the process started
-    }
-
-    const auto reply = QMessageBox::question(this,
-                                             tr("Save settings"),
-                                             tr("Do you want to save your settings before closing?"),
-                                             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
-                                             QMessageBox::Yes);
-
-    if (reply == QMessageBox::Yes)
-        save_settings();
-
-    if (reply == QMessageBox::Cancel)
-        event->ignore();
-    else
-        event->accept();
+    end_process();
+    save_settings();
+    event->accept();
 }
 
 [[maybe_unused]] void MainWindow::dragEnterEvent(QDragEnterEvent *e)
