@@ -12,6 +12,7 @@
 # - llvmlibc: checks only relevant for LLVM libc
 # - misc-include-cleaner: good idea but too much bother in practice
 # - misc-non-private-member-variables-in-classes: I like using structs
+# - misc-use-anonymous-namespace: doctest macros emit a warning with this check
 # - readability-braces-around-statements: Same as above
 # - readability-identifier-length: Who decided that 1 letter variable names are bad? It depends on the context
 # - readability-magic-numbers: Same as above
@@ -31,6 +32,7 @@ Checks: >-
   -llvmlibc-*,
   -misc-include-cleaner,
   -misc-non-private-member-variables-in-classes,
+  -misc-use-anonymous-namespace,
   -readability-braces-around-statements, 
   -readability-identifier-length, 
   -readability-magic-numbers, 
@@ -57,6 +59,8 @@ CheckOptions:
   - key: cppcoreguidelines-init-variables.MathHeader
     value: <cmath>
   - key: cppcoreguidelines-narrowing-conversions.PedanticMode
+    value: 'true'
+  - key: cppcoreguidelines-avoid-do-while.IgnoreMacros
     value: 'true'
   - key: readability-else-after-return.WarnOnUnfixable
     value: 'true'
