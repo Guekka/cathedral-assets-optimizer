@@ -53,12 +53,17 @@ void AdvancedMeshesModule::settings_to_ui(const Settings &settings)
 
 void AdvancedMeshesModule::ui_to_settings(Settings &settings) const
 {
+    auto &pfs = current_per_file_settings(settings);
+
     if (ui_->necessaryOptimizationRadioButton->isChecked())
-        current_per_file_settings(settings).nif_optimize = OptimizeType::Normal;
+        pfs.nif_optimize = OptimizeType::Normal;
     else if (ui_->fullOptimizationRadioButton->isChecked())
-        current_per_file_settings(settings).nif_optimize = OptimizeType::Forced;
+    {
+        pfs.nif_optimize = OptimizeType::Forced;
+        pfs.nif.optimize = true;
+    }
     else
-        current_per_file_settings(settings).nif_optimize = OptimizeType::None;
+        pfs.nif_optimize = OptimizeType::None;
 }
 
 auto AdvancedMeshesModule::is_supported_game(btu::Game game) const noexcept -> bool
