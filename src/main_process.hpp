@@ -21,6 +21,6 @@ enum class FileType : std::uint8_t
 const static auto k_error_no_work_required = std::error_code(0, std::generic_category());
 const static auto k_unreachable            = std::error_code(1, std::generic_category());
 
-[[nodiscard]] auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &settings) noexcept
+[[nodiscard]] auto process_file(btu::modmanager::ModFile &&file, const Settings &settings) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>;
 } // namespace cao

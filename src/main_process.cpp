@@ -111,7 +111,7 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
     PLOG_INFO << steps_log;
 }
 
-[[nodiscard]] auto process_mesh(btu::modmanager::ModFolder::ModFile &&file,
+[[nodiscard]] auto process_mesh(btu::modmanager::ModFile &&file,
                                 const btu::nif::Settings &settings,
                                 const OptimizeType type) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
@@ -150,7 +150,7 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
         });
 }
 
-[[nodiscard]] auto process_texture(btu::modmanager::ModFolder::ModFile &&file,
+[[nodiscard]] auto process_texture(btu::modmanager::ModFile &&file,
                                    const btu::tex::Settings &settings,
                                    const OptimizeType type,
                                    uint32_t gpu_index) noexcept
@@ -190,7 +190,7 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
         });
 }
 
-[[nodiscard]] auto process_animation(btu::modmanager::ModFolder::ModFile &&file,
+[[nodiscard]] auto process_animation(btu::modmanager::ModFile &&file,
                                      btu::Game hkx_target,
                                      OptimizeType type) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
@@ -213,7 +213,7 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
         [&](std::vector<std::byte> content) { return exe->convert(hkx_target, content); });
 }
 
-auto process_file(btu::modmanager::ModFolder::ModFile &&file, const Settings &settings) noexcept
+auto process_file(btu::modmanager::ModFile &&file, const Settings &settings) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
     const auto type       = guess_file_type(file.relative_path);
