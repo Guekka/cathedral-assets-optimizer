@@ -75,7 +75,7 @@ auto guess_file_type(const std::filesystem::path &path) noexcept -> std::optiona
 [[nodiscard]] auto steps_are_empty(const btu::nif::OptimizationSteps &steps) noexcept -> bool
 {
     return !steps.format && !steps.rename_referenced_textures
-           && steps.headpart == btu::nif::HeadpartStatus::No;
+           && steps.headpart == btu::nif::HeadpartStatus::No && !steps.optimize;
 }
 
 [[nodiscard]] auto steps_are_empty(const btu::tex::OptimizationSteps &steps) noexcept -> bool
@@ -91,7 +91,9 @@ void log_steps(const btu::nif::OptimizationSteps &steps) noexcept
     if (steps.rename_referenced_textures)
         steps_log += "rename textures tga -> dds, ";
     if (steps.headpart == btu::nif::HeadpartStatus::Yes)
-        steps_log += "processing as headpart";
+        steps_log += "processing as headpart, ";
+    if (steps.optimize)
+        steps_log += "optimizing";
 
     PLOG_INFO << steps_log;
 }
@@ -133,7 +135,7 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
             }
 
             if (type == OptimizeType::Forced)
-                steps.format = std::optional(settings.game); // force conversion
+                steps.format = std::optional(settings.target_game); // force conversion
 
             log_steps(steps);
 

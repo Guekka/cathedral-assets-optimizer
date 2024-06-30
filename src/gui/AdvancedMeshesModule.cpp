@@ -45,6 +45,7 @@ void AdvancedMeshesModule::settings_to_ui(const Settings &settings)
     switch (current_per_file_settings(settings).nif_optimize)
     {
         case OptimizeType::None: ui_->mainGroupBox->setChecked(false); break;
+        case OptimizeType::DryRun:
         case OptimizeType::Normal: ui_->necessaryOptimizationRadioButton->setChecked(true); break;
         case OptimizeType::Forced: ui_->fullOptimizationRadioButton->setChecked(true); break;
     }
@@ -62,7 +63,20 @@ void AdvancedMeshesModule::ui_to_settings(Settings &settings) const
 
 auto AdvancedMeshesModule::is_supported_game(btu::Game game) const noexcept -> bool
 {
-    return game == btu::Game::SSE || game == btu::Game::SLE; // TODO: check if this is correct
+    switch (game)
+    {
+        // all these games appear to be supported here
+        // <https://github.com/ousnius/nifly/blob/868b648b72392d3f8f582a28f819253dc5c6063e/include/BasicTypes.hpp#L150>
+        case btu::Game::TES4:
+        case btu::Game::FNV:
+        case btu::Game::SLE:
+        case btu::Game::SSE:
+        case btu::Game::FO4:
+        case btu::Game::Starfield: return true;
+        case btu::Game::TES3:
+        case btu::Game::Custom: return false;
+    }
+    return false;
 }
 
 } // namespace cao
