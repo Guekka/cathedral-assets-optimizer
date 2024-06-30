@@ -22,6 +22,12 @@ AdvancedBSAModule::AdvancedBSAModule(QWidget *parent)
     auto *button_group = new QButtonGroup(this); // NOLINT(cppcoreguidelines-owning-memory)
     button_group->addButton(ui_->BSACreate);
     button_group->addButton(ui_->BSAExtract);
+
+    connect(ui_->baseGroupBox, &QGroupBox::toggled, this, [button_group, this](bool state) {
+        // By default, check bsa create
+        if (state)
+            ui_->BSACreate->setChecked(true);
+    });
 }
 
 AdvancedBSAModule::~AdvancedBSAModule() = default;
