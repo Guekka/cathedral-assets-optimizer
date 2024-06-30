@@ -21,6 +21,7 @@
 
 #include <filesystem>
 #include <mutex>
+#include <utility>
 
 namespace cao {
 
@@ -65,21 +66,21 @@ struct PluginInfo
     std::mutex mutex;
 
     mod.iterate(
-        [&result, &mutex](const btu::Path &loose_path) {
+        [&result, &mutex, &mod](const btu::Path &relative_path) {
             static constexpr auto k_plugin_exts = std::to_array({".esp", ".esm", ".esl"});
-            if (!btu::common::contains(k_plugin_exts, loose_path.extension()))
+            if (!btu::common::contains(k_plugin_exts, relative_path.extension()))
                 return;
 
-            PLOG_INFO << fmt::format("Parsing plugin {}", loose_path.string());
+            PLOG_INFO << fmt::format("Parsing plugin {}", relative_path.string());
 
-            auto headparts          = btu::esp::list_headparts(loose_path);
-            auto landscape_textures = btu::esp::list_landscape_textures(loose_path);
+            const auto absolute_path = mod.path() / relative_path;
+            auto headparts           = btu::esp::list_headparts(absolute_path);
+            auto landscape_textures  = btu::esp::list_landscape_textures(absolute_path);
 
             if (!headparts && !landscape_textures)
             {
-                PLOG_ERROR << fmt::format("Failed to parse plugin {}", loose_path.string());
-                rename_bad_file(loose_path);
-                return;
+                PLOGV << fmt::format("Plugin {} has no headparts or landscape textures",
+                                     relative_path.string());
             }
 
             const auto lock = std::scoped_lock(mutex);
@@ -93,7 +94,7 @@ struct PluginInfo
                                                  landscape_textures->end());
         },
         // plugins cannot be in archives
-        [](const btu::Path &, const btu::bsa::Archive &) {});
+        [](const btu::Path &) {});
 
     return result;
 }
@@ -184,7 +185,7 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
         });
 
     if (settings_.current_profile().bsa_make_dummy_plugins)
-        make_dummy_plugins(directory_path, bsa_sets);
+        remake_dummy_plugins(directory_path, bsa_sets);
 }
 
 void Manager::emit_progress_rate_limited(const btu::Path &path)
@@ -198,6 +199,70 @@ void Manager::emit_progress_rate_limited(const btu::Path &path)
         emit files_processed(path, ++files_processed_since_last_emissions_);
     }
 }
+
+class ModTransformer final : public btu::modmanager::ModFolderTransformer
+{
+public:
+    using ProgressCallback = std::function<void(const btu::Path &)>;
+
+private:
+    Settings settings_;
+    ProgressCallback progress_callback_;
+
+public:
+    ModTransformer(Settings settings, ProgressCallback progress_callback)
+        : settings_(std::move(settings))
+        , progress_callback_(std::move(progress_callback))
+    {
+    }
+
+    [[nodiscard]] auto archive_too_large(const btu::Path &archive_path, ArchiveTooLargeState state) noexcept
+        -> ArchiveTooLargeAction override
+    {
+        switch (state)
+        {
+            case ArchiveTooLargeState::BeforeProcessing:
+            {
+                PLOG_ERROR << fmt::format("Found archive {} that is too large", archive_path.string());
+                rename_bad_file(archive_path);
+                break;
+            }
+            case ArchiveTooLargeState::AfterProcessing:
+            {
+                PLOG_ERROR << fmt::format("Archive {} became too large after processing. Ignoring it.",
+                                          archive_path.string());
+                break;
+            }
+        }
+        return ArchiveTooLargeAction::Skip;
+    }
+    [[nodiscard]] auto transform_file(btu::modmanager::ModFile file) noexcept
+        -> std::optional<std::vector<std::byte>> override
+    {
+        const auto path   = file.relative_path;
+        auto path_for_log = btu::common::as_ascii_string(path.u8string());
+
+        PLOG_VERBOSE << fmt::format("Processing file {}", path_for_log);
+
+        auto ret = process_file(std::move(file), settings_);
+
+        progress_callback_(path);
+
+        if (!ret)
+        {
+            if (ret.error() == k_error_no_work_required) // everything is fine
+                return std::nullopt;
+
+            PLOG_ERROR << fmt::format("Failed to process file {}: {}", path_for_log, ret.error().message());
+
+            // TODO: rename bad files
+
+            return std::nullopt;
+        }
+
+        return std::move(*ret);
+    }
+};
 
 // TODO: handle several mods at once
 void Manager::run_optimization()
@@ -221,52 +286,9 @@ void Manager::run_optimization()
     if (settings_.current_profile().bsa_operation == BsaOperation::Extract)
         unpack_directory(mod.path());
 
-    mod.transform(
-        [this](btu::modmanager::ModFolder::ModFile &&file) -> std::optional<std::vector<std::byte>> {
-            const auto path   = file.relative_path;
-            auto path_for_log = btu::common::as_ascii_string(path.u8string());
-
-            PLOG_VERBOSE << fmt::format("Processing file {}", path_for_log);
-
-            auto ret = process_file(std::move(file), settings_);
-
-            emit_progress_rate_limited(path);
-
-            if (!ret)
-            {
-                if (ret.error() == k_error_no_work_required) // everything is fine
-                    return std::nullopt;
-
-                PLOG_ERROR << fmt::format("Failed to process file {}: {}",
-                                          path_for_log,
-                                          ret.error().message());
-
-                // TODO: rename bad files
-
-                return std::nullopt;
-            }
-
-            return std::move(*ret);
-        },
-        [](const btu::Path &archive_path, btu::modmanager::ModFolder::ArchiveTooLargeState state) {
-            switch (state)
-            {
-                case btu::modmanager::ModFolder::ArchiveTooLargeState::BeforeProcessing:
-                {
-                    // FIXME: this is likely broken as the archive is still open when this is called
-                    PLOG_ERROR << fmt::format("Found archive {} that is too large", archive_path.string());
-                    rename_bad_file(archive_path);
-                    break;
-                }
-                case btu::modmanager::ModFolder::ArchiveTooLargeState::AfterProcessing:
-                {
-                    PLOG_ERROR << fmt::format("Archive {} became too large after processing. Ignoring it.",
-                                              archive_path.string());
-                    break;
-                }
-            }
-            return btu::modmanager::ModFolder::ArchiveTooLargeAction::Skip;
-        });
+    auto transformer = ModTransformer{settings_,
+                                      [this](const btu::Path &path) { emit_progress_rate_limited(path); }};
+    mod.transform(transformer);
 
     if (settings_.current_profile().bsa_operation == BsaOperation::Create)
         pack_directory(mod.path());
