@@ -170,6 +170,9 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     success = select_text(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
     assert(success);
 
+    success = select_text(*ui.profiles, to_qstring(settings.current_profile_name()));
+    assert(success);
+
     for (auto *module : module_display.get_modules())
         module->setup(settings);
 }
@@ -263,13 +266,14 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         set_theme(theme);
     });
 
-    connect(ui_->profiles, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+    connect(ui_->profiles, &QComboBox::activated, this, [this](int idx) {
+        const QString &text = ui_->profiles->itemText(idx);
         if (!settings_.set_current_profile(to_u8string(text)))
         {
             // TODO: improve error message
             QMessageBox::critical(this, tr("Error"), tr("Could not set the current profile"));
         }
-        // TODO
+        settings_to_ui(settings_, *ui_, module_display_);
     });
 
     connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::init_process);
