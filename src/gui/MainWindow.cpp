@@ -123,8 +123,8 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
                 throw UiException("Invalid profile selected");
             break;
         }
-        case GuiMode::Medium: break;   // nothing to do
-        case GuiMode::Advanced: break; // TODO
+        case GuiMode::Medium:
+        case GuiMode::Advanced: break; // nothing to do
     }
 
     settings.current_profile().input_path        = ui.inputDirTextEdit->text().toStdString();
