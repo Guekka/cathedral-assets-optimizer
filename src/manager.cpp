@@ -264,16 +264,10 @@ public:
     }
 };
 
-// TODO: handle several mods at once
-void Manager::run_optimization()
+void Manager::process_single_mod(const btu::Path &path)
 {
-    PLOG_INFO << fmt::format("Processing: {}", settings_.current_profile().input_path.string());
-
-    const auto start_time = std::chrono::system_clock::now();
-    PLOG_INFO << fmt::format("Beginning. Start time: {}", start_time);
-
     const auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
-    auto mod            = btu::modmanager::ModFolder(settings_.current_profile().input_path, bsa_sets);
+    auto mod            = btu::modmanager::ModFolder(path, bsa_sets);
 
     PLOG_INFO << "Counting files...";
     PLOG_INFO << fmt::format("Found {} files", mod.size());
@@ -292,6 +286,49 @@ void Manager::run_optimization()
 
     if (settings_.current_profile().bsa_operation == BsaOperation::Create)
         pack_directory(mod.path());
+}
+
+void Manager::process_several_mods(const btu::Path &path)
+{
+    PLOGI << "Processing several mods in " << path.string();
+    switch (btu::modmanager::find_manager(path))
+    {
+        case btu::modmanager::ModManager::Vortex:
+            PLOGI << "This directory appears to be a Vortex mod directory";
+            break;
+        case btu::modmanager::ModManager::MO2:
+            PLOGI << "This directory appears to be a MO2 mod directory";
+            break;
+        case btu::modmanager::ModManager::ManualForced:
+            PLOGI << "This directory appears to be managed manually and was marked for processing";
+            break;
+        case btu::modmanager::ModManager::None:
+            PLOGI << "This directory does not appear to be a mod directory. Processing it anyway, but it may "
+                     "not work as expected";
+            break;
+    }
+
+    // TODO: improve handling per mod manager
+
+    flux::from_range(btu::fs::directory_iterator(path))
+        .filter([](const auto &entry) { return btu::fs::is_directory(entry.path()); })
+        .for_each([this](const auto &entry) { process_single_mod(entry.path()); });
+}
+
+void Manager::run_optimization()
+{
+    PLOG_INFO << fmt::format("Processing: {}", settings_.current_profile().input_path.string());
+
+    const auto start_time = std::chrono::system_clock::now();
+    PLOG_INFO << fmt::format("Beginning. Start time: {}", start_time);
+
+    switch (settings_.current_profile().optimization_mode)
+    {
+        case OptimizationMode::SingleMod: process_single_mod(settings_.current_profile().input_path); break;
+        case OptimizationMode::SeveralMods:
+            process_several_mods(settings_.current_profile().input_path);
+            break;
+    }
 
     const auto end_time     = std::chrono::system_clock::now();
     const auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();

@@ -24,6 +24,9 @@ public:
 private:
     Settings settings_;
 
+    void process_single_mod(const btu::Path &path);
+    void process_several_mods(const btu::Path &path);
+
     void unpack_directory(const std::filesystem::path &directory_path) const;
     void pack_directory(const std::filesystem::path &directory_path) const;
 
