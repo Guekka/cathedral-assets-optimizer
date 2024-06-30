@@ -22,7 +22,7 @@ namespace cao {
 
                 Uses default settings for porting a mod between LE and SSE.
                 It will work for most of the cases and is the recommended way to port a mod.
-                It is safe to apply it on a mod, and it is recommended to apply it to your whole mod list if you experience crashes.)");
+                It is safe to apply it on a mod, and applying it to your whole mod list could help if you experience crashes.)");
         }
         case GuiMode::Medium:
         {
@@ -36,9 +36,7 @@ namespace cao {
             return QObject::tr(
                 R"(Advanced mode
 
-                The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.
-
-                This mode is still in development and may not work as expected. Use it at your own risk.)");
+                The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.)");
         }
     }
     return QObject::tr("Unknown mode");
@@ -64,10 +62,7 @@ LevelSelector::LevelSelector(GuiSettings settings)
 
     setup_button(ui_->quick_optimize, GuiMode::QuickOptimize);
     setup_button(ui_->medium, GuiMode::Medium);
-
-    // Advanced mode is not ready yet
-    // setup_button(ui_->advanced, GuiMode::Advanced);
-    ui_->advanced->setEnabled(false);
+    setup_button(ui_->advanced, GuiMode::Advanced);
 }
 
 LevelSelector::~LevelSelector() = default;
