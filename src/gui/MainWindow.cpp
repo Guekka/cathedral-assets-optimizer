@@ -412,15 +412,14 @@ void MainWindow::run_gui_selector()
 void MainWindow::about() noexcept
 {
     constexpr auto message =
-        R"(%1 %2
+        R"( %1 version %2 built on %3
             Made by G'k
             This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTY.
             See the Mozilla Public License)";
 
-    const QString text = QString("%1 %2 %3")
-                             .arg(QCoreApplication::applicationName(),
-                                  QCoreApplication::applicationVersion(),
-                                  tr(message));
+    const QString text = tr(message).arg(QCoreApplication::applicationName(),
+                                         QCoreApplication::applicationVersion(),
+                                         __DATE__);
 
     QMessageBox::about(this, tr("About"), text);
 }
