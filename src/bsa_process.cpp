@@ -2,9 +2,8 @@
 
 #include <btu/bsa/pack.hpp>
 #include <btu/bsa/plugin.hpp>
-#include <btu/bsa/unpack.hpp>
-#include <plog/Log.h>
 #include <btu/common/filesystem.hpp>
+#include <plog/Log.h>
 
 /**
  * @brief Remove relative paths from a directory
@@ -44,18 +43,18 @@ void write_single_archive(const btu::Path &directory_path,
         return;
     }
 
-    if (const bool success = std::move(archive).write(archive_path->full_path()); !success)
+    if (const bool success = std::move(archive).write(archive_path.value()); !success)
     {
-        PLOGE << "Failed to write archive " << archive_path->full_path().string();
+        PLOGE << "Failed to write archive " << archive_path.value().string();
         return;
     }
 
     // we open the archive again to make sure the files are written
-    auto written_archive = btu::bsa::Archive::read(archive_path->full_path());
+    auto written_archive = btu::bsa::Archive::read(archive_path.value());
     if (!written_archive)
     {
         PLOGE << "Archive was written but cannot be opened, it is likely corrupted. Removing it.";
-        btu::fs::remove(archive_path->full_path());
+        btu::fs::remove(archive_path.value());
     }
 
     if (remove_files)

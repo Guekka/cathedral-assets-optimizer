@@ -30,6 +30,6 @@ public:
 
 private:
     std::unique_ptr<Ui::SelectGPUWindow> ui_;
-    std::vector<btu::tex::CompressionDevice> devices_;
+    std::vector<btu::tex::CompressionDevice::AdapterInfo> devices_;
 };
 } // namespace cao
