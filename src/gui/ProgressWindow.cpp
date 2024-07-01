@@ -125,6 +125,9 @@ ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
     set_data(*ui_->logLevel, "Info", plog::info);
     set_data(*ui_->logLevel, "Error", plog::error);
 
+    [[maybe_unused]] const bool res = select_data(*ui_->logLevel, plog::info); // Default to info
+    assert(res);
+
     connect(ui_->clearLog, &QPushButton::clicked, this, [this] { ui_->log->clear(); });
 
     connect(ui_->openLogFile, &QPushButton::clicked, this, [this] {
