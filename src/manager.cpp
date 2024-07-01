@@ -60,43 +60,64 @@ struct PluginInfo
     std::vector<std::u8string> landscape_textures;
 };
 
-[[nodiscard]] auto get_plugin_info(const btu::modmanager::ModFolder &mod) -> PluginInfo
+[[nodiscard]] auto get_plugin_info(btu::modmanager::ModFolder &mod) -> PluginInfo
 {
-    PluginInfo result;
-    std::mutex mutex;
+    class PluginInfoVisitor final : public btu::modmanager::ModFolderIterator
+    {
+    public:
+        explicit PluginInfoVisitor(btu::Path mod_root)
+            : mod_root_(std::move(mod_root))
+        {
+        }
 
-    mod.iterate(
-        [&result, &mutex, &mod](const btu::Path &relative_path) {
+        [[nodiscard]] auto archive_too_large(const btu::Path & /*archive_path*/,
+                                             ArchiveTooLargeState /*state*/) noexcept
+            -> ArchiveTooLargeAction override
+        {
+            return ArchiveTooLargeAction::Skip;
+        }
+
+        void process_file(const btu::modmanager::ModFile file) noexcept override
+        {
             static constexpr auto k_plugin_exts = std::to_array({".esp", ".esm", ".esl"});
-            if (!btu::common::contains(k_plugin_exts, relative_path.extension()))
+            if (!btu::common::contains(k_plugin_exts, file.relative_path.extension()))
                 return;
 
-            PLOG_INFO << fmt::format("Parsing plugin {}", relative_path.string());
+            PLOG_INFO << fmt::format("Parsing plugin {}", file.relative_path.string());
 
-            const auto absolute_path = mod.path() / relative_path;
+            const auto absolute_path = mod_root_ / file.relative_path;
             auto headparts           = btu::esp::list_headparts(absolute_path);
             auto landscape_textures  = btu::esp::list_landscape_textures(absolute_path);
 
             if (!headparts && !landscape_textures)
             {
                 PLOGV << fmt::format("Plugin {} has no headparts or landscape textures",
-                                     relative_path.string());
+                                     file.relative_path.string());
             }
 
-            const auto lock = std::scoped_lock(mutex);
+            const auto lock = std::scoped_lock(mutex_);
 
             if (headparts)
-                result.headparts.insert(result.headparts.end(), headparts->begin(), headparts->end());
+                result_.headparts.insert(result_.headparts.end(), headparts->begin(), headparts->end());
 
             if (landscape_textures)
-                result.landscape_textures.insert(result.landscape_textures.end(),
-                                                 landscape_textures->begin(),
-                                                 landscape_textures->end());
-        },
-        // plugins cannot be in archives
-        [](const btu::Path &) {});
+                result_.landscape_textures.insert(result_.landscape_textures.end(),
+                                                  landscape_textures->begin(),
+                                                  landscape_textures->end());
+        }
 
-    return result;
+        [[nodiscard]] auto result() const noexcept -> PluginInfo { return result_; }
+
+    private:
+        std::mutex mutex_;
+        PluginInfo result_;
+        btu::Path mod_root_;
+    };
+
+    auto iterator = PluginInfoVisitor(mod.path());
+    mod.iterate(iterator);
+
+    return iterator.result();
 }
 
 void Manager::unpack_directory(const std::filesystem::path &directory_path) const

@@ -154,11 +154,10 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
 
 [[nodiscard]] auto process_texture(btu::modmanager::ModFile &&file,
                                    const btu::tex::Settings &settings,
-                                   const OptimizeType type,
-                                   uint32_t gpu_index) noexcept
+                                   const OptimizeType type) noexcept
     -> tl::expected<std::vector<std::byte>, btu::common::Error>
 {
-    auto thread_local compression_device = btu::tex::CompressionDevice::make(gpu_index);
+    static auto compression_device = btu::tex::CompressionDevice();
 
     if (type == OptimizeType::None)
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
@@ -170,7 +169,7 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
 
             if (steps_are_empty(steps))
             {
-                PLOG_INFO << "No work required";
+                PLOGV << "No work required  ";
                 return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
             }
 
@@ -233,10 +232,7 @@ auto process_file(btu::modmanager::ModFile &&file, const Settings &settings) noe
         case FileType::Mesh:
             return process_mesh(std::move(file), file_sets.nif, get_optimize_type(file_sets.nif_optimize));
         case FileType::Texture:
-            return process_texture(std::move(file),
-                                   file_sets.tex,
-                                   get_optimize_type(file_sets.tex_optimize),
-                                   settings.current_profile().gpu_index);
+            return process_texture(std::move(file), file_sets.tex, get_optimize_type(file_sets.tex_optimize));
         case FileType::Animation:
             return process_animation(std::move(file),
                                      file_sets.hkx_target,

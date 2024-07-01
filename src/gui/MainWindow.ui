@@ -286,7 +286,6 @@
      <string>Options</string>
     </property>
     <addaction name="actionEnableDarkTheme"/>
-    <addaction name="actionSelect_GPU"/>
     <addaction name="actionChange_level"/>
     <addaction name="actionOpen_config_dir"/>
    </widget>

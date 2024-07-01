@@ -17,21 +17,15 @@ using btu::tex::CompressionDevice;
 SelectGPUWindow::SelectGPUWindow(QWidget *parent)
     : QDialog(parent)
     , ui_(std::make_unique<Ui::SelectGPUWindow>())
+    , devices_(CompressionDevice().list_adapters())
 {
     ui_->setupUi(this);
-
-    auto dev = CompressionDevice::make(0);
-    while (dev)
-    {
-        devices_.emplace_back(*std::move(dev));
-        dev = CompressionDevice::make(static_cast<uint32_t>(devices_.size()));
-    }
 
     auto *layout = new QVBoxLayout(this); // NOLINT(cppcoreguidelines-owning-memory
     for (size_t i = 0; i < devices_.size(); i++)
     {
         auto *button = new QRadioButton(this); // NOLINT(cppcoreguidelines-owning-memory)
-        button->setText(to_qstring(devices_[i].gpu_name()));
+        button->setText(to_qstring(devices_[i].name));
         button->setProperty(property_key, QVariant::fromValue(i));
         layout->addWidget(button);
     }

@@ -19,7 +19,8 @@
     "utf8h",
     "rsm-bsa",
     "tl-expected",
-    "reproc"
+    "reproc",
+    "bshoshany-thread-pool"
   ],
   "features": {
     "tests": {
