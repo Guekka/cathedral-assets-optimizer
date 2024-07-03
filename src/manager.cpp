@@ -309,7 +309,8 @@ void Manager::process_single_mod(const btu::Path &path)
     if (stop_token_.stop_requested())
         return;
 
-    if (settings_.current_profile().bsa_operation == BsaOperation::Extract)
+    if (settings_.current_profile().bsa_operation == BsaOperation::Extract
+        && !settings_.current_profile().dry_run)
         unpack_directory(mod.path());
 
     const auto size = mod.size();
@@ -325,7 +326,8 @@ void Manager::process_single_mod(const btu::Path &path)
     if (stop_token_.stop_requested())
         return;
 
-    if (settings_.current_profile().bsa_operation == BsaOperation::Create)
+    if (settings_.current_profile().bsa_operation == BsaOperation::Create
+        && !settings_.current_profile().dry_run)
         pack_directory(mod.path());
 }
 
