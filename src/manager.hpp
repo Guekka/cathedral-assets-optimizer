@@ -8,6 +8,7 @@
 
 #include <QObject>
 #include <QString>
+#include <thread>
 
 namespace cao {
 /// \brief The Manager class is responsible for the optimization process.
@@ -17,12 +18,11 @@ class Manager final : public QObject
     Q_OBJECT
 
 public:
-    explicit Manager(Settings settings);
-
-    void run_optimization();
+    void run_optimization(Settings settings, std::stop_token stop_token);
 
 private:
     Settings settings_;
+    std::stop_token stop_token_;
 
     void process_single_mod(const btu::Path &path);
     void process_several_mods(const btu::Path &path);
