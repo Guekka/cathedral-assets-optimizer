@@ -88,8 +88,8 @@ auto main(int argc, char *argv[]) -> int
             if (!profile)
                 throw std::runtime_error("Profile not found");
 
-            cao::Manager manager(settings);
-            manager.run_optimization();
+            cao::Manager manager;
+            manager.run_optimization(settings, std::stop_token{}); // TODO: handle signals
         }
         else
         {
