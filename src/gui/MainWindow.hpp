@@ -40,14 +40,14 @@ private:
     Settings settings_;
 
     std::unique_ptr<Ui::MainWindow> ui_;
-    std::unique_ptr<Manager> cao_process_;
+    std::optional<std::jthread> cao_process_;
+    std::unique_ptr<QProgressDialog> graceful_stop_dialog_;
+
     std::unique_ptr<ProgressWindow> progress_window_;
     ModuleDisplay module_display_{};
 
-    std::future<void> cao_process_future_;
-
     void init_process();
-    void end_process();
+    void stop_process_gracefully();
 
     void save_settings() noexcept;
 

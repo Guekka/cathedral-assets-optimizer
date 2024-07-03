@@ -22,13 +22,7 @@
 #include <filesystem>
 #include <mutex>
 #include <utility>
-
 namespace cao {
-
-Manager::Manager(Settings settings)
-    : settings_(std::move(settings))
-{
-}
 
 constexpr auto k_bad_file_ext = ".caobad";
 
@@ -129,6 +123,12 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
         return !btu::common::contains(btu::bsa::k_archive_extensions, file.path().extension());
     });
 
+    if (archives.empty())
+    {
+        PLOG_INFO << "No archives found";
+        return;
+    }
+
     emit files_counted(archives.size());
 
     std::ranges::for_each(archives, [this](const auto &entry) {
@@ -192,6 +192,9 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
              .compress      = btu::bsa::Compression::Yes,
          })
         .for_each([&](auto archive) {
+            if (stop_token_.stop_requested())
+                return;
+
             try
             {
                 write_single_archive(directory_path,
@@ -211,13 +214,15 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
 
 void Manager::emit_progress_rate_limited(const btu::Path &path)
 {
-    constexpr auto emit_every = std::chrono::milliseconds(500);
+    ++files_processed_since_last_emissions_;
+    constexpr auto emit_every = std::chrono::milliseconds(200);
 
     const auto now = std::chrono::steady_clock::now();
-    if ((now - last_emission_.load()) > emit_every)
+    if (now - last_emission_.load() > emit_every)
     {
         last_emission_.store(now);
-        emit files_processed(path, ++files_processed_since_last_emissions_);
+        emit files_processed(path, files_processed_since_last_emissions_);
+        files_processed_since_last_emissions_ = 0;
     }
 }
 
@@ -228,11 +233,13 @@ public:
 
 private:
     Settings settings_;
+    std::stop_token stop_token_;
     ProgressCallback progress_callback_;
 
 public:
-    ModTransformer(Settings settings, ProgressCallback progress_callback)
+    ModTransformer(Settings settings, std::stop_token stop_token, ProgressCallback progress_callback)
         : settings_(std::move(settings))
+        , stop_token_(std::move(stop_token))
         , progress_callback_(std::move(progress_callback))
     {
     }
@@ -283,6 +290,11 @@ public:
 
         return std::move(*ret);
     }
+
+    [[nodiscard]] auto stop_requested() const noexcept -> bool override
+    {
+        return stop_token_.stop_requested();
+    }
 };
 
 void Manager::process_single_mod(const btu::Path &path)
@@ -290,20 +302,28 @@ void Manager::process_single_mod(const btu::Path &path)
     const auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
     auto mod            = btu::modmanager::ModFolder(path, bsa_sets);
 
-    PLOG_INFO << "Counting files...";
-    PLOG_INFO << fmt::format("Found {} files", mod.size());
-    emit files_counted(mod.size());
-
     PLOG_INFO << "Parsing plugins...";
     const auto plugin_info = get_plugin_info(mod);
     apply_plugin_info(settings_, plugin_info);
 
+    if (stop_token_.stop_requested())
+        return;
+
     if (settings_.current_profile().bsa_operation == BsaOperation::Extract)
         unpack_directory(mod.path());
 
-    auto transformer = ModTransformer{settings_,
-                                      [this](const btu::Path &path) { emit_progress_rate_limited(path); }};
+    const auto size = mod.size();
+    PLOG_INFO << fmt::format("Found {} files", size);
+
+    emit files_counted(size);
+
+    auto transformer = ModTransformer{settings_, stop_token_, [this](const btu::Path &path) {
+                                          emit_progress_rate_limited(path);
+                                      }};
+
     mod.transform(transformer);
+    if (stop_token_.stop_requested())
+        return;
 
     if (settings_.current_profile().bsa_operation == BsaOperation::Create)
         pack_directory(mod.path());
@@ -330,14 +350,23 @@ void Manager::process_several_mods(const btu::Path &path)
     }
 
     // TODO: improve handling per mod manager
+    const auto mod_folders = flux::from_range(btu::fs::directory_iterator(path)).filter([](const auto &entry) {
+        return btu::fs::is_directory(entry.path());
+    });
 
-    flux::from_range(btu::fs::directory_iterator(path))
-        .filter([](const auto &entry) { return btu::fs::is_directory(entry.path()); })
-        .for_each([this](const auto &entry) { process_single_mod(entry.path()); });
+    for (const auto &mod_folder : mod_folders)
+    {
+        if (stop_token_.stop_requested())
+            return;
+        process_single_mod(mod_folder);
+    }
 }
 
-void Manager::run_optimization()
+void Manager::run_optimization(Settings settings, std::stop_token stop_token)
 {
+    settings_   = std::move(settings);
+    stop_token_ = std::move(stop_token);
+
     PLOG_INFO << fmt::format("Processing: {}", settings_.current_profile().input_path.string());
 
     const auto start_time = std::chrono::system_clock::now();

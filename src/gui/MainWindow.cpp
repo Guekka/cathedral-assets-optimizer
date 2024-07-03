@@ -345,31 +345,39 @@ void MainWindow::init_process()
 
     try
     {
-        cao_process_     = std::make_unique<Manager>(settings_);
         progress_window_ = std::make_unique<ProgressWindow>(
             LogReader(Settings::state_directory() / k_log_file_name));
 
-        connect(cao_process_.get(),
-                &Manager::files_counted,
-                progress_window_.get(),
-                &ProgressWindow::set_maximum);
+        cao_process_ = std::jthread([this](std::stop_token &&stop_token) mutable {
+            auto manager = Manager();
 
-        connect(cao_process_.get(),
-                &Manager::files_processed,
-                progress_window_.get(),
-                [this](const std::filesystem::path &file) {
-                    const auto text = QString("Processing %1").arg(QString::fromStdString(file.string()));
-                    progress_window_->step(std::optional(text));
-                });
+            connect(&manager, &Manager::files_counted, progress_window_.get(), &ProgressWindow::set_maximum);
 
-        connect(cao_process_.get(), &Manager::end, progress_window_.get(), &ProgressWindow::end);
-        connect(cao_process_.get(), &Manager::end, this, &MainWindow::end_process);
+            connect(&manager,
+                    &Manager::files_processed,
+                    progress_window_.get(),
+                    [this](const std::filesystem::path &file, size_t count_since_last) {
+                        const auto text = QString("Processing %1").arg(QString::fromStdString(file.string()));
+                        progress_window_->step(std::optional(text), static_cast<int>(count_since_last));
+                    });
+
+            connect(&manager, &Manager::end, progress_window_.get(), &ProgressWindow::end);
+
+            connect(&manager, &Manager::end, this, [this] {
+                graceful_stop_dialog_.reset();
+                cao_process_.reset();
+                ui_->processButton->setDisabled(false);
+            });
+
+            manager.run_optimization(settings_, std::move(stop_token));
+        });
 
         progress_window_->show();
 
-        connect(progress_window_.get(), &ProgressWindow::cancelled, this, &MainWindow::end_process);
-
-        cao_process_future_ = std::async(&Manager::run_optimization, cao_process_.get());
+        connect(progress_window_.get(),
+                &ProgressWindow::cancelled,
+                this,
+                &MainWindow::stop_process_gracefully);
 
         ui_->processButton->setDisabled(true);
     }
@@ -380,16 +388,26 @@ void MainWindow::init_process()
                         tr("An exception has been encountered and the process was forced to stop: %1")
                             .arg(e.what()));
         box.exec();
-        end_process();
+        stop_process_gracefully();
     }
 }
 
-void MainWindow::end_process()
+void MainWindow::stop_process_gracefully()
 {
-    ui_->processButton->setDisabled(false);
-
     if (cao_process_)
-        cao_process_.reset();
+    {
+        cao_process_->request_stop();
+
+        graceful_stop_dialog_ = std::make_unique<QProgressDialog>();
+        graceful_stop_dialog_->setLabelText(
+            tr("Waiting for the process to end... Please do not close the application."));
+        // expect 20 seconds to end the process
+        graceful_stop_dialog_->setRange(0, 0);
+        graceful_stop_dialog_->setModal(/*modal*/ true);
+        graceful_stop_dialog_->setCancelButton(nullptr);
+
+        graceful_stop_dialog_->show();
+    }
 }
 
 void MainWindow::save_settings() noexcept
@@ -426,7 +444,7 @@ void MainWindow::about() noexcept
 
 [[maybe_unused]] void MainWindow::closeEvent(QCloseEvent *event)
 {
-    end_process();
+    stop_process_gracefully();
     save_settings();
     event->accept();
 }
