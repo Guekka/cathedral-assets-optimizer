@@ -53,11 +53,12 @@ void AdvancedMeshesModule::settings_to_ui(const Settings &settings)
 
 void AdvancedMeshesModule::ui_to_settings(Settings &settings) const
 {
-    auto &pfs = current_per_file_settings(settings);
+    auto &pfs       = current_per_file_settings(settings);
+    const bool base = ui_->mainGroupBox->isChecked();
 
-    if (ui_->necessaryOptimizationRadioButton->isChecked())
+    if (base && ui_->necessaryOptimizationRadioButton->isChecked())
         pfs.nif_optimize = OptimizeType::Normal;
-    else if (ui_->fullOptimizationRadioButton->isChecked())
+    else if (base && ui_->fullOptimizationRadioButton->isChecked())
     {
         pfs.nif_optimize = OptimizeType::Forced;
         pfs.nif.optimize = true;
