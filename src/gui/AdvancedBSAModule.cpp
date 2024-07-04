@@ -47,9 +47,11 @@ void AdvancedBSAModule::settings_to_ui(const Settings &settings)
 
 void AdvancedBSAModule::ui_to_settings(Settings &settings) const
 {
-    if (ui_->BSAExtract->isChecked())
+    const bool base = ui_->baseGroupBox->isChecked();
+
+    if (base && ui_->BSAExtract->isChecked())
         settings.current_profile().bsa_operation = BsaOperation::Extract;
-    else if (ui_->BSACreate->isChecked())
+    else if (base && ui_->BSACreate->isChecked())
         settings.current_profile().bsa_operation = BsaOperation::Create;
     else
         settings.current_profile().bsa_operation = BsaOperation::None;
