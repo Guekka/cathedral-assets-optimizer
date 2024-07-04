@@ -278,10 +278,12 @@ public:
 
         if (!ret)
         {
-            if (ret.error() == k_error_no_work_required) // everything is fine
-                return std::nullopt;
-
-            PLOG_ERROR << fmt::format("Failed to process file {}: {}", path_for_log, ret.error().message());
+            if (ret.error() != k_error_no_work_required)
+            {
+                PLOG_ERROR << fmt::format("Failed to process file {}: {}",
+                                          path_for_log,
+                                          ret.error().message());
+            }
 
             // TODO: rename bad files
 
@@ -294,6 +296,38 @@ public:
     [[nodiscard]] auto stop_requested() const noexcept -> bool override
     {
         return stop_token_.stop_requested();
+    }
+
+    void failed_to_read_archive(const btu::Path &archive_path) noexcept override
+    {
+        PLOGE << fmt::format("Failed to read archive {}", archive_path.string());
+        rename_bad_file(archive_path);
+    }
+
+    // TODO: think more thoroughly about these error handling functions
+
+    void failed_to_write_transformed_file(const btu::Path &relative_path,
+                                          const std::span<const std::byte> content) noexcept override
+    {
+        PLOGE << fmt::format("Failed to write transformed file {}. After processing, file size was {}",
+                             relative_path.string(),
+                             content.size());
+    }
+
+    void failed_to_read_transformed_file(const btu::Path &relative_path,
+                                         const std::span<const std::byte> content) noexcept override
+    {
+        PLOGE << fmt::format("Failed to read transformed file {}. After processing, file size was {}",
+                             relative_path.string(),
+                             content.size());
+    }
+
+    void failed_to_write_archive(const btu::Path &old_archive_path,
+                                 const btu::Path &new_archive_path) noexcept override
+    {
+        PLOGE << fmt::format("Failed to write archive {} to {}",
+                             old_archive_path.string(),
+                             new_archive_path.string());
     }
 };
 
