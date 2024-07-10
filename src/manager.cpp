@@ -114,14 +114,17 @@ struct PluginInfo
     return iterator.result();
 }
 
+[[nodiscard]] auto get_bsa_settings(const Settings &sets) noexcept -> btu::bsa::Settings
+{
+    return btu::bsa::Settings::get(sets.current_profile().target_game);
+}
+
 void Manager::unpack_directory(const std::filesystem::path &directory_path) const
 {
     PLOG_INFO << fmt::format("Extracting archives in {}", directory_path.string());
 
-    std::vector archives(btu::fs::directory_iterator(directory_path), btu::fs::directory_iterator{});
-    erase_if(archives, [](const auto &file) {
-        return !btu::common::contains(btu::bsa::k_archive_extensions, file.path().extension());
-    });
+    const auto bsa_sets = get_bsa_settings(settings_);
+    const auto archives = list_archive(directory_path, bsa_sets);
 
     if (archives.empty())
     {
@@ -184,12 +187,14 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
     emit files_counted(0);
     emit files_processed("archive packing", 0);
 
-    auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
+    const auto bsa_sets = get_bsa_settings(settings_);
 
+    const auto compress = settings_.current_profile().bsa_allow_compression ? btu::bsa::Compression::Yes
+                                                                            : btu::bsa::Compression::No;
     pack(btu::bsa::PackSettings{
              .input_dir     = directory_path,
              .game_settings = bsa_sets,
-             .compress      = btu::bsa::Compression::Yes,
+             .compress      = compress,
          })
         .for_each([&](auto archive) {
             if (stop_token_.stop_requested())
@@ -331,7 +336,7 @@ public:
 
 void Manager::process_single_mod(const btu::Path &path)
 {
-    const auto bsa_sets = btu::bsa::Settings::get(settings_.current_profile().target_game);
+    const auto bsa_sets = get_bsa_settings(settings_);
     auto mod            = btu::modmanager::ModFolder(path, bsa_sets);
 
     PLOG_INFO << "Parsing plugins...";

@@ -25,6 +25,7 @@ public:
     BsaOperation bsa_operation  = BsaOperation::None;
     bool bsa_make_dummy_plugins = true;
     bool bsa_remove_files       = true;
+    bool bsa_allow_compression  = true;
 
     // TODO: think about removing this and letting the UI handle it
     bool dry_run = false;
