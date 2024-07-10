@@ -6,6 +6,7 @@
 #include "logger.hpp"
 
 #include <fmt/chrono.h>
+#include <plog/Appenders/ColorConsoleAppender.h>
 #include <plog/Appenders/RollingFileAppender.h>
 #include <plog/Formatters/TxtFormatter.h>
 #include <plog/Init.h>
@@ -56,7 +57,9 @@ public:
             return false;
     }
 
-    plog::init(plog::Severity::verbose, get_appender(log_file_path));
+    static plog::ColorConsoleAppender<CustomFormatter> console_appender;
+
+    plog::init(plog::Severity::verbose, get_appender(log_file_path)).addAppender(&console_appender);
 
     PLOGV << fmt::format("Logging initialized at time: {}", std::chrono::system_clock::now());
     return true;
