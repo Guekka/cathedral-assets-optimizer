@@ -83,34 +83,48 @@ auto guess_file_type(const std::filesystem::path &path) noexcept -> std::optiona
     return !steps.convert && !steps.mipmaps && !steps.add_transparent_alpha && !steps.resize;
 }
 
-void log_steps(const btu::nif::OptimizationSteps &steps) noexcept
+[[nodiscard]] auto human_readable_step_string(const btu::nif::OptimizationSteps &steps) noexcept
+    -> std::string
 {
-    auto steps_log = std::string{"Optimizing mesh. Steps: "};
-    if (steps.format)
-        fmt::format_to(std::back_inserter(steps_log), "format: {}, ", steps.format.value());
-    if (steps.rename_referenced_textures)
-        steps_log += "rename textures tga -> dds, ";
-    if (steps.headpart == btu::nif::HeadpartStatus::Yes)
-        steps_log += "processing as headpart, ";
-    if (steps.optimize)
-        steps_log += "optimizing";
+    auto strs = std::vector<std::string>{};
 
-    PLOG_INFO << steps_log;
+    if (steps.format)
+        strs.emplace_back(fmt::format("format: {}", steps.format.value()));
+    if (steps.rename_referenced_textures)
+        strs.emplace_back("rename textures tga -> dds");
+    if (steps.headpart == btu::nif::HeadpartStatus::Yes)
+        strs.emplace_back("processing as headpart");
+    if (steps.optimize)
+        strs.emplace_back("optimizing");
+
+    return fmt::format("{}", fmt::join(strs, ", "));
 }
 
-void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
+[[nodiscard]] auto human_readable_step_string(const btu::tex::OptimizationSteps &steps) noexcept
+    -> std::string
 {
-    auto steps_log = std::string{"Optimizing texture. Steps: "};
-    if (steps.convert)
-        fmt::format_to(std::back_inserter(steps_log), "converting to {}, ", steps.best_format);
-    if (steps.mipmaps)
-        steps_log += "generating mipmaps, ";
-    if (steps.add_transparent_alpha)
-        steps_log += "adding transparent alpha, ";
-    if (steps.resize)
-        fmt::format_to(std::back_inserter(steps_log), "resizing to {}x{}, ", steps.resize->w, steps.resize->h);
+    auto strs = std::vector<std::string>{};
 
-    PLOG_INFO << steps_log;
+    if (steps.convert)
+        strs.emplace_back(fmt::format("convert to {}", steps.best_format));
+    if (steps.mipmaps)
+        strs.emplace_back("generate mipmaps");
+    if (steps.add_transparent_alpha)
+        strs.emplace_back("add transparent alpha");
+    if (steps.resize)
+        strs.emplace_back(fmt::format("resize to {}x{}", steps.resize->w, steps.resize->h));
+
+    return fmt::format("{}", fmt::join(strs, ", "));
+}
+
+void log_file_processing(const std::filesystem::path &path, std::string_view steps) noexcept
+{
+    PLOGI << fmt::format("Processing file: {}. Steps: {}", path.string(), steps);
+}
+
+void log_file_no_work_required(const std::filesystem::path &path) noexcept
+{
+    PLOGV << fmt::format("No work required for file: {}", path.string());
 }
 
 [[nodiscard]] auto process_mesh(btu::modmanager::ModFile &&file,
@@ -122,22 +136,21 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
 
     return file.content
-        ->and_then([&file](std::vector<std::byte> content) {
-            return btu::nif::load(std::move(file.relative_path), content);
-        })
+        ->and_then(
+            [&file](std::vector<std::byte> content) { return btu::nif::load(file.relative_path, content); })
         .and_then([&](auto &&nif) -> tl::expected<btu::nif::Mesh, btu::common::Error> {
             auto steps = btu::nif::compute_optimization_steps(nif, settings);
 
             if (steps_are_empty(steps))
             {
-                PLOG_INFO << "No work required";
+                log_file_no_work_required(file.relative_path);
                 return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
             }
 
             if (type == OptimizeType::Forced)
                 steps.format = std::optional(settings.target_game); // force conversion
 
-            log_steps(steps);
+            log_file_processing(file.relative_path, human_readable_step_string(steps));
 
             if (type == OptimizeType::DryRun)
                 return nif;
@@ -163,20 +176,20 @@ void log_steps(const btu::tex::OptimizationSteps &steps) noexcept
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
 
     return file.content
-        ->and_then([&file](auto &&content) { return btu::tex::load(std::move(file.relative_path), content); })
+        ->and_then([&file](auto &&content) { return btu::tex::load(file.relative_path, content); })
         .and_then([&](auto &&tex) -> tl::expected<btu::tex::Texture, btu::common::Error> {
             auto steps = btu::tex::compute_optimization_steps(tex, settings);
 
             if (steps_are_empty(steps))
             {
-                PLOGV << "No work required  ";
+                log_file_no_work_required(file.relative_path);
                 return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
             }
 
             if (type == OptimizeType::Forced)
                 steps.convert = true;
 
-            log_steps(steps);
+            log_file_processing(file.relative_path, human_readable_step_string(steps));
 
             if (type == OptimizeType::DryRun)
                 return tl::make_unexpected(btu::common::Error(k_error_no_work_required));
