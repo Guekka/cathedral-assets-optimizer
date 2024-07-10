@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>463</width>
-    <height>144</height>
+    <height>188</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,6 +67,13 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="dontCompress">
+        <property name="text">
+         <string>Do not compress files</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QCheckBox" name="dontMakeLoaded">
         <property name="cursor">
@@ -77,6 +84,13 @@
         </property>
         <property name="text">
          <string>Do not make BSA loaded</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="dontRemoveFiles">
+        <property name="text">
+         <string>Do not remove packed files</string>
         </property>
        </widget>
       </item>

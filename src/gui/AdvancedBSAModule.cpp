@@ -35,28 +35,34 @@ AdvancedBSAModule::~AdvancedBSAModule() = default;
 void AdvancedBSAModule::settings_to_ui(const Settings &settings)
 {
     ui_->baseGroupBox->setChecked(true);
-    switch (settings.current_profile().bsa_operation)
+    const auto &profile = settings.current_profile();
+    switch (profile.bsa_operation)
     {
         case BsaOperation::None: ui_->baseGroupBox->setChecked(false); break;
         case BsaOperation::Create: ui_->BSACreate->setChecked(true); break;
         case BsaOperation::Extract: ui_->BSAExtract->setChecked(true); break;
     }
 
-    ui_->dontMakeLoaded->setChecked(!settings.current_profile().bsa_make_dummy_plugins);
+    ui_->dontMakeLoaded->setChecked(!profile.bsa_make_dummy_plugins);
+    ui_->dontRemoveFiles->setChecked(!profile.bsa_remove_files);
+    ui_->dontCompress->setChecked(!profile.bsa_allow_compression);
 }
 
 void AdvancedBSAModule::ui_to_settings(Settings &settings) const
 {
     const bool base = ui_->baseGroupBox->isChecked();
 
+    auto &profile = settings.current_profile();
     if (base && ui_->BSAExtract->isChecked())
-        settings.current_profile().bsa_operation = BsaOperation::Extract;
+        profile.bsa_operation = BsaOperation::Extract;
     else if (base && ui_->BSACreate->isChecked())
-        settings.current_profile().bsa_operation = BsaOperation::Create;
+        profile.bsa_operation = BsaOperation::Create;
     else
-        settings.current_profile().bsa_operation = BsaOperation::None;
+        profile.bsa_operation = BsaOperation::None;
 
-    settings.current_profile().bsa_make_dummy_plugins = !ui_->dontMakeLoaded->isChecked();
+    profile.bsa_make_dummy_plugins = !ui_->dontMakeLoaded->isChecked();
+    profile.bsa_remove_files       = !ui_->dontRemoveFiles->isChecked();
+    profile.bsa_allow_compression  = !ui_->dontCompress->isChecked();
 }
 
 auto AdvancedBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
