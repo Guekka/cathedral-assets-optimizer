@@ -446,6 +446,7 @@ void MainWindow::about() noexcept
     stop_process_gracefully();
     save_settings();
     event->accept();
+    exit(0);
 }
 
 [[maybe_unused]] void MainWindow::dragEnterEvent(QDragEnterEvent *e)
