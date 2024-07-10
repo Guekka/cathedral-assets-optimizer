@@ -270,8 +270,6 @@ public:
         const auto path   = file.relative_path;
         auto path_for_log = btu::common::as_ascii_string(path.u8string());
 
-        PLOG_VERBOSE << fmt::format("Processing file {}", path_for_log);
-
         auto ret = process_file(std::move(file), settings_);
 
         progress_callback_(path);
@@ -403,7 +401,7 @@ void Manager::run_optimization(Settings settings, std::stop_token stop_token)
     settings_   = std::move(settings);
     stop_token_ = std::move(stop_token);
 
-    PLOG_INFO << fmt::format("Processing: {}", settings_.current_profile().input_path.string());
+    PLOG_INFO << fmt::format("Processing mod: {}", settings_.current_profile().input_path.string());
 
     const auto start_time = std::chrono::system_clock::now();
     PLOG_INFO << fmt::format("Beginning. Start time: {}", start_time);
