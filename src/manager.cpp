@@ -136,22 +136,22 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
 
     std::ranges::for_each(archives, [this](const auto &entry) {
         const auto res = unpack(btu::bsa::UnpackSettings{
-            .file_path                = entry.path(),
+            .file_path                = entry,
             .remove_arch              = true,
             .overwrite_existing_files = false,
             .root_opt                 = nullptr,
         });
 
-        emit files_processed(entry.path(), 1);
+        emit files_processed(entry, 1);
 
         switch (res)
         {
             case btu::bsa::UnpackResult::Success: break;
             case btu::bsa::UnpackResult::UnreadableArchive:
-                PLOGE << "Unreadable archive: " << entry.path().string();
+                PLOGE << "Unreadable archive: " << entry.string();
                 break;
             case btu::bsa::UnpackResult::FailedToDeleteArchive:
-                PLOGE << "Failed to delete archive: " << entry.path().string();
+                PLOGE << "Failed to delete archive: " << entry.string();
                 break;
         }
     });
