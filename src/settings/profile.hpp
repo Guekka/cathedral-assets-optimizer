@@ -93,28 +93,19 @@ public:
         return *it;
     }
 
-    [[nodiscard]] static auto make_base(btu::Game game) noexcept -> Profile
-    {
-        Profile profile;
-        profile.target_game             = game;
-        profile.base_per_file_settings_ = PerFileSettings::make_base(game);
-
-        if (game == btu::Game::FNV)
-        {
-            profile.bsa_make_overrides = true;
-        }
-
-        return profile;
-    }
+    [[nodiscard]] static auto make_base(btu::Game game) noexcept -> Profile;
 
 private:
     PerFileSettings base_per_file_settings_;
     std::vector<PerFileSettings> per_file_settings_;
 
+    [[nodiscard]] static auto set_fnv_settings(Profile profile) noexcept -> Profile;
+
 public:
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Profile,
                                    bsa_operation,
                                    bsa_make_dummy_plugins,
+                                   bsa_allow_compression,
                                    bsa_make_overrides,
                                    dry_run,
                                    gpu_index,
