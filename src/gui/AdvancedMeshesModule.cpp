@@ -74,12 +74,12 @@ auto AdvancedMeshesModule::is_supported_game(btu::Game game) const noexcept -> b
         // all these games appear to be supported here
         // <https://github.com/ousnius/nifly/blob/868b648b72392d3f8f582a28f819253dc5c6063e/include/BasicTypes.hpp#L150>
         case btu::Game::TES4:
-        case btu::Game::FNV:
         case btu::Game::SLE:
         case btu::Game::SSE:
         case btu::Game::FO4:
         case btu::Game::Starfield: return true;
         case btu::Game::TES3:
+        case btu::Game::FNV:
         case btu::Game::Custom: return false;
     }
     return false;
