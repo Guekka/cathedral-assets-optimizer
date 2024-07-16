@@ -24,6 +24,7 @@ set(SOURCES
         ${SOURCE_DIR}/settings/per_file_settings.hpp
         ${SOURCE_DIR}/settings/settings.cpp
         ${SOURCE_DIR}/settings/settings.hpp
+        ${SOURCE_DIR}/settings/profile.cpp
         ${SOURCE_DIR}/settings/profile.hpp
         ${SOURCE_DIR}/gui/ListDialog.cpp
         ${SOURCE_DIR}/gui/ListDialog.hpp
