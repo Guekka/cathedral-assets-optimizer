@@ -94,6 +94,19 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="makeOverrides">
+        <property name="cursor">
+         <cursorShape>WhatsThisCursor</cursorShape>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, CAO will create an override file for each created BSA.&lt;/p&gt;&lt;p&gt;This is in general only useful for Fallout: New Vegas. Unlike the newer titles, a BSA is not loaded at the same time as the associated plugin. With JIP installed, an .override file causes the engine to mimick this new behaviour.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Create override files</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

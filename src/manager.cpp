@@ -134,7 +134,7 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
 
     emit files_counted(archives.size());
 
-    std::ranges::for_each(archives, [this](const auto &entry) {
+    std::ranges::for_each(archives, [this](const btu::Path &entry) {
         const auto res = unpack(btu::bsa::UnpackSettings{
             .file_path                = entry.path(),
             .remove_arch              = true,
@@ -205,7 +205,8 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
                 write_single_archive(directory_path,
                                      std::move(archive),
                                      bsa_sets,
-                                     settings_.current_profile().bsa_remove_files);
+                                     settings_.current_profile().bsa_remove_files,
+                                     settings_.current_profile().bsa_make_overrides);
             }
             catch (const std::exception &e)
             {
