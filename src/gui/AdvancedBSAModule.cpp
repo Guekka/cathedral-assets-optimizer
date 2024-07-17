@@ -46,6 +46,7 @@ void AdvancedBSAModule::settings_to_ui(const Settings &settings)
     ui_->dontMakeLoaded->setChecked(!profile.bsa_make_dummy_plugins);
     ui_->dontRemoveFiles->setChecked(!profile.bsa_remove_files);
     ui_->dontCompress->setChecked(!profile.bsa_allow_compression);
+    ui_->makeOverrides->setChecked(profile.bsa_make_overrides);
 }
 
 void AdvancedBSAModule::ui_to_settings(Settings &settings) const
@@ -63,6 +64,7 @@ void AdvancedBSAModule::ui_to_settings(Settings &settings) const
     profile.bsa_make_dummy_plugins = !ui_->dontMakeLoaded->isChecked();
     profile.bsa_remove_files       = !ui_->dontRemoveFiles->isChecked();
     profile.bsa_allow_compression  = !ui_->dontCompress->isChecked();
+    profile.bsa_make_overrides     = ui_->makeOverrides->isChecked();
 }
 
 auto AdvancedBSAModule::is_supported_game(btu::Game game) const noexcept -> bool

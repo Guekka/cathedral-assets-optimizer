@@ -26,6 +26,7 @@ public:
     bool bsa_make_dummy_plugins = true;
     bool bsa_remove_files       = true;
     bool bsa_allow_compression  = true;
+    bool bsa_make_overrides     = false;
 
     // TODO: think about removing this and letting the UI handle it
     bool dry_run = false;
@@ -98,6 +99,11 @@ public:
         profile.target_game             = game;
         profile.base_per_file_settings_ = PerFileSettings::make_base(game);
 
+        if (game == btu::Game::FNV)
+        {
+            profile.bsa_make_overrides = true;
+        }
+
         return profile;
     }
 
@@ -109,6 +115,7 @@ public:
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Profile,
                                    bsa_operation,
                                    bsa_make_dummy_plugins,
+                                   bsa_make_overrides,
                                    dry_run,
                                    gpu_index,
                                    optimization_mode,
