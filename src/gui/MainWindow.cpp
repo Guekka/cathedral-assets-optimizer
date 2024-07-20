@@ -9,6 +9,7 @@
 #include "AdvancedBSAModule.hpp"
 #include "AdvancedMeshesModule.hpp"
 #include "AdvancedTexturesModule.hpp"
+#include "GeneralBSAModule.hpp"
 #include "LevelSelector.hpp"
 #include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
@@ -91,12 +92,14 @@ void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) no
         }
         case GuiMode::Medium:
         {
+            modules.add_module(std::make_unique<GeneralBSAModule>());
             modules.add_module(std::make_unique<AdvancedBSAModule>());
             modules.add_module(std::make_unique<AdvancedTexturesModule>());
             break;
         }
         case GuiMode::Advanced:
         {
+            modules.add_module(std::make_unique<GeneralBSAModule>());
             modules.add_module(std::make_unique<AdvancedBSAModule>());
             modules.add_module(std::make_unique<AdvancedMeshesModule>());
             modules.add_module(std::make_unique<AdvancedTexturesModule>());
