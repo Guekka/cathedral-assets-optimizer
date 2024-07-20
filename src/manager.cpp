@@ -189,13 +189,24 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
 
     const auto bsa_sets = get_bsa_settings(settings_);
 
+    const auto &profile = settings_.current_profile();
     const auto compress = settings_.current_profile().bsa_allow_compression ? btu::bsa::Compression::Yes
                                                                             : btu::bsa::Compression::No;
-    pack(btu::bsa::PackSettings{
-             .input_dir     = directory_path,
-             .game_settings = bsa_sets,
-             .compress      = compress,
-         })
+
+    pack(btu::bsa::PackSettings{.input_dir     = directory_path,
+                                .game_settings = bsa_sets,
+                                .compress      = compress,
+                                .allow_file_pred =
+                                    [profile](const auto &dir, const auto &file_info) {
+                                        const auto relative_path = file_info.path().lexically_relative(dir);
+                                        const auto pack = profile.get_per_file_settings(relative_path).pack;
+
+                                        if (!pack && std::filesystem::is_regular_file(file_info))
+                                            PLOGV << fmt::format("Skipping file {} from packing",
+                                                                 relative_path.string());
+
+                                        return pack;
+                                    }})
         .for_each([&](auto archive) {
             if (stop_token_.stop_requested())
                 return;
