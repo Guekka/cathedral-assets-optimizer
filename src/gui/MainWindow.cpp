@@ -276,6 +276,12 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         settings_to_ui(settings_, *ui_, module_display_);
     });
 
+    connect(ui_->patterns, &QComboBox::activated, this, [this]() {
+        save_settings();
+        settings_.gui.selected_pattern = to_u8string(ui_->patterns->currentText());
+        settings_to_ui(settings_, *ui_, module_display_);
+    });
+
     connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::init_process);
 
     // Menu buttons
