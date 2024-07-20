@@ -105,6 +105,8 @@ enum class OptimizeType : std::uint8_t
 
 struct PerFileSettings
 {
+    bool pack = true;
+
     OptimizeType tex_optimize = OptimizeType::Normal;
     btu::tex::Settings tex    = btu::tex::Settings::get(btu::Game::SSE);
 
@@ -136,6 +138,6 @@ struct PerFileSettings
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
-    PerFileSettings, tex_optimize, tex, nif_optimize, nif, hkx_optimize, hkx_target, pattern)
+    PerFileSettings, pack, tex_optimize, tex, nif_optimize, nif, hkx_optimize, hkx_target, pattern)
 
 } // namespace cao

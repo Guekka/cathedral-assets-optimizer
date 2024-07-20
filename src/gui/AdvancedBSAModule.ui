@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
-    <height>188</height>
+    <width>333</width>
+    <height>120</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,94 +16,35 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="baseGroupBox">
-     <property name="title">
-      <string>Process BSAs</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QRadioButton" name="BSAExtract">
-        <property name="cursor">
-         <cursorShape>WhatsThisCursor</cursorShape>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extracts all BSAs&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Note: loose files are not overwritten by files in BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Extract BSAs</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="BSACreate">
-        <property name="cursor">
-         <cursorShape>WhatsThisCursor</cursorShape>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Packs all loose files into BSAs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Create BSAs</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="moreGroupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="title">
-      <string>More</string>
+      <string>File setting</string>
      </property>
      <property name="checkable">
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="dontCompress">
-        <property name="text">
-         <string>Do not compress files</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="dontMakeLoaded">
+       <widget class="QCheckBox" name="packFile">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="cursor">
          <cursorShape>WhatsThisCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, CAO will not make BSAs loaded by the game. &lt;/p&gt;&lt;p&gt;That is to say: &lt;/p&gt;&lt;p&gt;- For games that use plugins, CAO will not create dummy plugins &lt;/p&gt;&lt;p&gt;- For games that use the ini, CAO will not edit the INI (&lt;span style=&quot; font-weight:600;&quot;&gt;Note: CAO does not support yet editing the INI. This option will have no effect on these games&lt;/span&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, the files matched by the selected pattern will be packed into a BSA.&lt;/p&gt;&lt;p&gt;For this to have any effect, you have to ensure Process BSAs is on with the Create BSAs option. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Do not make BSA loaded</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="dontRemoveFiles">
-        <property name="text">
-         <string>Do not remove packed files</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="makeOverrides">
-        <property name="cursor">
-         <cursorShape>WhatsThisCursor</cursorShape>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, CAO will create an override file for each created BSA.&lt;/p&gt;&lt;p&gt;This is in general only useful for Fallout: New Vegas. Unlike the newer titles, a BSA is not loaded at the same time as the associated plugin. With JIP installed, an .override file causes the engine to mimick this new behaviour.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Create override files</string>
+         <string>Pack file</string>
         </property>
        </widget>
       </item>
