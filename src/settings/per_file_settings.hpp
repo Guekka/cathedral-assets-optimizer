@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include <btu/common/path.hpp>
 #include <btu/hkx/anim.hpp>
 #include <btu/nif/optimize.hpp>
 #include <btu/tex/optimize.hpp>
@@ -50,7 +51,9 @@ public:
     {
         assert(!pattern_.valueless_by_exception());
 
-        auto str           = BTU_MOV(path).u8string();
+        auto str = BTU_MOV(path).u8string();
+        btu::common::backslash_to_slash(str);
+
         const auto visitor = btu::common::Overload{
             [&str](const std::u8string &pattern) { return btu::common::str_match(str, pattern); },
             [&str](const Regex &regex) {
@@ -108,8 +111,8 @@ struct PerFileSettings
     OptimizeType nif_optimize = OptimizeType::Normal;
     btu::nif::Settings nif    = btu::nif::Settings::get(btu::Game::SSE);
 
-    OptimizeType hkx_optimize           = OptimizeType::Normal;
-    btu::Game hkx_target                = btu::Game::SSE;
+    OptimizeType hkx_optimize = OptimizeType::Normal;
+    btu::Game hkx_target      = btu::Game::SSE;
 
     Pattern pattern = k_default_pattern;
 
