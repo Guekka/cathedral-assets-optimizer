@@ -54,6 +54,17 @@ void PatternsManagerWindow::create_pattern()
     if (!ok || pat_name.isEmpty())
         return;
 
+    const auto new_pfs_name = to_u8string(pat_name);
+
+    // Check whether such pattern already exists.
+    auto all_pfs = settings_.current_profile().per_file_settings();
+    auto found   = std::ranges::find(all_pfs, new_pfs_name, [](const PerFileSettings *pfs) {
+        return pfs->pattern.text();
+    });
+
+    if (found != all_pfs.end())
+        return;
+
     //Choosing base Pattern
 
     QStringList patterns_list;
@@ -74,12 +85,12 @@ void PatternsManagerWindow::create_pattern()
 
     const auto base_pfs = to_u8string(base_pfs_qs);
 
-    auto all_pfs            = settings_.current_profile().per_file_settings();
     PerFileSettings new_pfs = **std::ranges::find(all_pfs, base_pfs, [](const PerFileSettings *pfs) {
         return pfs->pattern.text();
     });
 
-    new_pfs.pattern = Pattern{base_pfs};
+    // TODO: add way to select regex or glob
+    new_pfs.pattern = Pattern{new_pfs_name};
 
     settings_.current_profile().add_per_file_settings(std::move(new_pfs));
     update_patterns(*ui_->patterns);
