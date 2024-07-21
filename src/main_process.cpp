@@ -237,7 +237,9 @@ auto process_file(btu::modmanager::ModFile &&file, const Settings &settings) noe
         return tl::make_unexpected(btu::common::Error(k_error_no_work_required)); // TODO: better error
 
     const auto get_optimize_type = [settings](OptimizeType opt_type) {
-        return settings.current_profile().dry_run ? OptimizeType::DryRun : opt_type;
+        auto dry_run         = settings.current_profile().dry_run;
+        auto should_optimize = opt_type != OptimizeType::None;
+        return (dry_run && should_optimize) ? OptimizeType::DryRun : opt_type;
     };
 
     switch (type.value())
