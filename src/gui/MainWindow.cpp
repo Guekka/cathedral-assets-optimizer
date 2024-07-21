@@ -280,6 +280,8 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
             // TODO: improve error message
             QMessageBox::critical(this, tr("Error"), tr("Could not set the current profile"));
         }
+        // Reset selected pattern to default.
+        settings_.gui.selected_pattern = k_default_pattern.text();
         settings_to_ui(settings_, *ui_, module_display_);
     });
 
