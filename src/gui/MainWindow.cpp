@@ -142,6 +142,10 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
 void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display) noexcept
 {
     set_theme(settings.gui.gui_theme);
+
+    // Cache current index to keep selected tab if possible.
+    const auto old_tab_index = module_display.current_index();
+
     set_gui_level(module_display, ui, settings.gui.gui_mode);
 
     ui.inputDirTextEdit->setText(to_qstring(settings.current_profile().input_path.u8string()));
@@ -175,6 +179,8 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
 
     for (auto *module : module_display.get_modules())
         module->setup(settings);
+
+    module_display.set_current_index(old_tab_index);
 }
 
 void first_start(bool &first_run) noexcept
