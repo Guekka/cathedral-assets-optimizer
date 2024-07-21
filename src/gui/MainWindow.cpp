@@ -175,7 +175,8 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     assert(success);
 
     success = select_text(*ui.profiles, to_qstring(settings.current_profile_name()));
-    assert(success);
+    if (!success)
+        success = select_text(*ui.profiles, to_qstring(profiles.at(0)));
 
     for (auto *module : module_display.get_modules())
         module->setup(settings);
