@@ -99,7 +99,12 @@ void PatternsManagerWindow::create_pattern()
 void PatternsManagerWindow::delete_current_pattern()
 {
     const QString current = ui_->patterns->currentText();
-    const auto button     = QMessageBox::warning(
+
+    // Ensure user cannot delete default pattern to avoid issues.
+    if (to_u8string(current) == k_default_pattern.text())
+        return;
+
+    const auto button = QMessageBox::warning(
         this,
         tr("Remove Pattern"),
         tr("Are you sure you want to remove Pattern '%1'? This action cannot be undone").arg(current),
