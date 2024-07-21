@@ -13,6 +13,14 @@ void ModuleDisplay::set_tab_widget(QTabWidget *tab_widget)
     clear_modules();
 }
 
+void ModuleDisplay::set_current_index(int idx)
+{
+    if (idx > tab_widget_->count())
+        idx = 0;
+
+    tab_widget_->setCurrentIndex(idx);
+}
+
 void ModuleDisplay::add_module(std::unique_ptr<IWindowModule> mod)
 {
     tab_widget_->addTab(mod.release(), mod->name()); // ownership is transferred to tabs
@@ -23,8 +31,17 @@ void ModuleDisplay::add_module(std::unique_ptr<IWindowModule> mod)
 
 void ModuleDisplay::clear_modules()
 {
+    for (auto widget : get_modules())
+    {
+        widget->deleteLater();
+    }
     tab_widget_->clear();
     tab_widget_->setHidden(true);
+}
+
+int ModuleDisplay::current_index() const noexcept
+{
+    return tab_widget_->currentIndex();
 }
 
 auto ModuleDisplay::get_modules() noexcept -> std::vector<IWindowModule *>

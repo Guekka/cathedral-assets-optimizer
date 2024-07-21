@@ -20,10 +20,12 @@ class ModuleDisplay final
 
 public:
     void set_tab_widget(QTabWidget *tab_widget);
+    void set_current_index(int idx);
 
     void add_module(std::unique_ptr<IWindowModule> mod);
     void clear_modules();
 
+    [[nodiscard]] int current_index() const noexcept;
     [[nodiscard]] auto get_modules() noexcept -> std::vector<IWindowModule *>;
     [[nodiscard]] auto get_modules() const noexcept -> std::vector<const IWindowModule *>;
 
