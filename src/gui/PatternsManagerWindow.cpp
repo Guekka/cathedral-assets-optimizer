@@ -108,6 +108,10 @@ void PatternsManagerWindow::delete_current_pattern()
     if (button != QMessageBox::Yes)
         return;
 
+    // Ensure that the current selected pattern is correct to avoid crashes.
+    if (current_per_file_settings(settings_).pattern.text() == to_u8string(current))
+        settings_.gui.selected_pattern = k_default_pattern.text();
+
     settings_.current_profile().remove_per_file_settings(to_u8string(current));
     update_patterns(*ui_->patterns);
 }
