@@ -65,6 +65,27 @@ void PatternsManagerWindow::create_pattern()
     if (found != all_pfs.end())
         return;
 
+    //Choosing Pattern type
+
+    QStringList type_list{"Glob", "Regex"};
+    const QString type_str = QInputDialog::getItem(this,
+                                                   tr("Pattern type"),
+                                                   tr("What kind of a pattern would you like to create?"),
+                                                   type_list,
+                                                   0,
+                                                   false,
+                                                   &ok);
+    if (!ok)
+        return;
+
+    Pattern::Type pattern_type;
+    if (type_str == "Glob")
+        pattern_type = Pattern::Type::Wildcard;
+    else if (type_str == "Regex")
+        pattern_type = Pattern::Type::Regex;
+    else
+        return;
+
     //Choosing base Pattern
 
     QStringList patterns_list;
@@ -89,8 +110,7 @@ void PatternsManagerWindow::create_pattern()
         return pfs->pattern.text();
     });
 
-    // TODO: add way to select regex or glob
-    new_pfs.pattern = Pattern{new_pfs_name};
+    new_pfs.pattern = Pattern{new_pfs_name, pattern_type};
 
     settings_.current_profile().add_per_file_settings(std::move(new_pfs));
     update_patterns(*ui_->patterns);
