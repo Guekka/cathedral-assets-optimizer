@@ -46,7 +46,15 @@ void GeneralBSAModule::settings_to_ui(const Settings &settings)
     ui_->dontMakeLoaded->setChecked(!profile.bsa_make_dummy_plugins);
     ui_->dontRemoveFiles->setChecked(!profile.bsa_remove_files);
     ui_->dontCompress->setChecked(!profile.bsa_allow_compression);
-    ui_->makeOverrides->setChecked(profile.bsa_make_overrides);
+
+    // Only show override toggle when it makes sense.
+    if (profile.target_game != btu::Game::FNV)
+    {
+        ui_->makeOverrides->setChecked(false);
+        ui_->makeOverrides->hide();
+    }
+    else
+        ui_->makeOverrides->setChecked(profile.bsa_make_overrides);
 }
 
 void GeneralBSAModule::ui_to_settings(Settings &settings) const
