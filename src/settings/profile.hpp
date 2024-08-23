@@ -62,7 +62,12 @@ public:
         return result;
     }
 
-    void add_per_file_settings(PerFileSettings settings) noexcept
+    void prepend_per_file_settings(PerFileSettings settings) noexcept
+    {
+        per_file_settings_.insert(per_file_settings_.begin(), std::move(settings));
+    }
+
+    void append_per_file_settings(PerFileSettings settings) noexcept
     {
         per_file_settings_.emplace_back(std::move(settings));
     }
@@ -78,6 +83,21 @@ public:
 
         per_file_settings_.erase(it);
         return true;
+    }
+
+    void move_per_file_settings(const int original_index, const int new_index) noexcept
+    {
+        if (original_index == new_index)
+            return;
+
+        auto target = new_index;
+        if (original_index < new_index)
+            target--;
+
+        const auto pfs = per_file_settings_[original_index];
+
+        per_file_settings_.erase(per_file_settings_.begin() + original_index);
+        per_file_settings_.insert(per_file_settings_.begin() + target, std::move(pfs));
     }
 
     [[nodiscard]] auto get_per_file_settings(const std::filesystem::path &path) const noexcept

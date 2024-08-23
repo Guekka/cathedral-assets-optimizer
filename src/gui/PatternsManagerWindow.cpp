@@ -5,8 +5,6 @@
 
 #include "PatternsManagerWindow.hpp"
 
-#include "settings/profile.hpp"
-#include "settings/settings.hpp"
 #include "ui_PatternsManagerWindow.h"
 #include "utils/utils.hpp"
 
@@ -14,13 +12,47 @@
 #include <QMessageBox>
 
 namespace cao {
+PatternItem::PatternItem(PerFileSettings &pfs, QListWidget *parent)
+    : QListWidgetItem(to_qstring(pfs.pattern.text()), parent, UserType)
+    , pfs_(pfs)
+{
+    setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
+
+    // Distinguish regex patterns somehow.
+    if (pfs.pattern.type() == Pattern::Type::Regex)
+    {
+        auto f = font();
+        f.setBold(true);
+        setFont(f);
+    }
+}
+
+const std::u8string PatternItem::update_text()
+{
+    const auto old = pfs_.pattern.text();
+    pfs_.pattern   = Pattern{to_u8string(text()), pfs_.pattern.type()};
+    return old;
+}
+
 PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent)
     : QDialog(parent)
     , ui_(std::make_unique<Ui::PatternsManagerWindow>())
     , settings_(settings)
 {
     ui_->setupUi(this);
+    ui_->removePushButton->setEnabled(false);
 
+    connect(ui_->patterns, &QListWidget::currentRowChanged, this, [&](auto current) {
+        if (current > -1)
+            ui_->removePushButton->setEnabled(true);
+        else
+            ui_->removePushButton->setEnabled(false);
+    });
+    connect(ui_->patterns, &QListWidget::itemChanged, this, &PatternsManagerWindow::update_pattern);
+    connect(ui_->patterns->model(),
+            &QAbstractItemModel::rowsMoved,
+            this,
+            &PatternsManagerWindow::move_pattern);
     connect(ui_->newPushButton, &QPushButton::pressed, this, &PatternsManagerWindow::create_pattern);
     connect(ui_->removePushButton,
             &QPushButton::pressed,
@@ -28,22 +60,39 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
             &PatternsManagerWindow::delete_current_pattern);
 
     update_patterns(*ui_->patterns);
-
-    const bool success = select_text(*ui_->patterns,
-                                     to_qstring(current_per_file_settings(settings_).pattern.text()));
-    assert(success);
 }
 
 PatternsManagerWindow::~PatternsManagerWindow() = default;
 
-void PatternsManagerWindow::update_patterns(QComboBox &box)
+void PatternsManagerWindow::update_patterns(QListWidget &list)
 {
-    set_items(box, settings_.current_profile().per_file_settings(), [](const PerFileSettings *pfs) {
-        return to_qstring(pfs->pattern.text());
-    });
+    // Clear current item first to fix an issue with currentRowChanged signal.
+    list.setCurrentItem(nullptr);
+    list.clear();
+    auto per_file_settings = settings_.current_profile().per_file_settings();
+    for (PerFileSettings *pfs : per_file_settings)
+    {
+        if (pfs->pattern.text() == k_default_pattern.text())
+            continue;
 
-    const bool success = select_text(box, to_qstring(current_per_file_settings(settings_).pattern.text()));
-    assert(success);
+        list.addItem(new PatternItem(*pfs));
+    }
+}
+
+void PatternsManagerWindow::update_pattern(QListWidgetItem *item)
+{
+    const auto old_pattern = static_cast<PatternItem *>(item)->update_text();
+    const auto new_pattern = to_u8string(item->text());
+
+    if (settings_.gui.selected_pattern == old_pattern && old_pattern != new_pattern)
+        settings_.gui.selected_pattern = new_pattern;
+}
+
+void PatternsManagerWindow::move_pattern(
+    const QModelIndex, int source_row, int, const QModelIndex, int destination_row)
+{
+    settings_.current_profile().move_per_file_settings(source_row, destination_row);
+    update_patterns(*ui_->patterns);
 }
 
 void PatternsManagerWindow::create_pattern()
@@ -89,15 +138,16 @@ void PatternsManagerWindow::create_pattern()
     //Choosing base Pattern
 
     QStringList patterns_list;
+    for (auto pfs : all_pfs)
+        patterns_list.push_back(to_qstring(pfs->pattern.text()));
+
     const auto &patterns = ui_->patterns;
-    for (int i = 0; i < patterns->count(); ++i)
-        patterns_list.push_back(patterns->itemText(i));
 
     const QString base_pfs_qs = QInputDialog::getItem(this,
                                                       tr("Base pattern"),
                                                       tr("Which pattern do you want to use as a base?"),
                                                       patterns_list,
-                                                      patterns->currentIndex(),
+                                                      patterns->currentRow(),
                                                       false,
                                                       &ok);
 
@@ -112,13 +162,13 @@ void PatternsManagerWindow::create_pattern()
 
     new_pfs.pattern = Pattern{new_pfs_name, pattern_type};
 
-    settings_.current_profile().add_per_file_settings(std::move(new_pfs));
+    settings_.current_profile().prepend_per_file_settings(std::move(new_pfs));
     update_patterns(*ui_->patterns);
 }
 
 void PatternsManagerWindow::delete_current_pattern()
 {
-    const QString current = ui_->patterns->currentText();
+    const QString current = ui_->patterns->currentItem()->text();
 
     // Ensure user cannot delete default pattern to avoid issues.
     if (to_u8string(current) == k_default_pattern.text())

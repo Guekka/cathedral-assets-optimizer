@@ -32,12 +32,12 @@ namespace cao {
     auto fnv_sounds    = PerFileSettings::make_base(btu::Game::FNV);
     fnv_sounds.pattern = Pattern(u8"*.[ow][ga][gv]", Pattern::Type::Wildcard);
 
-    profile.add_per_file_settings(fnv_lod_textures);
-    profile.add_per_file_settings(fnv_ui_textures);
-    profile.add_per_file_settings(fnv_dds);
-    profile.add_per_file_settings(fnv_tga);
-    profile.add_per_file_settings(fnv_meshes);
-    profile.add_per_file_settings(fnv_sounds);
+    profile.append_per_file_settings(fnv_lod_textures);
+    profile.append_per_file_settings(fnv_ui_textures);
+    profile.append_per_file_settings(fnv_dds);
+    profile.append_per_file_settings(fnv_tga);
+    profile.append_per_file_settings(fnv_meshes);
+    profile.append_per_file_settings(fnv_sounds);
 
     return profile;
 }

@@ -14,10 +14,22 @@
    <string>Patterns manager</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Pattern</string>
+   <item row="0" column="0" colspan="2">
+    <widget class="QListWidget" name="patterns">
+     <property name="cursor" stdset="0">
+      <cursorShape>WhatsThisCursor</cursorShape>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Patterns currently configured for the active profile.&lt;/p&gt;&lt;p&gt;Regex patterns are distinguished by being &lt;span style=&quot; font-weight:700;&quot;&gt;bold&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;You can change the pattern by &lt;span style=&quot; font-weight:700;&quot;&gt;double-clicking&lt;/span&gt; on it and editing the text.&lt;/p&gt;&lt;p&gt;Note: The type of the pattern (glob/regex) is set on creation and cannot be changed.&lt;/p&gt;&lt;p&gt;You can reorder patterns by &lt;span style=&quot; font-weight:700;&quot;&gt;drag-and-droping&lt;/span&gt; them around in the list.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
+     </property>
+     <property name="defaultDropAction">
+      <enum>Qt::DropAction::MoveAction</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectionBehavior::SelectItems</enum>
      </property>
     </widget>
    </item>
@@ -27,9 +39,6 @@
       <string>New</string>
      </property>
     </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="patterns"/>
    </item>
    <item row="1" column="1">
     <widget class="QPushButton" name="removePushButton">

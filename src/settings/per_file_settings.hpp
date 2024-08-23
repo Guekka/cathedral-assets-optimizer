@@ -76,6 +76,12 @@ public:
         return std::visit(visitor, pattern_);
     }
 
+    [[nodiscard]] auto type() const noexcept -> Type
+    {
+        assert(!pattern_.valueless_by_exception());
+        return pattern_.index() == 0 ? Type::Wildcard : Type::Regex;
+    }
+
     NLOHMANN_JSON_SERIALIZE_ENUM(Type, {{Type::Wildcard, "wildcard"}, {Type::Regex, "regex"}})
 
     [[maybe_unused]] friend void to_json(nlohmann::json &j, const Pattern &p)
