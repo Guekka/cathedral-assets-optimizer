@@ -24,9 +24,9 @@ public:
 
     virtual void ui_to_settings(Settings &settings) const = 0;
 
+    [[nodiscard]] virtual auto is_supported_game(btu::Game game) const noexcept -> bool = 0;
+
 private:
     virtual void settings_to_ui(const Settings &settings) = 0;
-
-    [[nodiscard]] virtual auto is_supported_game(btu::Game game) const noexcept -> bool = 0;
 };
 } // namespace cao

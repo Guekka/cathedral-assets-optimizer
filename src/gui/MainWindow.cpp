@@ -77,10 +77,12 @@ void set_patterns_enabled(Ui::MainWindow &ui, bool state) noexcept
     }
 }
 
-void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) noexcept
+void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, const Settings &settings) noexcept
 {
     modules.clear_modules();
     set_patterns_enabled(ui, /*state=*/false);
+
+    const auto level = settings.gui.gui_mode;
 
     ui.manageProfiles->setHidden(level == GuiMode::QuickOptimize);
 
@@ -108,6 +110,8 @@ void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, GuiMode level) no
             break;
         }
     }
+
+    modules.hide_unsupported(settings.current_profile().target_game);
 }
 
 void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_display, Settings &settings)
@@ -149,7 +153,7 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     // Cache current index to keep selected tab if possible.
     const auto old_tab_index = module_display.current_index();
 
-    set_gui_level(module_display, ui, settings.gui.gui_mode);
+    set_gui_level(module_display, ui, settings);
 
     ui.inputDirTextEdit->setText(to_qstring(settings.current_profile().input_path.u8string()));
     ui.dryRunCheckBox->setChecked(settings.current_profile().dry_run);

@@ -39,6 +39,18 @@ void ModuleDisplay::clear_modules()
     tab_widget_->setHidden(true);
 }
 
+void ModuleDisplay::hide_unsupported(const btu::Game target_game)
+{
+    for (auto module : get_modules())
+    {
+        const auto i = tab_widget_->indexOf(module);
+        if (module->is_supported_game(target_game))
+            tab_widget_->setTabVisible(i, true);
+        else
+            tab_widget_->setTabVisible(i, false);
+    }
+}
+
 int ModuleDisplay::current_index() const noexcept
 {
     return tab_widget_->currentIndex();

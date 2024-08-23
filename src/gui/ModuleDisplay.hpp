@@ -5,6 +5,7 @@
 #pragma once
 
 #include "IWindowModule.hpp"
+#include "btu/common/games.hpp"
 
 #include <QCoreApplication>
 #include <QTabWidget>
@@ -24,6 +25,8 @@ public:
 
     void add_module(std::unique_ptr<IWindowModule> mod);
     void clear_modules();
+
+    void hide_unsupported(const btu::Game target_game);
 
     [[nodiscard]] int current_index() const noexcept;
     [[nodiscard]] auto get_modules() noexcept -> std::vector<IWindowModule *>;
