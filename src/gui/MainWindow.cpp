@@ -234,6 +234,7 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     });
 
     connect(ui_->managePatterns, &QPushButton::pressed, this, [this] {
+        save_settings();
         PatternsManagerWindow patterns_manager(settings_);
         patterns_manager.exec();
         settings_to_ui(settings_, *ui_, module_display_);
