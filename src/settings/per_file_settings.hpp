@@ -51,8 +51,9 @@ public:
     {
         assert(!pattern_.valueless_by_exception());
 
-        auto str = BTU_MOV(path).u8string();
-        btu::common::backslash_to_slash(str);
+        constexpr auto canonize_path = btu::common::make_path_canonizer(u8"");
+
+        auto str = canonize_path(BTU_MOV(path));
 
         const auto visitor = btu::common::Overload{
             [&str](const std::u8string &pattern) { return btu::common::str_match(str, pattern); },
