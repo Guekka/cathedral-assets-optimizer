@@ -61,7 +61,7 @@ struct fmt::formatter<DXGI_FORMAT> : fmt::formatter<std::string_view>
 namespace cao {
 auto guess_file_type(const std::filesystem::path &path) noexcept -> std::optional<FileType>
 {
-    const auto extension = path.extension().u8string();
+    const auto extension = btu::common::to_lower(path.extension().u8string());
     if (extension == u8".nif")
         return FileType::Mesh;
     if (extension == u8".dds" || extension == u8".tga")
@@ -83,8 +83,7 @@ auto guess_file_type(const std::filesystem::path &path) noexcept -> std::optiona
     return !steps.convert && !steps.mipmaps && !steps.add_transparent_alpha && !steps.resize;
 }
 
-[[nodiscard]] auto human_readable_step_string(const btu::nif::OptimizationSteps &steps) noexcept
-    -> std::string
+[[nodiscard]] auto human_readable_step_string(const btu::nif::OptimizationSteps &steps) noexcept -> std::string
 {
     auto strs = std::vector<std::string>{};
 
@@ -100,8 +99,7 @@ auto guess_file_type(const std::filesystem::path &path) noexcept -> std::optiona
     return fmt::format("{}", fmt::join(strs, ", "));
 }
 
-[[nodiscard]] auto human_readable_step_string(const btu::tex::OptimizationSteps &steps) noexcept
-    -> std::string
+[[nodiscard]] auto human_readable_step_string(const btu::tex::OptimizationSteps &steps) noexcept -> std::string
 {
     auto strs = std::vector<std::string>{};
 
