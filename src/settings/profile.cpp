@@ -8,6 +8,10 @@ namespace cao {
 
     profile.base_per_file_settings_.pack = false;
 
+    auto fnv_lod_atlases         = PerFileSettings::make_base(btu::Game::FNV);
+    fnv_lod_atlases.pattern      = Pattern(u8"textures/landscape/lod/*.dds", Pattern::Type::Wildcard);
+    fnv_lod_atlases.tex_optimize = OptimizeType::None;
+
     auto fnv_lod_textures         = PerFileSettings::make_base(btu::Game::FNV);
     fnv_lod_textures.pattern      = Pattern(u8".*lod(_[nsdgpe])?\\.dds", Pattern::Type::Regex);
     fnv_lod_textures.tex_optimize = OptimizeType::None;
@@ -32,6 +36,7 @@ namespace cao {
     auto fnv_sounds    = PerFileSettings::make_base(btu::Game::FNV);
     fnv_sounds.pattern = Pattern(u8"*.[ow][ga][gv]", Pattern::Type::Wildcard);
 
+    profile.append_per_file_settings(fnv_lod_atlases);
     profile.append_per_file_settings(fnv_lod_textures);
     profile.append_per_file_settings(fnv_ui_textures);
     profile.append_per_file_settings(fnv_dds);
