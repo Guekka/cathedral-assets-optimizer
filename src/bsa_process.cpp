@@ -1,5 +1,7 @@
 #include "bsa_process.hpp"
 
+#include <format>
+
 #include <btu/bsa/pack.hpp>
 #include <btu/bsa/plugin.hpp>
 #include <btu/common/filesystem.hpp>

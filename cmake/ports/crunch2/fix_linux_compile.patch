@@ -1,0 +1,26 @@
+diff --git a/inc/crn_decomp.h b/inc/crn_decomp.h
+index 6af702a..eb2030c 100644
+--- a/inc/crn_decomp.h
++++ b/inc/crn_decomp.h
+@@ -48,6 +48,7 @@
+ #else
+ #include <malloc.h>
+ #endif
++#include <cstdint>
+ #include <stdarg.h>
+ #include <new>  // needed for placement new, _msize, _expand
+ 
+@@ -2819,11 +2820,11 @@ namespace crnd
+     uint32 crnd_get_segmented_file_size(const void* pData, uint32 data_size)
+     {
+         if ((!pData) || (data_size < cCRNHeaderMinSize))
+-            return NULL;
++            return 0;
+ 
+         const crn_header* pHeader = crnd_get_header(pData, data_size);
+         if (!pHeader)
+-            return NULL;
++            return 0;
+ 
+         uint32 size = pHeader->m_header_size;
+ 
