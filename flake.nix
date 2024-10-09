@@ -38,7 +38,7 @@
               cmake
               makeWrapper
               ninja
-              gcc
+              gcc14
               vcpkg
 
               # profiling

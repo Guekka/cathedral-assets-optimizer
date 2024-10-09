@@ -11,6 +11,7 @@
       "host": true
     },
     "bc7enc",
+    "crunch2",
     "directxtex",
     "flux",
     "mpsc-channel",
