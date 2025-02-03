@@ -5,9 +5,9 @@ vcpkg_from_github(
   REPO
   Ryan-rsm-McKenzie/bsa
   REF
-  starfield
+  3bd49002aa53776df97e764fe19dd8b5559e613c
   SHA512
-  bb91206c3469fc7d896df77272305660ddd71b20f0ae4ddd61b08c11e8618355a3a1d234903adfebffbc91c7b1dea336c1e288acba832bd1bd036ebfc7ec5065
+  a1ff4c8e0c641e50e8492225f114302d68b093a55592376da2d0cefc6d400db95ea8e9b8836545277ee0f5e6cf6598883247c7921e7859bf80bb55a35a391b1a
   HEAD_REF
   master)
 

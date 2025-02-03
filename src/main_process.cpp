@@ -14,18 +14,19 @@
 #include <btu/nif/optimize.hpp>
 #include <btu/tex/optimize.hpp>
 #include <btu/tex/texture.hpp>
-#include <fmt/core.h>
 #include <fmt/format.h>
 #include <plog/Log.h>
 #include <tl/expected.hpp>
 
 #include <string_view>
+#include <flux/adaptor/flatten_with.hpp>
+#include <flux/core/ref.hpp>
+#include <flux/sequence/range.hpp>
 
 template<>
 struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
 {
-    [[maybe_unused]] auto format(const btu::Game &game, format_context &ctx)
-    {
+    [[maybe_unused]] auto format(const btu::Game &game, format_context &ctx) const {
         const auto *game_str = [game] {
             switch (game)
             {
@@ -51,8 +52,7 @@ struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
 template<>
 struct fmt::formatter<DXGI_FORMAT> : fmt::formatter<std::string_view>
 {
-    [[maybe_unused]] auto format(const DXGI_FORMAT &format, format_context &ctx)
-    {
+    [[maybe_unused]] auto format(const DXGI_FORMAT &format, format_context &ctx) const {
         return fmt::formatter<std::string_view>::format(btu::common::as_ascii(btu::tex::to_string(format)),
                                                         ctx);
     }
@@ -96,7 +96,7 @@ auto guess_file_type(const std::filesystem::path &path) noexcept -> std::optiona
     if (steps.optimize)
         strs.emplace_back("optimizing");
 
-    return fmt::format("{}", fmt::join(strs, ", "));
+    return flux::from_crange(strs).flatten_with(std::string(", ")).to<std::string>();
 }
 
 [[nodiscard]] auto human_readable_step_string(const btu::tex::OptimizationSteps &steps) noexcept -> std::string
@@ -112,7 +112,7 @@ auto guess_file_type(const std::filesystem::path &path) noexcept -> std::optiona
     if (steps.resize)
         strs.emplace_back(fmt::format("resize to {}x{}", steps.resize->w, steps.resize->h));
 
-    return fmt::format("{}", fmt::join(strs, ", "));
+    return flux::from_crange(strs).flatten_with(std::string(", ")).to<std::string>();
 }
 
 void log_file_processing(const std::filesystem::path &path, std::string_view steps) noexcept

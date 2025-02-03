@@ -8,13 +8,14 @@
 #include <plog/Log.h>
 
 #include <fstream>
+#include <format>
 
 /**
  * @brief Remove relative paths from a directory
  * Also removes directories made empty by the removal of the files
  * Remove the files case-insensitively (this is useful because the paths are lowercase)
  */
-auto remove_files_from_directory(const btu::Path &directory, std::span<const btu::Path> paths) noexcept
+static auto remove_files_from_directory(const btu::Path &directory, std::span<const btu::Path> paths) noexcept
     -> size_t
 {
     const auto files_to_remove = btu::common::find_matching_paths_icase(directory, paths);
