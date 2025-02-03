@@ -1,17 +1,15 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     systems.url = "github:nix-systems/default";
     devenv.url = "github:cachix/devenv";
   };
 
   outputs = {
-    self,
     nixpkgs,
-    devenv,
     systems,
     ...
-  } @ inputs: let
+  }: let
     forEachSystem = nixpkgs.lib.genAttrs (import systems);
   in {
     devShells =
@@ -52,7 +50,7 @@
             ++ vcpkgDeps;
 
           shellHook = ''
-            export VCPKG_ROOT=$(realpath $(dirname $(readlink -f $(type -p vcpkg)))/../share/vcpkg)
+            export VCPKG_ROOT=${pkgs.vcpkg}/share/vcpkg
 
             # set required environment variables for Qt
             setQtEnvironment=$(mktemp --suffix .setQtEnvironment.sh)
