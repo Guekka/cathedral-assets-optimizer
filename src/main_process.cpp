@@ -19,9 +19,10 @@
 #include <tl/expected.hpp>
 
 #include <string_view>
-#include <flux/adaptor/flatten_with.hpp>
+#include <flux.hpp>
 #include <flux/core/ref.hpp>
 #include <flux/sequence/range.hpp>
+#include <flux/adaptor/flatten_with.hpp>
 
 template<>
 struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>

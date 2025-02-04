@@ -69,7 +69,7 @@ AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
     };
 
     connect(ui_->resizingMode, &QComboBox::currentIndexChanged, update_min_size);
-    connect(ui_->resizingMinimumCheckBox, &QCheckBox::stateChanged, update_min_size);
+    connect(ui_->resizingMinimumCheckBox, &QCheckBox::checkStateChanged, update_min_size);
 }
 
 AdvancedTexturesModule::~AdvancedTexturesModule() = default;
