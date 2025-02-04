@@ -201,9 +201,10 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
                                         const auto relative_path = file_info.path().lexically_relative(dir);
                                         const auto pack = profile.get_per_file_settings(relative_path).pack;
 
-                                        if (!pack && std::filesystem::is_regular_file(file_info))
+                                        if (!pack && std::filesystem::is_regular_file(file_info)) {
                                             PLOGV << fmt::format("Skipping file {} from packing",
                                                                  relative_path.string());
+                                        }
 
                                         return pack;
                                     }})
