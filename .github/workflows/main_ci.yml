@@ -135,3 +135,9 @@ jobs:
           files: cov.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           working-directory: ${{ github.workspace }}/cao/build
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            ${{ github.workspace }}/cao/build/**/*.exe
