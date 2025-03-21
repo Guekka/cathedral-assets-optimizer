@@ -14,20 +14,21 @@
 #include <btu/nif/optimize.hpp>
 #include <btu/tex/optimize.hpp>
 #include <btu/tex/texture.hpp>
+#include <flux.hpp>
+#include <flux/adaptor/flatten_with.hpp>
+#include <flux/core/ref.hpp>
+#include <flux/sequence/range.hpp>
 #include <fmt/format.h>
 #include <plog/Log.h>
 #include <tl/expected.hpp>
 
 #include <string_view>
-#include <flux.hpp>
-#include <flux/core/ref.hpp>
-#include <flux/sequence/range.hpp>
-#include <flux/adaptor/flatten_with.hpp>
 
 template<>
 struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
 {
-    [[maybe_unused]] auto format(const btu::Game &game, format_context &ctx) const {
+    [[maybe_unused]] auto format(const btu::Game &game, format_context &ctx) const
+    {
         const auto *game_str = [game] {
             switch (game)
             {
@@ -53,7 +54,8 @@ struct fmt::formatter<btu::Game> : fmt::formatter<std::string_view>
 template<>
 struct fmt::formatter<DXGI_FORMAT> : fmt::formatter<std::string_view>
 {
-    [[maybe_unused]] auto format(const DXGI_FORMAT &format, format_context &ctx) const {
+    [[maybe_unused]] auto format(const DXGI_FORMAT &format, format_context &ctx) const
+    {
         return fmt::formatter<std::string_view>::format(btu::common::as_ascii(btu::tex::to_string(format)),
                                                         ctx);
     }

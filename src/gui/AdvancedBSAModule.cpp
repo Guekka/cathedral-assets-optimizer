@@ -21,7 +21,7 @@ AdvancedBSAModule::AdvancedBSAModule(QWidget *parent)
 AdvancedBSAModule::~AdvancedBSAModule() = default;
 
 void AdvancedBSAModule::settings_to_ui(const Settings &settings)
-{   
+{
     auto &pfs = current_per_file_settings(settings);
     ui_->packFile->setChecked(pfs.pack);
 }

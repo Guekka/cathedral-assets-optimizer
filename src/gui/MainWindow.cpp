@@ -285,7 +285,9 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         const QString &text = ui_->profiles->itemText(idx);
         if (!settings_.set_current_profile(to_u8string(text)))
         {
-            QMessageBox::critical(this, tr("Error"), tr("Could not set the current profile. Please restart the application"));
+            QMessageBox::critical(this,
+                                  tr("Error"),
+                                  tr("Could not set the current profile. Please restart the application"));
         }
         // Reset selected pattern to default.
         settings_.gui.selected_pattern = k_default_pattern.text();
