@@ -72,7 +72,8 @@ void write_single_archive(const btu::Path &directory_path,
                                   .map([](const auto &file) { return file.first; })
                                   .to<std::vector<btu::Path>>();
 
-        written_archive.reset(); // close the archive before removing the files
+        // close the archive before removing the files. The new value is unused
+        written_archive.emplace(btu::bsa::Archive(btu::bsa::ArchiveVersion::fo3, btu::bsa::ArchiveType::Standard));
         const auto count = remove_files_from_directory(directory_path, relative_paths);
         PLOGI << std::format("Attempted to remove {} files, {} were removed", relative_paths.size(), count);
     }
