@@ -1,0 +1,137 @@
+name: Main CI
+
+on:
+  pull_request:
+    branches: [ main,dev ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - '**/CMakeLists.txt'
+      - '**/CMakePresets.txt'
+      - '**/cmake/**'
+      - '**/vcpkg.json'
+      - '.github/workflows/main_ci.yml'
+      - 'codecov.yml'
+
+  push:
+    branches: [ main,dev ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - '**/CMakeLists.txt'
+      - '**/CMakePresets.txt'
+      - '**/cmake/**'
+      - '**/vcpkg.json'
+      - '.github/workflows/main_ci.yml'
+      - 'codecov.yml'
+    tags-ignore:
+      - '*'
+
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Debug
+  VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-cache
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        config: [ gcc ]
+        include:
+          - config: gcc
+            version: '14'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: cao
+
+      - name: Set up GCC
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Setup Environment
+        run: |
+          echo "GCOV=gcov-${{ matrix.version }}" >> $GITHUB_ENV
+
+          sudo apt install ninja-build gcovr liblz4-dev zlib1g-dev -y
+
+      - uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: ${{ github.workspace }}/cao/vcpkg.json
+
+      - name: Configure & Build
+        working-directory: ${{ github.workspace }}/cao
+        run: |
+          cmake --preset ninja-linux -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -Dcao_BUILD_DOCS=OFF
+          cmake --build build
+
+      - name: Test
+        working-directory: ${{ github.workspace }}/cao/build
+        env:
+          gcovr: gcovr -r .. . --coveralls --exclude-unreachable-branches --exclude-function-lines --exclude-throw-branches
+        run: |
+          (cd tests && ./tests)
+          ${{ env.gcovr }} -f ".*/src/.*" -f ".*/include/btu/.*" -o src.json
+
+          find -type f -name *.gcda | xargs rm
+
+      - name: Collect code coverage
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          files: cao/build/examples.json,cao/build/src.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: cao
+
+      - name: Install OpenCPPCoverage
+        working-directory: ${{ github.workspace }}/cao/scripts/opencppcoverage
+        run: |
+          choco pack
+          choco install opencppcoverage -s . -y
+
+      - name: Cache OpenCPPCoverage
+        uses: actions/cache@v3
+        env:
+          cache-name: opencppcoverage-cache
+        with:
+          path: ${{ env.SystemDrive }}/Program Files/OpenCppCoverage/*
+          key: ${{ runner.os }}-opencppcoverage-${{ env.cache-name }}-${{ hashFiles('${{ github.workspace }}/cao/scripts/opencppcoverage/opencppcoverage.nuspec') }}
+
+      - name: Setup MSVC (x64)
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
+
+      - uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: '**/cao/vcpkg.json'
+
+      - name: (main) Configure & Build
+        working-directory: ${{ github.workspace }}/cao
+        run: |
+          cmake --preset ninja-windows
+          cmake --build build --config ${{ env.BUILD_TYPE }}
+
+      - name: (main) Test
+        working-directory: ${{ github.workspace }}/cao/build
+        run: |
+          & "$($env:SystemDrive)/Program Files/OpenCppCoverage/OpenCppCoverage.exe" -q --sources cao\src --sources cao\tests --cover_children --export_type cobertura:cov.xml -- ctest -C ${{ env.BUILD_TYPE }} -V --rerun-failed --output-on-failure
+
+      - name: (main) Collect code coverage
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: false # Windows coverage is almost the same as Linux, so as long as one of them passes, we're good
+          files: cov.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          working-directory: ${{ github.workspace }}/cao/build

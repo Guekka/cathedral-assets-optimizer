@@ -1,0 +1,48 @@
+name: autofix.ci
+
+on:
+  pull_request:
+    branches: [ main,dev ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - '**/CMakeLists.txt'
+      - '**/CMakePresets.txt'
+      - '**/cmake/**'
+      - '**/vcpkg.json'
+      - '.github/workflows/main_ci.yml'
+      - 'codecov.yml'
+
+  push:
+    branches: [ main,dev ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - '**/CMakeLists.txt'
+      - '**/CMakePresets.txt'
+      - '**/cmake/**'
+      - '**/vcpkg.json'
+      - '.github/workflows/main_ci.yml'
+      - 'codecov.yml'
+    tags-ignore:
+      - '*'
+
+  workflow_dispatch:
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run clang-format
+      run: find -type f \( -name *.hpp -o -name *.cpp \) | xargs clang-format-18 -style=file -i
+
+    - name: Format CMake files
+      id: cmake-format
+      uses: PuneetMatharu/cmake-format-lint-action@v1.0.4
+      with:
+        args: --in-place
+
+    - uses: autofix-ci/action@v1
