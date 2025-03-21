@@ -9,22 +9,30 @@
     "nlohmann-json",
     "nifly",
     "platform-folders",
-    "plog",
-    {
-      "name": "qtbase",
-      "default-features": false,
-      "features": [
-        "gui",
-        "png",
-        "widgets"
-      ]
-    },
-    {
-      "name": "qttools",
-      "features": [
-        "linguist"
+    "plog"
+  ],
+  "features": {
+    "qt": {
+      "description": "Qt support",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
+            "gui",
+            "png",
+            "widgets"
+          ]
+        },
+        {
+          "name": "qttools",
+          "features": [
+            "linguist"
+          ]
+        }
       ]
     }
-  ],
+  },
+
   "builtin-baseline": "0ca64b4e1c70fa6d9f53b369b8f3f0843797c20c"
 }
