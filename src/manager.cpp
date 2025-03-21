@@ -139,25 +139,18 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
             .file_path                = entry,
             .remove_arch              = true,
             .overwrite_existing_files = false,
-            .root_opt                 = nullptr,
+            .extract_to_dir                 = std::nullopt,
         });
 
         emit files_processed(entry, 1);
 
-        switch (res)
-        {
-            case btu::bsa::UnpackResult::Success: break;
-            case btu::bsa::UnpackResult::UnreadableArchive:
-                PLOGE << "Unreadable archive: " << entry.string();
-                break;
-            case btu::bsa::UnpackResult::FailedToDeleteArchive:
-                PLOGE << "Failed to delete archive: " << entry.string();
-                break;
+        if (!res) {
+            PLOGE << "Failed to unpack archive: " << entry.string() << ". Reason: " << res.error().message();
         }
     });
 }
 
-void apply_plugin_info(PerFileSettings &sets, const PluginInfo &info)
+static void apply_plugin_info(PerFileSettings &sets, const PluginInfo &info)
 {
     sets.nif.headpart_meshes.insert(sets.nif.headpart_meshes.end(),
                                     info.headparts.begin(),
@@ -172,7 +165,7 @@ void apply_plugin_info(PerFileSettings &sets, const PluginInfo &info)
     btu::common::remove_duplicates(sets.tex.landscape_textures);
 }
 
-void apply_plugin_info(Settings &sets, const PluginInfo &info)
+static void apply_plugin_info(Settings &sets, const PluginInfo &info)
 {
     auto &profile = sets.current_profile();
 
