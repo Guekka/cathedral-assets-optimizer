@@ -78,7 +78,6 @@ jobs:
           name: build-linux-x64
           path: |
             ${{ github.workspace }}/cao/build/src/Cathedral_Assets_Optimizer
-      
 
   windows:
     runs-on: windows-latest
