@@ -28,7 +28,6 @@ public:
     bool bsa_allow_compression  = true;
     bool bsa_make_overrides     = false;
 
-    // TODO: think about removing this and letting the UI handle it
     bool dry_run = false;
 
     uint32_t gpu_index{0};

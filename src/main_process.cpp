@@ -215,7 +215,6 @@ void log_file_no_work_required(const std::filesystem::path &path) noexcept
     if (!exe)
         return tl::make_unexpected(exe.error());
 
-    // TODO: better dry run?
     if (type == OptimizeType::DryRun)
     {
         PLOGI << std::format("{} might be optimized", file.relative_path.string());
