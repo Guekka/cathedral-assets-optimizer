@@ -115,4 +115,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: |
-            ${{ github.workspace }}/cao/build/**/*.exe
+            ${{ github.workspace }}/cao/build/src/Cathedral_Assets_Optimizer.exe
