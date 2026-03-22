@@ -15,9 +15,6 @@
 #include <btu/tex/optimize.hpp>
 #include <btu/tex/texture.hpp>
 #include <flux.hpp>
-#include <flux/adaptor/flatten_with.hpp>
-#include <flux/core/ref.hpp>
-#include <flux/sequence/range.hpp>
 #include <fmt/format.h>
 #include <plog/Log.h>
 #include <tl/expected.hpp>
