@@ -5,9 +5,9 @@ vcpkg_from_github(
   REPO
   ousnius/nifly
   REF
-  09bf1950741266bfe8afa8cad4cca48ef7847125
+  c3cbdd64f18eb45f0b54975591f75db1ec5e6df0
   SHA512
-  04d7d7c60fd8cc7e554dfb25bccae02d9faf4ce3c9d6c5a3a7de70c5b6519f5dfd2736c5286e734a083488857d300e9c786910f224be1f0622c0a786cce4eb3f
+  4efecf5fe1999cfbebf86219c44bc0aba2275248720b2a42c957266152d88dc56e55270b1c4da6f1e62fd58eb0fce944424a52f51cec75ba391d8d068b6a7bcc
   HEAD_REF
   main)
 

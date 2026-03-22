@@ -93,7 +93,7 @@ target_include_directories(CAO_LIB
                            INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/version)
 
 # Set C++ 20
-target_compile_features(CAO_LIB INTERFACE cxx_std_20)
+target_compile_features(CAO_LIB INTERFACE cxx_std_23)
 
 # Link with external libraries
 find_package(nlohmann_json CONFIG REQUIRED)
