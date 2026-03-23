@@ -39,9 +39,9 @@ ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles, QWidget *parent
 
     connect(ui_->profiles, &QComboBox::currentTextChanged, this, [this](const QString &text) {
         bool success = profiles_.set_current_profile(to_u8string(text));
-        assert(success);
+        show_message_box_on_failure(success);
         success = select_data(*ui_->games, profiles_.current_profile().target_game);
-        assert(success);
+        show_message_box_on_failure(success);
     });
 
     connect(ui_->newPushButton, &QPushButton::pressed, this, &ProfilesManagerWindow::create_profile);
@@ -59,7 +59,14 @@ ProfilesManagerWindow::ProfilesManagerWindow(Settings &profiles, QWidget *parent
 
     update_profiles(*ui_->profiles);
     const bool success = select_data(*ui_->games, profiles_.current_profile().target_game);
-    assert(success);
+
+    if (!success)
+    {
+        QMessageBox::critical(this,
+                              tr("Error"),
+                              tr("Failure during loading of settings. Please restart the application. If the "
+                                 "issue persists, delete your settings folder and try again"));
+    }
 }
 
 ProfilesManagerWindow::~ProfilesManagerWindow() = default;
@@ -74,7 +81,7 @@ void ProfilesManagerWindow::update_profiles(QComboBox &box)
 
     box.addItems(profiles);
     const bool success = select_text(box, to_qstring(profiles_.current_profile_name()));
-    assert(success);
+    show_message_box_on_failure(success);
 }
 
 void ProfilesManagerWindow::create_profile()
@@ -108,11 +115,10 @@ void ProfilesManagerWindow::create_profile()
 
     this->profiles_.create_profile(to_u8string(text), std::move(base_profile));
     const bool success = profiles_.set_current_profile(to_u8string(text));
-    assert(success);
+    show_message_box_on_failure(success);
 }
 
 void ProfilesManagerWindow::delete_current_profile()
-
 {
     const QString &current = ui_->profiles->currentText();
     const auto button      = QMessageBox::warning(
@@ -163,5 +169,4 @@ void ProfilesManagerWindow::export_selected_profile()
     if (!json::save_to_file(profile, to_u8string(path)))
         QMessageBox::critical(this, tr("Error"), tr("Failed to save profile"));
 }
-
 } // namespace cao

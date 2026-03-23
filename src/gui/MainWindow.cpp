@@ -143,7 +143,6 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
     // has to be last because may rely on GuiSettings being already filled
     for (const auto *module : module_display.get_modules())
         module->ui_to_settings(settings);
-
 } // namespace cao
 
 void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display) noexcept
@@ -158,7 +157,7 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     ui.inputDirTextEdit->setText(to_qstring(settings.current_profile().input_path.u8string()));
     ui.dryRunCheckBox->setChecked(settings.current_profile().dry_run);
     bool success = select_data(*ui.modeChooserComboBox, settings.current_profile().optimization_mode);
-    assert(success);
+    show_message_box_on_failure(success);
 
     const auto profiles = [&settings]() -> std::vector<std::u8string_view> {
         using namespace std::literals;
@@ -179,7 +178,7 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     });
 
     success = select_text(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
-    assert(success);
+    show_message_box_on_failure(success);
 
     success = select_text(*ui.profiles, to_qstring(settings.current_profile_name()));
     if (!success)
@@ -485,5 +484,4 @@ void MainWindow::about() noexcept
     if (std::filesystem::is_directory(file_name.toStdString()))
         ui_->inputDirTextEdit->setText(QDir::cleanPath(file_name));
 }
-
 } // namespace cao
