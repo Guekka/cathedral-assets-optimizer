@@ -9,6 +9,7 @@
 #include <QDialog>
 #include <QGroupBox>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <functional>
 #include <stdexcept>
 
@@ -23,15 +24,15 @@ public:
 };
 
 /**
- * @brief Connects a QGroupBox to multiple UiElements
- *
- * This function connects a QGroupBox to multiple UiElements, allowing for easy manipulation of the group box properties.
- * The UiElements can be any QWidget, but also QAbstractButton, in which case the button will be unchecked when the group
- * box is unchecked.
- *
- * @param box The QGroupBox to be connected
- * @param ui_els The UiElements (variadic) to be connected to the group box
- */
+     * @brief Connects a QGroupBox to multiple UiElements
+     *
+     * This function connects a QGroupBox to multiple UiElements, allowing for easy manipulation of the group box properties.
+     * The UiElements can be any QWidget, but also QAbstractButton, in which case the button will be unchecked when the group
+     * box is unchecked.
+     *
+     * @param box The QGroupBox to be connected
+     * @param ui_els The UiElements (variadic) to be connected to the group box
+     */
 template<typename... UiElements>
 void connect_group_box(QGroupBox *box, UiElements *...ui_els)
 {
@@ -85,6 +86,22 @@ template<typename Data>
     return true;
 }
 
+inline void show_message_box_on_failure(const bool success)
+{
+    if (success)
+        return;
+
+    QMessageBox message_box;
+    message_box.setIcon(QMessageBox::Critical);
+    message_box.setWindowTitle(QCoreApplication::translate("message_box", "Error"));
+    message_box.setText(
+        QCoreApplication::translate("message_box",
+                                    "Interface failure. Please restart the application. If the issue "
+                                    "persists, delete your settings folder and try again"));
+
+    message_box.exec();
+}
+
 template<typename Collection, typename Proj>
 void set_items(QComboBox &box, const Collection &collection, Proj proj = std::identity{})
 {
@@ -103,5 +120,4 @@ void set_items(QComboBox &box, const Collection &collection, Proj proj = std::id
     const auto data = u.toUtf8();
     return {reinterpret_cast<const char8_t *>(data.constData()), static_cast<size_t>(data.size())};
 }
-
 } // namespace cao

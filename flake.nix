@@ -1,8 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
-    devenv.url = "github:cachix/devenv";
   };
 
   outputs = {
@@ -36,11 +35,13 @@
               cmake
               makeWrapper
               ninja
-              gcc14
+
+              llvmPackages_21.clang
+              llvmPackages_21.openmp
               vcpkg
 
               # profiling
-              linuxPackages_latest.perf
+              perf
 
               qt6.qtbase
               qt6.qttools

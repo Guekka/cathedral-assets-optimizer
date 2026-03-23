@@ -12,6 +12,8 @@
 
 #include <btu/common/algorithms.hpp>
 
+#include <QMessageBox>
+
 namespace cao {
 AdvancedTexturesModule::AdvancedTexturesModule(QWidget *parent)
     : IWindowModule(parent)
@@ -89,32 +91,54 @@ void AdvancedTexturesModule::settings_to_ui(const Settings &settings)
     ui_->mainMipMaps->setChecked(pfs.tex.mipmaps);
 
     // Resizing
-    ui_->resizingBox->setChecked(true);
-    std::visit(btu::common::Overload{[this](std::monostate) { ui_->resizingBox->setChecked(false); },
-                                     [this](btu::tex::util::ResizeRatio ratio) {
-                                         const bool success = select_data(*ui_->resizingMode,
-                                                                          TextureResizingMode::ByRatio);
-                                         assert(success);
+    ui_->resizingBox->setChecked(/*checked=*/true);
+    const bool success
+        = std::visit(btu::common::Overload{[this](std::monostate) {
+                                               ui_->resizingBox->setChecked(/*checked=*/false);
+                                               return true;
+                                           },
+                                           [this](btu::tex::util::ResizeRatio ratio) {
+                                               const bool success = select_data(*ui_->resizingMode,
+                                                                                TextureResizingMode::ByRatio);
 
-                                         ui_->resizingWidth->setValue(ratio.ratio);
-                                         ui_->resizingHeight->setValue(ratio.ratio);
+                                               if (!success)
+                                                   return false;
 
-                                         ui_->resizingMinimumCheckBox->setChecked(true);
+                                               ui_->resizingWidth->setValue(ratio.ratio);
+                                               ui_->resizingHeight->setValue(ratio.ratio);
 
-                                         ui_->resizingMinimumWidth->setValue(static_cast<int>(ratio.min.w));
-                                         ui_->resizingMinimumHeight->setValue(static_cast<int>(ratio.min.h));
-                                     },
-                                     [this](btu::tex::Dimension dim) {
-                                         const bool success = select_data(*ui_->resizingMode,
-                                                                          TextureResizingMode::BySize);
-                                         assert(success);
+                                               ui_->resizingMinimumCheckBox->setChecked(true);
 
-                                         ui_->resizingWidth->setValue(static_cast<int>(dim.w));
-                                         ui_->resizingHeight->setValue(static_cast<int>(dim.h));
+                                               ui_->resizingMinimumWidth->setValue(
+                                                   static_cast<int>(ratio.min.w));
+                                               ui_->resizingMinimumHeight->setValue(
+                                                   static_cast<int>(ratio.min.h));
 
-                                         ui_->resizingMinimumCheckBox->setChecked(false);
-                                     }},
-               pfs.tex.resize);
+                                               return true;
+                                           },
+                                           [this](btu::tex::Dimension dim) {
+                                               const bool success = select_data(*ui_->resizingMode,
+                                                                                TextureResizingMode::BySize);
+
+                                               if (!success)
+                                                   return false;
+
+                                               ui_->resizingWidth->setValue(static_cast<int>(dim.w));
+                                               ui_->resizingHeight->setValue(static_cast<int>(dim.h));
+
+                                               ui_->resizingMinimumCheckBox->setChecked(false);
+
+                                               return true;
+                                           }},
+                     pfs.tex.resize);
+
+    if (!success)
+    {
+        QMessageBox::critical(this,
+                              tr("Error"),
+                              tr("Failure during loading of settings. Please restart the application. If the "
+                                 "issue persists, delete your settings folder and try again"));
+    }
 }
 
 void AdvancedTexturesModule::ui_to_settings(Settings &settings) const
@@ -155,5 +179,4 @@ auto AdvancedTexturesModule::is_supported_game(btu::Game /*game*/) const noexcep
 {
     return true; // even if the game is not supported, the module is probably still useful
 }
-
 } // namespace cao

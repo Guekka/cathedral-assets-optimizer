@@ -30,9 +30,8 @@ auto LogReader::update() -> std::vector<LogEntry>
 {
     // We have to reopen the file every time because it can be rotated
     QFile log_file(log_file_path_);
-    log_file.open(QFile::ReadOnly);
 
-    if (!log_file.isOpen())
+    if (!log_file.open(QFile::ReadOnly))
         return {{QString("Failed to open log file: %1").arg(QString::fromStdString(log_file_path_.string())),
                  plog::error}};
 

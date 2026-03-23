@@ -30,8 +30,8 @@ template<typename T>
     }
 }
 
-[[nodiscard]] inline auto save_to_file(const nlohmann::json &json, const std::filesystem::path &filepath)
-    -> bool
+[[nodiscard]] inline auto save_to_file(const nlohmann::json &json,
+                                       const std::filesystem::path &filepath) -> bool
 {
     std::fstream stream(filepath, std::fstream::out);
     if (!stream)
