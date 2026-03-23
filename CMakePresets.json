@@ -104,7 +104,7 @@
         "value": "x64"
       },
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "/EHsc /MP /W4"
+        "CMAKE_CXX_FLAGS": "/EHsc /MP /W4 /WX /external:anglebrackets /external:W0"
       },
       "generator": "Visual Studio 17 2022",
       "inherits": [
@@ -114,6 +114,18 @@
       ],
       "name": "vs2022-windows",
       "toolset": "v143"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "RelWithDebInfo"
+        }
+      },
+      "inherits": [
+        "ninja-windows"
+      ],
+      "name": "ninja-windows-release"
     },
     {
       "cacheVariables": {
