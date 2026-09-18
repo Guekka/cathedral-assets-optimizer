@@ -14,6 +14,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <limits>
 
 namespace cao {
 
@@ -26,7 +27,7 @@ public:
 
 [[nodiscard]] auto get_appender(const std::filesystem::path &log_file_path) noexcept -> plog::IAppender *
 {
-    constexpr size_t max_file_size = 1'000'000; // 1MB
+    constexpr size_t max_file_size = std::numeric_limits<size_t>::max(); // Do not roll during a run
     constexpr size_t keep_files    = 20;
     // plog requires a static appender
     static auto appender = plog::RollingFileAppender<CustomFormatter>(log_file_path.string().c_str(),
