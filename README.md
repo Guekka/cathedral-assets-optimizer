@@ -37,6 +37,11 @@ GitHub Actions uploads an executable-only artifact for successful builds. A manu
 
 See [the NexusMods page](https://www.nexusmods.com/skyrimspecialedition/mods/23316).
 
+# User guide
+
+For a guide to choosing a mode, processing mods, profiles, patterns, and BSA options, see the
+[CAO user guide](docs/user-guide.md).
+
 # Credits
 
 A lot of people helped me throughout the development of this tool, and I would like to thank them all.
