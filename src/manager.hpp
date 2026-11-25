@@ -38,6 +38,7 @@ private:
 signals:
     void files_counted(size_t count) const;
     void files_processed(std::filesystem::path last_relative_path, size_t count_since_last) const;
+    void archive_verification_failed(QString message) const;
     void end() const;
 };
 } // namespace cao

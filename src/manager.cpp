@@ -207,11 +207,12 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
 
             try
             {
-                write_single_archive(directory_path,
-                                     std::move(archive),
-                                     bsa_sets,
-                                     settings_.current_profile().bsa_remove_files,
-                                     settings_.current_profile().bsa_make_overrides);
+                if (auto failure = write_single_archive(directory_path,
+                                                        std::move(archive),
+                                                        bsa_sets,
+                                                        settings_.current_profile().bsa_remove_files,
+                                                        settings_.current_profile().bsa_make_overrides))
+                    emit archive_verification_failed(QString::fromStdString(*failure));
             }
             catch (const std::exception &e)
             {

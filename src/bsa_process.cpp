@@ -38,24 +38,24 @@ static auto remove_files_from_directory(const btu::Path &directory, std::span<co
     return count;
 }
 
-void write_single_archive(const btu::Path &directory_path,
+auto write_single_archive(const btu::Path &directory_path,
                           btu::bsa::Archive &&archive,
                           const btu::bsa::Settings &bsa_sets,
                           const bool remove_files,
-                          const bool make_override)
+                          const bool make_override) -> std::optional<std::string>
 {
     const auto archive_path_opt = find_archive_name(directory_path, bsa_sets, archive.type());
     if (!archive_path_opt)
     {
         PLOGE << "Failed to find a name for the archive, skipping";
-        return;
+        return std::nullopt;
     }
     auto archive_path = std::move(archive_path_opt).value();
 
     if (const bool success = std::move(archive).write(archive_path); !success)
     {
         PLOGE << "Failed to write archive " << archive_path.string();
-        return;
+        return std::nullopt;
     }
 
     // we open the archive again to make sure the files are written
@@ -71,11 +71,12 @@ void write_single_archive(const btu::Path &directory_path,
         else if (!removed)
             removal_status = "The rejected archive was already absent.";
 
-        PLOGE << std::format("Could not verify generated archive {}: {}. {} Original files were kept.",
-                             archive_path.string(),
-                             written_archive.error().message(),
-                             removal_status);
-        return;
+        auto message = std::format("Could not verify generated archive {}: {}. {} Original files were kept.",
+                                   archive_path.string(),
+                                   written_archive.error().message(),
+                                   removal_status);
+        PLOGE << message;
+        return message;
     }
 
     if (remove_files)
@@ -102,4 +103,6 @@ void write_single_archive(const btu::Path &directory_path,
             PLOGE << "Failed to create override file: " << e;
         });
     }
+
+    return std::nullopt;
 }

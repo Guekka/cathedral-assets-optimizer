@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QMetaType>
 #include <QProgressDialog>
+#include <QStringList>
 #include <QTimer>
 #include <QWidget>
 
@@ -72,6 +73,7 @@ public:
 
     void set_maximum(int max);
     void step(std::optional<QString> text = std::nullopt, int n = 1);
+    void add_archive_verification_failure(QString message);
     void end();
 
 signals:
@@ -83,6 +85,7 @@ protected:
 private:
     int current_value_{0};
     std::optional<QString> last_text_;
+    QStringList archive_verification_failures_;
     QTimer timer_;
 
     LogReader log_reader_;

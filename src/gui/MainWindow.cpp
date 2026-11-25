@@ -383,6 +383,11 @@ void MainWindow::init_process()
                         progress_window_->step(std::optional(text), static_cast<int>(count_since_last));
                     });
 
+            connect(&manager,
+                    &Manager::archive_verification_failed,
+                    progress_window_.get(),
+                    &ProgressWindow::add_archive_verification_failure);
+
             connect(&manager, &Manager::end, progress_window_.get(), &ProgressWindow::end);
 
             connect(&manager, &Manager::end, this, [this] {

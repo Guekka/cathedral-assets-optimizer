@@ -14,6 +14,7 @@
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QFile>
+#include <QMessageBox>
 #include <QTextStream>
 #include <utility>
 
@@ -160,6 +161,11 @@ void ProgressWindow::step(std::optional<QString> text, int n)
     last_text_ = std::move(text);
 }
 
+void ProgressWindow::add_archive_verification_failure(QString message)
+{
+    archive_verification_failures_.append(std::move(message));
+}
+
 void ProgressWindow::end()
 {
     const auto &progress_bar = ui_->progressBar;
@@ -170,9 +176,27 @@ void ProgressWindow::end()
     update_all();
 
     progress_bar->setValue(progress_bar->maximum());
-    progress_bar->setFormat(tr("Done"));
+    progress_bar->setFormat(archive_verification_failures_.isEmpty() ? tr("Done") : tr("Done with warnings"));
 
     timer_.stop();
+
+    if (!archive_verification_failures_.isEmpty())
+    {
+        const auto count = archive_verification_failures_.size();
+        const auto summary = count == 1
+                                 ? tr("CAO could not verify one generated archive. It was rejected, and the "
+                                      "original files were kept.")
+                                 : tr("CAO could not verify %1 generated archives. They were rejected, and the "
+                                      "original files were kept.")
+                                       .arg(count);
+        auto message = QMessageBox(QMessageBox::Warning,
+                                   tr("Archive verification warning"),
+                                   summary,
+                                   QMessageBox::Ok,
+                                   this);
+        message.setDetailedText(archive_verification_failures_.join(QStringLiteral("\n\n")));
+        message.exec();
+    }
 }
 
 void ProgressWindow::update_all()
