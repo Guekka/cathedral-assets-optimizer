@@ -36,7 +36,7 @@ AdvancedMeshesModule::~AdvancedMeshesModule() = default;
 
 auto AdvancedMeshesModule::name() const noexcept -> QString
 {
-    return tr("Meshes (Patterns)");
+    return tr("Meshes (Per-file)");
 }
 
 void AdvancedMeshesModule::settings_to_ui(const Settings &settings)

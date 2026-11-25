@@ -23,7 +23,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>File setting</string>
+      <string>Per-file settings</string>
      </property>
      <property name="checkable">
       <bool>false</bool>
@@ -41,7 +41,7 @@
          <cursorShape>WhatsThisCursor</cursorShape>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, the files matched by the selected pattern will be packed into a BSA.&lt;/p&gt;&lt;p&gt;For this to have any effect, you have to ensure Process BSAs is on with the Create BSAs option. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, files matched by the selected rule will be packed into a BSA.&lt;/p&gt;&lt;p&gt;For this to have any effect, you have to ensure Process BSAs is on with the Create BSAs option. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>Pack file</string>

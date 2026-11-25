@@ -79,10 +79,10 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>Select which file rule's settings to edit. During processing, the first rule matching a file path applies.</string>
+          <string>Choose which file rule's settings to edit. These settings apply only to files matched by that rule; the first matching rule wins.</string>
          </property>
          <property name="text">
-          <string>Settings for rule</string>
+          <string>Per-file settings for</string>
          </property>
         </widget>
        </item>

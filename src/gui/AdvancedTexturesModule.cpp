@@ -78,7 +78,7 @@ AdvancedTexturesModule::~AdvancedTexturesModule() = default;
 
 auto AdvancedTexturesModule::name() const noexcept -> QString
 {
-    return tr("Textures (Patterns)");
+    return tr("Textures (Per-file)");
 }
 
 void AdvancedTexturesModule::settings_to_ui(const Settings &settings)

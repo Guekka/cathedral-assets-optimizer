@@ -41,7 +41,7 @@ auto AdvancedAnimationsModule::is_supported_game(btu::Game game) const noexcept 
 
 auto AdvancedAnimationsModule::name() const noexcept -> QString
 {
-    return QObject::tr("Animations (Patterns)");
+    return QObject::tr("Animations (Per-file)");
 }
 
 } // namespace cao

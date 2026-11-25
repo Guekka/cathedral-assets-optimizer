@@ -50,7 +50,7 @@ auto AdvancedBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
 
 auto AdvancedBSAModule::name() const noexcept -> QString
 {
-    return QObject::tr("BSA (Patterns)");
+    return QObject::tr("BSA (Per-file)");
 }
 
 } // namespace cao
