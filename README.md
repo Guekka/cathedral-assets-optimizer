@@ -49,6 +49,17 @@ Additional guides:
 - [Patterns](docs/patterns.md)
 - [Porting a mod from Skyrim LE to SSE](docs/porting-skyrim-le-to-sse.md)
 
+# Command-line usage
+
+Run CAO with `--cli`, a configured profile name, and optionally one or more mod directory paths. When paths are
+provided, CAO processes each path as a single mod instead of using the profile's saved input path:
+
+```sh
+Cathedral_Assets_Optimizer --cli SSE "/path/to/Mod A" "/path/to/Mod B"
+```
+
+If no mod paths are provided, CAO uses the selected profile's saved input path and optimization mode.
+
 # Credits
 
 A lot of people helped me throughout the development of this tool, and I would like to thank them all.

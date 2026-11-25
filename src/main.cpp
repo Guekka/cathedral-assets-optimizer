@@ -18,6 +18,8 @@
 #include <QMessageBox>
 #include <QTranslator>
 
+#include <utility>
+
 void init()
 {
     QCoreApplication::setApplicationName("Cathedral Assets Optimizer");
@@ -60,6 +62,8 @@ auto main(int argc, char *argv[]) -> int
 
     QCommandLineParser parser;
     parser.addPositionalArgument("profile", "The profile to use");
+    parser.addPositionalArgument(
+        "modPaths", "Optional mod paths to process instead of the profile's input path", "[modPaths...]");
     parser.addOption({"cli", "Do not run the GUI"});
     parser.process(*app);
 
@@ -82,14 +86,34 @@ auto main(int argc, char *argv[]) -> int
 
         if (cli)
         {
-            const auto profile_name = parser.positionalArguments().value(0);
+            const auto positional_args = parser.positionalArguments();
+            const auto profile_name    = positional_args.value(0);
 
-            auto profile = settings.get_profile(cao::to_u8string(profile_name));
-            if (!profile)
+            if (!settings.set_current_profile(cao::to_u8string(profile_name)))
                 throw std::runtime_error("Profile not found");
 
-            cao::Manager manager;
-            manager.run_optimization(settings, std::stop_token{}); // TODO: handle signals
+            if (positional_args.size() == 1)
+            {
+                cao::Manager manager;
+                manager.run_optimization(settings, std::stop_token{}); // TODO: handle signals
+            }
+            else
+            {
+                for (qsizetype i = 1; i < positional_args.size(); ++i)
+                {
+                    const auto &mod_path = positional_args.at(i);
+                    if (mod_path.isEmpty())
+                        throw std::runtime_error("Mod paths cannot be empty");
+
+                    auto mod_settings = settings;
+                    auto &profile = mod_settings.current_profile();
+                    profile.input_path = mod_path.toStdString();
+                    profile.optimization_mode = cao::OptimizationMode::SingleMod;
+
+                    cao::Manager manager;
+                    manager.run_optimization(std::move(mod_settings), std::stop_token{});
+                }
+            }
         }
         else
         {
