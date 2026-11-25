@@ -98,6 +98,7 @@ jobs:
           python-version: "3.x"
 
       - name: Deploy Qt runtime and package release
+        id: package
         shell: pwsh
         run: |
           $exe = Join-Path $env:RUNNER_TEMP "cao-exe/Cathedral_Assets_Optimizer.exe"
@@ -137,6 +138,8 @@ jobs:
 
           "BUNDLE_ZIP=$bundleZip" >> $env:GITHUB_ENV
           "WINE_ZIP=$wineZip" >> $env:GITHUB_ENV
+          "bundle_zip=$bundleZip" >> $env:GITHUB_OUTPUT
+          "nexus_version=$($tag -replace '^v', '')" >> $env:GITHUB_OUTPUT
 
       - name: Publish GitHub release assets
         shell: pwsh
@@ -154,3 +157,13 @@ jobs:
               --verify-tag
           }
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload Windows bundle to Nexus Mods
+        uses: Nexus-Mods/upload-action@98532f7670c27cbecc78fae03fa3e278147827e2
+        with:
+          api_key: ${{ secrets.NEXUSMODS_API_KEY }}
+          file_id: "734557"
+          filename: ${{ steps.package.outputs.bundle_zip }}
+          version: ${{ steps.package.outputs.nexus_version }}
+          display_name: "Cathedral Assets Optimizer ${{ steps.package.outputs.nexus_version }} (Windows x64)"
+          category: optional

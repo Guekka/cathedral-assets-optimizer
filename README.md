@@ -10,7 +10,7 @@ See [the wiki](https://gitlab.com/G_ka/sse-assets-optimiser/wikis/Build-instruct
 
 # CI distributions
 
-GitHub Actions uploads an executable-only artifact for successful builds. Pushing a `v*` tag creates a GitHub Release with a Windows bundle containing the Qt runtime DLLs and plugins, plus an optional Wine/Proton `icuuc.dll` forwarder zip. For Wine or Proton, extract the forwarder's `icuuc.dll` beside the executable; do not use it for native Windows.
+GitHub Actions uploads an executable-only artifact for successful builds. Pushing a `v*` tag creates a GitHub Release with a Windows bundle containing the Qt runtime DLLs and plugins, uploads that bundle as a new version of the CAO7 optional file on Nexus Mods, and attaches an optional Wine/Proton `icuuc.dll` forwarder zip. Configure the repository secret `NEXUSMODS_API_KEY` before tagging a release. For Wine or Proton, extract the forwarder's `icuuc.dll` beside the executable; do not use it for native Windows.
 
 # Features and use instructions
 
