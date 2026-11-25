@@ -142,8 +142,9 @@ auto current_per_file_settings(Settings &sets) -> PerFileSettings &
 
 auto current_per_file_settings(const Settings &sets) -> const PerFileSettings &
 {
-    const auto &profile          = sets.current_profile();
-    const auto &selected_pattern = sets.gui.selected_pattern;
+    const auto &profile         = sets.current_profile();
+    const auto selected_pattern = sets.gui.gui_mode == GuiMode::Advanced ? sets.gui.selected_pattern
+                                                                         : k_default_pattern.text();
 
     auto per_file_settings = profile.per_file_settings();
 

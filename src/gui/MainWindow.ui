@@ -79,10 +79,10 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>Choose which file rule's settings to edit. These settings apply only to files matched by that rule; the first matching rule wins.</string>
+          <string>Choose which file rule's settings to edit. These settings apply only when that rule is the first match.</string>
          </property>
          <property name="text">
-          <string>Per-file settings for</string>
+          <string>For matching files</string>
          </property>
         </widget>
        </item>
@@ -93,6 +93,16 @@
         <widget class="QPushButton" name="managePatterns">
          <property name="text">
           <string>Manage rules</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="3">
+        <widget class="QLabel" name="settingsScopeDescription">
+         <property name="text">
+          <string>These settings apply only when this is the first matching rule.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

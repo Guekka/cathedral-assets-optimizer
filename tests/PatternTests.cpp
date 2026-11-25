@@ -6,6 +6,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "settings/per_file_settings.hpp"
 #include "settings/profile.hpp"
+#include "settings/settings.hpp"
 
 #include <doctest/doctest.h>
 
@@ -81,5 +82,26 @@ TEST_CASE("profiles apply the first matching simple file rule")
 
     const auto fallback = profile.get_per_file_settings(std::filesystem::path{u8"meshes/armor.nif"});
     CHECK(fallback.pattern.text() == k_default_pattern.text());
+}
+
+TEST_CASE("non-advanced modes edit default settings, not the previously selected rule")
+{
+    auto settings = Settings::make_base();
+
+    auto custom_rule           = PerFileSettings::make_base(btu::Game::FNV);
+    custom_rule.pattern        = Pattern::simple_rule({}, u8"dds", u8"All DDS textures");
+    const auto custom_rule_key = custom_rule.pattern.text();
+    settings.current_profile().prepend_per_file_settings(std::move(custom_rule));
+    settings.gui.selected_pattern = custom_rule_key;
+
+    settings.gui.gui_mode = GuiMode::Medium;
+    CHECK(current_per_file_settings(settings).pattern.text() == k_default_pattern.text());
+    CHECK(settings.gui.selected_pattern == custom_rule_key);
+
+    settings.gui.gui_mode = GuiMode::Advanced;
+    CHECK(current_per_file_settings(settings).pattern.text() == custom_rule_key);
+
+    settings.gui.gui_mode = GuiMode::QuickOptimize;
+    CHECK(current_per_file_settings(settings).pattern.text() == k_default_pattern.text());
 }
 } // namespace cao

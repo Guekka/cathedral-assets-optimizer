@@ -93,7 +93,7 @@ auto GeneralBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
 
 auto GeneralBSAModule::name() const noexcept -> QString
 {
-    return QObject::tr("BSA (All files)");
+    return QObject::tr("BSA (Profile-wide)");
 }
 
 } // namespace cao
