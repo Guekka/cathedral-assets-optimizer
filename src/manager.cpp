@@ -116,7 +116,15 @@ struct PluginInfo
 
 [[nodiscard]] auto get_bsa_settings(const Settings &sets) noexcept -> btu::bsa::Settings
 {
-    return btu::bsa::Settings::get(sets.current_profile().target_game);
+    auto bsa_settings = btu::bsa::Settings::get(sets.current_profile().target_game);
+    const auto max_size_mb = sets.current_profile().bsa_max_size_mb;
+    if (max_size_mb > 0)
+    {
+        constexpr uint64_t k_megabyte = 1024ULL * 1024ULL;
+        bsa_settings.max_size = static_cast<uint64_t>(max_size_mb) * k_megabyte;
+    }
+
+    return bsa_settings;
 }
 
 void Manager::unpack_directory(const std::filesystem::path &directory_path) const

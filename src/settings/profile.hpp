@@ -27,6 +27,7 @@ public:
     bool bsa_remove_files       = true;
     bool bsa_allow_compression  = true;
     bool bsa_make_overrides     = false;
+    int32_t bsa_max_size_mb     = 0;
 
     bool dry_run = false;
 
@@ -121,19 +122,20 @@ private:
     [[nodiscard]] static auto set_fnv_settings(Profile profile) noexcept -> Profile;
 
 public:
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Profile,
-                                   bsa_operation,
-                                   bsa_make_dummy_plugins,
-                                   bsa_allow_compression,
-                                   bsa_make_overrides,
-                                   dry_run,
-                                   gpu_index,
-                                   optimization_mode,
-                                   target_game,
-                                   input_path,
-                                   mods_blacklist,
-                                   base_per_file_settings_,
-                                   per_file_settings_)
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Profile,
+                                                bsa_operation,
+                                                bsa_make_dummy_plugins,
+                                                bsa_allow_compression,
+                                                bsa_make_overrides,
+                                                bsa_max_size_mb,
+                                                dry_run,
+                                                gpu_index,
+                                                optimization_mode,
+                                                target_game,
+                                                input_path,
+                                                mods_blacklist,
+                                                base_per_file_settings_,
+                                                per_file_settings_)
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(BsaOperation,

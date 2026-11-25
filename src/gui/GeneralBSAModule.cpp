@@ -46,6 +46,7 @@ void GeneralBSAModule::settings_to_ui(const Settings &settings)
     ui_->dontMakeLoaded->setChecked(!profile.bsa_make_dummy_plugins);
     ui_->dontRemoveFiles->setChecked(!profile.bsa_remove_files);
     ui_->dontCompress->setChecked(!profile.bsa_allow_compression);
+    ui_->maxArchiveSize->setValue(profile.bsa_max_size_mb);
 
     // Only show override toggle when it makes sense.
     if (profile.target_game != btu::Game::FNV)
@@ -73,6 +74,7 @@ void GeneralBSAModule::ui_to_settings(Settings &settings) const
     profile.bsa_remove_files       = !ui_->dontRemoveFiles->isChecked();
     profile.bsa_allow_compression  = !ui_->dontCompress->isChecked();
     profile.bsa_make_overrides     = ui_->makeOverrides->isChecked();
+    profile.bsa_max_size_mb        = ui_->maxArchiveSize->value();
 }
 
 auto GeneralBSAModule::is_supported_game(btu::Game game) const noexcept -> bool
