@@ -116,7 +116,9 @@ jobs:
           New-Item -ItemType Directory -Force -Path $bundle | Out-Null
           Copy-Item $exe $bundle
           $bundledExe = Join-Path $bundle "Cathedral_Assets_Optimizer.exe"
-          & $qtDeploy --release --compiler-runtime --dir $bundle $bundledExe
+          & $qtDeploy --release --compiler-runtime --no-opengl-sw --no-system-d3d-compiler `
+            --skip-plugin-types "generic,iconengines,imageformats,networkinformation,tls" `
+            --translations "de,en,es,fr,ja,ko,nl,ru,tr,zh_CN" --dir $bundle $bundledExe
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
           foreach ($dll in @("Qt6Core.dll", "Qt6Gui.dll", "Qt6Widgets.dll")) {
@@ -141,7 +143,11 @@ jobs:
             Write-Host "App-local ICU DLL: $($icuuc[0].FullName) ($($icuuc[0].Length) bytes)"
           }
 
-          $tag = $env:GITHUB_REF_NAME
+          if ($env:GITHUB_REF.StartsWith("refs/tags/v")) {
+            $tag = $env:GITHUB_REF_NAME
+          } else {
+            $tag = "package-only"
+          }
           $bundleZip = Join-Path $env:RUNNER_TEMP "Cathedral_Assets_Optimizer-$tag-windows-x64.zip"
           Compress-Archive -Path (Join-Path $bundle "*") -DestinationPath $bundleZip -CompressionLevel Optimal
 
