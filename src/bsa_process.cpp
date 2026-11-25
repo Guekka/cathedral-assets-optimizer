@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <format>
+#include <string>
 
 /**
  * @brief Remove relative paths from a directory
@@ -61,8 +62,19 @@ void write_single_archive(const btu::Path &directory_path,
     auto written_archive = btu::bsa::Archive::read(archive_path);
     if (!written_archive)
     {
-        PLOGE << "Archive was written but cannot be opened, it is likely corrupted. Removing it.";
-        btu::fs::remove(archive_path);
+        std::error_code removal_error;
+        const bool removed = btu::fs::remove(archive_path, removal_error);
+        auto removal_status = std::string{"The rejected archive was removed."};
+        if (removal_error)
+            removal_status = std::format("The rejected archive could not be removed: {}",
+                                         removal_error.message());
+        else if (!removed)
+            removal_status = "The rejected archive was already absent.";
+
+        PLOGE << std::format("Could not verify generated archive {}: {}. {} Original files were kept.",
+                             archive_path.string(),
+                             written_archive.error().message(),
+                             removal_status);
         return;
     }
 
