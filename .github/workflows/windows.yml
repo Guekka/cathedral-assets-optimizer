@@ -10,6 +10,12 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      package_only:
+        description: Deploy and inspect the Windows bundle without publishing it
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -73,7 +79,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.package_only)
     needs: build
     runs-on: windows-2022
     permissions:
@@ -122,6 +128,19 @@ jobs:
             throw "Qt deployment did not include the Windows platform plugin"
           }
 
+          $files = @(Get-ChildItem -Path $bundle -File -Recurse | Sort-Object FullName)
+          $dlls = @($files | Where-Object { $_.Extension -ieq ".dll" })
+          $totalBytes = ($files | Measure-Object -Property Length -Sum).Sum
+          Write-Host "Deployed bundle: $($files.Count) files, $([math]::Round($totalBytes / 1MB, 1)) MiB expanded"
+          Write-Host "Deployed DLLs ($($dlls.Count)):"
+          $dlls | ForEach-Object { Write-Host "$($_.FullName) ($($_.Length) bytes)" }
+          $icuuc = @($dlls | Where-Object { $_.Name -ieq "icuuc.dll" })
+          if ($icuuc.Count -eq 0) {
+            Write-Host "No app-local icuuc.dll was deployed"
+          } else {
+            Write-Host "App-local ICU DLL: $($icuuc[0].FullName) ($($icuuc[0].Length) bytes)"
+          }
+
           $tag = $env:GITHUB_REF_NAME
           $bundleZip = Join-Path $env:RUNNER_TEMP "Cathedral_Assets_Optimizer-$tag-windows-x64.zip"
           Compress-Archive -Path (Join-Path $bundle "*") -DestinationPath $bundleZip -CompressionLevel Optimal
@@ -142,6 +161,7 @@ jobs:
           "nexus_version=$($tag -replace '^v', '')" >> $env:GITHUB_OUTPUT
 
       - name: Publish GitHub release assets
+        if: startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -159,6 +179,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Upload Windows bundle to Nexus Mods
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: Nexus-Mods/upload-action@98532f7670c27cbecc78fae03fa3e278147827e2
         with:
           api_key: ${{ secrets.NEXUSMODS_API_KEY }}
