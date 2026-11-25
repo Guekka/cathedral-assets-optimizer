@@ -8,6 +8,10 @@ Cathedral Assets Optimizer is a tool aiming to automate asset conversion and opt
 
 See [the wiki](https://gitlab.com/G_ka/sse-assets-optimiser/wikis/Build-instructions).
 
+# CI distributions
+
+GitHub Actions uploads an executable-only artifact for successful builds. Pushing a `v*` tag creates a GitHub Release with a Windows bundle containing the Qt runtime DLLs and plugins, plus an optional Wine/Proton `icuuc.dll` forwarder zip. For Wine or Proton, extract the forwarder's `icuuc.dll` beside the executable; do not use it for native Windows.
+
 # Features and use instructions
 
 See [the NexusMods page](https://www.nexusmods.com/skyrimspecialedition/mods/23316).
