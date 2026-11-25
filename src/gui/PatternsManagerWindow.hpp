@@ -10,8 +10,14 @@
 
 #include <QAbstractItemModel>
 #include <QDialog>
+#include <QFutureWatcher>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <cstddef>
+#include <filesystem>
+#include <string>
+#include <vector>
+
 class QComboBox;
 
 namespace Ui {
@@ -48,14 +54,38 @@ public:
     ~PatternsManagerWindow() override; // = default
 
 private:
+    struct PreviewScanResult
+    {
+        std::vector<std::filesystem::path> files;
+        std::size_t skipped_archives = 0;
+        std::string error;
+    };
+
+    enum class PreviewState
+    {
+        NoInput,
+        Scanning,
+        Ready,
+        Failed,
+    };
+
     std::unique_ptr<Ui::PatternsManagerWindow> ui_;
     Settings &settings_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
+    QFutureWatcher<PreviewScanResult> preview_watcher_;
+    PreviewScanResult preview_scan_result_;
+    std::vector<FileRuleImpact> rule_impacts_;
+    PreviewState preview_state_ = PreviewState::NoInput;
 
+    [[nodiscard]] static auto scan_input_files(btu::Path input_path,
+                                               OptimizationMode mode,
+                                               btu::Game target_game) -> PreviewScanResult;
     void update_patterns(std::u8string_view selected_pattern = {});
     void move_pattern(const QModelIndex, int source_row, int, const QModelIndex, int destination_row);
     void create_pattern();
     void edit_current_pattern();
     void delete_current_pattern();
     void update_sample_result();
+    void update_impact_preview();
+    [[nodiscard]] auto file_count_text(std::size_t count) const -> QString;
 };
 } // namespace cao

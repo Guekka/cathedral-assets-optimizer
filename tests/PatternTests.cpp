@@ -107,6 +107,44 @@ TEST_CASE("moving a file rule changes first-match priority")
         == u8"All DDS textures");
 }
 
+TEST_CASE("file-rule impact previews first-match counts and fallback examples")
+{
+    auto profile = Profile::make_base(btu::Game::SSE);
+
+    auto all_dds          = PerFileSettings::make_base(btu::Game::SSE);
+    all_dds.pattern       = Pattern::simple_rule({}, u8"dds", u8"All DDS textures");
+    auto interface_dds    = PerFileSettings::make_base(btu::Game::SSE);
+    interface_dds.pattern = Pattern::simple_rule(u8"textures/interface", u8"dds", u8"Interface textures");
+
+    profile.prepend_per_file_settings(std::move(all_dds));
+    profile.prepend_per_file_settings(std::move(interface_dds));
+
+    const auto files = std::vector<std::filesystem::path>{
+        u8"textures/interface/menu.dds",
+        u8"textures/landscape/ground.dds",
+        u8"meshes/armor.nif",
+        u8"textures/interface/icon.dds",
+    };
+    const auto impact = analyze_file_rule_impact(profile, files, 1);
+
+    REQUIRE(impact.size() == 3);
+    CHECK(impact[0].matching_files == 2);
+    CHECK(impact[0].applied_files == 2);
+    REQUIRE(impact[0].example_paths.size() == 1);
+    CHECK(impact[0].example_paths[0] == std::filesystem::path{u8"textures/interface/menu.dds"});
+
+    CHECK(impact[1].matching_files == 3);
+    CHECK(impact[1].applied_files == 1);
+    REQUIRE(impact[1].example_paths.size() == 1);
+    CHECK(impact[1].example_paths[0] == std::filesystem::path{u8"textures/landscape/ground.dds"});
+    REQUIRE(impact[1].overridden_example_paths.size() == 1);
+    CHECK(impact[1].overridden_example_paths[0] == std::filesystem::path{u8"textures/interface/menu.dds"});
+
+    CHECK(impact[2].applied_files == 1);
+    REQUIRE(impact[2].example_paths.size() == 1);
+    CHECK(impact[2].example_paths[0] == std::filesystem::path{u8"meshes/armor.nif"});
+}
+
 TEST_CASE("non-advanced modes edit default settings, not the previously selected rule")
 {
     auto settings = Settings::make_base();
