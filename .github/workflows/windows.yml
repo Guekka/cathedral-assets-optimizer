@@ -30,7 +30,6 @@ jobs:
         with:
           version: ${{ env.QT_VERSION }}
           arch: ${{ env.QT_ARCH }}
-          modules: qttools
           cache: true
 
       - uses: lukka/run-vcpkg@v11
@@ -81,7 +80,6 @@ jobs:
         with:
           version: ${{ env.QT_VERSION }}
           arch: ${{ env.QT_ARCH }}
-          modules: qttools
           cache: true
 
       - uses: actions/setup-python@v5
