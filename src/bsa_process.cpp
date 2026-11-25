@@ -63,6 +63,7 @@ void write_single_archive(const btu::Path &directory_path,
     {
         PLOGE << "Archive was written but cannot be opened, it is likely corrupted. Removing it.";
         btu::fs::remove(archive_path);
+        return;
     }
 
     if (remove_files)
