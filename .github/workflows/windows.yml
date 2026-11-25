@@ -35,6 +35,7 @@ jobs:
       - uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: ${{ env.VCPKG_ROOT }}
+          vcpkgJsonGlob: vcpkg.json
 
       - name: Configure
         shell: pwsh
