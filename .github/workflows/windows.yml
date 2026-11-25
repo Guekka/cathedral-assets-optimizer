@@ -37,6 +37,8 @@ jobs:
           vcpkgDirectory: ${{ env.VCPKG_ROOT }}
           vcpkgJsonGlob: vcpkg.json
 
+      - uses: crazy-max/ghaction-github-runtime@v4
+
       - name: Configure
         shell: pwsh
         run: |
