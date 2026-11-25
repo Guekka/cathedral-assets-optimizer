@@ -33,9 +33,9 @@ TEST_CASE("simple file rules can match by folder or extension alone")
 
 TEST_CASE("simple file rules reject paths outside the input root")
 {
-    CHECK_THROWS_AS(Pattern::simple_rule(u8"../textures", u8"dds"), std::invalid_argument);
-    CHECK_THROWS_AS(Pattern::simple_rule(u8"/textures", u8"dds"), std::invalid_argument);
-    CHECK_THROWS_AS(Pattern::simple_rule(u8"textures/*", u8"dds"), std::invalid_argument);
+    CHECK_THROWS_AS(static_cast<void>(Pattern::simple_rule(u8"../textures", u8"dds")), std::invalid_argument);
+    CHECK_THROWS_AS(static_cast<void>(Pattern::simple_rule(u8"/textures", u8"dds")), std::invalid_argument);
+    CHECK_THROWS_AS(static_cast<void>(Pattern::simple_rule(u8"textures/*", u8"dds")), std::invalid_argument);
 }
 
 TEST_CASE("simple file rules serialize their conditions and name")
@@ -56,8 +56,8 @@ TEST_CASE("legacy glob and regex patterns still deserialize")
 {
     auto wildcard = Pattern{u8"*.nif"};
     auto regex    = Pattern{u8".*\\.nif", Pattern::Type::Regex};
-    nlohmann::json{{"pattern", "*.dds"}, {"type", "wildcard"}}.get_to(wildcard);
-    nlohmann::json{{"pattern", R"(.*\.dds)"}, {"type", "regex"}}.get_to(regex);
+    nlohmann::json{{"pattern", "*.dds"}, {"type", 0}}.get_to(wildcard);
+    nlohmann::json{{"pattern", R"(.*\.dds)"}, {"type", 1}}.get_to(regex);
 
     CHECK(wildcard.matches(std::filesystem::path{u8"menu.dds"}));
     CHECK(regex.matches(std::filesystem::path{u8"textures/menu.DDS"}));
