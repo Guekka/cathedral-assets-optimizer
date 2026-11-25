@@ -26,7 +26,7 @@ class PatternItem : public QListWidgetItem
 public:
     explicit PatternItem(PerFileSettings &pfs, QListWidget *parent = nullptr);
 
-    const std::u8string update_text();
+    [[nodiscard]] auto per_file_settings() const noexcept -> PerFileSettings & { return pfs_; }
 
 private:
     PerFileSettings &pfs_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
@@ -43,19 +43,19 @@ public:
     PatternsManagerWindow(PatternsManagerWindow &&)      = delete;
 
     auto operator=(const PatternsManagerWindow &) -> PatternsManagerWindow & = delete;
-    auto operator=(PatternsManagerWindow &&) -> PatternsManagerWindow      & = delete;
+    auto operator=(PatternsManagerWindow &&) -> PatternsManagerWindow &      = delete;
 
     ~PatternsManagerWindow() override; // = default
-
-    void update_patterns(QListWidget &list);
 
 private:
     std::unique_ptr<Ui::PatternsManagerWindow> ui_;
     Settings &settings_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 
-    void update_pattern(QListWidgetItem *item);
+    void update_patterns(std::u8string_view selected_pattern = {});
     void move_pattern(const QModelIndex, int source_row, int, const QModelIndex, int destination_row);
     void create_pattern();
+    void edit_current_pattern();
     void delete_current_pattern();
+    void update_sample_result();
 };
 } // namespace cao

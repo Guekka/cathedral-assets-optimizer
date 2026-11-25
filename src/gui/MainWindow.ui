@@ -79,10 +79,10 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;See the wiki&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>Select which file rule's settings to edit. During processing, the first rule matching a file path applies.</string>
          </property>
          <property name="text">
-          <string>Pattern</string>
+          <string>Settings for rule</string>
          </property>
         </widget>
        </item>
@@ -92,7 +92,7 @@
        <item row="2" column="2">
         <widget class="QPushButton" name="managePatterns">
          <property name="text">
-          <string>Manage</string>
+          <string>Manage rules</string>
          </property>
         </widget>
        </item>

@@ -14,3 +14,16 @@ target_link_libraries(
                                 nlohmann_json::nlohmann_json Qt6::Core)
 
 add_test(NAME cao_cli_profile_tests COMMAND cao_cli_profile_tests)
+
+add_executable(CAO_test
+  PatternTests.cpp
+  ${PROJECT_SOURCE_DIR}/src/settings/profile.cpp)
+target_include_directories(CAO_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_compile_features(CAO_test PRIVATE cxx_std_20)
+target_link_libraries(CAO_test PRIVATE
+  btu::bethutil
+  doctest::doctest
+  nlohmann_json::nlohmann_json
+  Qt6::Core)
+
+add_test(NAME CAO_test COMMAND CAO_test)

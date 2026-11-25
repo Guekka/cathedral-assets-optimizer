@@ -173,11 +173,16 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
 
     set_items(*ui.profiles, profiles, to_qstring);
 
-    set_items(*ui.patterns, settings.current_profile().per_file_settings(), [](const auto *pfs) {
-        return to_qstring(pfs->pattern.text());
-    });
+    ui.patterns->clear();
+    for (const auto *pfs : settings.current_profile().per_file_settings())
+    {
+        const auto label = pfs->pattern.text() == k_default_pattern.text()
+                               ? QObject::tr("Everything else (default)")
+                               : pattern_display_name(pfs->pattern);
+        ui.patterns->addItem(label, to_qstring(pfs->pattern.text()));
+    }
 
-    success = select_text(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
+    success = select_data(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
     show_message_box_on_failure(success);
 
     success = select_text(*ui.profiles, to_qstring(settings.current_profile_name()));
@@ -295,7 +300,7 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 
     connect(ui_->patterns, &QComboBox::activated, this, [this]() {
         save_settings();
-        settings_.gui.selected_pattern = to_u8string(ui_->patterns->currentText());
+        settings_.gui.selected_pattern = to_u8string(ui_->patterns->currentData().toString());
         settings_to_ui(settings_, *ui_, module_display_);
     });
 
