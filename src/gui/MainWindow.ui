@@ -366,6 +366,18 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>profiles</tabstop>
+  <tabstop>manageProfiles</tabstop>
+  <tabstop>patterns</tabstop>
+  <tabstop>managePatterns</tabstop>
+  <tabstop>inputDirTextEdit</tabstop>
+  <tabstop>userPathButton</tabstop>
+  <tabstop>modeChooserComboBox</tabstop>
+  <tabstop>dryRunCheckBox</tabstop>
+  <tabstop>processButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
