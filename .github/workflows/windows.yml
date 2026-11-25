@@ -32,6 +32,14 @@ jobs:
           arch: ${{ env.QT_ARCH }}
           cache: true
 
+      - name: Install pkg-config for vcpkg
+        shell: pwsh
+        run: |
+          choco install pkgconfiglite --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $pkgConfig = Get-Command pkg-config -ErrorAction Stop
+          "PKG_CONFIG=$($pkgConfig.Source)" >> $env:GITHUB_ENV
+
       - uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: ${{ env.VCPKG_ROOT }}
