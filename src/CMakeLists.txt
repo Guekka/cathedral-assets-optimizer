@@ -57,6 +57,8 @@ set(SOURCES
     ${SOURCE_DIR}/gui/ProfilesManagerWindow.cpp
     ${SOURCE_DIR}/gui/ProfilesManagerWindow.hpp
     ${SOURCE_DIR}/gui/ProfilesManagerWindow.ui
+    ${SOURCE_DIR}/gui/file_rule_preview.cpp
+    ${SOURCE_DIR}/gui/file_rule_preview.hpp
     ${SOURCE_DIR}/gui/PatternsManagerWindow.cpp
     ${SOURCE_DIR}/gui/PatternsManagerWindow.hpp
     ${SOURCE_DIR}/gui/PatternsManagerWindow.ui

@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "gui/file_rule_preview.hpp"
 #include "settings/profile.hpp"
 #include "settings/settings.hpp"
 
@@ -54,13 +55,6 @@ public:
     ~PatternsManagerWindow() override; // = default
 
 private:
-    struct PreviewScanResult
-    {
-        std::vector<std::filesystem::path> files;
-        std::size_t skipped_archives = 0;
-        std::string error;
-    };
-
     enum class PreviewState
     {
         NoInput,
@@ -71,14 +65,11 @@ private:
 
     std::unique_ptr<Ui::PatternsManagerWindow> ui_;
     Settings &settings_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
-    QFutureWatcher<PreviewScanResult> preview_watcher_;
-    PreviewScanResult preview_scan_result_;
+    QFutureWatcher<FileRulePreviewScan> preview_watcher_;
+    FileRulePreviewScan preview_scan_result_;
     std::vector<FileRuleImpact> rule_impacts_;
     PreviewState preview_state_ = PreviewState::NoInput;
 
-    [[nodiscard]] static auto scan_input_files(btu::Path input_path,
-                                               OptimizationMode mode,
-                                               btu::Game target_game) -> PreviewScanResult;
     void update_patterns(std::u8string_view selected_pattern = {});
     void move_pattern(const QModelIndex, int source_row, int, const QModelIndex, int destination_row);
     void create_pattern();

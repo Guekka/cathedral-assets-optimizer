@@ -8,9 +8,6 @@
 #include "ui_PatternsManagerWindow.h"
 #include "utils/utils.hpp"
 
-#include <btu/bsa/settings.hpp>
-#include <btu/modmanager/mod_manager.hpp>
-
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFormLayout>
@@ -24,7 +21,6 @@
 #include <algorithm>
 #include <filesystem>
 #include <iterator>
-#include <mutex>
 #include <stdexcept>
 #include <utility>
 
@@ -41,38 +37,6 @@ enum class MatchMode : int
 {
     return settings.pattern.text() == k_default_pattern.text();
 }
-
-struct CollectedModFiles
-{
-    std::vector<std::filesystem::path> files;
-    std::size_t skipped_archives = 0;
-};
-
-class FilePathVisitor final : public btu::modmanager::ModFolderIterator
-{
-public:
-    [[nodiscard]] auto archive_too_large(const btu::Path & /*archive_path*/,
-                                         ArchiveTooLargeState /*state*/) noexcept
-        -> ArchiveTooLargeAction override
-    {
-        const auto lock = std::scoped_lock(mutex_);
-        ++skipped_archives_;
-        return ArchiveTooLargeAction::Skip;
-    }
-
-    void process_file(const btu::modmanager::ModFile file) noexcept override
-    {
-        const auto lock = std::scoped_lock(mutex_);
-        files_.push_back(file.relative_path);
-    }
-
-    [[nodiscard]] auto take() -> CollectedModFiles { return {std::move(files_), skipped_archives_}; }
-
-private:
-    std::mutex mutex_;
-    std::vector<std::filesystem::path> files_;
-    std::size_t skipped_archives_ = 0;
-};
 
 class RuleEditorDialog final : public QDialog
 {
@@ -337,7 +301,7 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
             &PatternsManagerWindow::delete_current_pattern);
     connect(ui_->samplePathEdit, &QLineEdit::textChanged, this, [this] { update_sample_result(); });
 
-    connect(&preview_watcher_, &QFutureWatcher<PreviewScanResult>::finished, this, [this] {
+    connect(&preview_watcher_, &QFutureWatcher<FileRulePreviewScan>::finished, this, [this] {
         preview_scan_result_ = preview_watcher_.result();
         preview_state_ = preview_scan_result_.error.empty() ? PreviewState::Ready : PreviewState::Failed;
 
@@ -363,61 +327,11 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
         preview_watcher_.setFuture(QtConcurrent::run(
             [input_path  = profile.input_path,
              mode        = profile.optimization_mode,
-             target_game = profile.target_game] { return scan_input_files(input_path, mode, target_game); }));
+             target_game = profile.target_game] { return scan_file_rule_preview(input_path, mode, target_game); }));
     }
 }
 
 PatternsManagerWindow::~PatternsManagerWindow() = default;
-
-auto PatternsManagerWindow::scan_input_files(const btu::Path input_path,
-                                             const OptimizationMode mode,
-                                             const btu::Game target_game) -> PreviewScanResult
-{
-    auto result = PreviewScanResult{};
-
-    try
-    {
-        if (!std::filesystem::is_directory(input_path))
-        {
-            result.error = "The selected input path is not a folder.";
-            return result;
-        }
-
-        const auto bsa_settings      = btu::bsa::Settings::get(target_game);
-        const auto collect_mod_files = [&result, &bsa_settings](const btu::Path &mod_path) {
-            auto mod     = btu::modmanager::ModFolder(mod_path, bsa_settings);
-            auto visitor = FilePathVisitor{};
-            mod.iterate(visitor);
-
-            auto collected = visitor.take();
-            result.skipped_archives += collected.skipped_archives;
-            for (auto &file : collected.files)
-                result.files.push_back(std::move(file));
-        };
-
-        switch (mode)
-        {
-            case OptimizationMode::SingleMod: collect_mod_files(input_path); break;
-            case OptimizationMode::SeveralMods:
-                for (const auto &entry : std::filesystem::directory_iterator(input_path))
-                {
-                    if (entry.is_directory())
-                        collect_mod_files(entry.path());
-                }
-                break;
-        }
-
-        std::ranges::sort(result.files);
-    }
-    catch (const std::exception &error)
-    {
-        result.files.clear();
-        result.skipped_archives = 0;
-        result.error            = error.what();
-    }
-
-    return result;
-}
 
 void PatternsManagerWindow::update_patterns(const std::u8string_view selected_pattern)
 {
