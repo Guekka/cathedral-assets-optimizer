@@ -16,12 +16,13 @@ formats and defaults; using the wrong game can produce unsuitable results.
 Use **Options > Change level** to choose how much of CAO's configuration to show:
 
 - **Quick Optimize** uses default settings for common Skyrim LE/SSE porting tasks. It offers the SLE
-  and SSE profiles.
-- **Medium** adds BSA and texture settings.
-- **Advanced** exposes the full set of modules, profiles, and per-file patterns.
+  and SSE profiles, with a limited set of options.
+- **Medium** adds BSA and texture settings, along with profile selection.
+- **Advanced** exposes the full set of modules, profiles, and file rules.
 
-Medium and Advanced modes are intended for users who need to customize what CAO does. Hover over
-controls with a help cursor to read their tooltips.
+Quick Optimize uses CAO's built-in defaults and does not expose file-rule controls. Medium and
+Advanced modes are intended for users who need to customize what CAO does. Hover over controls with a
+help cursor to read their tooltips.
 
 ## Choose what to process
 
@@ -37,7 +38,7 @@ Enable **Dry run** and click **Run** to see which files would be affected withou
 optimizations. Review the progress log before running with Dry run disabled. A dry run is a preview,
 not a backup.
 
-## Profiles
+## Profiles and setting scope
 
 A profile stores the target game and the settings used for processing. In Medium and Advanced modes,
 use **Manage** beside the profile selector to create, remove, import, or export profiles. Select the
@@ -46,27 +47,43 @@ profile whose target game and settings match the mod.
 The selected profile is saved with CAO's settings. Export a profile if you want to share or keep a
 separate copy of its configuration.
 
-## Patterns and per-file settings
+In Advanced mode, the controls above the modules show which settings you are editing:
 
-Patterns let Advanced mode apply different settings to different relative file paths:
+- **Profile** selects the complete game profile.
+- **Default file settings** are the fallback used when no file rule matches. If there are no active
+  rules, these settings apply to all files.
+- **For matching files** means the settings belong to the selected rule and apply only when it is the
+  first matching rule.
 
-1. Select a pattern in the main window. The settings shown in the modules belong to that pattern.
-2. Open **Manage** beside the pattern selector to create, edit, reorder, or remove patterns.
-3. New patterns can use a glob pattern or a regular expression and can start with the settings of an
-   existing pattern.
-4. Double-click a pattern to edit its text. Its type (glob or regular expression) is chosen when it is
-   created and cannot be changed later.
-5. Drag patterns to reorder them.
+The **BSA (Profile-wide)** module is an exception to the file-settings selector: it configures BSA
+processing for the whole profile, even while a file rule is selected. Other file settings belong to
+the default settings or the selected rule, as shown by the scope label.
 
-CAO uses the first matching pattern in the manager list, from top to bottom. Put more specific patterns
-before broader ones. The default `*` pattern supplies settings for files not matched by another pattern.
-Changing settings while one pattern is selected changes that pattern, not every pattern in the profile.
+Medium mode edits **Default file settings**. Any file rules already in the profile still override
+those defaults for matching files; Medium shows how many are active. Switch to Advanced to review or
+edit the rules.
 
-For examples and details about matching and priority, see the [patterns guide](patterns.md).
+## File rules
+
+File rules let Advanced mode apply different settings to different relative file paths. Open **Manage
+rules** beside the file-settings selector to create, edit, reorder, or remove rules.
+
+1. Choose **New rule...** and select the recommended folder-and-extension match, or an advanced glob
+   or regular expression.
+2. Optionally name the rule and choose which existing settings to copy as a starting point.
+3. Drag rules to change their priority. Select a rule in the main window to edit its settings.
+4. Use the sample-path preview at the bottom of the manager to check which rule would apply to a
+   relative path.
+
+Rules are checked from top to bottom, and the first matching rule supplies the file settings. Rules
+do not merge settings. The **Everything else (default)** entry is the fallback for files that match
+no rule; it can be selected to edit **Default file settings**, but it is not managed as a rule.
+
+For examples and details about matching, scope, and priority, see the [file rules guide](patterns.md).
 
 ## BSA options
 
-In Medium or Advanced mode, the **BSA (General)** module controls archive processing:
+In Medium or Advanced mode, **BSA (Profile-wide)** controls archive processing for the profile:
 
 - **Extract BSAs** extracts archive contents. Existing loose files are not overwritten.
 - **Create BSAs** packs eligible loose files into archives.
@@ -74,8 +91,9 @@ In Medium or Advanced mode, the **BSA (General)** module controls archive proces
   remove files that were successfully packed.
 - **Do not compress files** disables compression for created archives.
 
-In Advanced mode, the **Pack file** setting on a pattern controls whether matching files are eligible
-for packing. Packing has no effect unless **Create BSAs** is enabled.
+The **Pack file** setting in the **BSA** module is a file setting: in Advanced mode, it belongs to the
+selected rule or the default fallback. It controls whether those files are eligible for packing.
+Packing has no effect unless **Create BSAs** is enabled in **BSA (Profile-wide)**.
 
 ## Progress and logs
 

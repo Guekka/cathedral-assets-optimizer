@@ -2,7 +2,7 @@
 
 Cathedral Assets Optimizer is a tool aiming to automate asset conversion and optimization for several Bethesda games, such as Skyrim and Skyrim Special Edition.
 
-**This page is for the in-development, experimental version of the tool. Documentation is likely outdated.**
+**This repository documents the in-development, experimental version of CAO. The interface and options may change between versions.**
 
 # Build instructions
 
@@ -41,12 +41,12 @@ See [the NexusMods page](https://www.nexusmods.com/skyrimspecialedition/mods/233
 
 # User guide
 
-For a guide to choosing a mode, processing mods, profiles, patterns, and BSA options, see the
+For a guide to choosing a mode, processing mods, profiles, file rules, and BSA options, see the
 [CAO user guide](docs/user-guide.md).
 
 Additional guides:
 
-- [Patterns](docs/patterns.md)
+- [File rules](docs/patterns.md)
 - [Porting a mod from Skyrim LE to SSE](docs/porting-skyrim-le-to-sse.md)
 
 # Command-line usage
