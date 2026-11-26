@@ -79,6 +79,16 @@ Rules are checked from top to bottom, and the first matching rule supplies the f
 do not merge settings. The **Everything else (default)** entry is the fallback for files that match
 no rule; it can be selected to edit **Default file settings**, but it is not managed as a rule.
 
+When an input folder is selected, the **What these rules affect** panel scans its files and shows
+how many each rule matches and actually handles. With **Several mods**, it scans each immediate
+subfolder as a separate mod. Select a rule to see example paths it handles and matching paths taken
+by earlier rules. The summary also shows how many files use the default fallback. Oversized archives
+that cannot be scanned are reported.
+
+This file-impact preview only checks rule matching. It is read-only, does not run optimizations, and
+does not change files. Use **Dry run** separately to preview processing steps in the progress log.
+The sample-path field checks any relative path you enter, whether or not that file is in the input.
+
 For examples and details about matching, scope, and priority, see the [file rules guide](patterns.md).
 
 ## BSA options
