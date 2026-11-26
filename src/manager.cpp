@@ -21,6 +21,7 @@
 
 #include <filesystem>
 #include <mutex>
+#include <tuple>
 #include <utility>
 namespace cao {
 
@@ -121,7 +122,10 @@ struct PluginInfo
 
 void Manager::unpack_directory(const std::filesystem::path &directory_path) const
 {
-    PLOG_INFO << fmt::format("Extracting archives in {}", directory_path.string());
+    const bool dry_run = settings_.current_profile().dry_run;
+    PLOG_INFO << fmt::format("{}Extracting archives in {}",
+                             dry_run ? "[Dry run] " : "",
+                             directory_path.string());
 
     const auto bsa_sets = get_bsa_settings(settings_);
     const auto archives = list_archive(directory_path, bsa_sets);
@@ -134,7 +138,15 @@ void Manager::unpack_directory(const std::filesystem::path &directory_path) cons
 
     emit files_counted(archives.size());
 
-    std::ranges::for_each(archives, [this](const btu::Path &entry) {
+    std::ranges::for_each(archives, [this, dry_run, &directory_path](const btu::Path &entry) {
+        if (dry_run)
+        {
+            // Preview only: never extract files or remove the archive.
+            std::ignore = preview_unpack_archive(entry, directory_path);
+            emit files_processed(entry, 1);
+            return;
+        }
+
         const auto res = unpack(btu::bsa::UnpackSettings{
             .file_path                = entry,
             .remove_arch              = true,
@@ -177,7 +189,8 @@ static void apply_plugin_info(Settings &sets, const PluginInfo &info)
 // TODO: think about adding files to existing BSAs
 void Manager::pack_directory(const std::filesystem::path &directory_path) const
 {
-    PLOG_INFO << fmt::format("Packing directory {}", directory_path.string());
+    const bool dry_run = settings_.current_profile().dry_run;
+    PLOG_INFO << fmt::format("{}Packing directory {}", dry_run ? "[Dry run] " : "", directory_path.string());
     emit files_counted(0);
     emit files_processed("archive packing", 0);
 
@@ -207,6 +220,13 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
             if (stop_token_.stop_requested())
                 return;
 
+            if (dry_run)
+            {
+                // Preview only: never write the archive or remove the loose files that compose it.
+                std::ignore = preview_pack_archive(directory_path, archive, bsa_sets, profile.bsa_remove_files);
+                return;
+            }
+
             try
             {
                 write_single_archive(directory_path,
@@ -221,8 +241,17 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
             }
         });
 
-    if (settings_.current_profile().bsa_make_dummy_plugins)
+    if (dry_run)
+    {
+        if (profile.bsa_make_dummy_plugins)
+        {
+            PLOGI << "Dry run: would create dummy plugins for the packed archives";
+        }
+    }
+    else if (profile.bsa_make_dummy_plugins)
+    {
         remake_dummy_plugins(directory_path, bsa_sets);
+    }
 }
 
 void Manager::emit_progress_rate_limited(const btu::Path &path)
@@ -354,8 +383,7 @@ void Manager::process_single_mod(const btu::Path &path)
     if (stop_token_.stop_requested())
         return;
 
-    if (settings_.current_profile().bsa_operation == BsaOperation::Extract
-        && !settings_.current_profile().dry_run)
+    if (settings_.current_profile().bsa_operation == BsaOperation::Extract)
         unpack_directory(mod.path());
 
     const auto size = mod.size();
@@ -371,8 +399,7 @@ void Manager::process_single_mod(const btu::Path &path)
     if (stop_token_.stop_requested())
         return;
 
-    if (settings_.current_profile().bsa_operation == BsaOperation::Create
-        && !settings_.current_profile().dry_run)
+    if (settings_.current_profile().bsa_operation == BsaOperation::Create)
         pack_directory(mod.path());
 }
 

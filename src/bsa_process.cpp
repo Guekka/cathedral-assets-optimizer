@@ -3,10 +3,12 @@
 #include <btu/bsa/pack.hpp>
 #include <btu/bsa/plugin.hpp>
 #include <btu/common/filesystem.hpp>
+#include <btu/common/string.hpp>
 #include <plog/Log.h>
 
 #include <format>
 #include <fstream>
+#include <unordered_set>
 
 /**
  * @brief Remove relative paths from a directory
@@ -63,6 +65,10 @@ void write_single_archive(const btu::Path &directory_path,
     {
         PLOGE << "Archive was written but cannot be opened, it is likely corrupted. Removing it.";
         btu::fs::remove(archive_path);
+
+        // Verification failed: leave the loose source files untouched and report failure instead of
+        // falling through to the removal logic below, which requires a verified archive.
+        return;
     }
 
     if (remove_files)
@@ -89,4 +95,87 @@ void write_single_archive(const btu::Path &directory_path,
             PLOGE << "Failed to create override file: " << res.error();
         }
     }
+}
+
+auto preview_pack_archive(const btu::Path &directory_path,
+                          btu::bsa::Archive &archive,
+                          const btu::bsa::Settings &bsa_sets,
+                          bool remove_files) noexcept -> BsaPackPreview
+{
+    BsaPackPreview preview;
+
+    const auto archive_path_opt = find_archive_name(directory_path, bsa_sets, archive.type());
+    preview.archive_path         = archive_path_opt.value_or(btu::Path{});
+
+    for (const auto &[relative_path, file] : archive)
+    {
+        preview.packed_files.emplace_back(relative_path);
+        PLOGI << std::format("Dry run: would pack file: {}", relative_path);
+    }
+
+    const auto archive_name = preview.archive_path.empty() ? std::string("<name unavailable>")
+                                                           : preview.archive_path.filename().string();
+    PLOGI << std::format("Dry run: would create archive {} with {} files{}",
+                         archive_name,
+                         preview.packed_files.size(),
+                         remove_files ? " and remove the packed loose files after verifying the archive"
+                                      : "");
+
+    return preview;
+}
+
+auto preview_unpack_archive(const btu::Path &archive_path, const btu::Path &directory_path) noexcept
+    -> BsaUnpackPreview
+{
+    BsaUnpackPreview preview;
+    preview.archive_path = archive_path;
+
+    auto archive = btu::bsa::Archive::read(archive_path);
+    if (!archive)
+    {
+        PLOGE << "Dry run: failed to open archive " << archive_path.string()
+             << " for preview. Reason: " << archive.error().message();
+        return preview;
+    }
+
+    std::vector<btu::Path> relative_paths;
+    relative_paths.reserve(archive->size());
+    for (const auto &[relative_path, file] : archive.value())
+        relative_paths.emplace_back(relative_path);
+
+    preview.total_files = relative_paths.size();
+
+    // find_matching_paths_icase matches the lowercase relative archive paths against the real,
+    // possibly differently-cased files already on disk, mirroring the real extraction's
+    // overwrite_existing_files = false behavior without writing anything.
+    const auto existing_real_paths = btu::common::find_matching_paths_icase(directory_path, relative_paths);
+
+    const auto to_lower_generic = [](const btu::Path &path) {
+        return std::string(btu::common::as_ascii(btu::common::to_lower(path.generic_u8string())));
+    };
+
+    std::unordered_set<std::string> colliding_relative_lower;
+    for (const auto &real_path : existing_real_paths)
+        colliding_relative_lower.insert(to_lower_generic(real_path.lexically_relative(directory_path)));
+
+    for (const auto &relative_path : relative_paths)
+    {
+        if (colliding_relative_lower.contains(to_lower_generic(relative_path)))
+        {
+            preview.colliding_files.push_back(directory_path / relative_path);
+            PLOGI << std::format("Dry run: would skip extracting {} (a file already exists at this location)",
+                                 relative_path.string());
+        }
+        else
+        {
+            PLOGI << std::format("Dry run: would extract {}", relative_path.string());
+        }
+    }
+
+    PLOGI << std::format("Dry run: archive {} contains {} files, {} would be skipped because they already exist",
+                         archive_path.filename().string(),
+                         preview.total_files,
+                         preview.colliding_files.size());
+
+    return preview;
 }
