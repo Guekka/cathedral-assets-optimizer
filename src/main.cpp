@@ -5,9 +5,9 @@
 
 #include "gui/MainWindow.hpp"
 #include "gui/utils/utils.hpp"
+#include "cli_profile.hpp"
 #include "logger.hpp"
 #include "manager.hpp"
-#include "settings/json.hpp"
 #include "settings/settings.hpp"
 #include "version.hpp"
 
@@ -104,15 +104,7 @@ auto main(int argc, char *argv[]) -> int
             if (load_from_json)
             {
                 const auto json_path = std::filesystem::path(cao::to_u8string(profile_name));
-                auto profile         = cao::json::read_from_file<cao::Profile>(json_path);
-                if (!profile)
-                {
-                    throw std::runtime_error(
-                        "Failed to load profile from JSON file: " + json_path.string()
-                        + ". Check that the file exists and has a valid profile format.");
-                }
-
-                cli_settings.current_profile() = std::move(*profile);
+                cli_settings.current_profile() = cao::cli::load_profile_from_json(json_path);
             }
             else if (!cli_settings.set_current_profile(cao::to_u8string(profile_name)))
             {
@@ -129,13 +121,9 @@ auto main(int argc, char *argv[]) -> int
                 for (qsizetype i = 1; i < positional_args.size(); ++i)
                 {
                     const auto &mod_path = positional_args.at(i);
-                    if (mod_path.isEmpty())
-                        throw std::runtime_error("Mod paths cannot be empty");
-
-                    auto mod_settings         = cli_settings;
-                    auto &profile             = mod_settings.current_profile();
-                    profile.input_path        = std::filesystem::path(cao::to_u8string(mod_path));
-                    profile.optimization_mode = cao::OptimizationMode::SingleMod;
+                    auto mod_settings = cli_settings;
+                    mod_settings.current_profile() = cao::cli::profile_for_mod_path(
+                        cli_settings.current_profile(), std::filesystem::path(cao::to_u8string(mod_path)));
 
                     cao::Manager manager;
                     manager.run_optimization(std::move(mod_settings), std::stop_token{});
