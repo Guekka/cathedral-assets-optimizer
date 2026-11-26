@@ -62,7 +62,8 @@ cmake --build build --config Debug --target Cathedral_Assets_Optimizer
 ## Linux with Nix
 
 The repository provides a Nix flake with the compiler, CMake, Ninja, vcpkg, Qt 6, and the supporting
-build tools. The Linux CMake preset uses the `x64-linux` vcpkg triplet.
+build tools. Use the `ninja-linux-prebuilt-qt` preset when using Qt from the Nix development shell; it
+uses the `x64-linux` vcpkg triplet and the Qt provided by Nix.
 
 ### Requirements
 
@@ -71,36 +72,44 @@ build tools. The Linux CMake preset uses the `x64-linux` vcpkg triplet.
 - Git
 
 You do not need to install CMake, Ninja, vcpkg, Qt, or the compiler separately; the development shell
-provides them. The command below enables Nix flakes for this invocation; if you enabled them globally,
-you can omit `--extra-experimental-features "nix-command flakes"`.
+provides them.
 
 ### Configure and build
 
 Clone the repository if you have not already, then run these commands from its root:
 
 ```sh
-nix --extra-experimental-features "nix-command flakes" develop --impure
+nix develop
 ```
 
 This opens a shell with the flake's development environment active. From that shell, configure and
 build CAO:
 
 ```sh
-cmake --preset ninja-linux
-cmake --build build
+cmake --preset ninja-linux-prebuilt-qt
+cmake --build build/ninja-linux-prebuilt-qt
 ```
 
 The CMake preset configures a Debug build with Ninja; the first configure/build may download
 dependencies through vcpkg and take some time. The executable target is `Cathedral_Assets_Optimizer`.
+Nix supplies Qt while vcpkg installs the remaining manifest dependencies.
 
 The Linux preset enables AddressSanitizer, UndefinedBehaviorSanitizer, and coverage instrumentation.
 
 If you use direnv, the repository's `.envrc` already enters this development shell. After installing
 and configuring direnv for your shell, run `direnv allow` from the repository root.
 
+If flakes are not enabled in your Nix configuration, enable the `nix-command` and `flakes` features
+for this invocation:
+
+```sh
+nix --extra-experimental-features "nix-command flakes" develop
+```
+
 ### Troubleshooting
 
 - If Nix reports that `nix-command` or `flakes` is experimental and disabled, enable both features in
   your Nix configuration and start a new shell.
-- If CMake cannot find vcpkg or Qt, make sure you entered the flake development shell before running
-  the CMake preset. The shell sets up `VCPKG_ROOT`, the Qt environment, and the overlay ports.
+- If CMake cannot find vcpkg or Qt, make sure you entered the flake development shell and use the
+  `ninja-linux-prebuilt-qt` preset. The shell sets up `VCPKG_ROOT`, `Qt6_DIR`, Qt's runtime
+  environment, and the prebuilt-Qt overlay ports.
