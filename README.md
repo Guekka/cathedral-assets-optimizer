@@ -58,7 +58,13 @@ provided, CAO processes each path as a single mod instead of using the profile's
 Cathedral_Assets_Optimizer --cli SSE "/path/to/Mod A" "/path/to/Mod B"
 ```
 
-If no mod paths are provided, CAO uses the selected profile's saved input path and optimization mode.
+To load a profile from a JSON file instead of the saved settings:
+
+```sh
+Cathedral_Assets_Optimizer --cli --json "/path/to/profile.json" "/path/to/Mod A"
+```
+
+If no mod paths are provided, CAO uses the selected profile's input path and optimization mode.
 
 # Credits
 
