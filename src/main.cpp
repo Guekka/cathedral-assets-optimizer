@@ -18,7 +18,6 @@
 #include <QLibraryInfo>
 #include <QMessageBox>
 #include <QTranslator>
-
 #include <filesystem>
 #include <utility>
 
@@ -64,8 +63,9 @@ auto main(int argc, char *argv[]) -> int
 
     QCommandLineParser parser;
     parser.addPositionalArgument("profile", "The profile name, or a JSON path when using --json");
-    parser.addPositionalArgument(
-        "modPaths", "Optional mod paths to process instead of the profile's input path", "[modPaths...]");
+    parser.addPositionalArgument("modPaths",
+                                 "Optional mod paths to process instead of the profile's input path",
+                                 "[modPaths...]");
     parser.addOption({"cli", "Do not run the GUI"});
     parser.addOption({"json", "Load the profile from a JSON file"});
     parser.process(*app);
@@ -95,9 +95,8 @@ auto main(int argc, char *argv[]) -> int
 
             if (profile_name.isEmpty())
             {
-                const auto message
-                    = load_from_json ? "Profile JSON path is required when using --json"
-                                     : "Profile name is required when using --cli";
+                const auto message = load_from_json ? "Profile JSON path is required when using --json"
+                                                    : "Profile name is required when using --cli";
                 throw std::runtime_error(message);
             }
 
@@ -105,11 +104,12 @@ auto main(int argc, char *argv[]) -> int
             if (load_from_json)
             {
                 const auto json_path = std::filesystem::path(cao::to_u8string(profile_name));
-                auto profile = cao::json::read_from_file<cao::Profile>(json_path);
+                auto profile         = cao::json::read_from_file<cao::Profile>(json_path);
                 if (!profile)
                 {
-                    throw std::runtime_error("Failed to load profile from JSON file: " + json_path.string()
-                                             + ". Check that the file exists and has a valid profile format.");
+                    throw std::runtime_error(
+                        "Failed to load profile from JSON file: " + json_path.string()
+                        + ". Check that the file exists and has a valid profile format.");
                 }
 
                 cli_settings.current_profile() = std::move(*profile);
@@ -132,9 +132,9 @@ auto main(int argc, char *argv[]) -> int
                     if (mod_path.isEmpty())
                         throw std::runtime_error("Mod paths cannot be empty");
 
-                    auto mod_settings = cli_settings;
-                    auto &profile = mod_settings.current_profile();
-                    profile.input_path = std::filesystem::path(cao::to_u8string(mod_path));
+                    auto mod_settings         = cli_settings;
+                    auto &profile             = mod_settings.current_profile();
+                    profile.input_path        = std::filesystem::path(cao::to_u8string(mod_path));
                     profile.optimization_mode = cao::OptimizationMode::SingleMod;
 
                     cao::Manager manager;
