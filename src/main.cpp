@@ -7,6 +7,7 @@
 #include "gui/utils/utils.hpp"
 #include "logger.hpp"
 #include "manager.hpp"
+#include "settings/json.hpp"
 #include "settings/settings.hpp"
 #include "version.hpp"
 
@@ -17,6 +18,8 @@
 #include <QLibraryInfo>
 #include <QMessageBox>
 #include <QTranslator>
+#include <filesystem>
+#include <utility>
 
 void init()
 {
@@ -59,8 +62,12 @@ auto main(int argc, char *argv[]) -> int
     init();
 
     QCommandLineParser parser;
-    parser.addPositionalArgument("profile", "The profile to use");
+    parser.addPositionalArgument("profile", "The profile name, or a JSON path when using --json");
+    parser.addPositionalArgument("modPaths",
+                                 "Optional mod paths to process instead of the profile's input path",
+                                 "[modPaths...]");
     parser.addOption({"cli", "Do not run the GUI"});
+    parser.addOption({"json", "Load the profile from a JSON file"});
     parser.process(*app);
 
     const bool cli = parser.isSet("cli");
@@ -82,14 +89,58 @@ auto main(int argc, char *argv[]) -> int
 
         if (cli)
         {
-            const auto profile_name = parser.positionalArguments().value(0);
+            const auto positional_args = parser.positionalArguments();
+            const auto profile_name    = positional_args.value(0);
+            const auto load_from_json  = parser.isSet("json");
 
-            auto profile = settings.get_profile(cao::to_u8string(profile_name));
-            if (!profile)
-                throw std::runtime_error("Profile not found");
+            if (profile_name.isEmpty())
+            {
+                const auto message = load_from_json ? "Profile JSON path is required when using --json"
+                                                    : "Profile name is required when using --cli";
+                throw std::runtime_error(message);
+            }
 
-            cao::Manager manager;
-            manager.run_optimization(settings, std::stop_token{}); // TODO: handle signals
+            auto cli_settings = settings;
+            if (load_from_json)
+            {
+                const auto json_path = std::filesystem::path(cao::to_u8string(profile_name));
+                auto profile         = cao::json::read_from_file<cao::Profile>(json_path);
+                if (!profile)
+                {
+                    throw std::runtime_error(
+                        "Failed to load profile from JSON file: " + json_path.string()
+                        + ". Check that the file exists and has a valid profile format.");
+                }
+
+                cli_settings.current_profile() = std::move(*profile);
+            }
+            else if (!cli_settings.set_current_profile(cao::to_u8string(profile_name)))
+            {
+                throw std::runtime_error("Profile not found: " + profile_name.toStdString());
+            }
+
+            if (positional_args.size() == 1)
+            {
+                cao::Manager manager;
+                manager.run_optimization(std::move(cli_settings), std::stop_token{}); // TODO: handle signals
+            }
+            else
+            {
+                for (qsizetype i = 1; i < positional_args.size(); ++i)
+                {
+                    const auto &mod_path = positional_args.at(i);
+                    if (mod_path.isEmpty())
+                        throw std::runtime_error("Mod paths cannot be empty");
+
+                    auto mod_settings         = cli_settings;
+                    auto &profile             = mod_settings.current_profile();
+                    profile.input_path        = std::filesystem::path(cao::to_u8string(mod_path));
+                    profile.optimization_mode = cao::OptimizationMode::SingleMod;
+
+                    cao::Manager manager;
+                    manager.run_optimization(std::move(mod_settings), std::stop_token{});
+                }
+            }
         }
         else
         {
