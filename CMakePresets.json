@@ -54,6 +54,10 @@
           "type": "STRING",
           "value": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
         },
+        "VCPKG_MANIFEST_FEATURES": {
+          "type": "STRING",
+          "value": "qt"
+        },
         "VCPKG_TARGET_TRIPLET": {
           "type": "STRING",
           "value": "x64-windows-static-md-coroutine-abi2"
@@ -78,7 +82,7 @@
         },
         "VCPKG_MANIFEST_FEATURES": {
           "type": "STRING",
-          "value": "tests"
+          "value": "tests;qt"
         },
         "VCPKG_TARGET_TRIPLET": {
           "type": "STRING",
@@ -129,6 +133,10 @@
     },
     {
       "cacheVariables": {
+        "VCPKG_MANIFEST_FEATURES": {
+          "type": "STRING",
+          "value": ""
+        },
         "Qt6_DIR": {
           "type": "PATH",
           "value": "$env{QT_ROOT_DIR}/lib/cmake/Qt6"
@@ -155,6 +163,10 @@
     {
       "binaryDir": "${sourceDir}/build/ninja-windows-prebuilt-qt",
       "cacheVariables": {
+        "VCPKG_MANIFEST_FEATURES": {
+          "type": "STRING",
+          "value": ""
+        },
         "Qt6_DIR": {
           "type": "PATH",
           "value": "$env{QT_ROOT_DIR}/lib/cmake/Qt6"
@@ -178,6 +190,10 @@
     {
       "binaryDir": "${sourceDir}/build/ninja-linux-prebuilt-qt",
       "cacheVariables": {
+        "VCPKG_MANIFEST_FEATURES": {
+          "type": "STRING",
+          "value": "tests"
+        },
         "Qt6_DIR": {
           "type": "PATH",
           "value": "$env{Qt6_DIR}"

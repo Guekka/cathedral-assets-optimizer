@@ -69,7 +69,7 @@ jobs:
       - name: Configure & Build
         working-directory: ${{ github.workspace }}/cao
         run: |
-          cmake --preset ninja-linux -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -Dcao_BUILD_DOCS=OFF
+          cmake --preset ninja-linux -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -Dcao_BUILD_DOCS=OFF -DVCPKG_MANIFEST_FEATURES=tests
           cmake --build build
 
       - name: Archive production artifacts
@@ -102,7 +102,7 @@ jobs:
       - name: (main) Configure & Build
         working-directory: ${{ github.workspace }}/cao
         run: |
-          cmake --preset ninja-windows -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -Dcao_BUILD_DOCS=OFF
+          cmake --preset ninja-windows -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -Dcao_BUILD_DOCS=OFF -DVCPKG_MANIFEST_FEATURES=
           cmake --build build
 
       - name: Archive production artifacts
