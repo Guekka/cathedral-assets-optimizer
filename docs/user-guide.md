@@ -51,18 +51,18 @@ separate copy of its configuration.
 Patterns let Advanced mode apply different settings to different relative file paths:
 
 1. Select a pattern in the main window. The settings shown in the modules belong to that pattern.
-2. Open **Manage** beside the pattern selector to create or remove patterns.
+2. Open **Manage** beside the pattern selector to create, edit, reorder, or remove patterns.
 3. New patterns can use a glob pattern or a regular expression and can start with the settings of an
    existing pattern.
 4. Double-click a pattern to edit its text. Its type (glob or regular expression) is chosen when it is
    created and cannot be changed later.
 5. Drag patterns to reorder them.
 
-CAO uses the first matching pattern. Put more specific patterns before broader ones; the default `*`
-pattern supplies settings for files not matched by another pattern. Changing settings while one pattern
-is selected changes that pattern, not every pattern in the profile.
+CAO uses the first matching pattern in the manager list, from top to bottom. Put more specific patterns
+before broader ones. The default `*` pattern supplies settings for files not matched by another pattern.
+Changing settings while one pattern is selected changes that pattern, not every pattern in the profile.
 
-Regular expressions are case-insensitive and match the entire normalized relative path.
+For examples and details about matching and priority, see the [patterns guide](patterns.md).
 
 ## BSA options
 
