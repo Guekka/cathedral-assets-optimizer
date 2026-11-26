@@ -1,0 +1,63 @@
+name: Main CI
+
+on:
+  pull_request:
+    branches: [ main,dev ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - '**/CMakeLists.txt'
+      - '**/CMakePresets.json'
+      - '**/cmake/**'
+      - '**/vcpkg.json'
+      - 'flake.lock'
+      - 'flake.nix'
+      - '.github/workflows/main_ci.yml'
+      - 'codecov.yml'
+
+  push:
+    branches: [ main,dev ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - '**/CMakeLists.txt'
+      - '**/CMakePresets.json'
+      - '**/cmake/**'
+      - '**/vcpkg.json'
+      - 'flake.lock'
+      - 'flake.nix'
+      - '.github/workflows/main_ci.yml'
+      - 'codecov.yml'
+    tags-ignore:
+      - '*'
+
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: cao
+
+      - uses: cachix/install-nix-action@v32.1.0
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure & Build
+        working-directory: ${{ github.workspace }}/cao
+        shell: 'nix develop -c bash -e {0}'
+        run: |
+          cmake --preset ninja-linux-prebuilt-qt -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          cmake --build build/ninja-linux-prebuilt-qt
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-linux-x64
+          path: |
+            ${{ github.workspace }}/cao/build/ninja-linux-prebuilt-qt/src/Cathedral_Assets_Optimizer

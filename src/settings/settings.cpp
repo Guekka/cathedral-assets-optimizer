@@ -87,8 +87,8 @@ auto Settings::make_base() noexcept -> Settings
 
 using SagoFunction = std::string (*)();
 
-[[nodiscard]] auto any_directory(SagoFunction func, const std::filesystem::path &default_path) noexcept
-    -> std::filesystem::path
+[[nodiscard]] auto any_directory(SagoFunction func,
+                                 const std::filesystem::path &default_path) noexcept -> std::filesystem::path
 {
     try
     {

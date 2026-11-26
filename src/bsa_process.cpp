@@ -5,16 +5,16 @@
 #include <btu/common/filesystem.hpp>
 #include <plog/Log.h>
 
-#include <fstream>
 #include <format>
+#include <fstream>
 
 /**
  * @brief Remove relative paths from a directory
  * Also removes directories made empty by the removal of the files
  * Remove the files case-insensitively (this is useful because the paths are lowercase)
  */
-static auto remove_files_from_directory(const btu::Path &directory, std::span<const btu::Path> paths) noexcept
-    -> size_t
+static auto remove_files_from_directory(const btu::Path &directory,
+                                        std::span<const btu::Path> paths) noexcept -> size_t
 {
     const auto files_to_remove = btu::common::find_matching_paths_icase(directory, paths);
 
@@ -73,7 +73,8 @@ void write_single_archive(const btu::Path &directory_path,
                                   .to<std::vector<btu::Path>>();
 
         // close the archive before removing the files. The new value is unused
-        written_archive.emplace(btu::bsa::Archive(btu::bsa::ArchiveVersion::fo3, btu::bsa::ArchiveType::Standard));
+        written_archive.emplace(
+            btu::bsa::Archive(btu::bsa::ArchiveVersion::fo3, btu::bsa::ArchiveType::Standard));
         const auto count = remove_files_from_directory(directory_path, relative_paths);
         PLOGI << std::format("Attempted to remove {} files, {} were removed", relative_paths.size(), count);
     }
@@ -82,11 +83,10 @@ void write_single_archive(const btu::Path &directory_path,
     {
         const auto override_path = std::move(archive_path).replace_extension(".override");
 
-        btu::common::write_file_new(override_path, {}).map_error([](const btu::common::Error &e) {
-            if (e == std::errc::file_exists)
-                return; // this is fine
-
-            PLOGE << "Failed to create override file: " << e;
-        });
+        auto res = btu::common::write_file_new(override_path, {});
+        if (!res.has_value() && res.error() != std::errc::file_exists) // we're good if file already exists
+        {
+            PLOGE << "Failed to create override file: " << res.error();
+        }
     }
 }

@@ -76,10 +76,6 @@
           "type": "BOOL",
           "value": "ON"
         },
-        "VCPKG_MANIFEST_FEATURES": {
-          "type": "STRING",
-          "value": "tests"
-        },
         "VCPKG_TARGET_TRIPLET": {
           "type": "STRING",
           "value": "x64-linux"
@@ -104,7 +100,7 @@
         "value": "x64"
       },
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "/EHsc /MP /W4"
+        "CMAKE_CXX_FLAGS": "/EHsc /MP /W4 /WX /external:anglebrackets /external:W0"
       },
       "generator": "Visual Studio 17 2022",
       "inherits": [
@@ -114,6 +110,18 @@
       ],
       "name": "vs2022-windows",
       "toolset": "v143"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "RelWithDebInfo"
+        }
+      },
+      "inherits": [
+        "ninja-windows"
+      ],
+      "name": "ninja-windows-relwithdebinfo"
     },
     {
       "cacheVariables": {
@@ -155,6 +163,18 @@
       "name": "ninja-windows-prebuilt-qt"
     },
     {
+      "cacheVariables": {
+        "BUILD_TESTING": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      },
+      "inherits": [
+        "vs2022-windows-prebuilt-qt"
+      ],
+      "name": "vs2022-windows-production"
+    },
+    {
       "generator": "Ninja",
       "inherits": [
         "cmake-dev",
@@ -176,6 +196,13 @@
         "ninja-linux"
       ],
       "name": "ninja-linux-prebuilt-qt"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "production",
+      "configurePreset": "vs2022-windows-production",
+      "configuration": "Release"
     }
   ],
   "version": 3

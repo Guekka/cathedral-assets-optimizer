@@ -4,9 +4,11 @@ on:
   pull_request:
     branches:
       - main
+      - dev
   push:
     branches:
       - main
+      - dev
     tags:
       - "v*"
   workflow_dispatch:
@@ -56,13 +58,13 @@ jobs:
       - name: Configure
         shell: pwsh
         run: |
-          cmake --preset vs2022-windows-prebuilt-qt
+          cmake --preset vs2022-windows-production
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build
         shell: pwsh
         run: |
-          cmake --build build --config Release --parallel
+          cmake --build --preset production --parallel
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $exe = Join-Path $env:GITHUB_WORKSPACE "build/src/Release/Cathedral_Assets_Optimizer.exe"
           if (-not (Test-Path $exe)) { throw "Build did not produce $exe" }
