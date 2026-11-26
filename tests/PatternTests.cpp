@@ -84,6 +84,29 @@ TEST_CASE("profiles apply the first matching simple file rule")
     CHECK(fallback.pattern.text() == k_default_pattern.text());
 }
 
+TEST_CASE("moving a file rule changes first-match priority")
+{
+    auto profile = Profile::make_base(btu::Game::SSE);
+
+    auto all_dds          = PerFileSettings::make_base(btu::Game::SSE);
+    all_dds.pattern       = Pattern::simple_rule({}, u8"dds", u8"All DDS textures");
+    auto interface_dds    = PerFileSettings::make_base(btu::Game::SSE);
+    interface_dds.pattern = Pattern::simple_rule(u8"textures/interface", u8"dds", u8"Interface textures");
+
+    profile.append_per_file_settings(std::move(all_dds));
+    profile.append_per_file_settings(std::move(interface_dds));
+
+    const auto interface_path = std::filesystem::path{u8"textures/interface/menu.dds"};
+    CHECK(profile.get_per_file_settings(interface_path).pattern.name() == u8"All DDS textures");
+
+    profile.move_per_file_settings(1, 0);
+
+    CHECK(profile.get_per_file_settings(interface_path).pattern.name() == u8"Interface textures");
+    CHECK(profile.get_per_file_settings(std::filesystem::path{u8"textures/landscape/ground.dds"})
+              .pattern.name()
+          == u8"All DDS textures");
+}
+
 TEST_CASE("non-advanced modes edit default settings, not the previously selected rule")
 {
     auto settings = Settings::make_base();
