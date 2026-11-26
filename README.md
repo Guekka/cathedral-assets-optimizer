@@ -29,6 +29,8 @@ All prebuilt-Qt presets use the checked-in `cmake/prebuilt-qt-ports` overlay. It
 
 See [the wiki](https://gitlab.com/G_ka/sse-assets-optimiser/wikis/Build-instructions).
 
+For detailed Windows and Linux/Nix build instructions, see [building CAO from source](docs/build.md).
+
 # CI distributions
 
 GitHub Actions uploads an executable-only artifact for successful builds. A manual workflow run with `package_only` enabled packages and reports the Windows bundle without publishing it. Pushing a `v*` tag creates a GitHub Release with a Windows bundle containing the Qt runtime DLLs and plugins, uploads that bundle as a new version of the CAO7 optional file on Nexus Mods, and attaches an optional Wine/Proton `icuuc.dll` forwarder zip. Configure the repository secret `NEXUSMODS_API_KEY` before tagging a release. For Wine or Proton, extract the forwarder's `icuuc.dll` beside the executable; do not use it for native Windows.
@@ -36,6 +38,16 @@ GitHub Actions uploads an executable-only artifact for successful builds. A manu
 # Features and use instructions
 
 See [the NexusMods page](https://www.nexusmods.com/skyrimspecialedition/mods/23316).
+
+# User guide
+
+For a guide to choosing a mode, processing mods, profiles, patterns, and BSA options, see the
+[CAO user guide](docs/user-guide.md).
+
+Additional guides:
+
+- [Patterns](docs/patterns.md)
+- [Porting a mod from Skyrim LE to SSE](docs/porting-skyrim-le-to-sse.md)
 
 # Credits
 
