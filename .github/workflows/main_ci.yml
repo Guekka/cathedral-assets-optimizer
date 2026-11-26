@@ -7,9 +7,11 @@ on:
       - '**/*.cpp'
       - '**/*.hpp'
       - '**/CMakeLists.txt'
-      - '**/CMakePresets.txt'
+      - '**/CMakePresets.json'
       - '**/cmake/**'
       - '**/vcpkg.json'
+      - 'flake.lock'
+      - 'flake.nix'
       - '.github/workflows/main_ci.yml'
       - 'codecov.yml'
 
@@ -19,9 +21,11 @@ on:
       - '**/*.cpp'
       - '**/*.hpp'
       - '**/CMakeLists.txt'
-      - '**/CMakePresets.txt'
+      - '**/CMakePresets.json'
       - '**/cmake/**'
       - '**/vcpkg.json'
+      - 'flake.lock'
+      - 'flake.nix'
       - '.github/workflows/main_ci.yml'
       - 'codecov.yml'
     tags-ignore:
@@ -31,83 +35,29 @@ on:
 
 env:
   BUILD_TYPE: Release
-  VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-cache
 
 jobs:
   linux:
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        config: [ gcc ]
-        include:
-          - config: gcc
-            version: '14'
-
     steps:
       - uses: actions/checkout@v4
         with:
           path: cao
 
-      - name: Set up GCC
-        uses: egor-tensin/setup-gcc@v1
+      - uses: cachix/install-nix-action@v32.1.0
         with:
-          version: ${{ matrix.version }}
-
-      - name: Setup Environment
-        run: |
-          echo "GCOV=gcov-${{ matrix.version }}" >> $GITHUB_ENV
-
-          sudo apt install ninja-build gcovr liblz4-dev zlib1g-dev -y
-
-      - name: Install Qt
-        uses: kidev/install-qt-action@v4.5.0
-
-      - uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgJsonGlob: ${{ github.workspace }}/cao/vcpkg.json
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure & Build
         working-directory: ${{ github.workspace }}/cao
+        shell: 'nix develop -c bash -e {0}'
         run: |
-          cmake --preset ninja-linux -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -Dcao_BUILD_DOCS=OFF -DVCPKG_MANIFEST_FEATURES=tests
-          cmake --build build
+          cmake --preset ninja-linux-prebuilt-qt -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          cmake --build build/ninja-linux-prebuilt-qt
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-linux-x64
           path: |
-            ${{ github.workspace }}/cao/build/src/Cathedral_Assets_Optimizer
-      
-
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          path: cao
-
-      - name: Install Qt
-        uses: kidev/install-qt-action@v4.5.0
-
-      - name: Setup MSVC (x64)
-        uses: egor-tensin/vs-shell@v2
-        with:
-          arch: x64
-
-      - uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgJsonGlob: '**/cao/vcpkg.json'
-
-      - name: (main) Configure & Build
-        working-directory: ${{ github.workspace }}/cao
-        run: |
-          cmake --preset ninja-windows -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -Dcao_BUILD_DOCS=OFF -DVCPKG_MANIFEST_FEATURES=
-          cmake --build build
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-windows-x64
-          path: |
-            ${{ github.workspace }}/cao/build/src/Cathedral_Assets_Optimizer.exe
+            ${{ github.workspace }}/cao/build/ninja-linux-prebuilt-qt/src/Cathedral_Assets_Optimizer

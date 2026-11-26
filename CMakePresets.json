@@ -82,7 +82,7 @@
         },
         "VCPKG_MANIFEST_FEATURES": {
           "type": "STRING",
-          "value": "tests;qt"
+          "value": "qt"
         },
         "VCPKG_TARGET_TRIPLET": {
           "type": "STRING",
@@ -192,7 +192,7 @@
       "cacheVariables": {
         "VCPKG_MANIFEST_FEATURES": {
           "type": "STRING",
-          "value": "tests"
+          "value": ""
         },
         "Qt6_DIR": {
           "type": "PATH",
