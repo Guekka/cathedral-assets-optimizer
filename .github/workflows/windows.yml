@@ -56,12 +56,7 @@ jobs:
       - name: Configure
         shell: pwsh
         run: |
-          $qtConfig = Join-Path $env:QT_ROOT_DIR "lib/cmake/Qt6"
-          $overlays = @(
-            (Join-Path $env:GITHUB_WORKSPACE "cmake/ports")
-            (Join-Path $env:GITHUB_WORKSPACE "cmake/prebuilt-qt-ports")
-          ) -join ";"
-          cmake --preset vs2022-windows "-DQt6_DIR=$qtConfig" "-DVCPKG_OVERLAY_PORTS=$overlays"
+          cmake --preset vs2022-windows-prebuilt-qt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build

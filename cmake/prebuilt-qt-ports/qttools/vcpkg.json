@@ -1,6 +1,6 @@
 {
   "name": "qttools",
-  "version-string": "6.8.3",
+  "version-string": "prebuilt",
   "description": "Qt tools provided by the preinstalled Qt SDK.",
   "features": {
     "linguist": {

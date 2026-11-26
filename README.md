@@ -15,7 +15,17 @@ cmake --preset ninja-windows-prebuilt-qt
 cmake --build build/ninja-windows-prebuilt-qt
 ```
 
-The regular `ninja-windows` preset continues to use vcpkg's Qt port.
+The regular `ninja-windows` and `ninja-linux` presets remain vcpkg-based; use a `*-prebuilt-qt` preset when Qt comes from an SDK or Nix.
+
+For a Linux build using the Qt packages provided by the Nix dev shell:
+
+```sh
+nix develop
+cmake --preset ninja-linux-prebuilt-qt
+cmake --build build/ninja-linux-prebuilt-qt
+```
+
+All prebuilt-Qt presets use the checked-in `cmake/prebuilt-qt-ports` overlay. Its vcpkg version is a shim marker; the actual Qt version comes from the SDK or Nix package.
 
 See [the wiki](https://gitlab.com/G_ka/sse-assets-optimiser/wikis/Build-instructions).
 

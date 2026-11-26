@@ -89,6 +89,16 @@
       "name": "linux"
     },
     {
+      "cacheVariables": {
+        "VCPKG_OVERLAY_PORTS": {
+          "type": "STRING",
+          "value": "${sourceDir}/cmake/ports;${sourceDir}/cmake/prebuilt-qt-ports"
+        }
+      },
+      "hidden": true,
+      "name": "prebuilt-qt"
+    },
+    {
       "architecture": {
         "strategy": "set",
         "value": "x64"
@@ -104,6 +114,19 @@
       ],
       "name": "vs2022-windows",
       "toolset": "v143"
+    },
+    {
+      "cacheVariables": {
+        "Qt6_DIR": {
+          "type": "PATH",
+          "value": "$env{QT_ROOT_DIR}/lib/cmake/Qt6"
+        }
+      },
+      "inherits": [
+        "prebuilt-qt",
+        "vs2022-windows"
+      ],
+      "name": "vs2022-windows-prebuilt-qt"
     },
     {
       "cacheVariables": {
@@ -123,13 +146,12 @@
         "Qt6_DIR": {
           "type": "PATH",
           "value": "$env{QT_ROOT_DIR}/lib/cmake/Qt6"
-        },
-        "VCPKG_OVERLAY_PORTS": {
-          "type": "STRING",
-          "value": "${sourceDir}/cmake/ports;${sourceDir}/cmake/prebuilt-qt-ports"
         }
       },
-      "inherits": "ninja-windows",
+      "inherits": [
+        "prebuilt-qt",
+        "ninja-windows"
+      ],
       "name": "ninja-windows-prebuilt-qt"
     },
     {
@@ -140,6 +162,20 @@
         "vcpkg"
       ],
       "name": "ninja-linux"
+    },
+    {
+      "binaryDir": "${sourceDir}/build/ninja-linux-prebuilt-qt",
+      "cacheVariables": {
+        "Qt6_DIR": {
+          "type": "PATH",
+          "value": "$env{Qt6_DIR}"
+        }
+      },
+      "inherits": [
+        "prebuilt-qt",
+        "ninja-linux"
+      ],
+      "name": "ninja-linux-prebuilt-qt"
     }
   ],
   "version": 3

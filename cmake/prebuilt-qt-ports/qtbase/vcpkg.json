@@ -1,6 +1,6 @@
 {
   "name": "qtbase",
-  "version-string": "6.8.3",
+  "version-string": "prebuilt",
   "description": "Qt provided by the preinstalled Qt SDK.",
   "features": {
     "gui": {
