@@ -2,6 +2,18 @@
 
 This guide covers the current development interface. Names and options may change between versions.
 
+## What CAO does and where it fits
+
+CAO automates processing of Bethesda mod assets for a selected game profile. It can convert or optimize
+meshes, textures, and animations, and extract or create game-specific BSA archives.
+
+CAO is often one step in a larger modding workflow. A modlist guide may use it for one task, such as
+creating BSAs, while other tools handle other assets. Follow the guide's stated folder, profile, and
+options rather than assuming CAO should process an entire modlist.
+
+CAO processes assets, not every part of a mod. A plugin that needs conversion may require separate
+Creation Kit work, and processed mods should be tested in game.
+
 ## Before processing
 
 CAO works on the directory you select and can modify or remove files there. It does not create a backup
