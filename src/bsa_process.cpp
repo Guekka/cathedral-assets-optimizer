@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <format>
+#include <string>
 
 /**
  * @brief Remove relative paths from a directory
@@ -37,32 +38,45 @@ static auto remove_files_from_directory(const btu::Path &directory, std::span<co
     return count;
 }
 
-void write_single_archive(const btu::Path &directory_path,
+auto write_single_archive(const btu::Path &directory_path,
                           btu::bsa::Archive &&archive,
                           const btu::bsa::Settings &bsa_sets,
                           const bool remove_files,
-                          const bool make_override)
+                          const bool make_override) -> std::optional<std::string>
 {
     const auto archive_path_opt = find_archive_name(directory_path, bsa_sets, archive.type());
     if (!archive_path_opt)
     {
         PLOGE << "Failed to find a name for the archive, skipping";
-        return;
+        return std::nullopt;
     }
     auto archive_path = std::move(archive_path_opt).value();
 
     if (const bool success = std::move(archive).write(archive_path); !success)
     {
         PLOGE << "Failed to write archive " << archive_path.string();
-        return;
+        return std::nullopt;
     }
 
     // we open the archive again to make sure the files are written
     auto written_archive = btu::bsa::Archive::read(archive_path);
     if (!written_archive)
     {
-        PLOGE << "Archive was written but cannot be opened, it is likely corrupted. Removing it.";
-        btu::fs::remove(archive_path);
+        std::error_code removal_error;
+        const bool removed = btu::fs::remove(archive_path, removal_error);
+        auto removal_status = std::string{"The rejected archive was removed."};
+        if (removal_error)
+            removal_status = std::format("The rejected archive could not be removed: {}",
+                                         removal_error.message());
+        else if (!removed)
+            removal_status = "The rejected archive was already absent.";
+
+        auto message = std::format("Could not verify generated archive {}: {}. {} Original files were kept.",
+                                   archive_path.string(),
+                                   written_archive.error().message(),
+                                   removal_status);
+        PLOGE << message;
+        return message;
     }
 
     if (remove_files)
@@ -89,4 +103,6 @@ void write_single_archive(const btu::Path &directory_path,
             PLOGE << "Failed to create override file: " << e;
         });
     }
+
+    return std::nullopt;
 }
