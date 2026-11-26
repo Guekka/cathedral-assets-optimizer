@@ -118,6 +118,21 @@
       "name": "ninja-windows"
     },
     {
+      "binaryDir": "${sourceDir}/build/ninja-windows-prebuilt-qt",
+      "cacheVariables": {
+        "Qt6_DIR": {
+          "type": "PATH",
+          "value": "$env{QT_ROOT_DIR}/lib/cmake/Qt6"
+        },
+        "VCPKG_OVERLAY_PORTS": {
+          "type": "STRING",
+          "value": "${sourceDir}/cmake/ports;${sourceDir}/cmake/prebuilt-qt-ports"
+        }
+      },
+      "inherits": "ninja-windows",
+      "name": "ninja-windows-prebuilt-qt"
+    },
+    {
       "generator": "Ninja",
       "inherits": [
         "cmake-dev",

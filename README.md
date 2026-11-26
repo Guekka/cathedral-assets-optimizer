@@ -6,6 +6,17 @@ Cathedral Assets Optimizer is a tool aiming to automate asset conversion and opt
 
 # Build instructions
 
+For a Windows Ninja build with a preinstalled Qt MSVC 2022 SDK, open a Visual Studio 2022 Developer PowerShell and set `QT_ROOT_DIR` to the SDK root. Set `VCPKG_ROOT` to the repository's vcpkg checkout, then run:
+
+```powershell
+$env:QT_ROOT_DIR = 'C:\Qt\6.8.3\msvc2022_64'
+$env:VCPKG_ROOT = "$PWD\vcpkg"
+cmake --preset ninja-windows-prebuilt-qt
+cmake --build build/ninja-windows-prebuilt-qt
+```
+
+The regular `ninja-windows` preset continues to use vcpkg's Qt port.
+
 See [the wiki](https://gitlab.com/G_ka/sse-assets-optimiser/wikis/Build-instructions).
 
 # CI distributions
