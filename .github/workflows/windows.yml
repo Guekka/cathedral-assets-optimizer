@@ -69,12 +69,6 @@ jobs:
           $exe = Join-Path $env:GITHUB_WORKSPACE "build/src/Release/Cathedral_Assets_Optimizer.exe"
           if (-not (Test-Path $exe)) { throw "Build did not produce $exe" }
 
-      - name: Test
-        shell: pwsh
-        run: |
-          ctest --test-dir build -C Release --output-on-failure
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
       - uses: actions/upload-artifact@v4
         with:
           name: cao-exe

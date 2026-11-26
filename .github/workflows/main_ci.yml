@@ -55,6 +55,24 @@ jobs:
           cmake --preset ninja-linux-prebuilt-qt -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
           cmake --build build/ninja-linux-prebuilt-qt
 
+      - name: Test
+        id: test
+        working-directory: ${{ github.workspace }}/cao
+        shell: 'nix develop -c bash -e {0}'
+        run: |
+          ctest --test-dir build/ninja-linux-prebuilt-qt --output-on-failure
+          echo "gcov_executable=$(command -v gcov)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload coverage to Codecov
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: linux
+          fail_ci_if_error: true
+          gcov_executable: ${{ steps.test.outputs.gcov_executable }}
+          working-directory: ${{ github.workspace }}/cao
+
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
