@@ -1,7 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include <doctest/doctest.h>
-
 #include "cli_profile.hpp"
+
+#include <doctest/doctest.h>
 
 #include <chrono>
 #include <filesystem>
@@ -26,10 +26,7 @@ public:
         std::filesystem::remove(path_, error);
     }
 
-    [[nodiscard]] auto path() const -> const std::filesystem::path &
-    {
-        return path_;
-    }
+    [[nodiscard]] auto path() const -> const std::filesystem::path & { return path_; }
 
 private:
     std::filesystem::path path_;
@@ -42,11 +39,11 @@ TEST_CASE("JSON profile loading preserves profile values")
     TemporaryFile json_file;
 
     cao::Profile expected;
-    expected.dry_run            = true;
-    expected.gpu_index          = 3;
-    expected.optimization_mode  = cao::OptimizationMode::SeveralMods;
-    expected.target_game        = btu::Game::FNV;
-    expected.input_path         = std::filesystem::path("saved-mods");
+    expected.dry_run           = true;
+    expected.gpu_index         = 3;
+    expected.optimization_mode = cao::OptimizationMode::SeveralMods;
+    expected.target_game       = btu::Game::FNV;
+    expected.input_path        = std::filesystem::path("saved-mods");
 
     REQUIRE(cao::json::save_to_file(nlohmann::json(expected), json_file.path()));
 
@@ -100,6 +97,5 @@ TEST_CASE("per-mod profiles are isolated copies with single-mod mode")
 TEST_CASE("per-mod profile rejects an empty path")
 {
     const cao::Profile source;
-    CHECK_THROWS_AS(static_cast<void>(cao::cli::profile_for_mod_path(source, {})),
-                    std::runtime_error);
+    CHECK_THROWS_AS(static_cast<void>(cao::cli::profile_for_mod_path(source, {})), std::runtime_error);
 }

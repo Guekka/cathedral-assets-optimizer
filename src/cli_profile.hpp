@@ -24,7 +24,7 @@ namespace cao::cli {
 }
 
 [[nodiscard]] inline auto profile_for_mod_path(const Profile &source,
-                                              const std::filesystem::path &mod_path) -> Profile
+                                               const std::filesystem::path &mod_path) -> Profile
 {
     if (mod_path.empty())
         throw std::runtime_error("Mod paths cannot be empty");

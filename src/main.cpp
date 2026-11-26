@@ -3,9 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "cli_profile.hpp"
 #include "gui/MainWindow.hpp"
 #include "gui/utils/utils.hpp"
-#include "cli_profile.hpp"
 #include "logger.hpp"
 #include "manager.hpp"
 #include "settings/settings.hpp"
@@ -103,7 +103,7 @@ auto main(int argc, char *argv[]) -> int
             auto cli_settings = settings;
             if (load_from_json)
             {
-                const auto json_path = std::filesystem::path(cao::to_u8string(profile_name));
+                const auto json_path           = std::filesystem::path(cao::to_u8string(profile_name));
                 cli_settings.current_profile() = cao::cli::load_profile_from_json(json_path);
             }
             else if (!cli_settings.set_current_profile(cao::to_u8string(profile_name)))
@@ -121,9 +121,10 @@ auto main(int argc, char *argv[]) -> int
                 for (qsizetype i = 1; i < positional_args.size(); ++i)
                 {
                     const auto &mod_path = positional_args.at(i);
-                    auto mod_settings = cli_settings;
-                    mod_settings.current_profile() = cao::cli::profile_for_mod_path(
-                        cli_settings.current_profile(), std::filesystem::path(cao::to_u8string(mod_path)));
+                    auto mod_settings    = cli_settings;
+                    mod_settings.current_profile()
+                        = cao::cli::profile_for_mod_path(cli_settings.current_profile(),
+                                                         std::filesystem::path(cao::to_u8string(mod_path)));
 
                     cao::Manager manager;
                     manager.run_optimization(std::move(mod_settings), std::stop_token{});
