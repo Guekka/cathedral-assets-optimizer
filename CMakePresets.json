@@ -121,7 +121,7 @@
       "inherits": [
         "ninja-windows"
       ],
-      "name": "ninja-windows-release"
+      "name": "ninja-windows-relwithdebinfo"
     },
     {
       "cacheVariables": {
@@ -163,6 +163,18 @@
       "name": "ninja-windows-prebuilt-qt"
     },
     {
+      "cacheVariables": {
+        "BUILD_TESTING": {
+          "type": "BOOL",
+          "value": "OFF"
+        }
+      },
+      "inherits": [
+        "vs2022-windows-prebuilt-qt"
+      ],
+      "name": "vs2022-windows-production"
+    },
+    {
       "generator": "Ninja",
       "inherits": [
         "cmake-dev",
@@ -184,6 +196,13 @@
         "ninja-linux"
       ],
       "name": "ninja-linux-prebuilt-qt"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "production",
+      "configurePreset": "vs2022-windows-production",
+      "configuration": "Release"
     }
   ],
   "version": 3
