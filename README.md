@@ -6,7 +6,32 @@ Cathedral Assets Optimizer is a tool aiming to automate asset conversion and opt
 
 # Build instructions
 
+For a Windows Ninja build with a preinstalled Qt MSVC 2022 SDK, open a Visual Studio 2022 Developer PowerShell and set `QT_ROOT_DIR` to the SDK root. Set `VCPKG_ROOT` to the repository's vcpkg checkout, then run:
+
+```powershell
+$env:QT_ROOT_DIR = 'C:\Qt\6.8.3\msvc2022_64'
+$env:VCPKG_ROOT = "$PWD\vcpkg"
+cmake --preset ninja-windows-prebuilt-qt
+cmake --build build/ninja-windows-prebuilt-qt
+```
+
+The regular `ninja-windows` and `ninja-linux` presets remain vcpkg-based; use a `*-prebuilt-qt` preset when Qt comes from an SDK or Nix.
+
+For a Linux build using the Qt packages provided by the Nix dev shell:
+
+```sh
+nix develop
+cmake --preset ninja-linux-prebuilt-qt
+cmake --build build/ninja-linux-prebuilt-qt
+```
+
+All prebuilt-Qt presets use the checked-in `cmake/prebuilt-qt-ports` overlay. Its vcpkg version is a shim marker; the actual Qt version comes from the SDK or Nix package.
+
 See [the wiki](https://gitlab.com/G_ka/sse-assets-optimiser/wikis/Build-instructions).
+
+# CI distributions
+
+GitHub Actions uploads an executable-only artifact for successful builds. A manual workflow run with `package_only` enabled packages and reports the Windows bundle without publishing it. Pushing a `v*` tag creates a GitHub Release with a Windows bundle containing the Qt runtime DLLs and plugins, uploads that bundle as a new version of the CAO7 optional file on Nexus Mods, and attaches an optional Wine/Proton `icuuc.dll` forwarder zip. Configure the repository secret `NEXUSMODS_API_KEY` before tagging a release. For Wine or Proton, extract the forwarder's `icuuc.dll` beside the executable; do not use it for native Windows.
 
 # Features and use instructions
 

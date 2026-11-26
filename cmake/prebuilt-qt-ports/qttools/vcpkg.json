@@ -1,0 +1,10 @@
+{
+  "name": "qttools",
+  "version-string": "prebuilt",
+  "description": "Qt tools provided by the preinstalled Qt SDK.",
+  "features": {
+    "linguist": {
+      "description": "Provided by the preinstalled Qt SDK."
+    }
+  }
+}

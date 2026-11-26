@@ -1,0 +1,191 @@
+name: Windows build
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      package_only:
+        description: Deploy and inspect the Windows bundle without publishing it
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  QT_VERSION: "6.8.3"
+  QT_ARCH: win64_msvc2022_64
+
+jobs:
+  build:
+    runs-on: windows-2022
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: ${{ env.QT_ARCH }}
+          cache: true
+
+      - name: Install pkg-config for vcpkg
+        shell: pwsh
+        run: |
+          choco install pkgconfiglite --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $pkgConfig = Get-Command pkg-config -ErrorAction Stop
+          "PKG_CONFIG=$($pkgConfig.Source)" >> $env:GITHUB_ENV
+
+      - uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: ${{ env.VCPKG_ROOT }}
+          vcpkgJsonGlob: vcpkg.json
+
+      - uses: crazy-max/ghaction-github-runtime@v4
+
+      - name: Configure
+        shell: pwsh
+        run: |
+          cmake --preset vs2022-windows-prebuilt-qt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build
+        shell: pwsh
+        run: |
+          cmake --build build --config Release --parallel
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $exe = Join-Path $env:GITHUB_WORKSPACE "build/src/Release/Cathedral_Assets_Optimizer.exe"
+          if (-not (Test-Path $exe)) { throw "Build did not produce $exe" }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cao-exe
+          path: build/src/Release/Cathedral_Assets_Optimizer.exe
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.package_only)
+    needs: build
+    runs-on: windows-2022
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: cao-exe
+          path: ${{ runner.temp }}/cao-exe
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: ${{ env.QT_ARCH }}
+          cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Deploy Qt runtime and package release
+        id: package
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:RUNNER_TEMP "cao-exe/Cathedral_Assets_Optimizer.exe"
+          $bundle = Join-Path $env:RUNNER_TEMP "cao-bundle"
+          $qtDeploy = Join-Path $env:QT_ROOT_DIR "bin/windeployqt.exe"
+          if (-not (Test-Path $exe)) { throw "Downloaded executable not found: $exe" }
+          if (-not (Test-Path $qtDeploy)) { throw "windeployqt not found: $qtDeploy" }
+
+          New-Item -ItemType Directory -Force -Path $bundle | Out-Null
+          Copy-Item $exe $bundle
+          $bundledExe = Join-Path $bundle "Cathedral_Assets_Optimizer.exe"
+          & $qtDeploy --release --compiler-runtime --no-opengl-sw --no-system-d3d-compiler `
+            --skip-plugin-types "generic,iconengines,imageformats,networkinformation,tls" `
+            --translations "de,en,es,fr,ja,ko,nl,ru,tr,zh_CN" --dir $bundle $bundledExe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          foreach ($dll in @("Qt6Core.dll", "Qt6Gui.dll", "Qt6Widgets.dll")) {
+            if (-not (Test-Path (Join-Path $bundle $dll))) {
+              throw "Qt deployment did not include $dll"
+            }
+          }
+          if (-not (Get-ChildItem -Path $bundle -Filter "qwindows.dll" -File -Recurse)) {
+            throw "Qt deployment did not include the Windows platform plugin"
+          }
+
+          $files = @(Get-ChildItem -Path $bundle -File -Recurse | Sort-Object FullName)
+          $dlls = @($files | Where-Object { $_.Extension -ieq ".dll" })
+          $totalBytes = ($files | Measure-Object -Property Length -Sum).Sum
+          Write-Host "Deployed bundle: $($files.Count) files, $([math]::Round($totalBytes / 1MB, 1)) MiB expanded"
+          Write-Host "Deployed DLLs ($($dlls.Count)):"
+          $dlls | ForEach-Object { Write-Host "$($_.FullName) ($($_.Length) bytes)" }
+          $icuuc = @($dlls | Where-Object { $_.Name -ieq "icuuc.dll" })
+          if ($icuuc.Count -eq 0) {
+            Write-Host "No app-local icuuc.dll was deployed"
+          } else {
+            Write-Host "App-local ICU DLL: $($icuuc[0].FullName) ($($icuuc[0].Length) bytes)"
+          }
+
+          if ($env:GITHUB_REF.StartsWith("refs/tags/v")) {
+            $tag = $env:GITHUB_REF_NAME
+          } else {
+            $tag = "package-only"
+          }
+          $bundleZip = Join-Path $env:RUNNER_TEMP "Cathedral_Assets_Optimizer-$tag-windows-x64.zip"
+          Compress-Archive -Path (Join-Path $bundle "*") -DestinationPath $bundleZip -CompressionLevel Optimal
+
+          $wineDir = Join-Path $env:RUNNER_TEMP "wine-icuuc-forwarder"
+          New-Item -ItemType Directory -Force -Path $wineDir | Out-Null
+          $wineDll = Join-Path $wineDir "icuuc.dll"
+          python tools/make_wine_icuuc_forwarder.py $wineDll
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ((Get-Item $wineDll).Length -ne 2048) { throw "Unexpected Wine forwarder size" }
+          Copy-Item "tools/wine-icuuc-forwarder/README.md" (Join-Path $wineDir "README.md")
+          $wineZip = Join-Path $env:RUNNER_TEMP "Cathedral_Assets_Optimizer-$tag-wine-icuuc-forwarder.zip"
+          Compress-Archive -Path (Join-Path $wineDir "*") -DestinationPath $wineZip -CompressionLevel Optimal
+
+          "BUNDLE_ZIP=$bundleZip" >> $env:GITHUB_ENV
+          "WINE_ZIP=$wineZip" >> $env:GITHUB_ENV
+          "bundle_zip=$bundleZip" >> $env:GITHUB_OUTPUT
+          "nexus_version=$($tag -replace '^v', '')" >> $env:GITHUB_OUTPUT
+
+      - name: Publish GitHub release assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $env:BUNDLE_ZIP $env:WINE_ZIP --clobber
+          } else {
+            gh release create $tag $env:BUNDLE_ZIP $env:WINE_ZIP `
+              --title "Cathedral Assets Optimizer $tag" `
+              --generate-notes `
+              --verify-tag
+          }
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload Windows bundle to Nexus Mods
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: Nexus-Mods/upload-action@98532f7670c27cbecc78fae03fa3e278147827e2
+        with:
+          api_key: ${{ secrets.NEXUSMODS_API_KEY }}
+          file_id: "734557"
+          filename: ${{ steps.package.outputs.bundle_zip }}
+          version: ${{ steps.package.outputs.nexus_version }}
+          display_name: "Cathedral Assets Optimizer ${{ steps.package.outputs.nexus_version }} (Windows x64)"
+          category: optional

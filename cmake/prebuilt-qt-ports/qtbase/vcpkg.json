@@ -1,0 +1,16 @@
+{
+  "name": "qtbase",
+  "version-string": "prebuilt",
+  "description": "Qt provided by the preinstalled Qt SDK.",
+  "features": {
+    "gui": {
+      "description": "Provided by the preinstalled Qt SDK."
+    },
+    "png": {
+      "description": "Provided by the preinstalled Qt SDK."
+    },
+    "widgets": {
+      "description": "Provided by the preinstalled Qt SDK."
+    }
+  }
+}
