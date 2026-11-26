@@ -152,7 +152,7 @@ jobs:
           python tools/make_wine_icuuc_forwarder.py $wineDll
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           if ((Get-Item $wineDll).Length -ne 2048) { throw "Unexpected Wine forwarder size" }
-          Copy-Item "tools/wine-icuuc-forwarder/README.txt" (Join-Path $wineDir "README.txt")
+          Copy-Item "tools/wine-icuuc-forwarder/README.md" (Join-Path $wineDir "README.md")
           $wineZip = Join-Path $env:RUNNER_TEMP "Cathedral_Assets_Optimizer-$tag-wine-icuuc-forwarder.zip"
           Compress-Archive -Path (Join-Path $wineDir "*") -DestinationPath $wineZip -CompressionLevel Optimal
 
