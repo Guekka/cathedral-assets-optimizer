@@ -10,7 +10,50 @@
 #include <flux.hpp>
 #include <sago/platform_folders.h>
 
+#include <stdexcept>
+#include <utility>
+
 namespace cao {
+
+auto RunContext::from_profile(const Profile &profile) -> RunContext
+{
+    return {profile.input_path, profile.optimization_mode, profile.dry_run};
+}
+
+void RunContext::apply_to(Profile &profile) const
+{
+    profile.input_path        = input_path;
+    profile.optimization_mode = optimization_mode;
+    profile.dry_run           = dry_run;
+}
+
+void to_json(nlohmann::json &json, const Settings &settings)
+{
+    auto profiles = settings.profiles_;
+    // Keep the selected profile's legacy fields synchronized for older CAO versions.
+    if (!profiles.empty())
+        settings.run_context.apply_to(profiles.at(settings.current_profile_index_).second);
+
+    json = {
+        {"gui", settings.gui},
+        {"profiles_", std::move(profiles)},
+        {"current_profile_index_", settings.current_profile_index_},
+        {"run_context", settings.run_context},
+    };
+}
+
+void from_json(const nlohmann::json &json, Settings &settings)
+{
+    json.at("gui").get_to(settings.gui);
+    json.at("profiles_").get_to(settings.profiles_);
+    json.at("current_profile_index_").get_to(settings.current_profile_index_);
+
+    if (const auto run_context = json.find("run_context"); run_context != json.end())
+        run_context->get_to(settings.run_context);
+    else
+        // Older settings files stored run context on the selected profile.
+        settings.run_context = RunContext::from_profile(settings.current_profile());
+}
 
 void Settings::create_profile(std::u8string profile_name, Profile base_profile) noexcept
 {
@@ -81,6 +124,7 @@ auto Settings::make_base() noexcept -> Settings
         {u8"Starfield", Profile::make_base(btu::Game::Starfield)},
     };
     settings.current_profile_index_ = 0;
+    settings.run_context            = RunContext::from_profile(settings.current_profile());
 
     return settings;
 }
@@ -125,13 +169,31 @@ auto Settings::list_profiles() const noexcept -> std::vector<std::u8string_view>
 auto load_settings() -> Settings
 {
     const auto settings_file = Settings::config_directory() / "settings.json";
-    return json::read_from_file<Settings>(settings_file).value_or(Settings::make_base());
+    if (!std::filesystem::exists(settings_file))
+        return Settings::make_base();
+
+    auto settings = json::read_from_file<Settings>(settings_file);
+    if (!settings)
+        throw std::runtime_error("Could not load settings file; it has been left unchanged: "
+                                 + settings_file.string());
+
+    return std::move(*settings);
 }
 
 auto save_settings(const Settings &settings) -> bool
 {
     const auto settings_file = Settings::config_directory() / "settings.json";
     return json::save_to_file(settings, settings_file);
+}
+
+auto make_run_settings(const Settings &settings, std::optional<Profile> profile_override) -> Settings
+{
+    auto run_settings = settings;
+    if (profile_override)
+        run_settings.current_profile() = std::move(*profile_override);
+
+    run_settings.run_context.apply_to(run_settings.current_profile());
+    return run_settings;
 }
 
 auto current_per_file_settings(Settings &sets) -> PerFileSettings &

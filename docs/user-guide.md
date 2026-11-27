@@ -31,6 +31,8 @@ parent directory: CAO processes each immediate subdirectory as a separate mod. C
 directory has the layout you intend before running.
 
 Use **Open Directory** to choose the input path. The path can also be entered directly in the field.
+The input path, **One mod/Several mods** choice, and Dry run setting are shared run context; changing
+profiles does not change them.
 
 ## Preview with Dry run
 
@@ -40,7 +42,7 @@ not a backup.
 
 ## Profiles and setting scope
 
-A profile stores the target game and the settings used for processing. In Medium and Advanced modes,
+A profile stores the target game and reusable asset-processing settings. In Medium and Advanced modes,
 use **Manage** beside the profile selector to create, remove, import, or export profiles. Select the
 profile whose target game and settings match the mod.
 

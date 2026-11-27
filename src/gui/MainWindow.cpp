@@ -165,27 +165,11 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
 {
     settings.gui.gui_theme = ui.actionEnableDarkTheme->isChecked() ? GuiTheme::Dark : GuiTheme::Light;
 
-    switch (settings.gui.gui_mode)
-    {
-        case GuiMode::QuickOptimize:
-        {
-            if (ui.profiles->currentText() == "SLE")
-                settings.current_profile() = Profile::make_base(btu::Game::SLE);
-            else if (ui.profiles->currentText() == "SSE")
-                settings.current_profile() = Profile::make_base(btu::Game::SSE);
-            else
-                throw UiException("Invalid profile selected");
-            break;
-        }
-        case GuiMode::Medium:
-        case GuiMode::Advanced: break; // nothing to do
-    }
-
-    settings.current_profile().input_path        = ui.inputDirTextEdit->text().toStdString();
-    settings.current_profile().dry_run           = ui.dryRunCheckBox->isChecked();
-    settings.current_profile().mods_blacklist    = {}; // TODO
-    settings.current_profile().optimization_mode = ui.modeChooserComboBox->currentData()
-                                                       .value<OptimizationMode>();
+    settings.run_context.input_path        = ui.inputDirTextEdit->text().toStdString();
+    settings.run_context.dry_run           = ui.dryRunCheckBox->isChecked();
+    settings.run_context.optimization_mode = ui.modeChooserComboBox->currentData()
+                                                 .value<OptimizationMode>();
+    settings.current_profile().mods_blacklist = {}; // TODO
 
     // has to be last because may rely on GuiSettings being already filled
     for (const auto *module : module_display.get_modules())
@@ -201,9 +185,9 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
 
     set_gui_level(module_display, ui, settings);
 
-    ui.inputDirTextEdit->setText(to_qstring(settings.current_profile().input_path.u8string()));
-    ui.dryRunCheckBox->setChecked(settings.current_profile().dry_run);
-    bool success = select_data(*ui.modeChooserComboBox, settings.current_profile().optimization_mode);
+    ui.inputDirTextEdit->setText(to_qstring(settings.run_context.input_path.u8string()));
+    ui.dryRunCheckBox->setChecked(settings.run_context.dry_run);
+    bool success = select_data(*ui.modeChooserComboBox, settings.run_context.optimization_mode);
     show_message_box_on_failure(success);
 
     const auto profiles = [&settings]() -> std::vector<std::u8string_view> {
@@ -380,19 +364,20 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 [[nodiscard]] auto check_settings(const Settings &settings) noexcept -> bool
 {
     const auto &profile = settings.current_profile();
+    const auto &context = settings.run_context;
 
-    if (profile.input_path.empty())
+    if (context.input_path.empty())
     {
         QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("The input path is empty"));
         return false;
     }
 
-    if (!exists(profile.input_path))
+    if (!exists(context.input_path))
     {
         QMessageBox::critical(nullptr,
                               QObject::tr("Error"),
                               QObject::tr("The input path %1 does not exist")
-                                  .arg(to_qstring(profile.input_path.u8string())));
+                                  .arg(to_qstring(context.input_path.u8string())));
         return false;
     }
 
@@ -416,37 +401,56 @@ void MainWindow::init_process()
 {
     save_settings();
 
-    if (!check_settings(settings_))
-        return;
+    auto quick_profile = std::optional<Profile>{};
+    if (settings_.gui.gui_mode == GuiMode::QuickOptimize)
+    {
+        const auto selected_profile = ui_->profiles->currentText();
+        if (selected_profile == "SLE")
+            quick_profile = Profile::make_base(btu::Game::SLE);
+        else if (selected_profile == "SSE")
+            quick_profile = Profile::make_base(btu::Game::SSE);
+        else
+        {
+            QMessageBox::critical(this, tr("Error"), tr("Invalid game selected for Quick Optimize."));
+            return;
+        }
+    }
 
     try
     {
+        auto run_settings = make_run_settings(settings_, std::move(quick_profile));
+        if (!check_settings(run_settings))
+            return;
+
         progress_window_ = std::make_unique<ProgressWindow>(
             LogReader(Settings::state_directory() / k_log_file_name));
 
-        cao_process_ = std::jthread([this](std::stop_token &&stop_token) mutable {
-            auto manager = Manager();
+        cao_process_ = std::jthread(
+            [this, run_settings = std::move(run_settings)](std::stop_token &&stop_token) mutable {
+                auto manager = Manager();
 
-            connect(&manager, &Manager::files_counted, progress_window_.get(), &ProgressWindow::set_maximum);
+                connect(
+                    &manager, &Manager::files_counted, progress_window_.get(), &ProgressWindow::set_maximum);
 
-            connect(&manager,
-                    &Manager::files_processed,
-                    progress_window_.get(),
-                    [this](const std::filesystem::path &file, size_t count_since_last) {
-                        const auto text = QString("Processing %1").arg(QString::fromStdString(file.string()));
-                        progress_window_->step(std::optional(text), static_cast<int>(count_since_last));
-                    });
+                connect(&manager,
+                        &Manager::files_processed,
+                        progress_window_.get(),
+                        [this](const std::filesystem::path &file, size_t count_since_last) {
+                            const auto text
+                                = QString("Processing %1").arg(QString::fromStdString(file.string()));
+                            progress_window_->step(std::optional(text), static_cast<int>(count_since_last));
+                        });
 
-            connect(&manager, &Manager::end, progress_window_.get(), &ProgressWindow::end);
+                connect(&manager, &Manager::end, progress_window_.get(), &ProgressWindow::end);
 
-            connect(&manager, &Manager::end, this, [this] {
-                graceful_stop_dialog_.reset();
-                cao_process_.reset();
-                ui_->processButton->setDisabled(false);
+                connect(&manager, &Manager::end, this, [this] {
+                    graceful_stop_dialog_.reset();
+                    cao_process_.reset();
+                    ui_->processButton->setDisabled(false);
+                });
+
+                manager.run_optimization(std::move(run_settings), std::move(stop_token));
             });
-
-            manager.run_optimization(settings_, std::move(stop_token));
-        });
 
         progress_window_->show();
 
