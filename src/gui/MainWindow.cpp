@@ -409,8 +409,8 @@ void MainWindow::init_process(const bool dry_run)
         = settings_.gui.workspace == Workspace::QuickTasks
               ? std::optional<QuickTask>{ui_->quickTaskSelector->currentData().value<QuickTask>()}
               : std::nullopt;
-    const bool remove_packed_files
-        = quick_task == QuickTask::CreateBsa && ui_->quickRemoveLooseFiles->isChecked();
+    const bool remove_packed_files = quick_task == QuickTask::CreateBsa
+                                     && ui_->quickRemoveLooseFiles->isChecked();
     if (!dry_run && remove_packed_files)
     {
         const auto choice
@@ -429,8 +429,9 @@ void MainWindow::init_process(const bool dry_run)
 
     auto quick_profile = std::optional<Profile>{};
     if (quick_task)
-        quick_profile = Profile::make_quick_task(
-            settings_.gui.quick_target_game, *quick_task, remove_packed_files);
+        quick_profile = Profile::make_quick_task(settings_.gui.quick_target_game,
+                                                 *quick_task,
+                                                 remove_packed_files);
 
     try
     {

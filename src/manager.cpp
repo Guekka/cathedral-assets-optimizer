@@ -379,8 +379,7 @@ void Manager::process_single_mod(const btu::Path &path)
     const auto bsa_sets = get_bsa_settings(settings_);
     auto mod            = btu::modmanager::ModFolder(path, bsa_sets);
 
-    const bool prepare_assets
-        = !quick_task_ || quick_task_ == QuickTask::PrepareSkyrimAssets;
+    const bool prepare_assets = !quick_task_ || quick_task_ == QuickTask::PrepareSkyrimAssets;
     if (prepare_assets)
     {
         PLOG_INFO << "Parsing plugins...";

@@ -193,8 +193,7 @@ TEST_CASE("Quick BSA tasks have explicit archive operations and preserve loose f
     CHECK(create.bsa_operation == BsaOperation::Create);
     CHECK_FALSE(create.bsa_remove_files);
 
-    const auto create_and_remove
-        = Profile::make_quick_task(btu::Game::SSE, QuickTask::CreateBsa, true);
+    const auto create_and_remove = Profile::make_quick_task(btu::Game::SSE, QuickTask::CreateBsa, true);
     CHECK(create_and_remove.bsa_operation == BsaOperation::Create);
     CHECK(create_and_remove.bsa_remove_files);
 }
