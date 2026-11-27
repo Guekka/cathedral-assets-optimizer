@@ -5,13 +5,21 @@
 
 #pragma once
 
+#include "gui/file_rule_preview.hpp"
 #include "settings/profile.hpp"
 #include "settings/settings.hpp"
 
 #include <QAbstractItemModel>
 #include <QDialog>
+#include <QFutureWatcher>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <cstddef>
+#include <filesystem>
+#include <string>
+#include <variant>
+#include <vector>
+
 class QComboBox;
 
 namespace Ui {
@@ -48,8 +56,29 @@ public:
     ~PatternsManagerWindow() override; // = default
 
 private:
+    struct NoInputState
+    {
+    };
+
+    struct ScanningState
+    {
+    };
+
+    struct ReadyState
+    {
+        FileRulePreviewScan scan;
+        std::vector<FileRuleImpact> impacts;
+    };
+
+    struct FailedState
+    {
+        std::string error;
+    };
+
     std::unique_ptr<Ui::PatternsManagerWindow> ui_;
     Settings &settings_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
+    QFutureWatcher<FileRulePreviewResult> preview_watcher_;
+    std::variant<NoInputState, ScanningState, ReadyState, FailedState> preview_state_ = NoInputState{};
 
     void update_patterns(std::u8string_view selected_pattern = {});
     void move_pattern(const QModelIndex, int source_row, int, const QModelIndex, int destination_row);
@@ -57,5 +86,7 @@ private:
     void edit_current_pattern();
     void delete_current_pattern();
     void update_sample_result();
+    void update_impact_preview();
+    [[nodiscard]] auto file_count_text(std::size_t count) const -> QString;
 };
 } // namespace cao

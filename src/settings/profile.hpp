@@ -11,12 +11,24 @@
 #include <btu/common/path.hpp>
 #include <nlohmann/json.hpp>
 
+#include <cstddef>
+#include <filesystem>
+#include <vector>
+
 namespace cao {
 enum class BsaOperation : std::uint8_t
 {
     None,
     Create,
     Extract,
+};
+
+struct FileRuleImpact
+{
+    std::size_t matching_files = 0;
+    std::size_t applied_files  = 0;
+    std::vector<std::filesystem::path> example_paths;
+    std::vector<std::filesystem::path> overridden_example_paths;
 };
 
 class Profile
@@ -135,6 +147,10 @@ public:
                                    base_per_file_settings_,
                                    per_file_settings_)
 };
+
+[[nodiscard]] auto analyze_file_rule_impact(const Profile &profile,
+                                            const std::vector<std::filesystem::path> &files,
+                                            std::size_t max_examples = 3) -> std::vector<FileRuleImpact>;
 
 NLOHMANN_JSON_SERIALIZE_ENUM(BsaOperation,
                              {{BsaOperation::None, nullptr},

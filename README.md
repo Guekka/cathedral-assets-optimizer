@@ -4,6 +4,8 @@ Cathedral Assets Optimizer is a tool aiming to automate asset conversion and opt
 
 **This repository documents the in-development, experimental version of CAO. The interface and options may change between versions.**
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for product context and UX constraints when changing the GUI or documentation.
+
 # Build instructions
 
 For a Windows Ninja build with a preinstalled Qt MSVC 2022 SDK, open a Visual Studio 2022 Developer PowerShell and set `QT_ROOT_DIR` to the SDK root. Set `VCPKG_ROOT` to the repository's vcpkg checkout, then run:

@@ -3,6 +3,9 @@
   "version-string": "prebuilt",
   "description": "Qt provided by the preinstalled Qt SDK.",
   "features": {
+    "concurrent": {
+      "description": "Provided by the preinstalled Qt SDK."
+    },
     "gui": {
       "description": "Provided by the preinstalled Qt SDK."
     },

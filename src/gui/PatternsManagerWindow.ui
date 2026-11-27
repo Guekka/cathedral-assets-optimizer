@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>760</width>
-    <height>460</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,9 +82,28 @@
     </layout>
    </item>
    <item>
+    <widget class="QGroupBox" name="impactGroupBox">
+     <property name="title">
+      <string>What these rules affect</string>
+     </property>
+     <layout class="QVBoxLayout" name="impactLayout">
+      <item>
+       <widget class="QLabel" name="impactSummaryLabel">
+        <property name="text">
+         <string>Scanning files from the selected input folder...</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="samplePathLabel">
      <property name="text">
-      <string>Test a relative file path to see which rule wins:</string>
+      <string>Test a specific relative path:</string>
      </property>
     </widget>
    </item>

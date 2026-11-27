@@ -10,14 +10,20 @@
 
 #include <QComboBox>
 #include <QDialogButtonBox>
+#include <QFontMetrics>
 #include <QFormLayout>
+#include <QFutureWatcher>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QStringList>
+#include <QtConcurrent/QtConcurrentRun>
 #include <algorithm>
 #include <filesystem>
+#include <iterator>
 #include <stdexcept>
+#include <utility>
 
 namespace cao {
 namespace {
@@ -270,6 +276,7 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
     , settings_(settings)
 {
     ui_->setupUi(this);
+    ui_->impactSummaryLabel->setTextFormat(Qt::PlainText);
     ui_->editPushButton->setEnabled(false);
     ui_->removePushButton->setEnabled(false);
 
@@ -278,6 +285,7 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
         ui_->editPushButton->setEnabled(has_selection);
         ui_->removePushButton->setEnabled(has_selection);
         update_sample_result();
+        update_impact_preview();
     });
     connect(ui_->patterns, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *) {
         edit_current_pattern();
@@ -294,13 +302,54 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
             &PatternsManagerWindow::delete_current_pattern);
     connect(ui_->samplePathEdit, &QLineEdit::textChanged, this, [this] { update_sample_result(); });
 
+    connect(&preview_watcher_, &QFutureWatcher<FileRulePreviewResult>::finished, this, [this] {
+        auto result = preview_watcher_.result();
+        if (result)
+        {
+            auto scan      = std::move(result).value();
+            auto impacts   = analyze_file_rule_impact(settings_.current_profile(), scan.files);
+            preview_state_ = ReadyState{std::move(scan), std::move(impacts)};
+        }
+        else
+        {
+            preview_state_ = FailedState{std::move(result).error()};
+        }
+
+        const auto *selected        = static_cast<const PatternItem *>(ui_->patterns->currentItem());
+        const auto selected_pattern = selected == nullptr
+                                          ? settings_.gui.selected_pattern
+                                          : std::u8string(selected->per_file_settings().pattern.text());
+        update_patterns(selected_pattern);
+    });
+
     update_patterns(settings_.gui.selected_pattern);
+
+    const auto &profile = settings_.current_profile();
+    if (profile.input_path.empty())
+    {
+        preview_state_ = NoInputState{};
+        update_impact_preview();
+    }
+    else
+    {
+        preview_state_ = ScanningState{};
+        update_impact_preview();
+        preview_watcher_.setFuture(QtConcurrent::run([input_path  = profile.input_path,
+                                                      mode        = profile.optimization_mode,
+                                                      target_game = profile.target_game] {
+            return scan_file_rule_preview(input_path, mode, target_game);
+        }));
+    }
 }
 
 PatternsManagerWindow::~PatternsManagerWindow() = default;
 
 void PatternsManagerWindow::update_patterns(const std::u8string_view selected_pattern)
 {
+    auto *ready = std::get_if<ReadyState>(&preview_state_);
+    if (ready != nullptr)
+        ready->impacts = analyze_file_rule_impact(settings_.current_profile(), ready->scan.files);
+
     auto &list = *ui_->patterns;
     list.setCurrentItem(nullptr);
     list.clear();
@@ -316,8 +365,23 @@ void PatternsManagerWindow::update_patterns(const std::u8string_view selected_pa
         auto *item             = new PatternItem(*pfs, &list);
         const auto description = pattern_match_description(pfs->pattern);
         const auto name        = pattern_display_name(pfs->pattern);
-        item->setText(tr("%1. %2").arg(row + 1).arg(name));
-        item->setToolTip(description);
+        auto item_text         = tr("%1. %2").arg(row + 1).arg(name);
+        if (ready != nullptr && static_cast<std::size_t>(row) < ready->impacts.size())
+        {
+            const auto &impact        = ready->impacts[static_cast<std::size_t>(row)];
+            item_text                 = tr("%1 (%2)").arg(item_text, file_count_text(impact.applied_files));
+            const auto shadowed_files = impact.matching_files - impact.applied_files;
+            auto impact_text = tr("This rule is applied to %1.").arg(file_count_text(impact.applied_files));
+            if (shadowed_files > 0)
+                impact_text += tr(" It matches %1 that earlier rules handle.")
+                                   .arg(file_count_text(shadowed_files));
+            item->setToolTip(QString("%1\n%2").arg(description, impact_text));
+        }
+        else
+        {
+            item->setToolTip(description);
+        }
+        item->setText(item_text);
         if (pfs->pattern.text() == selected_pattern)
             selected_row = row;
         ++row;
@@ -327,8 +391,9 @@ void PatternsManagerWindow::update_patterns(const std::u8string_view selected_pa
         selected_row = 0;
     if (selected_row >= 0)
         list.setCurrentRow(selected_row);
-    else
-        update_sample_result();
+
+    update_sample_result();
+    update_impact_preview();
 }
 
 void PatternsManagerWindow::move_pattern(
@@ -473,6 +538,160 @@ void PatternsManagerWindow::update_sample_result()
         ui_->sampleResultLabel->setText(
             tr("This rule matches, but %1 comes first and will apply instead.").arg(winner_name));
     }
+}
+
+void PatternsManagerWindow::update_impact_preview()
+{
+    ui_->impactSummaryLabel->setToolTip({});
+    if (std::holds_alternative<NoInputState>(preview_state_))
+    {
+        ui_->impactSummaryLabel->setText(
+            tr("Choose an input folder in the main window to preview real files."));
+        return;
+    }
+
+    if (std::holds_alternative<ScanningState>(preview_state_))
+    {
+        ui_->impactSummaryLabel->setText(tr("Scanning files from the selected input folder..."));
+        return;
+    }
+
+    if (const auto *failed = std::get_if<FailedState>(&preview_state_))
+    {
+        ui_->impactSummaryLabel->setText(tr("The file preview could not be loaded: %1\nTry another input "
+                                            "folder or check that it is readable, "
+                                            "then reopen this manager to refresh the preview.")
+                                             .arg(QString::fromStdString(failed->error)));
+        return;
+    }
+
+    const auto *ready = std::get_if<ReadyState>(&preview_state_);
+    if (ready == nullptr)
+    {
+        ui_->impactSummaryLabel->setText(tr("The file-rule preview is unavailable."));
+        return;
+    }
+
+    if (ready->scan.files.empty())
+    {
+        ui_->impactSummaryLabel->setText(tr("No files were found in the selected input folder."));
+        return;
+    }
+
+    if (ready->impacts.empty())
+    {
+        ui_->impactSummaryLabel->setText(tr("The file-rule preview is unavailable."));
+        return;
+    }
+
+    const auto all_settings = settings_.current_profile().per_file_settings();
+    const auto *selected    = static_cast<const PatternItem *>(ui_->patterns->currentItem());
+    auto impact_index       = all_settings.size() - 1;
+    if (selected != nullptr)
+    {
+        const auto it = std::ranges::find(all_settings, &selected->per_file_settings());
+        if (it == all_settings.end())
+        {
+            ui_->impactSummaryLabel->setText(tr("The selected rule is no longer available."));
+            return;
+        }
+        impact_index = static_cast<std::size_t>(std::distance(all_settings.begin(), it));
+    }
+
+    if (impact_index >= ready->impacts.size())
+    {
+        ui_->impactSummaryLabel->setText(tr("The file-rule preview is unavailable."));
+        return;
+    }
+
+    const auto &impact = ready->impacts[impact_index];
+    auto summary       = selected == nullptr
+                             ? tr("Default settings apply to %1.").arg(file_count_text(impact.applied_files))
+                             : QString{};
+    auto full_summary  = summary;
+
+    const auto shadowed_files = impact.matching_files > impact.applied_files
+                                    ? impact.matching_files - impact.applied_files
+                                    : std::size_t{0};
+    if (selected != nullptr && impact.applied_files == 0 && impact.matching_files == 0)
+    {
+        summary = tr("No files in this folder match this rule.");
+    }
+    else if (selected != nullptr && impact.applied_files == 0)
+    {
+        summary = tr("This rule matches %1, but an earlier rule handles all of them.")
+                      .arg(file_count_text(impact.matching_files));
+    }
+    else if (selected != nullptr)
+    {
+        summary = tr("This rule is used by %1 in this folder.").arg(file_count_text(impact.applied_files));
+        if (shadowed_files > 0)
+            summary += tr(" It also matches %1 handled by earlier rules.").arg(file_count_text(shadowed_files));
+    }
+    full_summary = summary;
+
+    if (selected != nullptr)
+    {
+        const auto default_summary = tr("\nDefault settings apply to %1.")
+                                         .arg(file_count_text(ready->impacts.back().applied_files));
+        summary += default_summary;
+        full_summary += default_summary;
+    }
+
+    const auto display_path = [this](const QString &path) {
+        const auto width = std::max(ui_->impactSummaryLabel->width(), 400);
+        return QFontMetrics{ui_->impactSummaryLabel->font()}.elidedText(path, Qt::ElideMiddle, width);
+    };
+
+    QStringList examples;
+    QStringList full_examples;
+    for (const auto &path : impact.example_paths)
+    {
+        const auto path_text = to_qstring(path.u8string());
+        examples.push_back(display_path(path_text));
+        full_examples.push_back(path_text);
+    }
+    if (!examples.isEmpty())
+    {
+        summary += tr("\nFiles using this rule: %1").arg(examples.join(", "));
+        full_summary += tr("\nFiles using this rule: %1").arg(full_examples.join(", "));
+    }
+
+    QStringList overridden_examples;
+    QStringList full_overridden_examples;
+    for (const auto &path : impact.overridden_example_paths)
+    {
+        const auto path_text = to_qstring(path.u8string());
+        overridden_examples.push_back(display_path(path_text));
+        full_overridden_examples.push_back(path_text);
+    }
+    if (!overridden_examples.isEmpty())
+    {
+        summary += tr("\nFiles handled by earlier rules: %1").arg(overridden_examples.join(", "));
+        full_summary += tr("\nFiles handled by earlier rules: %1").arg(full_overridden_examples.join(", "));
+    }
+
+    if (ready->scan.skipped_archives > 0)
+    {
+        const auto skipped_summary = ready->scan.skipped_archives == 1
+                                         ? tr("\nOne oversized archive was excluded from the preview.")
+                                         : tr("\n%1 oversized archives were excluded from the preview.")
+                                               .arg(static_cast<qulonglong>(ready->scan.skipped_archives));
+        summary += skipped_summary;
+        full_summary += skipped_summary;
+    }
+
+    if (summary != full_summary)
+        ui_->impactSummaryLabel->setToolTip(full_summary);
+    ui_->impactSummaryLabel->setText(summary);
+}
+
+auto PatternsManagerWindow::file_count_text(const std::size_t count) const -> QString
+{
+    if (count == 1)
+        return tr("1 file");
+
+    return tr("%1 files").arg(static_cast<qulonglong>(count));
 }
 
 } // namespace cao

@@ -55,3 +55,14 @@ even when a rule is selected.
 The file rules manager includes a sample-path preview. Enter a relative path, such as
 `textures/interface/menu.dds`, to see whether the selected rule matches and whether an earlier rule
 or the default settings would apply.
+
+When an input folder is selected, the **What these rules affect** panel also scans real files from
+that input. It shows the number of files each rule matches and the number it handles after priority
+is applied. Select a rule to see examples it handles and examples captured by earlier rules; the
+summary also shows how many files use the default fallback. If there are no custom rules, the panel
+shows examples handled by the fallback. If the input mode is **Several mods**, each immediate
+subfolder is scanned as a mod. Files from readable archives are included; oversized archives that
+are skipped are reported.
+
+This impact preview is read-only and does not run optimizations. Use **Dry run** to preview processing
+steps; use the sample-path field to test a relative path that may not be present in the selected input.

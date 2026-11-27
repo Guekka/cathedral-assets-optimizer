@@ -57,6 +57,8 @@ set(SOURCES
     ${SOURCE_DIR}/gui/ProfilesManagerWindow.cpp
     ${SOURCE_DIR}/gui/ProfilesManagerWindow.hpp
     ${SOURCE_DIR}/gui/ProfilesManagerWindow.ui
+    ${SOURCE_DIR}/gui/file_rule_preview.cpp
+    ${SOURCE_DIR}/gui/file_rule_preview.hpp
     ${SOURCE_DIR}/gui/PatternsManagerWindow.cpp
     ${SOURCE_DIR}/gui/PatternsManagerWindow.hpp
     ${SOURCE_DIR}/gui/PatternsManagerWindow.ui
@@ -110,9 +112,10 @@ target_link_libraries(CAO_LIB INTERFACE fmt::fmt)
 
 find_package(
   Qt6
-  COMPONENTS Core Widgets Gui LinguistTools
+  COMPONENTS Core Widgets Gui Concurrent LinguistTools
   REQUIRED)
-target_link_libraries(CAO_LIB INTERFACE Qt6::Core Qt6::Widgets Qt6::Gui)
+target_link_libraries(CAO_LIB INTERFACE Qt6::Core Qt6::Widgets Qt6::Gui
+                                        Qt6::Concurrent)
 
 # Main exe
 add_executable(
