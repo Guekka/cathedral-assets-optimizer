@@ -124,15 +124,16 @@ auto main(int argc, char *argv[]) -> int
                 for (qsizetype i = 1; i < positional_args.size(); ++i)
                 {
                     const auto &mod_path = positional_args.at(i);
-                    auto mod_profile = cao::cli::profile_for_mod_path(
-                        cli_settings.current_profile(), std::filesystem::path(cao::to_u8string(mod_path)));
-                    auto mod_settings                          = cli_settings;
+                    auto mod_profile     = cao::cli::profile_for_mod_path(cli_settings.current_profile(),
+                                                                      std::filesystem::path(
+                                                                          cao::to_u8string(mod_path)));
+                    auto mod_settings    = cli_settings;
                     mod_settings.run_context.input_path        = mod_profile.input_path;
                     mod_settings.run_context.optimization_mode = mod_profile.optimization_mode;
 
                     cao::Manager manager;
-                    manager.run_optimization(
-                        cao::make_run_settings(mod_settings, std::move(mod_profile)), std::stop_token{});
+                    manager.run_optimization(cao::make_run_settings(mod_settings, std::move(mod_profile)),
+                                             std::stop_token{});
                 }
             }
         }

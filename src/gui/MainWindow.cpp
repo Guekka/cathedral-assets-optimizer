@@ -167,8 +167,7 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
 
     settings.run_context.input_path        = ui.inputDirTextEdit->text().toStdString();
     settings.run_context.dry_run           = ui.dryRunCheckBox->isChecked();
-    settings.run_context.optimization_mode = ui.modeChooserComboBox->currentData()
-                                                 .value<OptimizationMode>();
+    settings.run_context.optimization_mode = ui.modeChooserComboBox->currentData().value<OptimizationMode>();
     settings.current_profile().mods_blacklist = {}; // TODO
 
     // has to be last because may rely on GuiSettings being already filled
@@ -425,32 +424,30 @@ void MainWindow::init_process()
         progress_window_ = std::make_unique<ProgressWindow>(
             LogReader(Settings::state_directory() / k_log_file_name));
 
-        cao_process_ = std::jthread(
-            [this, run_settings = std::move(run_settings)](std::stop_token &&stop_token) mutable {
-                auto manager = Manager();
+        cao_process_ = std::jthread([this, run_settings = std::move(run_settings)](
+                                        std::stop_token &&stop_token) mutable {
+            auto manager = Manager();
 
-                connect(
-                    &manager, &Manager::files_counted, progress_window_.get(), &ProgressWindow::set_maximum);
+            connect(&manager, &Manager::files_counted, progress_window_.get(), &ProgressWindow::set_maximum);
 
-                connect(&manager,
-                        &Manager::files_processed,
-                        progress_window_.get(),
-                        [this](const std::filesystem::path &file, size_t count_since_last) {
-                            const auto text
-                                = QString("Processing %1").arg(QString::fromStdString(file.string()));
-                            progress_window_->step(std::optional(text), static_cast<int>(count_since_last));
-                        });
+            connect(&manager,
+                    &Manager::files_processed,
+                    progress_window_.get(),
+                    [this](const std::filesystem::path &file, size_t count_since_last) {
+                        const auto text = QString("Processing %1").arg(QString::fromStdString(file.string()));
+                        progress_window_->step(std::optional(text), static_cast<int>(count_since_last));
+                    });
 
-                connect(&manager, &Manager::end, progress_window_.get(), &ProgressWindow::end);
+            connect(&manager, &Manager::end, progress_window_.get(), &ProgressWindow::end);
 
-                connect(&manager, &Manager::end, this, [this] {
-                    graceful_stop_dialog_.reset();
-                    cao_process_.reset();
-                    ui_->processButton->setDisabled(false);
-                });
-
-                manager.run_optimization(std::move(run_settings), std::move(stop_token));
+            connect(&manager, &Manager::end, this, [this] {
+                graceful_stop_dialog_.reset();
+                cao_process_.reset();
+                ui_->processButton->setDisabled(false);
             });
+
+            manager.run_optimization(std::move(run_settings), std::move(stop_token));
+        });
 
         progress_window_->show();
 

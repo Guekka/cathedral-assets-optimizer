@@ -13,8 +13,8 @@
 namespace cao {
 TEST_CASE("legacy settings migrate run context from the selected profile")
 {
-    auto legacy_settings = Settings::make_base();
-    auto legacy_profile  = Profile::make_base(btu::Game::SSE);
+    auto legacy_settings             = Settings::make_base();
+    auto legacy_profile              = Profile::make_base(btu::Game::SSE);
     legacy_profile.input_path        = btu::Path{"guide-mods"};
     legacy_profile.optimization_mode = OptimizationMode::SeveralMods;
     legacy_profile.dry_run           = true;
@@ -35,8 +35,8 @@ TEST_CASE("legacy settings migrate run context from the selected profile")
 
 TEST_CASE("settings serialize shared run context with legacy rollback fields")
 {
-    auto settings       = Settings::make_base();
-    auto legacy_profile = Profile::make_base(btu::Game::FNV);
+    auto settings                    = Settings::make_base();
+    auto legacy_profile              = Profile::make_base(btu::Game::FNV);
     legacy_profile.input_path        = btu::Path{"profile-specific-input"};
     legacy_profile.optimization_mode = OptimizationMode::SeveralMods;
     legacy_profile.dry_run           = true;
@@ -63,13 +63,13 @@ TEST_CASE("settings serialize shared run context with legacy rollback fields")
     CHECK(restored.current_profile().optimization_mode == settings.run_context.optimization_mode);
     CHECK(restored.current_profile().dry_run == settings.run_context.dry_run);
 
-    auto conflicting_json = serialized;
-    const auto active_index = conflicting_json.at("current_profile_index_").get<std::size_t>();
-    auto &active_legacy_profile = conflicting_json.at("profiles_").at(active_index).at(1);
+    auto conflicting_json               = serialized;
+    const auto active_index             = conflicting_json.at("current_profile_index_").get<std::size_t>();
+    auto &active_legacy_profile         = conflicting_json.at("profiles_").at(active_index).at(1);
     active_legacy_profile["input_path"] = "stale-profile-input";
     active_legacy_profile["optimization_mode"] = nlohmann::json(OptimizationMode::SeveralMods);
-    active_legacy_profile["dry_run"] = true;
-    const auto authoritative = conflicting_json.get<Settings>();
+    active_legacy_profile["dry_run"]           = true;
+    const auto authoritative                   = conflicting_json.get<Settings>();
     CHECK(authoritative.run_context.input_path == settings.run_context.input_path);
     CHECK(authoritative.run_context.optimization_mode == settings.run_context.optimization_mode);
     CHECK(authoritative.run_context.dry_run == settings.run_context.dry_run);
@@ -88,13 +88,13 @@ TEST_CASE("settings serialize shared run context with legacy rollback fields")
 
 TEST_CASE("run settings project shared context without mutating saved profiles")
 {
-    auto settings       = Settings::make_base();
-    auto saved_profile  = Profile::make_base(btu::Game::FNV);
+    auto settings                   = Settings::make_base();
+    auto saved_profile              = Profile::make_base(btu::Game::FNV);
     saved_profile.input_path        = btu::Path{"saved-profile-input"};
     saved_profile.optimization_mode = OptimizationMode::SeveralMods;
     saved_profile.dry_run           = true;
-    auto saved_rules       = saved_profile.per_file_settings();
-    saved_rules.back()->pack = false;
+    auto saved_rules                = saved_profile.per_file_settings();
+    saved_rules.back()->pack        = false;
 
     settings.create_profile(u8"Guide", saved_profile);
     REQUIRE(settings.set_current_profile(u8"Guide"));
@@ -104,9 +104,8 @@ TEST_CASE("run settings project shared context without mutating saved profiles")
         .dry_run           = false,
     };
 
-    auto quick_profile = Profile::make_base(btu::Game::SSE);
-    const auto run_settings
-        = make_run_settings(settings, std::optional<Profile>{std::move(quick_profile)});
+    auto quick_profile      = Profile::make_base(btu::Game::SSE);
+    const auto run_settings = make_run_settings(settings, std::optional<Profile>{std::move(quick_profile)});
 
     CHECK(run_settings.current_profile().target_game == btu::Game::SSE);
     CHECK(run_settings.current_profile().input_path == settings.run_context.input_path);

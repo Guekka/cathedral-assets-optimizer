@@ -324,7 +324,7 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
 
     update_patterns(settings_.gui.selected_pattern);
 
-    const auto &profile = settings_.current_profile();
+    const auto &profile     = settings_.current_profile();
     const auto &run_context = settings_.run_context;
     if (run_context.input_path.empty())
     {

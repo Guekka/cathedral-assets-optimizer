@@ -29,7 +29,7 @@ struct RunContext
 {
     btu::Path input_path;
     OptimizationMode optimization_mode = OptimizationMode::SingleMod;
-    bool dry_run                     = false;
+    bool dry_run                       = false;
 
     [[nodiscard]] static auto from_profile(const Profile &profile) -> RunContext;
     void apply_to(Profile &profile) const;
@@ -80,7 +80,7 @@ void to_json(nlohmann::json &json, const Settings &settings);
 void from_json(const nlohmann::json &json, Settings &settings);
 
 [[nodiscard]] auto make_run_settings(const Settings &settings,
-                                    std::optional<Profile> profile_override = std::nullopt) -> Settings;
+                                     std::optional<Profile> profile_override = std::nullopt) -> Settings;
 
 [[nodiscard]] auto current_per_file_settings(Settings &sets) -> PerFileSettings &;
 [[nodiscard]] auto current_per_file_settings(const Settings &sets) -> const PerFileSettings &;
