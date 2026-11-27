@@ -30,7 +30,7 @@ void RunContext::apply_to(Profile &profile) const
 void to_json(nlohmann::json &json, const Settings &settings)
 {
     auto profiles = settings.profiles_;
-    // Keep the selected profile's legacy fields synchronized for older CAO versions.
+    // Keep this compatibility mirror until rollback to versions without run_context is no longer supported.
     if (!profiles.empty())
         settings.run_context.apply_to(profiles.at(settings.current_profile_index_).second);
 
