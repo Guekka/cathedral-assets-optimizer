@@ -148,7 +148,7 @@ auto build_run_context_summary(const Settings &settings,
                                const std::optional<QuickTask> quick_task,
                                const bool dry_run) -> QString
 {
-    auto summary = QString{};
+    auto summary      = QString{};
     const auto append = [&summary](const QString &line) {
         if (!summary.isEmpty())
             summary += QLatin1Char('\n');
@@ -173,10 +173,9 @@ auto build_run_context_summary(const Settings &settings,
         else if (std::holds_alternative<ExtractBsaTask>(*quick_task))
         {
             append(QObject::tr("Existing loose files will not be overwritten."));
-            append(dry_run
-                       ? QObject::tr("Dry run will preview extraction without extracting files or "
-                                     "removing BSA archives.")
-                       : QObject::tr("Successfully extracted BSA archives will be removed."));
+            append(dry_run ? QObject::tr("Dry run will preview extraction without extracting files or "
+                                         "removing BSA archives.")
+                           : QObject::tr("Successfully extracted BSA archives will be removed."));
         }
         else
         {
@@ -184,36 +183,38 @@ auto build_run_context_summary(const Settings &settings,
                        ? QObject::tr("A real run will remove loose files included in verified archives.")
                        : QObject::tr("Loose source files will be preserved."));
             if (profile.bsa_make_dummy_plugins)
-                append(QObject::tr("A real run may create dummy plugins so the game can load the archives."));
+                append(QObject::tr(
+                    "A real run may create dummy plugins so the game can load the archives."));
         }
     }
     else
     {
         append(QObject::tr("Profile: %1").arg(to_qstring(settings.current_profile_name())));
         const auto &selected_settings = current_per_file_settings(settings);
-        const auto selected_scope = selected_settings.pattern.text() == k_default_pattern.text()
-                                        ? QObject::tr("Default file settings")
-                                        : pattern_display_name(selected_settings.pattern);
+        const auto selected_scope     = selected_settings.pattern.text() == k_default_pattern.text()
+                                            ? QObject::tr("Default file settings")
+                                            : pattern_display_name(selected_settings.pattern);
         append(QObject::tr("File settings: %1").arg(selected_scope));
-        append(QObject::tr("The file-impact preview shows settings routing; it does not preview processing."));
+        append(
+            QObject::tr("The file-impact preview shows settings routing; it does not preview processing."));
 
         switch (profile.bsa_operation)
         {
             case BsaOperation::None: break;
             case BsaOperation::Extract:
                 append(QObject::tr("Existing loose files will not be overwritten."));
-                append(dry_run
-                           ? QObject::tr("Dry run will preview extraction and asset processing without "
-                                         "changing files.")
-                           : QObject::tr("Successfully extracted BSA archives will be removed, then the "
-                                         "selected asset settings will run."));
+                append(dry_run ? QObject::tr("Dry run will preview extraction and asset processing without "
+                                             "changing files.")
+                               : QObject::tr("Successfully extracted BSA archives will be removed, then the "
+                                             "selected asset settings will run."));
                 break;
             case BsaOperation::Create:
                 append(profile.bsa_remove_files
                            ? QObject::tr("A real run will remove loose files included in verified archives.")
                            : QObject::tr("Loose source files will be preserved."));
                 if (profile.bsa_make_dummy_plugins)
-                    append(QObject::tr("A real run may create dummy plugins so the game can load the archives."));
+                    append(QObject::tr(
+                        "A real run may create dummy plugins so the game can load the archives."));
                 break;
         }
     }
@@ -523,7 +524,7 @@ void MainWindow::init_process(const bool dry_run)
 
     try
     {
-        auto run_context_settings = settings_;
+        auto run_context_settings                = settings_;
         run_context_settings.run_context.dry_run = dry_run;
         auto run_settings = make_run_settings(run_context_settings, std::move(quick_profile));
         if (!check_settings(run_settings))
@@ -537,7 +538,7 @@ void MainWindow::init_process(const bool dry_run)
                                      run_context,
                                      QMessageBox::NoButton,
                                      this);
-            auto *run_button = confirmation.addButton(tr("Run"), QMessageBox::AcceptRole);
+            auto *run_button    = confirmation.addButton(tr("Run"), QMessageBox::AcceptRole);
             auto *cancel_button = confirmation.addButton(QMessageBox::Cancel);
             confirmation.setDefaultButton(cancel_button);
             confirmation.exec();

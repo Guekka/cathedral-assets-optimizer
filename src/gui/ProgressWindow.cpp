@@ -193,7 +193,7 @@ void ProgressWindow::finish(const bool cancelled)
     if (finished_)
         return;
 
-    finished_ = true;
+    finished_                = true;
     const auto &progress_bar = ui_->progressBar;
 
     if (progress_bar->maximum() == 0)
@@ -205,22 +205,20 @@ void ProgressWindow::finish(const bool cancelled)
 
     progress_bar->setValue(progress_bar->maximum());
     progress_bar->setFormat(tr("Done"));
-    const auto completion = cancelled ? tr("Stopped before all work was complete.")
-                                      : dry_run_ ? tr("Dry run complete; no files were modified.")
-                                                 : tr("Run complete.");
-    const auto next_step = cancelled ? tr("Review the log to see what finished before stopping.")
-                                     : dry_run_ ? tr("Review the planned actions, then choose Run when ready.")
-                                                : error_count_ > 0
-                                                   ? tr("Review the errors before using the output.")
-                                                   : tr("Review the output, then test the mod in game.");
-    ui_->stageLabel->setText(
-        tr("%1 %2 progress items reported; %3 skip notices, %4 warnings, %5 errors. %6")
-            .arg(completion)
-            .arg(work_units_reported_)
-            .arg(skip_notice_count_)
-            .arg(warning_count_)
-            .arg(error_count_)
-            .arg(next_step));
+    const auto completion = cancelled  ? tr("Stopped before all work was complete.")
+                            : dry_run_ ? tr("Dry run complete; no files were modified.")
+                                       : tr("Run complete.");
+    const auto next_step  = cancelled          ? tr("Review the log to see what finished before stopping.")
+                            : dry_run_         ? tr("Review the planned actions, then choose Run when ready.")
+                            : error_count_ > 0 ? tr("Review the errors before using the output.")
+                                               : tr("Review the output, then test the mod in game.");
+    ui_->stageLabel->setText(tr("%1 %2 progress items reported; %3 skip notices, %4 warnings, %5 errors. %6")
+                                 .arg(completion)
+                                 .arg(work_units_reported_)
+                                 .arg(skip_notice_count_)
+                                 .arg(warning_count_)
+                                 .arg(error_count_)
+                                 .arg(next_step));
 
     timer_.stop();
 }
