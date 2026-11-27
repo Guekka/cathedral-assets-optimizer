@@ -97,29 +97,30 @@ void write_single_archive(const btu::Path &directory_path,
     }
 }
 
-auto preview_pack_archive(const btu::Path &directory_path,
-                          btu::bsa::Archive &archive,
-                          const btu::bsa::Settings &bsa_sets,
-                          bool remove_files) noexcept -> BsaPackPreview
+auto preview_pack_directory(const btu::bsa::PackSettings &settings, const bool remove_files) noexcept
+    -> btu::bsa::PackPreview
 {
-    BsaPackPreview preview;
+    auto preview = btu::bsa::list_pack_preview(settings);
 
-    const auto archive_path_opt = find_archive_name(directory_path, bsa_sets, archive.type());
-    preview.archive_path         = archive_path_opt.value_or(btu::Path{});
+    const auto log_files = [](const char *archive_group, const std::vector<btu::Path> &files) {
+        for (const auto &relative_path : files)
+            PLOGI << std::format("Dry run: would include in {} archive(s): {}",
+                                 archive_group,
+                                 relative_path.string());
+    };
+    log_files("standard", preview.standard_files);
+    log_files("texture", preview.texture_files);
 
-    for (const auto &[relative_path, file] : archive)
+    PLOGI << std::format("Dry run: selected {} standard files and {} texture files; archive count and splitting "
+                         "are not predicted because they depend on resulting file sizes",
+                         preview.standard_files.size(),
+                         preview.texture_files.size());
+
+    if (remove_files)
     {
-        preview.packed_files.emplace_back(relative_path);
-        PLOGI << std::format("Dry run: would pack file: {}", relative_path);
+        PLOGI << "Dry run: would remove packed loose files only after successfully writing and verifying "
+                 "their archives";
     }
-
-    const auto archive_name = preview.archive_path.empty() ? std::string("<name unavailable>")
-                                                           : preview.archive_path.filename().string();
-    PLOGI << std::format("Dry run: would create archive {} with {} files{}",
-                         archive_name,
-                         preview.packed_files.size(),
-                         remove_files ? " and remove the packed loose files after verifying the archive"
-                                      : "");
 
     return preview;
 }

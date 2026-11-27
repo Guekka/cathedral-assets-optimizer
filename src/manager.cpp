@@ -200,13 +200,14 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
     const auto compress = settings_.current_profile().bsa_allow_compression ? btu::bsa::Compression::Yes
                                                                             : btu::bsa::Compression::No;
 
-    pack(btu::bsa::PackSettings{.input_dir     = directory_path,
-                                .game_settings = bsa_sets,
-                                .compress      = compress,
-                                .allow_file_pred =
-                                    [profile](const auto &dir, const auto &file_info) {
-                                        const auto relative_path = file_info.path().lexically_relative(dir);
-                                        const auto pack = profile.get_per_file_settings(relative_path).pack;
+    const auto pack_settings = btu::bsa::PackSettings{
+        .input_dir     = directory_path,
+        .game_settings = bsa_sets,
+        .compress      = compress,
+        .allow_file_pred =
+            [profile](const auto &dir, const auto &file_info) {
+                const auto relative_path = file_info.path().lexically_relative(dir);
+                const auto pack = profile.get_per_file_settings(relative_path).pack;
 
                                         if (!pack && std::filesystem::is_regular_file(file_info))
                                         {
@@ -214,18 +215,27 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
                                                                  relative_path.string());
                                         }
 
-                                        return pack;
-                                    }})
+                return pack;
+            }};
+
+    if (dry_run)
+    {
+        if (stop_token_.stop_requested())
+            return;
+
+        std::ignore = preview_pack_directory(pack_settings, profile.bsa_remove_files);
+
+        if (profile.bsa_make_dummy_plugins)
+        {
+            PLOGI << "Dry run: would create dummy plugins for the packed archives";
+        }
+        return;
+    }
+
+    pack(pack_settings)
         .for_each([&](auto archive) {
             if (stop_token_.stop_requested())
                 return;
-
-            if (dry_run)
-            {
-                // Preview only: never write the archive or remove the loose files that compose it.
-                std::ignore = preview_pack_archive(directory_path, archive, bsa_sets, profile.bsa_remove_files);
-                return;
-            }
 
             try
             {
@@ -241,14 +251,7 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
             }
         });
 
-    if (dry_run)
-    {
-        if (profile.bsa_make_dummy_plugins)
-        {
-            PLOGI << "Dry run: would create dummy plugins for the packed archives";
-        }
-    }
-    else if (profile.bsa_make_dummy_plugins)
+    if (profile.bsa_make_dummy_plugins)
     {
         remake_dummy_plugins(directory_path, bsa_sets);
     }

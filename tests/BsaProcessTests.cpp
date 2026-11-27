@@ -11,6 +11,7 @@
 
 #include <doctest/doctest.h>
 
+#include <algorithm>
 #include <chrono>
 #include <cstddef>
 #include <filesystem>
@@ -73,44 +74,49 @@ void write_file(const std::filesystem::path &path, std::string_view content)
 }
 } // namespace
 
-TEST_CASE("preview_pack_archive reports the files that would be packed without writing or deleting anything")
+TEST_CASE("preview_pack_directory lists selected files without writing or deleting anything")
 {
     const auto source      = TemporaryDirectory("pack-src");
     const auto &source_dir = source.path();
 
     write_file(source_dir / "meshes" / "a.nif", "mesh-a-content");
     write_file(source_dir / "meshes" / "sub" / "b.nif", "mesh-b-content");
+    write_file(source_dir / "meshes" / "filtered.nif", "filtered-content");
     write_file(source_dir / "textures" / "c.dds", "texture-c-content");
 
     const auto &bsa_sets = btu::bsa::Settings::get(btu::Game::SSE);
 
     const auto entries_before = count_entries(source_dir);
 
-    std::size_t total_packed_files = 0;
-    std::vector<std::filesystem::path> all_packed_files;
+    const auto settings = btu::bsa::PackSettings{
+        .input_dir     = source_dir,
+        .game_settings = bsa_sets,
+        .compress      = btu::bsa::Compression::Yes,
+        .allow_file_pred =
+            [](const btu::Path &, const std::filesystem::directory_entry &entry) {
+                return entry.path().filename() != "filtered.nif";
+            }};
+    const auto preview = preview_pack_directory(settings, /*remove_files=*/true);
 
-    btu::bsa::pack(btu::bsa::PackSettings{.input_dir     = source_dir,
-                                          .game_settings = bsa_sets,
-                                          .compress      = btu::bsa::Compression::No})
-        .for_each([&](auto archive) {
-            const auto preview = preview_pack_archive(source_dir, archive, bsa_sets, /*remove_files=*/true);
-
-            total_packed_files += preview.packed_files.size();
-            all_packed_files.insert(all_packed_files.end(),
-                                    preview.packed_files.begin(),
-                                    preview.packed_files.end());
-        });
-
-    CHECK(total_packed_files == 3);
+    auto standard_files = preview.standard_files;
+    auto texture_files  = preview.texture_files;
+    std::ranges::sort(standard_files);
+    std::ranges::sort(texture_files);
+    const auto expected_standard_files = std::vector<btu::Path>{"meshes/a.nif", "meshes/sub/b.nif"};
+    const auto expected_texture_files  = std::vector<btu::Path>{"textures/c.dds"};
+    CHECK(standard_files == expected_standard_files);
+    CHECK(texture_files == expected_texture_files);
 
     // Nothing should have been written to, or removed from, the source directory: no archive appeared,
     // and the original loose files (and their content) are untouched.
     CHECK(count_entries(source_dir) == entries_before);
     CHECK(std::filesystem::exists(source_dir / "meshes" / "a.nif"));
     CHECK(std::filesystem::exists(source_dir / "meshes" / "sub" / "b.nif"));
+    CHECK(std::filesystem::exists(source_dir / "meshes" / "filtered.nif"));
     CHECK(std::filesystem::exists(source_dir / "textures" / "c.dds"));
     CHECK(read_file(source_dir / "meshes" / "a.nif") == "mesh-a-content");
     CHECK(read_file(source_dir / "meshes" / "sub" / "b.nif") == "mesh-b-content");
+    CHECK(read_file(source_dir / "meshes" / "filtered.nif") == "filtered-content");
     CHECK(read_file(source_dir / "textures" / "c.dds") == "texture-c-content");
 
     for (const auto &entry : std::filesystem::recursive_directory_iterator(source_dir))
