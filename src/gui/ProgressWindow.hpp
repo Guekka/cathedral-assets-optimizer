@@ -70,9 +70,11 @@ public:
 
     ~ProgressWindow() override; // = default
 
+    void set_run_context(const QString &context, bool dry_run);
+    void set_stage(const QString &stage);
     void set_maximum(int max);
     void step(std::optional<QString> text = std::nullopt, int n = 1);
-    void end();
+    void finish(bool cancelled);
 
 signals:
     void cancelled();
@@ -81,7 +83,13 @@ protected:
     [[maybe_unused]] void closeEvent(QCloseEvent *event) override;
 
 private:
-    int current_value_{0};
+    int current_stage_value_{0};
+    int work_units_reported_{0};
+    int skip_notice_count_{0};
+    int warning_count_{0};
+    int error_count_{0};
+    bool dry_run_{false};
+    bool finished_{false};
     std::optional<QString> last_text_;
     QTimer timer_;
 
