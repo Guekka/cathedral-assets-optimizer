@@ -656,10 +656,10 @@ void FileRulesPanel::update_impact_preview()
 
     if (const auto *failed = std::get_if<FailedState>(&preview_state_))
     {
-        ui_->impactSummaryLabel->setText(
-            tr("The file preview could not be loaded: %1\nCheck that the input folder exists and is readable, "
-               "then choose it again to retry the preview.")
-                .arg(QString::fromStdString(failed->error)));
+        ui_->impactSummaryLabel->setText(tr("The file preview could not be loaded: %1\nCheck that the input "
+                                            "folder exists and is readable, "
+                                            "then choose it again to retry the preview.")
+                                             .arg(QString::fromStdString(failed->error)));
         return;
     }
 

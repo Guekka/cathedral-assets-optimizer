@@ -103,7 +103,7 @@ private:
     QTimer preview_timer_;
     std::optional<PreviewKey> preview_key_;
     btu::Path preview_input_path_;
-    std::uint64_t preview_generation_ = 0;
+    std::uint64_t preview_generation_                                                 = 0;
     std::variant<NoInputState, ScanningState, ReadyState, FailedState> preview_state_ = NoInputState{};
 
     void update_patterns(std::u8string_view selected_pattern);
