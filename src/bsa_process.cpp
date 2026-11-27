@@ -6,7 +6,8 @@
 #include <plog/Log.h>
 
 #include <format>
-#include <fstream>
+#include <string_view>
+#include <vector>
 
 /**
  * @brief Remove relative paths from a directory
@@ -63,6 +64,10 @@ void write_single_archive(const btu::Path &directory_path,
     {
         PLOGE << "Archive was written but cannot be opened, it is likely corrupted. Removing it.";
         btu::fs::remove(archive_path);
+
+        // Verification failed: leave the loose source files untouched and report failure instead of
+        // falling through to the removal logic below, which requires a verified archive.
+        return;
     }
 
     if (remove_files)
@@ -89,4 +94,60 @@ void write_single_archive(const btu::Path &directory_path,
             PLOGE << "Failed to create override file: " << res.error();
         }
     }
+}
+
+auto preview_pack_directory(const btu::bsa::PackSettings &settings,
+                            const bool remove_files) noexcept -> btu::bsa::PackPreview
+{
+    auto preview = btu::bsa::list_pack_preview(settings);
+
+    const auto log_files = [](const std::string_view archive_group, const std::vector<btu::Path> &files) {
+        for (const auto &relative_path : files)
+            PLOGI << std::format("Dry run: would include in {} archive(s): {}",
+                                 archive_group,
+                                 relative_path.string());
+    };
+    log_files("standard", preview.standard_files);
+    log_files("texture", preview.texture_files);
+
+    PLOGI << std::format(
+        "Dry run: selected {} standard files and {} texture files; archive count and splitting "
+        "are not predicted because they depend on resulting file sizes",
+        preview.standard_files.size(),
+        preview.texture_files.size());
+
+    if (remove_files)
+    {
+        PLOGI << "Dry run: would remove packed loose files only after successfully writing and verifying "
+                 "their archives";
+    }
+
+    return preview;
+}
+
+auto preview_unpack_archive(const btu::Path &archive_path, const btu::Path &directory_path) noexcept
+    -> tl::expected<btu::bsa::UnpackPreview, btu::common::Error>
+{
+    auto preview = btu::bsa::list_unpack_preview(
+        {.file_path = archive_path, .overwrite_existing_files = false, .extract_to_dir = directory_path});
+    if (!preview)
+    {
+        PLOGE << "Dry run: failed to open archive " << archive_path.string()
+              << " for preview. Reason: " << preview.error().message();
+        return tl::make_unexpected(preview.error());
+    }
+
+    for (const auto &relative_path : preview->files_to_extract)
+        PLOGI << std::format("Dry run: would extract {}", relative_path.string());
+    for (const auto &relative_path : preview->skipped_files)
+        PLOGI << std::format("Dry run: would skip extracting {} (a file already exists at this location)",
+                             relative_path.string());
+
+    PLOGI << std::format(
+        "Dry run: archive {} contains {} files, {} would be skipped because they already exist",
+        archive_path.filename().string(),
+        preview->files_to_extract.size() + preview->skipped_files.size(),
+        preview->skipped_files.size());
+
+    return preview;
 }
