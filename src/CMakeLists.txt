@@ -48,6 +48,8 @@ set(SOURCES
     ${SOURCE_DIR}/gui/AdvancedTexturesModule.cpp
     ${SOURCE_DIR}/gui/AdvancedTexturesModule.hpp
     ${SOURCE_DIR}/gui/AdvancedTexturesModule.ui
+    ${SOURCE_DIR}/gui/CustomizeOverviewModule.cpp
+    ${SOURCE_DIR}/gui/CustomizeOverviewModule.hpp
     ${SOURCE_DIR}/gui/GeneralBSAModule.cpp
     ${SOURCE_DIR}/gui/GeneralBSAModule.hpp
     ${SOURCE_DIR}/gui/GeneralBSAModule.ui
@@ -56,9 +58,9 @@ set(SOURCES
     ${SOURCE_DIR}/gui/ProfilesManagerWindow.ui
     ${SOURCE_DIR}/gui/file_rule_preview.cpp
     ${SOURCE_DIR}/gui/file_rule_preview.hpp
-    ${SOURCE_DIR}/gui/PatternsManagerWindow.cpp
-    ${SOURCE_DIR}/gui/PatternsManagerWindow.hpp
-    ${SOURCE_DIR}/gui/PatternsManagerWindow.ui
+    ${SOURCE_DIR}/gui/FileRulesPanel.cpp
+    ${SOURCE_DIR}/gui/FileRulesPanel.hpp
+    ${SOURCE_DIR}/gui/FileRulesPanel.ui
     ${SOURCE_DIR}/gui/SelectGPUWindow.cpp
     ${SOURCE_DIR}/gui/SelectGPUWindow.hpp
     ${SOURCE_DIR}/gui/SelectGPUWindow.ui

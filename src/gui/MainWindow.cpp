@@ -9,8 +9,9 @@
 #include "AdvancedBSAModule.hpp"
 #include "AdvancedMeshesModule.hpp"
 #include "AdvancedTexturesModule.hpp"
+#include "CustomizeOverviewModule.hpp"
+#include "FileRulesPanel.hpp"
 #include "GeneralBSAModule.hpp"
-#include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
 #include "logger.hpp"
@@ -23,9 +24,12 @@
 #include <QDesktopServices>
 #include <QDragEnterEvent>
 #include <QFileDialog>
+#include <QLineEdit>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QSplitter>
 #include <QUrl>
+#include <algorithm>
 
 namespace cao {
 constexpr static inline auto k_discord_url = "https://discord.gg/SwfTzHGQcy";
@@ -63,6 +67,7 @@ auto set_theme(GuiTheme theme) noexcept -> bool
 
 void add_customize_modules(ModuleDisplay &modules)
 {
+    modules.add_module(std::make_unique<CustomizeOverviewModule>());
     modules.add_module(std::make_unique<GeneralBSAModule>());
     modules.add_module(std::make_unique<AdvancedBSAModule>());
     modules.add_module(std::make_unique<AdvancedMeshesModule>());
@@ -72,17 +77,12 @@ void add_customize_modules(ModuleDisplay &modules)
 
 void update_file_settings_context(Ui::MainWindow &ui, const Settings &settings)
 {
-    const bool default_selected = settings.gui.selected_pattern == k_default_pattern.text();
-    ui.patternsLabel->setText(default_selected ? QObject::tr("Default file settings")
-                                               : QObject::tr("For matching files"));
-    ui.patternsLabel->setToolTip(
-        default_selected ? QObject::tr("These settings are used when no file rule matches.")
-                         : QObject::tr("These settings apply only when this is the first matching rule."));
-
-    if (!default_selected)
+    const auto &selected_settings = current_per_file_settings(settings);
+    if (selected_settings.pattern.text() != k_default_pattern.text())
     {
         ui.settingsScopeDescription->setText(
-            QObject::tr("These settings apply only when this is the first matching rule."));
+            QObject::tr("Editing settings for %1. They apply only when this is the first matching rule.")
+                .arg(pattern_display_name(selected_settings.pattern)));
         return;
     }
 
@@ -123,7 +123,8 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
     }
 }
 
-void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display) noexcept
+void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display,
+                    FileRulesPanel &file_rules_panel) noexcept
 {
     set_theme(settings.gui.gui_theme);
 
@@ -145,17 +146,9 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     success = select_text(*ui.profiles, to_qstring(settings.current_profile_name()));
     assert(success);
 
-    ui.patterns->clear();
-    for (const auto *pfs : settings.current_profile().per_file_settings())
-    {
-        const auto label = pfs->pattern.text() == k_default_pattern.text()
-                               ? QObject::tr("Everything else (default)")
-                               : pattern_display_name(pfs->pattern);
-        ui.patterns->addItem(label, to_qstring(pfs->pattern.text()));
-    }
-
-    success = select_data(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
-    show_message_box_on_failure(success);
+    ui.profileTargetLabel->setText(
+        QObject::tr("Target: %1").arg(game_display_name(settings.current_profile().target_game)));
+    file_rules_panel.refresh();
     update_file_settings_context(ui, settings);
 
     module_display.hide_unsupported(settings.current_profile().target_game);
@@ -192,6 +185,19 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     , ui_(std::make_unique<Ui::MainWindow>())
 {
     ui_->setupUi(this);
+    file_rules_panel_ = std::make_unique<FileRulesPanel>(settings_, ui_->fileRulesHost);
+    ui_->fileRulesLayout->addWidget(file_rules_panel_.get());
+
+    auto *splitter = new QSplitter(Qt::Horizontal, ui_->customizePage);
+    ui_->customizeContentLayout->removeWidget(ui_->fileRulesHost);
+    ui_->customizeContentLayout->removeWidget(ui_->tabWidget);
+    splitter->addWidget(ui_->fileRulesHost);
+    splitter->addWidget(ui_->tabWidget);
+    splitter->setStretchFactor(0, 0);
+    splitter->setStretchFactor(1, 1);
+    splitter->setSizes({360, 540});
+    ui_->customizeContentLayout->addWidget(splitter);
+
     module_display_.set_tab_widget(ui_->tabWidget);
     add_customize_modules(module_display_);
 
@@ -208,15 +214,28 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         save_settings();
         ProfilesManagerWindow profiles_manager(settings_);
         profiles_manager.exec();
-        settings_to_ui(settings_, *ui_, module_display_);
+        const auto current_settings = settings_.current_profile().per_file_settings();
+        const auto selected_pattern = std::ranges::find(
+            current_settings,
+            settings_.gui.selected_pattern,
+            [](const auto *per_file_settings) { return per_file_settings->pattern.text(); });
+        if (selected_pattern == current_settings.end())
+            settings_.gui.selected_pattern = k_default_pattern.text();
+        settings_to_ui(settings_, *ui_, module_display_, *file_rules_panel_);
     });
 
-    connect(ui_->managePatterns, &QPushButton::pressed, this, [this] {
-        save_settings();
-        PatternsManagerWindow patterns_manager(settings_);
-        patterns_manager.exec();
-        settings_to_ui(settings_, *ui_, module_display_);
-    });
+    connect(file_rules_panel_.get(),
+            &FileRulesPanel::settings_sync_requested,
+            this,
+            [this] { ui_to_settings(*ui_, module_display_, settings_); });
+    connect(file_rules_panel_.get(),
+            &FileRulesPanel::selected_pattern_changed,
+            this,
+            [this] {
+                update_file_settings_context(*ui_, settings_);
+                for (auto *module : module_display_.get_modules())
+                    module->setup(settings_);
+            });
 
     connect(ui_->actionSelect_GPU, &QAction::triggered, this, [this] {
         auto window = SelectGPUWindow();
@@ -274,13 +293,18 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         }
         // Reset selected pattern to default.
         settings_.gui.selected_pattern = k_default_pattern.text();
-        settings_to_ui(settings_, *ui_, module_display_);
+        settings_to_ui(settings_, *ui_, module_display_, *file_rules_panel_);
     });
 
-    connect(ui_->patterns, &QComboBox::activated, this, [this]() {
-        save_settings();
-        settings_.gui.selected_pattern = to_u8string(ui_->patterns->currentData().toString());
-        settings_to_ui(settings_, *ui_, module_display_);
+    connect(ui_->inputDirTextEdit, &QLineEdit::textChanged, this, [this](const QString &path) {
+        settings_.run_context.input_path = path.toStdString();
+        file_rules_panel_->refresh();
+    });
+
+    connect(ui_->modeChooserComboBox, &QComboBox::activated, this, [this] {
+        settings_.run_context.optimization_mode
+            = ui_->modeChooserComboBox->currentData().value<OptimizationMode>();
+        file_rules_panel_->refresh();
     });
 
     connect(ui_->previewButton, &QPushButton::pressed, this, [this] { init_process(true); });
@@ -296,12 +320,12 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     connect(ui_->actionAbout_Qt, &QAction::triggered, this, &QApplication::aboutQt);
 
     first_start(settings_.gui.first_run);
-    settings_to_ui(settings_, *ui_, module_display_);
+    settings_to_ui(settings_, *ui_, module_display_, *file_rules_panel_);
 
     connect(ui_->workspaceTabs, &QTabWidget::currentChanged, this, [this](const int index) {
         ui_to_settings(*ui_, module_display_, settings_);
         settings_.gui.workspace = index == 0 ? Workspace::QuickTasks : Workspace::Customize;
-        settings_to_ui(settings_, *ui_, module_display_);
+        settings_to_ui(settings_, *ui_, module_display_, *file_rules_panel_);
         save_settings();
     });
 }

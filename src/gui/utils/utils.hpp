@@ -6,6 +6,8 @@
 
 #include "settings/per_file_settings.hpp"
 
+#include <btu/common/games.hpp>
+
 #include <QAbstractButton>
 #include <QComboBox>
 #include <QDialog>
@@ -121,6 +123,24 @@ void set_items(QComboBox &box, const Collection &collection, Proj proj = std::id
 {
     const auto data = u.toUtf8();
     return {reinterpret_cast<const char8_t *>(data.constData()), static_cast<size_t>(data.size())};
+}
+
+[[nodiscard]] inline auto game_display_name(const btu::Game game) -> QString
+{
+    switch (game)
+    {
+        case btu::Game::TES3: return QObject::tr("Morrowind");
+        case btu::Game::TES4: return QObject::tr("Oblivion");
+        case btu::Game::FNV: return QObject::tr("Fallout New Vegas");
+        case btu::Game::SLE: return QObject::tr("Skyrim LE (2011)");
+        case btu::Game::SSE: return QObject::tr("Skyrim SE (2016)");
+        case btu::Game::FO4: return QObject::tr("Fallout 4 NG");
+        case btu::Game::Starfield: return QObject::tr("Starfield");
+        case btu::Game::Custom: return QObject::tr("Custom");
+    }
+
+    Q_UNREACHABLE();
+    return {};
 }
 
 [[nodiscard]] inline auto pattern_match_description(const Pattern &pattern) -> QString
