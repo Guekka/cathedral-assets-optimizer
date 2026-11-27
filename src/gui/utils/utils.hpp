@@ -139,9 +139,8 @@ void set_items(QComboBox &box, const Collection &collection, Proj proj = std::id
         case btu::Game::Starfield: return QObject::tr("Starfield");
         case btu::Game::Custom: return QObject::tr("Custom");
     }
-
     Q_UNREACHABLE();
-    return {};
+    Q_UNREACHABLE();
 }
 
 [[nodiscard]] inline auto pattern_match_description(const Pattern &pattern) -> QString
