@@ -102,9 +102,9 @@ TEST_CASE("moving a file rule changes first-match priority")
     profile.move_per_file_settings(1, 0);
 
     CHECK(profile.get_per_file_settings(interface_path).pattern.name() == u8"Interface textures");
-    CHECK(profile.get_per_file_settings(std::filesystem::path{u8"textures/landscape/ground.dds"})
-              .pattern.name()
-          == u8"All DDS textures");
+    CHECK(
+        profile.get_per_file_settings(std::filesystem::path{u8"textures/landscape/ground.dds"}).pattern.name()
+        == u8"All DDS textures");
 }
 
 TEST_CASE("non-advanced modes edit default settings, not the previously selected rule")

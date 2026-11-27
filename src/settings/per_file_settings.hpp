@@ -259,8 +259,8 @@ private:
         return true;
     }
 
-    [[nodiscard]] static auto matches_simple_rule(const std::u8string &path, const SimpleRule &rule) noexcept
-        -> bool
+    [[nodiscard]] static auto matches_simple_rule(const std::u8string &path,
+                                                  const SimpleRule &rule) noexcept -> bool
     {
         if (!rule.folder.empty())
         {

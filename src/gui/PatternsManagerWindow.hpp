@@ -43,7 +43,7 @@ public:
     PatternsManagerWindow(PatternsManagerWindow &&)      = delete;
 
     auto operator=(const PatternsManagerWindow &) -> PatternsManagerWindow & = delete;
-    auto operator=(PatternsManagerWindow &&) -> PatternsManagerWindow &      = delete;
+    auto operator=(PatternsManagerWindow &&) -> PatternsManagerWindow      & = delete;
 
     ~PatternsManagerWindow() override; // = default
 

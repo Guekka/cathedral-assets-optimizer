@@ -10,19 +10,18 @@ target_link_libraries(
 
 add_test(NAME cao_cli_profile_tests COMMAND cao_cli_profile_tests)
 find_package(platform_folders CONFIG REQUIRED)
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(
+  Qt6
+  COMPONENTS Core
+  REQUIRED)
 
-add_executable(CAO_test
-  PatternTests.cpp
-  ${PROJECT_SOURCE_DIR}/src/settings/profile.cpp
-  ${PROJECT_SOURCE_DIR}/src/settings/settings.cpp)
+add_executable(
+  CAO_test PatternTests.cpp ${PROJECT_SOURCE_DIR}/src/settings/profile.cpp
+           ${PROJECT_SOURCE_DIR}/src/settings/settings.cpp)
 target_include_directories(CAO_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_compile_features(CAO_test PRIVATE cxx_std_20)
-target_link_libraries(CAO_test PRIVATE
-  btu::bethutil
-  doctest::doctest
-  Qt6::Core
-  nlohmann_json::nlohmann_json
-  sago::platform_folders)
+target_link_libraries(
+  CAO_test PRIVATE btu::bethutil doctest::doctest Qt6::Core
+                   nlohmann_json::nlohmann_json sago::platform_folders)
 
 add_test(NAME CAO_test COMMAND CAO_test)
