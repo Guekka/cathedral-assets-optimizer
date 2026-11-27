@@ -10,7 +10,6 @@
 #include "AdvancedMeshesModule.hpp"
 #include "AdvancedTexturesModule.hpp"
 #include "GeneralBSAModule.hpp"
-#include "LevelSelector.hpp"
 #include "PatternsManagerWindow.hpp"
 #include "ProfilesManagerWindow.hpp"
 #include "SelectGPUWindow.hpp"
@@ -62,103 +61,50 @@ auto set_theme(GuiTheme theme) noexcept -> bool
     return true;
 }
 
-void set_file_settings_context_visible(Ui::MainWindow &ui, const GuiMode mode) noexcept
+void add_customize_modules(ModuleDisplay &modules)
 {
-    const bool show_rule_controls   = mode == GuiMode::Advanced;
-    const bool show_file_settings   = mode != GuiMode::QuickOptimize;
-    const bool show_fallback_notice = mode == GuiMode::Medium;
-
-    ui.patterns->setEnabled(show_rule_controls);
-    ui.patterns->setVisible(show_rule_controls);
-    ui.managePatterns->setEnabled(show_rule_controls);
-    ui.managePatterns->setVisible(show_rule_controls);
-    ui.patternsLabel->setVisible(show_file_settings);
-    ui.settingsScopeDescription->setVisible(show_fallback_notice);
-}
-
-void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, const Settings &settings) noexcept
-{
-    modules.clear_modules();
-
-    const auto level = settings.gui.gui_mode;
-
-    ui.manageProfiles->setHidden(level == GuiMode::QuickOptimize);
-
-    switch (level)
-    {
-        case GuiMode::QuickOptimize:
-        {
-            break;
-        }
-        case GuiMode::Medium:
-        {
-            modules.add_module(std::make_unique<GeneralBSAModule>());
-            modules.add_module(std::make_unique<AdvancedBSAModule>());
-            modules.add_module(std::make_unique<AdvancedTexturesModule>());
-            break;
-        }
-        case GuiMode::Advanced:
-        {
-            modules.add_module(std::make_unique<GeneralBSAModule>());
-            modules.add_module(std::make_unique<AdvancedBSAModule>());
-            modules.add_module(std::make_unique<AdvancedMeshesModule>());
-            modules.add_module(std::make_unique<AdvancedTexturesModule>());
-            modules.add_module(std::make_unique<AdvancedAnimationsModule>());
-            break;
-        }
-    }
-
-    set_file_settings_context_visible(ui, level);
-    modules.hide_unsupported(settings.current_profile().target_game);
+    modules.add_module(std::make_unique<GeneralBSAModule>());
+    modules.add_module(std::make_unique<AdvancedBSAModule>());
+    modules.add_module(std::make_unique<AdvancedMeshesModule>());
+    modules.add_module(std::make_unique<AdvancedTexturesModule>());
+    modules.add_module(std::make_unique<AdvancedAnimationsModule>());
 }
 
 void update_file_settings_context(Ui::MainWindow &ui, const Settings &settings)
 {
-    const auto mode = settings.gui.gui_mode;
-    if (mode == GuiMode::QuickOptimize)
-        return;
-
-    if (mode == GuiMode::Medium)
-    {
-        ui.patternsLabel->setText(QObject::tr("Default file settings"));
-        ui.patternsLabel->setToolTip(QObject::tr("These settings are used when no file rule matches."));
-
-        auto active_rule_count = std::size_t{0};
-        for (const auto *per_file_settings : settings.current_profile().per_file_settings())
-        {
-            if (per_file_settings->pattern.text() != k_default_pattern.text())
-                ++active_rule_count;
-        }
-
-        if (active_rule_count == 0)
-        {
-            ui.settingsScopeDescription->setText(
-                QObject::tr("These settings apply to all files in this profile."));
-        }
-        else if (active_rule_count == 1)
-        {
-            ui.settingsScopeDescription->setText(
-                QObject::tr("Used when no file rule matches. One active file rule overrides these defaults "
-                            "for matching files. Switch to Advanced to review it."));
-        }
-        else
-        {
-            ui.settingsScopeDescription->setText(
-                QObject::tr("Used when no file rule matches. %1 active file rules override these defaults "
-                            "for matching files. Switch to Advanced to review them.")
-                    .arg(static_cast<qulonglong>(active_rule_count)));
-        }
-        return;
-    }
-
     const bool default_selected = settings.gui.selected_pattern == k_default_pattern.text();
     ui.patternsLabel->setText(default_selected ? QObject::tr("Default file settings")
                                                : QObject::tr("For matching files"));
-    const auto tool_tip = default_selected
-                              ? QObject::tr("These settings are used when no file rule matches.")
-                              : QObject::tr(
-                                    "These settings apply only when this is the first matching rule.");
-    ui.patternsLabel->setToolTip(tool_tip);
+    ui.patternsLabel->setToolTip(default_selected
+                                     ? QObject::tr("These settings are used when no file rule matches.")
+                                     : QObject::tr(
+                                           "These settings apply only when this is the first matching rule."));
+
+    if (!default_selected)
+    {
+        ui.settingsScopeDescription->setText(
+            QObject::tr("These settings apply only when this is the first matching rule."));
+        return;
+    }
+
+    auto active_rule_count = std::size_t{0};
+    for (const auto *per_file_settings : settings.current_profile().per_file_settings())
+    {
+        if (per_file_settings->pattern.text() != k_default_pattern.text())
+            ++active_rule_count;
+    }
+
+    if (active_rule_count == 0)
+    {
+        ui.settingsScopeDescription->setText(
+            QObject::tr("These settings apply to all files in this profile."));
+    }
+    else
+    {
+        ui.settingsScopeDescription->setText(
+            QObject::tr("Used when no file rule matches. %1 active rules override these defaults.")
+                .arg(static_cast<qulonglong>(active_rule_count)));
+    }
 }
 
 void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_display, Settings &settings)
@@ -166,42 +112,41 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
     settings.gui.gui_theme = ui.actionEnableDarkTheme->isChecked() ? GuiTheme::Dark : GuiTheme::Light;
 
     settings.run_context.input_path        = ui.inputDirTextEdit->text().toStdString();
-    settings.run_context.dry_run           = ui.dryRunCheckBox->isChecked();
     settings.run_context.optimization_mode = ui.modeChooserComboBox->currentData().value<OptimizationMode>();
-    settings.current_profile().mods_blacklist = {}; // TODO
+    settings.gui.quick_target_game = ui.quickTargetGame->currentData().value<btu::Game>();
 
-    // has to be last because may rely on GuiSettings being already filled
-    for (const auto *module : module_display.get_modules())
-        module->ui_to_settings(settings);
-} // namespace cao
+    if (settings.gui.workspace == Workspace::Customize)
+    {
+        settings.current_profile().mods_blacklist = {}; // TODO
 
-void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display) noexcept
+        for (const auto *module : module_display.get_modules())
+            module->ui_to_settings(settings);
+    }
+}
+
+void settings_to_ui(const Settings &settings,
+                    Ui::MainWindow &ui,
+                    ModuleDisplay &module_display) noexcept
 {
     set_theme(settings.gui.gui_theme);
 
     // Cache current index to keep selected tab if possible.
     const auto old_tab_index = module_display.current_index();
 
-    set_gui_level(module_display, ui, settings);
+    const bool customize = settings.gui.workspace == Workspace::Customize;
+    ui.workspaceTabs->setCurrentIndex(customize ? 1 : 0);
+    ui.groupBox->setVisible(customize);
 
     ui.inputDirTextEdit->setText(to_qstring(settings.run_context.input_path.u8string()));
-    ui.dryRunCheckBox->setChecked(settings.run_context.dry_run);
     bool success = select_data(*ui.modeChooserComboBox, settings.run_context.optimization_mode);
     show_message_box_on_failure(success);
 
-    const auto profiles = [&settings]() -> std::vector<std::u8string_view> {
-        using namespace std::literals;
+    success = select_data(*ui.quickTargetGame, settings.gui.quick_target_game);
+    assert(success);
 
-        switch (settings.gui.gui_mode)
-        {
-            case GuiMode::QuickOptimize: return {u8"SLE"sv, u8"SSE"sv};
-            case GuiMode::Medium: [[fallthrough]];
-            case GuiMode::Advanced: [[fallthrough]];
-            default: return settings.list_profiles();
-        }
-    }();
-
-    set_items(*ui.profiles, profiles, to_qstring);
+    set_items(*ui.profiles, settings.list_profiles(), to_qstring);
+    success = select_text(*ui.profiles, to_qstring(settings.current_profile_name()));
+    assert(success);
 
     ui.patterns->clear();
     for (const auto *pfs : settings.current_profile().per_file_settings())
@@ -216,10 +161,7 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
     show_message_box_on_failure(success);
     update_file_settings_context(ui, settings);
 
-    success = select_text(*ui.profiles, to_qstring(settings.current_profile_name()));
-    if (!success)
-        success = select_text(*ui.profiles, to_qstring(profiles.at(0)));
-
+    module_display.hide_unsupported(settings.current_profile().target_game);
     for (auto *module : module_display.get_modules())
         module->setup(settings);
 
@@ -254,15 +196,19 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 {
     ui_->setupUi(this);
     module_display_.set_tab_widget(ui_->tabWidget);
+    add_customize_modules(module_display_);
 
     setAcceptDrops(true);
 
-    // Setting data for widgets
+    // Setting data for run-context widgets
     set_data(*ui_->modeChooserComboBox, tr("One mod"), OptimizationMode::SingleMod);
     set_data(*ui_->modeChooserComboBox, tr("Several mods"), OptimizationMode::SeveralMods);
+    set_data(*ui_->quickTargetGame, tr("Skyrim LE (2011)"), btu::Game::SLE);
+    set_data(*ui_->quickTargetGame, tr("Skyrim SE (2016)"), btu::Game::SSE);
 
     // Connecting widgets that do not depend on current profile
     connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
+        save_settings();
         ProfilesManagerWindow profiles_manager(settings_);
         profiles_manager.exec();
         settings_to_ui(settings_, *ui_, module_display_);
@@ -305,6 +251,10 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         ui_->inputDirTextEdit->setText(dir);
     });
 
+    connect(ui_->quickTargetGame, &QComboBox::activated, this, [this] {
+        settings_.gui.quick_target_game = ui_->quickTargetGame->currentData().value<btu::Game>();
+    });
+
     auto &common_settings = settings_.gui;
     ui_->actionEnableDarkTheme->setChecked(common_settings.gui_theme == GuiTheme::Dark);
     set_theme(common_settings.gui_theme);
@@ -318,6 +268,7 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 
     connect(ui_->profiles, &QComboBox::activated, this, [this](int idx) {
         const QString &text = ui_->profiles->itemText(idx);
+        save_settings();
         if (!settings_.set_current_profile(to_u8string(text)))
         {
             QMessageBox::critical(this,
@@ -335,10 +286,8 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         settings_to_ui(settings_, *ui_, module_display_);
     });
 
-    connect(ui_->processButton, &QPushButton::pressed, this, &MainWindow::init_process);
-
-    // Menu buttons
-    connect(ui_->actionChange_level, &QAction::triggered, this, &MainWindow::run_gui_selector);
+    connect(ui_->previewButton, &QPushButton::pressed, this, [this] { init_process(true); });
+    connect(ui_->processButton, &QPushButton::pressed, this, [this] { init_process(false); });
 
     auto url_opener = [](const char *url) { return [url] { QDesktopServices::openUrl(QUrl(url)); }; };
 
@@ -350,11 +299,14 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     connect(ui_->actionAbout_Qt, &QAction::triggered, this, &QApplication::aboutQt);
 
     first_start(settings_.gui.first_run);
+    settings_to_ui(settings_, *ui_, module_display_);
 
-    if (settings_.gui.remember_gui_mode)
+    connect(ui_->workspaceTabs, &QTabWidget::currentChanged, this, [this](const int index) {
+        ui_to_settings(*ui_, module_display_, settings_);
+        settings_.gui.workspace = index == 0 ? Workspace::QuickTasks : Workspace::Customize;
         settings_to_ui(settings_, *ui_, module_display_);
-    else
-        run_gui_selector();
+        save_settings();
+    });
 }
 
 /// @brief Checks if the settings are valid. Displays a message box if they are not.
@@ -396,22 +348,14 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 
 MainWindow::~MainWindow() = default;
 
-void MainWindow::init_process()
+void MainWindow::init_process(const bool dry_run)
 {
+    settings_.run_context.dry_run = dry_run;
     save_settings();
 
     auto quick_profile = std::optional<Profile>{};
-    if (settings_.gui.gui_mode == GuiMode::QuickOptimize)
-    {
-        const auto game = settings_.current_profile().target_game;
-        if (game == btu::Game::SLE || game == btu::Game::SSE)
-            quick_profile = Profile::make_base(game);
-        else
-        {
-            QMessageBox::critical(this, tr("Error"), tr("Invalid game selected for Quick Optimize."));
-            return;
-        }
-    }
+    if (settings_.gui.workspace == Workspace::QuickTasks)
+        quick_profile = Profile::make_base(settings_.gui.quick_target_game);
 
     try
     {
@@ -442,6 +386,7 @@ void MainWindow::init_process()
                 graceful_stop_dialog_.reset();
                 cao_process_.reset();
                 ui_->processButton->setDisabled(false);
+                ui_->previewButton->setDisabled(false);
             });
 
             manager.run_optimization(std::move(run_settings), std::move(stop_token));
@@ -455,6 +400,7 @@ void MainWindow::init_process()
                 &MainWindow::stop_process_gracefully);
 
         ui_->processButton->setDisabled(true);
+        ui_->previewButton->setDisabled(true);
     }
     catch (const std::exception &e)
     {
@@ -492,13 +438,6 @@ void MainWindow::save_settings() noexcept
     {
         QMessageBox::critical(this, tr("Error"), tr("Your settings could not be saved to disk."));
     }
-}
-
-void MainWindow::run_gui_selector()
-{
-    auto level_selector = LevelSelector(settings_.gui);
-    settings_.gui       = level_selector.run_selection();
-    settings_to_ui(settings_, *ui_, module_display_);
 }
 
 void MainWindow::about() noexcept

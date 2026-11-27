@@ -17,8 +17,10 @@ processed mods should be tested in game.
 
 ## How people use CAO
 
-- **Quick Optimize** is a simplified, one-click view for common tasks. Preserve this direct path when
-  redesigning settings or navigation.
+- **Quick tasks** is the short path for common task flows, starting with Skyrim asset preparation.
+  Preserve its low-decision path when redesigning settings or navigation.
+- **Customize** is where users select profiles, operations, and file-specific settings. Keep the saved
+  profile distinct from task-specific choices in Quick tasks.
 - Some users arrive from a modlist guide with a specific working folder, target game, profile, and
   exact operation to perform. The Phoenix Flavour guide, for example, uses CAO primarily for BSA
   creation and recommends preserving source files; Salvo gives users a prescribed folder and settings.
@@ -31,6 +33,10 @@ processed mods should be tested in game.
 
 - Begin from the user's task and selected input, then make the target game/profile and operation
   explicit. A task-specific profile can be more meaningful than exposing every setting immediately.
+- Keep Quick tasks and Customize as distinct destinations: one favors a guided, recommended workflow;
+  the other exposes reusable profiles and detailed controls.
+- Keep the input path and one-mod/several-mod scope visible across workspaces. Explain Preview (Dry run)
+  as a processing preview, distinct from a file-rule impact preview.
 - Make the processing scope clear: one mod versus several immediate subfolders, and which files are
   matched, processed, skipped, or left unchanged.
 - Make side effects visible before running. CAO can modify or remove files; a dry run is not a

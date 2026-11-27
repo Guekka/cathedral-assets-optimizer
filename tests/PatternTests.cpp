@@ -254,7 +254,7 @@ TEST_CASE("file-rule preview reports an invalid input folder")
     CHECK(result.error() == "The selected input path is not a folder.");
 }
 
-TEST_CASE("non-advanced modes edit default settings, not the previously selected rule")
+TEST_CASE("Quick tasks use default settings and Customize can edit the selected rule")
 {
     auto settings = Settings::make_base();
 
@@ -264,14 +264,14 @@ TEST_CASE("non-advanced modes edit default settings, not the previously selected
     settings.current_profile().prepend_per_file_settings(std::move(custom_rule));
     settings.gui.selected_pattern = custom_rule_key;
 
-    settings.gui.gui_mode = GuiMode::Medium;
+    settings.gui.workspace = Workspace::QuickTasks;
     CHECK(current_per_file_settings(settings).pattern.text() == k_default_pattern.text());
     CHECK(settings.gui.selected_pattern == custom_rule_key);
 
-    settings.gui.gui_mode = GuiMode::Advanced;
+    settings.gui.workspace = Workspace::Customize;
     CHECK(current_per_file_settings(settings).pattern.text() == custom_rule_key);
 
-    settings.gui.gui_mode = GuiMode::QuickOptimize;
+    settings.gui.workspace = Workspace::QuickTasks;
     CHECK(current_per_file_settings(settings).pattern.text() == k_default_pattern.text());
 }
 } // namespace cao

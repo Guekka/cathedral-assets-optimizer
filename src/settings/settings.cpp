@@ -27,6 +27,45 @@ void RunContext::apply_to(Profile &profile) const
     profile.dry_run           = dry_run;
 }
 
+void to_json(nlohmann::json &json, const GuiSettings &settings)
+{
+    const auto legacy_mode = settings.workspace == Workspace::QuickTasks ? GuiMode::QuickOptimize
+                                                                         : GuiMode::Advanced;
+
+    json = {
+        {"gui_theme", settings.gui_theme},
+        {"remember_gui_mode", settings.remember_gui_mode},
+        {"gui_mode", legacy_mode},
+        {"first_run", settings.first_run},
+        {"selected_pattern", settings.selected_pattern},
+        {"workspace", settings.workspace},
+        {"quick_target_game", settings.quick_target_game},
+    };
+}
+
+void from_json(const nlohmann::json &json, GuiSettings &settings)
+{
+    json.at("gui_theme").get_to(settings.gui_theme);
+    if (const auto remember = json.find("remember_gui_mode"); remember != json.end())
+        remember->get_to(settings.remember_gui_mode);
+    json.at("first_run").get_to(settings.first_run);
+    json.at("selected_pattern").get_to(settings.selected_pattern);
+
+    if (const auto workspace = json.find("workspace"); workspace != json.end())
+    {
+        workspace->get_to(settings.workspace);
+    }
+    else
+    {
+        auto legacy_mode = GuiMode::QuickOptimize;
+        json.at("gui_mode").get_to(legacy_mode);
+        settings.workspace = legacy_mode == GuiMode::QuickOptimize ? Workspace::QuickTasks
+                                                                   : Workspace::Customize;
+    }
+    if (const auto quick_target_game = json.find("quick_target_game"); quick_target_game != json.end())
+        quick_target_game->get_to(settings.quick_target_game);
+}
+
 void to_json(nlohmann::json &json, const Settings &settings)
 {
     auto profiles = settings.profiles_;
@@ -44,9 +83,17 @@ void to_json(nlohmann::json &json, const Settings &settings)
 
 void from_json(const nlohmann::json &json, Settings &settings)
 {
-    json.at("gui").get_to(settings.gui);
     json.at("profiles_").get_to(settings.profiles_);
     json.at("current_profile_index_").get_to(settings.current_profile_index_);
+    const auto &gui_json = json.at("gui");
+    const bool has_quick_target_game = gui_json.contains("quick_target_game");
+    gui_json.get_to(settings.gui);
+    if (!has_quick_target_game)
+    {
+        const auto legacy_target_game = settings.current_profile().target_game;
+        if (legacy_target_game == btu::Game::SLE || legacy_target_game == btu::Game::SSE)
+            settings.gui.quick_target_game = legacy_target_game;
+    }
 
     if (const auto run_context = json.find("run_context"); run_context != json.end())
         run_context->get_to(settings.run_context);
@@ -205,8 +252,8 @@ auto current_per_file_settings(Settings &sets) -> PerFileSettings &
 auto current_per_file_settings(const Settings &sets) -> const PerFileSettings &
 {
     const auto &profile         = sets.current_profile();
-    const auto selected_pattern = sets.gui.gui_mode == GuiMode::Advanced ? sets.gui.selected_pattern
-                                                                         : k_default_pattern.text();
+    const auto selected_pattern = sets.gui.workspace == Workspace::Customize ? sets.gui.selected_pattern
+                                                                              : k_default_pattern.text();
 
     auto per_file_settings = profile.per_file_settings();
 

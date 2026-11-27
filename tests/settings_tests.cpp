@@ -11,6 +11,67 @@
 #include <utility>
 
 namespace cao {
+TEST_CASE("legacy GUI modes migrate to Quick tasks and Customize")
+{
+    auto legacy_json = nlohmann::json(GuiSettings{});
+    legacy_json.erase("workspace");
+    legacy_json.erase("quick_target_game");
+    legacy_json["remember_gui_mode"] = false;
+
+    legacy_json["gui_mode"] = GuiMode::QuickOptimize;
+    const auto quick_tasks = legacy_json.get<GuiSettings>();
+    CHECK(quick_tasks.workspace == Workspace::QuickTasks);
+
+    auto quick_tasks_json = nlohmann::json(quick_tasks);
+    CHECK(quick_tasks_json.at("workspace").get<Workspace>() == Workspace::QuickTasks);
+    CHECK(quick_tasks_json.at("gui_mode").get<GuiMode>() == GuiMode::QuickOptimize);
+    CHECK_FALSE(quick_tasks_json.at("remember_gui_mode").get<bool>());
+
+    for (const auto legacy_mode : {GuiMode::Medium, GuiMode::Advanced})
+    {
+        legacy_json["gui_mode"] = legacy_mode;
+        const auto customize = legacy_json.get<GuiSettings>();
+        CHECK(customize.workspace == Workspace::Customize);
+
+        const auto customize_json = nlohmann::json(customize);
+        CHECK(customize_json.at("workspace").get<Workspace>() == Workspace::Customize);
+        CHECK(customize_json.at("gui_mode").get<GuiMode>() == GuiMode::Advanced);
+
+        auto rollback_json = customize_json;
+        rollback_json.erase("workspace");
+        CHECK(rollback_json.get<GuiSettings>().workspace == Workspace::Customize);
+    }
+
+    auto workspace_wins = quick_tasks_json;
+    workspace_wins["workspace"] = Workspace::Customize;
+    workspace_wins["gui_mode"] = GuiMode::QuickOptimize;
+    CHECK(workspace_wins.get<GuiSettings>().workspace == Workspace::Customize);
+}
+
+TEST_CASE("legacy settings migrate quick target game from the selected profile")
+{
+    auto settings = Settings::make_base();
+    settings.create_profile(u8"Legacy SLE", Profile::make_base(btu::Game::SLE));
+    REQUIRE(settings.set_current_profile(u8"Legacy SLE"));
+
+    auto legacy_json = nlohmann::json(settings);
+    legacy_json["gui"].erase("workspace");
+    legacy_json["gui"].erase("quick_target_game");
+
+    const auto migrated = legacy_json.get<Settings>();
+    CHECK(migrated.gui.quick_target_game == btu::Game::SLE);
+}
+
+TEST_CASE("quick target game persists independently of the selected profile")
+{
+    auto settings = Settings::make_base();
+    settings.gui.quick_target_game = btu::Game::SLE;
+
+    const auto restored = nlohmann::json(settings).get<Settings>();
+    CHECK(restored.gui.quick_target_game == btu::Game::SLE);
+    CHECK(restored.current_profile().target_game == settings.current_profile().target_game);
+}
+
 TEST_CASE("legacy settings migrate run context from the selected profile")
 {
     auto legacy_settings             = Settings::make_base();

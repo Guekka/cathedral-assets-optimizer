@@ -13,17 +13,19 @@
 namespace cao {
 struct GuiSettings
 {
-    GuiTheme gui_theme     = GuiTheme::Dark;
-    bool remember_gui_mode = false;
-    GuiMode gui_mode       = GuiMode::QuickOptimize;
+    GuiTheme gui_theme          = GuiTheme::Dark;
+    Workspace workspace         = Workspace::QuickTasks;
+    btu::Game quick_target_game = btu::Game::SSE;
 
     bool first_run = true;
+
+    bool remember_gui_mode = false; // Retained for legacy settings and rollback compatibility.
 
     std::u8string selected_pattern = k_default_pattern.text();
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
-    GuiSettings, gui_theme, remember_gui_mode, gui_mode, first_run, selected_pattern)
+void to_json(nlohmann::json &json, const GuiSettings &settings);
+void from_json(const nlohmann::json &json, GuiSettings &settings);
 
 struct RunContext
 {
