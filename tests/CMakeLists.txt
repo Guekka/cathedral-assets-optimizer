@@ -20,10 +20,11 @@ add_test(NAME cao_cli_profile_tests COMMAND cao_cli_profile_tests)
 add_executable(
   CAO_test
   PatternTests.cpp
-  ${PROJECT_SOURCE_DIR}/src/gui/file_rule_preview.cpp
-  ${PROJECT_SOURCE_DIR}/src/settings/profile.cpp
+  settings_tests.cpp
   bsa_process_tests.cpp
   ${PROJECT_SOURCE_DIR}/src/bsa_process.cpp
+  ${PROJECT_SOURCE_DIR}/src/gui/file_rule_preview.cpp
+  ${PROJECT_SOURCE_DIR}/src/settings/profile.cpp
   ${PROJECT_SOURCE_DIR}/src/settings/settings.cpp)
 target_include_directories(CAO_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_compile_features(CAO_test PRIVATE cxx_std_23)

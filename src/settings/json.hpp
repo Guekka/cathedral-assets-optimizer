@@ -38,7 +38,8 @@ template<typename T>
         return false;
 
     stream << json.dump(4);
-    return true;
+    stream.flush();
+    return stream.good();
 }
 
 } // namespace cao::json

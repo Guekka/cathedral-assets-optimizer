@@ -54,7 +54,7 @@ Additional guides:
 # Command-line usage
 
 Run CAO with `--cli`, a configured profile name, and optionally one or more mod directory paths. When paths are
-provided, CAO processes each path as a single mod instead of using the profile's saved input path:
+provided, CAO processes each path as a single mod instead of using the saved input path:
 
 ```sh
 Cathedral_Assets_Optimizer --cli SSE "/path/to/Mod A" "/path/to/Mod B"
@@ -66,7 +66,9 @@ To load a profile from a JSON file instead of the saved settings:
 Cathedral_Assets_Optimizer --cli --json "/path/to/profile.json" "/path/to/Mod A"
 ```
 
-If no mod paths are provided, CAO uses the selected profile's input path and optimization mode.
+If no mod paths are provided, CAO uses the saved shared run context (input path, mode, and dry-run setting).
+With `--json`, these values come from the JSON profile. For saved profiles, the profile name selects processing
+settings but does not change the shared run context.
 
 # Credits
 

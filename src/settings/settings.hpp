@@ -8,6 +8,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <optional>
+
 namespace cao {
 struct GuiSettings
 {
@@ -22,6 +24,18 @@ struct GuiSettings
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
     GuiSettings, gui_theme, remember_gui_mode, gui_mode, first_run, selected_pattern)
+
+struct RunContext
+{
+    btu::Path input_path;
+    OptimizationMode optimization_mode = OptimizationMode::SingleMod;
+    bool dry_run                       = false;
+
+    [[nodiscard]] static auto from_profile(const Profile &profile) -> RunContext;
+    void apply_to(Profile &profile) const;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RunContext, input_path, optimization_mode, dry_run)
 
 class Settings
 {
@@ -48,6 +62,9 @@ public:
     [[nodiscard]] static auto state_directory() noexcept -> std::filesystem::path;
 
     // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
+    RunContext run_context{};
+
+    // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
     GuiSettings gui{};
 
 private:
@@ -55,8 +72,15 @@ private:
     size_t current_profile_index_ = 0;
 
 public:
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Settings, gui, profiles_, current_profile_index_)
+    friend void to_json(nlohmann::json &json, const Settings &settings);
+    friend void from_json(const nlohmann::json &json, Settings &settings);
 };
+
+void to_json(nlohmann::json &json, const Settings &settings);
+void from_json(const nlohmann::json &json, Settings &settings);
+
+[[nodiscard]] auto make_run_settings(const Settings &settings,
+                                     std::optional<Profile> profile_override = std::nullopt) -> Settings;
 
 [[nodiscard]] auto current_per_file_settings(Settings &sets) -> PerFileSettings &;
 [[nodiscard]] auto current_per_file_settings(const Settings &sets) -> const PerFileSettings &;
@@ -64,8 +88,8 @@ public:
 [[nodiscard]] auto save_settings(const Settings &settings) -> bool;
 
 /// @brief Loads settings from the default location.
-/// @return The loaded settings or a default-constructed Settings object if the file could not be
-/// loaded.
+/// @return The loaded settings, or default settings when no file exists.
+/// @throws std::runtime_error if an existing settings file cannot be loaded.
 [[nodiscard]] auto load_settings() -> Settings;
 
 } // namespace cao

@@ -164,7 +164,8 @@ void ProfilesManagerWindow::export_selected_profile()
         return;
 
     const auto &current = ui_->profiles->currentText();
-    const auto profile  = profiles_.get_profile(to_u8string(current)).value();
+    auto profile        = profiles_.get_profile(to_u8string(current)).value();
+    profiles_.run_context.apply_to(profile);
 
     if (!json::save_to_file(profile, to_u8string(path)))
         QMessageBox::critical(this, tr("Error"), tr("Failed to save profile"));
