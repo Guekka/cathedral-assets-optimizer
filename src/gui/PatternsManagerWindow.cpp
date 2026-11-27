@@ -207,9 +207,9 @@ private:
                         return Pattern::simple_rule(to_u8string(folder_->text().trimmed()),
                                                     to_u8string(extension_->text().trimmed()));
                     case MatchMode::Wildcard:
-                        return Pattern{to_u8string(pattern_->text().trimmed()), Pattern::Type::Wildcard};
+                        return Pattern::wildcard(to_u8string(pattern_->text().trimmed()));
                     case MatchMode::Regex:
-                        return Pattern{to_u8string(pattern_->text().trimmed()), Pattern::Type::Regex};
+                        return Pattern::regular_expression(to_u8string(pattern_->text().trimmed()));
                 }
 
                 throw std::logic_error("Unknown file-rule match mode");

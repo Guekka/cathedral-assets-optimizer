@@ -55,8 +55,8 @@ TEST_CASE("simple file rules serialize their conditions and name")
 
 TEST_CASE("legacy glob and regex patterns still deserialize")
 {
-    auto wildcard = Pattern{u8"*.nif"};
-    auto regex    = Pattern{u8".*\\.nif", Pattern::Type::Regex};
+    auto wildcard = Pattern::wildcard(u8"*.nif");
+    auto regex    = Pattern::regular_expression(u8".*\\.nif");
     nlohmann::json{{"pattern", "*.dds"}, {"type", 0}}.get_to(wildcard);
     nlohmann::json{{"pattern", R"(.*\.dds)"}, {"type", 1}}.get_to(regex);
 

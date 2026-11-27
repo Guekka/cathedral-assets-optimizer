@@ -44,25 +44,14 @@ public:
         Simple,
     };
 
-    explicit Pattern(std::u8string pattern, const Type type = Type::Wildcard)
+    [[nodiscard]] static auto wildcard(std::u8string pattern, std::u8string name = {}) -> Pattern
     {
-        switch (type)
-        {
-            case Type::Wildcard:
-            {
-                pattern_ = BTU_MOV(pattern);
-                break;
-            }
-            case Type::Regex:
-            {
-                pattern_ = Regex{.regex    = std::regex{btu::common::as_ascii_string(pattern),
-                                                     std::regex::optimize | std::regex::icase},
-                                 .original = pattern};
-                break;
-            }
-            case Type::Simple:
-                throw std::invalid_argument("Simple rules must be constructed from conditions");
-        }
+        return Pattern{std::move(pattern), Type::Wildcard, std::move(name)};
+    }
+
+    [[nodiscard]] static auto regular_expression(std::u8string pattern, std::u8string name = {}) -> Pattern
+    {
+        return Pattern{std::move(pattern), Type::Regex, std::move(name)};
     }
 
     [[nodiscard]] static auto simple_rule(std::u8string folder,
@@ -154,9 +143,13 @@ public:
             p = Pattern::simple_rule(j.at("folder").get<std::u8string>(),
                                      j.at("extension").get<std::u8string>());
         }
+        else if (type == Type::Regex)
+        {
+            p = Pattern::regular_expression(j.at("pattern").get<std::u8string>());
+        }
         else
         {
-            p = Pattern{j.at("pattern").get<std::u8string>(), type};
+            p = Pattern::wildcard(j.at("pattern").get<std::u8string>());
         }
 
         if (j.contains("name"))
@@ -164,6 +157,24 @@ public:
     }
 
 private:
+    Pattern(std::u8string pattern, const Type type, std::u8string name)
+        : name_(std::move(name))
+    {
+        switch (type)
+        {
+            case Type::Wildcard:
+                pattern_ = BTU_MOV(pattern);
+                break;
+            case Type::Regex:
+                pattern_ = Regex{.regex    = std::regex{btu::common::as_ascii_string(pattern),
+                                                     std::regex::optimize | std::regex::icase},
+                                 .original = pattern};
+                break;
+            case Type::Simple:
+                throw std::invalid_argument("Simple rules must be constructed from conditions");
+        }
+    }
+
     explicit Pattern(SimpleRule rule)
         : pattern_(std::move(rule))
     {
@@ -301,7 +312,7 @@ private:
     std::u8string name_;
 };
 
-const auto k_default_pattern = Pattern{u8"*"}; // NOLINT(cert-err58-cpp)
+const auto k_default_pattern = Pattern::wildcard(u8"*"); // NOLINT(cert-err58-cpp)
 
 enum class OptimizeType : std::uint8_t
 {
