@@ -4,7 +4,6 @@
 #include <btu/bsa/pack.hpp>
 #include <btu/bsa/settings.hpp>
 #include <btu/bsa/unpack.hpp>
-
 #include <tl/expected.hpp>
 
 void write_single_archive(const btu::Path &directory_path,

@@ -125,8 +125,7 @@ auto preview_pack_directory(const btu::bsa::PackSettings &settings,
     return preview;
 }
 
-auto preview_unpack_archive(const btu::Path &archive_path,
-                            const btu::Path &directory_path) noexcept
+auto preview_unpack_archive(const btu::Path &archive_path, const btu::Path &directory_path) noexcept
     -> tl::expected<btu::bsa::UnpackPreview, btu::common::Error>
 {
     auto preview = btu::bsa::list_unpack_preview(
