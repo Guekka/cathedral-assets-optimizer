@@ -10,6 +10,7 @@
 
 #include <QAbstractButton>
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QDialog>
 #include <QGroupBox>
 #include <QLineEdit>
