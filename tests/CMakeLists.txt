@@ -7,8 +7,8 @@ find_package(
   COMPONENTS Core
   REQUIRED)
 
-set(CAO_TEST_DEPENDENCIES
-    btu::bethutil doctest::doctest Qt6::Core nlohmann_json::nlohmann_json)
+set(CAO_TEST_DEPENDENCIES btu::bethutil doctest::doctest Qt6::Core
+                          nlohmann_json::nlohmann_json)
 
 add_executable(cao_cli_profile_tests cli_profile_tests.cpp)
 target_include_directories(cao_cli_profile_tests
@@ -22,6 +22,7 @@ add_executable(
            ${PROJECT_SOURCE_DIR}/src/settings/settings.cpp)
 target_include_directories(CAO_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_compile_features(CAO_test PRIVATE cxx_std_20)
-target_link_libraries(CAO_test PRIVATE ${CAO_TEST_DEPENDENCIES} sago::platform_folders)
+target_link_libraries(CAO_test PRIVATE ${CAO_TEST_DEPENDENCIES}
+                                       sago::platform_folders)
 
 add_test(NAME CAO_test COMMAND CAO_test)

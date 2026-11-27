@@ -162,9 +162,7 @@ private:
     {
         switch (type)
         {
-            case Type::Wildcard:
-                pattern_ = BTU_MOV(pattern);
-                break;
+            case Type::Wildcard: pattern_ = BTU_MOV(pattern); break;
             case Type::Regex:
                 pattern_ = Regex{.regex    = std::regex{btu::common::as_ascii_string(pattern),
                                                      std::regex::optimize | std::regex::icase},
