@@ -226,7 +226,8 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
 
         if (profile.bsa_make_dummy_plugins)
         {
-            PLOGI << "Dry run: would create dummy plugins for the packed archives";
+            PLOGI << "Dry run: would create dummy plugins for packed archives; plugin names and count are not "
+                     "predicted because archive splitting is unknown";
         }
         return;
     }
