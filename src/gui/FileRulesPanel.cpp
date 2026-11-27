@@ -331,9 +331,7 @@ FileRulesPanel::FileRulesPanel(Settings &settings, QWidget *parent)
 
         if (result.result)
         {
-            auto scan    = std::move(result.result).value();
-            auto impacts = analyze_file_rule_impact(settings_.current_profile(), scan.files);
-            preview_state_ = ReadyState{std::move(scan), std::move(impacts)};
+            preview_state_ = ReadyState{std::move(result.result).value(), {}};
         }
         else
         {
