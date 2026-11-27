@@ -75,10 +75,9 @@ void update_file_settings_context(Ui::MainWindow &ui, const Settings &settings)
     const bool default_selected = settings.gui.selected_pattern == k_default_pattern.text();
     ui.patternsLabel->setText(default_selected ? QObject::tr("Default file settings")
                                                : QObject::tr("For matching files"));
-    ui.patternsLabel->setToolTip(default_selected
-                                     ? QObject::tr("These settings are used when no file rule matches.")
-                                     : QObject::tr(
-                                           "These settings apply only when this is the first matching rule."));
+    ui.patternsLabel->setToolTip(
+        default_selected ? QObject::tr("These settings are used when no file rule matches.")
+                         : QObject::tr("These settings apply only when this is the first matching rule."));
 
     if (!default_selected)
     {
@@ -124,9 +123,7 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
     }
 }
 
-void settings_to_ui(const Settings &settings,
-                    Ui::MainWindow &ui,
-                    ModuleDisplay &module_display) noexcept
+void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display) noexcept
 {
     set_theme(settings.gui.gui_theme);
 

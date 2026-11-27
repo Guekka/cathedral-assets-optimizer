@@ -85,7 +85,7 @@ void from_json(const nlohmann::json &json, Settings &settings)
 {
     json.at("profiles_").get_to(settings.profiles_);
     json.at("current_profile_index_").get_to(settings.current_profile_index_);
-    const auto &gui_json = json.at("gui");
+    const auto &gui_json             = json.at("gui");
     const bool has_quick_target_game = gui_json.contains("quick_target_game");
     gui_json.get_to(settings.gui);
     if (!has_quick_target_game)
@@ -253,7 +253,7 @@ auto current_per_file_settings(const Settings &sets) -> const PerFileSettings &
 {
     const auto &profile         = sets.current_profile();
     const auto selected_pattern = sets.gui.workspace == Workspace::Customize ? sets.gui.selected_pattern
-                                                                              : k_default_pattern.text();
+                                                                             : k_default_pattern.text();
 
     auto per_file_settings = profile.per_file_settings();
 
