@@ -8,6 +8,7 @@
 
 #include <format>
 #include <fstream>
+#include <string_view>
 #include <unordered_set>
 
 /**
@@ -102,7 +103,7 @@ auto preview_pack_directory(const btu::bsa::PackSettings &settings,
 {
     auto preview = btu::bsa::list_pack_preview(settings);
 
-    const auto log_files = [](const char *archive_group, const std::vector<btu::Path> &files) {
+    const auto log_files = [](const std::string_view archive_group, const std::vector<btu::Path> &files) {
         for (const auto &relative_path : files)
             PLOGI << std::format("Dry run: would include in {} archive(s): {}",
                                  archive_group,
