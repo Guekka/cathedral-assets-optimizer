@@ -16,8 +16,8 @@
  * Also removes directories made empty by the removal of the files
  * Remove the files case-insensitively (this is useful because the paths are lowercase)
  */
-static auto remove_files_from_directory(const btu::Path &directory, std::span<const btu::Path> paths) noexcept
-    -> size_t
+static auto remove_files_from_directory(const btu::Path &directory,
+                                        std::span<const btu::Path> paths) noexcept -> size_t
 {
     const auto files_to_remove = btu::common::find_matching_paths_icase(directory, paths);
 
@@ -98,8 +98,8 @@ void write_single_archive(const btu::Path &directory_path,
     }
 }
 
-auto preview_pack_directory(const btu::bsa::PackSettings &settings, const bool remove_files) noexcept
-    -> btu::bsa::PackPreview
+auto preview_pack_directory(const btu::bsa::PackSettings &settings,
+                            const bool remove_files) noexcept -> btu::bsa::PackPreview
 {
     auto preview = btu::bsa::list_pack_preview(settings);
 
@@ -127,8 +127,8 @@ auto preview_pack_directory(const btu::bsa::PackSettings &settings, const bool r
     return preview;
 }
 
-auto preview_unpack_archive(const btu::Path &archive_path, const btu::Path &directory_path) noexcept
-    -> BsaUnpackPreview
+auto preview_unpack_archive(const btu::Path &archive_path,
+                            const btu::Path &directory_path) noexcept -> BsaUnpackPreview
 {
     BsaUnpackPreview preview;
     preview.archive_path = archive_path;
