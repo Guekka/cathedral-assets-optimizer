@@ -135,6 +135,94 @@ void update_quick_task_controls(Ui::MainWindow &ui)
     }
 }
 
+auto quick_task_display_name(const QuickTask &task) -> QString
+{
+    if (std::holds_alternative<PrepareSkyrimAssetsTask>(task))
+        return QObject::tr("Prepare Skyrim assets");
+    if (std::holds_alternative<ExtractBsaTask>(task))
+        return QObject::tr("Extract BSAs");
+    return QObject::tr("Create BSAs");
+}
+
+auto build_run_context_summary(const Settings &settings,
+                               const std::optional<QuickTask> quick_task,
+                               const bool dry_run) -> QString
+{
+    auto summary      = QString{};
+    const auto append = [&summary](const QString &line) {
+        if (!summary.isEmpty())
+            summary += QLatin1Char('\n');
+        summary += line;
+    };
+
+    const auto &profile = settings.current_profile();
+    append(QObject::tr("Input: %1").arg(to_qstring(settings.run_context.input_path.u8string())));
+    append(settings.run_context.optimization_mode == OptimizationMode::SingleMod
+               ? QObject::tr("Mod scope: One mod")
+               : QObject::tr("Mod scope: Several mods; process each immediate subfolder separately"));
+    append(QObject::tr("Target game: %1").arg(game_display_name(profile.target_game)));
+
+    if (quick_task)
+    {
+        append(QObject::tr("Quick task: %1").arg(quick_task_display_name(*quick_task)));
+        if (std::holds_alternative<PrepareSkyrimAssetsTask>(*quick_task))
+        {
+            append(QObject::tr("CAO will use its recommended Skyrim asset settings; no archive "
+                               "creation or extraction is selected."));
+        }
+        else if (std::holds_alternative<ExtractBsaTask>(*quick_task))
+        {
+            append(QObject::tr("Existing loose files will not be overwritten."));
+            append(dry_run ? QObject::tr("Dry run will preview extraction without extracting files or "
+                                         "removing BSA archives.")
+                           : QObject::tr("Successfully extracted BSA archives will be removed."));
+        }
+        else
+        {
+            append(profile.bsa_remove_files
+                       ? QObject::tr("A real run will remove loose files included in verified archives.")
+                       : QObject::tr("Loose source files will be preserved."));
+            if (profile.bsa_make_dummy_plugins)
+                append(QObject::tr("A real run may create dummy plugins so the game can load the archives."));
+        }
+    }
+    else
+    {
+        append(QObject::tr("Profile: %1").arg(to_qstring(settings.current_profile_name())));
+        const auto &selected_settings = current_per_file_settings(settings);
+        const auto selected_scope     = selected_settings.pattern.text() == k_default_pattern.text()
+                                            ? QObject::tr("Default file settings")
+                                            : pattern_display_name(selected_settings.pattern);
+        append(QObject::tr("File settings: %1").arg(selected_scope));
+        append(
+            QObject::tr("The file-impact preview shows settings routing; it does not preview processing."));
+
+        switch (profile.bsa_operation)
+        {
+            case BsaOperation::None: break;
+            case BsaOperation::Extract:
+                append(QObject::tr("Existing loose files will not be overwritten."));
+                append(dry_run ? QObject::tr("Dry run will preview extraction and asset processing without "
+                                             "changing files.")
+                               : QObject::tr("Successfully extracted BSA archives will be removed, then the "
+                                             "selected asset settings will run."));
+                break;
+            case BsaOperation::Create:
+                append(profile.bsa_remove_files
+                           ? QObject::tr("A real run will remove loose files included in verified archives.")
+                           : QObject::tr("Loose source files will be preserved."));
+                if (profile.bsa_make_dummy_plugins)
+                    append(QObject::tr(
+                        "A real run may create dummy plugins so the game can load the archives."));
+                break;
+        }
+    }
+
+    append(dry_run ? QObject::tr("Action: Dry run. Planned processing will be shown without modifying files.")
+                   : QObject::tr("Action: Run. Processing can modify or remove files; keep a backup."));
+    return summary;
+}
+
 void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_display, Settings &settings)
 {
     settings.gui.gui_theme = ui.actionEnableDarkTheme->isChecked() ? GuiTheme::Dark : GuiTheme::Light;
@@ -435,30 +523,55 @@ void MainWindow::init_process(const bool dry_run)
 
     try
     {
-        auto run_settings = make_run_settings(settings_, std::move(quick_profile));
+        auto run_context_settings                = settings_;
+        run_context_settings.run_context.dry_run = dry_run;
+        auto run_settings = make_run_settings(run_context_settings, std::move(quick_profile));
         if (!check_settings(run_settings))
             return;
 
+        const auto run_context = build_run_context_summary(run_settings, quick_task, dry_run);
+        if (!dry_run)
+        {
+            QMessageBox confirmation(QMessageBox::Warning,
+                                     tr("Review this run"),
+                                     run_context,
+                                     QMessageBox::NoButton,
+                                     this);
+            auto *run_button    = confirmation.addButton(tr("Run"), QMessageBox::AcceptRole);
+            auto *cancel_button = confirmation.addButton(QMessageBox::Cancel);
+            confirmation.setDefaultButton(cancel_button);
+            confirmation.exec();
+            if (confirmation.clickedButton() != run_button)
+                return;
+        }
+
+        settings_.run_context.dry_run = dry_run;
+        save_settings();
+
         progress_window_ = std::make_unique<ProgressWindow>(
             LogReader(Settings::state_directory() / k_log_file_name));
+        progress_window_->set_run_context(run_context, dry_run);
 
         cao_process_ = std::jthread([this, run_settings = std::move(run_settings), quick_task](
                                         std::stop_token &&stop_token) mutable {
             auto manager = Manager();
 
+            connect(&manager, &Manager::stage_changed, progress_window_.get(), &ProgressWindow::set_stage);
             connect(&manager, &Manager::files_counted, progress_window_.get(), &ProgressWindow::set_maximum);
 
             connect(&manager,
                     &Manager::files_processed,
                     progress_window_.get(),
                     [this](const std::filesystem::path &file, size_t count_since_last) {
-                        const auto text = QString("Processing %1").arg(QString::fromStdString(file.string()));
+                        const auto text = file == std::filesystem::path{"archive packing"}
+                                              ? tr("Packing archives")
+                                              : tr("Processing %1").arg(QString::fromStdString(file.string()));
                         progress_window_->step(std::optional(text), static_cast<int>(count_since_last));
                     });
 
-            connect(&manager, &Manager::end, progress_window_.get(), &ProgressWindow::end);
+            connect(&manager, &Manager::end, progress_window_.get(), &ProgressWindow::finish);
 
-            connect(&manager, &Manager::end, this, [this] {
+            connect(&manager, &Manager::end, this, [this](bool) {
                 graceful_stop_dialog_.reset();
                 cao_process_.reset();
                 ui_->processButton->setDisabled(false);

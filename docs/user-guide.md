@@ -36,16 +36,17 @@ does not change them.
 ## Preview with Dry run
 
 Click **Preview (Dry run)** to see the planned processing steps without modifying files. Click
-**Run** to process the selected input. Preview is not a backup; keep a separate copy or use your mod
-manager's backup/versioning features before running.
+**Run** to review the input, mod scope, target, task or profile, and side effects before confirming
+the run. Preview is not a backup; keep a separate copy or use your mod manager's backup/versioning
+features before running.
 
 ## Quick tasks
 
 Choose **Prepare Skyrim assets** to optimize assets with CAO's recommended settings; this task does
 not create or extract BSAs. Choose **Extract BSAs** to extract archives without overwriting existing
-loose files or running other asset optimizations. Choose **Create BSAs** to pack eligible loose files
-without optimizing them. CAO preserves the loose source files by default and may create dummy plugins
-so the game can load the archives.
+loose files or running other asset optimizations. Successfully extracted archives are removed.
+Choose **Create BSAs** to pack eligible loose files without optimizing them. CAO preserves the loose
+source files by default and may create dummy plugins so the game can load the archives.
 
 For **Create BSAs**, enable **Remove loose source files after packing** only if you intend to delete
 those files. CAO asks for confirmation before a real run; a Dry run does not delete files. Keep a
@@ -88,7 +89,8 @@ types, rule priority, setting scope, and preview details, see the [file rules gu
 
 In **Customize**, **BSA (Profile-wide)** controls archive processing for the profile:
 
-- **Extract BSAs** extracts archive contents. Existing loose files are not overwritten.
+- **Extract BSAs** extracts archive contents and removes successfully extracted archives. Existing
+  loose files are not overwritten.
 - **Create BSAs** packs eligible loose files into archives.
 - **Do not remove packed files** keeps the loose source files after packing. If unchecked, CAO may
   remove files that were successfully packed.
@@ -100,7 +102,12 @@ Packing has no effect unless **Create BSAs** is enabled in **BSA (Profile-wide)*
 
 ## Progress and logs
 
-The progress window shows processing status and a log. Use its log-level selector to show Verbose,
-Info, or Error entries. **Open log file** opens the current log file in the system's default viewer.
-CAO rotates log files to keep them from growing indefinitely; older log segments are in the same log
-directory.
+Before a real run, CAO summarizes the input, scope, target, selected task or profile, and relevant
+side effects for confirmation. During processing, the progress window shows the run context, current
+stage, progress, and log. When the run ends, its summary reports progress items, skip-related log
+notices, warnings, and errors, then suggests a next step. Review errors before using the output; test
+processed assets in game.
+
+Use the log-level selector to show Verbose, Info, or Error entries. **Open log file** opens the full
+current log in the system's default viewer. CAO rotates log files to keep them from growing
+indefinitely; older log segments are in the same log directory.

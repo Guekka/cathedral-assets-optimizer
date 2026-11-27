@@ -24,6 +24,17 @@ constexpr int k_max_log_entries = 5000;
 LogReader::LogReader(btu::Path log_file_path)
     : log_file_path_(BTU_MOV(log_file_path))
 {
+    QFile log_file(log_file_path_);
+    if (!log_file.open(QFile::ReadOnly))
+        return;
+
+    auto log_stream = QTextStream(&log_file);
+    if (!log_stream.atEnd())
+        current_file_first_line_ = log_stream.readLine();
+    while (!log_stream.atEnd())
+        log_stream.readLine();
+
+    log_read_pos_ = log_stream.pos();
 }
 
 auto LogReader::update() -> std::vector<LogEntry>
@@ -143,33 +154,71 @@ ProgressWindow::ProgressWindow(LogReader log_reader, QWidget *parent)
     connect(&timer_, &QTimer::timeout, this, &ProgressWindow::update_all);
 }
 
-ProgressWindow::~ProgressWindow()
+ProgressWindow::~ProgressWindow() = default;
+
+void ProgressWindow::set_run_context(const QString &context, const bool dry_run)
 {
-    end();
+    dry_run_ = dry_run;
+    ui_->runContextLabel->setText(context);
+}
+
+void ProgressWindow::set_stage(const QString &stage)
+{
+    if (!finished_)
+    {
+        current_stage_value_ = 0;
+        last_text_.reset();
+        ui_->progressBar->setValue(0);
+        ui_->progressBar->setFormat(QStringLiteral("%p%"));
+        ui_->stageLabel->setText(stage);
+    }
 }
 
 void ProgressWindow::set_maximum(int max)
 {
+    current_stage_value_ = 0;
+    ui_->progressBar->setValue(0);
     ui_->progressBar->setMaximum(max);
 }
 
 void ProgressWindow::step(std::optional<QString> text, int n)
 {
-    current_value_ += n;
+    current_stage_value_ += n;
+    work_units_reported_ += n;
     last_text_ = std::move(text);
 }
 
-void ProgressWindow::end()
+void ProgressWindow::finish(const bool cancelled)
 {
+    if (finished_)
+        return;
+
+    finished_                = true;
     const auto &progress_bar = ui_->progressBar;
 
     if (progress_bar->maximum() == 0)
         progress_bar->setMaximum(1); // avoid busy indicator
 
     update_all();
+    if (error_count_ > 0)
+        assert(select_data(*ui_->logLevel, plog::error));
 
     progress_bar->setValue(progress_bar->maximum());
     progress_bar->setFormat(tr("Done"));
+    const auto completion = cancelled  ? tr("Stopped before all work was complete.")
+                            : dry_run_ ? tr("Dry run complete; no files were modified.")
+                                       : tr("Run complete.");
+    const auto next_step  = cancelled          ? tr("Review the log to see what finished before stopping.")
+                            : dry_run_         ? tr("Review the planned actions, then choose Run when ready.")
+                            : error_count_ > 0 ? tr("Review the errors before using the output.")
+                                               : tr("Review the output, then test the mod in game.");
+    ui_->stageLabel->setText(tr("%1 %2 progress items reported; %3 skip notices, %4 warnings, %5 errors. %6")
+                                 .arg(completion)
+                                 .arg(work_units_reported_)
+                                 .arg(skip_notice_count_)
+                                 .arg(warning_count_)
+                                 .arg(error_count_)
+                                 .arg(next_step));
 
     timer_.stop();
 }
@@ -177,9 +226,9 @@ void ProgressWindow::end()
 void ProgressWindow::update_all()
 {
     if (last_text_)
-        update_progress_bar(*last_text_, ui_->progressBar->maximum(), current_value_);
+        update_progress_bar(*last_text_, ui_->progressBar->maximum(), current_stage_value_);
     else
-        ui_->progressBar->setValue(current_value_);
+        ui_->progressBar->setValue(current_stage_value_);
 
     update_log(ui_->logLevel->itemData(ui_->logLevel->currentIndex()).value<plog::Severity>());
 }
@@ -211,6 +260,15 @@ void ProgressWindow::update_log(plog::Severity log_severity)
 {
     for (const auto &entry : log_reader_.update())
     {
+        if (entry.text.contains(QStringLiteral("Skipping file"), Qt::CaseInsensitive)
+            || entry.text.contains(QStringLiteral("would skip"), Qt::CaseInsensitive)
+            || entry.text.contains(QStringLiteral("would be skipped"), Qt::CaseInsensitive))
+            ++skip_notice_count_;
+        if (entry.severity == plog::warning)
+            ++warning_count_;
+        else if (entry.severity == plog::error || entry.severity == plog::fatal)
+            ++error_count_;
+
         // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
         auto *item = new QListWidgetItem(entry.text);
         item->setForeground(QBrush(QColor(log_color(entry.severity))));

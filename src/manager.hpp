@@ -40,8 +40,9 @@ private:
     std::atomic_uint32_t files_processed_since_last_emissions_;
 
 signals:
+    void stage_changed(QString stage) const;
     void files_counted(size_t count) const;
     void files_processed(std::filesystem::path last_relative_path, size_t count_since_last) const;
-    void end() const;
+    void end(bool cancelled) const;
 };
 } // namespace cao

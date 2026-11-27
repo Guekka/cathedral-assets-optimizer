@@ -122,6 +122,7 @@ struct PluginInfo
 
 void Manager::unpack_directory(const std::filesystem::path &directory_path) const
 {
+    emit stage_changed(tr("Extracting BSAs"));
     const bool dry_run = settings_.current_profile().dry_run;
     PLOG_INFO << fmt::format("{}Extracting archives in {}",
                              dry_run ? "[Dry run] " : "",
@@ -189,6 +190,7 @@ static void apply_plugin_info(Settings &sets, const PluginInfo &info)
 // TODO: think about adding files to existing BSAs
 void Manager::pack_directory(const std::filesystem::path &directory_path) const
 {
+    emit stage_changed(tr("Creating BSAs"));
     const bool dry_run = settings_.current_profile().dry_run;
     PLOG_INFO << fmt::format("{}Packing directory {}", dry_run ? "[Dry run] " : "", directory_path.string());
     emit files_counted(0);
@@ -249,6 +251,7 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
         {
             PLOGE << "Failed to pack archive: " << e.what();
         }
+        emit files_processed("archive packing", 1);
     });
 
     if (profile.bsa_make_dummy_plugins)
@@ -376,6 +379,7 @@ public:
 
 void Manager::process_single_mod(const btu::Path &path)
 {
+    emit stage_changed(tr("Reading mod contents"));
     const auto bsa_sets = get_bsa_settings(settings_);
     auto mod            = btu::modmanager::ModFolder(path, bsa_sets);
 
@@ -408,6 +412,7 @@ void Manager::process_single_mod(const btu::Path &path)
     PLOG_INFO << fmt::format("Found {} files", size);
 
     emit files_counted(size);
+    emit stage_changed(tr("Processing assets"));
 
     auto transformer = ModTransformer{settings_, stop_token_, [this](const btu::Path &path) {
                                           emit_progress_rate_limited(path);
@@ -423,6 +428,7 @@ void Manager::process_single_mod(const btu::Path &path)
 
 void Manager::process_several_mods(const btu::Path &path)
 {
+    emit stage_changed(tr("Finding mods in the selected folder"));
     PLOGI << "Processing several mods in " << path.string();
     switch (btu::modmanager::find_manager(path))
     {
@@ -462,6 +468,7 @@ void Manager::run_optimization(Settings settings,
     stop_token_ = std::move(stop_token);
     quick_task_ = quick_task;
 
+    emit stage_changed(tr("Preparing run"));
     PLOG_INFO << fmt::format("Processing mod: {}", settings_.current_profile().input_path.string());
     if (quick_task_)
     {
@@ -487,6 +494,8 @@ void Manager::run_optimization(Settings settings,
     const auto end_time     = std::chrono::system_clock::now();
     const auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
     PLOG_INFO << fmt::format("Finished. End time: {}. Elapsed time: {}s", end_time, elapsed_time);
-    emit end();
+    const bool cancelled = stop_token_.stop_requested();
+    emit stage_changed(cancelled ? tr("Stopped before all work was complete") : tr("Finishing run"));
+    emit end(cancelled);
 }
 } // namespace cao
