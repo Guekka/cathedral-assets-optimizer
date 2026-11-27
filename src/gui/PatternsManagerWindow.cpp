@@ -10,8 +10,8 @@
 
 #include <QComboBox>
 #include <QDialogButtonBox>
-#include <QFormLayout>
 #include <QFontMetrics>
+#include <QFormLayout>
 #include <QFutureWatcher>
 #include <QLabel>
 #include <QLineEdit>
@@ -306,8 +306,8 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
         auto result = preview_watcher_.result();
         if (result)
         {
-            auto scan    = std::move(result).value();
-            auto impacts = analyze_file_rule_impact(settings_.current_profile(), scan.files);
+            auto scan      = std::move(result).value();
+            auto impacts   = analyze_file_rule_impact(settings_.current_profile(), scan.files);
             preview_state_ = ReadyState{std::move(scan), std::move(impacts)};
         }
         else
@@ -558,10 +558,10 @@ void PatternsManagerWindow::update_impact_preview()
 
     if (const auto *failed = std::get_if<FailedState>(&preview_state_))
     {
-        ui_->impactSummaryLabel->setText(
-            tr("The file preview could not be loaded: %1\nTry another input folder or check that it is readable, "
-               "then reopen this manager to refresh the preview.")
-                .arg(QString::fromStdString(failed->error)));
+        ui_->impactSummaryLabel->setText(tr("The file preview could not be loaded: %1\nTry another input "
+                                            "folder or check that it is readable, "
+                                            "then reopen this manager to refresh the preview.")
+                                             .arg(QString::fromStdString(failed->error)));
         return;
     }
 
@@ -608,7 +608,7 @@ void PatternsManagerWindow::update_impact_preview()
     auto summary       = selected == nullptr
                              ? tr("Default settings apply to %1.").arg(file_count_text(impact.applied_files))
                              : QString{};
-    auto full_summary = summary;
+    auto full_summary  = summary;
 
     const auto shadowed_files = impact.matching_files > impact.applied_files
                                     ? impact.matching_files - impact.applied_files
@@ -632,8 +632,8 @@ void PatternsManagerWindow::update_impact_preview()
 
     if (selected != nullptr)
     {
-        const auto default_summary
-            = tr("\nDefault settings apply to %1.").arg(file_count_text(ready->impacts.back().applied_files));
+        const auto default_summary = tr("\nDefault settings apply to %1.")
+                                         .arg(file_count_text(ready->impacts.back().applied_files));
         summary += default_summary;
         full_summary += default_summary;
     }
@@ -673,11 +673,10 @@ void PatternsManagerWindow::update_impact_preview()
 
     if (ready->scan.skipped_archives > 0)
     {
-        const auto skipped_summary
-            = ready->scan.skipped_archives == 1
-                  ? tr("\nOne oversized archive was excluded from the preview.")
-                  : tr("\n%1 oversized archives were excluded from the preview.")
-                        .arg(static_cast<qulonglong>(ready->scan.skipped_archives));
+        const auto skipped_summary = ready->scan.skipped_archives == 1
+                                         ? tr("\nOne oversized archive was excluded from the preview.")
+                                         : tr("\n%1 oversized archives were excluded from the preview.")
+                                               .arg(static_cast<qulonglong>(ready->scan.skipped_archives));
         summary += skipped_summary;
         full_summary += skipped_summary;
     }

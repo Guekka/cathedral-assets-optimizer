@@ -80,7 +80,6 @@ auto scan_file_rule_preview(const btu::Path &input_path,
                 }
                 break;
         }
-
     }
     catch (const std::exception &error)
     {
