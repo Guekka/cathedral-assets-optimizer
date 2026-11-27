@@ -557,10 +557,7 @@ void MainWindow::init_process(const bool dry_run)
                                         std::stop_token &&stop_token) mutable {
             auto manager = Manager();
 
-            connect(&manager,
-                    &Manager::stage_changed,
-                    progress_window_.get(),
-                    &ProgressWindow::set_stage);
+            connect(&manager, &Manager::stage_changed, progress_window_.get(), &ProgressWindow::set_stage);
             connect(&manager, &Manager::files_counted, progress_window_.get(), &ProgressWindow::set_maximum);
 
             connect(&manager,
@@ -569,8 +566,7 @@ void MainWindow::init_process(const bool dry_run)
                     [this](const std::filesystem::path &file, size_t count_since_last) {
                         const auto text = file == std::filesystem::path{"archive packing"}
                                               ? tr("Packing archives")
-                                              : tr("Processing %1")
-                                                    .arg(QString::fromStdString(file.string()));
+                                              : tr("Processing %1").arg(QString::fromStdString(file.string()));
                         progress_window_->step(std::optional(text), static_cast<int>(count_since_last));
                     });
 

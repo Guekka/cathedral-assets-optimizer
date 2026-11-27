@@ -251,8 +251,8 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
         {
             PLOGE << "Failed to pack archive: " << e.what();
         }
-            emit files_processed("archive packing", 1);
-        });
+        emit files_processed("archive packing", 1);
+    });
 
     if (profile.bsa_make_dummy_plugins)
     {
