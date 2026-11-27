@@ -241,8 +241,9 @@ TEST_CASE("file-rule preview scans single and several mods")
 TEST_CASE("file-rule preview reports an invalid input folder")
 {
     auto temporary_directory = TemporaryDirectory{};
-    const auto result        = scan_file_rule_preview(
-        temporary_directory.path() / "missing", OptimizationMode::SingleMod, btu::Game::SSE);
+    const auto result        = scan_file_rule_preview(temporary_directory.path() / "missing",
+                                               OptimizationMode::SingleMod,
+                                               btu::Game::SSE);
 
     CHECK_FALSE(result.error.empty());
     CHECK(result.files.empty());

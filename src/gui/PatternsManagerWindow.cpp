@@ -324,10 +324,11 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
     {
         preview_state_ = PreviewState::Scanning;
         update_impact_preview();
-        preview_watcher_.setFuture(QtConcurrent::run(
-            [input_path  = profile.input_path,
-             mode        = profile.optimization_mode,
-             target_game = profile.target_game] { return scan_file_rule_preview(input_path, mode, target_game); }));
+        preview_watcher_.setFuture(QtConcurrent::run([input_path  = profile.input_path,
+                                                      mode        = profile.optimization_mode,
+                                                      target_game = profile.target_game] {
+            return scan_file_rule_preview(input_path, mode, target_game);
+        }));
     }
 }
 

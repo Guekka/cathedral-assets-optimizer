@@ -18,9 +18,10 @@ target_link_libraries(cao_cli_profile_tests PRIVATE ${CAO_TEST_DEPENDENCIES})
 add_test(NAME cao_cli_profile_tests COMMAND cao_cli_profile_tests)
 
 add_executable(
-  CAO_test PatternTests.cpp ${PROJECT_SOURCE_DIR}/src/gui/file_rule_preview.cpp
-           ${PROJECT_SOURCE_DIR}/src/settings/profile.cpp
-           ${PROJECT_SOURCE_DIR}/src/settings/settings.cpp)
+  CAO_test
+  PatternTests.cpp ${PROJECT_SOURCE_DIR}/src/gui/file_rule_preview.cpp
+  ${PROJECT_SOURCE_DIR}/src/settings/profile.cpp
+  ${PROJECT_SOURCE_DIR}/src/settings/settings.cpp)
 target_include_directories(CAO_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_compile_features(CAO_test PRIVATE cxx_std_20)
 target_link_libraries(CAO_test PRIVATE ${CAO_TEST_DEPENDENCIES}
