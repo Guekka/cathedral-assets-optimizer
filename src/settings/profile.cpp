@@ -100,4 +100,19 @@ auto analyze_file_rule_impact(const Profile &profile,
 
     return impacts;
 }
+
+auto Profile::make_quick_task(const btu::Game game, const QuickTask task) noexcept -> Profile
+{
+    auto profile = make_base(game);
+    if (std::holds_alternative<ExtractBsaTask>(task))
+        profile.bsa_operation = BsaOperation::Extract;
+    else if (const auto *create_task = std::get_if<CreateBsaTask>(&task))
+    {
+        profile.bsa_operation    = BsaOperation::Create;
+        profile.bsa_remove_files = create_task->remove_packed_files;
+    }
+
+    return profile;
+    return profile;
+}
 } // namespace cao

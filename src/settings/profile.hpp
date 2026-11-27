@@ -125,6 +125,7 @@ public:
     }
 
     [[nodiscard]] static auto make_base(btu::Game game) noexcept -> Profile;
+    [[nodiscard]] static auto make_quick_task(btu::Game game, QuickTask task) noexcept -> Profile;
 
 private:
     PerFileSettings base_per_file_settings_;

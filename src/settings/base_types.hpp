@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 
 #include <QObject>
+#include <variant>
 
 namespace cao {
 
@@ -34,6 +35,20 @@ enum class Workspace : std::uint8_t
     QuickTasks,
     Customize,
 };
+
+struct PrepareSkyrimAssetsTask
+{
+};
+
+struct ExtractBsaTask
+{
+};
+
+struct CreateBsaTask
+{
+    bool remove_packed_files = false;
+};
+using QuickTask = std::variant<PrepareSkyrimAssetsTask, ExtractBsaTask, CreateBsaTask>;
 
 enum class GuiTheme : std::uint8_t
 {
@@ -66,4 +81,5 @@ NLOHMANN_JSON_SERIALIZE_ENUM(cao::GuiTheme, {{cao::GuiTheme::Dark, "Dark"}, {cao
 Q_DECLARE_METATYPE(cao::OptimizationMode)
 Q_DECLARE_METATYPE(cao::TextureResizingMode)
 Q_DECLARE_METATYPE(cao::GuiMode)
+Q_DECLARE_METATYPE(cao::QuickTask)
 Q_DECLARE_METATYPE(cao::GuiTheme)

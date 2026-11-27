@@ -15,7 +15,8 @@ game-specific formats and defaults, so using the wrong game can produce unsuitab
 ## Choose a workspace
 
 - **Quick tasks** provides a short path for preparing Skyrim LE/SSE assets with CAO's recommended
-  settings. Choose the target game without changing your saved profile.
+  settings, extracting BSAs, or creating BSAs. Choose the target game without changing your saved
+  profile.
 - **Customize** exposes profiles, operation settings, and file rules for users who need more control.
 
 Use Quick tasks when the recommended asset-preparation workflow fits. Use Customize when you need to
@@ -37,6 +38,18 @@ does not change them.
 Click **Preview (Dry run)** to see the planned processing steps without modifying files. Click
 **Run** to process the selected input. Preview is not a backup; keep a separate copy or use your mod
 manager's backup/versioning features before running.
+
+## Quick tasks
+
+Choose **Prepare Skyrim assets** to optimize assets with CAO's recommended settings; this task does
+not create or extract BSAs. Choose **Extract BSAs** to extract archives without overwriting existing
+loose files or running other asset optimizations. Choose **Create BSAs** to pack eligible loose files
+without optimizing them. CAO preserves the loose source files by default and may create dummy plugins
+so the game can load the archives.
+
+For **Create BSAs**, enable **Remove loose source files after packing** only if you intend to delete
+those files. CAO asks for confirmation before a real run; a Dry run does not delete files. Keep a
+backup before running any task that changes files.
 
 ## Profiles and setting scope
 

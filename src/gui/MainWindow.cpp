@@ -21,6 +21,7 @@
 
 #include <plog/Log.h>
 
+#include <QCheckBox>
 #include <QDesktopServices>
 #include <QDragEnterEvent>
 #include <QFileDialog>
@@ -103,6 +104,34 @@ void update_file_settings_context(Ui::MainWindow &ui, const Settings &settings)
         ui.settingsScopeDescription->setText(
             QObject::tr("Used when no file rule matches. %1 active rules override these defaults.")
                 .arg(static_cast<qulonglong>(active_rule_count)));
+    }
+}
+
+void update_quick_task_controls(Ui::MainWindow &ui)
+{
+    const auto task       = ui.quickTaskSelector->currentData().value<QuickTask>();
+    const bool create_bsa = std::holds_alternative<CreateBsaTask>(task);
+    ui.quickRemoveLooseFiles->setVisible(create_bsa);
+    if (!create_bsa)
+        ui.quickRemoveLooseFiles->setChecked(false);
+
+    if (std::holds_alternative<PrepareSkyrimAssetsTask>(task))
+    {
+        ui.quickTaskDescription->setText(
+            QObject::tr("Use CAO's recommended settings to prepare one or several Skyrim LE/SSE mods. "
+                        "This task does not create or extract BSAs."));
+    }
+    else if (std::holds_alternative<ExtractBsaTask>(task))
+    {
+        ui.quickTaskDescription->setText(
+            QObject::tr("Extract BSAs from the selected mod or mods. Existing loose files are not "
+                        "overwritten, and other asset optimizations will not run."));
+    }
+    else
+    {
+        ui.quickTaskDescription->setText(
+            QObject::tr("Pack eligible loose files into BSAs. Source files are preserved by default; "
+                        "CAO may create dummy plugins so the game can load the archives."));
     }
 }
 
@@ -208,8 +237,12 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     // Setting data for run-context widgets
     set_data(*ui_->modeChooserComboBox, tr("One mod"), OptimizationMode::SingleMod);
     set_data(*ui_->modeChooserComboBox, tr("Several mods"), OptimizationMode::SeveralMods);
+    set_data(*ui_->quickTaskSelector, tr("Prepare Skyrim assets"), QuickTask{PrepareSkyrimAssetsTask{}});
+    set_data(*ui_->quickTaskSelector, tr("Extract BSAs"), QuickTask{ExtractBsaTask{}});
+    set_data(*ui_->quickTaskSelector, tr("Create BSAs"), QuickTask{CreateBsaTask{}});
     set_data(*ui_->quickTargetGame, tr("Skyrim LE (2011)"), btu::Game::SLE);
     set_data(*ui_->quickTargetGame, tr("Skyrim SE (2016)"), btu::Game::SSE);
+    update_quick_task_controls(*ui_);
 
     // Connecting widgets that do not depend on current profile
     connect(ui_->manageProfiles, &QPushButton::pressed, this, [this] {
@@ -268,6 +301,9 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 
     connect(ui_->quickTargetGame, &QComboBox::activated, this, [this] {
         settings_.gui.quick_target_game = ui_->quickTargetGame->currentData().value<btu::Game>();
+    });
+    connect(ui_->quickTaskSelector, &QComboBox::currentIndexChanged, this, [this] {
+        update_quick_task_controls(*ui_);
     });
 
     auto &common_settings = settings_.gui;
@@ -370,12 +406,32 @@ MainWindow::~MainWindow() = default;
 
 void MainWindow::init_process(const bool dry_run)
 {
+    auto quick_task   = settings_.gui.workspace == Workspace::QuickTasks
+                            ? std::optional<QuickTask>{ui_->quickTaskSelector->currentData().value<QuickTask>()}
+                            : std::nullopt;
+    auto *create_task = quick_task ? std::get_if<CreateBsaTask>(&*quick_task) : nullptr;
+    if (create_task != nullptr)
+        create_task->remove_packed_files = ui_->quickRemoveLooseFiles->isChecked();
+    const bool remove_packed_files = create_task != nullptr && create_task->remove_packed_files;
+    if (!dry_run && remove_packed_files)
+    {
+        const auto choice
+            = QMessageBox::warning(this,
+                                   tr("Remove packed source files?"),
+                                   tr("After each archive is created and verified, CAO will remove the loose "
+                                      "files it contains. This cannot be undone. Continue?"),
+                                   QMessageBox::Yes | QMessageBox::No,
+                                   QMessageBox::No);
+        if (choice != QMessageBox::Yes)
+            return;
+    }
+
     settings_.run_context.dry_run = dry_run;
     save_settings();
 
     auto quick_profile = std::optional<Profile>{};
-    if (settings_.gui.workspace == Workspace::QuickTasks)
-        quick_profile = Profile::make_base(settings_.gui.quick_target_game);
+    if (quick_task)
+        quick_profile = Profile::make_quick_task(settings_.gui.quick_target_game, *quick_task);
 
     try
     {
@@ -386,7 +442,7 @@ void MainWindow::init_process(const bool dry_run)
         progress_window_ = std::make_unique<ProgressWindow>(
             LogReader(Settings::state_directory() / k_log_file_name));
 
-        cao_process_ = std::jthread([this, run_settings = std::move(run_settings)](
+        cao_process_ = std::jthread([this, run_settings = std::move(run_settings), quick_task](
                                         std::stop_token &&stop_token) mutable {
             auto manager = Manager();
 
@@ -409,7 +465,7 @@ void MainWindow::init_process(const bool dry_run)
                 ui_->previewButton->setDisabled(false);
             });
 
-            manager.run_optimization(std::move(run_settings), std::move(stop_token));
+            manager.run_optimization(std::move(run_settings), std::move(stop_token), quick_task);
         });
 
         progress_window_->show();
