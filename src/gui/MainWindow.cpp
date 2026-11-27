@@ -123,7 +123,9 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
     }
 }
 
-void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay &module_display,
+void settings_to_ui(const Settings &settings,
+                    Ui::MainWindow &ui,
+                    ModuleDisplay &module_display,
                     FileRulesPanel &file_rules_panel) noexcept
 {
     set_theme(settings.gui.gui_theme);
