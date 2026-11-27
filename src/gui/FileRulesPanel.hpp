@@ -10,20 +10,21 @@
 #include "settings/settings.hpp"
 
 #include <QAbstractItemModel>
-#include <QDialog>
 #include <QFutureWatcher>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QTimer>
+#include <QWidget>
 #include <cstddef>
+#include <cstdint>
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
 
-class QComboBox;
-
 namespace Ui {
-class PatternsManagerWindow;
+class FileRulesPanel;
 } // namespace Ui
 
 namespace cao {
@@ -40,22 +41,43 @@ private:
     PerFileSettings &pfs_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 };
 
-class PatternsManagerWindow final : public QDialog
+class FileRulesPanel final : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PatternsManagerWindow(Settings &settings, QWidget *parent = nullptr);
+    explicit FileRulesPanel(Settings &settings, QWidget *parent = nullptr);
 
-    PatternsManagerWindow(const PatternsManagerWindow &) = delete;
-    PatternsManagerWindow(PatternsManagerWindow &&)      = delete;
+    FileRulesPanel(const FileRulesPanel &) = delete;
+    FileRulesPanel(FileRulesPanel &&)      = delete;
 
-    auto operator=(const PatternsManagerWindow &) -> PatternsManagerWindow & = delete;
-    auto operator=(PatternsManagerWindow &&) -> PatternsManagerWindow      & = delete;
+    auto operator=(const FileRulesPanel &) -> FileRulesPanel & = delete;
+    auto operator=(FileRulesPanel &&) -> FileRulesPanel      & = delete;
 
-    ~PatternsManagerWindow() override; // = default
+    ~FileRulesPanel() override;
+
+    void refresh();
+
+signals:
+    void settings_sync_requested();
+    void selected_pattern_changed();
 
 private:
+    struct PreviewKey
+    {
+        std::u8string input_path;
+        OptimizationMode mode;
+        btu::Game target_game;
+
+        auto operator==(const PreviewKey &) const -> bool = default;
+    };
+
+    struct PreviewScanResult
+    {
+        std::uint64_t generation;
+        FileRulePreviewResult result;
+    };
+
     struct NoInputState
     {
     };
@@ -75,12 +97,18 @@ private:
         std::string error;
     };
 
-    std::unique_ptr<Ui::PatternsManagerWindow> ui_;
+    std::unique_ptr<Ui::FileRulesPanel> ui_;
     Settings &settings_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
-    QFutureWatcher<FileRulePreviewResult> preview_watcher_;
+    QFutureWatcher<PreviewScanResult> preview_watcher_;
+    QTimer preview_timer_;
+    std::optional<PreviewKey> preview_key_;
+    btu::Path preview_input_path_;
+    std::uint64_t preview_generation_                                                 = 0;
     std::variant<NoInputState, ScanningState, ReadyState, FailedState> preview_state_ = NoInputState{};
 
-    void update_patterns(std::u8string_view selected_pattern = {});
+    void update_patterns(std::u8string_view selected_pattern);
+    void select_pattern(std::u8string pattern);
+    void start_preview_scan();
     void move_pattern(const QModelIndex, int source_row, int, const QModelIndex, int destination_row);
     void create_pattern();
     void edit_current_pattern();

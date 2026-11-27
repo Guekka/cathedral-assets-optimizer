@@ -48,28 +48,28 @@ selected profile.
 The selected profile is saved with CAO's settings. Export a profile if you want to share or keep a
 separate copy of its configuration.
 
-In **Customize**, the controls above the modules show which settings you are editing:
+In **Customize**, the profile controls identify the game and profile. The scope label above the
+operation tabs and the selection in the left-hand file-rules panel show which file settings you are
+editing:
 
 - **Profile** selects the complete game profile.
-- **Default file settings** are the fallback used when no file rule matches. If there are no active
-  rules, these settings apply to all files.
-- **For matching files** means the settings belong to the selected rule and apply only when it is the
-  first matching rule.
+- **Default file settings** are selected with **Everything else (default)** and are the fallback
+  used when no file rule matches. If there are no active rules, these settings apply to all files.
+- Selecting a file rule means the operation tabs edit that rule's settings; they apply only when it
+  is the first matching rule.
 
-The **BSA (Profile-wide)** module is an exception to the file-settings selector: it configures BSA
-processing for the whole profile, even while a file rule is selected. Other file settings belong to
-the default settings or the selected rule, as shown by the scope label.
+The **BSA (Profile-wide)** module configures BSA processing for the whole profile, even while a file
+rule is selected. The other operation settings belong to the default settings or selected rule, as
+shown by the scope label.
 
 ## File rules
 
-File rules let **Customize** apply different settings to relative paths. Use **Manage rules** beside
-the file-settings selector to create, edit, reorder, or remove rules. Rules are checked from top to
-bottom; the first matching rule supplies the settings, and **Default file settings** are the
-fallback. Medium mode edits that fallback while existing rules keep applying to their matches.
+File rules let **Customize** apply different settings to relative paths. The left-hand **File rules**
+panel keeps rule priority and active settings scope visible beside the operation tabs. The first
+matching rule supplies the settings, and **Default file settings** are the fallback.
 
-The manager's sample-path and file-impact previews are read-only and distinct from **Dry run**.
-For match types, rule priority, setting scope, and preview details, see the [file rules
-guide](patterns.md).
+The sample-path and real-input impact previews are read-only and distinct from **Dry run**. For match
+types, rule priority, setting scope, and preview details, see the [file rules guide](patterns.md).
 
 ## BSA options
 

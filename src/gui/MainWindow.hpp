@@ -12,6 +12,7 @@
 #include <QCoreApplication>
 #include <QMainWindow>
 #include <future>
+#include <memory>
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,7 @@ class MainWindow;
 
 namespace cao {
 class Manager;
+class FileRulesPanel;
 class Settings;
 
 class MainWindow final : public QMainWindow
@@ -40,6 +42,7 @@ private:
     Settings settings_;
 
     std::unique_ptr<Ui::MainWindow> ui_;
+    std::unique_ptr<FileRulesPanel> file_rules_panel_;
     std::optional<std::jthread> cao_process_;
     std::unique_ptr<QProgressDialog> graceful_stop_dialog_;
 

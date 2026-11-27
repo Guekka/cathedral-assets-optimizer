@@ -26,16 +26,16 @@ subfolders without writing an expression, use the recommended folder-and-extensi
 
 ## Create and organize rules
 
-In **Customize**, choose **Manage rules** beside the file-settings selector:
+In **Customize**, use the **File rules** panel beside the operation tabs:
 
 1. Choose **New rule...**, select a match type, and optionally give the rule a descriptive name.
 2. Choose **Copy settings from** to start with the default settings or another rule's settings.
-3. Select a rule and choose **Edit rule...** to change its name or match conditions.
-4. Drag rules to change their order, or choose **Remove rule** to delete one.
+3. Select a rule or **Everything else (default)** to edit its file settings in the operation tabs.
+4. Choose **Edit rule...** to change a selected rule's name or match conditions.
+5. Drag rules to change their order, or choose **Remove rule** to delete one.
 
 The **Everything else (default)** entry is the fallback for paths that do not match a file rule. It
-appears in the main window's selector, where it is labeled **Default file settings**, but is not listed
-in the manager and cannot be removed.
+is pinned below the ordered rules and cannot be removed.
 
 ## Priority and settings scope
 
@@ -51,7 +51,7 @@ even when a rule is selected.
 
 ## Check a rule
 
-The file rules manager includes a sample-path preview. Enter a relative path, such as
+The file rules panel includes a sample-path preview. Enter a relative path, such as
 `textures/interface/menu.dds`, to see whether the selected rule matches and whether an earlier rule
 or the default settings would apply.
 

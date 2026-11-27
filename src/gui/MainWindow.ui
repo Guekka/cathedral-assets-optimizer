@@ -54,6 +54,13 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="3">
+        <widget class="QLabel" name="profileTargetLabel">
+         <property name="text">
+          <string>Target game</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_8">
          <property name="sizePolicy">
@@ -73,30 +80,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="patternsLabel">
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>Choose which file rule's settings to edit. These settings apply only when that rule is the first match.</string>
-         </property>
-         <property name="text">
-          <string>For matching files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="patterns"/>
-       </item>
-       <item row="2" column="2">
-        <widget class="QPushButton" name="managePatterns">
-         <property name="text">
-          <string>Manage rules</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="3">
+       <item row="2" column="0" colspan="4">
         <widget class="QLabel" name="settingsScopeDescription">
          <property name="text">
           <string>These settings apply only when this is the first matching rule.</string>
@@ -199,7 +183,7 @@
          <item>
           <widget class="QLabel" name="customizeDescription">
            <property name="text">
-            <string>Choose a profile to customize its reusable processing settings.</string>
+            <string>Choose a file rule on the left, then edit its settings in the operation tabs.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -207,11 +191,26 @@
           </widget>
          </item>
          <item>
-          <widget class="QTabWidget" name="tabWidget">
-           <property name="currentIndex">
-            <number>-1</number>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="customizeContentLayout">
+           <item>
+            <widget class="QWidget" name="fileRulesHost">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+             <layout class="QVBoxLayout" name="fileRulesLayout"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTabWidget" name="tabWidget">
+             <property name="currentIndex">
+              <number>-1</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -463,8 +462,6 @@
  <tabstops>
   <tabstop>profiles</tabstop>
   <tabstop>manageProfiles</tabstop>
-  <tabstop>patterns</tabstop>
-  <tabstop>managePatterns</tabstop>
   <tabstop>inputDirTextEdit</tabstop>
   <tabstop>userPathButton</tabstop>
   <tabstop>modeChooserComboBox</tabstop>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PatternsManagerWindow</class>
- <widget class="QWidget" name="PatternsManagerWindow">
+ <class>FileRulesPanel</class>
+ <widget class="QWidget" name="FileRulesPanel">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>760</width>
-    <height>560</height>
+    <width>400</width>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="rulesDescription">
      <property name="text">
-      <string>Rules are checked from top to bottom. The first matching rule sets the file settings. Files with no match use the default settings. Drag rules to change their priority.</string>
+      <string>Rules are checked from top to bottom. The first matching rule sets the file settings. Select a rule to edit its settings in the tabs. Drag rules to change their priority.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -29,7 +29,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>180</height>
+       <height>140</height>
       </size>
      </property>
      <property name="dragDropMode">
@@ -40,6 +40,19 @@
      </property>
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectionBehavior::SelectItems</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="defaultRuleButton">
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="toolTip">
+      <string>These settings apply when no file rule matches.</string>
+     </property>
+     <property name="text">
+      <string>Everything else (default)</string>
      </property>
     </widget>
    </item>
@@ -84,7 +97,7 @@
    <item>
     <widget class="QGroupBox" name="impactGroupBox">
      <property name="title">
-      <string>What these rules affect</string>
+      <string>Files affected in the selected input</string>
      </property>
      <layout class="QVBoxLayout" name="impactLayout">
       <item>
@@ -103,7 +116,7 @@
    <item>
     <widget class="QLabel" name="samplePathLabel">
      <property name="text">
-      <string>Test a specific relative path:</string>
+      <string>Test another relative path (optional):</string>
      </property>
     </widget>
    </item>

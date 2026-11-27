@@ -3,9 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "PatternsManagerWindow.hpp"
+#include "FileRulesPanel.hpp"
 
-#include "ui_PatternsManagerWindow.h"
+#include "ui_FileRulesPanel.h"
 #include "utils/utils.hpp"
 
 #include <QComboBox>
@@ -17,6 +17,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSignalBlocker>
 #include <QStringList>
 #include <QtConcurrent/QtConcurrentRun>
 #include <algorithm>
@@ -270,88 +271,149 @@ PatternItem::PatternItem(PerFileSettings &pfs, QListWidget *parent)
     setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled);
 }
 
-PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent)
-    : QDialog(parent)
-    , ui_(std::make_unique<Ui::PatternsManagerWindow>())
+FileRulesPanel::FileRulesPanel(Settings &settings, QWidget *parent)
+    : QWidget(parent)
+    , ui_(std::make_unique<Ui::FileRulesPanel>())
     , settings_(settings)
 {
     ui_->setupUi(this);
     ui_->impactSummaryLabel->setTextFormat(Qt::PlainText);
     ui_->editPushButton->setEnabled(false);
     ui_->removePushButton->setEnabled(false);
+    ui_->defaultRuleButton->setChecked(settings_.gui.selected_pattern == k_default_pattern.text());
 
     connect(ui_->patterns, &QListWidget::currentRowChanged, this, [this](const int current) {
         const bool has_selection = current >= 0;
         ui_->editPushButton->setEnabled(has_selection);
         ui_->removePushButton->setEnabled(has_selection);
+        if (has_selection)
+        {
+            const QSignalBlocker button_blocker(ui_->defaultRuleButton);
+            ui_->defaultRuleButton->setChecked(false);
+            const auto *selected = static_cast<const PatternItem *>(ui_->patterns->currentItem());
+            select_pattern(selected->per_file_settings().pattern.text());
+        }
+        else if (!ui_->defaultRuleButton->isChecked())
+        {
+            select_pattern(k_default_pattern.text());
+        }
         update_sample_result();
         update_impact_preview();
     });
     connect(ui_->patterns, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *) {
         edit_current_pattern();
     });
-    connect(ui_->patterns->model(),
-            &QAbstractItemModel::rowsMoved,
-            this,
-            &PatternsManagerWindow::move_pattern);
-    connect(ui_->newPushButton, &QPushButton::pressed, this, &PatternsManagerWindow::create_pattern);
-    connect(ui_->editPushButton, &QPushButton::pressed, this, &PatternsManagerWindow::edit_current_pattern);
-    connect(ui_->removePushButton,
-            &QPushButton::pressed,
-            this,
-            &PatternsManagerWindow::delete_current_pattern);
+    connect(ui_->patterns->model(), &QAbstractItemModel::rowsMoved, this, &FileRulesPanel::move_pattern);
+    connect(ui_->newPushButton, &QPushButton::pressed, this, &FileRulesPanel::create_pattern);
+    connect(ui_->editPushButton, &QPushButton::pressed, this, &FileRulesPanel::edit_current_pattern);
+    connect(ui_->removePushButton, &QPushButton::pressed, this, &FileRulesPanel::delete_current_pattern);
     connect(ui_->samplePathEdit, &QLineEdit::textChanged, this, [this] { update_sample_result(); });
+    connect(ui_->defaultRuleButton, &QPushButton::clicked, this, [this] {
+        const QSignalBlocker button_blocker(ui_->defaultRuleButton);
+        const QSignalBlocker list_blocker(ui_->patterns);
+        ui_->defaultRuleButton->setChecked(true);
+        ui_->patterns->setCurrentRow(-1);
+        ui_->editPushButton->setEnabled(false);
+        ui_->removePushButton->setEnabled(false);
+        select_pattern(k_default_pattern.text());
+        update_sample_result();
+        update_impact_preview();
+    });
 
-    connect(&preview_watcher_, &QFutureWatcher<FileRulePreviewResult>::finished, this, [this] {
+    preview_timer_.setSingleShot(true);
+    preview_timer_.setInterval(300);
+    connect(&preview_timer_, &QTimer::timeout, this, &FileRulesPanel::start_preview_scan);
+
+    connect(&preview_watcher_, &QFutureWatcher<PreviewScanResult>::finished, this, [this] {
         auto result = preview_watcher_.result();
-        if (result)
+        if (result.generation != preview_generation_)
+            return;
+
+        if (result.result)
         {
-            auto scan      = std::move(result).value();
-            auto impacts   = analyze_file_rule_impact(settings_.current_profile(), scan.files);
-            preview_state_ = ReadyState{std::move(scan), std::move(impacts)};
+            preview_state_ = ReadyState{std::move(result.result).value(), {}};
         }
         else
         {
-            preview_state_ = FailedState{std::move(result).error()};
+            preview_state_ = FailedState{std::move(result.result).error()};
         }
-
-        const auto *selected        = static_cast<const PatternItem *>(ui_->patterns->currentItem());
-        const auto selected_pattern = selected == nullptr
-                                          ? settings_.gui.selected_pattern
-                                          : std::u8string(selected->per_file_settings().pattern.text());
-        update_patterns(selected_pattern);
+        update_patterns(settings_.gui.selected_pattern);
     });
 
-    update_patterns(settings_.gui.selected_pattern);
-
-    const auto &profile     = settings_.current_profile();
-    const auto &run_context = settings_.run_context;
-    if (run_context.input_path.empty())
-    {
-        preview_state_ = NoInputState{};
-        update_impact_preview();
-    }
-    else
-    {
-        preview_state_ = ScanningState{};
-        update_impact_preview();
-        preview_watcher_.setFuture(QtConcurrent::run([input_path  = run_context.input_path,
-                                                      mode        = run_context.optimization_mode,
-                                                      target_game = profile.target_game] {
-            return scan_file_rule_preview(input_path, mode, target_game);
-        }));
-    }
+    refresh();
 }
 
-PatternsManagerWindow::~PatternsManagerWindow() = default;
+void FileRulesPanel::refresh()
+{
+    if (settings_.gui.workspace != Workspace::Customize)
+        return;
 
-void PatternsManagerWindow::update_patterns(const std::u8string_view selected_pattern)
+    const auto input_path = settings_.run_context.input_path;
+    const auto key        = PreviewKey{
+               .input_path  = input_path.u8string(),
+               .mode        = settings_.run_context.optimization_mode,
+               .target_game = settings_.current_profile().target_game,
+    };
+
+    if (!preview_key_ || *preview_key_ != key)
+    {
+        preview_key_        = key;
+        preview_input_path_ = input_path;
+        ++preview_generation_;
+        preview_timer_.stop();
+
+        if (key.input_path.empty())
+        {
+            preview_state_ = NoInputState{};
+        }
+        else
+        {
+            preview_state_ = ScanningState{};
+            preview_timer_.start();
+        }
+    }
+
+    update_patterns(settings_.gui.selected_pattern);
+}
+
+void FileRulesPanel::start_preview_scan()
+{
+    if (!preview_key_ || preview_key_->input_path.empty())
+        return;
+
+    const auto generation = preview_generation_;
+    const auto key        = *preview_key_;
+    const auto input_path = preview_input_path_;
+    preview_watcher_.setFuture(
+        QtConcurrent::run([generation, input_path, mode = key.mode, target_game = key.target_game] {
+            return PreviewScanResult{
+                generation,
+                scan_file_rule_preview(input_path, mode, target_game),
+            };
+        }));
+}
+
+void FileRulesPanel::select_pattern(std::u8string pattern)
+{
+    if (settings_.gui.selected_pattern == pattern)
+        return;
+
+    emit settings_sync_requested();
+    settings_.gui.selected_pattern = std::move(pattern);
+    emit selected_pattern_changed();
+}
+
+FileRulesPanel::~FileRulesPanel() = default;
+
+void FileRulesPanel::update_patterns(const std::u8string_view selected_pattern)
 {
     auto *ready = std::get_if<ReadyState>(&preview_state_);
     if (ready != nullptr)
         ready->impacts = analyze_file_rule_impact(settings_.current_profile(), ready->scan.files);
 
     auto &list = *ui_->patterns;
+    const QSignalBlocker list_blocker(&list);
+    const QSignalBlocker default_button_blocker(ui_->defaultRuleButton);
     list.setCurrentItem(nullptr);
     list.clear();
 
@@ -388,27 +450,42 @@ void PatternsManagerWindow::update_patterns(const std::u8string_view selected_pa
         ++row;
     }
 
-    if (selected_row < 0 && list.count() > 0)
+    if (selected_row < 0 && selected_pattern != k_default_pattern.text() && list.count() > 0)
         selected_row = 0;
     if (selected_row >= 0)
+    {
+        ui_->defaultRuleButton->setChecked(false);
         list.setCurrentRow(selected_row);
+    }
+    else
+    {
+        ui_->defaultRuleButton->setChecked(true);
+    }
+    ui_->editPushButton->setEnabled(selected_row >= 0);
+    ui_->removePushButton->setEnabled(selected_row >= 0);
+
+    auto default_rule_text = tr("Everything else (default)");
+    if (ready != nullptr && !ready->impacts.empty())
+        default_rule_text += tr(" (%1)").arg(file_count_text(ready->impacts.back().applied_files));
+    ui_->defaultRuleButton->setText(default_rule_text);
 
     update_sample_result();
     update_impact_preview();
 }
 
-void PatternsManagerWindow::move_pattern(
+void FileRulesPanel::move_pattern(
     const QModelIndex, const int source_row, int, const QModelIndex, const int destination_row)
 {
     const auto *selected        = static_cast<const PatternItem *>(ui_->patterns->currentItem());
     const auto selected_pattern = selected == nullptr ? std::u8string{}
                                                       : selected->per_file_settings().pattern.text();
 
+    emit settings_sync_requested();
     settings_.current_profile().move_per_file_settings(source_row, destination_row);
     update_patterns(selected_pattern);
 }
 
-void PatternsManagerWindow::create_pattern()
+void FileRulesPanel::create_pattern()
 {
     const auto *selected      = static_cast<const PatternItem *>(ui_->patterns->currentItem());
     const auto initial_source = selected == nullptr ? k_default_pattern.text()
@@ -428,14 +505,17 @@ void PatternsManagerWindow::create_pattern()
         return;
     }
 
+    emit settings_sync_requested();
     PerFileSettings new_settings = **base;
     new_settings.pattern         = dialog.pattern();
     const auto new_pattern       = new_settings.pattern.text();
     settings_.current_profile().prepend_per_file_settings(std::move(new_settings));
+    settings_.gui.selected_pattern = new_pattern;
     update_patterns(new_pattern);
+    emit selected_pattern_changed();
 }
 
-void PatternsManagerWindow::edit_current_pattern()
+void FileRulesPanel::edit_current_pattern()
 {
     auto *item = static_cast<PatternItem *>(ui_->patterns->currentItem());
     if (item == nullptr)
@@ -447,14 +527,17 @@ void PatternsManagerWindow::edit_current_pattern()
     if (dialog.exec() != QDialog::Accepted)
         return;
 
+    emit settings_sync_requested();
     per_file_settings.pattern = dialog.pattern();
     const auto new_pattern    = per_file_settings.pattern.text();
     if (settings_.gui.selected_pattern == old_pattern)
         settings_.gui.selected_pattern = new_pattern;
     update_patterns(new_pattern);
+    if (settings_.gui.selected_pattern == new_pattern)
+        emit selected_pattern_changed();
 }
 
-void PatternsManagerWindow::delete_current_pattern()
+void FileRulesPanel::delete_current_pattern()
 {
     const auto *item = static_cast<const PatternItem *>(ui_->patterns->currentItem());
     if (item == nullptr)
@@ -471,19 +554,23 @@ void PatternsManagerWindow::delete_current_pattern()
     if (button != QMessageBox::Yes)
         return;
 
+    emit settings_sync_requested();
     if (!settings_.current_profile().remove_per_file_settings(current_pattern))
     {
         QMessageBox::critical(this, tr("Error"), tr("The file rule could not be removed."));
         return;
     }
 
-    if (settings_.gui.selected_pattern == current_pattern)
+    const bool removed_selected = settings_.gui.selected_pattern == current_pattern;
+    if (removed_selected)
         settings_.gui.selected_pattern = k_default_pattern.text();
 
     update_patterns(settings_.gui.selected_pattern);
+    if (removed_selected)
+        emit selected_pattern_changed();
 }
 
-void PatternsManagerWindow::update_sample_result()
+void FileRulesPanel::update_sample_result()
 {
     const auto sample = to_u8string(ui_->samplePathEdit->text().trimmed());
     if (sample.empty())
@@ -511,21 +598,29 @@ void PatternsManagerWindow::update_sample_result()
         }
     }
 
-    const auto *selected = static_cast<const PatternItem *>(ui_->patterns->currentItem());
-    if (selected == nullptr)
+    const auto all_settings      = settings_.current_profile().per_file_settings();
+    const auto first_match       = std::ranges::find_if(all_settings,
+                                                  [&path](const auto *pfs) { return pfs->matches(path); });
+    const auto *winner           = first_match == all_settings.end() ? all_settings.back() : *first_match;
+    const auto winner_is_default = is_default_rule(*winner);
+    const auto winner_name       = winner_is_default ? tr("the default settings")
+                                                     : pattern_display_name(winner->pattern);
+    if (ui_->defaultRuleButton->isChecked())
     {
-        ui_->sampleResultLabel->setText(tr("No custom rule is selected. The default settings will apply."));
+        ui_->sampleResultLabel->setText(
+            winner_is_default ? tr("Default file settings will apply to this path.")
+                              : tr("The default settings are overridden by %1.").arg(winner_name));
         return;
     }
 
-    const auto all_settings       = settings_.current_profile().per_file_settings();
-    const auto first_match        = std::ranges::find_if(all_settings,
-                                                  [&path](const auto *pfs) { return pfs->matches(path); });
+    const auto *selected = static_cast<const PatternItem *>(ui_->patterns->currentItem());
+    if (selected == nullptr)
+    {
+        ui_->sampleResultLabel->setText(tr("Select a rule or the default settings to test this path."));
+        return;
+    }
+
     const auto &selected_settings = selected->per_file_settings();
-    const auto *winner            = first_match == all_settings.end() ? all_settings.back() : *first_match;
-    const auto winner_is_default  = is_default_rule(*winner);
-    const auto winner_name        = winner_is_default ? tr("the default settings")
-                                                      : pattern_display_name(winner->pattern);
     if (!selected_settings.matches(path))
     {
         ui_->sampleResultLabel->setText(tr("This rule does not match. %1 will apply.").arg(winner_name));
@@ -541,7 +636,7 @@ void PatternsManagerWindow::update_sample_result()
     }
 }
 
-void PatternsManagerWindow::update_impact_preview()
+void FileRulesPanel::update_impact_preview()
 {
     ui_->impactSummaryLabel->setToolTip({});
     if (std::holds_alternative<NoInputState>(preview_state_))
@@ -559,9 +654,9 @@ void PatternsManagerWindow::update_impact_preview()
 
     if (const auto *failed = std::get_if<FailedState>(&preview_state_))
     {
-        ui_->impactSummaryLabel->setText(tr("The file preview could not be loaded: %1\nTry another input "
-                                            "folder or check that it is readable, "
-                                            "then reopen this manager to refresh the preview.")
+        ui_->impactSummaryLabel->setText(tr("The file preview could not be loaded: %1\nCheck that the input "
+                                            "folder exists and is readable, "
+                                            "then choose it again to retry the preview.")
                                              .arg(QString::fromStdString(failed->error)));
         return;
     }
@@ -687,7 +782,7 @@ void PatternsManagerWindow::update_impact_preview()
     ui_->impactSummaryLabel->setText(summary);
 }
 
-auto PatternsManagerWindow::file_count_text(const std::size_t count) const -> QString
+auto FileRulesPanel::file_count_text(const std::size_t count) const -> QString
 {
     if (count == 1)
         return tr("1 file");
