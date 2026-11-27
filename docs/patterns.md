@@ -1,42 +1,57 @@
-# Patterns
+# File rules
 
-Patterns are available in Advanced mode. They let a profile apply different per-file settings to
-different relative paths within a mod.
+File rules (called patterns in older CAO versions) let a profile apply different file settings to
+different relative paths within a mod. You create and edit them in Advanced mode. Existing rules
+continue to apply in Medium mode, where you can edit only the default file settings.
 
-## Match files
+## Choose what to match
 
-Patterns can be glob patterns or regular expressions. For example, if a mod contains:
+The recommended **Folder and file extension** match lets you combine a folder and an extension. If
+both are provided, a file must match both conditions. Either condition can be left blank.
+
+For example, a folder of `textures/interface` and an extension of `dds` matches:
 
 ```text
-main.dds
-landscape.dds
-normalMap.dds
+textures/interface/menu.dds
+textures/interface/icons/menu.dds
 ```
 
-the glob pattern `*.dds` matches all three files. A pattern is matched against the file's normalized
-relative path, not just its name. Regular expressions are case-insensitive and must match the complete
-relative path. Regex patterns are shown in bold in the Patterns Manager.
+Folder matching includes subfolders and can match the folder path within a longer relative path.
+Extension matching is case-insensitive. Use a folder condition alone to match all file types in that
+folder, or an extension alone to match that file type in any folder.
 
-## Add and edit patterns
+**Glob pattern** and **Regular expression** are available as advanced match types. They are matched
+against the complete normalized relative file path. If you want to match a folder and all of its
+subfolders without writing an expression, use the recommended folder-and-extension match.
 
-Use **Manage** beside the pattern selector in the main window:
+## Create and organize rules
 
-1. Choose **New**, enter the pattern text, and choose **Glob** or **Regex**.
-2. Choose an existing pattern as the starting settings for the new one.
-3. Double-click an item in the list to edit its pattern text. The pattern type cannot be changed after
-   creation.
-4. Drag items to change their order, or select an item and choose **Remove** to delete it.
+In Advanced mode, choose **Manage rules** beside the file-settings selector:
 
-The default `*` pattern is the fallback settings for files that do not match another pattern. It can be
-selected in the main window, but is not listed for removal in the Patterns Manager.
+1. Choose **New rule...**, select a match type, and optionally give the rule a descriptive name.
+2. Choose **Copy settings from** to start with the default settings or another rule's settings.
+3. Select a rule and choose **Edit rule...** to change its name or match conditions.
+4. Drag rules to change their order, or choose **Remove rule** to delete one.
 
-## Priority and settings
+The **Everything else (default)** entry is the fallback for paths that do not match a file rule. It
+appears in the main window's selector, where it is labeled **Default file settings**, but is not listed
+in the manager and cannot be removed.
 
-CAO checks patterns in the order shown in the manager, from top to bottom, and uses the first match.
-There is no merging of settings from multiple matching patterns. Put specific patterns above broad
-patterns so they take priority. For example, place `*.dds` above `*` to give DDS files their own
-settings while `*` provides a fallback for other files.
+## Priority and settings scope
 
-The modules display and edit the settings for the currently selected pattern. A new pattern begins
-with a copy of the chosen base pattern's settings; after creation, changes to one pattern do not
-automatically change the others.
+CAO checks rules from top to bottom and applies the settings from the first matching rule. If more
+than one rule matches a file, later matches do not contribute settings. Put narrower rules above
+broader ones so they take priority.
+
+In Advanced mode, **For matching files** identifies settings for the selected rule. They apply only
+when that rule is the first match. **Default file settings** apply only when no rule matches. Medium
+mode always edits the default settings; active rules continue to override them for matching files.
+
+**BSA (Profile-wide)** settings are separate from file rules and apply to the profile as a whole,
+even when a rule is selected.
+
+## Check a rule
+
+The file rules manager includes a sample-path preview. Enter a relative path, such as
+`textures/interface/menu.dds`, to see whether the selected rule matches and whether an earlier rule
+or the default settings would apply.

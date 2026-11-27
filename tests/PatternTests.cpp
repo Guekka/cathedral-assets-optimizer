@@ -1,0 +1,130 @@
+/* Copyright (C) 2026 G'k
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "settings/per_file_settings.hpp"
+#include "settings/profile.hpp"
+#include "settings/settings.hpp"
+
+#include <doctest/doctest.h>
+
+namespace cao {
+TEST_CASE("simple file rules match folders and extensions")
+{
+    const auto pattern = Pattern::simple_rule(u8"textures/interface/", u8"dds");
+
+    CHECK(pattern.matches(std::filesystem::path{u8"textures/interface/menu.dds"}));
+    CHECK(pattern.matches(std::filesystem::path{u8"mods/Textures/Interface/sub/menu.DDS"}));
+    CHECK_FALSE(pattern.matches(std::filesystem::path{u8"textures/interface-old/menu.dds"}));
+    CHECK_FALSE(pattern.matches(std::filesystem::path{u8"textures/interface/menu.nif"}));
+}
+
+TEST_CASE("simple file rules can match by folder or extension alone")
+{
+    const auto folder_rule    = Pattern::simple_rule(u8"textures/interface", {});
+    const auto extension_rule = Pattern::simple_rule({}, u8"dds");
+
+    CHECK(folder_rule.matches(std::filesystem::path{u8"textures/interface/menu.nif"}));
+    CHECK_FALSE(folder_rule.matches(std::filesystem::path{u8"textures/landscape/menu.nif"}));
+    CHECK(extension_rule.matches(std::filesystem::path{u8"textures/landscape/menu.DDS"}));
+    CHECK_FALSE(extension_rule.matches(std::filesystem::path{u8"textures/landscape/menu.nif"}));
+}
+
+TEST_CASE("simple file rules reject paths outside the input root")
+{
+    CHECK_THROWS_AS(static_cast<void>(Pattern::simple_rule(u8"../textures", u8"dds")), std::invalid_argument);
+    CHECK_THROWS_AS(static_cast<void>(Pattern::simple_rule(u8"/textures", u8"dds")), std::invalid_argument);
+    CHECK_THROWS_AS(static_cast<void>(Pattern::simple_rule(u8"textures/*", u8"dds")), std::invalid_argument);
+}
+
+TEST_CASE("simple file rules serialize their conditions and name")
+{
+    const auto pattern = Pattern::simple_rule(u8"textures/interface", u8"dds", u8"Interface textures");
+    auto loaded        = Pattern::simple_rule(u8"textures/landscape", u8"nif");
+    nlohmann::json(pattern).get_to(loaded);
+
+    REQUIRE(loaded.simple_rule() != nullptr);
+    CHECK(loaded.simple_rule()->folder == u8"textures/interface");
+    CHECK(loaded.simple_rule()->extension == u8".dds");
+    CHECK(loaded.name() == std::u8string_view{u8"Interface textures"});
+    CHECK(loaded.text() == pattern.text());
+    CHECK(loaded.matches(std::filesystem::path{u8"textures/interface/menu.DDS"}));
+}
+
+TEST_CASE("legacy glob and regex patterns still deserialize")
+{
+    auto wildcard = Pattern::wildcard(u8"*.nif");
+    auto regex    = Pattern::regular_expression(u8".*\\.nif");
+    nlohmann::json{{"pattern", "*.dds"}, {"type", 0}}.get_to(wildcard);
+    nlohmann::json{{"pattern", R"(.*\.dds)"}, {"type", 1}}.get_to(regex);
+
+    CHECK(wildcard.matches(std::filesystem::path{u8"menu.dds"}));
+    CHECK(regex.matches(std::filesystem::path{u8"textures/menu.DDS"}));
+}
+
+TEST_CASE("profiles apply the first matching simple file rule")
+{
+    auto profile = Profile::make_base(btu::Game::SSE);
+
+    auto all_dds          = PerFileSettings::make_base(btu::Game::SSE);
+    all_dds.pattern       = Pattern::simple_rule({}, u8"dds", u8"All DDS textures");
+    auto interface_dds    = PerFileSettings::make_base(btu::Game::SSE);
+    interface_dds.pattern = Pattern::simple_rule(u8"textures/interface", u8"dds", u8"Interface textures");
+
+    profile.prepend_per_file_settings(std::move(all_dds));
+    profile.prepend_per_file_settings(std::move(interface_dds));
+
+    const auto selected = profile.get_per_file_settings(
+        std::filesystem::path{u8"textures/interface/menu.dds"});
+    CHECK(selected.pattern.name() == std::u8string_view{u8"Interface textures"});
+
+    const auto fallback = profile.get_per_file_settings(std::filesystem::path{u8"meshes/armor.nif"});
+    CHECK(fallback.pattern.text() == k_default_pattern.text());
+}
+
+TEST_CASE("moving a file rule changes first-match priority")
+{
+    auto profile = Profile::make_base(btu::Game::SSE);
+
+    auto all_dds          = PerFileSettings::make_base(btu::Game::SSE);
+    all_dds.pattern       = Pattern::simple_rule({}, u8"dds", u8"All DDS textures");
+    auto interface_dds    = PerFileSettings::make_base(btu::Game::SSE);
+    interface_dds.pattern = Pattern::simple_rule(u8"textures/interface", u8"dds", u8"Interface textures");
+
+    profile.append_per_file_settings(std::move(all_dds));
+    profile.append_per_file_settings(std::move(interface_dds));
+
+    const auto interface_path = std::filesystem::path{u8"textures/interface/menu.dds"};
+    CHECK(profile.get_per_file_settings(interface_path).pattern.name() == u8"All DDS textures");
+
+    profile.move_per_file_settings(1, 0);
+
+    CHECK(profile.get_per_file_settings(interface_path).pattern.name() == u8"Interface textures");
+    CHECK(
+        profile.get_per_file_settings(std::filesystem::path{u8"textures/landscape/ground.dds"}).pattern.name()
+        == u8"All DDS textures");
+}
+
+TEST_CASE("non-advanced modes edit default settings, not the previously selected rule")
+{
+    auto settings = Settings::make_base();
+
+    auto custom_rule           = PerFileSettings::make_base(btu::Game::FNV);
+    custom_rule.pattern        = Pattern::simple_rule({}, u8"dds", u8"All DDS textures");
+    const auto custom_rule_key = custom_rule.pattern.text();
+    settings.current_profile().prepend_per_file_settings(std::move(custom_rule));
+    settings.gui.selected_pattern = custom_rule_key;
+
+    settings.gui.gui_mode = GuiMode::Medium;
+    CHECK(current_per_file_settings(settings).pattern.text() == k_default_pattern.text());
+    CHECK(settings.gui.selected_pattern == custom_rule_key);
+
+    settings.gui.gui_mode = GuiMode::Advanced;
+    CHECK(current_per_file_settings(settings).pattern.text() == custom_rule_key);
+
+    settings.gui.gui_mode = GuiMode::QuickOptimize;
+    CHECK(current_per_file_settings(settings).pattern.text() == k_default_pattern.text());
+}
+} // namespace cao

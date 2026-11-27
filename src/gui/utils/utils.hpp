@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #pragma once
 
+#include "settings/per_file_settings.hpp"
+
 #include <QAbstractButton>
 #include <QComboBox>
 #include <QDialog>
@@ -120,4 +122,30 @@ void set_items(QComboBox &box, const Collection &collection, Proj proj = std::id
     const auto data = u.toUtf8();
     return {reinterpret_cast<const char8_t *>(data.constData()), static_cast<size_t>(data.size())};
 }
+
+[[nodiscard]] inline auto pattern_match_description(const Pattern &pattern) -> QString
+{
+    if (const auto *rule = pattern.simple_rule())
+    {
+        const auto folder    = to_qstring(rule->folder);
+        const auto extension = to_qstring(rule->extension);
+        if (rule->folder.empty())
+            return QObject::tr("All files with extension %1").arg(extension);
+        if (rule->extension.empty())
+            return QObject::tr("All files in %1").arg(folder);
+        return QObject::tr("Files with extension %1 in %2").arg(extension, folder);
+    }
+
+    const auto type = pattern.type() == Pattern::Type::Regex ? QObject::tr("Regex") : QObject::tr("Glob");
+    return QObject::tr("%1: %2").arg(type, to_qstring(pattern.text()));
+}
+
+[[nodiscard]] inline auto pattern_display_name(const Pattern &pattern) -> QString
+{
+    const auto description = pattern_match_description(pattern);
+    if (pattern.name().empty())
+        return description;
+    return QObject::tr("%1 (%2)").arg(to_qstring(pattern.name()), description);
+}
+
 } // namespace cao

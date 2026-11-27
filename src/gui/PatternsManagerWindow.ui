@@ -6,21 +6,31 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>326</width>
-    <height>180</height>
+    <width>760</width>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Patterns manager</string>
+   <string>File rules</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
-    <widget class="QListWidget" name="patterns">
-     <property name="cursor" stdset="0">
-      <cursorShape>WhatsThisCursor</cursorShape>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="rulesDescription">
+     <property name="text">
+      <string>Rules are checked from top to bottom. The first matching rule sets the file settings. Files with no match use the default settings. Drag rules to change their priority.</string>
      </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Patterns currently configured for the active profile.&lt;/p&gt;&lt;p&gt;Regex patterns are distinguished by being &lt;span style=&quot; font-weight:700;&quot;&gt;bold&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;You can change the pattern by &lt;span style=&quot; font-weight:700;&quot;&gt;double-clicking&lt;/span&gt; on it and editing the text.&lt;/p&gt;&lt;p&gt;Note: The type of the pattern (glob/regex) is set on creation and cannot be changed.&lt;/p&gt;&lt;p&gt;You can reorder patterns by &lt;span style=&quot; font-weight:700;&quot;&gt;drag-and-droping&lt;/span&gt; them around in the list.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListWidget" name="patterns">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>180</height>
+      </size>
      </property>
      <property name="dragDropMode">
       <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
@@ -33,17 +43,65 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="newPushButton">
+   <item>
+    <layout class="QHBoxLayout" name="buttonLayout">
+     <item>
+      <widget class="QPushButton" name="newPushButton">
+       <property name="text">
+        <string>New rule...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="editPushButton">
+       <property name="text">
+        <string>Edit rule...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="removePushButton">
+       <property name="text">
+        <string>Remove rule</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="buttonSpacer">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="samplePathLabel">
      <property name="text">
-      <string>New</string>
+      <string>Test a relative file path to see which rule wins:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="removePushButton">
+   <item>
+    <widget class="QLineEdit" name="samplePathEdit">
+     <property name="placeholderText">
+      <string>textures/interface/menu.dds</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="sampleResultLabel">
      <property name="text">
-      <string>Remove</string>
+      <string>Enter a path to preview rule matching.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

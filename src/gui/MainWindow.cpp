@@ -62,25 +62,23 @@ auto set_theme(GuiTheme theme) noexcept -> bool
     return true;
 }
 
-void set_patterns_enabled(Ui::MainWindow &ui, bool state) noexcept
+void set_file_settings_context_visible(Ui::MainWindow &ui, const GuiMode mode) noexcept
 {
-    const std::array patterns_object = std::to_array<QWidget *>({
-        ui.patterns,
-        ui.managePatterns,
-        ui.patternsLabel,
-    });
+    const bool show_rule_controls   = mode == GuiMode::Advanced;
+    const bool show_file_settings   = mode != GuiMode::QuickOptimize;
+    const bool show_fallback_notice = mode == GuiMode::Medium;
 
-    for (auto *widget : patterns_object)
-    {
-        widget->setEnabled(state);
-        widget->setVisible(state);
-    }
+    ui.patterns->setEnabled(show_rule_controls);
+    ui.patterns->setVisible(show_rule_controls);
+    ui.managePatterns->setEnabled(show_rule_controls);
+    ui.managePatterns->setVisible(show_rule_controls);
+    ui.patternsLabel->setVisible(show_file_settings);
+    ui.settingsScopeDescription->setVisible(show_fallback_notice);
 }
 
 void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, const Settings &settings) noexcept
 {
     modules.clear_modules();
-    set_patterns_enabled(ui, /*state=*/false);
 
     const auto level = settings.gui.gui_mode;
 
@@ -106,12 +104,61 @@ void set_gui_level(ModuleDisplay &modules, Ui::MainWindow &ui, const Settings &s
             modules.add_module(std::make_unique<AdvancedMeshesModule>());
             modules.add_module(std::make_unique<AdvancedTexturesModule>());
             modules.add_module(std::make_unique<AdvancedAnimationsModule>());
-            set_patterns_enabled(ui, /*state=*/true);
             break;
         }
     }
 
+    set_file_settings_context_visible(ui, level);
     modules.hide_unsupported(settings.current_profile().target_game);
+}
+
+void update_file_settings_context(Ui::MainWindow &ui, const Settings &settings)
+{
+    const auto mode = settings.gui.gui_mode;
+    if (mode == GuiMode::QuickOptimize)
+        return;
+
+    if (mode == GuiMode::Medium)
+    {
+        ui.patternsLabel->setText(QObject::tr("Default file settings"));
+        ui.patternsLabel->setToolTip(QObject::tr("These settings are used when no file rule matches."));
+
+        auto active_rule_count = std::size_t{0};
+        for (const auto *per_file_settings : settings.current_profile().per_file_settings())
+        {
+            if (per_file_settings->pattern.text() != k_default_pattern.text())
+                ++active_rule_count;
+        }
+
+        if (active_rule_count == 0)
+        {
+            ui.settingsScopeDescription->setText(
+                QObject::tr("These settings apply to all files in this profile."));
+        }
+        else if (active_rule_count == 1)
+        {
+            ui.settingsScopeDescription->setText(
+                QObject::tr("Used when no file rule matches. One active file rule overrides these defaults "
+                            "for matching files. Switch to Advanced to review it."));
+        }
+        else
+        {
+            ui.settingsScopeDescription->setText(
+                QObject::tr("Used when no file rule matches. %1 active file rules override these defaults "
+                            "for matching files. Switch to Advanced to review them.")
+                    .arg(static_cast<qulonglong>(active_rule_count)));
+        }
+        return;
+    }
+
+    const bool default_selected = settings.gui.selected_pattern == k_default_pattern.text();
+    ui.patternsLabel->setText(default_selected ? QObject::tr("Default file settings")
+                                               : QObject::tr("For matching files"));
+    const auto tool_tip = default_selected
+                              ? QObject::tr("These settings are used when no file rule matches.")
+                              : QObject::tr(
+                                    "These settings apply only when this is the first matching rule.");
+    ui.patternsLabel->setToolTip(tool_tip);
 }
 
 void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_display, Settings &settings)
@@ -173,12 +220,18 @@ void settings_to_ui(const Settings &settings, Ui::MainWindow &ui, ModuleDisplay 
 
     set_items(*ui.profiles, profiles, to_qstring);
 
-    set_items(*ui.patterns, settings.current_profile().per_file_settings(), [](const auto *pfs) {
-        return to_qstring(pfs->pattern.text());
-    });
+    ui.patterns->clear();
+    for (const auto *pfs : settings.current_profile().per_file_settings())
+    {
+        const auto label = pfs->pattern.text() == k_default_pattern.text()
+                               ? QObject::tr("Everything else (default)")
+                               : pattern_display_name(pfs->pattern);
+        ui.patterns->addItem(label, to_qstring(pfs->pattern.text()));
+    }
 
-    success = select_text(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
+    success = select_data(*ui.patterns, to_qstring(current_per_file_settings(settings).pattern.text()));
     show_message_box_on_failure(success);
+    update_file_settings_context(ui, settings);
 
     success = select_text(*ui.profiles, to_qstring(settings.current_profile_name()));
     if (!success)
@@ -295,7 +348,7 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
 
     connect(ui_->patterns, &QComboBox::activated, this, [this]() {
         save_settings();
-        settings_.gui.selected_pattern = to_u8string(ui_->patterns->currentText());
+        settings_.gui.selected_pattern = to_u8string(ui_->patterns->currentData().toString());
         settings_to_ui(settings_, *ui_, module_display_);
     });
 

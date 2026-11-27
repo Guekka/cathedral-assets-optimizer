@@ -9,32 +9,32 @@ namespace cao {
     profile.base_per_file_settings_.pack = false;
 
     auto fnv_lod_atlases         = PerFileSettings::make_base(btu::Game::FNV);
-    fnv_lod_atlases.pattern      = Pattern(u8"textures/landscape/lod/*.dds", Pattern::Type::Wildcard);
+    fnv_lod_atlases.pattern      = Pattern::wildcard(u8"textures/landscape/lod/*.dds");
     fnv_lod_atlases.tex_optimize = OptimizeType::None;
 
     auto fnv_lod_textures         = PerFileSettings::make_base(btu::Game::FNV);
-    fnv_lod_textures.pattern      = Pattern(u8".*lod(_[nsdgpe])?\\.dds", Pattern::Type::Regex);
+    fnv_lod_textures.pattern      = Pattern::regular_expression(u8".*lod(_[nsdgpe])?\\.dds");
     fnv_lod_textures.tex_optimize = OptimizeType::None;
 
     auto fnv_ui_textures         = PerFileSettings::make_base(btu::Game::FNV);
-    fnv_ui_textures.pattern      = Pattern(u8"textures/interface/.*\\.dds", Pattern::Type::Regex);
+    fnv_ui_textures.pattern      = Pattern::regular_expression(u8"textures/interface/.*\\.dds");
     fnv_ui_textures.tex_optimize = OptimizeType::None;
 
     auto fnv_dds         = PerFileSettings::make_base(btu::Game::FNV);
-    fnv_dds.pattern      = Pattern(u8"*.dds", Pattern::Type::Wildcard);
+    fnv_dds.pattern      = Pattern::wildcard(u8"*.dds");
     fnv_dds.tex.compress = true;
     fnv_dds.tex.resize   = btu::tex::Dimension{2048, 2048};
 
     auto fnv_tga         = PerFileSettings::make_base(btu::Game::FNV);
-    fnv_tga.pattern      = Pattern(u8"*.tga", Pattern::Type::Wildcard);
+    fnv_tga.pattern      = Pattern::wildcard(u8"*.tga");
     fnv_tga.tex_optimize = OptimizeType::None;
 
     auto fnv_meshes         = PerFileSettings::make_base(btu::Game::FNV);
-    fnv_meshes.pattern      = Pattern(u8"*.nif", Pattern::Type::Wildcard);
+    fnv_meshes.pattern      = Pattern::wildcard(u8"*.nif");
     fnv_meshes.nif_optimize = OptimizeType::None;
 
     auto fnv_sounds    = PerFileSettings::make_base(btu::Game::FNV);
-    fnv_sounds.pattern = Pattern(u8"*.[ow][ga][gv]", Pattern::Type::Wildcard);
+    fnv_sounds.pattern = Pattern::wildcard(u8"*.[ow][ga][gv]");
 
     profile.append_per_file_settings(fnv_lod_atlases);
     profile.append_per_file_settings(fnv_lod_textures);

@@ -36,7 +36,7 @@ namespace cao {
             return QObject::tr(
                 R"(Advanced mode
 
-                The full CAO experience. With profiles and patterns, you can fully customize how CAO will optimize your files.)");
+                The full CAO experience. With profiles and file rules, you can fully customize how CAO will optimize your files.)");
         }
     }
     return QObject::tr("Unknown mode");
