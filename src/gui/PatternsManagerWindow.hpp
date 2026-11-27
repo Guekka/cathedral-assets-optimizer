@@ -18,6 +18,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include <variant>
 
 class QComboBox;
 
@@ -55,20 +56,29 @@ public:
     ~PatternsManagerWindow() override; // = default
 
 private:
-    enum class PreviewState
+    struct NoInputState
     {
-        NoInput,
-        Scanning,
-        Ready,
-        Failed,
+    };
+
+    struct ScanningState
+    {
+    };
+
+    struct ReadyState
+    {
+        FileRulePreviewScan scan;
+        std::vector<FileRuleImpact> impacts;
+    };
+
+    struct FailedState
+    {
+        std::string error;
     };
 
     std::unique_ptr<Ui::PatternsManagerWindow> ui_;
     Settings &settings_; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
-    QFutureWatcher<FileRulePreviewScan> preview_watcher_;
-    FileRulePreviewScan preview_scan_result_;
-    std::vector<FileRuleImpact> rule_impacts_;
-    PreviewState preview_state_ = PreviewState::NoInput;
+    QFutureWatcher<FileRulePreviewResult> preview_watcher_;
+    std::variant<NoInputState, ScanningState, ReadyState, FailedState> preview_state_ = NoInputState{};
 
     void update_patterns(std::u8string_view selected_pattern = {});
     void move_pattern(const QModelIndex, int source_row, int, const QModelIndex, int destination_row);

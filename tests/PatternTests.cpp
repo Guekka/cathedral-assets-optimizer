@@ -11,6 +11,7 @@
 
 #include <doctest/doctest.h>
 
+#include <algorithm>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
@@ -219,23 +220,27 @@ TEST_CASE("file-rule preview scans single and several mods")
     create_file(root / "mod-b" / "meshes" / "armor.nif");
 
     const auto single_mod = scan_file_rule_preview(root, OptimizationMode::SingleMod, btu::Game::SSE);
-    CHECK(single_mod.error.empty());
-    CHECK(single_mod.skipped_archives == 0);
+    REQUIRE(single_mod.has_value());
+    CHECK(single_mod->skipped_archives == 0);
     const auto expected_single = std::vector<std::filesystem::path>{
         "mod-a/textures/interface.dds",
         "mod-b/meshes/armor.nif",
         "root.dds",
     };
-    CHECK(single_mod.files == expected_single);
+    auto single_files = single_mod->files;
+    std::ranges::sort(single_files);
+    CHECK(single_files == expected_single);
 
     const auto several_mods = scan_file_rule_preview(root, OptimizationMode::SeveralMods, btu::Game::SSE);
-    CHECK(several_mods.error.empty());
-    CHECK(several_mods.skipped_archives == 0);
+    REQUIRE(several_mods.has_value());
+    CHECK(several_mods->skipped_archives == 0);
     const auto expected_several = std::vector<std::filesystem::path>{
         "meshes/armor.nif",
         "textures/interface.dds",
     };
-    CHECK(several_mods.files == expected_several);
+    auto several_files = several_mods->files;
+    std::ranges::sort(several_files);
+    CHECK(several_files == expected_several);
 }
 
 TEST_CASE("file-rule preview reports an invalid input folder")
@@ -245,9 +250,8 @@ TEST_CASE("file-rule preview reports an invalid input folder")
                                                OptimizationMode::SingleMod,
                                                btu::Game::SSE);
 
-    CHECK_FALSE(result.error.empty());
-    CHECK(result.files.empty());
-    CHECK(result.skipped_archives == 0);
+    REQUIRE_FALSE(result.has_value());
+    CHECK(result.error() == "The selected input path is not a folder.");
 }
 
 TEST_CASE("non-advanced modes edit default settings, not the previously selected rule")

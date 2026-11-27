@@ -148,40 +148,9 @@ public:
                                    per_file_settings_)
 };
 
-[[nodiscard]] inline auto analyze_file_rule_impact(const Profile &profile,
-                                                   const std::vector<std::filesystem::path> &files,
-                                                   const std::size_t max_examples = 3)
-    -> std::vector<FileRuleImpact>
-{
-    const auto per_file_settings = profile.per_file_settings();
-    auto impacts                 = std::vector<FileRuleImpact>(per_file_settings.size());
-
-    for (const auto &file : files)
-    {
-        auto first_matching_rule = per_file_settings.size();
-        for (std::size_t index = 0; index < per_file_settings.size(); ++index)
-        {
-            if (!per_file_settings[index]->matches(file))
-                continue;
-
-            ++impacts[index].matching_files;
-            if (first_matching_rule == per_file_settings.size())
-                first_matching_rule = index;
-            else if (impacts[index].overridden_example_paths.size() < max_examples)
-                impacts[index].overridden_example_paths.push_back(file);
-        }
-
-        if (first_matching_rule == per_file_settings.size())
-            first_matching_rule = per_file_settings.size() - 1;
-
-        auto &applied_impact = impacts[first_matching_rule];
-        ++applied_impact.applied_files;
-        if (applied_impact.example_paths.size() < max_examples)
-            applied_impact.example_paths.push_back(file);
-    }
-
-    return impacts;
-}
+[[nodiscard]] auto analyze_file_rule_impact(const Profile &profile,
+                                            const std::vector<std::filesystem::path> &files,
+                                            std::size_t max_examples = 3) -> std::vector<FileRuleImpact>;
 
 NLOHMANN_JSON_SERIALIZE_ENUM(BsaOperation,
                              {{BsaOperation::None, nullptr},

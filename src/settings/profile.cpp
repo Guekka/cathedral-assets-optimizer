@@ -1,5 +1,7 @@
 #include "profile.hpp"
 
+#include <algorithm>
+
 namespace cao {
 [[nodiscard]] auto Profile::set_fnv_settings(Profile profile) noexcept -> Profile
 {
@@ -58,5 +60,44 @@ namespace cao {
         case btu::Game::FNV: return set_fnv_settings(profile);
         default: return profile;
     }
+}
+
+auto analyze_file_rule_impact(const Profile &profile,
+                              const std::vector<std::filesystem::path> &files,
+                              const std::size_t max_examples) -> std::vector<FileRuleImpact>
+{
+    const auto per_file_settings = profile.per_file_settings();
+    auto impacts                 = std::vector<FileRuleImpact>(per_file_settings.size());
+    auto ordered_files           = std::vector<const std::filesystem::path *>{};
+    ordered_files.reserve(files.size());
+    for (const auto &file : files)
+        ordered_files.push_back(&file);
+    std::ranges::sort(ordered_files, [](const auto *left, const auto *right) { return *left < *right; });
+
+    for (const auto *file : ordered_files)
+    {
+        auto first_matching_rule = per_file_settings.size();
+        for (std::size_t index = 0; index < per_file_settings.size(); ++index)
+        {
+            if (!per_file_settings[index]->matches(*file))
+                continue;
+
+            ++impacts[index].matching_files;
+            if (first_matching_rule == per_file_settings.size())
+                first_matching_rule = index;
+            else if (impacts[index].overridden_example_paths.size() < max_examples)
+                impacts[index].overridden_example_paths.push_back(*file);
+        }
+
+        if (first_matching_rule == per_file_settings.size())
+            first_matching_rule = per_file_settings.size() - 1;
+
+        auto &applied_impact = impacts[first_matching_rule];
+        ++applied_impact.applied_files;
+        if (applied_impact.example_paths.size() < max_examples)
+            applied_impact.example_paths.push_back(*file);
+    }
+
+    return impacts;
 }
 } // namespace cao

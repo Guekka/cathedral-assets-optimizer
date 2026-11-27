@@ -10,6 +10,7 @@
 #include <btu/common/path.hpp>
 
 #include <cstddef>
+#include <expected>
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -19,10 +20,11 @@ struct FileRulePreviewScan
 {
     std::vector<std::filesystem::path> files;
     std::size_t skipped_archives = 0;
-    std::string error;
 };
+
+using FileRulePreviewResult = std::expected<FileRulePreviewScan, std::string>;
 
 [[nodiscard]] auto scan_file_rule_preview(const btu::Path &input_path,
                                           OptimizationMode mode,
-                                          btu::Game target_game) -> FileRulePreviewScan;
+                                          btu::Game target_game) -> FileRulePreviewResult;
 } // namespace cao

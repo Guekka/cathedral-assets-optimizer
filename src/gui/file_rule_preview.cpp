@@ -6,10 +6,9 @@
 #include "file_rule_preview.hpp"
 
 #include <btu/bsa/settings.hpp>
+#include <btu/common/threading.hpp>
 #include <btu/modmanager/mod_manager.hpp>
 
-#include <algorithm>
-#include <mutex>
 #include <stdexcept>
 #include <utility>
 
@@ -28,39 +27,35 @@ public:
                                          ArchiveTooLargeState /*state*/) noexcept
         -> ArchiveTooLargeAction override
     {
-        const auto lock = std::scoped_lock(mutex_);
-        ++skipped_archives_;
+        collected_.apply([](auto &collected) { ++collected.skipped_archives; });
         return ArchiveTooLargeAction::Skip;
     }
 
     void process_file(const btu::modmanager::ModFile file) noexcept override
     {
-        const auto lock = std::scoped_lock(mutex_);
-        files_.push_back(file.relative_path);
+        collected_.apply([&file](auto &collected) { collected.files.push_back(file.relative_path); });
     }
 
-    [[nodiscard]] auto take() -> CollectedModFiles { return {std::move(files_), skipped_archives_}; }
+    [[nodiscard]] auto take() -> CollectedModFiles
+    {
+        return collected_.apply([](auto &collected) { return std::move(collected); });
+    }
 
 private:
-    std::mutex mutex_;
-    std::vector<std::filesystem::path> files_;
-    std::size_t skipped_archives_ = 0;
+    btu::common::synchronized<CollectedModFiles> collected_;
 };
 } // namespace
 
 auto scan_file_rule_preview(const btu::Path &input_path,
                             const OptimizationMode mode,
-                            const btu::Game target_game) -> FileRulePreviewScan
+                            const btu::Game target_game) -> FileRulePreviewResult
 {
     auto result = FileRulePreviewScan{};
 
     try
     {
         if (!std::filesystem::is_directory(input_path))
-        {
-            result.error = "The selected input path is not a folder.";
-            return result;
-        }
+            return std::unexpected<std::string>{"The selected input path is not a folder."};
 
         const auto bsa_settings      = btu::bsa::Settings::get(target_game);
         const auto collect_mod_files = [&result, &bsa_settings](const btu::Path &mod_path) {
@@ -86,13 +81,10 @@ auto scan_file_rule_preview(const btu::Path &input_path,
                 break;
         }
 
-        std::ranges::sort(result.files);
     }
     catch (const std::exception &error)
     {
-        result.files.clear();
-        result.skipped_archives = 0;
-        result.error            = error.what();
+        return std::unexpected<std::string>{error.what()};
     }
 
     return result;

@@ -11,6 +11,7 @@
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QFontMetrics>
 #include <QFutureWatcher>
 #include <QLabel>
 #include <QLineEdit>
@@ -301,9 +302,18 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
             &PatternsManagerWindow::delete_current_pattern);
     connect(ui_->samplePathEdit, &QLineEdit::textChanged, this, [this] { update_sample_result(); });
 
-    connect(&preview_watcher_, &QFutureWatcher<FileRulePreviewScan>::finished, this, [this] {
-        preview_scan_result_ = preview_watcher_.result();
-        preview_state_ = preview_scan_result_.error.empty() ? PreviewState::Ready : PreviewState::Failed;
+    connect(&preview_watcher_, &QFutureWatcher<FileRulePreviewResult>::finished, this, [this] {
+        auto result = preview_watcher_.result();
+        if (result)
+        {
+            auto scan    = std::move(result).value();
+            auto impacts = analyze_file_rule_impact(settings_.current_profile(), scan.files);
+            preview_state_ = ReadyState{std::move(scan), std::move(impacts)};
+        }
+        else
+        {
+            preview_state_ = FailedState{std::move(result).error()};
+        }
 
         const auto *selected        = static_cast<const PatternItem *>(ui_->patterns->currentItem());
         const auto selected_pattern = selected == nullptr
@@ -317,12 +327,12 @@ PatternsManagerWindow::PatternsManagerWindow(Settings &settings, QWidget *parent
     const auto &profile = settings_.current_profile();
     if (profile.input_path.empty())
     {
-        preview_state_ = PreviewState::NoInput;
+        preview_state_ = NoInputState{};
         update_impact_preview();
     }
     else
     {
-        preview_state_ = PreviewState::Scanning;
+        preview_state_ = ScanningState{};
         update_impact_preview();
         preview_watcher_.setFuture(QtConcurrent::run([input_path  = profile.input_path,
                                                       mode        = profile.optimization_mode,
@@ -336,9 +346,9 @@ PatternsManagerWindow::~PatternsManagerWindow() = default;
 
 void PatternsManagerWindow::update_patterns(const std::u8string_view selected_pattern)
 {
-    rule_impacts_.clear();
-    if (preview_state_ == PreviewState::Ready)
-        rule_impacts_ = analyze_file_rule_impact(settings_.current_profile(), preview_scan_result_.files);
+    auto *ready = std::get_if<ReadyState>(&preview_state_);
+    if (ready != nullptr)
+        ready->impacts = analyze_file_rule_impact(settings_.current_profile(), ready->scan.files);
 
     auto &list = *ui_->patterns;
     list.setCurrentItem(nullptr);
@@ -356,9 +366,9 @@ void PatternsManagerWindow::update_patterns(const std::u8string_view selected_pa
         const auto description = pattern_match_description(pfs->pattern);
         const auto name        = pattern_display_name(pfs->pattern);
         auto item_text         = tr("%1. %2").arg(row + 1).arg(name);
-        if (preview_state_ == PreviewState::Ready && static_cast<std::size_t>(row) < rule_impacts_.size())
+        if (ready != nullptr && static_cast<std::size_t>(row) < ready->impacts.size())
         {
-            const auto &impact        = rule_impacts_[static_cast<std::size_t>(row)];
+            const auto &impact        = ready->impacts[static_cast<std::size_t>(row)];
             item_text                 = tr("%1 (%2)").arg(item_text, file_count_text(impact.applied_files));
             const auto shadowed_files = impact.matching_files - impact.applied_files;
             auto impact_text = tr("This rule is applied to %1.").arg(file_count_text(impact.applied_files));
@@ -532,29 +542,43 @@ void PatternsManagerWindow::update_sample_result()
 
 void PatternsManagerWindow::update_impact_preview()
 {
-    switch (preview_state_)
+    ui_->impactSummaryLabel->setToolTip({});
+    if (std::holds_alternative<NoInputState>(preview_state_))
     {
-        case PreviewState::NoInput:
-            ui_->impactSummaryLabel->setText(
-                tr("Choose an input folder in the main window to preview real files."));
-            return;
-        case PreviewState::Scanning:
-            ui_->impactSummaryLabel->setText(tr("Scanning files from the selected input folder..."));
-            return;
-        case PreviewState::Failed:
-            ui_->impactSummaryLabel->setText(tr("The file preview could not be loaded: %1")
-                                                 .arg(QString::fromStdString(preview_scan_result_.error)));
-            return;
-        case PreviewState::Ready: break;
+        ui_->impactSummaryLabel->setText(
+            tr("Choose an input folder in the main window to preview real files."));
+        return;
     }
 
-    if (preview_scan_result_.files.empty())
+    if (std::holds_alternative<ScanningState>(preview_state_))
+    {
+        ui_->impactSummaryLabel->setText(tr("Scanning files from the selected input folder..."));
+        return;
+    }
+
+    if (const auto *failed = std::get_if<FailedState>(&preview_state_))
+    {
+        ui_->impactSummaryLabel->setText(
+            tr("The file preview could not be loaded: %1\nTry another input folder or check that it is readable, "
+               "then reopen this manager to refresh the preview.")
+                .arg(QString::fromStdString(failed->error)));
+        return;
+    }
+
+    const auto *ready = std::get_if<ReadyState>(&preview_state_);
+    if (ready == nullptr)
+    {
+        ui_->impactSummaryLabel->setText(tr("The file-rule preview is unavailable."));
+        return;
+    }
+
+    if (ready->scan.files.empty())
     {
         ui_->impactSummaryLabel->setText(tr("No files were found in the selected input folder."));
         return;
     }
 
-    if (rule_impacts_.empty())
+    if (ready->impacts.empty())
     {
         ui_->impactSummaryLabel->setText(tr("The file-rule preview is unavailable."));
         return;
@@ -574,16 +598,17 @@ void PatternsManagerWindow::update_impact_preview()
         impact_index = static_cast<std::size_t>(std::distance(all_settings.begin(), it));
     }
 
-    if (impact_index >= rule_impacts_.size())
+    if (impact_index >= ready->impacts.size())
     {
         ui_->impactSummaryLabel->setText(tr("The file-rule preview is unavailable."));
         return;
     }
 
-    const auto &impact = rule_impacts_[impact_index];
+    const auto &impact = ready->impacts[impact_index];
     auto summary       = selected == nullptr
                              ? tr("Default settings apply to %1.").arg(file_count_text(impact.applied_files))
                              : QString{};
+    auto full_summary = summary;
 
     const auto shadowed_files = impact.matching_files > impact.applied_files
                                     ? impact.matching_files - impact.applied_files
@@ -603,31 +628,62 @@ void PatternsManagerWindow::update_impact_preview()
         if (shadowed_files > 0)
             summary += tr(" It also matches %1 handled by earlier rules.").arg(file_count_text(shadowed_files));
     }
+    full_summary = summary;
 
     if (selected != nullptr)
-        summary += tr("\nDefault settings apply to %1.")
-                       .arg(file_count_text(rule_impacts_.back().applied_files));
-
-    QStringList examples;
-    for (const auto &path : impact.example_paths)
-        examples.push_back(to_qstring(path.u8string()));
-    if (!examples.isEmpty())
-        summary += tr("\nFiles using this rule: %1").arg(examples.join(", "));
-
-    QStringList overridden_examples;
-    for (const auto &path : impact.overridden_example_paths)
-        overridden_examples.push_back(to_qstring(path.u8string()));
-    if (!overridden_examples.isEmpty())
-        summary += tr("\nFiles handled by earlier rules: %1").arg(overridden_examples.join(", "));
-
-    if (preview_scan_result_.skipped_archives > 0)
     {
-        summary += preview_scan_result_.skipped_archives == 1
-                       ? tr("\nOne oversized archive was excluded from the preview.")
-                       : tr("\n%1 oversized archives were excluded from the preview.")
-                             .arg(static_cast<qulonglong>(preview_scan_result_.skipped_archives));
+        const auto default_summary
+            = tr("\nDefault settings apply to %1.").arg(file_count_text(ready->impacts.back().applied_files));
+        summary += default_summary;
+        full_summary += default_summary;
     }
 
+    const auto display_path = [this](const QString &path) {
+        const auto width = std::max(ui_->impactSummaryLabel->width(), 400);
+        return QFontMetrics{ui_->impactSummaryLabel->font()}.elidedText(path, Qt::ElideMiddle, width);
+    };
+
+    QStringList examples;
+    QStringList full_examples;
+    for (const auto &path : impact.example_paths)
+    {
+        const auto path_text = to_qstring(path.u8string());
+        examples.push_back(display_path(path_text));
+        full_examples.push_back(path_text);
+    }
+    if (!examples.isEmpty())
+    {
+        summary += tr("\nFiles using this rule: %1").arg(examples.join(", "));
+        full_summary += tr("\nFiles using this rule: %1").arg(full_examples.join(", "));
+    }
+
+    QStringList overridden_examples;
+    QStringList full_overridden_examples;
+    for (const auto &path : impact.overridden_example_paths)
+    {
+        const auto path_text = to_qstring(path.u8string());
+        overridden_examples.push_back(display_path(path_text));
+        full_overridden_examples.push_back(path_text);
+    }
+    if (!overridden_examples.isEmpty())
+    {
+        summary += tr("\nFiles handled by earlier rules: %1").arg(overridden_examples.join(", "));
+        full_summary += tr("\nFiles handled by earlier rules: %1").arg(full_overridden_examples.join(", "));
+    }
+
+    if (ready->scan.skipped_archives > 0)
+    {
+        const auto skipped_summary
+            = ready->scan.skipped_archives == 1
+                  ? tr("\nOne oversized archive was excluded from the preview.")
+                  : tr("\n%1 oversized archives were excluded from the preview.")
+                        .arg(static_cast<qulonglong>(ready->scan.skipped_archives));
+        summary += skipped_summary;
+        full_summary += skipped_summary;
+    }
+
+    if (summary != full_summary)
+        ui_->impactSummaryLabel->setToolTip(full_summary);
     ui_->impactSummaryLabel->setText(summary);
 }
 
