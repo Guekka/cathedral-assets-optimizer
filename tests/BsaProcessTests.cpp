@@ -8,7 +8,6 @@
 #include <btu/bsa/pack.hpp>
 #include <btu/bsa/plugin.hpp>
 #include <btu/common/games.hpp>
-
 #include <doctest/doctest.h>
 
 #include <algorithm>
@@ -21,18 +20,16 @@
 #include <system_error>
 #include <vector>
 
-namespace cao
-{
-namespace
-{
+namespace cao {
+namespace {
 class TemporaryDirectory
 {
 public:
     explicit TemporaryDirectory(std::string_view tag)
     {
         const auto suffix = std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
-        path_             = std::filesystem::temp_directory_path() / ("cao-bsa-process-" + std::string(tag) + "-"
-                                                                       + suffix);
+        path_             = std::filesystem::temp_directory_path()
+                / ("cao-bsa-process-" + std::string(tag) + "-" + suffix);
         std::filesystem::create_directories(path_);
     }
 
@@ -69,8 +66,8 @@ void write_file(const std::filesystem::path &path, std::string_view content)
     if (!std::filesystem::exists(dir))
         return 0;
 
-    return static_cast<std::size_t>(
-        std::distance(std::filesystem::recursive_directory_iterator(dir), std::filesystem::recursive_directory_iterator{}));
+    return static_cast<std::size_t>(std::distance(std::filesystem::recursive_directory_iterator(dir),
+                                                  std::filesystem::recursive_directory_iterator{}));
 }
 } // namespace
 
@@ -88,15 +85,15 @@ TEST_CASE("preview_pack_directory lists selected files without writing or deleti
 
     const auto entries_before = count_entries(source_dir);
 
-    const auto settings = btu::bsa::PackSettings{
-        .input_dir     = source_dir,
-        .game_settings = bsa_sets,
-        .compress      = btu::bsa::Compression::Yes,
-        .allow_file_pred =
-            [](const btu::Path &, const std::filesystem::directory_entry &entry) {
-                return entry.path().filename() != "filtered.nif";
-            }};
-    const auto preview = preview_pack_directory(settings, /*remove_files=*/true);
+    const auto settings = btu::bsa::PackSettings{.input_dir     = source_dir,
+                                                 .game_settings = bsa_sets,
+                                                 .compress      = btu::bsa::Compression::Yes,
+                                                 .allow_file_pred =
+                                                     [](const btu::Path &,
+                                                        const std::filesystem::directory_entry &entry) {
+                                                         return entry.path().filename() != "filtered.nif";
+                                                     }};
+    const auto preview  = preview_pack_directory(settings, /*remove_files=*/true);
 
     auto standard_files = preview.standard_files;
     auto texture_files  = preview.texture_files;
@@ -124,7 +121,7 @@ TEST_CASE("preview_pack_directory lists selected files without writing or deleti
 }
 
 TEST_CASE("preview_unpack_archive reports planned extraction collisions without extracting or removing "
-         "the archive")
+          "the archive")
 {
     const auto pack_source      = TemporaryDirectory("unpack-pack-src");
     const auto &pack_source_dir = pack_source.path();

@@ -97,8 +97,8 @@ void write_single_archive(const btu::Path &directory_path,
     }
 }
 
-auto preview_pack_directory(const btu::bsa::PackSettings &settings, const bool remove_files) noexcept
-    -> btu::bsa::PackPreview
+auto preview_pack_directory(const btu::bsa::PackSettings &settings,
+                            const bool remove_files) noexcept -> btu::bsa::PackPreview
 {
     auto preview = btu::bsa::list_pack_preview(settings);
 
@@ -111,10 +111,11 @@ auto preview_pack_directory(const btu::bsa::PackSettings &settings, const bool r
     log_files("standard", preview.standard_files);
     log_files("texture", preview.texture_files);
 
-    PLOGI << std::format("Dry run: selected {} standard files and {} texture files; archive count and splitting "
-                         "are not predicted because they depend on resulting file sizes",
-                         preview.standard_files.size(),
-                         preview.texture_files.size());
+    PLOGI << std::format(
+        "Dry run: selected {} standard files and {} texture files; archive count and splitting "
+        "are not predicted because they depend on resulting file sizes",
+        preview.standard_files.size(),
+        preview.texture_files.size());
 
     if (remove_files)
     {
@@ -125,8 +126,8 @@ auto preview_pack_directory(const btu::bsa::PackSettings &settings, const bool r
     return preview;
 }
 
-auto preview_unpack_archive(const btu::Path &archive_path, const btu::Path &directory_path) noexcept
-    -> BsaUnpackPreview
+auto preview_unpack_archive(const btu::Path &archive_path,
+                            const btu::Path &directory_path) noexcept -> BsaUnpackPreview
 {
     BsaUnpackPreview preview;
     preview.archive_path = archive_path;
@@ -135,7 +136,7 @@ auto preview_unpack_archive(const btu::Path &archive_path, const btu::Path &dire
     if (!archive)
     {
         PLOGE << "Dry run: failed to open archive " << archive_path.string()
-             << " for preview. Reason: " << archive.error().message();
+              << " for preview. Reason: " << archive.error().message();
         return preview;
     }
 
@@ -173,10 +174,11 @@ auto preview_unpack_archive(const btu::Path &archive_path, const btu::Path &dire
         }
     }
 
-    PLOGI << std::format("Dry run: archive {} contains {} files, {} would be skipped because they already exist",
-                         archive_path.filename().string(),
-                         preview.total_files,
-                         preview.colliding_files.size());
+    PLOGI << std::format(
+        "Dry run: archive {} contains {} files, {} would be skipped because they already exist",
+        archive_path.filename().string(),
+        preview.total_files,
+        preview.colliding_files.size());
 
     return preview;
 }

@@ -200,23 +200,22 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
     const auto compress = settings_.current_profile().bsa_allow_compression ? btu::bsa::Compression::Yes
                                                                             : btu::bsa::Compression::No;
 
-    const auto pack_settings = btu::bsa::PackSettings{
-        .input_dir     = directory_path,
-        .game_settings = bsa_sets,
-        .compress      = compress,
-        .allow_file_pred =
-            [profile](const auto &dir, const auto &file_info) {
-                const auto relative_path = file_info.path().lexically_relative(dir);
-                const auto pack = profile.get_per_file_settings(relative_path).pack;
+    const auto pack_settings
+        = btu::bsa::PackSettings{.input_dir       = directory_path,
+                                 .game_settings   = bsa_sets,
+                                 .compress        = compress,
+                                 .allow_file_pred = [profile](const auto &dir, const auto &file_info) {
+                                     const auto relative_path = file_info.path().lexically_relative(dir);
+                                     const auto pack = profile.get_per_file_settings(relative_path).pack;
 
-                                        if (!pack && std::filesystem::is_regular_file(file_info))
-                                        {
-                                            PLOGV << fmt::format("Skipping file {} from packing",
-                                                                 relative_path.string());
-                                        }
+                                     if (!pack && std::filesystem::is_regular_file(file_info))
+                                     {
+                                         PLOGV << fmt::format("Skipping file {} from packing",
+                                                              relative_path.string());
+                                     }
 
-                return pack;
-            }};
+                                     return pack;
+                                 }};
 
     if (dry_run)
     {
@@ -232,24 +231,23 @@ void Manager::pack_directory(const std::filesystem::path &directory_path) const
         return;
     }
 
-    pack(pack_settings)
-        .for_each([&](auto archive) {
-            if (stop_token_.stop_requested())
-                return;
+    pack(pack_settings).for_each([&](auto archive) {
+        if (stop_token_.stop_requested())
+            return;
 
-            try
-            {
-                write_single_archive(directory_path,
-                                     std::move(archive),
-                                     bsa_sets,
-                                     settings_.current_profile().bsa_remove_files,
-                                     settings_.current_profile().bsa_make_overrides);
-            }
-            catch (const std::exception &e)
-            {
-                PLOGE << "Failed to pack archive: " << e.what();
-            }
-        });
+        try
+        {
+            write_single_archive(directory_path,
+                                 std::move(archive),
+                                 bsa_sets,
+                                 settings_.current_profile().bsa_remove_files,
+                                 settings_.current_profile().bsa_make_overrides);
+        }
+        catch (const std::exception &e)
+        {
+            PLOGE << "Failed to pack archive: " << e.what();
+        }
+    });
 
     if (profile.bsa_make_dummy_plugins)
     {
