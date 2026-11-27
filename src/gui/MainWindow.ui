@@ -106,18 +106,48 @@
          <item>
           <widget class="QGroupBox" name="quickAssetTaskGroup">
            <property name="title">
-            <string>Prepare Skyrim assets</string>
+            <string>Choose a task</string>
            </property>
            <layout class="QVBoxLayout" name="quickAssetTaskLayout">
             <item>
              <widget class="QLabel" name="quickTaskDescription">
               <property name="text">
-               <string>Use CAO's recommended settings to prepare one or several Skyrim LE/SSE mods.</string>
+               <string>Use CAO's recommended settings to prepare one or several Skyrim LE/SSE mods. This task does not create or extract BSAs.</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
               </property>
              </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="quickTaskLayout">
+              <item>
+               <widget class="QLabel" name="quickTaskLabel">
+                <property name="text">
+                 <string>Task</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="quickTaskSelector">
+                <item>
+                 <property name="text">
+                  <string>Prepare Skyrim assets</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Extract BSAs</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Create BSAs</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <layout class="QHBoxLayout" name="quickTargetGameLayout">
@@ -156,6 +186,16 @@
                </spacer>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="quickRemoveLooseFiles">
+              <property name="toolTip">
+               <string>When enabled, CAO can delete loose source files after their archive has been created and verified.</string>
+              </property>
+              <property name="text">
+               <string>Remove loose source files after packing (cannot be undone)</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

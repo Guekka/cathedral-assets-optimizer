@@ -100,4 +100,22 @@ auto analyze_file_rule_impact(const Profile &profile,
 
     return impacts;
 }
+
+auto Profile::make_quick_task(const btu::Game game,
+                              const QuickTask task,
+                              const bool remove_packed_files) noexcept -> Profile
+{
+    auto profile = make_base(game);
+    switch (task)
+    {
+        case QuickTask::PrepareSkyrimAssets: break;
+        case QuickTask::ExtractBsa: profile.bsa_operation = BsaOperation::Extract; break;
+        case QuickTask::CreateBsa:
+            profile.bsa_operation    = BsaOperation::Create;
+            profile.bsa_remove_files = remove_packed_files;
+            break;
+    }
+    return profile;
+    return profile;
+}
 } // namespace cao

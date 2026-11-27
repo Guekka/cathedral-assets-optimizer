@@ -180,4 +180,22 @@ TEST_CASE("run settings project shared context without mutating saved profiles")
     CHECK(settings.current_profile().dry_run == saved_profile.dry_run);
     CHECK_FALSE(settings.current_profile().per_file_settings().back()->pack);
 }
+
+TEST_CASE("Quick BSA tasks have explicit archive operations and preserve loose files by default")
+{
+    const auto prepare = Profile::make_quick_task(btu::Game::SSE, QuickTask::PrepareSkyrimAssets);
+    CHECK(prepare.bsa_operation == BsaOperation::None);
+
+    const auto extract = Profile::make_quick_task(btu::Game::SSE, QuickTask::ExtractBsa);
+    CHECK(extract.bsa_operation == BsaOperation::Extract);
+
+    const auto create = Profile::make_quick_task(btu::Game::SSE, QuickTask::CreateBsa);
+    CHECK(create.bsa_operation == BsaOperation::Create);
+    CHECK_FALSE(create.bsa_remove_files);
+
+    const auto create_and_remove
+        = Profile::make_quick_task(btu::Game::SSE, QuickTask::CreateBsa, true);
+    CHECK(create_and_remove.bsa_operation == BsaOperation::Create);
+    CHECK(create_and_remove.bsa_remove_files);
+}
 } // namespace cao

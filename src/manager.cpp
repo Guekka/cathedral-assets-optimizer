@@ -379,12 +379,28 @@ void Manager::process_single_mod(const btu::Path &path)
     const auto bsa_sets = get_bsa_settings(settings_);
     auto mod            = btu::modmanager::ModFolder(path, bsa_sets);
 
-    PLOG_INFO << "Parsing plugins...";
-    const auto plugin_info = get_plugin_info(mod);
-    apply_plugin_info(settings_, plugin_info);
+    const bool prepare_assets
+        = !quick_task_ || quick_task_ == QuickTask::PrepareSkyrimAssets;
+    if (prepare_assets)
+    {
+        PLOG_INFO << "Parsing plugins...";
+        const auto plugin_info = get_plugin_info(mod);
+        apply_plugin_info(settings_, plugin_info);
+    }
 
     if (stop_token_.stop_requested())
         return;
+
+    if (quick_task_ == QuickTask::ExtractBsa)
+    {
+        unpack_directory(mod.path());
+        return;
+    }
+    if (quick_task_ == QuickTask::CreateBsa)
+    {
+        pack_directory(mod.path());
+        return;
+    }
 
     if (settings_.current_profile().bsa_operation == BsaOperation::Extract)
         unpack_directory(mod.path());
@@ -439,12 +455,24 @@ void Manager::process_several_mods(const btu::Path &path)
     }
 }
 
-void Manager::run_optimization(Settings settings, std::stop_token stop_token)
+void Manager::run_optimization(Settings settings,
+                               std::stop_token stop_token,
+                               std::optional<QuickTask> quick_task)
 {
     settings_   = std::move(settings);
     stop_token_ = std::move(stop_token);
+    quick_task_ = quick_task;
 
     PLOG_INFO << fmt::format("Processing mod: {}", settings_.current_profile().input_path.string());
+    if (quick_task_)
+    {
+        switch (*quick_task_)
+        {
+            case QuickTask::PrepareSkyrimAssets: PLOG_INFO << "Quick task: Prepare Skyrim assets"; break;
+            case QuickTask::ExtractBsa: PLOG_INFO << "Quick task: Extract BSAs"; break;
+            case QuickTask::CreateBsa: PLOG_INFO << "Quick task: Create BSAs"; break;
+        }
+    }
 
     const auto start_time = std::chrono::system_clock::now();
     PLOG_INFO << fmt::format("Beginning. Start time: {}", start_time);

@@ -8,6 +8,7 @@
 
 #include <QObject>
 #include <QString>
+#include <optional>
 #include <thread>
 
 namespace cao {
@@ -18,11 +19,14 @@ class Manager final : public QObject
     Q_OBJECT
 
 public:
-    void run_optimization(Settings settings, std::stop_token stop_token);
+    void run_optimization(Settings settings,
+                          std::stop_token stop_token,
+                          std::optional<QuickTask> quick_task = std::nullopt);
 
 private:
     Settings settings_;
     std::stop_token stop_token_;
+    std::optional<QuickTask> quick_task_;
 
     void process_single_mod(const btu::Path &path);
     void process_several_mods(const btu::Path &path);

@@ -35,6 +35,13 @@ enum class Workspace : std::uint8_t
     Customize,
 };
 
+enum class QuickTask : std::uint8_t
+{
+    PrepareSkyrimAssets,
+    ExtractBsa,
+    CreateBsa,
+};
+
 enum class GuiTheme : std::uint8_t
 {
     Dark,
@@ -66,4 +73,5 @@ NLOHMANN_JSON_SERIALIZE_ENUM(cao::GuiTheme, {{cao::GuiTheme::Dark, "Dark"}, {cao
 Q_DECLARE_METATYPE(cao::OptimizationMode)
 Q_DECLARE_METATYPE(cao::TextureResizingMode)
 Q_DECLARE_METATYPE(cao::GuiMode)
+Q_DECLARE_METATYPE(cao::QuickTask)
 Q_DECLARE_METATYPE(cao::GuiTheme)
