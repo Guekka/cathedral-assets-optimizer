@@ -403,11 +403,9 @@ void MainWindow::init_process()
     auto quick_profile = std::optional<Profile>{};
     if (settings_.gui.gui_mode == GuiMode::QuickOptimize)
     {
-        const auto selected_profile = ui_->profiles->currentText();
-        if (selected_profile == "SLE")
-            quick_profile = Profile::make_base(btu::Game::SLE);
-        else if (selected_profile == "SSE")
-            quick_profile = Profile::make_base(btu::Game::SSE);
+        const auto game = settings_.current_profile().target_game;
+        if (game == btu::Game::SLE || game == btu::Game::SSE)
+            quick_profile = Profile::make_base(game);
         else
         {
             QMessageBox::critical(this, tr("Error"), tr("Invalid game selected for Quick Optimize."));
