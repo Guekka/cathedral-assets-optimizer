@@ -163,14 +163,14 @@ TEST_CASE("file-rule impact previews first-match counts and fallback examples")
     CHECK(impact[0].matching_files == 2);
     CHECK(impact[0].applied_files == 2);
     REQUIRE(impact[0].example_paths.size() == 1);
-    CHECK(impact[0].example_paths[0] == std::filesystem::path{u8"textures/interface/menu.dds"});
+    CHECK(impact[0].example_paths[0] == std::filesystem::path{u8"textures/interface/icon.dds"});
 
     CHECK(impact[1].matching_files == 3);
     CHECK(impact[1].applied_files == 1);
     REQUIRE(impact[1].example_paths.size() == 1);
     CHECK(impact[1].example_paths[0] == std::filesystem::path{u8"textures/landscape/ground.dds"});
     REQUIRE(impact[1].overridden_example_paths.size() == 1);
-    CHECK(impact[1].overridden_example_paths[0] == std::filesystem::path{u8"textures/interface/menu.dds"});
+    CHECK(impact[1].overridden_example_paths[0] == std::filesystem::path{u8"textures/interface/icon.dds"});
 
     CHECK(impact[2].applied_files == 1);
     REQUIRE(impact[2].example_paths.size() == 1);
