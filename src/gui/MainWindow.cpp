@@ -183,8 +183,7 @@ auto build_run_context_summary(const Settings &settings,
                        ? QObject::tr("A real run will remove loose files included in verified archives.")
                        : QObject::tr("Loose source files will be preserved."));
             if (profile.bsa_make_dummy_plugins)
-                append(QObject::tr(
-                    "A real run may create dummy plugins so the game can load the archives."));
+                append(QObject::tr("A real run may create dummy plugins so the game can load the archives."));
         }
     }
     else
