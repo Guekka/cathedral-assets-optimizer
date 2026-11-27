@@ -303,16 +303,10 @@ FileRulesPanel::FileRulesPanel(Settings &settings, QWidget *parent)
     connect(ui_->patterns, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem *) {
         edit_current_pattern();
     });
-    connect(ui_->patterns->model(),
-            &QAbstractItemModel::rowsMoved,
-            this,
-            &FileRulesPanel::move_pattern);
+    connect(ui_->patterns->model(), &QAbstractItemModel::rowsMoved, this, &FileRulesPanel::move_pattern);
     connect(ui_->newPushButton, &QPushButton::pressed, this, &FileRulesPanel::create_pattern);
     connect(ui_->editPushButton, &QPushButton::pressed, this, &FileRulesPanel::edit_current_pattern);
-    connect(ui_->removePushButton,
-            &QPushButton::pressed,
-            this,
-            &FileRulesPanel::delete_current_pattern);
+    connect(ui_->removePushButton, &QPushButton::pressed, this, &FileRulesPanel::delete_current_pattern);
     connect(ui_->samplePathEdit, &QLineEdit::textChanged, this, [this] { update_sample_result(); });
     connect(ui_->defaultRuleButton, &QPushButton::clicked, this, [this] {
         const QSignalBlocker button_blocker(ui_->defaultRuleButton);
@@ -357,15 +351,15 @@ void FileRulesPanel::refresh()
         return;
 
     const auto input_path = settings_.run_context.input_path;
-    const auto key = PreviewKey{
-        .input_path = input_path.u8string(),
-        .mode = settings_.run_context.optimization_mode,
-        .target_game = settings_.current_profile().target_game,
+    const auto key        = PreviewKey{
+               .input_path  = input_path.u8string(),
+               .mode        = settings_.run_context.optimization_mode,
+               .target_game = settings_.current_profile().target_game,
     };
 
     if (!preview_key_ || *preview_key_ != key)
     {
-        preview_key_ = key;
+        preview_key_        = key;
         preview_input_path_ = input_path;
         ++preview_generation_;
         preview_timer_.stop();
@@ -390,10 +384,10 @@ void FileRulesPanel::start_preview_scan()
         return;
 
     const auto generation = preview_generation_;
-    const auto key = *preview_key_;
+    const auto key        = *preview_key_;
     const auto input_path = preview_input_path_;
-    preview_watcher_.setFuture(QtConcurrent::run(
-        [generation, input_path, mode = key.mode, target_game = key.target_game] {
+    preview_watcher_.setFuture(
+        QtConcurrent::run([generation, input_path, mode = key.mode, target_game = key.target_game] {
             return PreviewScanResult{
                 generation,
                 scan_file_rule_preview(input_path, mode, target_game),
@@ -606,13 +600,13 @@ void FileRulesPanel::update_sample_result()
         }
     }
 
-    const auto all_settings       = settings_.current_profile().per_file_settings();
-    const auto first_match        = std::ranges::find_if(all_settings,
+    const auto all_settings      = settings_.current_profile().per_file_settings();
+    const auto first_match       = std::ranges::find_if(all_settings,
                                                   [&path](const auto *pfs) { return pfs->matches(path); });
-    const auto *winner            = first_match == all_settings.end() ? all_settings.back() : *first_match;
-    const auto winner_is_default  = is_default_rule(*winner);
-    const auto winner_name        = winner_is_default ? tr("the default settings")
-                                                      : pattern_display_name(winner->pattern);
+    const auto *winner           = first_match == all_settings.end() ? all_settings.back() : *first_match;
+    const auto winner_is_default = is_default_rule(*winner);
+    const auto winner_name       = winner_is_default ? tr("the default settings")
+                                                     : pattern_display_name(winner->pattern);
     if (ui_->defaultRuleButton->isChecked())
     {
         ui_->sampleResultLabel->setText(

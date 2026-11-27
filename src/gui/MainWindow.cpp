@@ -215,27 +215,24 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
         ProfilesManagerWindow profiles_manager(settings_);
         profiles_manager.exec();
         const auto current_settings = settings_.current_profile().per_file_settings();
-        const auto selected_pattern = std::ranges::find(
-            current_settings,
-            settings_.gui.selected_pattern,
-            [](const auto *per_file_settings) { return per_file_settings->pattern.text(); });
+        const auto selected_pattern = std::ranges::find(current_settings,
+                                                        settings_.gui.selected_pattern,
+                                                        [](const auto *per_file_settings) {
+                                                            return per_file_settings->pattern.text();
+                                                        });
         if (selected_pattern == current_settings.end())
             settings_.gui.selected_pattern = k_default_pattern.text();
         settings_to_ui(settings_, *ui_, module_display_, *file_rules_panel_);
     });
 
-    connect(file_rules_panel_.get(),
-            &FileRulesPanel::settings_sync_requested,
-            this,
-            [this] { ui_to_settings(*ui_, module_display_, settings_); });
-    connect(file_rules_panel_.get(),
-            &FileRulesPanel::selected_pattern_changed,
-            this,
-            [this] {
-                update_file_settings_context(*ui_, settings_);
-                for (auto *module : module_display_.get_modules())
-                    module->setup(settings_);
-            });
+    connect(file_rules_panel_.get(), &FileRulesPanel::settings_sync_requested, this, [this] {
+        ui_to_settings(*ui_, module_display_, settings_);
+    });
+    connect(file_rules_panel_.get(), &FileRulesPanel::selected_pattern_changed, this, [this] {
+        update_file_settings_context(*ui_, settings_);
+        for (auto *module : module_display_.get_modules())
+            module->setup(settings_);
+    });
 
     connect(ui_->actionSelect_GPU, &QAction::triggered, this, [this] {
         auto window = SelectGPUWindow();
@@ -302,8 +299,8 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     });
 
     connect(ui_->modeChooserComboBox, &QComboBox::activated, this, [this] {
-        settings_.run_context.optimization_mode
-            = ui_->modeChooserComboBox->currentData().value<OptimizationMode>();
+        settings_.run_context.optimization_mode = ui_->modeChooserComboBox->currentData()
+                                                      .value<OptimizationMode>();
         file_rules_panel_->refresh();
     });
 
