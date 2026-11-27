@@ -379,7 +379,7 @@ void Manager::process_single_mod(const btu::Path &path)
     const auto bsa_sets = get_bsa_settings(settings_);
     auto mod            = btu::modmanager::ModFolder(path, bsa_sets);
 
-    const bool prepare_assets = !quick_task_ || quick_task_ == QuickTask::PrepareSkyrimAssets;
+    const bool prepare_assets = !quick_task_ || std::holds_alternative<PrepareSkyrimAssetsTask>(*quick_task_);
     if (prepare_assets)
     {
         PLOG_INFO << "Parsing plugins...";
@@ -390,12 +390,12 @@ void Manager::process_single_mod(const btu::Path &path)
     if (stop_token_.stop_requested())
         return;
 
-    if (quick_task_ == QuickTask::ExtractBsa)
+    if (quick_task_ && std::holds_alternative<ExtractBsaTask>(*quick_task_))
     {
         unpack_directory(mod.path());
         return;
     }
-    if (quick_task_ == QuickTask::CreateBsa)
+    if (quick_task_ && std::holds_alternative<CreateBsaTask>(*quick_task_))
     {
         pack_directory(mod.path());
         return;
@@ -465,12 +465,12 @@ void Manager::run_optimization(Settings settings,
     PLOG_INFO << fmt::format("Processing mod: {}", settings_.current_profile().input_path.string());
     if (quick_task_)
     {
-        switch (*quick_task_)
-        {
-            case QuickTask::PrepareSkyrimAssets: PLOG_INFO << "Quick task: Prepare Skyrim assets"; break;
-            case QuickTask::ExtractBsa: PLOG_INFO << "Quick task: Extract BSAs"; break;
-            case QuickTask::CreateBsa: PLOG_INFO << "Quick task: Create BSAs"; break;
-        }
+        if (std::holds_alternative<PrepareSkyrimAssetsTask>(*quick_task_))
+            PLOG_INFO << "Quick task: Prepare Skyrim assets";
+        else if (std::holds_alternative<ExtractBsaTask>(*quick_task_))
+            PLOG_INFO << "Quick task: Extract BSAs";
+        else
+            PLOG_INFO << "Quick task: Create BSAs";
     }
 
     const auto start_time = std::chrono::system_clock::now();

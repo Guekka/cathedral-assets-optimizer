@@ -183,17 +183,19 @@ TEST_CASE("run settings project shared context without mutating saved profiles")
 
 TEST_CASE("Quick BSA tasks have explicit archive operations and preserve loose files by default")
 {
-    const auto prepare = Profile::make_quick_task(btu::Game::SSE, QuickTask::PrepareSkyrimAssets);
+    const auto prepare = Profile::make_quick_task(btu::Game::SSE, QuickTask{PrepareSkyrimAssetsTask{}});
     CHECK(prepare.bsa_operation == BsaOperation::None);
 
-    const auto extract = Profile::make_quick_task(btu::Game::SSE, QuickTask::ExtractBsa);
+    const auto extract = Profile::make_quick_task(btu::Game::SSE, QuickTask{ExtractBsaTask{}});
     CHECK(extract.bsa_operation == BsaOperation::Extract);
 
-    const auto create = Profile::make_quick_task(btu::Game::SSE, QuickTask::CreateBsa);
+    const auto create = Profile::make_quick_task(btu::Game::SSE, QuickTask{CreateBsaTask{}});
     CHECK(create.bsa_operation == BsaOperation::Create);
     CHECK_FALSE(create.bsa_remove_files);
 
-    const auto create_and_remove = Profile::make_quick_task(btu::Game::SSE, QuickTask::CreateBsa, true);
+    const auto create_and_remove = Profile::make_quick_task(btu::Game::SSE,
+                                                            QuickTask{
+                                                                CreateBsaTask{.remove_packed_files = true}});
     CHECK(create_and_remove.bsa_operation == BsaOperation::Create);
     CHECK(create_and_remove.bsa_remove_files);
 }

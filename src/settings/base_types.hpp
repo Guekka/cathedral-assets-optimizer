@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 
 #include <QObject>
+#include <variant>
 
 namespace cao {
 
@@ -35,12 +36,19 @@ enum class Workspace : std::uint8_t
     Customize,
 };
 
-enum class QuickTask : std::uint8_t
+struct PrepareSkyrimAssetsTask
 {
-    PrepareSkyrimAssets,
-    ExtractBsa,
-    CreateBsa,
 };
+
+struct ExtractBsaTask
+{
+};
+
+struct CreateBsaTask
+{
+    bool remove_packed_files = false;
+};
+using QuickTask = std::variant<PrepareSkyrimAssetsTask, ExtractBsaTask, CreateBsaTask>;
 
 enum class GuiTheme : std::uint8_t
 {

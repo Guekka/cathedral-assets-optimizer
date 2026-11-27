@@ -109,28 +109,29 @@ void update_file_settings_context(Ui::MainWindow &ui, const Settings &settings)
 
 void update_quick_task_controls(Ui::MainWindow &ui)
 {
-    const auto task = ui.quickTaskSelector->currentData().value<QuickTask>();
-    ui.quickRemoveLooseFiles->setVisible(task == QuickTask::CreateBsa);
-    if (task != QuickTask::CreateBsa)
+    const auto task       = ui.quickTaskSelector->currentData().value<QuickTask>();
+    const bool create_bsa = std::holds_alternative<CreateBsaTask>(task);
+    ui.quickRemoveLooseFiles->setVisible(create_bsa);
+    if (!create_bsa)
         ui.quickRemoveLooseFiles->setChecked(false);
 
-    switch (task)
+    if (std::holds_alternative<PrepareSkyrimAssetsTask>(task))
     {
-        case QuickTask::PrepareSkyrimAssets:
-            ui.quickTaskDescription->setText(
-                QObject::tr("Use CAO's recommended settings to prepare one or several Skyrim LE/SSE mods. "
-                            "This task does not create or extract BSAs."));
-            break;
-        case QuickTask::ExtractBsa:
-            ui.quickTaskDescription->setText(
-                QObject::tr("Extract BSAs from the selected mod or mods. Existing loose files are not "
-                            "overwritten, and other asset optimizations will not run."));
-            break;
-        case QuickTask::CreateBsa:
-            ui.quickTaskDescription->setText(
-                QObject::tr("Pack eligible loose files into BSAs. Source files are preserved by default; "
-                            "CAO may create dummy plugins so the game can load the archives."));
-            break;
+        ui.quickTaskDescription->setText(
+            QObject::tr("Use CAO's recommended settings to prepare one or several Skyrim LE/SSE mods. "
+                        "This task does not create or extract BSAs."));
+    }
+    else if (std::holds_alternative<ExtractBsaTask>(task))
+    {
+        ui.quickTaskDescription->setText(
+            QObject::tr("Extract BSAs from the selected mod or mods. Existing loose files are not "
+                        "overwritten, and other asset optimizations will not run."));
+    }
+    else
+    {
+        ui.quickTaskDescription->setText(
+            QObject::tr("Pack eligible loose files into BSAs. Source files are preserved by default; "
+                        "CAO may create dummy plugins so the game can load the archives."));
     }
 }
 
@@ -236,9 +237,9 @@ MainWindow::MainWindow(Settings settings, QWidget *parent)
     // Setting data for run-context widgets
     set_data(*ui_->modeChooserComboBox, tr("One mod"), OptimizationMode::SingleMod);
     set_data(*ui_->modeChooserComboBox, tr("Several mods"), OptimizationMode::SeveralMods);
-    set_data(*ui_->quickTaskSelector, tr("Prepare Skyrim assets"), QuickTask::PrepareSkyrimAssets);
-    set_data(*ui_->quickTaskSelector, tr("Extract BSAs"), QuickTask::ExtractBsa);
-    set_data(*ui_->quickTaskSelector, tr("Create BSAs"), QuickTask::CreateBsa);
+    set_data(*ui_->quickTaskSelector, tr("Prepare Skyrim assets"), QuickTask{PrepareSkyrimAssetsTask{}});
+    set_data(*ui_->quickTaskSelector, tr("Extract BSAs"), QuickTask{ExtractBsaTask{}});
+    set_data(*ui_->quickTaskSelector, tr("Create BSAs"), QuickTask{CreateBsaTask{}});
     set_data(*ui_->quickTargetGame, tr("Skyrim LE (2011)"), btu::Game::SLE);
     set_data(*ui_->quickTargetGame, tr("Skyrim SE (2016)"), btu::Game::SSE);
     update_quick_task_controls(*ui_);
@@ -405,12 +406,13 @@ MainWindow::~MainWindow() = default;
 
 void MainWindow::init_process(const bool dry_run)
 {
-    const std::optional<QuickTask> quick_task
-        = settings_.gui.workspace == Workspace::QuickTasks
-              ? std::optional<QuickTask>{ui_->quickTaskSelector->currentData().value<QuickTask>()}
-              : std::nullopt;
-    const bool remove_packed_files = quick_task == QuickTask::CreateBsa
-                                     && ui_->quickRemoveLooseFiles->isChecked();
+    auto quick_task   = settings_.gui.workspace == Workspace::QuickTasks
+                            ? std::optional<QuickTask>{ui_->quickTaskSelector->currentData().value<QuickTask>()}
+                            : std::nullopt;
+    auto *create_task = quick_task ? std::get_if<CreateBsaTask>(&*quick_task) : nullptr;
+    if (create_task != nullptr)
+        create_task->remove_packed_files = ui_->quickRemoveLooseFiles->isChecked();
+    const bool remove_packed_files = create_task != nullptr && create_task->remove_packed_files;
     if (!dry_run && remove_packed_files)
     {
         const auto choice
@@ -429,9 +431,7 @@ void MainWindow::init_process(const bool dry_run)
 
     auto quick_profile = std::optional<Profile>{};
     if (quick_task)
-        quick_profile = Profile::make_quick_task(settings_.gui.quick_target_game,
-                                                 *quick_task,
-                                                 remove_packed_files);
+        quick_profile = Profile::make_quick_task(settings_.gui.quick_target_game, *quick_task);
 
     try
     {
