@@ -65,31 +65,13 @@ edit the rules.
 
 ## File rules
 
-File rules let Advanced mode apply different settings to different relative file paths. Open **Manage
-rules** beside the file-settings selector to create, edit, reorder, or remove rules.
+Advanced mode lets you apply file settings to relative paths. Rules are checked from top to bottom;
+the first matching rule supplies the settings, and **Default file settings** are the fallback.
+Medium mode edits that fallback while existing rules keep applying to their matches.
 
-1. Choose **New rule...** and select the recommended folder-and-extension match, or an advanced glob
-   or regular expression.
-2. Optionally name the rule and choose which existing settings to copy as a starting point.
-3. Drag rules to change their priority. Select a rule in the main window to edit its settings.
-4. Use the sample-path preview at the bottom of the manager to check which rule would apply to a
-   relative path.
-
-Rules are checked from top to bottom, and the first matching rule supplies the file settings. Rules
-do not merge settings. The **Everything else (default)** entry is the fallback for files that match
-no rule; it can be selected to edit **Default file settings**, but it is not managed as a rule.
-
-When an input folder is selected, the **What these rules affect** panel scans its files and shows
-how many each rule matches and actually handles. With **Several mods**, it scans each immediate
-subfolder as a separate mod. Select a rule to see example paths it handles and matching paths taken
-by earlier rules. The summary also shows how many files use the default fallback. Oversized archives
-that cannot be scanned are reported.
-
-This file-impact preview only checks rule matching. It is read-only, does not run optimizations, and
-does not change files. Use **Dry run** separately to preview processing steps in the progress log.
-The sample-path field checks any relative path you enter, whether or not that file is in the input.
-
-For examples and details about matching, scope, and priority, see the [file rules guide](patterns.md).
+The manager's sample-path and file-impact previews are read-only and distinct from **Dry run**.
+For match types, rule priority, setting scope, and preview details, see the [file rules
+guide](patterns.md).
 
 ## BSA options
 
