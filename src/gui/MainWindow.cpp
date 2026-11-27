@@ -112,7 +112,7 @@ void ui_to_settings(const Ui::MainWindow &ui, const ModuleDisplay &module_displa
 
     settings.run_context.input_path        = ui.inputDirTextEdit->text().toStdString();
     settings.run_context.optimization_mode = ui.modeChooserComboBox->currentData().value<OptimizationMode>();
-    settings.gui.quick_target_game = ui.quickTargetGame->currentData().value<btu::Game>();
+    settings.gui.quick_target_game         = ui.quickTargetGame->currentData().value<btu::Game>();
 
     if (settings.gui.workspace == Workspace::Customize)
     {
