@@ -505,7 +505,7 @@
   <tabstop>inputDirTextEdit</tabstop>
   <tabstop>userPathButton</tabstop>
   <tabstop>modeChooserComboBox</tabstop>
-  <tabstop>dryRunCheckBox</tabstop>
+  <tabstop>previewButton</tabstop>
   <tabstop>processButton</tabstop>
   <tabstop>tabWidget</tabstop>
  </tabstops>
