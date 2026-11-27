@@ -1,8 +1,8 @@
 # File rules
 
 File rules (called patterns in older CAO versions) let a profile apply different file settings to
-different relative paths within a mod. You create and edit them in Advanced mode. Existing rules
-continue to apply in Medium mode, where you can edit only the default file settings.
+different relative paths within a mod. You create and edit them in **Customize**, alongside the
+profile's other processing settings.
 
 ## Choose what to match
 
@@ -26,7 +26,7 @@ subfolders without writing an expression, use the recommended folder-and-extensi
 
 ## Create and organize rules
 
-In Advanced mode, choose **Manage rules** beside the file-settings selector:
+In **Customize**, choose **Manage rules** beside the file-settings selector:
 
 1. Choose **New rule...**, select a match type, and optionally give the rule a descriptive name.
 2. Choose **Copy settings from** to start with the default settings or another rule's settings.
@@ -43,9 +43,8 @@ CAO checks rules from top to bottom and applies the settings from the first matc
 than one rule matches a file, later matches do not contribute settings. Put narrower rules above
 broader ones so they take priority.
 
-In Advanced mode, **For matching files** identifies settings for the selected rule. They apply only
-when that rule is the first match. **Default file settings** apply only when no rule matches. Medium
-mode always edits the default settings; active rules continue to override them for matching files.
+In **Customize**, **For matching files** identifies settings for the selected rule. They apply only
+when that rule is the first match. **Default file settings** apply only when no rule matches.
 
 **BSA (Profile-wide)** settings are separate from file rules and apply to the profile as a whole,
 even when a rule is selected.
@@ -64,5 +63,6 @@ shows examples handled by the fallback. If the input mode is **Several mods**, e
 subfolder is scanned as a mod. Files from readable archives are included; oversized archives that
 are skipped are reported.
 
-This impact preview is read-only and does not run optimizations. Use **Dry run** to preview processing
-steps; use the sample-path field to test a relative path that may not be present in the selected input.
+This impact preview is read-only and does not run optimizations. Use **Preview (Dry run)** to preview
+processing steps; use the sample-path field to test a relative path that may not be present in the
+selected input.

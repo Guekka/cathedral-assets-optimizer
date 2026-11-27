@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>657</width>
-    <height>314</height>
+    <width>900</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -110,17 +110,136 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="inputDirTextEdit">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
+      <widget class="QTabWidget" name="workspaceTabs">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="quickTasksPage">
+        <attribute name="title">
+         <string>Quick tasks</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="quickTasksLayout">
+         <item>
+          <widget class="QGroupBox" name="quickAssetTaskGroup">
+           <property name="title">
+            <string>Prepare Skyrim assets</string>
+           </property>
+           <layout class="QVBoxLayout" name="quickAssetTaskLayout">
+            <item>
+             <widget class="QLabel" name="quickTaskDescription">
+              <property name="text">
+               <string>Use CAO's recommended settings to prepare one or several Skyrim LE/SSE mods.</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="quickTargetGameLayout">
+              <item>
+               <widget class="QLabel" name="quickTargetGameLabel">
+                <property name="text">
+                 <string>Target game</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="quickTargetGame">
+                <item>
+                 <property name="text">
+                  <string>Skyrim LE (2011)</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Skyrim SE (2016)</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="quickTargetSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="quickTasksSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="customizePage">
+        <attribute name="title">
+         <string>Customize</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="customizeLayout">
+         <item>
+          <widget class="QLabel" name="customizeDescription">
+           <property name="text">
+            <string>Choose a profile to customize its reusable processing settings.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTabWidget" name="tabWidget">
+           <property name="currentIndex">
+            <number>-1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="mainGroupBox">
+     <layout class="QHBoxLayout" name="inputPathLayout">
+      <item>
+       <widget class="QLabel" name="inputPathLabel">
+        <property name="text">
+         <string>Input path</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="inputDirTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+      <widget class="QGroupBox" name="mainGroupBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -134,7 +253,7 @@
        </size>
       </property>
       <property name="title">
-       <string/>
+       <string>Run context</string>
       </property>
       <property name="flat">
        <bool>false</bool>
@@ -166,6 +285,25 @@
         </widget>
        </item>
        <item row="0" column="1">
+        <widget class="QPushButton" name="previewButton">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Show what would happen without modifying files.</string>
+         </property>
+         <property name="text">
+          <string>Preview (Dry run)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
         <widget class="QPushButton" name="processButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -191,54 +329,13 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="dryRunCheckBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>140</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will list all files that
-                                            would be modified, without actually processing them. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                                        </string>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
+        <widget class="QLabel" name="modeChooserLabel">
          <property name="text">
-          <string>Dry run</string>
+          <string>Mod scope</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="1" column="1" colspan="2">
         <widget class="QComboBox" name="modeChooserComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -273,13 +370,6 @@
       </layout>
      </widget>
     </item>
-    <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -287,7 +377,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>657</width>
+     <width>900</width>
      <height>25</height>
     </rect>
    </property>
@@ -296,7 +386,6 @@
      <string>Options</string>
     </property>
     <addaction name="actionEnableDarkTheme"/>
-    <addaction name="actionChange_level"/>
     <addaction name="actionOpen_config_dir"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -363,11 +452,6 @@
   <action name="actionSelect_GPU">
    <property name="text">
     <string>Select GPU</string>
-   </property>
-  </action>
-  <action name="actionChange_level">
-   <property name="text">
-    <string>Change level</string>
    </property>
   </action>
   <action name="actionOpen_config_dir">

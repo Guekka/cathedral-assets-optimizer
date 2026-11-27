@@ -1,7 +1,7 @@
 # Port a mod from Skyrim LE to SSE
 
-CAO's Quick Optimize mode is designed for common Skyrim LE-to-SSE porting tasks and is the recommended
-starting point. Results depend on the mod; always keep a backup and test the converted mod.
+CAO's Quick tasks workspace includes a recommended workflow for common Skyrim LE-to-SSE asset
+preparation. Results depend on the mod; always keep a backup and test the converted mod.
 
 ## Prepare
 
@@ -15,19 +15,17 @@ starting point. Results depend on the mod; always keep a backup and test the con
 
 ## Process assets with CAO
 
-1. Start CAO and choose **Quick Optimize**.
-2. Select **SSE** as the target profile.
+1. Start CAO and open **Quick tasks**.
+2. Select **Skyrim SE (2016)** as the target game.
 3. Choose **One mod** and select the copied mod directory. Use **Several mods** only if you intend to
    process each immediate subdirectory of a parent directory as its own mod.
-4. If you want to review the planned changes first, run once with **Dry run** enabled. This previews
-   affected files; it does not back them up.
-5. Turn **Dry run** off, click **Run**, and wait for processing to finish. Review the progress log for
-   errors.
+4. Click **Preview (Dry run)** to review planned processing steps; this does not back up your files.
+5. Click **Run** and wait for processing to finish. Review the progress log for errors.
 
-Quick Optimize uses CAO's defaults for common porting work. If you need to adjust individual asset
-settings, use Advanced mode and read the module tooltips. The **Recommended** mesh optimization targets
-mesh problems that are likely to crash the game; **Extensive** optimization is more aggressive and is
-intended only when the recommended option does not address the problem.
+Quick tasks uses CAO's defaults for common porting work. If you need to adjust individual asset
+settings, open **Customize** and read the module tooltips. The **Recommended** mesh optimization
+targets mesh problems that are likely to crash the game; **Extensive** optimization is more aggressive
+and is intended only when the recommended option does not address the problem.
 
 ## Handle a plugin, if present
 

@@ -46,12 +46,10 @@ private:
     std::unique_ptr<ProgressWindow> progress_window_;
     ModuleDisplay module_display_{};
 
-    void init_process();
+    void init_process(bool dry_run);
     void stop_process_gracefully();
 
     void save_settings() noexcept;
-
-    void run_gui_selector();
 
     void about() noexcept;
 

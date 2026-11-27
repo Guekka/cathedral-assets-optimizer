@@ -8,21 +8,19 @@ CAO works on the directory you select and can modify or remove files there. It d
 of your mod. Keep a separate copy or use your mod manager's backup/versioning features before running
 an operation that changes files.
 
-Choose the game profile that matches the assets you are processing. Game profiles select game-specific
-formats and defaults; using the wrong game can produce unsuitable results.
+Choose a target game that matches the assets you are processing. In Quick tasks, select the game
+directly; in Customize, select a profile with the matching target game. Game profiles select
+game-specific formats and defaults, so using the wrong game can produce unsuitable results.
 
-## Choose a mode
+## Choose a workspace
 
-Use **Options > Change level** to choose how much of CAO's configuration to show:
+- **Quick tasks** provides a short path for preparing Skyrim LE/SSE assets with CAO's recommended
+  settings. Choose the target game without changing your saved profile.
+- **Customize** exposes profiles, operation settings, and file rules for users who need more control.
 
-- **Quick Optimize** uses default settings for common Skyrim LE/SSE porting tasks. It offers the SLE
-  and SSE profiles, with a limited set of options.
-- **Medium** adds BSA and texture settings, along with profile selection.
-- **Advanced** exposes the full set of modules, profiles, and file rules.
-
-Quick Optimize uses CAO's built-in defaults and does not expose file-rule controls. Medium and
-Advanced modes are intended for users who need to customize what CAO does. Hover over controls with a
-help cursor to read their tooltips.
+Use Quick tasks when the recommended asset-preparation workflow fits. Use Customize when you need to
+reuse settings, choose individual operations, or make file-specific exceptions. Hover over controls
+with a help cursor to read their tooltips.
 
 ## Choose what to process
 
@@ -31,25 +29,26 @@ parent directory: CAO processes each immediate subdirectory as a separate mod. C
 directory has the layout you intend before running.
 
 Use **Open Directory** to choose the input path. The path can also be entered directly in the field.
-The input path, **One mod/Several mods** choice, and Dry run setting are shared run context; changing
-profiles does not change them.
+The input path and **One mod/Several mods** choice are shared across workspaces; changing profiles
+does not change them.
 
 ## Preview with Dry run
 
-Enable **Dry run** and click **Run** to see which files would be affected without performing their
-optimizations. Review the progress log before running with Dry run disabled. A dry run is a preview,
-not a backup.
+Click **Preview (Dry run)** to see the planned processing steps without modifying files. Click
+**Run** to process the selected input. Preview is not a backup; keep a separate copy or use your mod
+manager's backup/versioning features before running.
 
 ## Profiles and setting scope
 
-A profile stores the target game and reusable asset-processing settings. In Medium and Advanced modes,
-use **Manage** beside the profile selector to create, remove, import, or export profiles. Select the
-profile whose target game and settings match the mod.
+A profile stores the target game and reusable processing settings. In **Customize**, use **Manage**
+beside the profile selector to create, remove, import, or export profiles. Select the profile whose
+target game and settings match the mod. The Skyrim target in Quick tasks is independent of the
+selected profile.
 
 The selected profile is saved with CAO's settings. Export a profile if you want to share or keep a
 separate copy of its configuration.
 
-In Advanced mode, the controls above the modules show which settings you are editing:
+In **Customize**, the controls above the modules show which settings you are editing:
 
 - **Profile** selects the complete game profile.
 - **Default file settings** are the fallback used when no file rule matches. If there are no active
@@ -61,15 +60,12 @@ The **BSA (Profile-wide)** module is an exception to the file-settings selector:
 processing for the whole profile, even while a file rule is selected. Other file settings belong to
 the default settings or the selected rule, as shown by the scope label.
 
-Medium mode edits **Default file settings**. Any file rules already in the profile still override
-those defaults for matching files; Medium shows how many are active. Switch to Advanced to review or
-edit the rules.
-
 ## File rules
 
-Advanced mode lets you apply file settings to relative paths. Rules are checked from top to bottom;
-the first matching rule supplies the settings, and **Default file settings** are the fallback.
-Medium mode edits that fallback while existing rules keep applying to their matches.
+File rules let **Customize** apply different settings to relative paths. Use **Manage rules** beside
+the file-settings selector to create, edit, reorder, or remove rules. Rules are checked from top to
+bottom; the first matching rule supplies the settings, and **Default file settings** are the
+fallback. Medium mode edits that fallback while existing rules keep applying to their matches.
 
 The manager's sample-path and file-impact previews are read-only and distinct from **Dry run**.
 For match types, rule priority, setting scope, and preview details, see the [file rules
@@ -77,7 +73,7 @@ guide](patterns.md).
 
 ## BSA options
 
-In Medium or Advanced mode, **BSA (Profile-wide)** controls archive processing for the profile:
+In **Customize**, **BSA (Profile-wide)** controls archive processing for the profile:
 
 - **Extract BSAs** extracts archive contents. Existing loose files are not overwritten.
 - **Create BSAs** packs eligible loose files into archives.
@@ -85,7 +81,7 @@ In Medium or Advanced mode, **BSA (Profile-wide)** controls archive processing f
   remove files that were successfully packed.
 - **Do not compress files** disables compression for created archives.
 
-The **Pack file** setting in the **BSA** module is a file setting: in Advanced mode, it belongs to the
+The **Pack file** setting in the **BSA** module is a file setting: in Customize, it belongs to the
 selected rule or the default fallback. It controls whether those files are eligible for packing.
 Packing has no effect unless **Create BSAs** is enabled in **BSA (Profile-wide)**.
 

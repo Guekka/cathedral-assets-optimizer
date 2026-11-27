@@ -29,6 +29,12 @@ enum class GuiMode : std::uint8_t
     Advanced,
 };
 
+enum class Workspace : std::uint8_t
+{
+    QuickTasks,
+    Customize,
+};
+
 enum class GuiTheme : std::uint8_t
 {
     Dark,
@@ -48,6 +54,10 @@ NLOHMANN_JSON_SERIALIZE_ENUM(cao::GuiMode,
                              {{cao::GuiMode::QuickOptimize, "QuickOptimize"},
                               {cao::GuiMode::Medium, "Medium"},
                               {cao::GuiMode::Advanced, "Advanced"}})
+
+NLOHMANN_JSON_SERIALIZE_ENUM(cao::Workspace,
+                             {{cao::Workspace::QuickTasks, "QuickTasks"},
+                              {cao::Workspace::Customize, "Customize"}})
 
 NLOHMANN_JSON_SERIALIZE_ENUM(cao::GuiTheme, {{cao::GuiTheme::Dark, "Dark"}, {cao::GuiTheme::Light, "Light"}})
 

@@ -23,7 +23,8 @@ void ModuleDisplay::set_current_index(int idx)
 
 void ModuleDisplay::add_module(std::unique_ptr<IWindowModule> mod)
 {
-    tab_widget_->addTab(mod.release(), mod->name()); // ownership is transferred to tabs
+    const auto name = mod->name();
+    tab_widget_->addTab(mod.release(), name); // ownership is transferred to tabs
     tab_widget_->setCurrentIndex(0);
 
     tab_widget_->setHidden(false);

@@ -28,9 +28,6 @@ set(SOURCES
     ${SOURCE_DIR}/gui/ListDialog.cpp
     ${SOURCE_DIR}/gui/ListDialog.hpp
     ${SOURCE_DIR}/gui/ListDialog.ui
-    ${SOURCE_DIR}/gui/LevelSelector.cpp
-    ${SOURCE_DIR}/gui/LevelSelector.hpp
-    ${SOURCE_DIR}/gui/LevelSelector.ui
     ${SOURCE_DIR}/gui/ProgressWindow.cpp
     ${SOURCE_DIR}/gui/ProgressWindow.hpp
     ${SOURCE_DIR}/gui/ProgressWindow.ui
