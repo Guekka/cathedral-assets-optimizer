@@ -157,9 +157,9 @@ TEST_CASE("preview_unpack_archive reports planned extraction collisions without 
 
     const auto preview = preview_unpack_archive(archive_path, destination_dir);
 
-    CHECK(preview.total_files == 2);
-    REQUIRE(preview.colliding_files.size() == 1);
-    CHECK(preview.colliding_files.front() == destination_dir / "meshes" / "a.nif");
+    REQUIRE(preview.has_value());
+    CHECK(preview->files_to_extract == std::vector<btu::Path>{"meshes/b.nif"});
+    CHECK(preview->skipped_files == std::vector<btu::Path>{"meshes/a.nif"});
 
     // The archive must still exist, byte-for-byte, and nothing should have been extracted: the
     // colliding file keeps its original content, and the non-colliding file was never created.
@@ -178,8 +178,7 @@ TEST_CASE("preview_unpack_archive reports a failure without crashing when the ar
 
     const auto preview = preview_unpack_archive(bad_archive_path, directory.path());
 
-    CHECK(preview.total_files == 0);
-    CHECK(preview.colliding_files.empty());
+    CHECK_FALSE(preview.has_value());
 
     // Nothing should have been touched: the bogus archive is still there, untouched.
     CHECK(std::filesystem::exists(bad_archive_path));

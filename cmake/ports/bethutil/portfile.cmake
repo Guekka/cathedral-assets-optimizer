@@ -5,9 +5,9 @@ vcpkg_from_github(
   REPO
   Guekka/bethutil
   REF
-  5f1ab07d7e2b4edf7980dccc9be87f829ecc9d52
+  d00768cf0ea7fb213fffcf3a346dd2370be3da4d
   SHA512
-  0834d60ec1634b7c5671ced65e97b32b8b33bcaeb9819c2fc15d614c933502c98061d16a7cd3d0315ae643b871fe45ad02545d7b1cd3442f6174c8a982c9ebc5
+  daec3feea82c0b0e92602906a8b102f8cfd1faebf70493eecbfac039d505908de07fdf3b9d6b8bb2c1f90777f13bfff7daf4492daa5bf7f2e34648c70b86bd96
   HEAD_REF
   main)
 

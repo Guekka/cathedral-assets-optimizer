@@ -3,13 +3,11 @@
 #include <btu/bsa/pack.hpp>
 #include <btu/bsa/plugin.hpp>
 #include <btu/common/filesystem.hpp>
-#include <btu/common/string.hpp>
 #include <plog/Log.h>
 
 #include <format>
-#include <fstream>
 #include <string_view>
-#include <unordered_set>
+#include <vector>
 
 /**
  * @brief Remove relative paths from a directory
@@ -128,58 +126,29 @@ auto preview_pack_directory(const btu::bsa::PackSettings &settings,
 }
 
 auto preview_unpack_archive(const btu::Path &archive_path,
-                            const btu::Path &directory_path) noexcept -> BsaUnpackPreview
+                            const btu::Path &directory_path) noexcept
+    -> tl::expected<btu::bsa::UnpackPreview, btu::common::Error>
 {
-    BsaUnpackPreview preview;
-    preview.archive_path = archive_path;
-
-    auto archive = btu::bsa::Archive::read(archive_path);
-    if (!archive)
+    auto preview = btu::bsa::list_unpack_preview(
+        {.file_path = archive_path, .overwrite_existing_files = false, .extract_to_dir = directory_path});
+    if (!preview)
     {
         PLOGE << "Dry run: failed to open archive " << archive_path.string()
-              << " for preview. Reason: " << archive.error().message();
-        return preview;
+              << " for preview. Reason: " << preview.error().message();
+        return tl::make_unexpected(preview.error());
     }
 
-    std::vector<btu::Path> relative_paths;
-    relative_paths.reserve(archive->size());
-    for (const auto &[relative_path, file] : archive.value())
-        relative_paths.emplace_back(relative_path);
-
-    preview.total_files = relative_paths.size();
-
-    // find_matching_paths_icase matches the lowercase relative archive paths against the real,
-    // possibly differently-cased files already on disk, mirroring the real extraction's
-    // overwrite_existing_files = false behavior without writing anything.
-    const auto existing_real_paths = btu::common::find_matching_paths_icase(directory_path, relative_paths);
-
-    const auto to_lower_generic = [](const btu::Path &path) {
-        return std::string(btu::common::as_ascii(btu::common::to_lower(path.generic_u8string())));
-    };
-
-    std::unordered_set<std::string> colliding_relative_lower;
-    for (const auto &real_path : existing_real_paths)
-        colliding_relative_lower.insert(to_lower_generic(real_path.lexically_relative(directory_path)));
-
-    for (const auto &relative_path : relative_paths)
-    {
-        if (colliding_relative_lower.contains(to_lower_generic(relative_path)))
-        {
-            preview.colliding_files.push_back(directory_path / relative_path);
-            PLOGI << std::format("Dry run: would skip extracting {} (a file already exists at this location)",
-                                 relative_path.string());
-        }
-        else
-        {
-            PLOGI << std::format("Dry run: would extract {}", relative_path.string());
-        }
-    }
+    for (const auto &relative_path : preview->files_to_extract)
+        PLOGI << std::format("Dry run: would extract {}", relative_path.string());
+    for (const auto &relative_path : preview->skipped_files)
+        PLOGI << std::format("Dry run: would skip extracting {} (a file already exists at this location)",
+                             relative_path.string());
 
     PLOGI << std::format(
         "Dry run: archive {} contains {} files, {} would be skipped because they already exist",
         archive_path.filename().string(),
-        preview.total_files,
-        preview.colliding_files.size());
+        preview->files_to_extract.size() + preview->skipped_files.size(),
+        preview->skipped_files.size());
 
     return preview;
 }
