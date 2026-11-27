@@ -22,7 +22,7 @@ add_executable(
   PatternTests.cpp
   ${PROJECT_SOURCE_DIR}/src/gui/file_rule_preview.cpp
   ${PROJECT_SOURCE_DIR}/src/settings/profile.cpp
-  BsaProcessTests.cpp
+  bsa_process_tests.cpp
   ${PROJECT_SOURCE_DIR}/src/bsa_process.cpp
   ${PROJECT_SOURCE_DIR}/src/settings/settings.cpp)
 target_include_directories(CAO_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
